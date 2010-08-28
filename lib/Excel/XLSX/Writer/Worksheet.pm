@@ -14,14 +14,14 @@ package Excel::XLSX::Writer::Worksheet;
 
 use Exporter;
 use strict;
+use warnings;
 use Carp;
-use Excel::XLSX::Writer::XMLwriter;
 use Excel::XLSX::Writer::Format;
 use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 
 use vars qw($VERSION @ISA);
-@ISA = qw(Excel::XLSX::Writer::XMLwriter);
+@ISA = qw(Exporter);
 
 $VERSION = '0.01';
 
@@ -29,12 +29,12 @@ $VERSION = '0.01';
 #
 # new()
 #
-# Constructor. Creates a new Worksheet object from a XMLwriter object
+# Constructor.
 #
 sub new {
 
     my $class  = shift;
-    my $self   = Excel::XLSX::Writer::XMLwriter->new();
+    my $self;
     my $rowmax = 1_048_576;
     my $colmax = 16_384;
     my $strmax = 32767;

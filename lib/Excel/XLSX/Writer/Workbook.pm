@@ -14,15 +14,15 @@ package Excel::XLSX::Writer::Workbook;
 
 use Exporter;
 use strict;
+use warnings;
 use Carp;
 use FileHandle;
-use Excel::XLSX::Writer::XMLwriter;
 use Excel::XLSX::Writer::Worksheet;
 use Excel::XLSX::Writer::Format;
 
 
 use vars qw($VERSION @ISA);
-@ISA = qw(Excel::XLSX::Writer::XMLwriter Exporter);
+@ISA = qw(Exporter);
 
 $VERSION = '0.01';
 
@@ -30,12 +30,12 @@ $VERSION = '0.01';
 #
 # new()
 #
-# Constructor. Creates a new Workbook object from a XMLwriter object.
+# Constructor.
 #
 sub new {
 
-    my $class      = shift;
-    my $self       = Excel::XLSX::Writer::XMLwriter->new();
+    my $class = shift;
+    my $self;
     my $tmp_format = Excel::XLSX::Writer::Format->new();
     my $byte_order = $self->{_byte_order};
 
@@ -84,9 +84,6 @@ sub new {
         $self->{_filehandle} = $fh;
     }
 
-
-    # Set colour palette.
-    $self->set_palette_xl97();
 
     return $self;
 }
@@ -389,54 +386,6 @@ sub _store_workbook {
 
     my $self = shift;
 
-
-    # Write the XML version.
-    $self->_write_xml_directive( 0, 1, 0, 'xml', 'version', '1.0' );
-
-    # Write the XML directive to make Windows open the file in Excel.
-    $self->_write_xml_directive( 0, 1, 0, 'mso-application', 'progid',
-        'Excel.Sheet' );
-
-    # Write the XML namespaces.
-    $self->_write_xml_start_tag(
-        0,          1,
-        1,          'Workbook',
-        'xmlns:x',  'urn:schemas-microsoft-com:office:excel',
-        'xmlns',    'urn:schemas-microsoft-com:office:spreadsheet',
-        'xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet',
-    );
-
-
-    $self->_store_all_xfs();
-
-
-    # Ensure that at least one worksheet has been selected.
-    if ( $self->{_activesheet} == 0 ) {
-        @{ $self->{_worksheets} }[0]->{_selected} = 1;
-    }
-
-    # Calculate the number of selected worksheet tabs and call the finalization
-    # methods for each worksheet
-    foreach my $sheet ( @{ $self->{_worksheets} } ) {
-        $self->{_selected}++ if $sheet->{_selected};
-        $sheet->_close( $self->{_sheetnames} );
-    }
-
-    # Add Workbook globals
-    $self->_store_codepage();
-    $self->_store_externs();    # For print area and repeat rows
-    $self->_store_names();      # For print area and repeat rows
-    $self->_store_window1();
-    $self->_store_1904();
-    $self->_store_palette();
-
-
-    # Close Workbook tag. WriteExcel _store_eof().
-    $self->_write_xml_end_tag( 0, 1, 1, 'Workbook' );
-
-
-    # Close the file
-    #$self->{_filehandle}->close(); TODO
 }
 
 
@@ -449,64 +398,6 @@ sub _store_workbook {
 sub _store_all_xfs {
 
     my $self = shift;
-    my @attribs;
-
-    $self->_write_xml_start_tag( 1, 1, 0, 'Styles' );
-
-    # User defined XFs
-    foreach my $format ( @{ $self->{_formats} } ) {
-
-        $self->_write_xml_start_tag( 2, 1, 0, 'Style', 'ss:ID',
-            's' . $format->get_xf_index() );
-
-
-        # Write the <Alignment> properties if any
-        if ( @attribs = $format->get_align_properties() ) {
-            $self->_write_xml_element( 3, 1, 1, 'Alignment', @attribs );
-        }
-
-
-        # Write the <Borders> properties if any
-        if ( @attribs = $format->get_border_properties() ) {
-            $self->_write_xml_start_tag( 3, 1, 1, 'Borders' );
-
-            for my $aref ( @attribs ) {
-                $self->_write_xml_element( 4, 1, 0, 'Border', @$aref );
-            }
-
-            $self->_write_xml_end_tag( 3, 1, 1, 'Borders' );
-        }
-
-
-        # Write the <Font> properties if any
-        if ( @attribs = $format->get_font_properties() ) {
-            $self->_write_xml_element( 3, 1, 1, 'Font', @attribs );
-        }
-
-
-        # Write the <Interior> properties if any
-        if ( @attribs = $format->get_interior_properties() ) {
-            $self->_write_xml_element( 3, 1, 0, 'Interior', @attribs );
-        }
-
-
-        # Write the <NumberFormat> properties if any
-        if ( @attribs = $format->get_num_format_properties() ) {
-            $self->_write_xml_element( 3, 1, 0, 'NumberFormat', @attribs );
-        }
-
-
-        # Write the <Protection> properties if any
-        if ( @attribs = $format->get_protection_properties() ) {
-            $self->_write_xml_element( 3, 1, 0, 'Protection', @attribs );
-        }
-
-
-        $self->_write_xml_end_tag( 2, 1, 0, 'Style' );
-
-    }
-
-    $self->_write_xml_end_tag( 1, 1, 0, 'Styles' );
 
 }
 
@@ -522,13 +413,6 @@ sub _store_externs {
 
     my $self = shift;
 
-    # Create EXTERNCOUNT with number of worksheets
-    $self->_store_externcount( scalar @{ $self->{_worksheets} } );
-
-    # Create EXTERNSHEET for each worksheet
-    foreach my $sheetname ( @{ $self->{_sheetnames} } ) {
-        $self->_store_externsheet( $sheetname );
-    }
 }
 
 
@@ -542,77 +426,264 @@ sub _store_names {
 
     my $self = shift;
 
-    # Create the print area NAME records
-    foreach my $worksheet ( @{ $self->{_worksheets} } ) {
-
-        # Write a Name record if the print area has been defined
-        if ( defined $worksheet->{_print_rowmin} ) {
-            $self->_store_name_short(
-                $worksheet->{_index},
-                0x06,    # NAME type
-                $worksheet->{_print_rowmin},
-                $worksheet->{_print_rowmax},
-                $worksheet->{_print_colmin},
-                $worksheet->{_print_colmax}
-            );
-        }
-    }
-
-
-    # Create the print title NAME records
-    foreach my $worksheet ( @{ $self->{_worksheets} } ) {
-
-        my $rowmin = $worksheet->{_title_rowmin};
-        my $rowmax = $worksheet->{_title_rowmax};
-        my $colmin = $worksheet->{_title_colmin};
-        my $colmax = $worksheet->{_title_colmax};
-
-        # Determine if row + col, row, col or nothing has been defined
-        # and write the appropriate record
-        #
-        if ( defined $rowmin && defined $colmin ) {
-
-            # Row and column titles have been defined.
-            # Row title has been defined.
-            $self->_store_name_long(
-                $worksheet->{_index},
-                0x07,    # NAME type
-                $rowmin,
-                $rowmax,
-                $colmin,
-                $colmax
-            );
-        }
-        elsif ( defined $rowmin ) {
-
-            # Row title has been defined.
-            $self->_store_name_short(
-                $worksheet->{_index},
-                0x07,    # NAME type
-                $rowmin,
-                $rowmax,
-                0x00,
-                0xff
-            );
-        }
-        elsif ( defined $colmin ) {
-
-            # Column title has been defined.
-            $self->_store_name_short(
-                $worksheet->{_index},
-                0x07,    # NAME type
-                0x0000,
-                0x3fff,
-                $colmin,
-                $colmax
-            );
-        }
-        else {
-
-            # Print title hasn't been defined.
-        }
-    }
 }
+
+
+###############################################################################
+#
+# XML writing methods.
+#
+###############################################################################
+
+###############################################################################
+#
+# _write_xml_declaration()
+#
+# Write the XML declaration.
+#
+sub _write_xml_declaration {
+
+    my $self       = shift;
+    my $writer     = $self->{_writer};
+    my $encoding   = 'UTF-8';
+    my $standalone = 1;
+
+    $writer->xmlDecl( $encoding, $standalone );
+}
+
+###############################################################################
+#
+# _write_workbook()
+#
+# Write <workbook> element.
+#
+sub _write_workbook {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+    my $xmlns_r =
+      'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+
+    my @attributes = (
+        'xmlns'   => $xmlns,
+        'xmlns:r' => $xmlns_r,
+    );
+
+    $writer->emptyTag( 'workbook', @attributes );
+}
+
+###############################################################################
+#
+# write_file_version()
+#
+# Write the <fileVersion> element.
+#
+sub _write_file_version {
+
+    my $self          = shift;
+    my $writer        = $self->{_writer};
+    my $app_name      = 'xl';
+    my $last_edited   = 4;
+    my $lowest_edited = 4;
+    my $rup_build     = 4505;
+
+    my @attributes = (
+        'appName'      => $app_name,
+        'lastEdited'   => $last_edited,
+        'lowestEdited' => $lowest_edited,
+        'rupBuild'     => $rup_build,
+    );
+
+    $writer->emptyTag( 'fileVersion', @attributes );
+}
+
+###############################################################################
+#
+# _write_workbook_pr()
+#
+# Write <workbookPr> element.
+#
+sub _write_workbook_pr {
+
+    my $self                   = shift;
+    my $writer                 = $self->{_writer};
+    my $date_1904              = 1;
+    my $show_ink_annotation    = 0;
+    my $auto_compress_pictures = 0;
+
+    my @attributes = (
+        'date1904'             => $date_1904,
+        'showInkAnnotation'    => $show_ink_annotation,
+        'autoCompressPictures' => $auto_compress_pictures,
+    );
+
+    $writer->emptyTag( 'workbookPr', @attributes );
+}
+
+###############################################################################
+#
+# _write_book_views()
+#
+# Write <bookViews> element.
+#
+sub _write_book_views {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+
+
+    $writer->startTag( 'bookViews' );
+    $self->_write_workbook_view();
+    $writer->endTag( 'bookViews' );
+}
+
+###############################################################################
+#
+# _write_workbook_view()
+#
+# Write <workbookView> element.
+#
+sub _write_workbook_view {
+
+    my $self          = shift;
+    my $writer        = $self->{_writer};
+    my $x_window      = -20;
+    my $y_window      = -20;
+    my $window_width  = 34400;
+    my $window_height = 20700;
+    my $tab_ratio     = 500;
+
+    my @attributes = (
+        'xWindow'      => $x_window,
+        'yWindow'      => $y_window,
+        'windowWidth'  => $window_width,
+        'windowHeight' => $window_height,
+        'tabRatio'     => $tab_ratio,
+    );
+
+    $writer->emptyTag( 'workbookView', @attributes );
+}
+
+###############################################################################
+#
+# _write_sheets()
+#
+# Write <sheets> element.
+#
+sub _write_sheets {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+
+    $writer->startTag( 'sheets' );
+    $self->_write_sheet();
+    $writer->endTag( 'sheets' );
+}
+
+
+###############################################################################
+#
+# _write_sheet()
+#
+# Write <sheet> element.
+#
+sub _write_sheet {
+
+    my $self     = shift;
+    my $writer   = $self->{_writer};
+    my $name     = 'Sheet1';
+    my $sheet_id = 1;
+    my $r_id     = 'rId1';
+
+    my @attributes = (
+        'name'    => $name,
+        'sheetId' => $sheet_id,
+        'r:id'    => $r_id,
+    );
+
+    $writer->emptyTag( 'sheet', @attributes );
+}
+
+###############################################################################
+#
+# _write_calc_pr()
+#
+# Write <calcPr> element.
+#
+sub _write_calc_pr {
+
+    my $self                 = shift;
+    my $writer               = $self->{_writer};
+    my $calc_id              = 130000;
+    my $concurrent_calc      = 0;
+
+    my @attributes = (
+        'calcId'             => $calc_id,
+        'concurrentCalc'     => $concurrent_calc,
+    );
+
+    $writer->emptyTag( 'calcPr', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_ext_lst()
+#
+# Write <extLst> element.
+#
+sub _write_ext_lst {
+
+    my $self                 = shift;
+    my $writer               = $self->{_writer};
+
+    $writer->startTag( 'extLst' );
+    $self->_write_ext();
+    $writer->endTag( 'extLst' );
+}
+
+
+###############################################################################
+#
+# _write_ext()
+#
+# Write <ext> element.
+#
+sub _write_ext {
+
+    my $self     = shift;
+    my $writer   = $self->{_writer};
+    my $xmlns_mx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
+    my $uri      = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
+
+    my @attributes = (
+        'xmlns:mx' => $xmlns_mx,
+        'uri'      => $uri,
+    );
+
+    $writer->startTag( 'ext', @attributes );
+    $self->_write_mx_arch_id();
+    $writer->endTag( 'ext' );
+}
+
+###############################################################################
+#
+# _write_mx_arch_id()
+#
+# Write <mx:ArchID> element.
+#
+sub _write_mx_arch_id {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $Flags  = 2;
+
+    my @attributes = ( 'Flags' => $Flags, );
+
+    $writer->emptyTag( 'mx:ArchID', @attributes );
+}
+
 
 
 1;
