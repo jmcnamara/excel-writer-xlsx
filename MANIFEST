@@ -1,0 +1,16 @@
+Changes
+MANIFEST
+Makefile.PL
+README
+
+lib/Excel/XLSX/Writer.pm
+lib/Excel/XLSX/Writer/Format.pm
+lib/Excel/XLSX/Writer/Utility.pm
+lib/Excel/XLSX/Writer/Workbook.pm
+lib/Excel/XLSX/Writer/Worksheet.pm
+
+t/workbook/sub_output_file_version.t
+
+examples/README
+examples/bug_report.pl
+examples/a_simple.pl  
