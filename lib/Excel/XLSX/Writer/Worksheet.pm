@@ -3746,11 +3746,10 @@ sub _quote_sheetname {
 sub _write_xml_declaration {
 
     my $self       = shift;
-    my $writer     = $self->{_writer};
     my $encoding   = 'UTF-8';
     my $standalone = 1;
 
-    $writer->xmlDecl( $encoding, $standalone );
+    $self->{_writer}->xmlDecl( $encoding, $standalone );
 }
 
 ###############################################################################
@@ -3762,7 +3761,6 @@ sub _write_xml_declaration {
 sub _write_worksheet {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
     my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     my $xmlns_r =
       'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
@@ -3781,7 +3779,7 @@ sub _write_worksheet {
         'mc:PreserveAttributes' => $mc_preserve_attributes,
     );
 
-    $writer->emptyTag( 'worksheet', @attributes );
+    $self->{_writer}->emptyTag( 'worksheet', @attributes );
 }
 
 
@@ -3794,7 +3792,6 @@ sub _write_worksheet {
 sub _write_sheet_pr {
 
     my $self                                 = shift;
-    my $writer                               = $self->{_writer};
     my $published                            = 0;
     my $enable_format_conditions_calculation = 0;
 
@@ -3804,7 +3801,7 @@ sub _write_sheet_pr {
           $enable_format_conditions_calculation,
     );
 
-    $writer->emptyTag( 'sheetPr', @attributes );
+    $self->{_writer}->emptyTag( 'sheetPr', @attributes );
 }
 
 
@@ -3817,12 +3814,11 @@ sub _write_sheet_pr {
 sub _write_dimension {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
     my $searef = 'A1:B2';
 
     my @attributes = ( 'searef' => $searef, );
 
-    $writer->emptyTag( 'dimension', @attributes );
+    $self->{_writer}->emptyTag( 'dimension', @attributes );
 }
 
 
@@ -3835,13 +3831,12 @@ sub _write_dimension {
 sub _write_sheet_views {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
 
     my @attributes = ();
 
-    $writer->startTag( 'sheetViews', @attributes );
+    $self->{_writer}->startTag( 'sheetViews', @attributes );
     $self->_write_sheet_view();
-    $writer->endTag( 'sheetViews' );
+    $self->{_writer}->endTag( 'sheetViews' );
 }
 
 
@@ -3854,7 +3849,6 @@ sub _write_sheet_views {
 sub _write_sheet_view {
 
     my $self             = shift;
-    my $writer           = $self->{_writer};
     my $tab_selected     = 1;
     my $view             = 'pageLayout';
     my $workbook_view_id = 0;
@@ -3865,9 +3859,9 @@ sub _write_sheet_view {
         'workbookViewId' => $workbook_view_id,
     );
 
-    $writer->startTag( 'sheetView', @attributes );
+    $self->{_writer}->startTag( 'sheetView', @attributes );
     $self->_write_selection();
-    $writer->endTag( 'sheetView' );
+    $self->{_writer}->endTag( 'sheetView' );
 }
 
 
@@ -3880,7 +3874,6 @@ sub _write_sheet_view {
 sub _write_selection {
 
     my $self        = shift;
-    my $writer      = $self->{_writer};
     my $active_cell = 'A1';
     my $sqref       = 'A1';
 
@@ -3889,7 +3882,7 @@ sub _write_selection {
         'sqref'      => $sqref,
     );
 
-    $writer->emptyTag( 'selection', @attributes );
+    $self->{_writer}->emptyTag( 'selection', @attributes );
 }
 
 
@@ -3902,7 +3895,6 @@ sub _write_selection {
 sub _write_sheet_format_pr {
 
     my $self               = shift;
-    my $writer             = $self->{_writer};
     my $base_col_width     = 10;
     my $default_row_height = 13;
 
@@ -3911,7 +3903,7 @@ sub _write_sheet_format_pr {
         'defaultRowHeight' => $default_row_height,
     );
 
-    $writer->emptyTag( 'sheetFormatPr', @attributes );
+    $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
 }
 
 
@@ -3924,10 +3916,9 @@ sub _write_sheet_format_pr {
 sub _write_sheet_data {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
 
-    $writer->startTag( 'sheetData' );
-    $writer->endTag( 'sheetData' );
+    $self->{_writer}->startTag( 'sheetData' );
+    $self->{_writer}->endTag( 'sheetData' );
 }
 
 
@@ -3949,10 +3940,10 @@ sub _write_row {
         'spans' => $spans,
     );
 
-    $writer->startTag( 'row', @attributes );
+    $self->{_writer}->startTag( 'row', @attributes );
 
     #$self->_write_foo();
-    $writer->endTag( 'row' );
+    $self->{_writer}->endTag( 'row' );
 }
 
 
@@ -3966,14 +3957,13 @@ sub _write_cell {
 
     my $self   = shift;
     my $value  = shift;
-    my $writer = $self->{_writer};
     my $range  = 'A1';
 
     my @attributes = ( 'r' => $range, );
 
-    $writer->startTag( 'c', @attributes );
+    $self->{_writer}->startTag( 'c', @attributes );
     $self->_write_value( $value );
-    $writer->endTag( 'c' );
+    $self->{_writer}->endTag( 'c' );
 }
 
 
@@ -3987,9 +3977,8 @@ sub _write_value {
 
     my $self   = shift;
     my $value  = shift;
-    my $writer = $self->{_writer};
 
-    $writer->dataElement( 'v', $value );
+    $self->{_writer}->dataElement( 'v', $value );
 }
 
 
@@ -4002,7 +3991,6 @@ sub _write_value {
 sub _write_phonetic_pr {
 
     my $self    = shift;
-    my $writer  = $self->{_writer};
     my $font_id = 1;
     my $type    = 'noConversion';
 
@@ -4011,7 +3999,7 @@ sub _write_phonetic_pr {
         'type'   => $type,
     );
 
-    $writer->emptyTag( 'phoneticPr', @attributes );
+    $self->{_writer}->emptyTag( 'phoneticPr', @attributes );
 }
 
 
@@ -4024,7 +4012,6 @@ sub _write_phonetic_pr {
 sub _write_page_margins {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
     my $left   = 0.75;
     my $right  = 0.75;
     my $top    = 1;
@@ -4041,7 +4028,7 @@ sub _write_page_margins {
         'footer' => $footer,
     );
 
-    $writer->emptyTag( 'pageMargins', @attributes );
+    $self->{_writer}->emptyTag( 'pageMargins', @attributes );
 }
 
 ###############################################################################
@@ -4053,7 +4040,6 @@ sub _write_page_margins {
 sub _write_page_setup {
 
     my $self           = shift;
-    my $writer         = $self->{_writer};
     my $paper_size     = 0;
     my $orientation    = 'portrait';
     my $horizontal_dpi = 4294967292;
@@ -4066,7 +4052,7 @@ sub _write_page_setup {
         'verticalDpi'   => $vertical_dpi,
     );
 
-    $writer->emptyTag( 'pageSetup', @attributes );
+    $self->{_writer}->emptyTag( 'pageSetup', @attributes );
 }
 
 
@@ -4079,7 +4065,6 @@ sub _write_page_setup {
 sub _write_ext {
 
     my $self    = shift;
-    my $writer  = $self->{_writer};
     my $xmlnsmx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
     my $uri     = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
 
@@ -4088,9 +4073,9 @@ sub _write_ext {
         'uri'      => $uri,
     );
 
-    $writer->startTag( 'ext', @attributes );
+    $self->{_writer}->startTag( 'ext', @attributes );
     $self->_write_mx_plv();
-    $writer->endTag( 'ext' );
+    $self->{_writer}->endTag( 'ext' );
 }
 
 ###############################################################################
@@ -4102,7 +4087,6 @@ sub _write_ext {
 sub _write_mx_plv {
 
     my $self                 = shift;
-    my $writer               = $self->{_writer};
     my $mode                 = 1;
     my $one_page             = 0;
     my $w_scale              = 0;
@@ -4113,7 +4097,7 @@ sub _write_mx_plv {
         'WScale'             => $w_scale,
     );
 
-    $writer->emptyTag( 'mx:PLV', @attributes );
+    $self->{_writer}->emptyTag( 'mx:PLV', @attributes );
 }
 
 

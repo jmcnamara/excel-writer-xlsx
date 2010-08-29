@@ -444,11 +444,10 @@ sub _store_names {
 sub _write_xml_declaration {
 
     my $self       = shift;
-    my $writer     = $self->{_writer};
     my $encoding   = 'UTF-8';
     my $standalone = 1;
 
-    $writer->xmlDecl( $encoding, $standalone );
+    $self->{_writer}->xmlDecl( $encoding, $standalone );
 }
 
 ###############################################################################
@@ -460,7 +459,6 @@ sub _write_xml_declaration {
 sub _write_workbook {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
     my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     my $xmlns_r =
       'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
@@ -470,7 +468,7 @@ sub _write_workbook {
         'xmlns:r' => $xmlns_r,
     );
 
-    $writer->emptyTag( 'workbook', @attributes );
+    $self->{_writer}->emptyTag( 'workbook', @attributes );
 }
 
 ###############################################################################
@@ -482,7 +480,6 @@ sub _write_workbook {
 sub _write_file_version {
 
     my $self          = shift;
-    my $writer        = $self->{_writer};
     my $app_name      = 'xl';
     my $last_edited   = 4;
     my $lowest_edited = 4;
@@ -495,7 +492,7 @@ sub _write_file_version {
         'rupBuild'     => $rup_build,
     );
 
-    $writer->emptyTag( 'fileVersion', @attributes );
+    $self->{_writer}->emptyTag( 'fileVersion', @attributes );
 }
 
 ###############################################################################
@@ -507,7 +504,6 @@ sub _write_file_version {
 sub _write_workbook_pr {
 
     my $self                   = shift;
-    my $writer                 = $self->{_writer};
     my $date_1904              = 1;
     my $show_ink_annotation    = 0;
     my $auto_compress_pictures = 0;
@@ -518,7 +514,7 @@ sub _write_workbook_pr {
         'autoCompressPictures' => $auto_compress_pictures,
     );
 
-    $writer->emptyTag( 'workbookPr', @attributes );
+    $self->{_writer}->emptyTag( 'workbookPr', @attributes );
 }
 
 ###############################################################################
@@ -530,12 +526,10 @@ sub _write_workbook_pr {
 sub _write_book_views {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
 
-
-    $writer->startTag( 'bookViews' );
+    $self->{_writer}->startTag( 'bookViews' );
     $self->_write_workbook_view();
-    $writer->endTag( 'bookViews' );
+    $self->{_writer}->endTag( 'bookViews' );
 }
 
 ###############################################################################
@@ -547,7 +541,6 @@ sub _write_book_views {
 sub _write_workbook_view {
 
     my $self          = shift;
-    my $writer        = $self->{_writer};
     my $x_window      = -20;
     my $y_window      = -20;
     my $window_width  = 34400;
@@ -562,7 +555,7 @@ sub _write_workbook_view {
         'tabRatio'     => $tab_ratio,
     );
 
-    $writer->emptyTag( 'workbookView', @attributes );
+    $self->{_writer}->emptyTag( 'workbookView', @attributes );
 }
 
 ###############################################################################
@@ -574,11 +567,10 @@ sub _write_workbook_view {
 sub _write_sheets {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
 
-    $writer->startTag( 'sheets' );
+    $self->{_writer}->startTag( 'sheets' );
     $self->_write_sheet();
-    $writer->endTag( 'sheets' );
+    $self->{_writer}->endTag( 'sheets' );
 }
 
 
@@ -591,7 +583,6 @@ sub _write_sheets {
 sub _write_sheet {
 
     my $self     = shift;
-    my $writer   = $self->{_writer};
     my $name     = 'Sheet1';
     my $sheet_id = 1;
     my $r_id     = 'rId1';
@@ -602,7 +593,7 @@ sub _write_sheet {
         'r:id'    => $r_id,
     );
 
-    $writer->emptyTag( 'sheet', @attributes );
+    $self->{_writer}->emptyTag( 'sheet', @attributes );
 }
 
 ###############################################################################
@@ -614,7 +605,6 @@ sub _write_sheet {
 sub _write_calc_pr {
 
     my $self                 = shift;
-    my $writer               = $self->{_writer};
     my $calc_id              = 130000;
     my $concurrent_calc      = 0;
 
@@ -623,7 +613,7 @@ sub _write_calc_pr {
         'concurrentCalc'     => $concurrent_calc,
     );
 
-    $writer->emptyTag( 'calcPr', @attributes );
+    $self->{_writer}->emptyTag( 'calcPr', @attributes );
 }
 
 
@@ -636,11 +626,10 @@ sub _write_calc_pr {
 sub _write_ext_lst {
 
     my $self                 = shift;
-    my $writer               = $self->{_writer};
 
-    $writer->startTag( 'extLst' );
+    $self->{_writer}->startTag( 'extLst' );
     $self->_write_ext();
-    $writer->endTag( 'extLst' );
+    $self->{_writer}->endTag( 'extLst' );
 }
 
 
@@ -653,7 +642,6 @@ sub _write_ext_lst {
 sub _write_ext {
 
     my $self     = shift;
-    my $writer   = $self->{_writer};
     my $xmlns_mx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
     my $uri      = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
 
@@ -662,9 +650,9 @@ sub _write_ext {
         'uri'      => $uri,
     );
 
-    $writer->startTag( 'ext', @attributes );
+    $self->{_writer}->startTag( 'ext', @attributes );
     $self->_write_mx_arch_id();
-    $writer->endTag( 'ext' );
+    $self->{_writer}->endTag( 'ext' );
 }
 
 ###############################################################################
@@ -676,12 +664,11 @@ sub _write_ext {
 sub _write_mx_arch_id {
 
     my $self   = shift;
-    my $writer = $self->{_writer};
     my $Flags  = 2;
 
     my @attributes = ( 'Flags' => $Flags, );
 
-    $writer->emptyTag( 'mx:ArchID', @attributes );
+    $self->{_writer}->emptyTag( 'mx:ArchID', @attributes );
 }
 
 
