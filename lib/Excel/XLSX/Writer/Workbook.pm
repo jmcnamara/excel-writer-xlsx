@@ -708,12 +708,6 @@ This module is used in conjunction with Excel::XLSX::Writer.
 
 John McNamara jmcnamara@cpan.org
 
-=head1 PATENT LICENSE
-
-Software programs that read or write files that comply with the Microsoft specifications for the Office Schemas must include the following notice:
-
-"This product may incorporate intellectual property owned by Microsoft Corporation. The terms and conditions upon which Microsoft is licensing such intellectual property may be found at http://msdn.microsoft.com/library/en-us/odcXMLRef/html/odcXMLRefLegalNotice.asp."
-
 =head1 COPYRIGHT
 
 © MM-MMX, John McNamara.

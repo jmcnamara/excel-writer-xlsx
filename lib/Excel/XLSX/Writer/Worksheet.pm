@@ -33,7 +33,7 @@ $VERSION = '0.01';
 #
 sub new {
 
-    my $class  = shift;
+    my $class = shift;
     my $self;
     my $rowmax = 1_048_576;
     my $colmax = 16_384;
@@ -3731,6 +3731,393 @@ sub _quote_sheetname {
 }
 
 
+###############################################################################
+#
+# XML writing methods.
+#
+###############################################################################
+
+###############################################################################
+#
+# _write_xml_declaration()
+#
+# Write the XML declaration.
+#
+sub _write_xml_declaration {
+
+    my $self       = shift;
+    my $writer     = $self->{_writer};
+    my $encoding   = 'UTF-8';
+    my $standalone = 1;
+
+    $writer->xmlDecl( $encoding, $standalone );
+}
+
+###############################################################################
+#
+# _write_worksheet()
+#
+# Write the <worksheet> element.
+#
+sub _write_worksheet {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+    my $xmlns_r =
+      'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    my $xmlns_mc =
+      'http://schemas.openxmlformats.org/markup-compatibility/2006';
+    my $xmlns_mv               = 'urn:schemas-microsoft-com:mac:vml';
+    my $mc_ignorable           = 'mv';
+    my $mc_preserve_attributes = 'mv:*';
+
+    my @attributes = (
+        'xmlns'                 => $xmlns,
+        'xmlns:r'               => $xmlns_r,
+        'xmlns:mc'              => $xmlns_mc,
+        'xmlns:mv'              => $xmlns_mv,
+        'mc:Ignorable'          => $mc_ignorable,
+        'mc:PreserveAttributes' => $mc_preserve_attributes,
+    );
+
+    $writer->emptyTag( 'worksheet', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_sheet_pr()
+#
+# Write the <sheetPr> element.
+#
+sub _write_sheet_pr {
+
+    my $self                                 = shift;
+    my $writer                               = $self->{_writer};
+    my $published                            = 0;
+    my $enable_format_conditions_calculation = 0;
+
+    my @attributes = (
+        'published' => $published,
+        'enableFormatConditionsCalculation' =>
+          $enable_format_conditions_calculation,
+    );
+
+    $writer->emptyTag( 'sheetPr', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_dimension()
+#
+# Write the <dimension> element.
+#
+sub _write_dimension {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $searef = 'A1:B2';
+
+    my @attributes = ( 'searef' => $searef, );
+
+    $writer->emptyTag( 'dimension', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_sheet_views()
+#
+# Write the <sheetViews> element.
+#
+sub _write_sheet_views {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+
+    my @attributes = ();
+
+    $writer->startTag( 'sheetViews', @attributes );
+    $self->_write_sheet_view();
+    $writer->endTag( 'sheetViews' );
+}
+
+
+###############################################################################
+#
+# _write_sheet_view()
+#
+# Write the <sheetView> element.
+#
+sub _write_sheet_view {
+
+    my $self             = shift;
+    my $writer           = $self->{_writer};
+    my $tab_selected     = 1;
+    my $view             = 'pageLayout';
+    my $workbook_view_id = 0;
+
+    my @attributes = (
+        'tabSelected'    => $tab_selected,
+        'view'           => $view,
+        'workbookViewId' => $workbook_view_id,
+    );
+
+    $writer->startTag( 'sheetView', @attributes );
+    $self->_write_selection();
+    $writer->endTag( 'sheetView' );
+}
+
+
+###############################################################################
+#
+# _write_selection()
+#
+# Write the <selection> element.
+#
+sub _write_selection {
+
+    my $self        = shift;
+    my $writer      = $self->{_writer};
+    my $active_cell = 'A1';
+    my $sqref       = 'A1';
+
+    my @attributes = (
+        'activeCell' => $active_cell,
+        'sqref'      => $sqref,
+    );
+
+    $writer->emptyTag( 'selection', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_sheet_format_pr()
+#
+# Write the <sheetFormatPr> element.
+#
+sub _write_sheet_format_pr {
+
+    my $self               = shift;
+    my $writer             = $self->{_writer};
+    my $base_col_width     = 10;
+    my $default_row_height = 13;
+
+    my @attributes = (
+        'baseColWidth'     => $base_col_width,
+        'defaultRowHeight' => $default_row_height,
+    );
+
+    $writer->emptyTag( 'sheetFormatPr', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_sheet_data()
+#
+# Write the <sheetData> element.
+#
+sub _write_sheet_data {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+
+    $writer->startTag( 'sheetData' );
+    $writer->endTag( 'sheetData' );
+}
+
+
+###############################################################################
+#
+# _write_row()
+#
+# Write the <row> element.
+#
+sub _write_row {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $r      = 1;
+    my $spans  = '1:3';
+
+    my @attributes = (
+        'r'     => $r,
+        'spans' => $spans,
+    );
+
+    $writer->startTag( 'row', @attributes );
+
+    #$self->_write_foo();
+    $writer->endTag( 'row' );
+}
+
+
+###############################################################################
+#
+# _write_cell()
+#
+# Write the <cell> element.
+#
+sub _write_cell {
+
+    my $self   = shift;
+    my $value  = shift;
+    my $writer = $self->{_writer};
+    my $range  = 'A1';
+
+    my @attributes = ( 'r' => $range, );
+
+    $writer->startTag( 'c', @attributes );
+    $self->_write_value( $value );
+    $writer->endTag( 'c' );
+}
+
+
+###############################################################################
+#
+# _write_value()
+#
+# Write the cell value <v> element.
+#
+sub _write_value {
+
+    my $self   = shift;
+    my $value  = shift;
+    my $writer = $self->{_writer};
+
+    $writer->dataElement( 'v', $value );
+}
+
+
+###############################################################################
+#
+# _write_phonetic_pr()
+#
+# Write the <phoneticPr> element.
+#
+sub _write_phonetic_pr {
+
+    my $self    = shift;
+    my $writer  = $self->{_writer};
+    my $font_id = 1;
+    my $type    = 'noConversion';
+
+    my @attributes = (
+        'fontId' => $font_id,
+        'type'   => $type,
+    );
+
+    $writer->emptyTag( 'phoneticPr', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_page_margins()
+#
+# Write the <pageMargins> element.
+#
+sub _write_page_margins {
+
+    my $self   = shift;
+    my $writer = $self->{_writer};
+    my $left   = 0.75;
+    my $right  = 0.75;
+    my $top    = 1;
+    my $bottom = 1;
+    my $header = 0.5;
+    my $footer = 0.5;
+
+    my @attributes = (
+        'left'   => $left,
+        'right'  => $right,
+        'top'    => $top,
+        'bottom' => $bottom,
+        'header' => $header,
+        'footer' => $footer,
+    );
+
+    $writer->emptyTag( 'pageMargins', @attributes );
+}
+
+###############################################################################
+#
+# _write_page_setup()
+#
+# Write the <pageSetup> element.
+#
+sub _write_page_setup {
+
+    my $self           = shift;
+    my $writer         = $self->{_writer};
+    my $paper_size     = 0;
+    my $orientation    = 'portrait';
+    my $horizontal_dpi = 4294967292;
+    my $vertical_dpi   = 4294967292;
+
+    my @attributes = (
+        'paperSize'     => $paper_size,
+        'orientation'   => $orientation,
+        'horizontalDpi' => $horizontal_dpi,
+        'verticalDpi'   => $vertical_dpi,
+    );
+
+    $writer->emptyTag( 'pageSetup', @attributes );
+}
+
+
+###############################################################################
+#
+# _write_ext()
+#
+# Write the <ext> element.
+#
+sub _write_ext {
+
+    my $self    = shift;
+    my $writer  = $self->{_writer};
+    my $xmlnsmx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
+    my $uri     = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
+
+    my @attributes = (
+        'xmlns:mx' => $xmlnsmx,
+        'uri'      => $uri,
+    );
+
+    $writer->startTag( 'ext', @attributes );
+    $self->_write_mx_plv();
+    $writer->endTag( 'ext' );
+}
+
+###############################################################################
+#
+# _write_mx_plv()
+#
+# Write the <mx:PLV> element.
+#
+sub _write_mx_plv {
+
+    my $self                 = shift;
+    my $writer               = $self->{_writer};
+    my $mode                 = 1;
+    my $one_page             = 0;
+    my $w_scale              = 0;
+
+    my @attributes = (
+        'Mode'               => $mode,
+        'OnePage'            => $one_page,
+        'WScale'             => $w_scale,
+    );
+
+    $writer->emptyTag( 'mx:PLV', @attributes );
+}
+
+
+
 1;
 
 
@@ -3752,12 +4139,6 @@ This module is used in conjunction with Excel::XLSX::Writer.
 =head1 AUTHOR
 
 John McNamara jmcnamara@cpan.org
-
-=head1 PATENT LICENSE
-
-Software programs that read or write files that comply with the Microsoft specifications for the Office Schemas must include the following notice:
-
-"This product may incorporate intellectual property owned by Microsoft Corporation. The terms and conditions upon which Microsoft is licensing such intellectual property may be found at http://msdn.microsoft.com/library/en-us/odcXMLRef/html/odcXMLRefLegalNotice.asp."
 
 =head1 COPYRIGHT
 
