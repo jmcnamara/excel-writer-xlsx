@@ -8,7 +8,12 @@ lib/Excel/XLSX/Writer/Format.pm
 lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm
 lib/Excel/XLSX/Writer/Worksheet.pm
+lib/Excel/XLSX/Writer/Container/ContentTypes.pm
 
+t/container/content_types/content_types.t
+t/container/content_types/sub_write_default.t
+t/container/content_types/sub_write_override.t
+t/container/content_types/sub_write_xml_declaration.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
 t/workbook/sub_write_ext.t
