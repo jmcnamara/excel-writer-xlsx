@@ -28,9 +28,9 @@ $obj->{_writer} = $writer;
 
 ################################################################################
 #
-# Test the _write_default() method.
+# Test the _assemble_xml_file() method.
 #
-$caption = " \tContentTypes: _write_default()";
+$caption = " \tContentTypes: _assemble_xml_file()";
 
 $obj->_add_sheet_name( 'sheet1' );
 $obj->_add_shared_strings();
