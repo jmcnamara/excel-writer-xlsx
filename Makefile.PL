@@ -23,6 +23,8 @@ my %params = (
     'dist'          => { COMPRESS => 'gzip --best', SUFFIX => 'gz' },
     'LICENSE'       => 'perl',
     'PREREQ_PM'     => {},
+    'test'          => { TESTS => 't/*/*.t' }
+
 );
 
 if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {

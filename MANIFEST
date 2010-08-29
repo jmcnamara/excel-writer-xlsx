@@ -9,7 +9,35 @@ lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm
 lib/Excel/XLSX/Writer/Worksheet.pm
 
-t/workbook/sub_output_file_version.t
+t/workbook/sub_write_book_views.t
+t/workbook/sub_write_calc_pr.t
+t/workbook/sub_write_ext.t
+t/workbook/sub_write_ext_lst.t
+t/workbook/sub_write_file_version.t
+t/workbook/sub_write_mx_arch_id.t
+t/workbook/sub_write_sheet.t
+t/workbook/sub_write_sheets.t
+t/workbook/sub_write_workbook.t
+t/workbook/sub_write_workbook_pr.t
+t/workbook/sub_write_workbook_view.t
+t/workbook/sub_write_xml_declaration.t
+t/worksheet/sub_write_cell.t
+t/worksheet/sub_write_dimension.t
+t/worksheet/sub_write_ext.t
+t/worksheet/sub_write_mx_plv.t
+t/worksheet/sub_write_page_margins.t
+t/worksheet/sub_write_page_setup.t
+t/worksheet/sub_write_phonetic_pr.t
+t/worksheet/sub_write_row.t
+t/worksheet/sub_write_selection.t
+t/worksheet/sub_write_sheet_data.t
+t/worksheet/sub_write_sheet_format_pr.t
+t/worksheet/sub_write_sheet_pr.t
+t/worksheet/sub_write_sheet_view.t
+t/worksheet/sub_write_sheet_views.t
+t/worksheet/sub_write_value.t
+t/worksheet/sub_write_worksheet.t
+t/worksheet/sub_write_xml_declaration.t
 
 examples/README
 examples/bug_report.pl
