@@ -4,6 +4,9 @@ NAME
 
 DESCRIPTION
 
+    *** NOTE. This currently isn't working code. A developer release should
+              be available by the end of September, 2010. 
+
     The Excel::XLSX::Writer module can be used to create a new Excel file
     in the 2007+ XLSX format. 
 
