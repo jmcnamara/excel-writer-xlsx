@@ -30,7 +30,7 @@ $obj->{_writer} = $writer;
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tContentTypes: _assemble_xml_file()";
+$caption = " \tCore: _assemble_xml_file()";
 
 $obj->_set_creator('A User');
 $obj->_set_modifier('Another User');

@@ -30,7 +30,7 @@ $obj->{_writer} = $writer;
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tContentTypes: _assemble_xml_file()";
+$caption = " \tApp: _assemble_xml_file()";
 
 $obj->_add_part_names('Sheet1');
 $obj->_assemble_xml_file();
