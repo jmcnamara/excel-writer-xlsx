@@ -7,6 +7,7 @@ lib/Excel/XLSX/Writer.pm
 lib/Excel/XLSX/Writer/Container/App.pm
 lib/Excel/XLSX/Writer/Container/ContentTypes.pm
 lib/Excel/XLSX/Writer/Container/Core.pm
+lib/Excel/XLSX/Writer/Container/Relationships.pm
 lib/Excel/XLSX/Writer/Format.pm
 lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm
@@ -18,9 +19,10 @@ t/container/content_types/content_types.t
 t/container/content_types/sub_write_default.t
 t/container/content_types/sub_write_override.t
 t/container/content_types/sub_write_xml_declaration.t
-t/container/core/.#core.t
 t/container/core/core.t
 t/container/core/sub_write_xml_declaration.t
+t/container/relationships/relationships.t
+t/container/relationships/sub_write_xml_declaration.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
 t/workbook/sub_write_ext.t
