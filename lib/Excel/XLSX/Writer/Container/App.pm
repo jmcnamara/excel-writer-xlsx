@@ -66,6 +66,18 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_properties();
+    $self->_write_application();
+    $self->_write_doc_security();
+    $self->_write_scale_crop();
+    $self->_write_heading_pairs();
+    $self->_write_titles_of_parts();
+    $self->_write_company();
+    $self->_write_links_up_to_date();
+    $self->_write_shared_doc();
+    $self->_write_hyperlinks_changed();
+    $self->_write_app_version();
+
+    $self->{_writer}->endTag( 'Properties' );
 }
 
 
@@ -153,17 +165,6 @@ sub _write_properties {
     );
 
     $self->{_writer}->startTag( 'Properties', @attributes );
-    $self->_write_application();
-    $self->_write_doc_security();
-    $self->_write_scale_crop();
-    $self->_write_heading_pairs();
-    $self->_write_titles_of_parts();
-    $self->_write_company();
-    $self->_write_links_up_to_date();
-    $self->_write_shared_doc();
-    $self->_write_hyperlinks_changed();
-    $self->_write_app_version();
-    $self->{_writer}->endTag( 'Properties' );
 }
 
 ###############################################################################

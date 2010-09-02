@@ -106,6 +106,10 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_types();
+    $self->_write_defaults();
+    $self->_write_overrides();
+
+    $self->{_writer}->endTag( 'Types' );
 }
 
 
@@ -280,11 +284,7 @@ sub _write_types {
     my @attributes = ( 'xmlns' => $xmlns, );
 
     $self->{_writer}->startTag( 'Types', @attributes );
-    $self->_write_defaults();
-    $self->_write_overrides();
-    $self->{_writer}->endTag( 'Types' );
 }
-
 
 ###############################################################################
 #

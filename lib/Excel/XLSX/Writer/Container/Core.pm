@@ -69,6 +69,12 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_cp_core_properties();
+    $self->_write_dc_creator();
+    $self->_write_cp_last_modified_by();
+    $self->_write_dcterms_created();
+    $self->_write_dcterms_modified();
+
+    $self->{_writer}->endTag( 'cp:coreProperties' );
 }
 
 
@@ -202,11 +208,6 @@ sub _write_cp_core_properties {
     );
 
     $self->{_writer}->startTag( 'cp:coreProperties', @attributes );
-    $self->_write_dc_creator();
-    $self->_write_cp_last_modified_by();
-    $self->_write_dcterms_created();
-    $self->_write_dcterms_modified();
-    $self->{_writer}->endTag( 'cp:coreProperties' );
 }
 
 
