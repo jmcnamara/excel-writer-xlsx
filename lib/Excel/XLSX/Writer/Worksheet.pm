@@ -179,6 +179,7 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_worksheet();
+
     # TODO.
 }
 
@@ -190,6 +191,7 @@ sub _assemble_xml_file {
 # Write the worksheet elements.
 #
 sub _close {
+
     # TODO. Unused. Remove after refactoring.
     my $self       = shift;
     my $sheetnames = shift;
@@ -1672,8 +1674,6 @@ sub outline_settings {
 }
 
 
-
-
 ###############################################################################
 #
 # write_url($row, $col, $url, $string, $format)
@@ -2019,8 +2019,6 @@ sub set_row {
 }
 
 
-
-
 ###############################################################################
 #
 # merge_range($first_row, $first_col, $last_row, $last_col, $string, $format)
@@ -2070,7 +2068,6 @@ sub merge_range {
     # Write the first cell
     return $self->write( $rwFirst, $colFirst, $string, $format );
 }
-
 
 
 ###############################################################################
@@ -2348,6 +2345,7 @@ sub _store_defcol {
 #
 #
 sub _store_colinfo {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2410,6 +2408,7 @@ sub _store_colinfo {
 # Write BIFF record SELECTION.
 #
 sub _store_selection {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
@@ -2455,6 +2454,7 @@ sub _store_selection {
 # parser the worksheet objects.
 #
 sub _store_externcount {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
@@ -2478,6 +2478,7 @@ sub _store_externcount {
 # as the worksheet index.
 #
 sub _store_externsheet {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2519,6 +2520,7 @@ sub _store_externsheet {
 # Thawed panes are specified in terms of Excel's units for rows and columns.
 #
 sub _store_panes {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
@@ -2578,6 +2580,7 @@ sub _store_panes {
 # Store the <WorksheetOptions> child element <PageSetup>.
 #
 sub _store_setup {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2631,6 +2634,7 @@ sub _store_setup {
 # Store the <WorksheetOptions> child element <Print>.
 #
 sub _store_print {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2687,6 +2691,7 @@ sub _store_print {
 # Write the <Worksheet> <Names> element.
 #
 sub _write_names {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2741,6 +2746,7 @@ sub _write_names {
 # Store horizontal and vertical pagebreaks.
 #
 sub _store_pagebreaks {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2797,6 +2803,7 @@ sub _store_pagebreaks {
 # Set the Biff PROTECT record to indicate that the worksheet is protected.
 #
 sub _store_protect {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2861,6 +2868,7 @@ sub _size_row {
 # simplicity we will store all fractions with a numerator of 100.
 #
 sub _store_zoom {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2883,6 +2891,7 @@ sub _store_zoom {
 # record.
 #
 sub _store_comment {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2909,6 +2918,7 @@ sub _store_comment {
 # TODO Add note about data structure
 #
 sub _write_xml_table {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -2937,6 +2947,7 @@ sub _write_xml_table {
 # Write all <Row> elements.
 #
 sub _write_xml_rows {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3014,6 +3025,7 @@ sub _write_xml_rows {
 # Write a <Cell> element start tag.
 #
 sub _write_xml_cell {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3220,6 +3232,7 @@ sub _write_xml_cell {
 # Write a generic Data element.
 #
 sub _write_xml_cell_data {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3245,6 +3258,7 @@ sub _write_xml_cell_data {
 # Write a string Data element with html text.
 #
 sub _write_xml_html_string {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3266,6 +3280,7 @@ sub _write_xml_html_string {
 # Write a cell Comment element.
 #
 sub _write_xml_cell_comment {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self    = shift;
@@ -3292,6 +3307,7 @@ sub _write_xml_cell_comment {
 # Write the <WorksheetOptions> element if the worksheet options have changed.
 #
 sub _write_worksheet_options {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3407,6 +3423,7 @@ sub _options_changed {
 # Write the <AutoFilter> element.
 #
 sub _write_autofilter {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3432,6 +3449,7 @@ sub _write_autofilter {
 # of this is a little complicated.
 #
 sub _write_autofilter_column {
+
     # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
@@ -3548,8 +3566,8 @@ sub _write_xml_declaration {
 #
 sub _write_worksheet {
 
-    my $self   = shift;
-    my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+    my $self  = shift;
+    my $xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     my $xmlns_r =
       'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
     my $xmlns_mc =
@@ -3619,7 +3637,7 @@ sub _write_dimension {
 #
 sub _write_sheet_views {
 
-    my $self   = shift;
+    my $self = shift;
 
     my @attributes = ();
 
@@ -3704,7 +3722,7 @@ sub _write_sheet_format_pr {
 #
 sub _write_sheet_data {
 
-    my $self   = shift;
+    my $self = shift;
 
     $self->{_writer}->startTag( 'sheetData' );
     $self->{_writer}->endTag( 'sheetData' );
@@ -3744,9 +3762,9 @@ sub _write_row {
 #
 sub _write_cell {
 
-    my $self   = shift;
-    my $value  = shift;
-    my $range  = 'A1';
+    my $self  = shift;
+    my $value = shift;
+    my $range = 'A1';
 
     my @attributes = ( 'r' => $range, );
 
@@ -3764,8 +3782,8 @@ sub _write_cell {
 #
 sub _write_value {
 
-    my $self   = shift;
-    my $value  = shift;
+    my $self  = shift;
+    my $value = shift;
 
     $self->{_writer}->dataElement( 'v', $value );
 }
@@ -3875,20 +3893,19 @@ sub _write_ext {
 #
 sub _write_mx_plv {
 
-    my $self                 = shift;
-    my $mode                 = 1;
-    my $one_page             = 0;
-    my $w_scale              = 0;
+    my $self     = shift;
+    my $mode     = 1;
+    my $one_page = 0;
+    my $w_scale  = 0;
 
     my @attributes = (
-        'Mode'               => $mode,
-        'OnePage'            => $one_page,
-        'WScale'             => $w_scale,
+        'Mode'    => $mode,
+        'OnePage' => $one_page,
+        'WScale'  => $w_scale,
     );
 
     $self->{_writer}->emptyTag( 'mx:PLV', @attributes );
 }
-
 
 
 1;
