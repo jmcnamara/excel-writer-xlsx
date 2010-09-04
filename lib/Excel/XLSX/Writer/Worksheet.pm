@@ -12,18 +12,27 @@ package Excel::XLSX::Writer::Worksheet;
 # Documentation after __END__
 #
 
-use Exporter;
+# perltidy with the following options: -mbl=2 -pt=0 -nola
+
+use 5.010000;
 use strict;
 use warnings;
+use Exporter;
 use Carp;
+use XML::Writer;
 use Excel::XLSX::Writer::Format;
 use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
+our @ISA     = qw(Exporter);
+our $VERSION = '0.01';
 
-use vars qw($VERSION @ISA);
-@ISA = qw(Exporter);
 
-$VERSION = '0.01';
+###############################################################################
+#
+# Public and private API methods.
+#
+###############################################################################
+
 
 ###############################################################################
 #
@@ -158,13 +167,19 @@ sub new {
 
 ###############################################################################
 #
-# _initialize()
+# _assemble_xml_file()
 #
-# Placeholder.
+# Assemble and write the XML file.
 #
-sub _initialize {
+sub _assemble_xml_file {
 
     my $self = shift;
+
+    return unless $self->{_writer};
+
+    $self->_write_xml_declaration;
+    $self->_write_worksheet();
+    # TODO.
 }
 
 
@@ -175,7 +190,7 @@ sub _initialize {
 # Write the worksheet elements.
 #
 sub _close {
-
+    # TODO. Unused. Remove after refactoring.
     my $self       = shift;
     my $sheetnames = shift;
     my $num_sheets = scalar @$sheetnames;
@@ -1340,185 +1355,6 @@ sub write_comment {
 
 ###############################################################################
 #
-# _XF()
-#
-# Returns an index to the XF record in the workbook.
-#
-# Note: this is a function, not a method.
-#
-sub _XF {
-
-    # TODO $row and $col aren't actually required in the XML version and
-    # should eventually be removed. They are required in the Biff version
-    # to allow for row and col formats.
-
-    my $self   = $_[0];
-    my $row    = $_[1];
-    my $col    = $_[2];
-    my $format = $_[3];
-
-    if ( ref( $format ) ) {
-        return $format->get_xf_index();
-    }
-    else {
-        return 0;    # 0x0F for Spreadsheet::WriteExcel
-    }
-}
-
-
-###############################################################################
-###############################################################################
-#
-# Internal methods
-#
-
-
-###############################################################################
-#
-# _substitute_cellref()
-#
-# Substitute an Excel cell reference in A1 notation for  zero based row and
-# column values in an argument list.
-#
-# Ex: ("A4", "Hello") is converted to (3, 0, "Hello").
-#
-sub _substitute_cellref {
-
-    my $self = shift;
-    my $cell = uc( shift );
-
-    # Convert a column range: 'A:A' or 'B:G'.
-    # A range such as A:A is equivalent to A1:Rowmax, so add rows as required
-    if ( $cell =~ /\$?([A-Z]{1,3}):\$?([A-Z]{1,3})/ ) {
-        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 . '1' );
-        my ( $row2, $col2 ) =
-          $self->_cell_to_rowcol( $2 . $self->{_xls_rowmax} );
-        return $row1, $col1, $row2, $col2, @_;
-    }
-
-    # Convert a cell range: 'A1:B7'
-    if ( $cell =~ /\$?([A-Z]{1,3}\$?\d+):\$?([A-Z]{1,3}\$?\d+)/ ) {
-        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 );
-        my ( $row2, $col2 ) = $self->_cell_to_rowcol( $2 );
-        return $row1, $col1, $row2, $col2, @_;
-    }
-
-    # Convert a cell reference: 'A1' or 'AD2000'
-    if ( $cell =~ /\$?([A-Z]{1,3}\$?\d+)/ ) {
-        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 );
-        return $row1, $col1, @_;
-
-    }
-
-    croak( "Unknown cell reference $cell" );
-}
-
-
-###############################################################################
-#
-# _cell_to_rowcol($cell_ref)
-#
-# Convert an Excel cell reference in A1 notation to a zero based row and column
-# reference; converts C1 to (0, 2).
-#
-# See also: http://www.perlmonks.org/index.pl?node_id=270352
-#
-# Returns: ($row, $col, $row_absolute, $col_absolute)
-#
-#
-sub _cell_to_rowcol {
-
-    my $self = shift;
-
-    my $cell = $_[0];
-    $cell =~ /(\$?)([A-Z]{1,3})(\$?)(\d+)/;
-
-    my $col_abs = $1 eq "" ? 0 : 1;
-    my $col     = $2;
-    my $row_abs = $3 eq "" ? 0 : 1;
-    my $row     = $4;
-
-    # Convert base26 column string to number
-    # All your Base are belong to us.
-    my @chars = split //, $col;
-    my $expn = 0;
-    $col = 0;
-
-    while ( @chars ) {
-        my $char = pop( @chars );    # LS char first
-        $col += ( ord( $char ) - ord( 'A' ) + 1 ) * ( 26**$expn );
-        $expn++;
-    }
-
-    # Convert 1-index to zero-index
-    $row--;
-    $col--;
-
-    # TODO Check row and column range
-    return $row, $col, $row_abs, $col_abs;
-}
-
-
-###############################################################################
-#
-# _sort_pagebreaks()
-#
-#
-# This is an internal method that is used to filter elements of the array of
-# pagebreaks used in the _store_hbreak() and _store_vbreak() methods. It:
-#   1. Removes duplicate entries from the list.
-#   2. Sorts the list.
-#   3. Removes 0 from the list if present.
-#
-sub _sort_pagebreaks {
-
-    my $self = shift;
-
-    my %hash;
-    my @array;
-
-    @hash{@_} = undef;    # Hash slice to remove duplicates
-    @array = sort { $a <=> $b } keys %hash;    # Numerical sort
-    shift @array if $array[0] == 0;            # Remove zero
-
-    # 1000 vertical pagebreaks appears to be an internal Excel 5 limit.
-    # It is slightly higher in Excel 97/200, approx. 1026
-    splice( @array, 1000 ) if ( @array > 1000 );
-
-    return @array;
-}
-
-
-###############################################################################
-#
-# outline_settings($visible, $symbols_below, $symbols_right, $auto_style)
-#
-# This method sets the properties for outlining and grouping. The defaults
-# correspond to Excel's defaults.
-#
-sub outline_settings {
-
-    my $self = shift;
-
-    $self->{_outline_on}    = defined $_[0] ? $_[0] : 1;
-    $self->{_outline_below} = defined $_[1] ? $_[1] : 1;
-    $self->{_outline_right} = defined $_[2] ? $_[2] : 1;
-    $self->{_outline_style} = $_[3] || 0;
-
-    # Ensure this is a boolean vale for Window2
-    $self->{_outline_on} = 1 if $self->{_outline_on};
-}
-
-
-###############################################################################
-###############################################################################
-#
-# Public Methods
-#
-
-
-###############################################################################
-#
 # write_number($row, $col, $num, $format)
 #
 # Write a double to the specified row and column (zero indexed).
@@ -1817,39 +1653,25 @@ sub write_array_formula {
 
 ###############################################################################
 #
-# store_formula($formula)
+# outline_settings($visible, $symbols_below, $symbols_right, $auto_style)
 #
-# Pre-parse a formula. This is used in conjunction with repeat_formula()
-# to repetitively rewrite a formula without re-parsing it.
+# This method sets the properties for outlining and grouping. The defaults
+# correspond to Excel's defaults.
 #
-sub store_formula {
-
+sub outline_settings {
 
     my $self = shift;
 
-    # TODO Update for ExcelXML format
+    $self->{_outline_on}    = defined $_[0] ? $_[0] : 1;
+    $self->{_outline_below} = defined $_[1] ? $_[1] : 1;
+    $self->{_outline_right} = defined $_[2] ? $_[2] : 1;
+    $self->{_outline_style} = $_[3] || 0;
+
+    # Ensure this is a boolean vale for Window2
+    $self->{_outline_on} = 1 if $self->{_outline_on};
 }
 
 
-###############################################################################
-#
-# repeat_formula($row, $col, $formula, $format, ($pattern => $replacement,...))
-#
-# Write a formula to the specified row and column (zero indexed) by
-# substituting $pattern $replacement pairs in the $formula created via
-# store_formula(). This allows the user to repetitively rewrite a formula
-# without the significant overhead of parsing.
-#
-# Returns  0 : normal termination
-#         -1 : insufficient number of arguments
-#         -2 : row or column out of range
-#
-sub repeat_formula {
-
-    my $self = shift;
-
-    # TODO Update for ExcelXML format
-}
 
 
 ###############################################################################
@@ -2197,6 +2019,246 @@ sub set_row {
 }
 
 
+
+
+###############################################################################
+#
+# merge_range($first_row, $first_col, $last_row, $last_col, $string, $format)
+#
+# This is a wrapper to ensure correct use of the merge_cells method, i.e. write
+# the first cell of the range, write the formatted blank cells in the range and
+# then call the merge_cells record. Failing to do the steps in this order will
+# cause Excel 97 to crash.
+#
+sub merge_range {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+    croak "Incorrect number of arguments" if @_ != 6;
+    croak "Final argument must be a format object" unless ref $_[5];
+
+    my $rwFirst  = $_[0];
+    my $colFirst = $_[1];
+    my $rwLast   = $_[2];
+    my $colLast  = $_[3];
+    my $string   = $_[4];
+    my $format   = $_[5];
+
+
+    # Excel doesn't allow a single cell to be merged
+    croak "Can't merge single cell"
+      if $rwFirst == $rwLast
+          and $colFirst == $colLast;
+
+    # Swap last row/col with first row/col as necessary
+    ( $rwFirst,  $rwLast )  = ( $rwLast,  $rwFirst )  if $rwFirst > $rwLast;
+    ( $colFirst, $colLast ) = ( $colLast, $colFirst ) if $colFirst > $colLast;
+
+
+    # Check that column number is valid and store the max value
+    return if $self->_check_dimensions( $rwLast, $colLast );
+
+
+    # Store the merge range as a HoHoHoA
+    $self->{_merge}->{$rwFirst}->{$colFirst} =
+      [ $colLast - $colFirst, $rwLast - $rwFirst ];
+
+    # Write the first cell
+    return $self->write( $rwFirst, $colFirst, $string, $format );
+}
+
+
+
+###############################################################################
+#
+# Internal methods.
+#
+###############################################################################
+
+
+###############################################################################
+#
+# _XF()
+#
+# Returns an index to the XF record in the workbook.
+#
+# Note: this is a function, not a method.
+#
+sub _XF {
+
+    # TODO $row and $col aren't actually required in the XML version and
+    # should eventually be removed. They are required in the Biff version
+    # to allow for row and col formats.
+
+    my $self   = $_[0];
+    my $row    = $_[1];
+    my $col    = $_[2];
+    my $format = $_[3];
+
+    if ( ref( $format ) ) {
+        return $format->get_xf_index();
+    }
+    else {
+        return 0;    # 0x0F for Spreadsheet::WriteExcel
+    }
+}
+
+
+###############################################################################
+#
+# _substitute_cellref()
+#
+# Substitute an Excel cell reference in A1 notation for  zero based row and
+# column values in an argument list.
+#
+# Ex: ("A4", "Hello") is converted to (3, 0, "Hello").
+#
+sub _substitute_cellref {
+
+    my $self = shift;
+    my $cell = uc( shift );
+
+    # Convert a column range: 'A:A' or 'B:G'.
+    # A range such as A:A is equivalent to A1:Rowmax, so add rows as required
+    if ( $cell =~ /\$?([A-Z]{1,3}):\$?([A-Z]{1,3})/ ) {
+        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 . '1' );
+        my ( $row2, $col2 ) =
+          $self->_cell_to_rowcol( $2 . $self->{_xls_rowmax} );
+        return $row1, $col1, $row2, $col2, @_;
+    }
+
+    # Convert a cell range: 'A1:B7'
+    if ( $cell =~ /\$?([A-Z]{1,3}\$?\d+):\$?([A-Z]{1,3}\$?\d+)/ ) {
+        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 );
+        my ( $row2, $col2 ) = $self->_cell_to_rowcol( $2 );
+        return $row1, $col1, $row2, $col2, @_;
+    }
+
+    # Convert a cell reference: 'A1' or 'AD2000'
+    if ( $cell =~ /\$?([A-Z]{1,3}\$?\d+)/ ) {
+        my ( $row1, $col1 ) = $self->_cell_to_rowcol( $1 );
+        return $row1, $col1, @_;
+
+    }
+
+    croak( "Unknown cell reference $cell" );
+}
+
+
+###############################################################################
+#
+# _cell_to_rowcol($cell_ref)
+#
+# Convert an Excel cell reference in A1 notation to a zero based row and column
+# reference; converts C1 to (0, 2).
+#
+# See also: http://www.perlmonks.org/index.pl?node_id=270352
+#
+# Returns: ($row, $col, $row_absolute, $col_absolute)
+#
+#
+sub _cell_to_rowcol {
+
+    my $self = shift;
+
+    my $cell = $_[0];
+    $cell =~ /(\$?)([A-Z]{1,3})(\$?)(\d+)/;
+
+    my $col_abs = $1 eq "" ? 0 : 1;
+    my $col     = $2;
+    my $row_abs = $3 eq "" ? 0 : 1;
+    my $row     = $4;
+
+    # Convert base26 column string to number
+    # All your Base are belong to us.
+    my @chars = split //, $col;
+    my $expn = 0;
+    $col = 0;
+
+    while ( @chars ) {
+        my $char = pop( @chars );    # LS char first
+        $col += ( ord( $char ) - ord( 'A' ) + 1 ) * ( 26**$expn );
+        $expn++;
+    }
+
+    # Convert 1-index to zero-index
+    $row--;
+    $col--;
+
+    # TODO Check row and column range
+    return $row, $col, $row_abs, $col_abs;
+}
+
+
+###############################################################################
+#
+# _sort_pagebreaks()
+#
+#
+# This is an internal method that is used to filter elements of the array of
+# pagebreaks used in the _store_hbreak() and _store_vbreak() methods. It:
+#   1. Removes duplicate entries from the list.
+#   2. Sorts the list.
+#   3. Removes 0 from the list if present.
+#
+sub _sort_pagebreaks {
+
+    my $self = shift;
+
+    my %hash;
+    my @array;
+
+    @hash{@_} = undef;    # Hash slice to remove duplicates
+    @array = sort { $a <=> $b } keys %hash;    # Numerical sort
+    shift @array if $array[0] == 0;            # Remove zero
+
+    # 1000 vertical pagebreaks appears to be an internal Excel 5 limit.
+    # It is slightly higher in Excel 97/200, approx. 1026
+    splice( @array, 1000 ) if ( @array > 1000 );
+
+    return @array;
+}
+
+
+###############################################################################
+#
+# store_formula($formula)
+#
+# Pre-parse a formula. This is used in conjunction with repeat_formula()
+# to repetitively rewrite a formula without re-parsing it.
+#
+sub store_formula {
+
+
+    my $self = shift;
+
+    # TODO Update for ExcelXML format
+}
+
+
+###############################################################################
+#
+# repeat_formula($row, $col, $formula, $format, ($pattern => $replacement,...))
+#
+# Write a formula to the specified row and column (zero indexed) by
+# substituting $pattern $replacement pairs in the $formula created via
+# store_formula(). This allows the user to repetitively rewrite a formula
+# without the significant overhead of parsing.
+#
+# Returns  0 : normal termination
+#         -1 : insufficient number of arguments
+#         -2 : row or column out of range
+#
+sub repeat_formula {
+
+    my $self = shift;
+
+    # TODO Update for ExcelXML format
+}
 ###############################################################################
 #
 # _check_dimensions($row, $col)
@@ -2286,6 +2348,7 @@ sub _store_defcol {
 #
 #
 sub _store_colinfo {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2347,6 +2410,7 @@ sub _store_colinfo {
 # Write BIFF record SELECTION.
 #
 sub _store_selection {
+    # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
     my $record = 0x001D;    # Record identifier
@@ -2391,6 +2455,7 @@ sub _store_selection {
 # parser the worksheet objects.
 #
 sub _store_externcount {
+    # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
     my $record = 0x0016;    # Record identifier
@@ -2413,6 +2478,7 @@ sub _store_externcount {
 # as the worksheet index.
 #
 sub _store_externsheet {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2453,6 +2519,7 @@ sub _store_externsheet {
 # Thawed panes are specified in terms of Excel's units for rows and columns.
 #
 sub _store_panes {
+    # TODO. Unused. Remove after refactoring.
 
     my $self   = shift;
     my $record = 0x0041;    # Record identifier
@@ -2511,6 +2578,7 @@ sub _store_panes {
 # Store the <WorksheetOptions> child element <PageSetup>.
 #
 sub _store_setup {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2563,6 +2631,7 @@ sub _store_setup {
 # Store the <WorksheetOptions> child element <Print>.
 #
 sub _store_print {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2618,6 +2687,7 @@ sub _store_print {
 # Write the <Worksheet> <Names> element.
 #
 sub _write_names {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2666,62 +2736,12 @@ sub _write_names {
 
 ###############################################################################
 #
-# merge_range($first_row, $first_col, $last_row, $last_col, $string, $format)
-#
-# This is a wrapper to ensure correct use of the merge_cells method, i.e. write
-# the first cell of the range, write the formatted blank cells in the range and
-# then call the merge_cells record. Failing to do the steps in this order will
-# cause Excel 97 to crash.
-#
-sub merge_range {
-
-    my $self = shift;
-
-    # Check for a cell reference in A1 notation and substitute row and column
-    if ( $_[0] =~ /^\D/ ) {
-        @_ = $self->_substitute_cellref( @_ );
-    }
-    croak "Incorrect number of arguments" if @_ != 6;
-    croak "Final argument must be a format object" unless ref $_[5];
-
-    my $rwFirst  = $_[0];
-    my $colFirst = $_[1];
-    my $rwLast   = $_[2];
-    my $colLast  = $_[3];
-    my $string   = $_[4];
-    my $format   = $_[5];
-
-
-    # Excel doesn't allow a single cell to be merged
-    croak "Can't merge single cell"
-      if $rwFirst == $rwLast
-          and $colFirst == $colLast;
-
-    # Swap last row/col with first row/col as necessary
-    ( $rwFirst,  $rwLast )  = ( $rwLast,  $rwFirst )  if $rwFirst > $rwLast;
-    ( $colFirst, $colLast ) = ( $colLast, $colFirst ) if $colFirst > $colLast;
-
-
-    # Check that column number is valid and store the max value
-    return if $self->_check_dimensions( $rwLast, $colLast );
-
-
-    # Store the merge range as a HoHoHoA
-    $self->{_merge}->{$rwFirst}->{$colFirst} =
-      [ $colLast - $colFirst, $rwLast - $rwFirst ];
-
-    # Write the first cell
-    return $self->write( $rwFirst, $colFirst, $string, $format );
-}
-
-
-###############################################################################
-#
 # _store_pagebreaks()
 #
 # Store horizontal and vertical pagebreaks.
 #
 sub _store_pagebreaks {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2777,6 +2797,7 @@ sub _store_pagebreaks {
 # Set the Biff PROTECT record to indicate that the worksheet is protected.
 #
 sub _store_protect {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2840,6 +2861,7 @@ sub _size_row {
 # simplicity we will store all fractions with a numerator of 100.
 #
 sub _store_zoom {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2861,6 +2883,7 @@ sub _store_zoom {
 # record.
 #
 sub _store_comment {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
     if ( @_ < 3 ) { return -1 }
@@ -2886,6 +2909,7 @@ sub _store_comment {
 # TODO Add note about data structure
 #
 sub _write_xml_table {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2913,6 +2937,7 @@ sub _write_xml_table {
 # Write all <Row> elements.
 #
 sub _write_xml_rows {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -2989,6 +3014,7 @@ sub _write_xml_rows {
 # Write a <Cell> element start tag.
 #
 sub _write_xml_cell {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -3194,6 +3220,7 @@ sub _write_xml_cell {
 # Write a generic Data element.
 #
 sub _write_xml_cell_data {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -3218,6 +3245,7 @@ sub _write_xml_cell_data {
 # Write a string Data element with html text.
 #
 sub _write_xml_html_string {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
     my $data = $_[0];
@@ -3238,6 +3266,7 @@ sub _write_xml_html_string {
 # Write a cell Comment element.
 #
 sub _write_xml_cell_comment {
+    # TODO. Unused. Remove after refactoring.
 
     my $self    = shift;
     my $comment = $_[0];
@@ -3258,256 +3287,12 @@ sub _write_xml_cell_comment {
 
 ###############################################################################
 #
-# _convert_formula($row, $col, $A1_formula)
-#
-# Converts a string containing an Excel formula in A1 notation into a string
-# containing a formula in R1C1 notation.
-#
-# Instead of parsing the formula into its component parts, as Spreadsheet::
-# WriteExcel::Formula does, we convert the A1 style references to R1C1
-# references using regexes. This avoid the significant overhead of the
-# Parse::RecDescent parser in S::WE::Formula. The main problem with this
-# simplified approach is that there is potential for false matches. Such as
-# B5 in the following formula (only the last is a valid match).
-#
-# "= "B5" & SheetB5!B5"
-#
-# The method used here is to replace potential false matches before converting
-# the real A1 cell references and then substitute back the replaced data.
-#
-# Returns: a string. A representation of a formula in R1C1 notation.
-#
-sub _convert_formula {
-
-    my $self = shift;
-
-    my $row     = $_[0];
-    my $col     = $_[1];
-    my $formula = $_[2];
-
-    my @strings;
-    my @sheets;
-
-    # Replace double quoted strings in formula. Strings may contain escaped
-    # double quotes. Regex by merlyn.
-    # See http://www.perlmonks.org/index.pl?node_id=330280
-    #
-    push @strings, $1 while $formula =~ s/("([^"]|"")*")/__swe__str__/;    # "
-
-
-    # Replace worksheet references in formula, such as Sheet1! or 'Sheet 1'!
-    #
-    push @sheets, $1 while $formula =~ s/(('[^']+'|[\w\.]+)!)/__swe__sht__/;
-
-
-    # Replace valid A1 cell references with R1C1 references. Cell ranges such
-    # as B5:G10 are replaced in two passes.
-    # The negative look-ahead is to prevent false matches such as =LOG10(LOG10)
-    #
-    $formula =~ s{(\$?[A-Z]{1,3}\$?\d+)(?![(\d])}
-                 {$self->_A1_to_R1C1($row, $col, $1)}eg;
-
-
-    # Replace row ranges such as 2:9 with R1C1 references.
-    #
-    $formula =~ s{(\$?\d+:\$?\d+)}
-                 {$self->_row_range_to_R1C1($row, $1)}eg;
-
-
-    # Replace column ranges such as A:Z with R1C1 references.
-    # The negative look-behind is to prevent false column matches such
-    # as "=A1:A1" => "=RC:RC"
-    #
-    # Note: there is a tricky parse due to the increased column limits that
-    # isn't handled here. RC:RC is now a valid column range in A1 notation.
-    # Fix later. Maybe.
-    $formula =~ s{(?<![A-Z\]])(\$?[A-I]?[A-Z]:\$?[A-I]?[A-Z])}
-                 {$self->_col_range_to_R1C1($col, $1)}eg;
-
-
-    # Quoted A1 style alphanumeric sheetnames don't need quoting when
-    # converted to R1C1 style. For example "='A1'!A1" becomes "=A1!RC" (without
-    # the single quotes since A1 isn't a reserved name in R1C1 notation).
-    s/^'([a-zA-Z0-9]+)'!$/$1!/ for @sheets;
-
-
-    # However, sheet names that looks like R1C1 notation do have to be single
-    # quoted. For example "='R4C'!A1"  becomes "='R4C'!RC".
-    #
-    s/^((R\d*|R\[\d+\])?(C\d*|C\[\d+\])?)!$/\'$1\'!/ for @sheets;
-
-
-    # Replace temporarily escaped strings. Note that the s///s are performed in
-    # reverse order to the substitutions above in case of nested strings.
-    $formula =~ s/__swe__sht__/shift @sheets /e while @sheets;
-    $formula =~ s/__swe__str__/shift @strings/e while @strings;
-
-    return $formula;
-}
-
-
-###############################################################################
-#
-# _A1_to_R1C1($A1_string)
-#
-# Converts a string containing an Excel cell reference in A1 notation into a
-# string containing a formula in R1C1 notation. For example:
-#
-#   '=G1' in cell (0, 0) becomes '=RC[6]'.
-#
-# The R1C1 value is relative to the row and column from which it is referred.
-# With reference to the above example:
-#
-#   '=G1' in cell (1, 0) becomes '=R[-1]C[6]'.
-#
-# Returns: a string. A representation of a cell reference in R1C1 notation.
-#
-#
-sub _A1_to_R1C1 {
-
-    my $self = shift;
-
-    my $current_row = $_[0];
-    my $current_col = $_[1];
-
-    my ( $row, $col, $row_abs, $col_abs ) = $self->_cell_to_rowcol( $_[2] );
-
-    # Row part
-    my $r1c1 = 'R';
-
-    if ( $row_abs ) {
-        $r1c1 .= $row + 1;    # 1 based
-    }
-    else {
-        $r1c1 .= '[' . ( $row - $current_row ) . ']'
-          unless $row == $current_row;
-    }
-
-    # Column part
-    $r1c1 .= 'C';
-
-    if ( $col_abs ) {
-        $r1c1 .= $col + 1;    # 1 based
-    }
-    else {
-        $r1c1 .= '[' . ( $col - $current_col ) . ']'
-          unless $col == $current_col;
-    }
-
-    return $r1c1;
-}
-
-
-###############################################################################
-#
-# _row_range_to_R1C1($string)
-#
-# Replace row ranges with R1C1 references. For example:
-#
-#   '=20:120' in cell (7, 0) becomes '=R[12]:R[112]'
-#
-# Returns: a string. A representation of a row cell reference in R1C1 notation.
-
-#
-sub _row_range_to_R1C1 {
-
-    my $self = shift;
-
-    my $current_row = $_[0] + 1;    # One based
-    my $range       = $_[1];
-
-
-    # Split the range into 2 rows
-    my ( $row1, $row2 ) = split ':', $range;
-
-    for my $row ( $row1, $row2 ) {
-
-        my $row_abs = $row =~ s/\$//;
-
-        # TODO Check row range
-
-        my $r1c1 = 'R';
-
-        if ( $row_abs ) {
-            $r1c1 .= $row;
-        }
-        else {
-            $r1c1 .= '[' . ( $row - $current_row ) . ']'
-              unless $row == $current_row;
-        }
-
-        $row = $r1c1;
-    }
-
-    # A single row range such as 'R2:R2' is represented as 'R2'
-    if   ( $row1 eq $row2 ) { return $row1 }
-    else                    { return "$row1:$row2" }
-}
-
-
-###############################################################################
-#
-# _col_range_to_R1C1($string)
-#
-# Replace column ranges with R1C1 references. For example:
-#
-#   '=D:Z' in cell (6, 0) becomes '=C[3]:C[25]'
-#
-# Returns: a string. A representation of a col range reference in R1C1 notation.
-#
-sub _col_range_to_R1C1 {
-
-    my $self = shift;
-
-    my $current_col = $_[0] + 1;    # One based
-    my $range       = $_[1];
-
-
-    # Split the range into 2 cols
-    my ( $col_letter1, $col_letter2 ) = split ':', $range;
-
-    # Note $col is used as an alias. The original values are changed in place.
-    # This should probably be refactored into a function.
-    for my $col ( $col_letter1, $col_letter2 ) {
-
-        my $col_abs;
-        my $col_letter = $col;
-
-        ( undef, $col, undef, $col_abs ) = xl_cell_to_rowcol( $col . '1' );
-
-        # Switch from 0 based to 1 based.
-        $col++;
-
-        if ( $col > $self->{_xls_colmax} ) {
-            warn "$col_letter is not an Excel column label.\n";    # TODO Carp
-            return $range;
-        }
-
-        my $r1c1 = 'C';
-
-        if ( $col_abs ) {
-            $r1c1 .= $col;
-        }
-        else {
-            $r1c1 .= '[' . ( $col - $current_col ) . ']'
-              unless $col == $current_col;
-        }
-        $col = $r1c1;
-    }
-
-    # A single column range such as 'C3:C3' is represented as 'C3'
-    if   ( $col_letter1 eq $col_letter2 ) { return $col_letter1 }
-    else                                  { return "$col_letter1:$col_letter2" }
-}
-
-
-###############################################################################
-#
 # _write_worksheet_options()
 #
 # Write the <WorksheetOptions> element if the worksheet options have changed.
 #
 sub _write_worksheet_options {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -3622,6 +3407,7 @@ sub _options_changed {
 # Write the <AutoFilter> element.
 #
 sub _write_autofilter {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
 
@@ -3646,6 +3432,7 @@ sub _write_autofilter {
 # of this is a little complicated.
 #
 sub _write_autofilter_column {
+    # TODO. Unused. Remove after refactoring.
 
     my $self = shift;
     my @tokens;
@@ -3737,6 +3524,7 @@ sub _quote_sheetname {
 #
 ###############################################################################
 
+
 ###############################################################################
 #
 # _write_xml_declaration()
@@ -3779,7 +3567,8 @@ sub _write_worksheet {
         'mc:PreserveAttributes' => $mc_preserve_attributes,
     );
 
-    $self->{_writer}->emptyTag( 'worksheet', @attributes );
+    $self->{_writer}->startTag( 'worksheet', @attributes );
+    $self->{_writer}->endTag( 'worksheet' );
 }
 
 
