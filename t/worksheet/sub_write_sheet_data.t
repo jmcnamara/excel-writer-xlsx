@@ -33,7 +33,7 @@ $worksheet->{_writer} = $writer;
 # Test the _write_sheet_data() method.
 #
 $caption  = " \tWorksheet: _write_sheet_data()";
-$expected = '<sheetData></sheetData>';
+$expected = '<sheetData />';
 
 $worksheet->_write_sheet_data();
 

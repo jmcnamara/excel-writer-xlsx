@@ -2,7 +2,7 @@
 #
 # Tests for Excel::XLSX::Writer::Worksheet methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -24,18 +24,18 @@ open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
 my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
 my $worksheet = $workbook->add_worksheet;
-my $writer    = new XML::Writer( OUTPUT => $got_fh );
+my $writer  = new XML::Writer( OUTPUT => $got_fh );
 
 $worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
-# Test the _write_sheet_views() method.
+# Test the _write_sheet_calc_pr() method.
 #
-$caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" view="pageLayout" workbookViewId="0" /></sheetViews>';
+$caption  = " \tWorksheet: _write_sheet_calc_pr()";
+$expected = '<sheetCalcPr fullCalcOnLoad="1" />';
 
-$worksheet->_write_sheet_views();
+$worksheet->_write_sheet_calc_pr();
 
 is( $got, $expected, $caption );
 

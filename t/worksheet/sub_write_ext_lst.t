@@ -2,7 +2,7 @@
 #
 # Tests for Excel::XLSX::Writer::Worksheet methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -30,12 +30,12 @@ $worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
-# Test the _write_sheet_views() method.
+# Test the _write_ext_lst() method.
 #
-$caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" view="pageLayout" workbookViewId="0" /></sheetViews>';
+$caption  = " \tWorksheet: _write_ext_lst()";
+$expected = '<extLst><ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main"><mx:PLV Mode="1" OnePage="0" WScale="0" /></ext></extLst>';
 
-$worksheet->_write_sheet_views();
+$worksheet->_write_ext_lst();
 
 is( $got, $expected, $caption );
 
