@@ -18,11 +18,17 @@ use Test::More tests => 4;
 my $got;
 my $expected;
 my $caption;
-my $cell = 'A';
+my $cell;
 
-# Create a test case for  Excel 2007 columns. A .. XFD. Iterate the rows
-# as well for good measure.
-for my $i ( 0 .. 16_384 ) {
+# Create a test case for a range of the Excel 2007 columns.
+$cell = 'A';
+for my $i ( 0 .. 300 ) {
+    push @$expected, [ $i, $i, $cell . ( $i + 1 ) ];
+    $cell++;
+}
+
+$cell = 'WQK';
+for my $i ( 16_000 .. 16_384 ) {
     push @$expected, [ $i, $i, $cell . ( $i + 1 ) ];
     $cell++;
 }
