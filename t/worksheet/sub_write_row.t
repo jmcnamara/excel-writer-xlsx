@@ -33,9 +33,9 @@ $worksheet->{_writer} = $writer;
 # Test the _write_row() method.
 #
 $caption  = " \tWorksheet: _write_row()";
-$expected = '<row r="1" spans="1:3"></row>';
+$expected = '<row r="1">';
 
-$worksheet->_write_row();
+$worksheet->_write_row( 0 );
 
 is( $got, $expected, $caption );
 

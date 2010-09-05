@@ -63,10 +63,9 @@ sub new {
     $self->{_xls_rowmax}  = $rowmax;
     $self->{_xls_colmax}  = $colmax;
     $self->{_xls_strmax}  = $strmax;
-    $self->{_dim_rowmin}  = $rowmax + 1;
-    $self->{_dim_rowmax}  = 0;
-    $self->{_dim_colmin}  = $colmax + 1;
-    $self->{_dim_colmax}  = 0;
+    $self->{_dim_rowmin}  = undef;
+    $self->{_dim_rowmax}  = undef $self->{_dim_colmin} = undef;
+    $self->{_dim_colmax}  = undef;
     $self->{_dim_changed} = 0;
     $self->{_colinfo}     = [];
     $self->{_selection}   = [ 0, 0 ];
@@ -160,7 +159,6 @@ sub new {
 
 
     bless $self, $class;
-    $self->_initialize();
     return $self;
 }
 
@@ -178,9 +176,42 @@ sub _assemble_xml_file {
     return unless $self->{_writer};
 
     $self->_write_xml_declaration;
+
+    # Write the root worksheet element.
     $self->_write_worksheet();
 
-    # TODO.
+    # Write the worksheet properties.
+    $self->_write_sheet_pr();
+
+    # Write the worksheet dimensions.
+    $self->_write_dimension();
+
+    # Write the sheet view properties.
+    $self->_write_sheet_views();
+
+    # Write the sheet format properties.
+    $self->_write_sheet_format_pr();
+
+    # Write the worksheet data such as rows columns and cells.
+    $self->_write_sheet_data();
+
+    # Write the worksheet calculation properties.
+    $self->_write_sheet_calc_pr();
+
+    # Write the worksheet phonetic properites.
+    $self->_write_phonetic_pr();
+
+    # Write the worksheet page_margins.
+    $self->_write_page_margins();
+
+    # Write the worksheet page setup.
+    $self->_write_page_setup();
+
+    # Write the worksheet extension storage.
+    $self->_write_ext_lst();
+
+    # Close the worksheet tag.
+    $self->{_writer}->endTag( 'worksheet' );
 }
 
 
@@ -2256,28 +2287,57 @@ sub repeat_formula {
 
     # TODO Update for ExcelXML format
 }
+
+
 ###############################################################################
 #
-# _check_dimensions($row, $col)
+# _check_dimensions($row, $col, $ignore_row, $ignore_col)
 #
 # Check that $row and $col are valid and store max and min values for use in
 # DIMENSIONS record. See, _store_dimensions().
 #
+# The $ignore_row/$ignore_col flags is used to indicate that we wish to
+# perform the dimension check without storing the value.
+#
+# The ignore flags are use by set_row() and data_validate.
+#
 sub _check_dimensions {
 
-    my $self = shift;
-    my $row  = $_[0];
-    my $col  = $_[1];
+    my $self       = shift;
+    my $row        = $_[0];
+    my $col        = $_[1];
+    my $ignore_row = $_[2];
+    my $ignore_col = $_[3];
 
-    if ( $row >= $self->{_xls_rowmax} ) { return -2 }
-    if ( $col >= $self->{_xls_colmax} ) { return -2 }
 
-    $self->{_dim_changed} = 1;
+    return -2 if not defined $row;
+    return -2 if $row >= $self->{_xls_rowmax};
 
-    if ( $row < $self->{_dim_rowmin} ) { $self->{_dim_rowmin} = $row }
-    if ( $row > $self->{_dim_rowmax} ) { $self->{_dim_rowmax} = $row }
-    if ( $col < $self->{_dim_colmin} ) { $self->{_dim_colmin} = $col }
-    if ( $col > $self->{_dim_colmax} ) { $self->{_dim_colmax} = $col }
+    return -2 if not defined $col;
+    return -2 if $col >= $self->{_xls_colmax};
+
+
+    if ( not $ignore_row ) {
+
+        if ( not defined $self->{_dim_rowmin} or $row < $self->{_dim_rowmin} ) {
+            $self->{_dim_rowmin} = $row;
+        }
+
+        if ( not defined $self->{_dim_rowmax} or $row > $self->{_dim_rowmax} ) {
+            $self->{_dim_rowmax} = $row;
+        }
+    }
+
+    if ( not $ignore_col ) {
+
+        if ( not defined $self->{_dim_colmin} or $col < $self->{_dim_colmin} ) {
+            $self->{_dim_colmin} = $col;
+        }
+
+        if ( not defined $self->{_dim_colmax} or $col > $self->{_dim_colmax} ) {
+            $self->{_dim_colmax} = $col;
+        }
+    }
 
     return 0;
 }
@@ -3562,16 +3622,15 @@ sub _write_xml_declaration {
 #
 # _write_worksheet()
 #
-# Write the <worksheet> element.
+# Write the <worksheet> element. This is the root element of Worksheet.
 #
 sub _write_worksheet {
 
-    my $self  = shift;
-    my $xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-    my $xmlns_r =
-      'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
-    my $xmlns_mc =
-      'http://schemas.openxmlformats.org/markup-compatibility/2006';
+    my $self                   = shift;
+    my $schema                 = 'http://schemas.openxmlformats.org/';
+    my $xmlns                  = $schema . 'spreadsheetml/2006/main';
+    my $xmlns_r                = $schema . 'officeDocument/2006/relationships';
+    my $xmlns_mc               = $schema . 'markup-compatibility/2006';
     my $xmlns_mv               = 'urn:schemas-microsoft-com:mac:vml';
     my $mc_ignorable           = 'mv';
     my $mc_preserve_attributes = 'mv:*';
@@ -3586,7 +3645,6 @@ sub _write_worksheet {
     );
 
     $self->{_writer}->startTag( 'worksheet', @attributes );
-    $self->{_writer}->endTag( 'worksheet' );
 }
 
 
@@ -3594,18 +3652,17 @@ sub _write_worksheet {
 #
 # _write_sheet_pr()
 #
-# Write the <sheetPr> element.
+# Write the <sheetPr> element for Sheet level properties.
 #
 sub _write_sheet_pr {
 
-    my $self                                 = shift;
-    my $published                            = 0;
-    my $enable_format_conditions_calculation = 0;
+    my $self                    = shift;
+    my $published               = 0;
+    my $conditional_calculation = 0;
 
     my @attributes = (
-        'published' => $published,
-        'enableFormatConditionsCalculation' =>
-          $enable_format_conditions_calculation,
+        'published'                         => $published,
+        'enableFormatConditionsCalculation' => $conditional_calculation,
     );
 
     $self->{_writer}->emptyTag( 'sheetPr', @attributes );
@@ -3616,14 +3673,40 @@ sub _write_sheet_pr {
 #
 # _write_dimension()
 #
-# Write the <dimension> element.
+# Write the <dimension> element. This specifies the range of cells in the
+# worksheet. Ss a special case, empty spreadsheets use 'A1' as a reange.
 #
 sub _write_dimension {
 
-    my $self   = shift;
-    my $searef = 'A1:B2';
+    my $self = shift;
+    my $ref;
 
-    my @attributes = ( 'searef' => $searef, );
+    if ( not defined $self->{_dim_rowmin} ) {
+
+        # If the _dim_row_min is undefined then no dimensions have been set
+        # and we use the fefault 'A1'.
+        $ref = 'A1';
+    }
+    elsif ($self->{_dim_rowmin} == $self->{_dim_rowmax}
+        && $self->{_dim_colmin} == $self->{_dim_colmax} )
+    {
+
+        # The dimensions are a single cell and not a range.
+        $ref = xl_rowcol_to_cell( $self->{_dim_rowmin}, $self->{_dim_colmin} );
+    }
+    else {
+
+        # The dimensions are a cell range.
+        my $cell_1 =
+          xl_rowcol_to_cell( $self->{_dim_rowmin}, $self->{_dim_colmin} );
+        my $cell_2 =
+          xl_rowcol_to_cell( $self->{_dim_rowmax}, $self->{_dim_colmax} );
+
+        $ref = $cell_1 . ':' . $cell_2;
+    }
+
+
+    my @attributes = ( 'ref' => $ref, );
 
     $self->{_writer}->emptyTag( 'dimension', @attributes );
 }
@@ -3666,9 +3749,10 @@ sub _write_sheet_view {
         'workbookViewId' => $workbook_view_id,
     );
 
-    $self->{_writer}->startTag( 'sheetView', @attributes );
-    $self->_write_selection();
-    $self->{_writer}->endTag( 'sheetView' );
+    $self->{_writer}->emptyTag( 'sheetView', @attributes );
+    # TODO. Add selection later.
+    #$self->_write_selection();
+    #$self->{_writer}->endTag( 'sheetView' );
 }
 
 
@@ -3724,8 +3808,55 @@ sub _write_sheet_data {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'sheetData' );
-    $self->{_writer}->endTag( 'sheetData' );
+    if ( not defined $self->{_dim_rowmin} ) {
+        # If the dimensions aren't defined then there is no data to write.
+        $self->{_writer}->emptyTag( 'sheetData' );
+    }
+    else {
+        $self->{_writer}->startTag( 'sheetData' );
+        $self->_write_rows();
+        $self->{_writer}->endTag( 'sheetData' );
+
+    }
+
+}
+
+###############################################################################
+#
+# _write_rows()
+#
+# TODO
+#
+sub _write_rows {
+
+    #jmn
+
+    my $self = shift;
+
+    for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
+
+        next
+          unless $self->{_set_rows}->{$row_num}
+              or $self->{_table}->[$row_num];
+
+
+        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+
+            $self->_write_row( $row_num );
+
+            for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                    $self->_write_cell($row_num, $col_num, $col_ref);
+                }
+            }
+
+            $self->{_writer}->endTag( 'row' );
+        }
+        else {
+
+            # TODO. Row attributes only.
+        }
+    }
 }
 
 
@@ -3737,20 +3868,12 @@ sub _write_sheet_data {
 #
 sub _write_row {
 
-    my $self   = shift;
-    my $writer = $self->{_writer};
-    my $r      = 1;
-    my $spans  = '1:3';
+    my $self = shift;
+    my $r    = shift;
 
-    my @attributes = (
-        'r'     => $r,
-        'spans' => $spans,
-    );
+    my @attributes = ( 'r' => $r + 1, );
 
     $self->{_writer}->startTag( 'row', @attributes );
-
-    #$self->_write_foo();
-    $self->{_writer}->endTag( 'row' );
 }
 
 
@@ -3762,15 +3885,23 @@ sub _write_row {
 #
 sub _write_cell {
 
-    my $self  = shift;
-    my $value = shift;
-    my $range = 'A1';
+    my $self     = shift;
+    my $row      = shift;
+    my $col      = shift;
+    my $cell     = shift;
+    my $type     = $cell->[0];
+    my $value    = $cell->[1];
 
+
+
+    my $range = xl_rowcol_to_cell( $row, $col );
     my @attributes = ( 'r' => $range, );
 
-    $self->{_writer}->startTag( 'c', @attributes );
-    $self->_write_value( $value );
-    $self->{_writer}->endTag( 'c' );
+    if ( $type == 2 ) {
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_value( $value );
+        $self->{_writer}->endTag( 'c' );
+    }
 }
 
 
@@ -3786,6 +3917,23 @@ sub _write_value {
     my $value = shift;
 
     $self->{_writer}->dataElement( 'v', $value );
+}
+
+
+##############################################################################
+#
+# _write_sheet_calc_pr()
+#
+# Write the <sheetCalcPr> element for the worksheet calculation properties.
+#
+sub _write_sheet_calc_pr {
+
+    my $self              = shift;
+    my $full_calc_on_load = 1;
+
+    my @attributes = ( 'fullCalcOnLoad' => $full_calc_on_load, );
+
+    $self->{_writer}->emptyTag( 'sheetCalcPr', @attributes );
 }
 
 
@@ -3860,6 +4008,22 @@ sub _write_page_setup {
     );
 
     $self->{_writer}->emptyTag( 'pageSetup', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_ext_lst()
+#
+# Write the <extLst> element.
+#
+sub _write_ext_lst {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'extLst' );
+    $self->_write_ext();
+    $self->{_writer}->endTag( 'extLst' );
 }
 
 

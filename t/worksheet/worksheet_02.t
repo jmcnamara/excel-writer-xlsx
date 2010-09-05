@@ -34,12 +34,15 @@ $worksheet->{_writer} = $writer;
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
 
+$worksheet->write('B3', 123);
 $worksheet->_assemble_xml_file();
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );
 
-is_deeply( $got, $expected, $caption );
+use Test::Differences;
+eq_or_diff( $got, $expected, $caption,  { context => 1 } );
+#is_deeply( $got, $expected, $caption );
 
 ###############################################################################
 #
@@ -76,12 +79,18 @@ __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="urn:schemas-microsoft-com:mac:vml" mc:Ignorable="mv" mc:PreserveAttributes="mv:*">
   <sheetPr published="0" enableFormatConditionsCalculation="0"/>
-  <dimension ref="A1"/>
+  <dimension ref="B3"/>
   <sheetViews>
     <sheetView tabSelected="1" view="pageLayout" workbookViewId="0"/>
   </sheetViews>
   <sheetFormatPr baseColWidth="10" defaultRowHeight="13"/>
-  <sheetData/>
+  <sheetData>
+    <row r="3">
+      <c r="B3">
+        <v>123</v>
+      </c>
+    </row>
+  </sheetData>
   <sheetCalcPr fullCalcOnLoad="1"/>
   <phoneticPr fontId="1" type="noConversion"/>
   <pageMargins left="0.75" right="0.75" top="1" bottom="1" header="0.5" footer="0.5"/>
