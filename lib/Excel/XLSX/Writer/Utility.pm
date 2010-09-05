@@ -194,23 +194,27 @@ sub xl_rowcol_to_cell {
     my $col     = $_[1];
     my $row_abs = $_[2] ? '$' : '';
     my $col_abs = $_[3] ? '$' : '';
+    my $col_str;
 
+    # Change from 0-indexed to 1 indexed.
+    $row++;
+    $col++;
 
-    my $int  = int( $col / 26 );
-    my $frac = $col % 26;
+    while ( $col ) {
+        # Set remainder from 1 .. 26
+        my $remainder = $col % 26 || 26;
 
-    my $chr1 = '';    # Most significant character in AA1
+        # Convert the $remainder to a character. C-ishly.
+        my $col_letter = chr( ord( 'A' ) + $remainder - 1 );
 
-    if ( $int > 0 ) {
-        $chr1 = chr( ord( 'A' ) + $int - 1 );
+        # Accumulate the column letters, right to left.
+        $col_str = $col_letter . $col_str;
+
+        # Get the next order of magnitude.
+        $col = int( ( $col - 1 ) / 26 );
     }
 
-    my $chr2 = chr( ord( 'A' ) + $frac );
-
-    # Zero index to 1-index
-    $row++;
-
-    return $col_abs . $chr1 . $chr2 . $row_abs . $row;
+    return $col_abs . $col_str . $row_abs . $row;
 }
 
 
