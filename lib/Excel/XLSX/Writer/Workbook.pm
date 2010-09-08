@@ -2,7 +2,7 @@ package Excel::XLSX::Writer::Workbook;
 
 ###############################################################################
 #
-# Workbook - A writer class for Excel Workbooks.
+# Worksheet - A writer class for Excel Worksheets.
 #
 #
 # Used in conjunction with Excel::XLSX::Writer
@@ -12,19 +12,28 @@ package Excel::XLSX::Writer::Workbook;
 # Documentation after __END__
 #
 
-use Exporter;
+# perltidy with the following options: -mbl=2 -pt=0 -nola
+
+use 5.010000;
 use strict;
 use warnings;
+use Exporter;
 use Carp;
-use FileHandle;
+use XML::Writer;
 use Excel::XLSX::Writer::Worksheet;
 use Excel::XLSX::Writer::Format;
+use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+
+our @ISA     = qw(Exporter);
+our $VERSION = '0.01';
 
 
-use vars qw($VERSION @ISA);
-@ISA = qw(Exporter);
+###############################################################################
+#
+# Public and private API methods.
+#
+###############################################################################
 
-$VERSION = '0.01';
 
 ###############################################################################
 #
@@ -37,8 +46,6 @@ sub new {
     my $class = shift;
     my $self;
     my $tmp_format = Excel::XLSX::Writer::Format->new();
-    my $byte_order = $self->{_byte_order};
-
 
     $self->{_filename}          = $_[0] || '';
     $self->{_1904}              = 0;
@@ -87,6 +94,48 @@ sub new {
 
     return $self;
 }
+
+
+###############################################################################
+#
+# _assemble_xml_file()
+#
+# Assemble and write the XML file.
+#
+sub _assemble_xml_file {
+
+    my $self = shift;
+
+    return unless $self->{_writer};
+
+    $self->_write_xml_declaration;
+
+    # Write the root workbook element.
+    $self->_write_workbook();
+
+    # Write the XLSX file version.
+    $self->_write_file_version();
+
+    # Write the workbook properties.
+    $self->_write_workbook_pr();
+
+    # Write the workbook view properties.
+    $self->_write_book_views();
+
+    # Write the worksheet names and ids.
+    $self->_write_sheets();
+
+    # Write the workbook calculation properites.
+    $self->_write_calc_pr();
+
+    # Write the workbook extension storage.
+    $self->_write_ext_lst();
+
+    # Close the workbook tag.
+    $self->{_writer}->endTag( 'workbook' );
+}
+
+
 
 
 ###############################################################################
@@ -450,6 +499,7 @@ sub _write_xml_declaration {
     $self->{_writer}->xmlDecl( $encoding, $standalone );
 }
 
+
 ###############################################################################
 #
 # _write_workbook()
@@ -458,18 +508,19 @@ sub _write_xml_declaration {
 #
 sub _write_workbook {
 
-    my $self   = shift;
-    my $xmlns  = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-    my $xmlns_r =
-      'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    my $self    = shift;
+    my $schema  = 'http://schemas.openxmlformats.org';
+    my $xmlns   = $schema . '/spreadsheetml/2006/main';
+    my $xmlns_r = $schema . '/officeDocument/2006/relationships';
 
     my @attributes = (
         'xmlns'   => $xmlns,
         'xmlns:r' => $xmlns_r,
     );
 
-    $self->{_writer}->emptyTag( 'workbook', @attributes );
+    $self->{_writer}->startTag( 'workbook', @attributes );
 }
+
 
 ###############################################################################
 #
@@ -495,6 +546,7 @@ sub _write_file_version {
     $self->{_writer}->emptyTag( 'fileVersion', @attributes );
 }
 
+
 ###############################################################################
 #
 # _write_workbook_pr()
@@ -516,6 +568,7 @@ sub _write_workbook_pr {
 
     $self->{_writer}->emptyTag( 'workbookPr', @attributes );
 }
+
 
 ###############################################################################
 #
@@ -567,9 +620,14 @@ sub _write_workbook_view {
 sub _write_sheets {
 
     my $self   = shift;
+    my $id_num = 1;
 
     $self->{_writer}->startTag( 'sheets' );
-    $self->_write_sheet();
+
+    for my $worksheet ( @{ $self->{_worksheets} } ) {
+        $self->_write_sheet( $worksheet->{_name}, $id_num++ );
+    }
+
     $self->{_writer}->endTag( 'sheets' );
 }
 
@@ -583,9 +641,9 @@ sub _write_sheets {
 sub _write_sheet {
 
     my $self     = shift;
-    my $name     = 'Sheet1';
-    my $sheet_id = 1;
-    my $r_id     = 'rId1';
+    my $name     = shift;
+    my $sheet_id = shift;
+    my $r_id     = 'rId' . $sheet_id;
 
     my @attributes = (
         'name'    => $name,
@@ -595,6 +653,7 @@ sub _write_sheet {
 
     $self->{_writer}->emptyTag( 'sheet', @attributes );
 }
+
 
 ###############################################################################
 #

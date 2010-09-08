@@ -23,7 +23,7 @@ open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
 my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet;
+my $worksheet = $workbook->add_worksheet();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $worksheet->{_writer} = $writer;

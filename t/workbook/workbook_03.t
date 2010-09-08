@@ -1,8 +1,8 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Worksheet methods.
+# Tests for Excel::XLSX::Writer::Workbook methods.
 #
-# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -22,24 +22,28 @@ my $caption;
 open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet();
-my $writer = new XML::Writer( OUTPUT => $got_fh );
+my $workbook   = Excel::XLSX::Writer->new( $tmp_fh );
+my $worksheet1 = $workbook->add_worksheet('Non Default Name');
+my $worksheet2 = $workbook->add_worksheet('Another Name');
+my $writer     = new XML::Writer( OUTPUT => $got_fh );
 
-$worksheet->{_writer} = $writer;
+$workbook->{_writer} = $writer;
 
 ###############################################################################
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tWorksheet: _assemble_xml_file()";
+$caption = " \tWorkbook: _assemble_xml_file()";
 
-$worksheet->_assemble_xml_file();
+$workbook->_assemble_xml_file();
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );
 
-is_deeply( $got, $expected, $caption );
+use Test::Differences;
+eq_or_diff( $got, $expected, $caption, { context => 1 } );
+
+#is_deeply( $got, $expected, $caption );
 
 ###############################################################################
 #
@@ -74,21 +78,20 @@ sub _got_to_aref {
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="urn:schemas-microsoft-com:mac:vml" mc:Ignorable="mv" mc:PreserveAttributes="mv:*">
-  <sheetPr published="0" enableFormatConditionsCalculation="0"/>
-  <dimension ref="A1"/>
-  <sheetViews>
-    <sheetView tabSelected="1" view="pageLayout" workbookViewId="0"/>
-  </sheetViews>
-  <sheetFormatPr baseColWidth="10" defaultRowHeight="13"/>
-  <sheetData/>
-  <sheetCalcPr fullCalcOnLoad="1"/>
-  <phoneticPr fontId="1" type="noConversion"/>
-  <pageMargins left="0.75" right="0.75" top="1" bottom="1" header="0.5" footer="0.5"/>
-  <pageSetup paperSize="0" orientation="portrait" horizontalDpi="4294967292" verticalDpi="4294967292"/>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <fileVersion appName="xl" lastEdited="4" lowestEdited="4" rupBuild="4505"/>
+  <workbookPr date1904="1" showInkAnnotation="0" autoCompressPictures="0"/>
+  <bookViews>
+    <workbookView xWindow="-20" yWindow="-20" windowWidth="34400" windowHeight="20700" tabRatio="500"/>
+  </bookViews>
+  <sheets>
+    <sheet name="Non Default Name" sheetId="1" r:id="rId1"/>
+    <sheet name="Another Name" sheetId="2" r:id="rId2"/>
+  </sheets>
+  <calcPr calcId="130000" concurrentCalc="0"/>
   <extLst>
     <ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main">
-      <mx:PLV Mode="1" OnePage="0" WScale="0"/>
+      <mx:ArchID Flags="2"/>
     </ext>
   </extLst>
-</worksheet>
+</workbook>

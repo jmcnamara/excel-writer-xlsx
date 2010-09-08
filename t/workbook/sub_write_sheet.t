@@ -22,8 +22,8 @@ my $caption;
 open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $workbook = Excel::XLSX::Writer->new( $tmp_fh );
-my $writer = new XML::Writer( OUTPUT => $got_fh );
+my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
+my $writer    = new XML::Writer( OUTPUT => $got_fh );
 
 $workbook->{_writer} = $writer;
 
@@ -34,7 +34,7 @@ $workbook->{_writer} = $writer;
 $caption  = " \tWorkbook: _write_sheet()";
 $expected = '<sheet name="Sheet1" sheetId="1" r:id="rId1" />';
 
-$workbook->_write_sheet();
+$workbook->_write_sheet( 'Sheet1', 1 );
 
 is( $got, $expected, $caption );
 

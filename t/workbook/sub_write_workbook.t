@@ -32,7 +32,7 @@ $workbook->{_writer} = $writer;
 # Test the _write_workbook() method.
 #
 $caption  = " \tWorkbook: _write_workbook()";
-$expected = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" />';
+$expected = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">';
 
 $workbook->_write_workbook();
 

@@ -23,6 +23,7 @@ t/container/core/core.t
 t/container/core/sub_write_xml_declaration.t
 t/container/relationships/relationships.t
 t/container/relationships/sub_write_xml_declaration.t
+t/utility/x_rowcol_to_cell.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
 t/workbook/sub_write_ext.t
@@ -35,15 +36,20 @@ t/workbook/sub_write_workbook.t
 t/workbook/sub_write_workbook_pr.t
 t/workbook/sub_write_workbook_view.t
 t/workbook/sub_write_xml_declaration.t
+t/workbook/workbook_01.t
+t/workbook/workbook_02.t
+t/workbook/workbook_03.t
 t/worksheet/sub_write_cell.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
+t/worksheet/sub_write_ext_lst.t
 t/worksheet/sub_write_mx_plv.t
 t/worksheet/sub_write_page_margins.t
 t/worksheet/sub_write_page_setup.t
 t/worksheet/sub_write_phonetic_pr.t
 t/worksheet/sub_write_row.t
 t/worksheet/sub_write_selection.t
+t/worksheet/sub_write_sheet_calc_pr.t
 t/worksheet/sub_write_sheet_data.t
 t/worksheet/sub_write_sheet_format_pr.t
 t/worksheet/sub_write_sheet_pr.t
@@ -52,6 +58,8 @@ t/worksheet/sub_write_sheet_views.t
 t/worksheet/sub_write_value.t
 t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
+t/worksheet/worksheet_01.t
+t/worksheet/worksheet_02.t
 
 examples/README
 examples/bug_report.pl
