@@ -32,7 +32,7 @@ $workbook->{_writer} = $writer;
 # Test the _write_calc_pr() method.
 #
 $caption  = " \tWorkbook: _write_calc_pr()";
-$expected = '<calcPr calcId="130000" concurrentCalc="0" />';
+$expected = '<calcPr calcId="124519" />';
 
 $workbook->_write_calc_pr();
 

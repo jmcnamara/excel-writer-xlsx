@@ -181,7 +181,7 @@ sub _assemble_xml_file {
     $self->_write_worksheet();
 
     # Write the worksheet properties.
-    $self->_write_sheet_pr();
+    #$self->_write_sheet_pr();
 
     # Write the worksheet dimensions.
     $self->_write_dimension();
@@ -196,19 +196,19 @@ sub _assemble_xml_file {
     $self->_write_sheet_data();
 
     # Write the worksheet calculation properties.
-    $self->_write_sheet_calc_pr();
+    #$self->_write_sheet_calc_pr();
 
     # Write the worksheet phonetic properites.
-    $self->_write_phonetic_pr();
+    #$self->_write_phonetic_pr();
 
     # Write the worksheet page_margins.
     $self->_write_page_margins();
 
     # Write the worksheet page setup.
-    $self->_write_page_setup();
+    #$self->_write_page_setup();
 
     # Write the worksheet extension storage.
-    $self->_write_ext_lst();
+    #$self->_write_ext_lst();
 
     # Close the worksheet tag.
     $self->{_writer}->endTag( 'worksheet' );
@@ -3638,10 +3638,6 @@ sub _write_worksheet {
     my @attributes = (
         'xmlns'                 => $xmlns,
         'xmlns:r'               => $xmlns_r,
-        'xmlns:mc'              => $xmlns_mc,
-        'xmlns:mv'              => $xmlns_mv,
-        'mc:Ignorable'          => $mc_ignorable,
-        'mc:PreserveAttributes' => $mc_preserve_attributes,
     );
 
     $self->{_writer}->startTag( 'worksheet', @attributes );
@@ -3745,7 +3741,6 @@ sub _write_sheet_view {
 
     my @attributes = (
         'tabSelected'    => $tab_selected,
-        'view'           => $view,
         'workbookViewId' => $workbook_view_id,
     );
 
@@ -3787,10 +3782,9 @@ sub _write_sheet_format_pr {
 
     my $self               = shift;
     my $base_col_width     = 10;
-    my $default_row_height = 13;
+    my $default_row_height = 15;
 
     my @attributes = (
-        'baseColWidth'     => $base_col_width,
         'defaultRowHeight' => $default_row_height,
     );
 
@@ -3967,12 +3961,12 @@ sub _write_phonetic_pr {
 sub _write_page_margins {
 
     my $self   = shift;
-    my $left   = 0.75;
-    my $right  = 0.75;
-    my $top    = 1;
-    my $bottom = 1;
-    my $header = 0.5;
-    my $footer = 0.5;
+    my $left   = 0.7;
+    my $right  = 0.7;
+    my $top    = 0.75;
+    my $bottom = 0.75;
+    my $header = 0.3;
+    my $footer = 0.3;
 
     my @attributes = (
         'left'   => $left,

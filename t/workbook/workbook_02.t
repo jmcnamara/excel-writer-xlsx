@@ -80,18 +80,13 @@ __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <fileVersion appName="xl" lastEdited="4" lowestEdited="4" rupBuild="4505"/>
-  <workbookPr date1904="1" showInkAnnotation="0" autoCompressPictures="0"/>
+  <workbookPr defaultThemeVersion="124226"/>
   <bookViews>
-    <workbookView xWindow="-20" yWindow="-20" windowWidth="34400" windowHeight="20700" tabRatio="500"/>
+    <workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660"/>
   </bookViews>
   <sheets>
     <sheet name="Sheet1" sheetId="1" r:id="rId1"/>
     <sheet name="Sheet2" sheetId="2" r:id="rId2"/>
   </sheets>
-  <calcPr calcId="130000" concurrentCalc="0"/>
-  <extLst>
-    <ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main">
-      <mx:ArchID Flags="2"/>
-    </ext>
-  </extLst>
+  <calcPr calcId="124519"/>
 </workbook>

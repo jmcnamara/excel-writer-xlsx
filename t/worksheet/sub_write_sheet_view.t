@@ -33,7 +33,7 @@ $worksheet->{_writer} = $writer;
 # Test the _write_sheet_view() method.
 #
 $caption  = " \tWorksheet: _write_sheet_view()";
-$expected = '<sheetView tabSelected="1" view="pageLayout" workbookViewId="0" />';
+$expected = '<sheetView tabSelected="1" workbookViewId="0" />';
 
 $worksheet->_write_sheet_view();
 

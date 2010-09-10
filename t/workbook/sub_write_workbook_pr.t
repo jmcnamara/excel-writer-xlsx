@@ -32,7 +32,7 @@ $workbook->{_writer} = $writer;
 # Test the _write_workbook_pr() method.
 #
 $caption  = " \tWorkbook: _write_workbook_pr()";
-$expected = '<workbookPr date1904="1" showInkAnnotation="0" autoCompressPictures="0" />';
+$expected = '<workbookPr defaultThemeVersion="124226" />';
 
 $workbook->_write_workbook_pr();
 

@@ -32,7 +32,7 @@ $workbook->{_writer} = $writer;
 # Test the _write_workbook_view() method.
 #
 $caption  = " \tWorkbook: _write_workbook_view()";
-$expected = '<workbookView xWindow="-20" yWindow="-20" windowWidth="34400" windowHeight="20700" tabRatio="500" />';
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" />';
 
 $workbook->_write_workbook_view();
 

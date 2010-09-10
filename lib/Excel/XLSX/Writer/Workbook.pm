@@ -129,7 +129,7 @@ sub _assemble_xml_file {
     $self->_write_calc_pr();
 
     # Write the workbook extension storage.
-    $self->_write_ext_lst();
+    #$self->_write_ext_lst();
 
     # Close the workbook tag.
     $self->{_writer}->endTag( 'workbook' );
@@ -559,11 +559,11 @@ sub _write_workbook_pr {
     my $date_1904              = 1;
     my $show_ink_annotation    = 0;
     my $auto_compress_pictures = 0;
+    my $default_theme_version  = 124226;
+
 
     my @attributes = (
-        'date1904'             => $date_1904,
-        'showInkAnnotation'    => $show_ink_annotation,
-        'autoCompressPictures' => $auto_compress_pictures,
+        'defaultThemeVersion' => $default_theme_version,
     );
 
     $self->{_writer}->emptyTag( 'workbookPr', @attributes );
@@ -594,10 +594,10 @@ sub _write_book_views {
 sub _write_workbook_view {
 
     my $self          = shift;
-    my $x_window      = -20;
-    my $y_window      = -20;
-    my $window_width  = 34400;
-    my $window_height = 20700;
+    my $x_window      = 240;
+    my $y_window      = 15;
+    my $window_width  = 16095;
+    my $window_height = 9660;
     my $tab_ratio     = 500;
 
     my @attributes = (
@@ -605,7 +605,6 @@ sub _write_workbook_view {
         'yWindow'      => $y_window,
         'windowWidth'  => $window_width,
         'windowHeight' => $window_height,
-        'tabRatio'     => $tab_ratio,
     );
 
     $self->{_writer}->emptyTag( 'workbookView', @attributes );
@@ -664,12 +663,11 @@ sub _write_sheet {
 sub _write_calc_pr {
 
     my $self                 = shift;
-    my $calc_id              = 130000;
+    my $calc_id              = 124519;
     my $concurrent_calc      = 0;
 
     my @attributes = (
         'calcId'             => $calc_id,
-        'concurrentCalc'     => $concurrent_calc,
     );
 
     $self->{_writer}->emptyTag( 'calcPr', @attributes );

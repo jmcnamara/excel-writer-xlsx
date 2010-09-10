@@ -96,5 +96,5 @@ __DATA__
   <LinksUpToDate>false</LinksUpToDate>
   <SharedDoc>false</SharedDoc>
   <HyperlinksChanged>false</HyperlinksChanged>
-  <AppVersion>12.0001</AppVersion>
+  <AppVersion>12.0000</AppVersion>
 </Properties>

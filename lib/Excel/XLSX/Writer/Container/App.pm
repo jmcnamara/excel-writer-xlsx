@@ -370,7 +370,7 @@ sub _write_hyperlinks_changed {
 sub _write_app_version {
 
     my $self = shift;
-    my $data = 12.0001;
+    my $data = '12.0000';
 
     $self->{_writer}->dataElement( 'AppVersion', $data );
 }

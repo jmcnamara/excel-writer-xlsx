@@ -33,7 +33,7 @@ $worksheet->{_writer} = $writer;
 # Test the _write_sheet_format_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_format_pr()";
-$expected = '<sheetFormatPr baseColWidth="10" defaultRowHeight="13" />';
+$expected = '<sheetFormatPr defaultRowHeight="15" />';
 
 $worksheet->_write_sheet_format_pr();
 

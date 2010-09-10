@@ -33,7 +33,7 @@ $worksheet->{_writer} = $writer;
 # Test the _write_worksheet() method.
 #
 $caption  = " \tWorksheet: _write_worksheet()";
-$expected = '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="urn:schemas-microsoft-com:mac:vml" mc:Ignorable="mv" mc:PreserveAttributes="mv:*">';
+$expected = '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">';
 
 $worksheet->_write_worksheet();
 

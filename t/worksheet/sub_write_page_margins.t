@@ -33,7 +33,7 @@ $worksheet->{_writer} = $writer;
 # Test the _write_page_margins() method.
 #
 $caption  = " \tWorksheet: _write_page_margins()";
-$expected = '<pageMargins left="0.75" right="0.75" top="1" bottom="1" header="0.5" footer="0.5" />';
+$expected = '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3" />';
 
 $worksheet->_write_page_margins();
 

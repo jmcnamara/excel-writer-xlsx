@@ -74,21 +74,12 @@ sub _got_to_aref {
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="urn:schemas-microsoft-com:mac:vml" mc:Ignorable="mv" mc:PreserveAttributes="mv:*">
-  <sheetPr published="0" enableFormatConditionsCalculation="0"/>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <dimension ref="A1"/>
   <sheetViews>
-    <sheetView tabSelected="1" view="pageLayout" workbookViewId="0"/>
+    <sheetView tabSelected="1" workbookViewId="0"/>
   </sheetViews>
-  <sheetFormatPr baseColWidth="10" defaultRowHeight="13"/>
+  <sheetFormatPr defaultRowHeight="15"/>
   <sheetData/>
-  <sheetCalcPr fullCalcOnLoad="1"/>
-  <phoneticPr fontId="1" type="noConversion"/>
-  <pageMargins left="0.75" right="0.75" top="1" bottom="1" header="0.5" footer="0.5"/>
-  <pageSetup paperSize="0" orientation="portrait" horizontalDpi="4294967292" verticalDpi="4294967292"/>
-  <extLst>
-    <ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main">
-      <mx:PLV Mode="1" OnePage="0" WScale="0"/>
-    </ext>
-  </extLst>
+  <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
 </worksheet>
