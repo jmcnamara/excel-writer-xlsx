@@ -136,6 +136,18 @@ sub _assemble_xml_file {
 }
 
 
+###############################################################################
+#
+# _assemble_xlsl_file()
+#
+# Assemble and write the xlsx directory and files.
+#
+sub _assemble_xlsx_file {
+
+#jmn
+
+
+}
 
 
 ###############################################################################

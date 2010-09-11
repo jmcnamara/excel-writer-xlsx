@@ -19,14 +19,14 @@ use warnings;
 use Exporter;
 use Carp;
 use XML::Writer;
+use IO::File;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
 
-our $package_schema =
-  'http://schemas.openxmlformats.org/package/2006/relationships';
-our $document_schema =
-  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
+our $schema_root     = 'http://schemas.openxmlformats.org';
+our $package_schema  = $schema_root . '/package/2006/relationships';
+our $document_schema = $schema_root . '/officeDocument/2006/relationships/';
 
 ###############################################################################
 #
@@ -86,9 +86,12 @@ sub _set_xml_writer {
     my $filename = shift;
 
     my $output = new IO::File( $filename, 'w' );
-    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't open file $filename for writing.\n" unless $output;
 
-    $self->{_writer} => $writer;
+    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
+
+    $self->{_writer} = $writer;
 }
 
 

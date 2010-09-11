@@ -32,7 +32,7 @@ $obj->{_writer} = $writer;
 #
 $caption = " \tApp: _assemble_xml_file()";
 
-$obj->_add_part_names('Sheet1');
+$obj->_add_part_name('Sheet1');
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();
@@ -92,7 +92,8 @@ __DATA__
       <vt:lpstr>Sheet1</vt:lpstr>
     </vt:vector>
   </TitlesOfParts>
-  <Company>perl.org</Company>
+  <Company>
+  </Company>
   <LinksUpToDate>false</LinksUpToDate>
   <SharedDoc>false</SharedDoc>
   <HyperlinksChanged>false</HyperlinksChanged>

@@ -19,6 +19,7 @@ use warnings;
 use Exporter;
 use Carp;
 use XML::Writer;
+use IO::File;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
@@ -93,9 +94,12 @@ sub _set_xml_writer {
     my $filename = shift;
 
     my $output = new IO::File( $filename, 'w' );
-    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't open file $filename for writing.\n" unless $output;
 
-    $self->{_writer} => $writer;
+    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
+
+    $self->{_writer} = $writer;
 }
 
 
@@ -103,9 +107,9 @@ sub _set_xml_writer {
 #
 # _add_part_names()
 #
-# Add the name of a workbook parts suvh as 'Sheet1'.
+# Add the name of a workbook parts such as 'Sheet1'.
 #
-sub _add_part_names {
+sub _add_part_name {
 
     my $self       = shift;
     my $sheet_name = shift;
@@ -310,7 +314,7 @@ sub _write_vt_data {
 sub _write_company {
 
     my $self = shift;
-    my $data = 'perl.org';
+    my $data = '';
 
     $self->{_writer}->dataElement( 'Company', $data );
 }
