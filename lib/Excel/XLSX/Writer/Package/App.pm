@@ -1,4 +1,4 @@
-package Excel::XLSX::Writer::Container::App;
+package Excel::XLSX::Writer::Package::App;
 
 ###############################################################################
 #

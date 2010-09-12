@@ -1,4 +1,4 @@
-package Excel::XLSX::Writer::Container::Relationships;
+package Excel::XLSX::Writer::Package::Relationships;
 
 ###############################################################################
 #

@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Container::ContentTypes methods.
+# Tests for Excel::XLSX::Writer::Package::Relationships methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Container::ContentTypes;
+use Excel::XLSX::Writer::Package::Relationships;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -21,19 +21,19 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj     = Excel::XLSX::Writer::Container::ContentTypes->new();
-my $writer  = new XML::Writer( OUTPUT => $got_fh );
+my $obj    = Excel::XLSX::Writer::Package::Relationships->new();
+my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;
 
 ###############################################################################
 #
-# Test the _write_default() method.
+# Test the _write_xml_declaration() method.
 #
-$caption  = " \tContentTypes: _write_default()";
-$expected = '<Default Extension="xml" ContentType="application/xml" />';
+$caption  = " \tRelationships: _write_xml_declaration()";
+$expected = qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
 
-$obj->_write_default( 'xml', 'application/xml' );
+$obj->_write_xml_declaration();
 
 is( $got, $expected, $caption );
 

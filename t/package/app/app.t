@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Container::Core methods.
+# Tests for Excel::XLSX::Writer::Package::App methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Container::Core;
+use Excel::XLSX::Writer::Package::App;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -21,7 +21,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::XLSX::Writer::Container::Core->new();
+my $obj    = Excel::XLSX::Writer::Package::App->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;
@@ -30,12 +30,9 @@ $obj->{_writer} = $writer;
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tCore: _assemble_xml_file()";
+$caption = " \tApp: _assemble_xml_file()";
 
-$obj->_set_creator('A User');
-$obj->_set_modifier('Another User');
-$obj->_set_creation_date('2010-01-02T00:00:00Z');
-$obj->_set_modification_date('2010-01-03T00:00:00Z');
+$obj->_add_part_name('Sheet1');
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();
@@ -76,9 +73,29 @@ sub _got_to_aref {
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <dc:creator>A User</dc:creator>
-  <cp:lastModifiedBy>Another User</cp:lastModifiedBy>
-  <dcterms:created xsi:type="dcterms:W3CDTF">2010-01-02T00:00:00Z</dcterms:created>
-  <dcterms:modified xsi:type="dcterms:W3CDTF">2010-01-03T00:00:00Z</dcterms:modified>
-</cp:coreProperties>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Application>Microsoft Excel</Application>
+  <DocSecurity>0</DocSecurity>
+  <ScaleCrop>false</ScaleCrop>
+  <HeadingPairs>
+    <vt:vector size="2" baseType="variant">
+      <vt:variant>
+        <vt:lpstr>Worksheets</vt:lpstr>
+      </vt:variant>
+      <vt:variant>
+        <vt:i4>1</vt:i4>
+      </vt:variant>
+    </vt:vector>
+  </HeadingPairs>
+  <TitlesOfParts>
+    <vt:vector size="1" baseType="lpstr">
+      <vt:lpstr>Sheet1</vt:lpstr>
+    </vt:vector>
+  </TitlesOfParts>
+  <Company>
+  </Company>
+  <LinksUpToDate>false</LinksUpToDate>
+  <SharedDoc>false</SharedDoc>
+  <HyperlinksChanged>false</HyperlinksChanged>
+  <AppVersion>12.0000</AppVersion>
+</Properties>

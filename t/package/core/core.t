@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Container::Relationships methods.
+# Tests for Excel::XLSX::Writer::Package::Core methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Container::Relationships;
+use Excel::XLSX::Writer::Package::Core;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -21,7 +21,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::XLSX::Writer::Container::Relationships->new();
+my $obj    = Excel::XLSX::Writer::Package::Core->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;
@@ -30,13 +30,12 @@ $obj->{_writer} = $writer;
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tRelationships: _assemble_xml_file()";
+$caption = " \tCore: _assemble_xml_file()";
 
-$obj->_add_relationship( 'worksheet', 'worksheets/sheet1' );
-$obj->_add_relationship( 'theme', 'theme/theme1' );
-$obj->_add_relationship( 'styles');
-$obj->_add_relationship( 'sharedStrings' );
-$obj->_add_relationship( 'calcChain');
+$obj->_set_creator('A User');
+$obj->_set_modifier('Another User');
+$obj->_set_creation_date('2010-01-02T00:00:00Z');
+$obj->_set_modification_date('2010-01-03T00:00:00Z');
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();
@@ -77,10 +76,9 @@ sub _got_to_aref {
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
-  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>
-  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-  <Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
-  <Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain" Target="calcChain.xml"/>
-</Relationships>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dc:creator>A User</dc:creator>
+  <cp:lastModifiedBy>Another User</cp:lastModifiedBy>
+  <dcterms:created xsi:type="dcterms:W3CDTF">2010-01-02T00:00:00Z</dcterms:created>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">2010-01-03T00:00:00Z</dcterms:modified>
+</cp:coreProperties>

@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Container::App methods.
+# Tests for Excel::XLSX::Writer::Package::Relationships methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Container::App;
+use Excel::XLSX::Writer::Package::Relationships;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -21,7 +21,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::XLSX::Writer::Container::App->new();
+my $obj    = Excel::XLSX::Writer::Package::Relationships->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;
@@ -30,9 +30,13 @@ $obj->{_writer} = $writer;
 #
 # Test the _assemble_xml_file() method.
 #
-$caption = " \tApp: _assemble_xml_file()";
+$caption = " \tRelationships: _assemble_xml_file()";
 
-$obj->_add_part_name('Sheet1');
+$obj->_add_relationship( 'worksheet', 'worksheets/sheet1' );
+$obj->_add_relationship( 'theme', 'theme/theme1' );
+$obj->_add_relationship( 'styles');
+$obj->_add_relationship( 'sharedStrings' );
+$obj->_add_relationship( 'calcChain');
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();
@@ -73,29 +77,10 @@ sub _got_to_aref {
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>Microsoft Excel</Application>
-  <DocSecurity>0</DocSecurity>
-  <ScaleCrop>false</ScaleCrop>
-  <HeadingPairs>
-    <vt:vector size="2" baseType="variant">
-      <vt:variant>
-        <vt:lpstr>Worksheets</vt:lpstr>
-      </vt:variant>
-      <vt:variant>
-        <vt:i4>1</vt:i4>
-      </vt:variant>
-    </vt:vector>
-  </HeadingPairs>
-  <TitlesOfParts>
-    <vt:vector size="1" baseType="lpstr">
-      <vt:lpstr>Sheet1</vt:lpstr>
-    </vt:vector>
-  </TitlesOfParts>
-  <Company>
-  </Company>
-  <LinksUpToDate>false</LinksUpToDate>
-  <SharedDoc>false</SharedDoc>
-  <HyperlinksChanged>false</HyperlinksChanged>
-  <AppVersion>12.0000</AppVersion>
-</Properties>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+  <Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
+  <Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain" Target="calcChain.xml"/>
+</Relationships>

@@ -1,8 +1,8 @@
-package Excel::XLSX::Writer::Container::ContentTypes;
+package Excel::XLSX::Writer::Package::ContentTypes;
 
 ###############################################################################
 #
-# Excel::XLSX::Writer::Container::ContentTypes - A class for writing the Excel
+# Excel::XLSX::Writer::Package::ContentTypes - A class for writing the Excel
 # XLS [Content_Types] file.
 #
 # Used in conjunction with Excel::XLSX::Writer
@@ -342,7 +342,7 @@ __END__
 
 =head1 NAME
 
-Excel::XLSX::Writer::Container::ContentTypes - A class for writing the Excel XLSX [Content_Types] file.
+Excel::XLSX::Writer::Package::ContentTypes - A class for writing the Excel XLSX [Content_Types] file.
 
 =head1 SYNOPSIS
 
