@@ -19,6 +19,9 @@ use warnings;
 use Exporter;
 use Carp;
 use Excel::XLSX::Writer::Package::App;
+use Excel::XLSX::Writer::Package::ContentTypes;
+use Excel::XLSX::Writer::Package::Core;
+use Excel::XLSX::Writer::Package::Relationships;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
@@ -43,7 +46,8 @@ sub new {
 
     my $self = {
         _package_dir => '',
-        _sheet_names  => [],
+        _workbook    => undef,
+        _sheet_names => [],
     };
 
 
@@ -69,15 +73,18 @@ sub _set_package_dir {
 
 ###############################################################################
 #
-# _set_sheet_names()
+# _add_workbook()
 #
-# Set the file names used in the XLSX package.
+# Add the Excel::XLSX::Writer::Workbook object to the package.
 #
-sub _set_sheet_names {
+sub _add_workbook {
 
-    my $self = shift;
+    my $self        = shift;
+    my $workbook    = shift;
+    my @sheet_names = @{ $workbook->{_sheetnames} };
 
-    $self->{_sheet_names} = shift;
+    $self->{_workbook}    = $workbook;
+    $self->{_sheet_names} = \@sheet_names;
 }
 
 
@@ -91,7 +98,56 @@ sub _create_package {
 
     my $self = shift;
 
+    $self->_write_workbook_file();
+    $self->_write_worksheet_files();
     $self->_write_app_file();
+    $self->_write_core_file();
+    $self->_write_content_types_file();
+    $self->_write_root_rels_file();
+    $self->_write_workbook_rels_file();
+
+}
+
+
+###############################################################################
+#
+# _write_workbook_file()
+#
+# Write the workbook.xml file.
+#
+sub _write_workbook_file {
+
+    my $self     = shift;
+    my $dir      = $self->{_package_dir};
+    my $workbook = $self->{_workbook};
+
+    mkdir $dir . '/xl';
+
+    $workbook->_set_xml_writer( $dir . '/xl/workbook.xml' );
+    $workbook->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_worksheet_files()
+#
+# Write the worksheet files.
+#
+sub _write_worksheet_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/worksheets';
+
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        $worksheet->_set_xml_writer(
+            $dir . '/xl/worksheets/sheet' . 1 . '.xml' );
+        $worksheet->_assemble_xml_file();
+
+    }
 
 }
 
@@ -110,14 +166,129 @@ sub _write_app_file {
 
     mkdir $dir . '/docProps';
 
-    for my $sheet_name (@{$self->{_sheet_names}}) {
-        $app->_add_part_name($sheet_name);
+    for my $sheet_name ( @{ $self->{_sheet_names} } ) {
+        $app->_add_part_name( $sheet_name );
     }
 
     $app->_set_xml_writer( $dir . '/docProps/App.xml' );
     $app->_assemble_xml_file();
 }
 
+
+###############################################################################
+#
+# _write_core_file()
+#
+# Write the Core.xml file.
+#
+sub _write_core_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $core = new Excel::XLSX::Writer::Package::Core;
+
+    mkdir $dir . '/docProps';
+
+    my $date = _localtime_to_iso8601_date();
+
+    $core->_set_creation_date( $date );
+    $core->_set_modification_date( $date );
+    $core->_set_xml_writer( $dir . '/docProps/Core.xml' );
+    $core->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_content_types_file()
+#
+# Write the ContentTypes.xml file.
+#
+sub _write_content_types_file {
+
+    my $self    = shift;
+    my $dir     = $self->{_package_dir};
+    my $content = new Excel::XLSX::Writer::Package::ContentTypes;
+
+    for my $sheet_name ( @{ $self->{_sheet_names} } ) {
+        $content->_add_sheet_name( $sheet_name );
+    }
+
+    $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
+    $content->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_root_rels_file()
+#
+# Write the _rels/.rels xml file.
+#
+sub _write_root_rels_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $rels = new Excel::XLSX::Writer::Package::Relationships;
+
+    mkdir $dir . '/_rels';
+
+    $rels->_add_document_relationship( '/officeDocument', 'xl/workbook' );
+    $rels->_add_package_relationship( '/metadata/core-properties',
+        'docProps/core' );
+    $rels->_add_document_relationship( '/extended-properties', 'docProps/app' );
+
+    $rels->_set_xml_writer( $dir . '/_rels/.rels' );
+    $rels->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_workbook_rels_file()
+#
+# Write the _rels/.rels xml file.
+#
+sub _write_workbook_rels_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $rels = new Excel::XLSX::Writer::Package::Relationships;
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/_rels';
+
+    my $sheet_count = @{ $self->{_sheet_names} };
+
+    for my $index ( 1 .. $sheet_count ) {
+        $rels->_add_document_relationship( '/worksheet',
+            'worksheets/sheet' . $index );
+    }
+
+    $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
+    $rels->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _localtime_to_iso8601_date()
+#
+# Convert a localtime() date to a ISO 8601 style "2010-01-01T00:00:00Z" date.
+#
+sub _localtime_to_iso8601_date {
+
+    my $self = shift;
+    my $time = shift // time();
+
+    my ( $seconds, $minutes, $hours, $day, $month, $year ) = localtime( $time );
+
+    $month++;
+    $year += 1900;
+
+    my $date = sprintf "%4d-%02d-%02dT%02d:%02d:%02dZ", $year, $month, $day,
+      $hours, $minutes, $seconds;
+}
 
 
 1;
@@ -143,27 +314,27 @@ From Wikipedia: I<The Open Packaging Conventions (OPC) is a container-file techn
 
 At its simplest an Excel XLSX file contains the following elements:
 
-     ____[Content_Types].xml
+     ____ [Content_Types].xml
     |
-    |____docProps
-    | |____app.xml
-    | |____core.xml
+    |____ docProps
+    | |____ app.xml
+    | |____ core.xml
     |
-    |____xl
-    | |____workbook.xml
-    | |____worksheets
-    | | |____sheet1.xml
+    |____ xl
+    | |____ workbook.xml
+    | |____ worksheets
+    | | |____ sheet1.xml
     | |
-    | |____styles.xml
+    | |____ styles.xml
     | |
-    | |____theme
-    | | |____theme1.xml
+    | |____ theme
+    | | |____ theme1.xml
     | |
-    | |_____rels
-    |   |____workbook.xml.rels
+    | |____ _rels
+    |   |____ workbook.xml.rels
     |
-    |_____rels
-      |____.rels
+    |____ _rels
+      |____ .rels
 
 
 The C<Excel::XLSX::Writer::Package::Packager> class co-ordinates the classes that represent the elements of the package and writes them into the XLSX file.

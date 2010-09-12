@@ -22,6 +22,7 @@ use Carp;
 use XML::Writer;
 use Excel::XLSX::Writer::Worksheet;
 use Excel::XLSX::Writer::Format;
+use Excel::XLSX::Writer::Package::Packager;
 use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Exporter);
@@ -75,21 +76,21 @@ sub new {
 
 
     # If filename is a reference we assume that it is a valid filehandle.
-    if ( ref $self->{_filename} ) {
-        $self->{_filehandle} = $self->{_filename};
-    }
-    else {
-        my $fh = FileHandle->new( '>' . $self->{_filename} );
-
-        return undef unless defined $fh;
-
-        # Set the output to utf8 in newer perls.
-        if ( $] >= 5.008 ) {
-            eval q(binmode $fh, ':utf8');
-        }
-
-        $self->{_filehandle} = $fh;
-    }
+    #if ( ref $self->{_filename} ) {
+    #    $self->{_filehandle} = $self->{_filename};
+    #}
+    #else {
+    #    my $fh = FileHandle->new( '>' . $self->{_filename} );
+    #
+    #    return undef unless defined $fh;
+    #
+    #    # Set the output to utf8 in newer perls.
+    #    if ( $] >= 5.008 ) {
+    #        eval q(binmode $fh, ':utf8');
+    #    }
+    #
+    #    $self->{_filehandle} = $fh;
+    #}
 
 
     return $self;
@@ -133,6 +134,27 @@ sub _assemble_xml_file {
 
     # Close the workbook tag.
     $self->{_writer}->endTag( 'workbook' );
+}
+
+
+###############################################################################
+#
+# _set_xml_writer()
+#
+# Set the XML::Writer for the object.
+#
+sub _set_xml_writer {
+
+    my $self     = shift;
+    my $filename = shift;
+
+    my $output = new IO::File( $filename, 'w' );
+    croak "Couldn't open file $filename for writing.\n" unless $output;
+
+    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
+
+    $self->{_writer} = $writer;
 }
 
 

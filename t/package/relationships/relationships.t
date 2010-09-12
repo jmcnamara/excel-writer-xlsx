@@ -32,11 +32,11 @@ $obj->{_writer} = $writer;
 #
 $caption = " \tRelationships: _assemble_xml_file()";
 
-$obj->_add_relationship( 'worksheet', 'worksheets/sheet1' );
-$obj->_add_relationship( 'theme', 'theme/theme1' );
-$obj->_add_relationship( 'styles');
-$obj->_add_relationship( 'sharedStrings' );
-$obj->_add_relationship( 'calcChain');
+$obj->_add_document_relationship( '/worksheet',     'worksheets/sheet1' );
+$obj->_add_document_relationship( '/theme',         'theme/theme1' );
+$obj->_add_document_relationship( '/styles',        'styles' );
+$obj->_add_document_relationship( '/sharedStrings', 'sharedStrings' );
+$obj->_add_document_relationship( '/calcChain',     'calcChain' );
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();

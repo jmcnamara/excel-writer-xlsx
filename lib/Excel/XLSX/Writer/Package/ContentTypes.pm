@@ -34,9 +34,9 @@ our $VERSION = '0.01';
 
 
 our @defaults = (
-    [ 'xml',  'application/xml' ],
-    [ 'jpeg', 'image/jpeg' ],
     [ 'rels', 'application/vnd.openxmlformats-package.relationships+xml' ],
+    [ 'xml',  'application/xml' ],
+    #[ 'jpeg', 'image/jpeg' ],
 );
 
 our @overrides = (
@@ -53,14 +53,14 @@ our @overrides = (
         '/xl/workbook.xml',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
     ],
-    [
-        '/xl/styles.xml',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
-    ],
-    [
-        '/xl/theme/theme1.xml',
-        'application/vnd.openxmlformats-officedocument.theme+xml'
-    ],
+    #[
+    #    '/xl/styles.xml',
+    #    'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
+    #],
+    #[
+    #    '/xl/theme/theme1.xml',
+    #    'application/vnd.openxmlformats-officedocument.theme+xml'
+    #],
     #>>>
 );
 
@@ -132,6 +132,23 @@ sub _set_xml_writer {
     croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
 
     $self->{_writer} = $writer;
+}
+
+
+###############################################################################
+#
+# _add_default()
+#
+# Add elements to the ContentTypes defaults.
+#
+sub _add_default {
+
+    my $self         = shift;
+    my $part_name    = shift;
+    my $content_type = shift;
+
+    push @{ $self->{_defaults} }, [ $part_name, $content_type ];
+
 }
 
 

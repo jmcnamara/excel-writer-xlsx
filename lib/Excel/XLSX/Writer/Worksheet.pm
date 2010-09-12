@@ -217,6 +217,28 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
+# _set_xml_writer()
+#
+# Set the XML::Writer for the object.
+#
+sub _set_xml_writer {
+
+    my $self     = shift;
+    my $filename = shift;
+
+    my $output = new IO::File( $filename, 'w' );
+    croak "Couldn't open file $filename for writing.\n" unless $output;
+
+    my $writer = new XML::Writer( OUTPUT => $output );
+    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
+
+    $self->{_writer} = $writer;
+}
+
+
+
+###############################################################################
+#
 # _close()
 #
 # Write the worksheet elements.

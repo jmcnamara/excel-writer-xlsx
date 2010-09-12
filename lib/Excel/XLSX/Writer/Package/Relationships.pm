@@ -26,7 +26,7 @@ our $VERSION = '0.01';
 
 our $schema_root     = 'http://schemas.openxmlformats.org';
 our $package_schema  = $schema_root . '/package/2006/relationships';
-our $document_schema = $schema_root . '/officeDocument/2006/relationships/';
+our $document_schema = $schema_root . '/officeDocument/2006/relationships';
 
 ###############################################################################
 #
@@ -97,17 +97,36 @@ sub _set_xml_writer {
 
 ###############################################################################
 #
-# _add_relationship()
+# _add_document_relationship()
 #
 # Add container relationship to XLSX .rels xml files.
 #
-sub _add_relationship {
+sub _add_document_relationship {
 
     my $self   = shift;
     my $type   = shift;
-    my $target = shift // $type;
+    my $target = shift;
 
     $type   = $document_schema . $type;
+    $target = $target . '.xml';
+
+    push @{ $self->{_rels} }, [ $type, $target ];
+}
+
+
+###############################################################################
+#
+# _add_package_relationship()
+#
+# Add container relationship to XLSX .rels xml files.
+#
+sub _add_package_relationship {
+
+    my $self   = shift;
+    my $type   = shift;
+    my $target = shift;
+
+    $type   = $package_schema . $type;
     $target = $target . '.xml';
 
     push @{ $self->{_rels} }, [ $type, $target ];
