@@ -22,6 +22,7 @@ use Excel::XLSX::Writer::Package::App;
 use Excel::XLSX::Writer::Package::ContentTypes;
 use Excel::XLSX::Writer::Package::Core;
 use Excel::XLSX::Writer::Package::Relationships;
+use Excel::XLSX::Writer::Package::Styles;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
@@ -103,6 +104,7 @@ sub _create_package {
     $self->_write_app_file();
     $self->_write_core_file();
     $self->_write_content_types_file();
+    $self->_write_styles_file();
     $self->_write_root_rels_file();
     $self->_write_workbook_rels_file();
 
@@ -156,7 +158,7 @@ sub _write_worksheet_files {
 #
 # _write_app_file()
 #
-# Write the App.xml file.
+# Write the app.xml file.
 #
 sub _write_app_file {
 
@@ -170,7 +172,7 @@ sub _write_app_file {
         $app->_add_part_name( $sheet_name );
     }
 
-    $app->_set_xml_writer( $dir . '/docProps/App.xml' );
+    $app->_set_xml_writer( $dir . '/docProps/app.xml' );
     $app->_assemble_xml_file();
 }
 
@@ -179,7 +181,7 @@ sub _write_app_file {
 #
 # _write_core_file()
 #
-# Write the Core.xml file.
+# Write the core.xml file.
 #
 sub _write_core_file {
 
@@ -193,7 +195,7 @@ sub _write_core_file {
 
     $core->_set_creation_date( $date );
     $core->_set_modification_date( $date );
-    $core->_set_xml_writer( $dir . '/docProps/Core.xml' );
+    $core->_set_xml_writer( $dir . '/docProps/core.xml' );
     $core->_assemble_xml_file();
 }
 
@@ -216,6 +218,25 @@ sub _write_content_types_file {
 
     $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
     $content->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_styles_file()
+#
+# Write the style xml file.
+#
+sub _write_styles_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $rels = new Excel::XLSX::Writer::Package::Styles;
+
+    mkdir $dir . '/xl';
+
+    $rels->_set_xml_writer( $dir . '/xl/styles.xml' );
+    $rels->_assemble_xml_file();
 }
 
 
@@ -264,6 +285,8 @@ sub _write_workbook_rels_file {
         $rels->_add_document_relationship( '/worksheet',
             'worksheets/sheet' . $index );
     }
+
+    $rels->_add_document_relationship( '/styles', 'styles' );
 
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
     $rels->_assemble_xml_file();

@@ -53,10 +53,10 @@ our @overrides = (
         '/xl/workbook.xml',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
     ],
-    #[
-    #    '/xl/styles.xml',
-    #    'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
-    #],
+    [
+        '/xl/styles.xml',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
+    ],
     #[
     #    '/xl/theme/theme1.xml',
     #    'application/vnd.openxmlformats-officedocument.theme+xml'
