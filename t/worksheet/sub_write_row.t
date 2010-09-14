@@ -10,7 +10,7 @@ use warnings;
 use Excel::XLSX::Writer;
 use XML::Writer;
 
-use Test::More tests => 1;
+use Test::More tests => 2;
 
 ###############################################################################
 #
@@ -36,6 +36,18 @@ $caption  = " \tWorksheet: _write_row()";
 $expected = '<row r="1">';
 
 $worksheet->_write_row( 0 );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_row() method.
+#
+$caption  = " \tWorksheet: _write_row()";
+$expected .= '<row r="3" spans="2:2">';
+
+$worksheet->_write_row( 2, '2:2' );
 
 is( $got, $expected, $caption );
 

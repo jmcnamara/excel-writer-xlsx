@@ -57,6 +57,7 @@ t/workbook/sub_write_xml_declaration.t
 t/workbook/workbook_01.t
 t/workbook/workbook_02.t
 t/workbook/workbook_03.t
+t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_write_cell.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t

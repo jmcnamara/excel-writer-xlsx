@@ -3845,9 +3845,12 @@ sub _write_sheet_data {
 #
 sub _write_rows {
 
+
     #jmn
 
     my $self = shift;
+
+    $self->_calculate_spans();
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
@@ -3857,8 +3860,10 @@ sub _write_rows {
 
 
         if ( my $row_ref = $self->{_table}->[$row_num] ) {
+            my $span_index = int( $row_num / 16 );
+            my $span       = $self->{_row_spans}->[$span_index];
 
-            $self->_write_row( $row_num );
+            $self->_write_row( $row_num, $span );
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
                 if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
@@ -3876,6 +3881,62 @@ sub _write_rows {
 }
 
 
+
+###############################################################################
+#
+# _calculate_spans()
+#
+# Calculate the "spans" attribute of the <row> tag. This is an XLSX
+# optimisation and isn't strictly required. However, it makes comparing
+# files easier.
+#
+# The span is the same for each block of 16 rows.
+#
+sub _calculate_spans {
+
+    my $self = shift;
+
+    my @spans;
+    my $span_min;
+    my $span_max;
+
+    for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
+
+        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+
+            for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+
+                    if ( !defined $span_min ) {
+                        $span_min = $col_num;
+                        $span_max = $col_num;
+                    }
+                    else {
+                        $span_min = $col_num if $col_num < $span_min;
+                        $span_max = $col_num if $col_num > $span_max;
+                    }
+                }
+            }
+        }
+
+        if ( ( ( $row_num + 1 ) % 16 == 0 )
+            || $row_num == $self->{_dim_rowmax} )
+        {
+            my $span_index = int( $row_num / 16 );
+
+            if ( defined $span_min ) {
+                $span_min++;
+                $span_max++;
+                $spans[$span_index] = "$span_min:$span_max";
+                $span_min = undef;
+            }
+        }
+    }
+
+    $self->{_row_spans} = \@spans;
+}
+
+
 ###############################################################################
 #
 # _write_row()
@@ -3884,10 +3945,16 @@ sub _write_rows {
 #
 sub _write_row {
 
-    my $self = shift;
-    my $r    = shift;
+    my $self  = shift;
+    my $r     = shift;
+    my $spans = shift;
+
 
     my @attributes = ( 'r' => $r + 1, );
+
+    if ( defined $spans ) {
+        push @attributes, ( 'spans' => $spans, );
+    }
 
     $self->{_writer}->startTag( 'row', @attributes );
 }

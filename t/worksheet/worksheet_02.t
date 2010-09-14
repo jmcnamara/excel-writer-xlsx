@@ -82,7 +82,7 @@ __DATA__
   </sheetViews>
   <sheetFormatPr defaultRowHeight="15"/>
   <sheetData>
-    <row r="3">
+    <row r="3" spans="2:2">
       <c r="B3">
         <v>123</v>
       </c>
