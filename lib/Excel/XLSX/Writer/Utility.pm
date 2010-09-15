@@ -194,7 +194,7 @@ sub xl_rowcol_to_cell {
     my $col     = $_[1];
     my $row_abs = $_[2] ? '$' : '';
     my $col_abs = $_[3] ? '$' : '';
-    my $col_str;
+    my $col_str = '';
 
     # Change from 0-indexed to 1 indexed.
     $row++;
