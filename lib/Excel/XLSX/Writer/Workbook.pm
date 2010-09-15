@@ -186,12 +186,12 @@ sub close {
     return if $self->{_fileclosed};
 
     # Test filehandle in case new() failed and the user didn't check.
-    return unless defined $self->{_filehandle};
+    #return unless defined $self->{_filehandle};
 
     $self->{_fileclosed} = 1;
     $self->_store_workbook();
 
-    return close $self->{_filehandle};
+    #return close $self->{_filehandle};
 }
 
 
@@ -468,6 +468,14 @@ sub use_lower_cell_limits {
 sub _store_workbook {
 
     my $self = shift;
+
+
+    my $packager = Excel::XLSX::Writer::Package::Packager->new();
+
+    $packager->_add_workbook( $self );
+    $packager->_set_package_dir(
+        '/Users/John/Development/xlsx/examples/package' );
+    $packager->_create_package();
 
 }
 

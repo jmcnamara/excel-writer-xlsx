@@ -175,7 +175,7 @@ sub _assemble_xml_file {
 
     return unless $self->{_writer};
 
-    $self->_write_xml_declaration;
+    $self->_write_xml_declaration();
 
     # Write the root worksheet element.
     $self->_write_worksheet();
@@ -3692,7 +3692,7 @@ sub _write_sheet_pr {
 # _write_dimension()
 #
 # Write the <dimension> element. This specifies the range of cells in the
-# worksheet. Ss a special case, empty spreadsheets use 'A1' as a reange.
+# worksheet. Ss a special case, empty spreadsheets use 'A1' as a range.
 #
 sub _write_dimension {
 

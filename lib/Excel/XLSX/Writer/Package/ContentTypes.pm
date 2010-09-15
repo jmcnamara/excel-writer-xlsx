@@ -32,36 +32,23 @@ our $VERSION = '0.01';
 #
 ###############################################################################
 
+my $app_package  = 'application/vnd.openxmlformats-package.';
+my $app_document = 'application/vnd.openxmlformats-officedocument.';
 
 our @defaults = (
-    [ 'rels', 'application/vnd.openxmlformats-package.relationships+xml' ],
+    [ 'rels', $app_package . 'relationships+xml' ],
     [ 'xml',  'application/xml' ],
+
     #[ 'jpeg', 'image/jpeg' ],
 );
 
 our @overrides = (
-    #<<<
-    [
-        '/docProps/app.xml',
-        'application/vnd.openxmlformats-officedocument.extended-properties+xml'
-    ],
-    [
-        '/docProps/core.xml',
-        'application/vnd.openxmlformats-package.core-properties+xml'
-    ],
-    [
-        '/xl/workbook.xml',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
-    ],
-    [
-        '/xl/styles.xml',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
-    ],
-    #[
-    #    '/xl/theme/theme1.xml',
-    #    'application/vnd.openxmlformats-officedocument.theme+xml'
-    #],
-    #>>>
+    [ '/docProps/app.xml',  $app_document . 'extended-properties+xml' ],
+    [ '/docProps/core.xml', $app_package . 'core-properties+xml' ],
+    [ '/xl/styles.xml',     $app_document . 'spreadsheetml.styles+xml' ],
+    [ '/xl/workbook.xml',   $app_document . 'spreadsheetml.sheet.main+xml' ],
+
+    #[ '/xl/theme/theme1.xml', $app_document . '.theme+xml' ],
 );
 
 
@@ -183,8 +170,7 @@ sub _add_sheet_name {
     $sheet_name = "/xl/worksheets/$sheet_name.xml";
 
     $self->_add_override( $sheet_name,
-            'application/vnd.openxmlformats-officedocument.'
-          . 'spreadsheetml.worksheet+xml' );
+        $app_document . 'spreadsheetml.worksheet+xml' );
 }
 
 
@@ -199,8 +185,7 @@ sub _add_shared_strings {
     my $self = shift;
 
     $self->_add_override( '/xl/sharedStrings.xml',
-            'application/vnd.openxmlformats-officedocument.'
-          . 'spreadsheetml.sharedStrings+xml' );
+        $app_document . 'spreadsheetml.sharedStrings+xml' );
 }
 
 
@@ -215,8 +200,7 @@ sub _add_calc_chain {
     my $self = shift;
 
     $self->_add_override( '/xl/calcChain.xml',
-            'application/vnd.openxmlformats-officedocument.'
-          . 'spreadsheetml.calcChain+xml' );
+        $app_document . 'spreadsheetml.calcChain+xml' );
 }
 
 

@@ -20,7 +20,6 @@ use Test::More tests => 10;
 my $expected;
 my $caption;
 my $worksheet;
-my $tmp;
 my $got;
 my $cell_ref;
 
@@ -185,14 +184,9 @@ is( $got, $expected, $caption );
 sub _new_worksheet {
 
     $got = '';
-    $tmp = '';
-
-
-    open my $tmp_fh, '>', \$tmp or die "Failed to open filehandle: $!";
     open my $got_fh, '>', \$got or die "Failed to open filehandle: $!";
 
-    my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-    my $worksheet = $workbook->add_worksheet;
+    my $worksheet = new Excel::XLSX::Writer::Worksheet;
     my $writer    = new XML::Writer( OUTPUT => $got_fh );
 
     $worksheet->{_writer} = $writer;
