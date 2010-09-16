@@ -478,7 +478,7 @@ sub _store_workbook {
 
     $packager = undef;
 
-    $zip->addTree( $dir );
+    $zip->addTree( $dir, '', sub { -f } );
 
     if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
         carp 'Error writing zip container for xlsx file.';
