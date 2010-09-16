@@ -19,6 +19,9 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
+use IO::File;
+use File::Temp 'tempdir';
+use Archive::Zip;
 use XML::Writer;
 use Excel::XLSX::Writer::Worksheet;
 use Excel::XLSX::Writer::Format;
@@ -76,22 +79,19 @@ sub new {
 
 
     # If filename is a reference we assume that it is a valid filehandle.
-    #if ( ref $self->{_filename} ) {
-    #    $self->{_filehandle} = $self->{_filename};
-    #}
-    #else {
-    #    my $fh = FileHandle->new( '>' . $self->{_filename} );
-    #
-    #    return undef unless defined $fh;
-    #
-    #    # Set the output to utf8 in newer perls.
-    #    if ( $] >= 5.008 ) {
-    #        eval q(binmode $fh, ':utf8');
-    #    }
-    #
-    #    $self->{_filehandle} = $fh;
-    #}
+    if ( ref $self->{_filename} ) {
+        $self->{_filehandle} = $self->{_filename};
+    }
+    else {
+        my $fh = IO::File->new( $self->{_filename}, 'w' );
 
+        return undef unless defined $fh;
+
+        # TODO check if the FH needs to be binmoded for Archive::Zip.
+        #eval q(binmode $fh);
+
+        $self->{_filehandle} = $fh;
+    }
 
     return $self;
 }
@@ -467,16 +467,22 @@ sub use_lower_cell_limits {
 #
 sub _store_workbook {
 
-    my $self = shift;
-
-
+    my $self     = shift;
+    my $dir      = tempdir();
     my $packager = Excel::XLSX::Writer::Package::Packager->new();
+    my $zip      = Archive::Zip->new();
 
     $packager->_add_workbook( $self );
-    $packager->_set_package_dir(
-        '/Users/John/Development/xlsx/examples/package' );
+    $packager->_set_package_dir( $dir );
     $packager->_create_package();
 
+    $packager = undef;
+
+    $zip->addTree( $dir );
+
+    if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
+        carp 'Error writing zip container for xlsx file.';
+    }
 }
 
 
