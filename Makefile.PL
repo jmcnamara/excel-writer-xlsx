@@ -6,7 +6,8 @@ use strict;
 require 5.010;
 
 my %deps = (
-    'XML::Writer' => 0,
+    'Archive::Zip' => 1.30,
+    'XML::Writer'  => 0.612,
 );
 
 my %resources = (

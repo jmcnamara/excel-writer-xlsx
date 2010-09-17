@@ -166,20 +166,6 @@ sub _set_xml_writer {
 
 ###############################################################################
 #
-# _assemble_xlsl_file()
-#
-# Assemble and write the xlsx directory and files.
-#
-sub _assemble_xlsx_file {
-
-#jmn
-
-
-}
-
-
-###############################################################################
-#
 # close()
 #
 # Calls finalization methods.
@@ -468,6 +454,8 @@ sub _store_workbook {
     my $packager = Excel::XLSX::Writer::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
+    $self->_prepare_sst_string_data();
+
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
     $packager->_create_package();
@@ -480,6 +468,33 @@ sub _store_workbook {
         carp 'Error writing zip container for xlsx file.';
     }
 }
+
+
+###############################################################################
+#
+# _prepare_sst_string_data()
+#
+# TODO
+#
+sub _prepare_sst_string_data {
+
+    my $self = shift;
+
+    my @strings;
+    $#strings = $self->{_str_unique} - 1;    # Pre-extend array
+
+    while ( my $key = each %{ $self->{_str_table} } ) {
+        $strings[ $self->{_str_table}->{$key} ] = $key;
+    }
+
+    # The SST data could be very large, free some memory (maybe).
+    $self->{_str_table} = undef;
+    $self->{_str_array} = [@strings];
+
+}
+
+
+
 
 
 ###############################################################################

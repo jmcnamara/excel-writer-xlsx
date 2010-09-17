@@ -22,6 +22,7 @@ use Excel::XLSX::Writer::Package::App;
 use Excel::XLSX::Writer::Package::ContentTypes;
 use Excel::XLSX::Writer::Package::Core;
 use Excel::XLSX::Writer::Package::Relationships;
+use Excel::XLSX::Writer::Package::SharedStrings;
 use Excel::XLSX::Writer::Package::Styles;
 
 our @ISA     = qw(Exporter);
@@ -101,6 +102,7 @@ sub _create_package {
 
     $self->_write_workbook_file();
     $self->_write_worksheet_files();
+    $self->_write_shared_strings_file();
     $self->_write_app_file();
     $self->_write_core_file();
     $self->_write_content_types_file();
@@ -151,6 +153,35 @@ sub _write_worksheet_files {
 
     }
 
+}
+
+
+###############################################################################
+#
+# _write_shared_strings_file()
+#
+# Write the sharedStrings.xml file.
+#
+sub _write_shared_strings_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $sst  = new Excel::XLSX::Writer::Package::SharedStrings;
+
+    mkdir $dir . '/xl';
+
+    my $total     =  $self->{_workbook}->{_str_total};
+    my $unique    =  $self->{_workbook}->{_str_unique};
+    my $sst_data  =  $self->{_workbook}->{_str_array};
+
+    return unless $total > 0;
+
+    $sst->_set_string_count($total);
+    $sst->_set_unique_count($unique);
+    $sst->_add_strings($sst_data);
+
+    $sst->_set_xml_writer( $dir . '/xl/sharedStrings.xml' );
+    $sst->_assemble_xml_file();
 }
 
 
@@ -214,6 +245,11 @@ sub _write_content_types_file {
 
     for my $sheet_name ( @{ $self->{_sheet_names} } ) {
         $content->_add_sheet_name( $sheet_name );
+    }
+
+    # Add the sharedString rel if there is string data in the workbook.
+    if ($self->{_workbook}->{_str_total}) {
+        $content->_add_shared_strings();
     }
 
     $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
@@ -287,6 +323,11 @@ sub _write_workbook_rels_file {
     }
 
     $rels->_add_document_relationship( '/styles', 'styles' );
+
+    # Add the sharedString rel if there is string data in the workbook.
+    if ( $self->{_workbook}->{_str_total} ) {
+        $rels->_add_document_relationship( '/sharedStrings', 'sharedStrings' );
+    }
 
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
     $rels->_assemble_xml_file();

@@ -1436,7 +1436,7 @@ sub write_number {
     my $col  = $_[1];                              # Zero indexed column
     my $num  = $_[2];
     my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
-    my $type = $self->{_datatypes}->{Number};      # The data type
+    my $type = 'n';                                # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -1475,7 +1475,7 @@ sub write_string {
     my $xf      = _XF( $self, $row, $col, $_[3] );    # The cell format
     my $html    = $_[4] || 0;                         # Cell contains html text
     my $comment = '';                                 # Cell comment
-    my $type    = $self->{_datatypes}->{String};      # The data type
+    my $type    = 's';                                # The data type
     my $index;
     my $str_error = 0;
 
@@ -3983,7 +3983,14 @@ sub _write_cell {
     my $range = xl_rowcol_to_cell( $row, $col );
     my @attributes = ( 'r' => $range, );
 
-    if ( $type == 2 ) {
+    if ( $type eq 'n' ) {
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_value( $value );
+        $self->{_writer}->endTag( 'c' );
+    }
+    elsif ( $type eq 's' ) {
+        push @attributes, ('t' => 's');
+
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_value( $value );
         $self->{_writer}->endTag( 'c' );

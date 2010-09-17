@@ -103,9 +103,11 @@ my @modules = qw(
                   Excel::XLSX::Writer
                   Spreadsheet::WriteExcel
                   Parse::RecDescent
+                  Archive::Zip
+                  XML::Writer
+                  IO::File
                   File::Temp
                   OLE::Storage_Lite
-                  IO::Stringy
                 );
 
 
