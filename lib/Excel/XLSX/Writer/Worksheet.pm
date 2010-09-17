@@ -48,14 +48,15 @@ sub new {
     my $colmax = 16_384;
     my $strmax = 32767;
 
-    $self->{_name}              = $_[0];
-    $self->{_index}             = $_[1];
-    $self->{_filehandle}        = $_[2];
-    $self->{_indentation}       = $_[3];
-    $self->{_activesheet}       = $_[4];
-    $self->{_firstsheet}        = $_[5];
-    $self->{_1904}              = $_[6];
-    $self->{_lower_cell_limits} = $_[7];
+    $self->{_name}        = $_[0];
+    $self->{_index}       = $_[1];
+    $self->{_activesheet} = $_[2];
+    $self->{_firstsheet}  = $_[3];
+    $self->{_str_total}   = $_[4];
+    $self->{_str_unique}  = $_[5];
+    $self->{_str_table}   = $_[6];
+    $self->{_1904}        = $_[7];
+
 
     $self->{_ext_sheets}  = [];
     $self->{_fileclosed}  = 0;
@@ -234,7 +235,6 @@ sub _set_xml_writer {
 
     $self->{_writer} = $writer;
 }
-
 
 
 ###############################################################################
@@ -1476,7 +1476,7 @@ sub write_string {
     my $html    = $_[4] || 0;                         # Cell contains html text
     my $comment = '';                                 # Cell comment
     my $type    = $self->{_datatypes}->{String};      # The data type
-
+    my $index;
     my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
@@ -1487,13 +1487,18 @@ sub write_string {
         $str_error = -3;
     }
 
-    # Check if the cell already has a comment
-    if ( $self->{_table}->[$row]->[$col] ) {
-        $comment = $self->{_table}->[$row]->[$col]->[4];
+
+    # TODO
+    if (not exists ${$self->{_str_table}}->{$str}) {
+        ${$self->{_str_table}}->{$str} = ${$self->{_str_unique}}++;
     }
 
 
-    $self->{_table}->[$row]->[$col] = [ $type, $str, $xf, $html, $comment ];
+    ${$self->{_str_total}}++;
+    $index = ${$self->{_str_table}}->{$str};
+
+
+    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf];
 
     return $str_error;
 }
@@ -3658,8 +3663,8 @@ sub _write_worksheet {
     my $mc_preserve_attributes = 'mv:*';
 
     my @attributes = (
-        'xmlns'                 => $xmlns,
-        'xmlns:r'               => $xmlns_r,
+        'xmlns'   => $xmlns,
+        'xmlns:r' => $xmlns_r,
     );
 
     $self->{_writer}->startTag( 'worksheet', @attributes );
@@ -3767,6 +3772,7 @@ sub _write_sheet_view {
     );
 
     $self->{_writer}->emptyTag( 'sheetView', @attributes );
+
     # TODO. Add selection later.
     #$self->_write_selection();
     #$self->{_writer}->endTag( 'sheetView' );
@@ -3806,9 +3812,7 @@ sub _write_sheet_format_pr {
     my $base_col_width     = 10;
     my $default_row_height = 15;
 
-    my @attributes = (
-        'defaultRowHeight' => $default_row_height,
-    );
+    my @attributes = ( 'defaultRowHeight' => $default_row_height, );
 
     $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
 }
@@ -3825,6 +3829,7 @@ sub _write_sheet_data {
     my $self = shift;
 
     if ( not defined $self->{_dim_rowmin} ) {
+
         # If the dimensions aren't defined then there is no data to write.
         $self->{_writer}->emptyTag( 'sheetData' );
     }
@@ -3867,7 +3872,7 @@ sub _write_rows {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
                 if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
-                    $self->_write_cell($row_num, $col_num, $col_ref);
+                    $self->_write_cell( $row_num, $col_num, $col_ref );
                 }
             }
 
@@ -3879,7 +3884,6 @@ sub _write_rows {
         }
     }
 }
-
 
 
 ###############################################################################
@@ -3968,13 +3972,12 @@ sub _write_row {
 #
 sub _write_cell {
 
-    my $self     = shift;
-    my $row      = shift;
-    my $col      = shift;
-    my $cell     = shift;
-    my $type     = $cell->[0];
-    my $value    = $cell->[1];
-
+    my $self  = shift;
+    my $row   = shift;
+    my $col   = shift;
+    my $cell  = shift;
+    my $type  = $cell->[0];
+    my $value = $cell->[1];
 
 
     my $range = xl_rowcol_to_cell( $row, $col );

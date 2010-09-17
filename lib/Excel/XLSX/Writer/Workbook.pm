@@ -66,7 +66,13 @@ sub new {
     $self->{_sheetnames}        = [];
     $self->{_formats}           = [];
     $self->{_palette}           = [];
-    $self->{_lower_cell_limits} = 0;
+
+    # Structures for the shared strings data.
+    $self->{_str_total}             = 0;
+    $self->{_str_unique}            = 0;
+    $self->{_str_table}             = {};
+    $self->{_str_array}             = [];
+
 
     bless $self, $class;
 
@@ -293,10 +299,17 @@ sub add_worksheet {
     # language.
     #
     my @init_data = (
-        $name,                  $index,
-        $self->{_filehandle},   $self->{_indentation},
-        \$self->{_activesheet}, \$self->{_firstsheet},
-        $self->{_1904},         $self->{_lower_cell_limits},
+        $name,
+        $index,
+
+        \$self->{_activesheet},
+        \$self->{_firstsheet},
+
+        \$self->{_str_total},
+        \$self->{_str_unique},
+        \$self->{_str_table},
+
+        $self->{_1904},
     );
 
     my $worksheet = Excel::XLSX::Writer::Worksheet->new( @init_data );
@@ -438,23 +451,6 @@ sub set_codepage {
     $codepage = 0x04E4 if $codepage == 1;
     $codepage = 0x8000 if $codepage == 2;
     $self->{_codepage} = $codepage;
-}
-
-
-###############################################################################
-#
-# use_lower_cell_limits()
-#
-# TODO
-#
-sub use_lower_cell_limits {
-
-    my $self = shift;
-
-    croak "use_lower_cell_limits() must be called before add_worksheet()"
-      if $self->sheets();
-
-    $self->{_lower_cell_limits} = 1;
 }
 
 

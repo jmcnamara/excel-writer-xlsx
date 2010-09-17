@@ -10,6 +10,7 @@ lib/Excel/XLSX/Writer/Package/ContentTypes.pm
 lib/Excel/XLSX/Writer/Package/Core.pm
 lib/Excel/XLSX/Writer/Package/Packager.pm
 lib/Excel/XLSX/Writer/Package/Relationships.pm
+lib/Excel/XLSX/Writer/Package/SharedStrings.pm
 lib/Excel/XLSX/Writer/Package/Styles.pm
 lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm
@@ -25,6 +26,10 @@ t/package/core/core.t
 t/package/core/sub_write_xml_declaration.t
 t/package/relationships/relationships.t
 t/package/relationships/sub_write_xml_declaration.t
+t/package/shared_strings/shared_strings.t
+t/package/shared_strings/sub_write_si.t
+t/package/shared_strings/sub_write_sst.t
+t/package/shared_strings/sub_write_xml_declaration.t
 t/package/styles/styles.t
 t/package/styles/sub_write_border.t
 t/package/styles/sub_write_borders.t
