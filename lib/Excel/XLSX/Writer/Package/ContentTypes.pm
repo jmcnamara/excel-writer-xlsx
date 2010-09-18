@@ -17,7 +17,6 @@ package Excel::XLSX::Writer::Package::ContentTypes;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
 use Excel::XLSX::Writer::Package::XMLwriter;
 
