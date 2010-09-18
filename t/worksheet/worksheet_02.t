@@ -5,6 +5,8 @@
 # reverse('�'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions;
 use strict;
 use warnings;
 use Excel::XLSX::Writer;
@@ -40,38 +42,7 @@ $worksheet->_assemble_xml_file();
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );
 
-is_deeply( $got, $expected, $caption );
-
-###############################################################################
-#
-# Utility functions used by tests.
-#
-sub _expected_to_aref {
-
-    my @data;
-
-    while ( <DATA> ) {
-        next unless /\S/;
-        chomp;
-        s{/>$}{ />};
-        s{^\s+}{};
-        push @data, $_;
-    }
-
-    return \@data;
-}
-
-sub _got_to_aref {
-
-    my $xml_str = shift;
-
-    $xml_str =~ s/\n//;
-
-    # Split the XML into chunks at element boundaries.
-    my @data = split /(?<=>)(?=<)/, $xml_str;
-
-    return \@data;
-}
+_is_deep_diff( $got, $expected, $caption );
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
