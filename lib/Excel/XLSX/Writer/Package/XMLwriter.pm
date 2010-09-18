@@ -54,10 +54,12 @@ sub _set_xml_writer {
     my $self     = shift;
     my $filename = shift;
 
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
+    my $fh = new IO::File( $filename, 'w' );
+    croak "Couldn't open file $filename for writing.\n" unless $fh;
 
-    my $writer = new XML::Writer( OUTPUT => $output );
+    binmode $fh, ':utf8';
+
+    my $writer = new XML::Writer( OUTPUT => $fh );
     croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
 
     $self->{_writer} = $writer;
