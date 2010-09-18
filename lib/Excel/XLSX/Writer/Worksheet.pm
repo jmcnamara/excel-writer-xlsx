@@ -21,9 +21,10 @@ use Exporter;
 use Carp;
 use XML::Writer;
 use Excel::XLSX::Writer::Format;
+use Excel::XLSX::Writer::Package::XMLwriter;
 use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -42,8 +43,8 @@ our $VERSION = '0.01';
 #
 sub new {
 
-    my $class = shift;
-    my $self;
+    my $class  = shift;
+    my $self   = Excel::XLSX::Writer::Package::XMLwriter->new();
     my $rowmax = 1_048_576;
     my $colmax = 16_384;
     my $strmax = 32767;
@@ -213,27 +214,6 @@ sub _assemble_xml_file {
 
     # Close the worksheet tag.
     $self->{_writer}->endTag( 'worksheet' );
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -3629,21 +3609,6 @@ sub _quote_sheetname {
 #
 ###############################################################################
 
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $self->{_writer}->xmlDecl( $encoding, $standalone );
-}
 
 ###############################################################################
 #

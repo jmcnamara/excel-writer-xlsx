@@ -16,12 +16,10 @@ package Excel::XLSX::Writer::Package::SharedStrings;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -41,13 +39,12 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
-    my $self = {
-        _writer       => undef,
-        _strings      => [],
-        _string_count => 0,
-        _unique_count => 0,
-    };
+    $self->{_writer}       = undef;
+    $self->{_strings}      = [];
+    $self->{_string_count} = 0;
+    $self->{_unique_count} = 0;
 
     bless $self, $class;
 
@@ -77,27 +74,6 @@ sub _assemble_xml_file {
 
     # Close the sst tag.
     $self->{_writer}->endTag( 'sst' );
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -155,23 +131,6 @@ sub _add_strings {
 # XML writing methods.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self->{_writer};
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
 
 
 ##############################################################################

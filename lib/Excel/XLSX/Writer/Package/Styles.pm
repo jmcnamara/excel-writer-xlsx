@@ -18,10 +18,9 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -42,7 +41,9 @@ sub new {
 
     my $class = shift;
 
-    my $self = { _writer => undef, };
+    my $self = Excel::XLSX::Writer::Package::XMLwriter->new();
+
+    $self->{_writer} = undef;
 
     bless $self, $class;
 
@@ -98,27 +99,6 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
-}
-
-
-###############################################################################
-#
 # Internal methods.
 #
 ###############################################################################
@@ -129,23 +109,6 @@ sub _set_xml_writer {
 # XML writing methods.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self->{_writer};
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
 
 
 ##############################################################################

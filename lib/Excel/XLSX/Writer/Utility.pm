@@ -8,14 +8,12 @@ package Excel::XLSX::Writer::Utility;
 #
 #
 
+use 5.010000;
 use Exporter;
 use strict;
+use warnings;
 use autouse 'Date::Calc'  => qw(Delta_DHMS Decode_Date_EU Decode_Date_US);
 use autouse 'Date::Manip' => qw(ParseDate Date_Init);
-
-
-# Do all of the export preparation
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 # Row and column functions
 my @rowcol = qw(
@@ -39,16 +37,15 @@ my @dates = qw(
   xl_decode_date_US
 );
 
-
-@ISA         = qw(Exporter);
-@EXPORT_OK   = ();
-@EXPORT      = ( @rowcol, @dates );
-%EXPORT_TAGS = (
+our @ISA         = qw(Exporter);
+our @EXPORT_OK   = ();
+our @EXPORT      = ( @rowcol, @dates );
+our %EXPORT_TAGS = (
     rowcol => \@rowcol,
     dates  => \@dates
 );
 
-$VERSION = '0.01';
+our $VERSION = '0.01';
 
 
 =head1 NAME

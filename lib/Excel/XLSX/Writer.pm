@@ -11,16 +11,16 @@ package Excel::XLSX::Writer;
 # Documentation after __END__
 #
 
+use 5.010000;
+use strict;
+use warnings;
 use Exporter;
 
 use strict;
 use Excel::XLSX::Writer::Workbook;
 
-
-use vars qw($VERSION @ISA);
-@ISA = qw(Excel::XLSX::Writer::Workbook Exporter);
-
-$VERSION = '0.01';    # A Bookshop Idyll.
+our @ISA     = qw(Excel::XLSX::Writer::Workbook Exporter);
+our $VERSION = '0.01';
 
 
 ###############################################################################

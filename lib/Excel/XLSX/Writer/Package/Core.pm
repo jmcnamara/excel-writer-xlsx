@@ -16,12 +16,10 @@ package Excel::XLSX::Writer::Package::Core;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -41,14 +39,13 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
-    my $self = {
-        _writer            => undef,
-        _creator           => '',
-        _modifier          => '',
-        _creation_date     => '2010-01-01T00:00:00Z',
-        _modification_date => '2010-01-01T00:00:00Z',
-    };
+    $self->{_writer}            = undef;
+    $self->{_creator}           = '';
+    $self->{_modifier}          = '';
+    $self->{_creation_date}     = '2010-01-01T00:00:00Z';
+    $self->{_modification_date} = '2010-01-01T00:00:00Z';
 
     bless $self, $class;
 
@@ -76,27 +73,6 @@ sub _assemble_xml_file {
     $self->_write_dcterms_modified();
 
     $self->{_writer}->endTag( 'cp:coreProperties' );
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -168,23 +144,6 @@ sub _set_modification_date {
 # XML writing methods.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self->{_writer};
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
 
 
 ###############################################################################

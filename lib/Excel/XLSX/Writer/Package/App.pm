@@ -16,12 +16,10 @@ package Excel::XLSX::Writer::Package::App;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -41,11 +39,10 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
-    my $self = {
-        _writer      => undef,
-        _sheet_names => [],
-    };
+    $self->{_writer}      = undef;
+    $self->{_sheet_names} = [];
 
     bless $self, $class;
 
@@ -84,27 +81,6 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
-}
-
-
-###############################################################################
-#
 # _add_part_names()
 #
 # Add the name of a workbook parts such as 'Sheet1'.
@@ -134,34 +110,16 @@ sub _add_part_name {
 
 ###############################################################################
 #
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self->{_writer};
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
-
-
-###############################################################################
-#
 # _write_properties()
 #
 # Write the <Properties> element.
 #
 sub _write_properties {
 
-    my $self = shift;
-    my $xmlns =
-'http://schemas.openxmlformats.org/officeDocument/2006/extended-properties';
-    my $xmlns_vt =
-      'http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes';
+    my $self     = shift;
+    my $schema   = 'http://schemas.openxmlformats.org/officeDocument/2006/';
+    my $xmlns    = $schema . 'extended-properties';
+    my $xmlns_vt = $schema . 'docPropsVTypes';
 
     my @attributes = (
         'xmlns'    => $xmlns,

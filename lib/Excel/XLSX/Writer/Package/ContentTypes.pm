@@ -19,10 +19,9 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -67,12 +66,11 @@ our @overrides = (
 sub new {
 
     my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
-    my $self = {
-        _writer    => undef,
-        _defaults  => \@defaults,
-        _overrides => \@overrides,
-    };
+    $self->{_writer}    = undef;
+    $self->{_defaults}  = \@defaults;
+    $self->{_overrides} = \@overrides;
 
     bless $self, $class;
 
@@ -98,27 +96,6 @@ sub _assemble_xml_file {
     $self->_write_overrides();
 
     $self->{_writer}->endTag( 'Types' );
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -259,21 +236,6 @@ sub _write_overrides {
 #
 ###############################################################################
 
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $self->{_writer}->xmlDecl( $encoding, $standalone );
-}
 
 ###############################################################################
 #

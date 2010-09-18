@@ -17,18 +17,17 @@ package Excel::XLSX::Writer::Workbook;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
 use IO::File;
 use File::Temp 'tempdir';
 use Archive::Zip;
-use XML::Writer;
 use Excel::XLSX::Writer::Worksheet;
 use Excel::XLSX::Writer::Format;
 use Excel::XLSX::Writer::Package::Packager;
+use Excel::XLSX::Writer::Package::XMLwriter;
 use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -47,31 +46,31 @@ our $VERSION = '0.01';
 #
 sub new {
 
-    my $class = shift;
-    my $self;
+    my $class      = shift;
+    my $self       = Excel::XLSX::Writer::Package::XMLwriter->new();
     my $tmp_format = Excel::XLSX::Writer::Format->new();
 
-    $self->{_filename}          = $_[0] || '';
-    $self->{_1904}              = 0;
-    $self->{_activesheet}       = 0;
-    $self->{_firstsheet}        = 0;
-    $self->{_selected}          = 0;
-    $self->{_xf_index}          = 21;            # 21 internal styles +1
-    $self->{_fileclosed}        = 0;
-    $self->{_biffsize}          = 0;
-    $self->{_sheetname}         = "Sheet";
-    $self->{_tmp_format}        = $tmp_format;
-    $self->{_codepage}          = 0x04E4;
-    $self->{_worksheets}        = [];
-    $self->{_sheetnames}        = [];
-    $self->{_formats}           = [];
-    $self->{_palette}           = [];
+    $self->{_filename}    = $_[0] || '';
+    $self->{_1904}        = 0;
+    $self->{_activesheet} = 0;
+    $self->{_firstsheet}  = 0;
+    $self->{_selected}    = 0;
+    $self->{_xf_index}    = 21;            # 21 internal styles +1
+    $self->{_fileclosed}  = 0;
+    $self->{_biffsize}    = 0;
+    $self->{_sheetname}   = "Sheet";
+    $self->{_tmp_format}  = $tmp_format;
+    $self->{_codepage}    = 0x04E4;
+    $self->{_worksheets}  = [];
+    $self->{_sheetnames}  = [];
+    $self->{_formats}     = [];
+    $self->{_palette}     = [];
 
     # Structures for the shared strings data.
-    $self->{_str_total}             = 0;
-    $self->{_str_unique}            = 0;
-    $self->{_str_table}             = {};
-    $self->{_str_array}             = [];
+    $self->{_str_total}  = 0;
+    $self->{_str_unique} = 0;
+    $self->{_str_table}  = {};
+    $self->{_str_array}  = [];
 
 
     bless $self, $class;
@@ -140,27 +139,6 @@ sub _assemble_xml_file {
 
     # Close the workbook tag.
     $self->{_writer}->endTag( 'workbook' );
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -494,9 +472,6 @@ sub _prepare_sst_string_data {
 }
 
 
-
-
-
 ###############################################################################
 #
 # _store_all_xfs()
@@ -542,21 +517,6 @@ sub _store_names {
 # XML writing methods.
 #
 ###############################################################################
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $self->{_writer}->xmlDecl( $encoding, $standalone );
-}
 
 
 ###############################################################################
@@ -621,9 +581,7 @@ sub _write_workbook_pr {
     my $default_theme_version  = 124226;
 
 
-    my @attributes = (
-        'defaultThemeVersion' => $default_theme_version,
-    );
+    my @attributes = ( 'defaultThemeVersion' => $default_theme_version, );
 
     $self->{_writer}->emptyTag( 'workbookPr', @attributes );
 }
@@ -637,7 +595,7 @@ sub _write_workbook_pr {
 #
 sub _write_book_views {
 
-    my $self   = shift;
+    my $self = shift;
 
     $self->{_writer}->startTag( 'bookViews' );
     $self->_write_workbook_view();
@@ -721,13 +679,11 @@ sub _write_sheet {
 #
 sub _write_calc_pr {
 
-    my $self                 = shift;
-    my $calc_id              = 124519;
-    my $concurrent_calc      = 0;
+    my $self            = shift;
+    my $calc_id         = 124519;
+    my $concurrent_calc = 0;
 
-    my @attributes = (
-        'calcId'             => $calc_id,
-    );
+    my @attributes = ( 'calcId' => $calc_id, );
 
     $self->{_writer}->emptyTag( 'calcPr', @attributes );
 }
@@ -741,7 +697,7 @@ sub _write_calc_pr {
 #
 sub _write_ext_lst {
 
-    my $self                 = shift;
+    my $self = shift;
 
     $self->{_writer}->startTag( 'extLst' );
     $self->_write_ext();
@@ -779,14 +735,13 @@ sub _write_ext {
 #
 sub _write_mx_arch_id {
 
-    my $self   = shift;
-    my $Flags  = 2;
+    my $self  = shift;
+    my $Flags = 2;
 
     my @attributes = ( 'Flags' => $Flags, );
 
     $self->{_writer}->emptyTag( 'mx:ArchID', @attributes );
 }
-
 
 
 1;

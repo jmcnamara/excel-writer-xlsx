@@ -35,7 +35,7 @@ $worksheet->{_writer} = $writer;
 $caption  = " \tWorksheet: _write_cell()";
 $expected = '<c r="A1"><v>1</v></c>';
 
-$worksheet->_write_cell( 0, 0, [ 2, 1 ] );
+$worksheet->_write_cell( 0, 0, [ 'n', 1 ] );
 
 is( $got, $expected, $caption );
 

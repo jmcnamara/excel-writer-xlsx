@@ -16,12 +16,10 @@ package Excel::XLSX::Writer::Package::Relationships;
 use 5.010000;
 use strict;
 use warnings;
-use Exporter;
 use Carp;
-use XML::Writer;
-use IO::File;
+use Excel::XLSX::Writer::Package::XMLwriter;
 
-our @ISA     = qw(Exporter);
+our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
 our $VERSION = '0.01';
 
 our $schema_root     = 'http://schemas.openxmlformats.org';
@@ -44,12 +42,11 @@ our $document_schema = $schema_root . '/officeDocument/2006/relationships';
 sub new {
 
     my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
-    my $self = {
-        _writer => undef,
-        _rels   => [],
-        _id     => 1,
-    };
+    $self->{_writer} = undef;
+    $self->{_rels}   = [];
+    $self->{_id}     = 1;
 
     bless $self, $class;
 
@@ -71,27 +68,6 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_relationships();
-}
-
-
-###############################################################################
-#
-# _set_xml_writer()
-#
-# Set the XML::Writer for the object.
-#
-sub _set_xml_writer {
-
-    my $self     = shift;
-    my $filename = shift;
-
-    my $output = new IO::File( $filename, 'w' );
-    croak "Couldn't open file $filename for writing.\n" unless $output;
-
-    my $writer = new XML::Writer( OUTPUT => $output );
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
-
-    $self->{_writer} = $writer;
 }
 
 
@@ -145,23 +121,6 @@ sub _add_package_relationship {
 # XML writing methods.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self->{_writer};
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
 
 
 ##############################################################################

@@ -12,15 +12,17 @@ package Excel::XLSX::Writer::Format;
 # Documentation after __END__
 #
 
+use 5.010000;
 use Exporter;
 use strict;
+use warnings;
 use Carp;
 
 
-use vars qw($AUTOLOAD $VERSION @ISA);
-@ISA = qw(Exporter);
+our @ISA     = qw(Exporter);
+our $VERSION = '0.01';
+our $AUTOLOAD;
 
-$VERSION = '0.01';
 
 ###############################################################################
 #
