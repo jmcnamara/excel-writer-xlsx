@@ -12,10 +12,12 @@ lib/Excel/XLSX/Writer/Package/Packager.pm
 lib/Excel/XLSX/Writer/Package/Relationships.pm
 lib/Excel/XLSX/Writer/Package/SharedStrings.pm
 lib/Excel/XLSX/Writer/Package/Styles.pm
+lib/Excel/XLSX/Writer/Package/XMLwriter.pm
 lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm
 lib/Excel/XLSX/Writer/Worksheet.pm
 
+t/lib/TestFunctions.pm
 t/package/app/app.t
 t/package/app/sub_write_xml_declaration.t
 t/package/content_types/content_types.t
@@ -46,6 +48,7 @@ t/package/styles/sub_write_style_sheet.t
 t/package/styles/sub_write_style_xf.t
 t/package/styles/sub_write_xf.t
 t/package/styles/sub_write_xml_declaration.t
+t/package/xml_writer/sub_write_xml_declaration.t
 t/utility/x_rowcol_to_cell.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
@@ -64,6 +67,7 @@ t/workbook/workbook_02.t
 t/workbook/workbook_03.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_write_cell.t
+t/worksheet/sub_write_cell_value.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
 t/worksheet/sub_write_ext_lst.t
@@ -79,12 +83,30 @@ t/worksheet/sub_write_sheet_format_pr.t
 t/worksheet/sub_write_sheet_pr.t
 t/worksheet/sub_write_sheet_view.t
 t/worksheet/sub_write_sheet_views.t
-t/worksheet/sub_write_value.t
 t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
 t/worksheet/worksheet_01.t
 t/worksheet/worksheet_02.t
 
 examples/README
-examples/bug_report.pl
 examples/a_simple.pl  
+examples/bug_report.pl
+examples/unicode_2022_jp.pl
+examples/unicode_2022_jp.txt
+examples/unicode_8859_11.pl
+examples/unicode_8859_11.txt
+examples/unicode_8859_7.pl
+examples/unicode_8859_7.txt
+examples/unicode_big5.pl
+examples/unicode_big5.txt
+examples/unicode_cp1251.pl
+examples/unicode_cp1251.txt
+examples/unicode_cp1256.pl
+examples/unicode_cp1256.txt
+examples/unicode_cyrillic.pl
+examples/unicode_koi8r.pl
+examples/unicode_koi8r.txt
+examples/unicode_polish_utf8.pl
+examples/unicode_polish_utf8.txt
+examples/unicode_shift_jis.pl
+examples/unicode_shift_jis.txt

@@ -1590,27 +1590,21 @@ sub write_formula {
     my $row     = $_[0];           # Zero indexed row
     my $col     = $_[1];           # Zero indexed column
     my $formula = $_[2];           # The formula text string
+    my $value   = $_[4];           # The formula value.
+    my $type    = 'f';             # The data type
 
 
     my $xf = _XF( $self, $row, $col, $_[3] );     # The cell format
-    my $type = $self->{_datatypes}->{Formula};    # The data type
 
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-
-    my $array_range = 'RC' if $formula =~ s/^{(.*)}$/$1/;
-
-    # Add the = sign if it doesn't exist
-    $formula =~ s/^([^=])/=$1/;
+    # Remove the = sign if it exist.
+    $formula =~ s/^=//;
 
 
-    # Convert A1 style references in the formula to R1C1 references
-    $formula = $self->_convert_formula( $row, $col, $formula );
-
-
-    $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $array_range ];
+    $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
 
     return 0;
 }
@@ -3941,6 +3935,7 @@ sub _write_cell {
     my $cell  = shift;
     my $type  = $cell->[0];
     my $value = $cell->[1];
+    my $xf    = $cell->[2];
 
 
     my $range = xl_rowcol_to_cell( $row, $col );
@@ -3948,14 +3943,28 @@ sub _write_cell {
 
     if ( $type eq 'n' ) {
         $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_value( $value );
+        $self->_write_cell_value( $value );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 's' ) {
         push @attributes, ('t' => 's');
 
         $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_value( $value );
+        $self->_write_cell_value( $value );
+        $self->{_writer}->endTag( 'c' );
+    }
+    elsif ( $type eq 's' ) {
+        push @attributes, ('t' => 's');
+
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_cell_value( $value );
+        $self->{_writer}->endTag( 'c' );
+    }
+    elsif ( $type eq 'f' ) {
+
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_cell_formula( $value );
+        $self->_write_cell_value( $cell->[3] );
         $self->{_writer}->endTag( 'c' );
     }
 }
@@ -3963,16 +3972,31 @@ sub _write_cell {
 
 ###############################################################################
 #
-# _write_value()
+# _write_cell_value()
 #
 # Write the cell value <v> element.
 #
-sub _write_value {
+sub _write_cell_value {
 
     my $self  = shift;
-    my $value = shift;
+    my $value = shift // '';
 
     $self->{_writer}->dataElement( 'v', $value );
+}
+
+
+###############################################################################
+#
+# _write_cell_formula()
+#
+# Write the cell formula <f> element.
+#
+sub _write_cell_formula {
+
+    my $self    = shift;
+    my $formula = shift // '';
+
+    $self->{_writer}->dataElement( 'f', $formula );
 }
 
 

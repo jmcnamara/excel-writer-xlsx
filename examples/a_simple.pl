@@ -34,8 +34,8 @@ $worksheet->write( 5, 0, 3.14159 );    # TeX revision no.?
 
 
 # Write some formulas
-#$worksheet->write(7, 0,  '=A3 + A6');
-#$worksheet->write(8, 0,  '=IF(A5>3,"Yes", "No")');
+$worksheet->write(7, 0,  '=A3 + A6');
+$worksheet->write(8, 0,  '=IF(A5>3,"Yes", "No")');
 
 
 # Write a hyperlink

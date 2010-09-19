@@ -20,9 +20,9 @@ use Test::More tests => 10;
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
 my $worksheet;
-my $got;
 my $cell_ref;
 
 

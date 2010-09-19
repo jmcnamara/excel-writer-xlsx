@@ -30,12 +30,12 @@ $worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
-# Test the _write_value() method.
+# Test the _write_cell_value() method.
 #
-$caption  = " \tWorksheet: _write_value()";
+$caption  = " \tWorksheet: _write_cell_value()";
 $expected = '<v>1</v>';
 
-$worksheet->_write_value(1);
+$worksheet->_write_cell_value(1);
 
 is( $got, $expected, $caption );
 

@@ -12,7 +12,7 @@ use warnings;
 use Excel::XLSX::Writer;
 use XML::Writer;
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 ###############################################################################
 #
@@ -57,13 +57,28 @@ is( $got, $expected, $caption );
 # Test the _write_cell() method for TODO.
 #
 $caption  = " \tWorksheet: _write_cell()";
-$expected = '<c r="B4"><f>A3+A5</f><v>0</v></c>';
+$expected = '<c r="C2"><f>A3+A5</f><v>0</v></c>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_cell( 0, 0, [ 'f', 'A3+A5', 0 ] );
+$worksheet->_write_cell( 1, 2, [ 'f', 'A3+A5', undef, 0 ] );
 
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_cell() method for TODO.
+#
+$caption  = " \tWorksheet: _write_cell()";
+$expected = '<c r="C2"><f>A3+A5</f><v></v></c>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->_write_cell( 1, 2, [ 'f', 'A3+A5'] );
+
+is( $got, $expected, $caption );
+
 
 __END__
 
