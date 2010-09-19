@@ -1,0 +1,35 @@
+#
+# Spreadsheet::WriteExcel Unicode examples.
+#
+# Sample encoded text borrowed from Sean Burke's Pod::Simple distro.
+#
+# The text is some Japanese haiku by famous poets in ISO-2202-JP.
+#
+# See the unicode_2202_jp.pl example.
+#
+Some Japanese haiku by famous poets.
+
+MATSUO BASHO (松尾芭蕉 1644 - 1694) :
+
+古池や蛙とび込む水の音
+
+(furuike ya / kawazu tobikomu / mizu no oto)
+
+
+YOSA BUSON (与謝蕪村1716 - 1783)
+
+方八里雨雲よせぬ牡丹かな
+
+(ho hachiri / amagumo yosenu / botan kana)
+
+
+MASAOKA SHIKI (正岡子規 1867 - 1902)
+
+いちはつの一輪白し春の暮
+
+(ichihatsu no / ichirin shiroshi / haruno kure)
+
+余命いくばくかある夜短し
+
+(yomei / ikubakuka aru / yo mijikashi)
+

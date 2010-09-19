@@ -8,7 +8,21 @@ Getting started
 bug_report.pl           A template for submitting bug reports.
 a_simple.pl             A simple demo of some of the features.
 
-Advanced
-========
+Intermediate
+============
+
+
+Unicode
+=======
+unicode_2022_jp.pl      Japanese: ISO-2022-JP.
+unicode_8859_11.pl      Thai:     ISO-8859_11.
+unicode_8859_7.pl       Greek:    ISO-8859_7.
+unicode_big5.pl         Chinese:  BIG5.
+unicode_cp1251.pl       Russian:  CP1251.
+unicode_cp1256.pl       Arabic:   CP1256.
+unicode_koi8r.pl        Russian:  KOI8-R.
+unicode_polish_utf8.pl  Polish :  UTF8.
+unicode_shift_jis.pl    Japanese: Shift JIS.
+
 
 

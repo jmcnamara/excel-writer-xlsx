@@ -243,8 +243,8 @@ sub _write_content_types_file {
     my $dir     = $self->{_package_dir};
     my $content = new Excel::XLSX::Writer::Package::ContentTypes;
 
-    for my $sheet_name ( @{ $self->{_sheet_names} } ) {
-        $content->_add_sheet_name( $sheet_name );
+    for my $i ( 1 .. @{ $self->{_sheet_names} } ) {
+        $content->_add_sheet_name( 'sheet' . $i );
     }
 
     # Add the sharedString rel if there is string data in the workbook.

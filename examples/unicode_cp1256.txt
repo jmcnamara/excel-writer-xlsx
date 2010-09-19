@@ -1,0 +1,16 @@
+#
+# Spreadsheet::WriteExcel Unicode examples.
+#
+# Sample encoded text borrowed from Sean Burke's Pod::Simple distro.
+#
+# The text is a paragraph in Arabic from "The Five Pillars of Islam"
+# as CP-1256.
+#
+# See the unicode_cp1256.pl example.
+#
+Arabic text from "The Five Pillars of Islam"
+
+жЏд Џг«—… »д Ќ“г ё«б ё«б —”жб «ббе ’бм «ббе Џбне ж”бг:
+«—»Џ Ё—÷ед «ббе Џ“ жћб Ён «б«”б«г Ёгд ћ«Ѕ »Ћб«Ћ бг нџднд Џде
+‘н∆« Ќ м н√ н »ед ћгнЏ« «б’б«… ж«б“я«… ж’н«г —г÷«д жЌћ
+«б»н . —ж«е «Ќгѕ ж«бЎ»—«дн Ён «бя»н— жЁн «”д«ѕе «»д бенЏ….

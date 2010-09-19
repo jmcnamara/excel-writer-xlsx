@@ -2,7 +2,7 @@
 
 #######################################################################
 #
-# A simple example of how to use the Excel::XLSX::Writer module to 
+# A simple example of how to use the Excel::XLSX::Writer module to
 # write text and numbers to an Excel xlsx file.
 #
 # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
@@ -12,7 +12,7 @@ use strict;
 use Excel::XLSX::Writer;
 
 # Create a new workbook called simple.xls and add a worksheet
-my $workbook  = Excel::XLSX::Writer->new('a_simple.xlsx');
+my $workbook = Excel::XLSX::Writer->new( 'a_simple.xlsx' );
 
 die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
 
@@ -23,14 +23,14 @@ my $worksheet = $workbook->add_worksheet();
 #
 
 # Write some text
-$worksheet->write(0, 0,  "Hi Excel!");
+$worksheet->write( 0, 0, "Hi Excel!" );
 
 
 # Write some numbers
-$worksheet->write(2, 0,  3);          # Writes 3
-$worksheet->write(3, 0,  3.00000);    # Writes 3
-$worksheet->write(4, 0,  3.00001);    # Writes 3.00001
-$worksheet->write(5, 0,  3.14159);    # TeX revision no.?
+$worksheet->write( 2, 0, 3 );          # Writes 3
+$worksheet->write( 3, 0, 3.00000 );    # Writes 3
+$worksheet->write( 4, 0, 3.00001 );    # Writes 3.00001
+$worksheet->write( 5, 0, 3.14159 );    # TeX revision no.?
 
 
 # Write some formulas
