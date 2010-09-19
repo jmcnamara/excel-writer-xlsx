@@ -12,6 +12,7 @@ lib/Excel/XLSX/Writer/Package/Packager.pm
 lib/Excel/XLSX/Writer/Package/Relationships.pm
 lib/Excel/XLSX/Writer/Package/SharedStrings.pm
 lib/Excel/XLSX/Writer/Package/Styles.pm
+lib/Excel/XLSX/Writer/Package/Theme.pm
 lib/Excel/XLSX/Writer/Package/XMLwriter.pm
 lib/Excel/XLSX/Writer/Utility.pm
 lib/Excel/XLSX/Writer/Workbook.pm

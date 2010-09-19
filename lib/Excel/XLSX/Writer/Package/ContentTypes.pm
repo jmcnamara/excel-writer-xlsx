@@ -36,17 +36,14 @@ my $app_document = 'application/vnd.openxmlformats-officedocument.';
 our @defaults = (
     [ 'rels', $app_package . 'relationships+xml' ],
     [ 'xml',  'application/xml' ],
-
-    #[ 'jpeg', 'image/jpeg' ],
 );
 
 our @overrides = (
-    [ '/docProps/app.xml',  $app_document . 'extended-properties+xml' ],
-    [ '/docProps/core.xml', $app_package . 'core-properties+xml' ],
-    [ '/xl/styles.xml',     $app_document . 'spreadsheetml.styles+xml' ],
-    [ '/xl/workbook.xml',   $app_document . 'spreadsheetml.sheet.main+xml' ],
-
-    #[ '/xl/theme/theme1.xml', $app_document . '.theme+xml' ],
+    [ '/docProps/app.xml',    $app_document . 'extended-properties+xml' ],
+    [ '/docProps/core.xml',   $app_package . 'core-properties+xml' ],
+    [ '/xl/styles.xml',       $app_document . 'spreadsheetml.styles+xml' ],
+    [ '/xl/theme/theme1.xml', $app_document . 'theme+xml' ],
+    [ '/xl/workbook.xml',     $app_document . 'spreadsheetml.sheet.main+xml' ],
 );
 
 

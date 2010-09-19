@@ -24,6 +24,7 @@ use Excel::XLSX::Writer::Package::Core;
 use Excel::XLSX::Writer::Package::Relationships;
 use Excel::XLSX::Writer::Package::SharedStrings;
 use Excel::XLSX::Writer::Package::Styles;
+use Excel::XLSX::Writer::Package::Theme;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
@@ -107,6 +108,7 @@ sub _create_package {
     $self->_write_core_file();
     $self->_write_content_types_file();
     $self->_write_styles_file();
+    $self->_write_theme_file();
     $self->_write_root_rels_file();
     $self->_write_workbook_rels_file();
 
@@ -278,6 +280,26 @@ sub _write_styles_file {
 
 ###############################################################################
 #
+# _write_theme_file()
+#
+# Write the style xml file.
+#
+sub _write_theme_file {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+    my $rels = new Excel::XLSX::Writer::Package::Theme;
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/theme';
+
+    $rels->_set_xml_writer( $dir . '/xl/theme/theme1.xml' );
+    $rels->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
 # _write_root_rels_file()
 #
 # Write the _rels/.rels xml file.
@@ -322,6 +344,7 @@ sub _write_workbook_rels_file {
             'worksheets/sheet' . $index );
     }
 
+    $rels->_add_document_relationship( '/theme', 'theme/theme1' );
     $rels->_add_document_relationship( '/styles', 'styles' );
 
     # Add the sharedString rel if there is string data in the workbook.
