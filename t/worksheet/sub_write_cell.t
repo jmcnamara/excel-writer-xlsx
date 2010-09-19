@@ -5,37 +5,63 @@
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 use Excel::XLSX::Writer;
 use XML::Writer;
 
-use Test::More tests => 1;
+use Test::More tests => 3;
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $worksheet;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet;
-my $writer    = new XML::Writer( OUTPUT => $got_fh );
-
-$worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
-# Test the _write_cell() method.
+# Test the _write_cell() method for TODO.
 #
 $caption  = " \tWorksheet: _write_cell()";
 $expected = '<c r="A1"><v>1</v></c>';
 
+$worksheet = _new_worksheet(\$got);
+
 $worksheet->_write_cell( 0, 0, [ 'n', 1 ] );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_cell() method for TODO.
+#
+$caption  = " \tWorksheet: _write_cell()";
+$expected = '<c r="B4" t="s"><v>0</v></c>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->_write_cell( 3, 1, [ 's', 0 ] );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_cell() method for TODO.
+#
+$caption  = " \tWorksheet: _write_cell()";
+$expected = '<c r="B4"><f>A3+A5</f><v>0</v></c>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->_write_cell( 0, 0, [ 'f', 'A3+A5', 0 ] );
 
 is( $got, $expected, $caption );
 

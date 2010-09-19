@@ -13,9 +13,15 @@ use strict;
 use warnings;
 use Test::More;
 
-our @ISA         = qw(Exporter);
-our @EXPORT_OK   = ();
-our @EXPORT      = qw(_expected_to_aref _got_to_aref _is_deep_diff );
+our @ISA       = qw(Exporter);
+our @EXPORT    = ();
+our @EXPORT_OK = qw(
+  _expected_to_aref
+  _got_to_aref
+  _is_deep_diff
+  _new_worksheet
+);
+
 our %EXPORT_TAGS = ();
 
 our $VERSION = '0.01';
@@ -23,8 +29,9 @@ our $VERSION = '0.01';
 
 ###############################################################################
 #
-# Read the __DATA__ section in the calling test program and return the data
-# as an array ref with some data formatting.
+# Turn the embedded XML in the __DATA__ section of the calling test program
+# into an array ref for comparison testing. Also does some data formatting
+# to make comparison easier.
 #
 sub _expected_to_aref {
 
@@ -44,7 +51,7 @@ sub _expected_to_aref {
 
 ###############################################################################
 #
-# Convert an XML doc in a string to an array ref for test comparisons.
+# Convert an XML string into an array ref for comparison testing.
 #
 sub _got_to_aref {
 
@@ -79,6 +86,25 @@ sub _is_deep_diff {
         is_deeply( $got, $expected, $caption );
     }
 
+}
+
+
+###############################################################################
+#
+# Create a new Worksheet object and bind the output to the supplied scalar ref.
+#
+sub _new_worksheet {
+
+    my $got_ref = shift;
+
+    open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
+
+    my $worksheet = new Excel::XLSX::Writer::Worksheet;
+    my $writer = new XML::Writer( OUTPUT => $got_fh );
+
+    $worksheet->{_writer} = $writer;
+
+    return $worksheet;
 }
 
 

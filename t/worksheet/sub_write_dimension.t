@@ -5,6 +5,8 @@
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 use Excel::XLSX::Writer;
@@ -31,7 +33,7 @@ my $cell_ref;
 $caption  = " \tWorksheet: _write_dimension(undef)";
 $expected = '<dimension ref="A1" />';
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 
 $worksheet->_write_dimension();
 
@@ -46,7 +48,7 @@ $cell_ref = 'A1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
 $worksheet->_write_dimension();
 
@@ -61,7 +63,7 @@ $cell_ref = 'A1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
 $worksheet->_write_dimension();
 
@@ -76,7 +78,7 @@ $cell_ref = 'XFD1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
 $worksheet->_write_dimension();
 
@@ -91,7 +93,7 @@ $cell_ref = 'XFD1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
 $worksheet->_write_dimension();
 
@@ -106,7 +108,7 @@ $cell_ref = 'A1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
 $worksheet->_write_dimension();
 
@@ -121,7 +123,7 @@ $cell_ref = 'A1:B2';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( 'A1', 'some string' );
 $worksheet->write( 'B2', 'some string' );
 $worksheet->_write_dimension();
@@ -137,7 +139,7 @@ $cell_ref = 'A1:B2';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( 'B2', 'some string' );
 $worksheet->write( 'A1', 'some string' );
 $worksheet->_write_dimension();
@@ -153,7 +155,7 @@ $cell_ref = 'B2:H11';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( 'B2',  'some string' );
 $worksheet->write( 'H11', 'some string' );
 $worksheet->_write_dimension();
@@ -169,30 +171,12 @@ $cell_ref = 'A1:XFD1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
 $expected = qq(<dimension ref="$cell_ref" />);
 
-$worksheet = _new_worksheet();
+$worksheet = _new_worksheet(\$got);
 $worksheet->write( 'A1',         'some string' );
 $worksheet->write( 'XFD1048576', 'some string' );
 $worksheet->_write_dimension();
 
 is( $got, $expected, $caption );
-
-
-###############################################################################
-#
-# Internal function used for setting up each test.
-#
-sub _new_worksheet {
-
-    $got = '';
-    open my $got_fh, '>', \$got or die "Failed to open filehandle: $!";
-
-    my $worksheet = new Excel::XLSX::Writer::Worksheet;
-    my $writer    = new XML::Writer( OUTPUT => $got_fh );
-
-    $worksheet->{_writer} = $writer;
-
-    return $worksheet;
-}
 
 
 __END__

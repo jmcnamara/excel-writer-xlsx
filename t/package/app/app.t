@@ -6,7 +6,7 @@
 #
 
 use lib 't/lib';
-use TestFunctions;
+use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff);
 use strict;
 use warnings;
 use Excel::XLSX::Writer::Package::App;
