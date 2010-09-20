@@ -2,33 +2,26 @@
 #
 # Tests for Excel::XLSX::Writer::Workbook methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
-use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff);
+use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_workbook);
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
 use Test::More tests => 1;
+
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $workbook;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet();
-my $writer    = new XML::Writer( OUTPUT => $got_fh );
-
-$workbook->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -36,6 +29,8 @@ $workbook->{_writer} = $writer;
 #
 $caption = " \tWorkbook: _assemble_xml_file()";
 
+$workbook = _new_workbook(\$got);
+$workbook->add_worksheet();
 $workbook->_assemble_xml_file();
 
 $expected = _expected_to_aref();

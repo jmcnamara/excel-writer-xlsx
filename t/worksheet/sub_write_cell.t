@@ -2,15 +2,13 @@
 #
 # Tests for Excel::XLSX::Writer::Worksheet methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
 use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
 use Test::More tests => 4;
 

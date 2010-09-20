@@ -2,31 +2,26 @@
 #
 # Tests for Excel::XLSX::Writer::Worksheet methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
 use Test::More tests => 1;
+
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $worksheet;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet;
-my $writer    = new XML::Writer( OUTPUT => $got_fh );
-
-$worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -34,6 +29,8 @@ $worksheet->{_writer} = $writer;
 #
 $caption  = " \tWorksheet: _write_cell_value()";
 $expected = '<v>1</v>';
+
+$worksheet = _new_worksheet(\$got);
 
 $worksheet->_write_cell_value(1);
 

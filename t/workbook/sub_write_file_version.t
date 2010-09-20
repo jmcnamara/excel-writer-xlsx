@@ -5,27 +5,23 @@
 # reverse('�'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_workbook';
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
 use Test::More tests => 1;
+
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $workbook;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook = Excel::XLSX::Writer->new( $tmp_fh );
-my $writer = new XML::Writer( OUTPUT => $got_fh );
-
-$workbook->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -34,6 +30,8 @@ $workbook->{_writer} = $writer;
 $caption  = " \tWorkbook: _write_file_version()";
 $expected = '<fileVersion appName="xl" lastEdited="4" '
   . 'lowestEdited="4" rupBuild="4505" />';
+
+$workbook = _new_workbook(\$got);
 
 $workbook->_write_file_version();
 

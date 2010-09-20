@@ -10,8 +10,8 @@ use TestFunctions '_new_workbook';
 use strict;
 use warnings;
 
-
 use Test::More tests => 3;
+
 
 ###############################################################################
 #

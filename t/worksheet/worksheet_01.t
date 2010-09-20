@@ -6,11 +6,9 @@
 #
 
 use lib 't/lib';
-use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff);
+use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
 use Test::More tests => 1;
 
@@ -19,22 +17,18 @@ use Test::More tests => 1;
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $worksheet;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook  = Excel::XLSX::Writer->new( $tmp_fh );
-my $worksheet = $workbook->add_worksheet();
-my $writer = new XML::Writer( OUTPUT => $got_fh );
-
-$worksheet->{_writer} = $writer;
 
 ###############################################################################
 #
 # Test the _assemble_xml_file() method.
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
+
+$worksheet = _new_worksheet(\$got);
 
 $worksheet->select();
 $worksheet->_assemble_xml_file();
