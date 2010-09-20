@@ -12,6 +12,9 @@ use Exporter;
 use strict;
 use warnings;
 use Test::More;
+use Excel::XLSX::Writer;
+use XML::Writer;
+
 
 our @ISA       = qw(Exporter);
 our @EXPORT    = ();
@@ -20,6 +23,7 @@ our @EXPORT_OK = qw(
   _got_to_aref
   _is_deep_diff
   _new_worksheet
+  _new_workbook
 );
 
 our %EXPORT_TAGS = ();
@@ -105,6 +109,26 @@ sub _new_worksheet {
     $worksheet->{_writer} = $writer;
 
     return $worksheet;
+}
+
+
+###############################################################################
+#
+# Create a new Workbook object and bind the output to the supplied scalar ref.
+#
+sub _new_workbook {
+
+    my $got_ref = shift;
+
+    open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
+    open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
+
+    my $workbook = Excel::XLSX::Writer->new( $tmp_fh );
+    my $writer = new XML::Writer( OUTPUT => $got_fh );
+
+    $workbook->{_writer} = $writer;
+
+    return $workbook;
 }
 
 

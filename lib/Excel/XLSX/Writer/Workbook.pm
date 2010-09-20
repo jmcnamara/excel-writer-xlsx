@@ -432,14 +432,34 @@ sub _store_workbook {
     my $packager = Excel::XLSX::Writer::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
+
+    # Add a default worksheet if non have been added.
+    $self->add_worksheet() if not @{ $self->{_worksheets} };
+
+    # Ensure that at least one worksheet has been selected.
+    if ( $self->{_activesheet} == 0 ) {
+        @{ $self->{_worksheets} }[0]->{_selected} = 1;
+        @{ $self->{_worksheets} }[0]->{_hidden}   = 0;
+    }
+
+    # Calculate the number of selected sheet tabs and set the active sheet.
+    foreach my $sheet ( @{ $self->{_worksheets} } ) {
+        $self->{_selected}++ if $sheet->{_selected};
+        $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
+    }
+
+    # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
+    # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
     $packager->_create_package();
 
+    # Free up the Packager object.
     $packager = undef;
 
+    # Add the files to the zip archive.
     $zip->addTree( $dir, '', sub { -f } );
 
     if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
@@ -616,6 +636,8 @@ sub _write_workbook_view {
     my $window_width  = 16095;
     my $window_height = 9660;
     my $tab_ratio     = 500;
+    my $active_tab    = $self->{_activesheet};
+    my $first_sheet   = $self->{_firstsheet};
 
     my @attributes = (
         'xWindow'      => $x_window,
@@ -623,6 +645,12 @@ sub _write_workbook_view {
         'windowWidth'  => $window_width,
         'windowHeight' => $window_height,
     );
+
+    # Store the firstSheet attribute when it isn't the default.
+    push @attributes, ( firstSheet => $first_sheet ) if $first_sheet > 0;
+
+    # Store the activeTab attribute when it isn't the first sheet.
+    push @attributes, ( activeTab => $active_tab ) if $active_tab > 0;
 
     $self->{_writer}->emptyTag( 'workbookView', @attributes );
 }
@@ -641,7 +669,8 @@ sub _write_sheets {
     $self->{_writer}->startTag( 'sheets' );
 
     for my $worksheet ( @{ $self->{_worksheets} } ) {
-        $self->_write_sheet( $worksheet->{_name}, $id_num++ );
+        $self->_write_sheet( $worksheet->{_name}, $id_num++,
+            $worksheet->{_hidden} );
     }
 
     $self->{_writer}->endTag( 'sheets' );
@@ -659,13 +688,17 @@ sub _write_sheet {
     my $self     = shift;
     my $name     = shift;
     my $sheet_id = shift;
+    my $hidden   = shift;
     my $r_id     = 'rId' . $sheet_id;
 
     my @attributes = (
         'name'    => $name,
         'sheetId' => $sheet_id,
-        'r:id'    => $r_id,
     );
+
+    push @attributes, ( 'state' => 'hidden' ) if $hidden;
+    push @attributes, ( 'r:id' => $r_id );
+
 
     $self->{_writer}->emptyTag( 'sheet', @attributes );
 }

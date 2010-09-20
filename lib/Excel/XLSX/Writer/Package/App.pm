@@ -182,12 +182,19 @@ sub _write_scale_crop {
 #
 sub _write_heading_pairs {
 
-    my $self = shift;
+    my $self        = shift;
+    my $sheet_count = @{ $self->{_sheet_names} };
+
 
     $self->{_writer}->startTag( 'HeadingPairs' );
 
-    $self->_write_vt_vector( 'variant',
-        [ [ 'lpstr', 'Worksheets' ], [ 'i4', 1 ] ] );
+    $self->_write_vt_vector(
+        'variant',
+        [
+            [ 'lpstr', 'Worksheets' ],    #
+            [ 'i4',    $sheet_count ],    #
+        ]
+    );
 
     $self->{_writer}->endTag( 'HeadingPairs' );
 }

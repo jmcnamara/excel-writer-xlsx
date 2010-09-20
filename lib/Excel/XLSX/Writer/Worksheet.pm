@@ -69,6 +69,10 @@ sub new {
     $self->{_dim_changed} = 0;
     $self->{_colinfo}     = [];
     $self->{_selection}   = [ 0, 0 ];
+    $self->{_hidden}      = 0;
+    $self->{_active}      = 0;
+    $self->{_tab_color}   = 0;
+
     $self->{_panes}       = [];
     $self->{_active_pane} = 3;
     $self->{_frozen}      = 0;
@@ -277,7 +281,8 @@ sub select {
 
     my $self = shift;
 
-    $self->{_selected} = 1;
+    $self->{_hidden}         = 0; # Selected worksheet can't be hidden.
+    $self->{_selected}       = 1;
 }
 
 
@@ -292,8 +297,28 @@ sub activate {
 
     my $self = shift;
 
-    $self->{_selected} = 1;
-    ${ $self->{_activesheet} } = $self->{_index};
+    $self->{_hidden}         = 0; # Active worksheet can't be hidden.
+    $self->{_selected}       = 1;
+    ${$self->{_activesheet}} = $self->{_index};
+}
+
+
+###############################################################################
+#
+# hide()
+#
+# Hide this worksheet.
+#
+sub hide {
+
+    my $self = shift;
+
+    $self->{_hidden}         = 1;
+
+    # A hidden worksheet shouldn't be active or selected.
+    $self->{_selected}       = 0;
+    ${$self->{_activesheet}} = 0;
+    ${$self->{_firstsheet}}  = 0;
 }
 
 
@@ -309,7 +334,8 @@ sub set_first_sheet {
 
     my $self = shift;
 
-    ${ $self->{_firstsheet} } = $self->{_index};
+    $self->{_hidden}         = 0; # Active worksheet can't be hidden.
+    ${$self->{_firstsheet}}  = $self->{_index};
 }
 
 
@@ -3719,14 +3745,16 @@ sub _write_sheet_views {
 sub _write_sheet_view {
 
     my $self             = shift;
-    my $tab_selected     = 1;
+    my $tab_selected     = $self->{_selected};
     my $view             = 'pageLayout';
     my $workbook_view_id = 0;
+    my @attributes       = ();
 
-    my @attributes = (
-        'tabSelected'    => $tab_selected,
-        'workbookViewId' => $workbook_view_id,
-    );
+    if ( $tab_selected ) {
+        push @attributes, ( 'tabSelected' => 1 );
+    }
+
+    push @attributes, ( 'workbookViewId' => $workbook_view_id );
 
     $self->{_writer}->emptyTag( 'sheetView', @attributes );
 

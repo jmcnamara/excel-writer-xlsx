@@ -148,9 +148,10 @@ sub _write_worksheet_files {
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/worksheets';
 
+    my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
         $worksheet->_set_xml_writer(
-            $dir . '/xl/worksheets/sheet' . 1 . '.xml' );
+            $dir . '/xl/worksheets/sheet' . $index++ . '.xml' );
         $worksheet->_assemble_xml_file();
 
     }

@@ -35,6 +35,7 @@ $worksheet->{_writer} = $writer;
 $caption  = " \tWorksheet: _write_sheet_views()";
 $expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0" /></sheetViews>';
 
+$worksheet->select();
 $worksheet->_write_sheet_views();
 
 is( $got, $expected, $caption );

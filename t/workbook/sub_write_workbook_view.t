@@ -5,27 +5,23 @@
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_workbook';
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
-use XML::Writer;
 
-use Test::More tests => 1;
+
+use Test::More tests => 3;
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $workbook;
 
-open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $workbook = Excel::XLSX::Writer->new( $tmp_fh );
-my $writer = new XML::Writer( OUTPUT => $got_fh );
-
-$workbook->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -34,6 +30,36 @@ $workbook->{_writer} = $writer;
 $caption  = " \tWorkbook: _write_workbook_view()";
 $expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" />';
 
+$workbook = _new_workbook(\$got);
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method. Second tab selected.
+#
+$caption  = " \tWorkbook: _write_workbook_view()";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" activeTab="1" />';
+
+$workbook = _new_workbook(\$got);
+$workbook->{_activesheet} = 1;
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method. Second tab selected. First sheet set.
+#
+$caption  = " \tWorkbook: _write_workbook_view()";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" firstSheet="1" activeTab="1" />';
+
+$workbook = _new_workbook(\$got);
+$workbook->{_firstsheet} = 1;
+$workbook->{_activesheet} = 1;
 $workbook->_write_workbook_view();
 
 is( $got, $expected, $caption );

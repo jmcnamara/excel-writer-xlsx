@@ -36,6 +36,7 @@ $worksheet->{_writer} = $writer;
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
 
+$worksheet->select();
 $worksheet->_assemble_xml_file();
 
 $expected = _expected_to_aref();

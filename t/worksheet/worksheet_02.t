@@ -36,6 +36,7 @@ $worksheet->{_writer} = $writer;
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
 
+$worksheet->select();
 $worksheet->write('B3', 123);
 $worksheet->_assemble_xml_file();
 
