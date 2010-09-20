@@ -74,6 +74,10 @@ sub _assemble_xml_file {
 
     # Close the sst tag.
     $self->{_writer}->endTag( 'sst' );
+
+    # Close the XML::Writer object and filehandle.
+    $self->{_writer}->end();
+    $self->{_writer}->getOutput()->close();
 }
 
 

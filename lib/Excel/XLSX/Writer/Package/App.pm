@@ -76,6 +76,10 @@ sub _assemble_xml_file {
     $self->_write_app_version();
 
     $self->{_writer}->endTag( 'Properties' );
+
+    # Close the XML::Writer object and filehandle.
+    $self->{_writer}->end();
+    $self->{_writer}->getOutput()->close();
 }
 
 

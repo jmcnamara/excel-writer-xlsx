@@ -93,6 +93,10 @@ sub _assemble_xml_file {
 
     # Close the style sheet tag.
     $self->{_writer}->endTag( 'styleSheet' );
+
+    # Close the XML::Writer object and filehandle.
+    $self->{_writer}->end();
+    $self->{_writer}->getOutput()->close();
 }
 
 

@@ -92,6 +92,10 @@ sub _assemble_xml_file {
     $self->_write_overrides();
 
     $self->{_writer}->endTag( 'Types' );
+
+    # Close the XML::Writer object and filehandle.
+    $self->{_writer}->end();
+    $self->{_writer}->getOutput()->close();
 }
 
 

@@ -61,7 +61,7 @@ sub _got_to_aref {
 
     my $xml_str = shift;
 
-    $xml_str =~ s/\n//;
+    $xml_str =~ s/\n//g;
 
     # Split the XML into chunks at element boundaries.
     my @data = split /(?<=>)(?=<)/, $xml_str;
