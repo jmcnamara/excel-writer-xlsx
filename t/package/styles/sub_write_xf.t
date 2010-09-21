@@ -2,30 +2,26 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
+use lib 't/lib';
+use TestFunctions '_new_style';
 use strict;
 use warnings;
-use Excel::Writer::XLSX::Package::Styles;
-use Excel::Writer::XLSX::Format;
-use XML::Writer;
 
 use Test::More tests => 1;
+
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $style;
 
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $obj = Excel::Writer::XLSX::Package::Styles->new();
-my $writer = new XML::Writer( OUTPUT => $got_fh );
-
-$obj->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -36,7 +32,9 @@ $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" />';
 
 my $format = Excel::Writer::XLSX::Format->new( 0 );
 
-$obj->_write_xf( $format );
+$style = _new_style(\$got);
+
+$style->_write_xf( $format );
 
 is( $got, $expected, $caption );
 

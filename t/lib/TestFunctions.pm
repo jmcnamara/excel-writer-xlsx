@@ -25,7 +25,7 @@ our @EXPORT_OK   = qw(
   _is_deep_diff
   _new_worksheet
   _new_workbook
-  _new_object
+  _new_style
 );
 
 our $VERSION = '0.01';
@@ -122,13 +122,24 @@ sub _new_object {
 ###############################################################################
 #
 # Create a new Worksheet object and bind the output to the supplied scalar ref.
-# This is a special case shorthand for _new_object() because it is used a lot.
 #
 sub _new_worksheet {
 
     my $got_ref = shift;
 
     return _new_object( $got_ref, 'Excel::Writer::XLSX::Worksheet' );
+}
+
+
+###############################################################################
+#
+# Create a new Style object and bind the output to the supplied scalar ref.
+#
+sub _new_style {
+
+    my $got_ref = shift;
+
+    return _new_object( $got_ref, 'Excel::Writer::XLSX::Package::Styles' );
 }
 
 

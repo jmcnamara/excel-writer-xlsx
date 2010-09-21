@@ -33,7 +33,7 @@ t/package/shared_strings/shared_strings.t
 t/package/shared_strings/sub_write_si.t
 t/package/shared_strings/sub_write_sst.t
 t/package/shared_strings/sub_write_xml_declaration.t
-t/package/styles/styles.t
+t/package/styles/styles_01.t
 t/package/styles/sub_write_border.t
 t/package/styles/sub_write_borders.t
 t/package/styles/sub_write_cell_style.t

@@ -2,31 +2,26 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
-use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff);
+use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_style);
 use strict;
 use warnings;
-use Excel::Writer::XLSX::Package::Styles;
-use XML::Writer;
 
 use Test::More tests => 1;
+
 
 ###############################################################################
 #
 # Tests setup.
 #
 my $expected;
+my $got;
 my $caption;
+my $style;
 
-open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
-
-my $obj = Excel::Writer::XLSX::Package::Styles->new();
-my $writer = new XML::Writer( OUTPUT => $got_fh );
-
-$obj->{_writer} = $writer;
 
 ###############################################################################
 #
@@ -34,12 +29,13 @@ $obj->{_writer} = $writer;
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-
 my @formats = ( Excel::Writer::XLSX::Format->new( 0, has_font => 1 ) );
 my $num_fonts = 1;
 
-$obj->_set_format_properties( \@formats, $num_fonts );
-$obj->_assemble_xml_file();
+$style = _new_style(\$got);
+
+$style->_set_format_properties( \@formats, $num_fonts );
+$style->_assemble_xml_file();
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );
