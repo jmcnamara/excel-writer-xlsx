@@ -38,9 +38,10 @@ sub new {
         _xf_index => shift || 0,
         _palette => shift,
 
+        _num_format     => 0,
         _font_index     => 0,
-        _font           => 'Arial',
-        _size           => 10,
+        _font           => 'Calibri',
+        _size           => 11,
         _bold           => 0,
         _italic         => 0,
         _color          => 0x0,
@@ -51,8 +52,6 @@ sub new {
         _font_script    => 0,
         _font_family    => 0,
         _font_charset   => 0,
-
-        _num_format => undef,
 
         _hidden => 0,
         _locked => 1,
@@ -95,7 +94,7 @@ sub new {
     bless $self, $class;
 
     # Set properties passed to Workbook::add_format()
-    $self->set_properties( @_ ) if @_;
+    $self->set_format_properties(@_) if @_;
 
     return $self;
 }
@@ -522,6 +521,31 @@ sub get_protection_properties {
 
 ###############################################################################
 #
+# get_font_key()
+#
+# Returns a unique hash key for a font. Used by Workbook->_store_all_fonts()
+#
+sub get_font_key {
+
+    my $self    = shift;
+
+    # The following elements are arranged to increase the probability of
+    # generating a unique key. Elements that hold a large range of numbers
+    # e.g. _color are placed between two binary elements such as _italic
+    #
+    my $key = "$self->{_font}$self->{_size}";
+    $key   .= "$self->{_font_script}$self->{_underline}";
+    $key   .= "$self->{_font_strikeout}$self->{_bold}$self->{_font_outline}";
+    $key   .= "$self->{_font_family}$self->{_font_charset}";
+    $key   .= "$self->{_font_shadow}$self->{_color}$self->{_italic}";
+    $key    =~ s/ /_/g; # Convert the key to a single word
+
+    return $key;
+}
+
+
+###############################################################################
+#
 # get_xf_index()
 #
 # Returns the index used by Worksheet->_XF()
@@ -557,6 +581,7 @@ sub _get_color {
         lime    => 0x0B,
         navy    => 0x12,
         orange  => 0x35,
+                    pink    => 0x21,
         purple  => 0x14,
         red     => 0x0A,
         silver  => 0x16,
@@ -581,6 +606,26 @@ sub _get_color {
 
     # or an integer in the valid range
     return $_[0];
+}
+
+
+###############################################################################
+#
+# set_type()
+#
+# Set the XF object type as 0 = cell XF or 0xFFF5 = style XF.
+#
+sub set_type {
+
+    my $self = shift;
+    my $type = $_[0];
+
+    if (defined $_[0] and $_[0] eq 0) {
+        $self->{_type} = 0x0000;
+    }
+    else {
+        $self->{_type} = 0xFFF5;
+    }
 }
 
 
@@ -757,11 +802,11 @@ sub set_rotation {
 
 ###############################################################################
 #
-# set_properties()
+# set_format_properties()
 #
 # Convert hashes of properties to method calls.
 #
-sub set_properties {
+sub set_format_properties {
 
     my $self = shift;
 
@@ -769,30 +814,19 @@ sub set_properties {
 
     while ( my ( $key, $value ) = each( %properties ) ) {
 
-        # Strip leading "-" from Tk style properties eg. -color => 'red'.
+        # Strip leading "-" from Tk style properties e.g. -color => 'red'.
         $key =~ s/^-//;
 
-
-        # Make sure method names are alphanumeric characters only, in case
-        # tainted data is passed to the eval().
-        #
-        die "Unknown method: \$self->set_$key\n" if $key =~ /\W/;
-
-
-        # Evaling $value as a string gets around the problem of some
-        # numerical format strings being evaluated as numbers, for example
-        # "00000" for a zip code.
-        #
-        if ( defined $value ) {
-            eval "\$self->set_$key('$value')";
+        # Create a sub to set the property.
+        my $sub = \&{"set_$key"};
+        $sub->($self, $value);
         }
-        else {
-            eval "\$self->set_$key(undef)";
         }
 
-        die $@ if $@;    # Re-throw the eval error.
-    }
-}
+# Renamed rarely used set_properties() to set_format_properties() to avoid
+# confusion with Workbook method of the same name. The following acts as an
+# alias for any code that uses the old name.
+*set_properties = *set_format_properties;
 
 
 ###############################################################################
@@ -808,10 +842,10 @@ sub AUTOLOAD {
     # Ignore calls to DESTROY
     return if $AUTOLOAD =~ /::DESTROY$/;
 
-    # Check for a valid method names, ie. "set_xxx_yyy".
+    # Check for a valid method names, i.e. "set_xxx_yyy".
     $AUTOLOAD =~ /.*::set(\w+)/ or die "Unknown method: $AUTOLOAD\n";
 
-    # Match the attribute, ie. "_xxx_yyy".
+    # Match the attribute, i.e. "_xxx_yyy".
     my $attribute = $1;
 
     # Check that the attribute exists
@@ -882,6 +916,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMX, John McNamara.
+ï¿½ MM-MMX, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

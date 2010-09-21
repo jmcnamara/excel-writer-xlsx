@@ -46,9 +46,8 @@ our $VERSION = '0.01';
 #
 sub new {
 
-    my $class      = shift;
-    my $self       = Excel::XLSX::Writer::Package::XMLwriter->new();
-    my $tmp_format = Excel::XLSX::Writer::Format->new();
+    my $class = shift;
+    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
 
     $self->{_filename}    = $_[0] || '';
     $self->{_1904}        = 0;
@@ -59,7 +58,6 @@ sub new {
     $self->{_fileclosed}  = 0;
     $self->{_biffsize}    = 0;
     $self->{_sheetname}   = "Sheet";
-    $self->{_tmp_format}  = $tmp_format;
     $self->{_codepage}    = 0x04E4;
     $self->{_worksheets}  = [];
     $self->{_sheetnames}  = [];
@@ -74,6 +72,9 @@ sub new {
 
 
     bless $self, $class;
+
+    # Add the default cell format.
+    $self->add_format();
 
 
     # Check for a filename unless it is an existing filehandle
@@ -455,6 +456,9 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
+    # Set the fort index numbers for the format objects.
+    $self->_prepare_fonts();
+
     # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
@@ -476,7 +480,7 @@ sub _store_workbook {
 #
 # _prepare_sst_string_data()
 #
-# TODO
+# Convert the SST string data from a hash to an array.
 #
 sub _prepare_sst_string_data {
 
@@ -498,14 +502,85 @@ sub _prepare_sst_string_data {
 
 ###############################################################################
 #
-# _store_all_xfs()
+# _prepare_fonts()
 #
-# Write all XF records.
+# Prepare the Excel FONT records.
 #
-sub _store_all_xfs {
+sub _prepare_fonts {
 
     my $self = shift;
 
+    # Iterate through the XF objects and write a FONT record if it isn't the
+    # same as the default FONT and if it hasn't already been used.
+    #
+    my %fonts;
+    my $index = 0;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        my $key = $format->get_font_key();
+
+        if ( $fonts{$key} ) {
+
+            # FONT has already been used
+            $format->{_font_index} = $fonts{$key};
+        }
+        else {
+
+            # Add a new FONT record
+
+            if ( not $format->{_font_only} ) {
+                $fonts{$key} = $index;
+            }
+
+            $format->{_font_index} = $index;
+            $index++;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# _prepare_num_formats()
+#
+#  Prepare the defined numerical formats.
+#
+sub _prepare_num_formats {
+
+    my $self = shift;
+
+    my %num_formats;
+    my @num_formats;
+    my $index = 164;    # User defined  records start from 0xA4
+
+
+    # Iterate through the XF objects and write a FORMAT record if it isn't a
+    # built-in format type and if the FORMAT string hasn't already been used.
+    #
+    for my $format ( @{ $self->{_formats} } ) {
+        my $num_format = $format->{_num_format};
+
+        # Check if $num_format is an index to a built-in format.
+        # Also check for a string of zeros, which is a valid format string
+        # but would evaluate to zero.
+        #
+        if ( $num_format !~ m/^0+\d/ ) {
+            next if $num_format =~ m/^\d+$/;    # built-in
+        }
+
+        if ( exists( $num_formats{$num_format} ) ) {
+
+            # FORMAT has already been used
+            $format->{_num_format} = $num_formats{$num_format};
+        }
+        else {
+
+            # Add a new FORMAT
+            $num_formats{$num_format} = $index;
+            $format->{_num_format} = $index;
+            $index++;
+        }
+    }
 }
 
 

@@ -99,6 +99,20 @@ sub _assemble_xml_file {
     $self->{_writer}->getOutput()->close();
 }
 
+###############################################################################
+#
+# _set_format_properties()
+#
+# Pass in the Format objects and other properties used to set the styles.
+#
+sub _set_format_properties {
+
+    my $self = shift;
+
+    $self->{_formats}      = shift;
+    $self->{_font_indexes} = shift;
+}
+
 
 ###############################################################################
 #
