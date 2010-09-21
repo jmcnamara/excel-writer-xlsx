@@ -3,7 +3,7 @@
 ##############################################################################
 #
 # A simple example of writing some Russian cyrillic text using
-# Excel::XLSX::Writer.
+# Excel::Writer::XLSX.
 #
 #
 #
@@ -13,7 +13,7 @@
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
+use Excel::Writer::XLSX;
 
 
 # In this example we generate utf8 strings from character data but in a
@@ -32,7 +32,7 @@ my $str = pack "U*", 0x0417, 0x0434, 0x0440, 0x0430, 0x0432, 0x0441,
   0x0438, 0x0440, 0x0021;
 
 
-my $workbook = Excel::XLSX::Writer->new( 'unicode_cyrillic.xlsx' );
+my $workbook = Excel::Writer::XLSX->new( 'unicode_cyrillic.xlsx' );
 
 die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
 

@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Package::Core methods.
+# Tests for Excel::Writer::XLSX::Package::Core methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Package::Core;
+use Excel::Writer::XLSX::Package::Core;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -21,7 +21,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::XLSX::Writer::Package::Core->new();
+my $obj    = Excel::Writer::XLSX::Package::Core->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;

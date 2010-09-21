@@ -1,11 +1,11 @@
-package Excel::XLSX::Writer::Worksheet;
+package Excel::Writer::XLSX::Worksheet;
 
 ###############################################################################
 #
 # Worksheet - A writer class for Excel Worksheets.
 #
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -18,11 +18,11 @@ use 5.010000;
 use strict;
 use warnings;
 use Carp;
-use Excel::XLSX::Writer::Format;
-use Excel::XLSX::Writer::Package::XMLwriter;
-use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Package::XMLwriter;
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
-our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
+our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -42,7 +42,7 @@ our $VERSION = '0.01';
 sub new {
 
     my $class  = shift;
-    my $self   = Excel::XLSX::Writer::Package::XMLwriter->new();
+    my $self   = Excel::Writer::XLSX::Package::XMLwriter->new();
     my $rowmax = 1_048_576;
     my $colmax = 16_384;
     my $strmax = 32767;
@@ -4196,11 +4196,11 @@ Worksheet - A writer class for Excel Worksheets.
 
 =head1 SYNOPSIS
 
-See the documentation for Excel::XLSX::Writer
+See the documentation for Excel::Writer::XLSX
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with Excel::XLSX::Writer.
+This module is used in conjunction with Excel::Writer::XLSX.
 
 =head1 AUTHOR
 

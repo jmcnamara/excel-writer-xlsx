@@ -1,10 +1,10 @@
-package Excel::XLSX::Writer::Package::SharedStrings;
+package Excel::Writer::XLSX::Package::SharedStrings;
 
 ###############################################################################
 #
 # SharedStrings - A class for writing the Excel XLSX sharedStrings file.
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -17,9 +17,9 @@ use 5.010000;
 use strict;
 use warnings;
 use Carp;
-use Excel::XLSX::Writer::Package::XMLwriter;
+use Excel::Writer::XLSX::Package::XMLwriter;
 
-our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
+our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -39,7 +39,7 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
-    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_writer}       = undef;
     $self->{_strings}      = [];
@@ -207,11 +207,11 @@ SharedStrings - A class for writing the Excel XLSX sharedStrings.xml file.
 
 =head1 SYNOPSIS
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::XLSX::Writer>.
+This module is used in conjunction with L<Excel::Writer::XLSX>.
 
 =head1 AUTHOR
 
@@ -229,6 +229,6 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 =head1 DISCLAIMER OF WARRANTY
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =cut

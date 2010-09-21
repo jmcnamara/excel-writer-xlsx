@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Package::Relationships methods.
+# Tests for Excel::Writer::XLSX::Package::Relationships methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
@@ -9,7 +9,7 @@ use lib 't/lib';
 use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff);
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Package::Relationships;
+use Excel::Writer::XLSX::Package::Relationships;
 use XML::Writer;
 
 use Test::More tests => 1;
@@ -23,7 +23,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::XLSX::Writer::Package::Relationships->new();
+my $obj    = Excel::Writer::XLSX::Package::Relationships->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;

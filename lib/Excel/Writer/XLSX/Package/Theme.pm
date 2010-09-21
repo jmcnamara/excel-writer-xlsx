@@ -1,10 +1,10 @@
-package Excel::XLSX::Writer::Package::Theme;
+package Excel::Writer::XLSX::Package::Theme;
 
 ###############################################################################
 #
 # Theme - A class for writing the Excel XLSX Theme file.
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -141,11 +141,11 @@ Foo - A class for writing the Excel XLSX Theme file.
 
 =head1 SYNOPSIS
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::XLSX::Writer>.
+This module is used in conjunction with L<Excel::Writer::XLSX>.
 
 =head1 AUTHOR
 
@@ -163,6 +163,6 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 =head1 DISCLAIMER OF WARRANTY
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =cut

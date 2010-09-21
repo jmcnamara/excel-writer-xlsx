@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Worksheet methods.
+# Tests for Excel::Writer::XLSX::Worksheet methods.
 #
 # reverse('�'), September 2010, John McNamara, jmcnamara@cpan.org
 #

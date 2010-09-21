@@ -1,10 +1,10 @@
-package Excel::XLSX::Writer::Package::Packager;
+package Excel::Writer::XLSX::Package::Packager;
 
 ###############################################################################
 #
 # Packager - A class for creating the Excel XLSX package.
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -18,13 +18,13 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
-use Excel::XLSX::Writer::Package::App;
-use Excel::XLSX::Writer::Package::ContentTypes;
-use Excel::XLSX::Writer::Package::Core;
-use Excel::XLSX::Writer::Package::Relationships;
-use Excel::XLSX::Writer::Package::SharedStrings;
-use Excel::XLSX::Writer::Package::Styles;
-use Excel::XLSX::Writer::Package::Theme;
+use Excel::Writer::XLSX::Package::App;
+use Excel::Writer::XLSX::Package::ContentTypes;
+use Excel::Writer::XLSX::Package::Core;
+use Excel::Writer::XLSX::Package::Relationships;
+use Excel::Writer::XLSX::Package::SharedStrings;
+use Excel::Writer::XLSX::Package::Styles;
+use Excel::Writer::XLSX::Package::Theme;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.01';
@@ -78,7 +78,7 @@ sub _set_package_dir {
 #
 # _add_workbook()
 #
-# Add the Excel::XLSX::Writer::Workbook object to the package.
+# Add the Excel::Writer::XLSX::Workbook object to the package.
 #
 sub _add_workbook {
 
@@ -169,7 +169,7 @@ sub _write_shared_strings_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $sst  = new Excel::XLSX::Writer::Package::SharedStrings;
+    my $sst  = new Excel::Writer::XLSX::Package::SharedStrings;
 
     mkdir $dir . '/xl';
 
@@ -198,7 +198,7 @@ sub _write_app_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $app  = new Excel::XLSX::Writer::Package::App;
+    my $app  = new Excel::Writer::XLSX::Package::App;
 
     mkdir $dir . '/docProps';
 
@@ -221,7 +221,7 @@ sub _write_core_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $core = new Excel::XLSX::Writer::Package::Core;
+    my $core = new Excel::Writer::XLSX::Package::Core;
 
     mkdir $dir . '/docProps';
 
@@ -244,7 +244,7 @@ sub _write_content_types_file {
 
     my $self    = shift;
     my $dir     = $self->{_package_dir};
-    my $content = new Excel::XLSX::Writer::Package::ContentTypes;
+    my $content = new Excel::Writer::XLSX::Package::ContentTypes;
 
     for my $i ( 1 .. @{ $self->{_sheet_names} } ) {
         $content->_add_sheet_name( 'sheet' . $i );
@@ -270,7 +270,7 @@ sub _write_styles_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::XLSX::Writer::Package::Styles;
+    my $rels = new Excel::Writer::XLSX::Package::Styles;
 
     mkdir $dir . '/xl';
 
@@ -289,7 +289,7 @@ sub _write_theme_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::XLSX::Writer::Package::Theme;
+    my $rels = new Excel::Writer::XLSX::Package::Theme;
 
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/theme';
@@ -309,7 +309,7 @@ sub _write_root_rels_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::XLSX::Writer::Package::Relationships;
+    my $rels = new Excel::Writer::XLSX::Package::Relationships;
 
     mkdir $dir . '/_rels';
 
@@ -333,7 +333,7 @@ sub _write_workbook_rels_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::XLSX::Writer::Package::Relationships;
+    my $rels = new Excel::Writer::XLSX::Package::Relationships;
 
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/_rels';
@@ -392,11 +392,11 @@ Packager - A class for creating the Excel XLSX package.
 
 =head1 SYNOPSIS
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::XLSX::Writer> to create an Excel XLSX container file.
+This module is used in conjunction with L<Excel::Writer::XLSX> to create an Excel XLSX container file.
 
 From Wikipedia: I<The Open Packaging Conventions (OPC) is a container-file technology initially created by Microsoft to store a combination of XML and non-XML files that together form a single entity such as an Open XML Paper Specification (OpenXPS) document>. L<http://en.wikipedia.org/wiki/Open_Packaging_Conventions>.
 
@@ -425,7 +425,7 @@ At its simplest an Excel XLSX file contains the following elements:
       |____ .rels
 
 
-The C<Excel::XLSX::Writer::Package::Packager> class co-ordinates the classes that represent the elements of the package and writes them into the XLSX file.
+The C<Excel::Writer::XLSX::Package::Packager> class co-ordinates the classes that represent the elements of the package and writes them into the XLSX file.
 
 =head1 AUTHOR
 
@@ -443,6 +443,6 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 =head1 DISCLAIMER OF WARRANTY
 
-See the documentation for L<Excel::XLSX::Writer>.
+See the documentation for L<Excel::Writer::XLSX>.
 
 =cut

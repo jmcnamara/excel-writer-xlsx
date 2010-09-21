@@ -1,11 +1,11 @@
-package Excel::XLSX::Writer::Workbook;
+package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
 # Worksheet - A writer class for Excel Worksheets.
 #
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -21,13 +21,13 @@ use Carp;
 use IO::File;
 use File::Temp 'tempdir';
 use Archive::Zip;
-use Excel::XLSX::Writer::Worksheet;
-use Excel::XLSX::Writer::Format;
-use Excel::XLSX::Writer::Package::Packager;
-use Excel::XLSX::Writer::Package::XMLwriter;
-use Excel::XLSX::Writer::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Worksheet;
+use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Package::Packager;
+use Excel::Writer::XLSX::Package::XMLwriter;
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
-our @ISA     = qw(Excel::XLSX::Writer::Package::XMLwriter);
+our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.01';
 
 
@@ -47,7 +47,7 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
-    my $self  = Excel::XLSX::Writer::Package::XMLwriter->new();
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_filename}    = $_[0] || '';
     $self->{_1904}        = 0;
@@ -79,7 +79,7 @@ sub new {
 
     # Check for a filename unless it is an existing filehandle
     if ( not ref $self->{_filename} and $self->{_filename} eq '' ) {
-        carp 'Filename required by Excel::XLSX::Writer->new()';
+        carp 'Filename required by Excel::Writer::XLSX->new()';
         return undef;
     }
 
@@ -281,7 +281,7 @@ sub add_worksheet {
         $self->{_1904},
     );
 
-    my $worksheet = Excel::XLSX::Writer::Worksheet->new( @init_data );
+    my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
     $self->{_worksheets}->[$index] = $worksheet;    # Store ref for iterator
     $self->{_sheetnames}->[$index] = $name;         # Store EXTERNSHEET names
     return $worksheet;
@@ -302,7 +302,7 @@ sub add_format {
     my @init_data = ( $self->{_xf_index}, \$self->{_palette}, @_, );
 
 
-    my $format = Excel::XLSX::Writer::Format->new( @init_data );
+    my $format = Excel::Writer::XLSX::Format->new( @init_data );
 
     $self->{_xf_index} += 1;
     push @{ $self->{_formats} }, $format;    # Store format reference
@@ -434,7 +434,7 @@ sub _store_workbook {
 
     my $self     = shift;
     my $dir      = tempdir();
-    my $packager = Excel::XLSX::Writer::Package::Packager->new();
+    my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
 
@@ -868,11 +868,11 @@ Workbook - A writer class for Excel Workbooks.
 
 =head1 SYNOPSIS
 
-See the documentation for Excel::XLSX::Writer
+See the documentation for Excel::Writer::XLSX
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with Excel::XLSX::Writer.
+This module is used in conjunction with Excel::Writer::XLSX.
 
 =head1 AUTHOR
 

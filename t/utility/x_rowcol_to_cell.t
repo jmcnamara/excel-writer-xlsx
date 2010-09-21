@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Utility.
+# Tests for Excel::Writer::XLSX::Utility.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Utility qw(xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Utility qw(xl_rowcol_to_cell);
 
 use Test::More tests => 4;
 

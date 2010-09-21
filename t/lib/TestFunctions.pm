@@ -2,7 +2,7 @@ package TestFunctions;
 
 ###############################################################################
 #
-# TestFunctions - Helper functions for Excel::XLSX::Writer test cases.
+# TestFunctions - Helper functions for Excel::Writer::XLSX test cases.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
@@ -12,7 +12,7 @@ use Exporter;
 use strict;
 use warnings;
 use Test::More;
-use Excel::XLSX::Writer;
+use Excel::Writer::XLSX;
 use XML::Writer;
 
 
@@ -128,7 +128,7 @@ sub _new_worksheet {
 
     my $got_ref = shift;
 
-    return _new_object( $got_ref, 'Excel::XLSX::Writer::Worksheet' );
+    return _new_object( $got_ref, 'Excel::Writer::XLSX::Worksheet' );
 }
 
 
@@ -145,7 +145,7 @@ sub _new_workbook {
     open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
     open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 
-    my $workbook = Excel::XLSX::Writer->new( $tmp_fh );
+    my $workbook = Excel::Writer::XLSX->new( $tmp_fh );
     my $writer = new XML::Writer( OUTPUT => $got_fh );
 
     $workbook->{_writer} = $writer;

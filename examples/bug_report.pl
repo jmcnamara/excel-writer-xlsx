@@ -21,7 +21,7 @@ REPORTING A BUG OR ASKING A QUESTION
 
     Read the documentation:
 
-        The Excel::XLSX::Writer documentation has been refined in
+        The Excel::Writer::XLSX documentation has been refined in
         response to user questions. Therefore, if you have a question it is
         possible that someone else has asked it before you and that it is
         already addressed in the documentation. Since there is a lot of
@@ -31,7 +31,7 @@ REPORTING A BUG OR ASKING A QUESTION
     Look at the example programs:
 
         There are over 40 example programs shipped with the standard
-        Excel::XLSX::Writer distribution. Many of these were created
+        Excel::Writer::XLSX distribution. Many of these were created
         in response to user questions. Try to identify an example program
         that corresponds to your query and adapt it to your needs.
 
@@ -73,7 +73,7 @@ Subject: WriteExcelXML: Problem with something.
 
 Hi John,
 
-I am using Excel::XLSX::Writer and I have encountered a problem. I
+I am using Excel::Writer::XLSX and I have encountered a problem. I
 want it to do SOMETHING but the module appears to do SOMETHING_ELSE.
 
 Here is some code that demonstrates the problem.
@@ -81,9 +81,9 @@ Here is some code that demonstrates the problem.
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::XLSX::Writer->new("reload.xls");
+    my $workbook  = Excel::Writer::XLSX->new("reload.xls");
     my $worksheet = $workbook->addworksheet();
 
     $worksheet->write(0, 0, "Hi Excel!");
@@ -100,7 +100,7 @@ print "\n    Module versions: (not all are required)\n";
 
 
 my @modules = qw(
-                  Excel::XLSX::Writer
+                  Excel::Writer::XLSX
                   Spreadsheet::WriteExcel
                   Parse::RecDescent
                   Archive::Zip

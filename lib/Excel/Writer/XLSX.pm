@@ -1,10 +1,10 @@
-package Excel::XLSX::Writer;
+package Excel::Writer::XLSX;
 
 ###############################################################################
 #
 # WriteExcelXML.
 #
-# Excel::XLSX::Writer - Create an Excel file in XML format.
+# Excel::Writer::XLSX - Create an Excel file in XML format.
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -17,9 +17,9 @@ use warnings;
 use Exporter;
 
 use strict;
-use Excel::XLSX::Writer::Workbook;
+use Excel::Writer::XLSX::Workbook;
 
-our @ISA     = qw(Excel::XLSX::Writer::Workbook Exporter);
+our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
 our $VERSION = '0.01';
 
 
@@ -30,7 +30,7 @@ our $VERSION = '0.01';
 sub new {
 
     my $class = shift;
-    my $self  = Excel::XLSX::Writer::Workbook->new( @_ );
+    my $self  = Excel::Writer::XLSX::Workbook->new( @_ );
 
     # Check for file creation failures before re-blessing
     bless $self, $class if defined $self;
@@ -48,11 +48,11 @@ __END__
 
 =head1 NAME
 
-Excel::XLSX::Writer - Create a new file in the Excel 2007+ XLSX format.
+Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.01 of Excel::XLSX::Writer, released September XX, 2010.
+This document refers to version 0.01 of Excel::Writer::XLSX, released September XX, 2010.
 
 
 
@@ -61,10 +61,10 @@ This document refers to version 0.01 of Excel::XLSX::Writer, released September 
 
 To write a string, a formatted string, a number and a formula to the first worksheet in an Excel XML spreadsheet called perl.xls:
 
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     # Create a new Excel workbook
-    my $workbook = Excel::XLSX::Writer->new("perl.xls");
+    my $workbook = Excel::Writer::XLSX->new("perl.xls");
 
     # Add a worksheet
     $worksheet = $workbook->add_worksheet();
@@ -89,28 +89,28 @@ To write a string, a formatted string, a number and a formula to the first works
 
 =head1 DESCRIPTION
 
-The C<Excel::XLSX::Writer> module can be used to create an Excel file in the 2007+ XLSX format.
+The C<Excel::Writer::XLSX> module can be used to create an Excel file in the 2007+ XLSX format.
 
 Multiple worksheets can be added to a workbook and formatting can be applied to cells. Text, numbers, and formulas can be written to the cells.
 
 
-C<Excel::XLSX::Writer> uses the same interface as C<Spreadsheet::WriteExcel>.
+C<Excel::Writer::XLSX> uses the same interface as C<Spreadsheet::WriteExcel>.
 
 This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 
 
 
-=head1 Excel::XLSX::Writer and Spreadsheet::WriteExcel
+=head1 Excel::Writer::XLSX and Spreadsheet::WriteExcel
 
-C<Excel::XLSX::Writer> uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary format.
+C<Excel::Writer::XLSX> uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary format.
 
-While Excel::XLSX::Writer doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will.
+While Excel::Writer::XLSX doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will.
 
 
 =head1 QUICK START
 
-Excel::XLSX::Writer tries to provide an interface to as many of Excel's features as possible. As a result there is a lot of documentation to accompany the interface and it can be difficult at first glance to see what it important and what is not. So for those of you who prefer to assemble Ikea furniture first and then read the instructions, here are three easy steps:
+Excel::Writer::XLSX tries to provide an interface to as many of Excel's features as possible. As a result there is a lot of documentation to accompany the interface and it can be difficult at first glance to see what it important and what is not. So for those of you who prefer to assemble Ikea furniture first and then read the instructions, here are three easy steps:
 
 1. Create a new Excel I<workbook> (i.e. file) using C<new()>.
 
@@ -120,9 +120,9 @@ Excel::XLSX::Writer tries to provide an interface to as many of Excel's features
 
 Like this:
 
-    use Excel::XLSX::Writer;                             # Step 0
+    use Excel::Writer::XLSX;                             # Step 0
 
-    my $workbook = Excel::XLSX::Writer->new("perl.xls"); # Step 1
+    my $workbook = Excel::Writer::XLSX->new("perl.xls"); # Step 1
     $worksheet   = $workbook->add_worksheet();                  # Step 2
     $worksheet->write('A1', "Hi Excel!");                       # Step 3
 
@@ -135,7 +135,7 @@ Those of you who read the instructions first and assemble the furniture afterwar
 
 =head1 WORKBOOK METHODS
 
-The Excel::XLSX::Writer module provides an object oriented interface to a new Excel workbook. The following methods are available through a new workbook.
+The Excel::Writer::XLSX module provides an object oriented interface to a new Excel workbook. The following methods are available through a new workbook.
 
     new()
     close()
@@ -149,7 +149,7 @@ The Excel::XLSX::Writer module provides an object oriented interface to a new Ex
     use_lower_cell_limits()
 
     *   Not yet supported. See Spreadsheet::WriteExcel.
-    **  Not required by Excel::XLSX::Writer.
+    **  Not required by Excel::Writer::XLSX.
 
 If you are unfamiliar with object oriented interfaces or the way that they are implemented in Perl have a look at C<perlobj> and C<perltoot> in the main Perl documentation.
 
@@ -160,33 +160,33 @@ If you are unfamiliar with object oriented interfaces or the way that they are i
 
 A new Excel workbook is created using the C<new()> constructor which accepts either a filename or a filehandle as a parameter. The following example creates a new Excel file based on a filename:
 
-    my $workbook  = Excel::XLSX::Writer->new('filename.xls');
+    my $workbook  = Excel::Writer::XLSX->new('filename.xls');
     my $worksheet = $workbook->add_worksheet();
     $worksheet->write(0, 0, 'Hi Excel!');
 
 Here are some other examples of using C<new()> with filenames:
 
-    my $workbook1 = Excel::XLSX::Writer->new($filename);
-    my $workbook2 = Excel::XLSX::Writer->new('/tmp/filename.xls');
-    my $workbook3 = Excel::XLSX::Writer->new("c:\\tmp\\filename.xls");
-    my $workbook4 = Excel::XLSX::Writer->new('c:\tmp\filename.xls');
+    my $workbook1 = Excel::Writer::XLSX->new($filename);
+    my $workbook2 = Excel::Writer::XLSX->new('/tmp/filename.xls');
+    my $workbook3 = Excel::Writer::XLSX->new("c:\\tmp\\filename.xls");
+    my $workbook4 = Excel::Writer::XLSX->new('c:\tmp\filename.xls');
 
 The last two examples demonstrates how to create a file on DOS or Windows where it is necessary to either escape the directory separator C<\> or to use single quotes to ensure that it isn't interpolated. For more information see C<perlfaq5: Why can't I use "C:\temp\foo" in DOS paths?>.
 
-The C<new()> constructor returns a Excel::XLSX::Writer object that you can use to add worksheets and store data. It should be noted that although C<my> is not specifically required it defines the scope of the new workbook variable and, in the majority of cases, ensures that the workbook is closed properly without explicitly calling the C<close()> method.
+The C<new()> constructor returns a Excel::Writer::XLSX object that you can use to add worksheets and store data. It should be noted that although C<my> is not specifically required it defines the scope of the new workbook variable and, in the majority of cases, ensures that the workbook is closed properly without explicitly calling the C<close()> method.
 
 If the file cannot be created, due to file permissions or some other reason,  C<new> will return C<undef>. Therefore, it is good practice to check the return value of C<new> before proceeding. As usual the Perl variable C<$!> will be set if there is a file creation error. You will also see one of the warning messages detailed in L<DIAGNOSTICS>:
 
-    my $workbook  = Excel::XLSX::Writer->new('protected.xls');
+    my $workbook  = Excel::Writer::XLSX->new('protected.xls');
     die "Problems creating new Excel file: $!" unless defined $workbook;
 
 You can also pass a valid filehandle to the C<new()> constructor. For example in a CGI program you could do something like this:
 
-    my $workbook  = Excel::XLSX::Writer->new(\*STDOUT);
+    my $workbook  = Excel::Writer::XLSX->new(\*STDOUT);
 
 For CGI programs you can also use the special Perl filename C<'-'> which will redirect the output to STDOUT:
 
-    my $workbook  = Excel::XLSX::Writer->new('-');
+    my $workbook  = Excel::Writer::XLSX->new('-');
 
 See also, the C<cgi.pl> program in the C<examples> directory of the distro.
 
@@ -196,14 +196,14 @@ However, this special case will not work in C<mod_perl> programs where you will 
     ...
     tie *XLS, 'Apache';
 
-    my $workbook  = Excel::XLSX::Writer->new(\*XLS);
+    my $workbook  = Excel::Writer::XLSX->new(\*XLS);
     ...
 
     # mod_perl 2
     ...
     tie *XLS => $r;  # Tie to the Apache::RequestRec object
 
-    my $workbook  = Excel::XLSX::Writer->new(\*XLS);
+    my $workbook  = Excel::Writer::XLSX->new(\*XLS);
     ...
 
 See also, the C<mod_perl1.pl> and C<mod_perl2.pl> programs in the C<examples> directory of the distro.
@@ -257,7 +257,7 @@ If the C<new()>, C<add_worksheet()> or C<add_format()> methods are called in sub
 
 =back
 
-The reason for this is that Excel::XLSX::Writer relies on Perl's C<DESTROY> mechanism to trigger destructor methods in a specific sequence. This may not happen in cases where the Workbook, Worksheet and Format variables are not lexically scoped or where they have different lexical scopes.
+The reason for this is that Excel::Writer::XLSX relies on Perl's C<DESTROY> mechanism to trigger destructor methods in a specific sequence. This may not happen in cases where the Workbook, Worksheet and Format variables are not lexically scoped or where they have different lexical scopes.
 
 In general, if you create a file with a size of 0 bytes or you fail to create a file you need to call C<close()>.
 
@@ -270,7 +270,7 @@ The return value of C<close()> is the same as that returned by perl when it clos
 
 =head2 set_tempdir()
 
-This method isn't used by Excel::XLSX::Writer. It is only required by Spreadsheet::WriteExcel.
+This method isn't used by Excel::Writer::XLSX. It is only required by Spreadsheet::WriteExcel.
 
 
 
@@ -305,7 +305,7 @@ See the L<CELL FORMATTING> section for more details about Format properties and 
 
 =head2 set_custom_color($index, $red, $green, $blue)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 The C<set_custom_color()> method can be used to override one of the built-in palette values with a more suitable colour.
 
@@ -388,11 +388,11 @@ Array slices are explained in the perldata manpage.
 
 =head2 set_1904()
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 Excel stores dates as real numbers where the integer part stores the number of days since the epoch and the fractional part stores the percentage of the day. The epoch can be either 1900 or 1904. Excel for Windows uses 1900 and Excel for Macintosh uses 1904. However, Excel on either platform will convert automatically between one system and the other.
 
-Excel::XLSX::Writer stores dates in the 1900 format by default. If you wish to change this you can call the C<set_1904()> workbook method. You can query the current value by calling the C<get_1904()> workbook method. This returns 0 for 1900 and 1 for 1904.
+Excel::Writer::XLSX stores dates in the 1900 format by default. If you wish to change this you can call the C<set_1904()> workbook method. You can query the current value by calling the C<get_1904()> workbook method. This returns 0 for 1900 and 1 for 1904.
 
 See also L<DATES IN EXCEL> for more information about working with Excel's date system.
 
@@ -403,11 +403,11 @@ In general you probably won't need to use C<set_1904()>.
 
 =head2 set_codepage($codepage)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
-The default code page or character set used by Excel::XLSX::Writer is ANSI. This is also the default used by Excel for Windows. Occasionally however it may be necessary to change the code page via the C<set_codepage()> method.
+The default code page or character set used by Excel::Writer::XLSX is ANSI. This is also the default used by Excel for Windows. Occasionally however it may be necessary to change the code page via the C<set_codepage()> method.
 
-Changing the code page may be required if your are using Excel::XLSX::Writer on the Macintosh and you are using characters outside the ASCII 128 character set:
+Changing the code page may be required if your are using Excel::Writer::XLSX on the Macintosh and you are using characters outside the ASCII 128 character set:
 
     $workbook->set_codepage(1); # ANSI, MS Windows
     $workbook->set_codepage(2); # Apple Macintosh
@@ -419,7 +419,7 @@ The C<set_codepage()> method is rarely required.
 
 =head2 use_lower_cell_limits()
 
-Excel 2007 allows cell limits of 1,048,576 rows x 16,384 columns. These limits are supported by Excel::XLSX::Writer for versions >= 0.11.
+Excel 2007 allows cell limits of 1,048,576 rows x 16,384 columns. These limits are supported by Excel::Writer::XLSX for versions >= 0.11.
 
 For backwards compatibility the older limits of 65,536 rows x 256 columns can still be imposed via the C<use_lower_cell_limits()> method.
 
@@ -470,7 +470,7 @@ The following methods are available through a new worksheet:
     filter_column()
 
     *   Not yet supported. See Spreadsheet::WriteExcel.
-    **  Not required by Excel::XLSX::Writer.
+    **  Not required by Excel::Writer::XLSX.
     *** Not supported by Excel XML.
 
 
@@ -478,7 +478,7 @@ The following methods are available through a new worksheet:
 
 =head2 Cell notation
 
-Excel::XLSX::Writer supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
+Excel::Writer::XLSX supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
 
 Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. For example:
 
@@ -503,16 +503,16 @@ In formulas and applicable methods you can also use the C<A:A> column notation:
 
     $worksheet->write('A1', '=SUM(B:B)');
 
-The C<Excel::XLSX::Writer::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
+The C<Excel::Writer::XLSX::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
 
-    use Excel::XLSX::Writer::Utility;
+    use Excel::Writer::XLSX::Utility;
 
     ($row, $col)    = xl_cell_to_rowcol('C2');  # (1, 2)
     $str            = xl_rowcol_to_cell(1, 2);  # C2
 
 For simplicity, the parameter lists for the worksheet method calls in the following sections are given in terms of row-column notation. In all cases it is also possible to use A1 notation.
 
-Note: in Excel it is also possible to use a R1C1 notation. This is not supported by Excel::XLSX::Writer.
+Note: in Excel it is also possible to use a R1C1 notation. This is not supported by Excel::Writer::XLSX.
 
 
 
@@ -825,9 +825,9 @@ The C<write_row()> method allows the following idiomatic conversion of a text fi
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::XLSX::Writer->new('file.xls');
+    my $workbook  = Excel::Writer::XLSX->new('file.xls');
     my $worksheet = $workbook->add_worksheet();
 
     open INPUT, 'file.txt' or die "Couldn't open file: $!";
@@ -923,7 +923,7 @@ A date should always have a C<$format>, otherwise it will appear as a number, se
     my $date_format = $workbook->add_format(num_format => 'mm/dd/yy');
     $worksheet->write_date_time('A1', '2004-05-13T23:20', $date_format);
 
-Excel::XLSX::Writer also allows Excel's newer text description formats:
+Excel::Writer::XLSX also allows Excel's newer text description formats:
 
     General Date
     Short Date
@@ -957,7 +957,7 @@ The parameters C<$format>, C<$string> and C<$tip> are optional. Note however tha
 
     my $format = $workbook->add_format(color => 'blue', underline => 1);
 
-You can add a I<tooltip> to the url by specifying the C<$tip> parameter. This is feature isn't supported in C<Excel::XLSX::Writer>.
+You can add a I<tooltip> to the url by specifying the C<$tip> parameter. This is feature isn't supported in C<Excel::Writer::XLSX>.
 
 There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and  C<mailto:>:
 
@@ -988,7 +988,7 @@ You can also link to a named range in the target worksheet. For example say you 
 
     $worksheet->write_url('A14', 'external:c:\temp\foo.xls#my_name');
 
-Note, you cannot currently create named ranges with C<Excel::XLSX::Writer>.
+Note, you cannot currently create named ranges with C<Excel::Writer::XLSX>.
 
 Excel requires that worksheet names containing spaces or non alphanumeric characters are single quoted as follows C<'Sales Data'!A1>. If you need to do this in a single quoted string then you can either escape the single quotes C<\'> or use the quote operator C<q{}> as described in C<perlop> in the main Perl documentation.
 
@@ -1008,7 +1008,7 @@ See also, the note about L<Cell notation>.
 
 =head2 write_url_range($row1, $col1, $row2, $col2, $url, $string, $format)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 This method is essentially the same as the C<write_url()> method described above. The main difference is that you can specify a link for a range of cells:
 
@@ -1079,13 +1079,13 @@ Note: Array formulas are not supported by Spreadsheet::WriteExcel.
 
 =head2 store_formula($formula)
 
-This method isn't used by Excel::XLSX::Writer. It is only required by Spreadsheet::WriteExcel.
+This method isn't used by Excel::Writer::XLSX. It is only required by Spreadsheet::WriteExcel.
 
 
 
 =head2 repeat_formula($row, $col, $formula, $format, ($pattern => $replace, ...))
 
-This method isn't used by Excel::XLSX::Writer. It is only required by Spreadsheet::WriteExcel.
+This method isn't used by Excel::Writer::XLSX. It is only required by Spreadsheet::WriteExcel.
 
 
 
@@ -1093,7 +1093,7 @@ This method isn't used by Excel::XLSX::Writer. It is only required by Spreadshee
 
 =head2 write_comment($row, $column, $string)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 The C<write_comment()> method is used to add a comment to a cell. A cell comment is indicated in Excel by a small red triangle in the upper right-hand corner of the cell. Moving the cursor over the red triangle will cause the comment to appear.
 
@@ -1119,7 +1119,7 @@ You can safely delete the user defined C<write_comment()> code from your old pro
 
 =head2 add_write_handler($re, $code_ref)
 
-This method is used to extend the Excel::XLSX::Writer write() method to handle user defined data.
+This method is used to extend the Excel::Writer::XLSX write() method to handle user defined data.
 
 If you refer to the section on C<write()> above you will see that it acts as an alias for several more specific C<write_*> methods. However, it doesn't always act in exactly the way that you would like it to.
 
@@ -1213,7 +1213,7 @@ The C<get_name()> method is used to retrieve the name of a worksheet. For exampl
 
 =head2 activate()
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 The C<activate()> method is used to specify which worksheet is initially visible in a multi-sheet workbook:
 
@@ -1230,7 +1230,7 @@ This is similar to the Excel VBA activate method. More than one worksheet can be
 
 =head2 select()
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 The C<select()> method is used to indicate that a worksheet is selected in a multi-sheet workbook:
 
@@ -1245,7 +1245,7 @@ A selected worksheet has its tab highlighted. Selecting worksheets is a way of g
 
 =head2 set_first_sheet()
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 The C<activate()> method determines which worksheet is initially selected. However, if there are a large number of worksheets the selected worksheet may not appear on the screen. To avoid this you can select which is the leftmost visible worksheet using C<set_first_sheet()>:
 
@@ -1296,14 +1296,14 @@ You can optionally add a password to the worksheet protection:
 
     $worksheet->protect('drowssap');
 
-Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data in any way and it is very easy to deactivate. Therefore, do not use the above method if you wish to protect sensitive data or calculations. However, before you get worried, Excel's own workbook level password protection does provide strong encryption in Excel 97+. For technical reasons this will never be supported by C<Excel::XLSX::Writer>.
+Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data in any way and it is very easy to deactivate. Therefore, do not use the above method if you wish to protect sensitive data or calculations. However, before you get worried, Excel's own workbook level password protection does provide strong encryption in Excel 97+. For technical reasons this will never be supported by C<Excel::Writer::XLSX>.
 
 
 
 
 =head2 set_selection($first_row, $first_col, $last_row, $last_col)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 This method can be used to specify which cell or cells are selected in a worksheet. The most common requirement is to select a single cell, in which case C<$last_row> and C<$last_col> can be omitted. The active cell within a selected range is determined by the order in which C<$first> and C<$last> are specified. It is also possible to specify a cell or a range using A1 notation. See the note about L<Cell notation>.
 
@@ -1411,7 +1411,7 @@ The C<$symbols_below> parameter is used to control whether the row outline symbo
 
 The C<symbols_right> parameter is used to control whether the column outline symbol will appear to the left or the right of the outline level bar. The default setting is 1 for symbols to appear to the right of the outline level bar.
 
-The C<$auto_style> parameter is used to control whether the automatic outline generator in Excel uses automatic styles when creating an outline. This has no effect on a file generated by C<Excel::XLSX::Writer> but it does have an effect on how the worksheet behaves after it is created. The default setting is 0 for "Automatic Styles" to be turned off.
+The C<$auto_style> parameter is used to control whether the automatic outline generator in Excel uses automatic styles when creating an outline. This has no effect on a file generated by C<Excel::Writer::XLSX> but it does have an effect on how the worksheet behaves after it is created. The default setting is 0 for "Automatic Styles" to be turned off.
 
 The default settings for all of these parameters correspond to Excel's default parameters.
 
@@ -1423,7 +1423,7 @@ The worksheet parameters controlled by C<outline_settings()> are rarely used.
 
 =head2 freeze_panes($row, $col, $top_row, $left_col)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 This method can be used to divide a worksheet into horizontal or vertical regions known as panes and to also "freeze" these panes so that the splitter bars are not visible. This is the same as the C<Window-E<gt>Freeze Panes> menu command in Excel
 
@@ -1500,7 +1500,7 @@ The full possibilities of this method are shown in the C<merge3.pl>, C<merge4.pl
 
 =head2 set_zoom($scale)
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 Set the worksheet zoom factor in the range C<10 E<lt>= $scale E<lt>= 400>:
 
@@ -1617,7 +1617,7 @@ The following methods are available for page set-up:
     set_h_pagebreaks()
     set_v_pagebreaks()
 
-A common requirement when working with Excel::XLSX::Writer is to apply the same page set-up features to all of the worksheets in a workbook. To do this you can use the C<sheets()> method of the C<workbook> class to access the array of worksheets in a workbook:
+A common requirement when working with Excel::Writer::XLSX is to apply the same page set-up features to all of the worksheets in a workbook. To do this you can use the C<sheets()> method of the C<workbook> class to access the array of worksheets in a workbook:
 
     foreach $worksheet ($workbook->sheets()) {
        $worksheet->set_landscape();
@@ -2167,7 +2167,7 @@ The Perl/Tk style of adding properties is also supported:
 
 The default format is Arial 10 with all other properties off.
 
-Each unique format in Excel::XLSX::Writer must have a corresponding Format object. It isn't possible to use a Format with a write() method and then redefine the Format for use at a later stage. This is because a Format is applied to a cell not in its current state but in its final state. Consider the following example:
+Each unique format in Excel::Writer::XLSX must have a corresponding Format object. It isn't possible to use a Format with a write() method and then redefine the Format for use at a later stage. This is because a Format is applied to a cell not in its current state but in its final state. Consider the following example:
 
     my $format = $workbook->add_format();
     $format->set_bold();
@@ -2484,7 +2484,7 @@ The colour format should have one of the following values:
 
 Alternatively you can specify the colour based on a colour index as follows: C<[Color n]>, where n is a standard Excel colour index - 7. See the 'Standard colors' worksheet created by formats.pl.
 
-For more information refer to the documentation on formatting in the C<doc> directory of the Excel::XLSX::Writer distro, the Excel on-line help or to the tutorial at: http://support.microsoft.com/support/Excel/Content/Formats/default.asp and http://support.microsoft.com/support/Excel/Content/Formats/codes.asp
+For more information refer to the documentation on formatting in the C<doc> directory of the Excel::Writer::XLSX distro, the Excel on-line help or to the tutorial at: http://support.microsoft.com/support/Excel/Content/Formats/default.asp and http://support.microsoft.com/support/Excel/Content/Formats/codes.asp
 
 You should ensure that the format string is valid in Excel prior to using it in WriteExcelXML.
 
@@ -2869,10 +2869,10 @@ Note: this is not a copy constructor, both objects must exist prior to copying.
 
 =head1 COLOURS IN EXCEL
 
-B<Note:> This method is not yet supported by Excel::XLSX::Writer. See Spreadsheet::WriteExcel if you need this feature.
+B<Note:> This method is not yet supported by Excel::Writer::XLSX. See Spreadsheet::WriteExcel if you need this feature.
 
 
-Excel provides a colour palette of 56 colours. In Excel::XLSX::Writer these colours are accessed via their palette index in the range 8..63. This index is used to set the colour of fonts, cell patterns and cell borders. For example:
+Excel provides a colour palette of 56 colours. In Excel::Writer::XLSX these colours are accessed via their palette index in the range 8..63. This index is used to set the colour of fonts, cell patterns and cell borders. For example:
 
     my $format = $workbook->add_format(
                                         color => 12, # index for blue
@@ -2923,7 +2923,7 @@ The default Excel colour palette is shown in C<palette.html> in the C<doc> direc
 
 =head1 DATES IN EXCEL
 
-The following methods  will work with Excel::XLSX::Writer but they apply more to Spreadsheet::WriteExcel since Excel XML has another relatively simpler method of dealing with dates. See the C<write_date_time()> Worksheet method.
+The following methods  will work with Excel::Writer::XLSX but they apply more to Spreadsheet::WriteExcel since Excel XML has another relatively simpler method of dealing with dates. See the C<write_date_time()> Worksheet method.
 
 Dates and times in Excel are represented by real numbers, for example "Jan 1 2001 12:30 AM" is represented by the number 36892.521.
 
@@ -2934,7 +2934,7 @@ The epoch can be either 1900 or 1904. Excel for Windows uses 1900 and Excel for 
     1900: 0 January 1900 i.e. 31 December 1899
     1904: 1 January 1904
 
-By default Excel::XLSX::Writer uses the Windows/1900 format although it generally isn't an issue since Excel on Windows and the Macintosh will convert automatically between one system and the other. To use the 1904 epoch you must use the C<set_1904()> workbook method.
+By default Excel::Writer::XLSX uses the Windows/1900 format although it generally isn't an issue since Excel on Windows and the Macintosh will convert automatically between one system and the other. To use the 1904 epoch you must use the C<set_1904()> workbook method.
 
 There are two things to note about the 1900 date format. The first is that the epoch starts on 0 January 1900. The second is that the year 1900 is erroneously but deliberately treated as a leap year. Therefore you must add an extra day to dates after 28 February 1900. The reason for this anomaly is explained at http://support.microsoft.com/support/kb/articles/Q181/3/70.asp
 
@@ -2944,7 +2944,7 @@ A date or time in Excel is like any other number. To display the number as a dat
     $worksheet->write('A1', 36892.521 , $format); # Jan 1 2001 12:30 AM
 
 
-The C<Excel::XLSX::Writer::Utility> module that is included in the distro contains helper functions for dealing with dates and times in Excel, for example:
+The C<Excel::Writer::XLSX::Utility> module that is included in the distro contains helper functions for dealing with dates and times in Excel, for example:
 
     $date = xl_date_list(2002, 1, 1);         # 37257
     $date = xl_parse_date("11 July 1997");    # 35622
@@ -2963,7 +2963,7 @@ It is also possible to get Excel to calculate dates for you by defining a functi
 
     $worksheet->write('A1', '=DATEVALUE("1-Jan-2001")');
 
-However, this carries a performance overhead in Excel::XLSX::Writer due to the parsing of the formula and it shouldn't be used for programs that deal with a large number of dates, unless you use it in conjunction with C<store_formula()> and C<repeat_formula()> .
+However, this carries a performance overhead in Excel::Writer::XLSX due to the parsing of the formula and it shouldn't be used for programs that deal with a large number of dates, unless you use it in conjunction with C<store_formula()> and C<repeat_formula()> .
 
 
 
@@ -3017,7 +3017,7 @@ Clicking on the minus sign on the level 1 outline will collapse the remaining ro
      +     | . |  ...  |  ...  |  ...  |  ...  |  ...
 
 
-Grouping in C<Excel::XLSX::Writer> is achieved by setting the outline level via the C<set_row()> and C<set_column()> worksheet methods:
+Grouping in C<Excel::Writer::XLSX> is achieved by setting the outline level via the C<set_row()> and C<set_column()> worksheet methods:
 
     set_row($row, $height, $format, $hidden, $level)
     set_column($first_col, $last_col, $width, $format, $hidden, $level)
@@ -3058,7 +3058,7 @@ However, this and other constraints will be removed in future versions. They are
 
 =head2 Introduction
 
-The following is a brief introduction to formulas and functions in Excel and Excel::XLSX::Writer.
+The following is a brief introduction to formulas and functions in Excel and Excel::Writer::XLSX.
 
 A formula is a string that begins with an equals sign:
 
@@ -3071,9 +3071,9 @@ Cells in Excel are referenced using the A1 notation system where the column is d
 
 
 
- The C<Excel::XLSX::Writer::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
+ The C<Excel::Writer::XLSX::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
 
-    use Excel::XLSX::Writer::Utility;
+    use Excel::Writer::XLSX::Utility;
 
     ($row, $col) = xl_cell_to_rowcol('C2');  # (1, 2)
     $str         = xl_rowcol_to_cell(1, 2);  # C2
@@ -3140,12 +3140,12 @@ The following table lists the operators that are available in Excel's formulas. 
     [2]: This range is equivalent to cells A1, A2, A3 and A4.
     [3]: The comma behaves like the list separator in Perl.
 
-The range and comma operators can have different symbols in non-English versions of Excel. These will be supported in a later version of Excel::XLSX::Writer. European users of Excel take note:
+The range and comma operators can have different symbols in non-English versions of Excel. These will be supported in a later version of Excel::Writer::XLSX. European users of Excel take note:
 
     $worksheet->write('A1', '=SUM(1; 2; 3)'); # Wrong!!
     $worksheet->write('A1', '=SUM(1, 2, 3)'); # Okay
 
-The following table lists all of the core functions supported by Excel 5 and Excel::XLSX::Writer. Any additional functions that are available through the "Analysis ToolPak" or other add-ins are not supported. These functions have all been tested to verify that they work.
+The following table lists all of the core functions supported by Excel 5 and Excel::Writer::XLSX. Any additional functions that are available through the "Analysis ToolPak" or other add-ins are not supported. These functions have all been tested to verify that they work.
 
     ABS           DB            INDIRECT      NORMINV       SLN
     ACOS          DCOUNT        INFO          NORMSDIST     SLOPE
@@ -3197,7 +3197,7 @@ The following table lists all of the core functions supported by Excel 5 and Exc
 For a general introduction to Excel's formulas and an explanation of the syntax of the function refer to the Excel help files or the following links: http://msdn.microsoft.com/library/default.asp?URL=/library/officedev/office97/s88f2.htm and http://msdn.microsoft.com/library/default.asp?URL=/library/en-us/office97/s992f.htm
 
 
-If your formula doesn't work in Excel::XLSX::Writer try the following:
+If your formula doesn't work in Excel::Writer::XLSX try the following:
 
     1. Verify that the formula works in Excel (or Gnumeric or OpenOffice.org).
     2. Ensure that it isn't on the Caveats list shown above.
@@ -3215,16 +3215,16 @@ If your formula doesn't work in Excel::XLSX::Writer try the following:
 
 =head2 Example 1
 
-The following example shows some of the basic features of Excel::XLSX::Writer.
+The following example shows some of the basic features of Excel::Writer::XLSX.
 
 
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     # Create a new workbook called simple.xls and add a worksheet
-    my $workbook  = Excel::XLSX::Writer->new("simple.xls");
+    my $workbook  = Excel::Writer::XLSX->new("simple.xls");
     my $worksheet = $workbook->add_worksheet();
 
     # The general syntax is write($row, $column, $token). Note that row and
@@ -3259,10 +3259,10 @@ The following is a general example which demonstrates some features of working w
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     # Create a new Excel workbook
-    my $workbook = Excel::XLSX::Writer->new("regions.xls");
+    my $workbook = Excel::Writer::XLSX->new("regions.xls");
 
     # Add some worksheets
     my $north = $workbook->add_worksheet('North');
@@ -3303,7 +3303,7 @@ The following is a general example which demonstrates some features of working w
 This example shows how to use a conditional numerical format with colours to indicate if a share price has gone up or down.
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     # Create a new workbook and add a worksheet
     my $workbook  = Spreadsheet::WriteExcel->new('stocks.xls');
@@ -3375,7 +3375,7 @@ The following is a simple example of using functions.
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     # Create a new workbook and add a worksheet
     my $workbook  = Spreadsheet::WriteExcel->new('stats.xls');
@@ -3442,11 +3442,11 @@ The following example converts a tab separated file called C<tab.txt> into an Ex
     #!/usr/bin/perl -w
 
     use strict;
-    use Excel::XLSX::Writer;
+    use Excel::Writer::XLSX;
 
     open (TABFILE, 'tab.txt') or die "tab.txt: $!";
 
-    my $workbook  = Excel::XLSX::Writer->new('tab.xls');
+    my $workbook  = Excel::Writer::XLSX->new('tab.xls');
     my $worksheet = $workbook->add_worksheet();
 
     # Row and column are zero indexed
@@ -3476,7 +3476,7 @@ See the examples/csv2xls link here: L<http://search.cpan.org/~hmbrand/Text-CSV_X
 =head2 Additional Examples
 
 The following is a description of the example files that are provided
-with Excel::XLSX::Writer, in the C<examples> directory of the distribution file. They are intended to demonstrate the
+with Excel::Writer::XLSX, in the C<examples> directory of the distribution file. They are intended to demonstrate the
 different features and options of the module.
 
     Getting started
@@ -3617,7 +3617,7 @@ Use the standard Unix style installation, a ppm for Windows users will be availa
 
 =head1 PORTABILITY
 
-Excel::XLSX::Writer should work on any platform that perl runs on.
+Excel::Writer::XLSX should work on any platform that perl runs on.
 
 
 
@@ -3627,7 +3627,7 @@ Excel::XLSX::Writer should work on any platform that perl runs on.
 
 =over 4
 
-=item Filename required by Excel::XLSX::Writer->new()
+=item Filename required by Excel::Writer::XLSX->new()
 
 A filename must be given in the constructor.
 
@@ -3798,7 +3798,7 @@ Also, here are some requested features that cannot be added because they aren't 
 
 =head1 REPOSITORY
 
-The Excel::XLSX::Writer source code in host on github: L<http://github.com/jmcnamara/spreadsheet-writeexcelxml>.
+The Excel::Writer::XLSX source code in host on github: L<http://github.com/jmcnamara/spreadsheet-writeexcelxml>.
 
 
 
@@ -3827,7 +3827,7 @@ There is a Google group for discussing and asking questions about Spreadsheet::W
 
 =head1 DONATIONS
 
-If you'd care to donate to the Excel::XLSX::Writer project, you can do so via PayPal: L<http://tinyurl.com/7ayes>.
+If you'd care to donate to the Excel::Writer::XLSX project, you can do so via PayPal: L<http://tinyurl.com/7ayes>.
 
 
 

@@ -1,13 +1,13 @@
 ###############################################################################
 #
-# Tests for Excel::XLSX::Writer::Worksheet methods.
+# Tests for Excel::Writer::XLSX::Worksheet methods.
 #
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer::Worksheet;
+use Excel::Writer::XLSX::Worksheet;
 
 use Test::More tests => 18;
 
@@ -31,7 +31,7 @@ my $worksheet;
 $row       = 0;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -51,7 +51,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 1;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -71,7 +71,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 2;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -91,7 +91,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 3;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -111,7 +111,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 4;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -131,7 +131,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 5;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -151,7 +151,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 6;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -171,7 +171,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 7;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -191,7 +191,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 8;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -211,7 +211,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 9;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -231,7 +231,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 10;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -251,7 +251,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 11;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -271,7 +271,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 12;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -291,7 +291,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 13;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -311,7 +311,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 14;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -331,7 +331,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 15;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -351,7 +351,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 16;
 $col       = 0;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);
@@ -371,7 +371,7 @@ is_deeply( $got, $expected, $caption );
 $row       = 16;
 $col       = 1;
 $caption   = " \tWorksheet: _calculate_spans()";
-$worksheet = new Excel::XLSX::Writer::Worksheet;
+$worksheet = new Excel::Writer::XLSX::Worksheet;
 
 for ($row .. $row +16) {
     $worksheet->write($row++, $col++, 1);

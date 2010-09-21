@@ -18,8 +18,8 @@ my %resources = (
 my %params = (
     'AUTHOR'        => 'John McNamara (jmcnamara@cpan.org)',
     'ABSTRACT'      => 'Create a new file in the Excel 2007+ XLSX format.',
-    'NAME'          => 'Excel::XLSX::Writer',
-    'VERSION_FROM'  => 'lib/Excel/XLSX/Writer.pm',
+    'NAME'          => 'Excel::Writer::XLSX',
+    'VERSION_FROM'  => 'lib/Excel/Writer/XLSX.pm',
     'NEEDS_LINKING' => 0,
     'dist'          => { COMPRESS => 'gzip --best', SUFFIX => 'gz' },
     'LICENSE'       => 'perl',

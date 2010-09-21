@@ -1,13 +1,13 @@
 NAME
 
-    Excel::XLSX::Writer - Create a new file in the Excel 2007+ XLSX format.
+    Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 DESCRIPTION
 
     *** NOTE. This currently isn't working code. A developer release should
               be available by the end of September, 2010. 
 
-    The Excel::XLSX::Writer module can be used to create a new Excel file
+    The Excel::Writer::XLSX module can be used to create a new Excel file
     in the 2007+ XLSX format. 
 
 
@@ -15,7 +15,7 @@ DESCRIPTION
     can be applied to cells. Text, numbers, and formulas can be
     written to the cells.
 
-    Excel::XLSX::Writer uses the same interface as Spreadsheet::WriteExcel.
+    Excel::Writer::XLSX uses the same interface as Spreadsheet::WriteExcel.
 
     This module cannot, as yet, be used to write to an existing
     Excel XLSX file.
@@ -26,10 +26,10 @@ SYNOPSIS
     To write a string, a formatted string, a number and a formula to
     the first worksheet in an Excel XML spreadsheet called perl.xls:
 
-        use Excel::XLSX::Writer;
+        use Excel::Writer::XLSX;
 
         # Create a new Excel workbook
-        my $workbook = Excel::XLSX::Writer->new("perl.xls");
+        my $workbook = Excel::Writer::XLSX->new("perl.xls");
 
         # Add a worksheet
         $worksheet = $workbook->add_worksheet();

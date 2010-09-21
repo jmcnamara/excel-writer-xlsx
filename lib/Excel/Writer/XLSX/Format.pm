@@ -1,11 +1,11 @@
-package Excel::XLSX::Writer::Format;
+package Excel::Writer::XLSX::Format;
 
 ###############################################################################
 #
 # Format - A class for defining Excel formatting.
 #
 #
-# Used in conjunction with Excel::XLSX::Writer
+# Used in conjunction with Excel::Writer::XLSX
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -104,7 +104,7 @@ sub new {
 #
 # copy($format)
 #
-# Copy the attributes of another Excel::XLSX::Writer::Format object.
+# Copy the attributes of another Excel::Writer::XLSX::Format object.
 #
 sub copy {
     my $self  = shift;
@@ -904,11 +904,11 @@ Format - A class for defining Excel formatting.
 
 =head1 SYNOPSIS
 
-See the documentation for Excel::XLSX::Writer
+See the documentation for Excel::Writer::XLSX
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with Excel::XLSX::Writer.
+This module is used in conjunction with Excel::Writer::XLSX.
 
 =head1 AUTHOR
 

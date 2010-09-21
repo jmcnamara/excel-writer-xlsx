@@ -3,7 +3,7 @@
 ##############################################################################
 #
 # A simple example of converting some Unicode text to an Excel file using
-# Excel::XLSX::Writer.
+# Excel::Writer::XLSX.
 #
 # This example generates some Russian from a file with KOI8-R encoded text.
 #
@@ -13,10 +13,10 @@
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
+use Excel::Writer::XLSX;
 
 
-my $workbook = Excel::XLSX::Writer->new( 'unicode_koi8r.xlsx' );
+my $workbook = Excel::Writer::XLSX->new( 'unicode_koi8r.xlsx' );
 
 die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
 

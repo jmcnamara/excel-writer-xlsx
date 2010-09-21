@@ -3,7 +3,7 @@
 ##############################################################################
 #
 # A simple example of converting some Unicode text to an Excel file using
-# Excel::XLSX::Writer.
+# Excel::Writer::XLSX.
 #
 # This example generates some Polish from a file with UTF8 encoded text.
 #
@@ -13,10 +13,10 @@
 
 use strict;
 use warnings;
-use Excel::XLSX::Writer;
+use Excel::Writer::XLSX;
 
 
-my $workbook = Excel::XLSX::Writer->new( 'unicode_polish_utf8.xlsx' );
+my $workbook = Excel::Writer::XLSX->new( 'unicode_polish_utf8.xlsx' );
 
 die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
 

@@ -1,8 +1,8 @@
-package Excel::XLSX::Writer::Utility;
+package Excel::Writer::XLSX::Utility;
 
 ###############################################################################
 #
-# Utility - Helper functions for Excel::XLSX::Writer.
+# Utility - Helper functions for Excel::Writer::XLSX.
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -50,17 +50,17 @@ our $VERSION = '0.01';
 
 =head1 NAME
 
-Utility - Helper functions for Excel::XLSX::Writer.
+Utility - Helper functions for Excel::Writer::XLSX.
 
 
 
 =head1 SYNOPSIS
 
-Functions to help with some common tasks when using Excel::XLSX::Writer.
+Functions to help with some common tasks when using Excel::Writer::XLSX.
 
 These functions mainly relate to dealing with rows and columns in A1 notation and to handling dates and times.
 
-    use Excel::XLSX::Writer::Utility;               # Import everything
+    use Excel::Writer::XLSX::Utility;               # Import everything
 
     ($row, $col)    = xl_cell_to_rowcol('C2');          # (1, 2)
     $str            = xl_rowcol_to_cell(1, 2);          # C2
@@ -77,7 +77,7 @@ These functions mainly relate to dealing with rows and columns in A1 notation an
 
 =head1 DESCRIPTION
 
-This module provides a set of functions to help with some common tasks encountered when using the Excel::XLSX::Writer module. The two main categories of function are:
+This module provides a set of functions to help with some common tasks encountered when using the Excel::Writer::XLSX module. The two main categories of function are:
 
 Row and column functions: these are used to deal with Excel's A1 representation of cells. The functions in this category are:
 
@@ -101,17 +101,17 @@ Date and Time functions: these are used to convert dates and times to the numeri
 
 All of these functions are exported by default. However, you can use import lists if you wish to limit the functions that are imported:
 
-    use Excel::XLSX::Writer::Utility;                  # Import everything
-    use Excel::XLSX::Writer::Utility qw(xl_date_list); # xl_date_list only
-    use Excel::XLSX::Writer::Utility qw(:rowcol);      # Row/col functions
-    use Excel::XLSX::Writer::Utility qw(:dates);       # Date functions
+    use Excel::Writer::XLSX::Utility;                  # Import everything
+    use Excel::Writer::XLSX::Utility qw(xl_date_list); # xl_date_list only
+    use Excel::Writer::XLSX::Utility qw(:rowcol);      # Row/col functions
+    use Excel::Writer::XLSX::Utility qw(:dates);       # Date functions
 
 
 
 =head1 ROW AND COLUMN FUNCTIONS
 
 
-Excel::XLSX::Writer supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
+Excel::Writer::XLSX supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
 
 Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 16384 in Excel 5 and 65536 in Excel 97. For example:
 
@@ -488,11 +488,11 @@ The epoch can be either 1900 or 1904. Excel for Windows uses 1900 and Excel for 
     1900: 0 January 1900 i.e. 31 December 1899
     1904: 1 January 1904
 
-Excel on Windows and the Macintosh will convert automatically between one system and the other. By default Excel::XLSX::Writer uses the 1900 format. To use the 1904 epoch you must use the C<set_1904()> workbook method, see the Excel::XLSX::Writer documentation.
+Excel on Windows and the Macintosh will convert automatically between one system and the other. By default Excel::Writer::XLSX uses the 1900 format. To use the 1904 epoch you must use the C<set_1904()> workbook method, see the Excel::Writer::XLSX documentation.
 
 There are two things to note about the 1900 date format. The first is that the epoch starts on 0 January 1900. The second is that the year 1900 is erroneously but deliberately treated as a leap year. Therefore you must add an extra day to dates after 28 February 1900. The functions in the following section will deal with these issues automatically. The reason for this anomaly is explained at http://support.microsoft.com/support/kb/articles/Q181/3/70.asp
 
-Note, a date or time in Excel is like any other number. To display the number as a date you must apply a number format to it: Refer to the C<set_num_format()> method in the Excel::XLSX::Writer documentation:
+Note, a date or time in Excel is like any other number. To display the number as a date you must apply a number format to it: Refer to the C<set_num_format()> method in the Excel::Writer::XLSX documentation:
 
     $date = xl_date_list(2001, 1, 1, 12, 30);
     $format->set_num_format('mmm d yyyy hh:mm AM/PM');
@@ -861,7 +861,7 @@ This function converts an Excel date based on the 1900 epoch into a date based o
     $date2 = xl_date_1904($date1);      # 13 Jan 2002, 1904 epoch
 
 
-See also the C<set_1904()> workbook method in the Excel::XLSX::Writer documentation.
+See also the C<set_1904()> workbook method in the Excel::Writer::XLSX documentation.
 
 =cut
 
