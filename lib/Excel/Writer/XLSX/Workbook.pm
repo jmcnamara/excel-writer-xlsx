@@ -54,7 +54,7 @@ sub new {
     $self->{_activesheet} = 0;
     $self->{_firstsheet}  = 0;
     $self->{_selected}    = 0;
-    $self->{_xf_index}    = 21;            # 21 internal styles +1
+    $self->{_xf_index}    = 0;
     $self->{_fileclosed}  = 0;
     $self->{_biffsize}    = 0;
     $self->{_sheetname}   = "Sheet";
@@ -63,6 +63,7 @@ sub new {
     $self->{_sheetnames}  = [];
     $self->{_formats}     = [];
     $self->{_palette}     = [];
+    $self->{_num_fonts}   = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -299,7 +300,7 @@ sub add_format {
 
     my $self = shift;
 
-    my @init_data = ( $self->{_xf_index}, \$self->{_palette}, @_, );
+    my @init_data = ( $self->{_xf_index},  @_, );
 
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
@@ -523,19 +524,21 @@ sub _prepare_fonts {
 
             # FONT has already been used
             $format->{_font_index} = $fonts{$key};
+            $format->{_has_font}   = 0;
         }
         else {
 
             # Add a new FONT record
 
-            if ( not $format->{_font_only} ) {
-                $fonts{$key} = $index;
-            }
+            $fonts{$key} = $index;
 
             $format->{_font_index} = $index;
+            $format->{_has_font}   = 1;
             $index++;
         }
     }
+
+    $self->{_num_fonts} = $index;
 }
 
 

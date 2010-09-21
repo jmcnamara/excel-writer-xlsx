@@ -7,6 +7,7 @@ require 5.010;
 
 my %deps = (
     'Archive::Zip' => 1.30,
+    'IO::File'     => 0,
     'XML::Writer'  => 0.612,
 );
 
@@ -24,7 +25,7 @@ my %params = (
     'dist'          => { COMPRESS => 'gzip --best', SUFFIX => 'gz' },
     'LICENSE'       => 'perl',
     'PREREQ_PM'     => {},
-    'test'          => { TESTS => 't/*/*.t' }
+    'test'          => { TESTS => 't/*/*.t t/*/*/*.t' }
 
 );
 

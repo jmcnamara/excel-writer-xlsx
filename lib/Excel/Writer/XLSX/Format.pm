@@ -36,10 +36,10 @@ sub new {
 
     my $self = {
         _xf_index => shift || 0,
-        _palette => shift,
 
         _num_format     => 0,
         _font_index     => 0,
+        _has_font       => 0,
         _font           => 'Calibri',
         _size           => 11,
         _bold           => 0,
@@ -50,8 +50,9 @@ sub new {
         _font_outline   => 0,
         _font_shadow    => 0,
         _font_script    => 0,
-        _font_family    => 0,
+        _font_family    => 2,
         _font_charset   => 0,
+        _font_scheme    => 'minor',
 
         _hidden => 0,
         _locked => 1,

@@ -42,7 +42,9 @@ sub new {
 
     my $self = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer} = undef;
+    $self->{_writer}    = undef;
+    $self->{_formats}   = undef;
+    $self->{_num_fonts} = 0;
 
     bless $self, $class;
 
@@ -109,8 +111,8 @@ sub _set_format_properties {
 
     my $self = shift;
 
-    $self->{_formats}      = shift;
-    $self->{_font_indexes} = shift;
+    $self->{_formats}   = shift;
+    $self->{_num_fonts} = shift;
 }
 
 
@@ -139,7 +141,7 @@ sub _write_style_sheet {
     my $self  = shift;
     my $xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
 
-    my @attributes = ( 'xmlns' => $xmlns, );
+    my @attributes = ( 'xmlns' => $xmlns );
 
     $self->{_writer}->startTag( 'styleSheet', @attributes );
 }
@@ -154,14 +156,19 @@ sub _write_style_sheet {
 sub _write_fonts {
 
     my $self  = shift;
-    my $count = 1;
+    my $count = $self->{_num_fonts};
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'fonts', @attributes );
 
-    # Write the font element.
-    $self->_write_font();
+    # Write the font elements.
+    for my $format ( @{ $self->{_formats} } ) {
+
+        # Ignore formats without font information.
+        next unless $format->{_has_font};
+        $self->_write_font( $format );
+    }
 
     $self->{_writer}->endTag( 'fonts' );
 }
@@ -175,15 +182,19 @@ sub _write_fonts {
 #
 sub _write_font {
 
-    my $self = shift;
+    my $self   = shift;
+    my $format = shift;
 
     $self->{_writer}->startTag( 'font' );
 
-    $self->{_writer}->emptyTag( 'sz',     'val',   11 );
+    $self->{_writer}->emptyTag( 'b') if $format->{_bold};
+    $self->{_writer}->emptyTag( 'i') if $format->{_italic};
+
+    $self->{_writer}->emptyTag( 'sz',     'val',   $format->{_size} );
     $self->{_writer}->emptyTag( 'color',  'theme', 1 );
-    $self->{_writer}->emptyTag( 'name',   'val',   'Calibri' );
-    $self->{_writer}->emptyTag( 'family', 'val',   2 );
-    $self->{_writer}->emptyTag( 'scheme', 'val',   'minor' );
+    $self->{_writer}->emptyTag( 'name',   'val',   $format->{_font} );
+    $self->{_writer}->emptyTag( 'family', 'val',   $format->{_font_family} );
+    $self->{_writer}->emptyTag( 'scheme', 'val',   $format->{_font_scheme} );
 
     $self->{_writer}->endTag( 'font' );
 }
@@ -200,7 +211,7 @@ sub _write_fills {
     my $self  = shift;
     my $count = 2;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'fills', @attributes );
 
@@ -242,7 +253,7 @@ sub _write_borders {
     my $self  = shift;
     my $count = 1;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'borders', @attributes );
 
@@ -285,7 +296,7 @@ sub _write_cell_style_xfs {
     my $self  = shift;
     my $count = 1;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'cellStyleXfs', @attributes );
 
@@ -304,15 +315,18 @@ sub _write_cell_style_xfs {
 #
 sub _write_cell_xfs {
 
-    my $self  = shift;
-    my $count = 1;
+    my $self    = shift;
+    my @formats = @{ $self->{_formats} };
+    my $count   = scalar @formats;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'cellXfs', @attributes );
 
-    # Write the xf element.
-    $self->_write_xf();
+    # Write the xf elements.
+    for my $format ( @formats ) {
+        $self->_write_xf( $format );
+    }
 
     $self->{_writer}->endTag( 'cellXfs' );
 }
@@ -352,8 +366,9 @@ sub _write_style_xf {
 sub _write_xf {
 
     my $self       = shift;
+    my $format     = shift;
     my $num_fmt_id = 0;
-    my $font_id    = 0;
+    my $font_id    = $format->{_font_index};
     my $fill_id    = 0;
     my $border_id  = 0;
     my $xf_id      = 0;
@@ -382,7 +397,7 @@ sub _write_cell_styles {
     my $self  = shift;
     my $count = 1;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'cellStyles', @attributes );
 
@@ -427,7 +442,7 @@ sub _write_dxfs {
     my $self  = shift;
     my $count = 0;
 
-    my @attributes = ( 'count' => $count, );
+    my @attributes = ( 'count' => $count );
 
     $self->{_writer}->emptyTag( 'dxfs', @attributes );
 }

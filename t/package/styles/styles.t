@@ -23,7 +23,7 @@ my $caption;
 
 open my $got_fh, '>', \my $got or die "Failed to open filehandle: $!";
 
-my $obj    = Excel::Writer::XLSX::Package::Styles->new();
+my $obj = Excel::Writer::XLSX::Package::Styles->new();
 my $writer = new XML::Writer( OUTPUT => $got_fh );
 
 $obj->{_writer} = $writer;
@@ -34,6 +34,11 @@ $obj->{_writer} = $writer;
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
+
+my @formats = ( Excel::Writer::XLSX::Format->new( 0, has_font => 1 ) );
+my $num_fonts = 1;
+
+$obj->_set_format_properties( \@formats, $num_fonts );
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();

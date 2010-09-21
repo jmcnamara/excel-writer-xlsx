@@ -3716,7 +3716,7 @@ sub _write_dimension {
     }
 
 
-    my @attributes = ( 'ref' => $ref, );
+    my @attributes = ( 'ref' => $ref );
 
     $self->{_writer}->emptyTag( 'dimension', @attributes );
 }
@@ -3801,7 +3801,7 @@ sub _write_sheet_format_pr {
     my $base_col_width     = 10;
     my $default_row_height = 15;
 
-    my @attributes = ( 'defaultRowHeight' => $default_row_height, );
+    my @attributes = ( 'defaultRowHeight' => $default_row_height );
 
     $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
 }
@@ -3943,10 +3943,10 @@ sub _write_row {
     my $spans = shift;
 
 
-    my @attributes = ( 'r' => $r + 1, );
+    my @attributes = ( 'r' => $r + 1 );
 
     if ( defined $spans ) {
-        push @attributes, ( 'spans' => $spans, );
+        push @attributes, ( 'spans' => $spans );
     }
 
     $self->{_writer}->startTag( 'row', @attributes );
@@ -3971,7 +3971,13 @@ sub _write_cell {
 
 
     my $range = xl_rowcol_to_cell( $row, $col );
-    my @attributes = ( 'r' => $range, );
+    my @attributes = ( 'r' => $range );
+
+    # Add the cell format index.
+    if ( $xf ) {
+        push @attributes, ( 's' => $xf );
+    }
+
 
     if ( $type eq 'n' ) {
         $self->{_writer}->startTag( 'c', @attributes );
@@ -4043,7 +4049,7 @@ sub _write_sheet_calc_pr {
     my $self              = shift;
     my $full_calc_on_load = 1;
 
-    my @attributes = ( 'fullCalcOnLoad' => $full_calc_on_load, );
+    my @attributes = ( 'fullCalcOnLoad' => $full_calc_on_load );
 
     $self->{_writer}->emptyTag( 'sheetCalcPr', @attributes );
 }
