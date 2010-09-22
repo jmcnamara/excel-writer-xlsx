@@ -126,29 +126,6 @@ sub copy {
 
 ###############################################################################
 #
-# convert_to_html_color()
-#
-# Convert from an Excel internal colour index to a Html style #RRGGBB index
-# based on the default or user defined values in the Workbook palette.
-#
-sub convert_to_html_color {
-
-    my $self  = shift;
-    my $index = $_[0];
-
-    return 0 unless $index;
-
-    $index -= 8;    # Adjust colour index
-
-    # _palette is a reference to the colour palette in the Workbook module
-    my @rgb = @{ ${ $self->{_palette} }->[$index] }[ 0, 1, 2 ];
-
-    return sprintf "#%02X%02X%02X", @rgb;
-}
-
-
-###############################################################################
-#
 # get_align_properties()
 #
 # Return properties for an Excel XML <Alignment> element.
@@ -582,7 +559,7 @@ sub _get_color {
         lime    => 0x0B,
         navy    => 0x12,
         orange  => 0x35,
-                    pink    => 0x21,
+        pink    => 0x21,
         purple  => 0x14,
         red     => 0x0A,
         silver  => 0x16,
@@ -820,9 +797,9 @@ sub set_format_properties {
 
         # Create a sub to set the property.
         my $sub = \&{"set_$key"};
-        $sub->($self, $value);
-        }
-        }
+        $sub->( $self, $value );
+    }
+}
 
 # Renamed rarely used set_properties() to set_format_properties() to avoid
 # confusion with Workbook method of the same name. The following acts as an

@@ -45,6 +45,7 @@ sub new {
     $self->{_writer}    = undef;
     $self->{_formats}   = undef;
     $self->{_num_fonts} = 0;
+    $self->{_palette}   = [];
 
     bless $self, $class;
 
@@ -103,16 +104,17 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_format_properties()
+# _set_style_properties()
 #
 # Pass in the Format objects and other properties used to set the styles.
 #
-sub _set_format_properties {
+sub _set_style_properties {
 
     my $self = shift;
 
     $self->{_formats}   = shift;
     $self->{_num_fonts} = shift;
+    $self->{_palette}   = shift;
 }
 
 
@@ -121,6 +123,30 @@ sub _set_format_properties {
 # Internal methods.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _convert_to_xml_color()
+#
+# Convert from an Excel internal colour index to a XML style #RRGGBB index
+# based on the default or user defined values in the Workbook palette.
+#
+sub _convert_to_xml_color {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $palette = $self->{_palette};
+
+    # Adjust the colour index.
+    $index -= 8;
+
+    # Palette is passsed in from the Workbook class.
+    my @rgb = @{ $palette->[$index] };
+
+    # TODO Add the alpha part to the RGBA.
+    return sprintf "FF%02X%02X%02X", @rgb;
+}
 
 
 ###############################################################################
@@ -187,16 +213,70 @@ sub _write_font {
 
     $self->{_writer}->startTag( 'font' );
 
-    $self->{_writer}->emptyTag( 'b') if $format->{_bold};
-    $self->{_writer}->emptyTag( 'i') if $format->{_italic};
+    $self->{_writer}->emptyTag( 'b' )       if $format->{_bold};
+    $self->{_writer}->emptyTag( 'i' )       if $format->{_italic};
+    $self->{_writer}->emptyTag( 'strike' )  if $format->{_font_strikeout};
+    $self->{_writer}->emptyTag( 'outline' ) if $format->{_font_outline};
+    $self->{_writer}->emptyTag( 'shadow' )  if $format->{_font_shadow};
+    $self->{_writer}->emptyTag( 'u' )       if $format->{_underline};
 
-    $self->{_writer}->emptyTag( 'sz',     'val',   $format->{_size} );
-    $self->{_writer}->emptyTag( 'color',  'theme', 1 );
-    $self->{_writer}->emptyTag( 'name',   'val',   $format->{_font} );
-    $self->{_writer}->emptyTag( 'family', 'val',   $format->{_font_family} );
-    $self->{_writer}->emptyTag( 'scheme', 'val',   $format->{_font_scheme} );
+    $self->_write_vert_align( 'superscript' ) if $format->{_font_script} == 1;
+    $self->_write_vert_align( 'subscript' )   if $format->{_font_script} == 2;
+
+    $self->{_writer}->emptyTag( 'sz', 'val', $format->{_size} );
+
+    if ( my $color = $format->{_color} ) {
+        $color = $self->_convert_to_xml_color( $color );
+
+        $self->_write_color( 'rgb' => $color );
+    }
+    else {
+        $self->_write_color( 'theme' => 1 );
+    }
+
+    $self->{_writer}->emptyTag( 'name',   'val', $format->{_font} );
+    $self->{_writer}->emptyTag( 'family', 'val', $format->{_font_family} );
+
+    if ( $format->{_font} eq 'Calibri' ) {
+        $self->{_writer}->emptyTag( 'scheme', 'val', $format->{_font_scheme} );
+    }
 
     $self->{_writer}->endTag( 'font' );
+}
+
+
+##############################################################################
+#
+# _write_vert_align()
+#
+# Write the <vertAlign> font sub-element.
+#
+sub _write_vert_align {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'vertAlign', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color()
+#
+# Write the <color> element.
+#
+sub _write_color {
+
+    my $self  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    my @attributes = ( $name => $value );
+
+    $self->{_writer}->emptyTag( 'color', @attributes );
 }
 
 

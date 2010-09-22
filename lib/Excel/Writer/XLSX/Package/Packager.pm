@@ -272,12 +272,13 @@ sub _write_styles_file {
     my $dir       = $self->{_package_dir};
     my $formats   = $self->{_workbook}->{_formats};
     my $num_fonts = $self->{_workbook}->{_num_fonts};
+    my $palette   = $self->{_workbook}->{_palette};
 
     my $rels = new Excel::Writer::XLSX::Package::Styles;
 
     mkdir $dir . '/xl';
 
-    $rels->_set_format_properties( $formats, $num_fonts );
+    $rels->_set_style_properties( $formats, $num_fonts, $palette );
     $rels->_set_xml_writer( $dir . '/xl/styles.xml' );
     $rels->_assemble_xml_file();
 }

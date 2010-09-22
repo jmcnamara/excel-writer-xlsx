@@ -37,7 +37,7 @@ my $num_fonts = 1;
 
 $style = _new_style(\$got);
 
-$style->_set_format_properties( \@formats, $num_fonts );
+$style->_set_style_properties( \@formats, $num_fonts );
 $style->_write_fonts();
 
 is( $got, $expected, $caption );
