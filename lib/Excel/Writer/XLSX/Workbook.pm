@@ -49,21 +49,22 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_filename}    = $_[0] || '';
-    $self->{_1904}        = 0;
-    $self->{_activesheet} = 0;
-    $self->{_firstsheet}  = 0;
-    $self->{_selected}    = 0;
-    $self->{_xf_index}    = 0;
-    $self->{_fileclosed}  = 0;
-    $self->{_biffsize}    = 0;
-    $self->{_sheetname}   = "Sheet";
-    $self->{_codepage}    = 0x04E4;
-    $self->{_worksheets}  = [];
-    $self->{_sheetnames}  = [];
-    $self->{_formats}     = [];
-    $self->{_palette}     = [];
-    $self->{_num_fonts}   = 0;
+    $self->{_filename}         = $_[0] || '';
+    $self->{_1904}             = 0;
+    $self->{_activesheet}      = 0;
+    $self->{_firstsheet}       = 0;
+    $self->{_selected}         = 0;
+    $self->{_xf_index}         = 0;
+    $self->{_fileclosed}       = 0;
+    $self->{_biffsize}         = 0;
+    $self->{_sheetname}        = "Sheet";
+    $self->{_codepage}         = 0x04E4;
+    $self->{_worksheets}       = [];
+    $self->{_sheetnames}       = [];
+    $self->{_formats}          = [];
+    $self->{_palette}          = [];
+    $self->{_font_count}       = 0;
+    $self->{_num_format_count} = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -535,8 +536,11 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
-    # Set the fort index numbers for the format objects.
+    # Set the fort index for the format objects.
     $self->_prepare_fonts();
+
+    # Set the number format index for the format objects.
+    $self->_prepare_num_formats();
 
     # Package the workbook.
     $packager->_add_workbook( $self );
@@ -583,40 +587,36 @@ sub _prepare_sst_string_data {
 #
 # _prepare_fonts()
 #
-# Prepare the Excel FONT records.
+# Iterate through the XF Format objects and give them an index to non-default
+# font elements.
 #
 sub _prepare_fonts {
 
     my $self = shift;
 
-    # Iterate through the XF objects and write a FONT record if it isn't the
-    # same as the default FONT and if it hasn't already been used.
-    #
     my %fonts;
     my $index = 0;
 
     for my $format ( @{ $self->{_formats} } ) {
         my $key = $format->get_font_key();
 
-        if ( $fonts{$key} ) {
+        if ( exists $fonts{$key} ) {
 
-            # FONT has already been used
+            # Font has already been used.
             $format->{_font_index} = $fonts{$key};
             $format->{_has_font}   = 0;
         }
         else {
 
-            # Add a new FONT record
-
-            $fonts{$key} = $index;
-
+            # This is a new font.
+            $fonts{$key}           = $index;
             $format->{_font_index} = $index;
             $format->{_has_font}   = 1;
             $index++;
         }
     }
 
-    $self->{_num_fonts} = $index;
+    $self->{_font_count} = $index;
 }
 
 
@@ -624,44 +624,50 @@ sub _prepare_fonts {
 #
 # _prepare_num_formats()
 #
-#  Prepare the defined numerical formats.
+# Iterate through the XF Format objects and give them an index to non-default
+# number format elements.
+#
+# User defined records start from index 0xA4.
 #
 sub _prepare_num_formats {
 
     my $self = shift;
 
     my %num_formats;
-    my @num_formats;
-    my $index = 164;    # User defined  records start from 0xA4
+    my $index            = 164;
+    my $num_format_count = 0;
 
-
-    # Iterate through the XF objects and write a FORMAT record if it isn't a
-    # built-in format type and if the FORMAT string hasn't already been used.
-    #
     for my $format ( @{ $self->{_formats} } ) {
         my $num_format = $format->{_num_format};
 
-        # Check if $num_format is an index to a built-in format.
-        # Also check for a string of zeros, which is a valid format string
-        # but would evaluate to zero.
+        # Check if $num_format is an index to a built-in number format.
+        # Also check for a string of zeros, which is a valid number format
+        # string but would evaluate to zero.
         #
-        if ( $num_format !~ m/^0+\d/ ) {
-            next if $num_format =~ m/^\d+$/;    # built-in
+        if ( $num_format =~ m/^\d+$/ && $num_format !~ m/^0+\d/ ) {
+
+            # Index to a built-in number format.
+            $format->{_num_format_index} = $num_format;
+            next;
         }
+
 
         if ( exists( $num_formats{$num_format} ) ) {
 
-            # FORMAT has already been used
-            $format->{_num_format} = $num_formats{$num_format};
+            # Number format has already been used.
+            $format->{_num_format_index} = $num_formats{$num_format};
         }
         else {
 
-            # Add a new FORMAT
+            # Add a new number format.
             $num_formats{$num_format} = $index;
-            $format->{_num_format} = $index;
+            $format->{_num_format_index} = $index;
             $index++;
+            $num_format_count++;
         }
     }
+
+    $self->{_num_format_count} = $num_format_count;
 }
 
 

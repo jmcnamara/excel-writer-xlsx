@@ -205,7 +205,7 @@ $expected   = '<font><sz val="11" /><color rgb="FFFF0000" /><name val="Calibri" 
 
 $format = Excel::Writer::XLSX::Format->new( 0, %properties );
 $style = _new_style( \$got );
-$style->_set_style_properties( undef, undef, $palette);
+$style->_set_style_properties( undef, undef, undef, $palette);
 $style->_write_font( $format );
 
 is( $got, $expected, $caption );
@@ -232,7 +232,7 @@ $expected   = '<font><b /><i /><strike /><outline /><shadow /><u /><vertAlign va
 
 $format = Excel::Writer::XLSX::Format->new( 0, %properties );
 $style = _new_style( \$got );
-$style->_set_style_properties( undef, undef, $palette);
+$style->_set_style_properties( undef, undef, undef, $palette);
 $style->_write_font( $format );
 
 is( $got, $expected, $caption );

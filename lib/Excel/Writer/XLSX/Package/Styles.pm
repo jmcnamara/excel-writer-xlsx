@@ -42,10 +42,11 @@ sub new {
 
     my $self = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}    = undef;
-    $self->{_formats}   = undef;
-    $self->{_num_fonts} = 0;
-    $self->{_palette}   = [];
+    $self->{_writer}           = undef;
+    $self->{_formats}          = undef;
+    $self->{_font_count}       = 0;
+    $self->{_num_format_count} = 0;
+    $self->{_palette}          = [];
 
     bless $self, $class;
 
@@ -69,6 +70,9 @@ sub _assemble_xml_file {
 
     # Add the style sheet.
     $self->_write_style_sheet();
+
+    # Write the number formats.
+    $self->_write_num_fmts();
 
     # Write the fonts.
     $self->_write_fonts();
@@ -112,9 +116,10 @@ sub _set_style_properties {
 
     my $self = shift;
 
-    $self->{_formats}   = shift;
-    $self->{_num_fonts} = shift;
-    $self->{_palette}   = shift;
+    $self->{_formats}          = shift;
+    $self->{_font_count}       = shift;
+    $self->{_num_format_count} = shift;
+    $self->{_palette}          = shift;
 }
 
 
@@ -175,6 +180,57 @@ sub _write_style_sheet {
 
 ##############################################################################
 #
+# _write_num_fmts()
+#
+# Write the <numFmts> element.
+#
+sub _write_num_fmts {
+
+    my $self  = shift;
+    my $count = $self->{_num_format_count};
+
+    return unless $count;
+
+    my @attributes = ( 'count' => $count );
+
+    $self->{_writer}->startTag( 'numFmts', @attributes );
+
+    # Write the font elements.
+    for my $format ( @{ $self->{_formats} } ) {
+
+        # Ignore formats without font information.
+        next unless $format->{_num_format_index} >= 164;
+        $self->_write_num_fmt( $format->{_num_format_index},
+            $format->{_num_format} );
+    }
+
+    $self->{_writer}->endTag( 'numFmts' );
+}
+
+
+##############################################################################
+#
+# _write_num_fmt()
+#
+# Write the <numFmt> element.
+#
+sub _write_num_fmt {
+
+    my $self        = shift;
+    my $num_fmt_id  = shift;
+    my $format_code = shift;
+
+    my @attributes = (
+        'numFmtId'   => $num_fmt_id,
+        'formatCode' => $format_code,
+    );
+
+    $self->{_writer}->emptyTag( 'numFmt', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_fonts()
 #
 # Write the <fonts> element.
@@ -182,7 +238,7 @@ sub _write_style_sheet {
 sub _write_fonts {
 
     my $self  = shift;
-    my $count = $self->{_num_fonts};
+    my $count = $self->{_font_count};
 
     my @attributes = ( 'count' => $count );
 
@@ -447,7 +503,7 @@ sub _write_xf {
 
     my $self       = shift;
     my $format     = shift;
-    my $num_fmt_id = 0;
+    my $num_fmt_id = $format->{_num_format_index};
     my $font_id    = $format->{_font_index};
     my $fill_id    = 0;
     my $border_id  = 0;
@@ -460,6 +516,16 @@ sub _write_xf {
         'borderId' => $border_id,
         'xfId'     => $xf_id,
     );
+
+    # Add applyNumberFormat attribute if XF format uses a number format.
+    if ( $format->{_num_format_index} > 0 ) {
+        push @attributes, ( 'applyNumberFormat' => 1 );
+    }
+
+    # Add applyFont attribute if XF format uses a font element.
+    if ( $format->{_has_font} && $format->{_font_index} > 0 ) {
+        push @attributes, ( 'applyFont' => 1 );
+    }
 
     $self->{_writer}->emptyTag( 'xf', @attributes );
 

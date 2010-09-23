@@ -45,6 +45,8 @@ t/package/styles/sub_write_fill.t
 t/package/styles/sub_write_fills.t
 t/package/styles/sub_write_font.t
 t/package/styles/sub_write_fonts.t
+t/package/styles/sub_write_num_fmt.t
+t/package/styles/sub_write_num_fmts.t
 t/package/styles/sub_write_style_sheet.t
 t/package/styles/sub_write_style_xf.t
 t/package/styles/sub_write_xf.t

@@ -37,22 +37,23 @@ sub new {
     my $self = {
         _xf_index => shift || 0,
 
-        _num_format     => 0,
-        _font_index     => 0,
-        _has_font       => 0,
-        _font           => 'Calibri',
-        _size           => 11,
-        _bold           => 0,
-        _italic         => 0,
-        _color          => 0x0,
-        _underline      => 0,
-        _font_strikeout => 0,
-        _font_outline   => 0,
-        _font_shadow    => 0,
-        _font_script    => 0,
-        _font_family    => 2,
-        _font_charset   => 0,
-        _font_scheme    => 'minor',
+        _num_format       => 0,
+        _num_format_index => 0,
+        _font_index       => 0,
+        _has_font         => 0,
+        _font             => 'Calibri',
+        _size             => 11,
+        _bold             => 0,
+        _italic           => 0,
+        _color            => 0x0,
+        _underline        => 0,
+        _font_strikeout   => 0,
+        _font_outline     => 0,
+        _font_shadow      => 0,
+        _font_script      => 0,
+        _font_family      => 2,
+        _font_charset     => 0,
+        _font_scheme      => 'minor',
 
         _hidden => 0,
         _locked => 1,
@@ -501,22 +502,21 @@ sub get_protection_properties {
 #
 # get_font_key()
 #
-# Returns a unique hash key for a font. Used by Workbook->_store_all_fonts()
+# Returns a unique hash key for a font. Used by Workbook.
 #
 sub get_font_key {
 
-    my $self    = shift;
+    my $self = shift;
 
-    # The following elements are arranged to increase the probability of
-    # generating a unique key. Elements that hold a large range of numbers
-    # e.g. _color are placed between two binary elements such as _italic
-    #
-    my $key = "$self->{_font}$self->{_size}";
-    $key   .= "$self->{_font_script}$self->{_underline}";
-    $key   .= "$self->{_font_strikeout}$self->{_bold}$self->{_font_outline}";
-    $key   .= "$self->{_font_family}$self->{_font_charset}";
-    $key   .= "$self->{_font_shadow}$self->{_color}$self->{_italic}";
-    $key    =~ s/ /_/g; # Convert the key to a single word
+    my $key = join ':',
+      (
+        $self->{_bold},         $self->{_color},
+        $self->{_font_charset}, $self->{_font_family},
+        $self->{_font_outline}, $self->{_font_script},
+        $self->{_font_shadow},  $self->{_font_strikeout},
+        $self->{_font},         $self->{_italic},
+        $self->{_size},         $self->{_underline},
+      );
 
     return $key;
 }
