@@ -10,7 +10,7 @@ use TestFunctions qw(_new_style _new_workbook);
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 16;
 
 
 ###############################################################################
@@ -205,7 +205,7 @@ $expected   = '<font><sz val="11" /><color rgb="FFFF0000" /><name val="Calibri" 
 
 $format = Excel::Writer::XLSX::Format->new( 0, %properties );
 $style = _new_style( \$got );
-$style->_set_style_properties( undef, undef, undef, $palette);
+$style->_set_style_properties( undef, $palette, undef, undef );
 $style->_write_font( $format );
 
 is( $got, $expected, $caption );
@@ -232,10 +232,57 @@ $expected   = '<font><b /><i /><strike /><outline /><shadow /><u /><vertAlign va
 
 $format = Excel::Writer::XLSX::Format->new( 0, %properties );
 $style = _new_style( \$got );
-$style->_set_style_properties( undef, undef, undef, $palette);
+$style->_set_style_properties( undef, $palette, undef, undef );
 $style->_write_font( $format );
 
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 14. Test the _write_font() method. Dooble underline.
+#
+%properties = ( underline => 2 );
+$caption    = " \tStyles: _write_font()";
+$expected   = '<font><u val="double" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
+
+$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$style  = _new_style( \$got );
+$style->_write_font( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 15. Test the _write_font() method. Doouble underline.
+#
+%properties = ( underline => 33 );
+$caption    = " \tStyles: _write_font()";
+$expected   = '<font><u val="singleAccounting" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
+
+$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$style  = _new_style( \$got );
+$style->_write_font( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 16. Test the _write_font() method. Doouble underline.
+#
+%properties = ( underline => 34 );
+$caption    = " \tStyles: _write_font()";
+$expected   = '<font><u val="doubleAccounting" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
+
+$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$style  = _new_style( \$got );
+$style->_write_font( $format );
+
+is( $got, $expected, $caption );
+
+
 
 
 __END__

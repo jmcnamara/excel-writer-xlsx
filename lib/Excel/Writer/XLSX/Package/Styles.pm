@@ -117,9 +117,9 @@ sub _set_style_properties {
     my $self = shift;
 
     $self->{_formats}          = shift;
+    $self->{_palette}          = shift;
     $self->{_font_count}       = shift;
     $self->{_num_format_count} = shift;
-    $self->{_palette}          = shift;
 }
 
 
@@ -146,10 +146,10 @@ sub _convert_to_xml_color {
     # Adjust the colour index.
     $index -= 8;
 
-    # Palette is passsed in from the Workbook class.
+    # Palette is passed in from the Workbook class.
     my @rgb = @{ $palette->[$index] };
 
-    # TODO Add the alpha part to the RGBA.
+    # TODO Add the alpha part to the RGB.
     return sprintf "FF%02X%02X%02X", @rgb;
 }
 
@@ -195,10 +195,10 @@ sub _write_num_fmts {
 
     $self->{_writer}->startTag( 'numFmts', @attributes );
 
-    # Write the font elements.
+    # Write the numFmts elements.
     for my $format ( @{ $self->{_formats} } ) {
 
-        # Ignore formats without font information.
+        # Ignore built-in number formats, i.e., < 164.
         next unless $format->{_num_format_index} >= 164;
         $self->_write_num_fmt( $format->{_num_format_index},
             $format->{_num_format} );
@@ -274,7 +274,26 @@ sub _write_font {
     $self->{_writer}->emptyTag( 'strike' )  if $format->{_font_strikeout};
     $self->{_writer}->emptyTag( 'outline' ) if $format->{_font_outline};
     $self->{_writer}->emptyTag( 'shadow' )  if $format->{_font_shadow};
-    $self->{_writer}->emptyTag( 'u' )       if $format->{_underline};
+
+    # Handle the underline variants.
+    if ( my $underline = $format->{_underline} ) {
+        my @attributes;
+
+        if ( $underline == 2 ) {
+            @attributes = ( val => 'double' );
+        }
+        elsif  ( $underline == 33 ) {
+            @attributes = ( val => 'singleAccounting' );
+        }
+        elsif  ( $underline == 34 ) {
+            @attributes = ( val => 'doubleAccounting' );
+        }
+        else {
+            @attributes = (); # Default to single underline.
+        }
+
+        $self->{_writer}->emptyTag( 'u', @attributes );
+    }
 
     $self->_write_vert_align( 'superscript' ) if $format->{_font_script} == 1;
     $self->_write_vert_align( 'subscript' )   if $format->{_font_script} == 2;
@@ -351,7 +370,7 @@ sub _write_fills {
 
     $self->{_writer}->startTag( 'fills', @attributes );
 
-    # Write the fill elementa.
+    # Write the fill element.
     $self->_write_fill( 'none' );
     $self->_write_fill( 'gray125' );
 

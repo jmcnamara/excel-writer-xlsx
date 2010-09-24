@@ -61,7 +61,7 @@ $num_format_count = 1;
 $got = ''; # Since it was previously undef.
 
 $style = _new_style( \$got );
-$style->_set_style_properties( \@formats, undef, $num_format_count );
+$style->_set_style_properties( \@formats, undef,  undef, $num_format_count );
 
 $style->_write_num_fmts();
 

@@ -70,24 +70,23 @@ sub new {
 
         _pattern => 0,
 
-        _bottom => 0,
-        _top    => 0,
-        _left   => 0,
-        _right  => 0,
-
+        _bottom       => 0,
         _bottom_color => 0x0,
-        _top_color    => 0x0,
+        _diag_border  => 0,
+        _diag_color   => 0x0,
+        _diag_type    => 0,
+        _left         => 0,
         _left_color   => 0x0,
+        _right        => 0,
         _right_color  => 0x0,
+        _top          => 0,
+        _top_color    => 0x0,
 
         _indent        => 0,
         _shrink        => 0,
         _merge_range   => 0,
         _reading_order => 0,
 
-        _diag_type   => 0,
-        _diag_color  => 0x0,
-        _diag_border => 0,
 
         _just_distrib => 0,
 
@@ -508,15 +507,50 @@ sub get_font_key {
 
     my $self = shift;
 
-    my $key = join ':',
-      (
-        $self->{_bold},         $self->{_color},
-        $self->{_font_charset}, $self->{_font_family},
-        $self->{_font_outline}, $self->{_font_script},
-        $self->{_font_shadow},  $self->{_font_strikeout},
-        $self->{_font},         $self->{_italic},
-        $self->{_size},         $self->{_underline},
-      );
+    my $key = join ':', (
+        $self->{_bold},
+        $self->{_color},
+        $self->{_font_charset},
+        $self->{_font_family},
+        $self->{_font_outline},
+        $self->{_font_script},
+        $self->{_font_shadow},
+        $self->{_font_strikeout},
+        $self->{_font},
+        $self->{_italic},
+        $self->{_size},
+        $self->{_underline},
+
+    );
+
+    return $key;
+}
+
+
+###############################################################################
+#
+# get_border_key()
+#
+# Returns a unique hash key for a border style. Used by Workbook.
+#
+sub get_border_key {
+
+    my $self = shift;
+
+    my $key = join ':', (
+        $self->{_bottom},
+        $self->{_bottom_color},
+        $self->{_diag_border},
+        $self->{_diag_color},
+        $self->{_diag_type},
+        $self->{_left},
+        $self->{_left_color},
+        $self->{_right},
+        $self->{_right_color},
+        $self->{_top},
+        $self->{_top_color},
+
+    );
 
     return $key;
 }
