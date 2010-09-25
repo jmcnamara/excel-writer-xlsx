@@ -536,11 +536,14 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
-    # Set the fort index for the format objects.
+    # Set the font index for the format objects.
     $self->_prepare_fonts();
 
     # Set the number format index for the format objects.
     $self->_prepare_num_formats();
+
+    # Set the border index for the format objects.
+    $self->_prepare_borders();
 
     # Package the workbook.
     $packager->_add_workbook( $self );
@@ -668,6 +671,43 @@ sub _prepare_num_formats {
     }
 
     $self->{_num_format_count} = $num_format_count;
+}
+
+
+###############################################################################
+#
+# _prepare_borders()
+#
+# Iterate through the XF Format objects and give them an index to non-default
+# border elements.
+#
+sub _prepare_borders {
+
+    my $self = shift;
+
+    my %borders;
+    my $index = 0;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        my $key = $format->get_border_key();
+
+        if ( exists $borders{$key} ) {
+
+            # Border has already been used.
+            $format->{_border_index} = $borders{$key};
+            $format->{_has_border}   = 0;
+        }
+        else {
+
+            # This is a new border.
+            $borders{$key}           = $index;
+            $format->{_border_index} = $index;
+            $format->{_has_border}   = 1;
+            $index++;
+        }
+    }
+
+    $self->{_border_count} = $index;
 }
 
 

@@ -35,15 +35,26 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-my $format1 = $workbook->add_format( bold   => 1 );
-my $format2 = $workbook->add_format( italic => 1 );
-my $format3 = $workbook->add_format( bold   => 1, italic => 1 );
+my $format1 = $workbook->add_format(
+    left         => 1,
+    right        => 1,
+    top          => 1,
+    bottom       => 1,
+    diag_border  => 1,
+    diag_type    => 3,
+    left_color   => 'red',
+    right_color  => 'red',
+    top_color    => 'red',
+    bottom_color => 'red',
+    diag_color   => 'red'
+);
+
 
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
 $workbook->_prepare_borders();
 
-$style = _new_style(\$got);
+$style = _new_style( \$got );
 $style->_set_style_properties(
     $workbook->{_formats},
     $workbook->{_palette},
@@ -61,33 +72,8 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <fonts count="4">
+  <fonts count="1">
     <font>
-      <sz val="11"/>
-      <color theme="1"/>
-      <name val="Calibri"/>
-      <family val="2"/>
-      <scheme val="minor"/>
-    </font>
-    <font>
-      <b/>
-      <sz val="11"/>
-      <color theme="1"/>
-      <name val="Calibri"/>
-      <family val="2"/>
-      <scheme val="minor"/>
-    </font>
-    <font>
-      <i/>
-      <sz val="11"/>
-      <color theme="1"/>
-      <name val="Calibri"/>
-      <family val="2"/>
-      <scheme val="minor"/>
-    </font>
-    <font>
-      <b/>
-      <i/>
       <sz val="11"/>
       <color theme="1"/>
       <name val="Calibri"/>
@@ -103,7 +89,7 @@ __DATA__
       <patternFill patternType="gray125"/>
     </fill>
   </fills>
-  <borders count="1">
+  <borders count="2">
     <border>
       <left/>
       <right/>
@@ -111,15 +97,30 @@ __DATA__
       <bottom/>
       <diagonal/>
     </border>
+    <border diagonalUp="1" diagonalDown="1">
+      <left style="thin">
+        <color rgb="FFFF0000"/>
+      </left>
+      <right style="thin">
+        <color rgb="FFFF0000"/>
+      </right>
+      <top style="thin">
+        <color rgb="FFFF0000"/>
+      </top>
+      <bottom style="thin">
+        <color rgb="FFFF0000"/>
+      </bottom>
+      <diagonal style="thin">
+        <color rgb="FFFF0000"/>
+      </diagonal>
+    </border>
   </borders>
   <cellStyleXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
   </cellStyleXfs>
-  <cellXfs count="4">
+  <cellXfs count="2">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
-    <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>
-    <xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
   </cellXfs>
   <cellStyles count="1">
     <cellStyle name="Normal" xfId="0" builtinId="0"/>

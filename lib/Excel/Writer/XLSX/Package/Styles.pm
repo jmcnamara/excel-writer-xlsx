@@ -44,9 +44,10 @@ sub new {
 
     $self->{_writer}           = undef;
     $self->{_formats}          = undef;
+    $self->{_palette}          = [];
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
-    $self->{_palette}          = [];
+    $self->{_border_count}     = 0;
 
     bless $self, $class;
 
@@ -120,6 +121,7 @@ sub _set_style_properties {
     $self->{_palette}          = shift;
     $self->{_font_count}       = shift;
     $self->{_num_format_count} = shift;
+    $self->{_border_count}     = shift;
 }
 
 
@@ -132,12 +134,12 @@ sub _set_style_properties {
 
 ###############################################################################
 #
-# _convert_to_xml_color()
+# _get_palette_color()
 #
 # Convert from an Excel internal colour index to a XML style #RRGGBB index
 # based on the default or user defined values in the Workbook palette.
 #
-sub _convert_to_xml_color {
+sub _get_palette_color {
 
     my $self    = shift;
     my $index   = shift;
@@ -244,12 +246,9 @@ sub _write_fonts {
 
     $self->{_writer}->startTag( 'fonts', @attributes );
 
-    # Write the font elements.
+    # Write the font elements for format objects that have them.
     for my $format ( @{ $self->{_formats} } ) {
-
-        # Ignore formats without font information.
-        next unless $format->{_has_font};
-        $self->_write_font( $format );
+        $self->_write_font( $format ) if $format->{_has_font};
     }
 
     $self->{_writer}->endTag( 'fonts' );
@@ -276,24 +275,7 @@ sub _write_font {
     $self->{_writer}->emptyTag( 'shadow' )  if $format->{_font_shadow};
 
     # Handle the underline variants.
-    if ( my $underline = $format->{_underline} ) {
-        my @attributes;
-
-        if ( $underline == 2 ) {
-            @attributes = ( val => 'double' );
-        }
-        elsif  ( $underline == 33 ) {
-            @attributes = ( val => 'singleAccounting' );
-        }
-        elsif  ( $underline == 34 ) {
-            @attributes = ( val => 'doubleAccounting' );
-        }
-        else {
-            @attributes = (); # Default to single underline.
-        }
-
-        $self->{_writer}->emptyTag( 'u', @attributes );
-    }
+    $self->_write_underline( $format->{_underline} ) if $format->{_underline};
 
     $self->_write_vert_align( 'superscript' ) if $format->{_font_script} == 1;
     $self->_write_vert_align( 'subscript' )   if $format->{_font_script} == 2;
@@ -301,7 +283,7 @@ sub _write_font {
     $self->{_writer}->emptyTag( 'sz', 'val', $format->{_size} );
 
     if ( my $color = $format->{_color} ) {
-        $color = $self->_convert_to_xml_color( $color );
+        $color = $self->_get_palette_color( $color );
 
         $self->_write_color( 'rgb' => $color );
     }
@@ -317,6 +299,37 @@ sub _write_font {
     }
 
     $self->{_writer}->endTag( 'font' );
+}
+
+
+###############################################################################
+#
+# _write_underline()
+#
+# Write the underline font element.
+#
+sub _write_underline {
+
+    my $self      = shift;
+    my $underline = shift;
+    my @attributes;
+
+    # Handle the underline variants.
+    if ( $underline == 2 ) {
+        @attributes = ( val => 'double' );
+    }
+    elsif ( $underline == 33 ) {
+        @attributes = ( val => 'singleAccounting' );
+    }
+    elsif ( $underline == 34 ) {
+        @attributes = ( val => 'doubleAccounting' );
+    }
+    else {
+        @attributes = ();    # Default to single underline.
+    }
+
+    $self->{_writer}->emptyTag( 'u', @attributes );
+
 }
 
 
@@ -406,14 +419,16 @@ sub _write_fill {
 sub _write_borders {
 
     my $self  = shift;
-    my $count = 1;
+    my $count = $self->{_border_count};
 
     my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'borders', @attributes );
 
-    # Write the border element.
-    $self->_write_border();
+    # Write the border elements for format objects that have them.
+    for my $format ( @{ $self->{_formats} } ) {
+        $self->_write_border( $format ) if $format->{_has_border};
+    }
 
     $self->{_writer}->endTag( 'borders' );
 }
@@ -427,16 +442,117 @@ sub _write_borders {
 #
 sub _write_border {
 
-    my $self = shift;
-    $self->{_writer}->startTag( 'border' );
+    my $self       = shift;
+    my $format     = shift;
+    my @attributes = ();
 
-    $self->{_writer}->emptyTag( 'left' );
-    $self->{_writer}->emptyTag( 'right' );
-    $self->{_writer}->emptyTag( 'top' );
-    $self->{_writer}->emptyTag( 'bottom' );
-    $self->{_writer}->emptyTag( 'diagonal' );
+
+    # Diagonal borders add attributes to the <border> element.
+    if ($format->{_diag_type} == 1) {
+        push @attributes, ( diagonalUp => 1 );
+    }
+    elsif ($format->{_diag_type} == 2) {
+        push @attributes, ( diagonalDown => 1 );
+    }
+    elsif ($format->{_diag_type} == 3) {
+        push @attributes, ( diagonalUp => 1 );
+        push @attributes, ( diagonalDown => 1 );
+    }
+
+    # Write the start border tag.
+    $self->{_writer}->startTag( 'border', @attributes );
+
+    # Write the <border> sub elements.
+    $self->_write_sub_border(
+        'left',
+        $format->{_left},
+        $format->{_left_color}
+
+    );
+
+    $self->_write_sub_border(
+        'right',
+        $format->{_right},
+        $format->{_right_color}
+
+    );
+
+    $self->_write_sub_border(
+        'top',
+        $format->{_top},
+        $format->{_top_color}
+
+    );
+
+    $self->_write_sub_border(
+        'bottom',
+        $format->{_bottom},
+        $format->{_bottom_color}
+
+    );
+
+    $self->_write_sub_border(
+        'diagonal',
+        $format->{_diag_border},
+        $format->{_diag_color}
+
+    );
 
     $self->{_writer}->endTag( 'border' );
+}
+
+
+##############################################################################
+#
+# _write_sub_border()
+#
+# Write the <border> sub elements such as <rigth>, <top>, etc.
+#
+sub _write_sub_border {
+
+    my $self  = shift;
+    my $type  = shift;
+    my $style = shift;
+    my $color = shift;
+    my @attributes;
+
+    if (!$style) {
+        $self->{_writer}->emptyTag( $type );
+        return;
+    }
+
+    my @border_styles = qw(
+      none
+      thin
+      medium
+      dashed
+      dotted
+      thick
+      double
+      hair
+      mediumDashed
+      dashDot
+      mediumDashDot
+      dashDotDot
+      mediumDashDotDot
+      slantDashDot
+
+    );
+
+
+    push @attributes, ( style => $border_styles[$style] );
+
+    $self->{_writer}->startTag( $type, @attributes );
+
+    if ( $color ) {
+        $color = $self->_get_palette_color( $color );
+        $self->{_writer}->emptyTag( 'color', 'rgb' => $color );
+    }
+    else {
+        $self->{_writer}->emptyTag( 'color', 'auto' => 1 );
+    }
+
+    $self->{_writer}->endTag( $type );
 }
 
 
@@ -525,7 +641,7 @@ sub _write_xf {
     my $num_fmt_id = $format->{_num_format_index};
     my $font_id    = $format->{_font_index};
     my $fill_id    = 0;
-    my $border_id  = 0;
+    my $border_id  = $format->{_border_index};
     my $xf_id      = 0;
 
     my @attributes = (
@@ -544,6 +660,11 @@ sub _write_xf {
     # Add applyFont attribute if XF format uses a font element.
     if ( $format->{_has_font} && $format->{_font_index} > 0 ) {
         push @attributes, ( 'applyFont' => 1 );
+    }
+
+    # Add applyBorder attribute if XF format uses a border element.
+    if ( $format->{_has_border} && $format->{_border_index} > 0 ) {
+        push @attributes, ( 'applyBorder' => 1 );
     }
 
     $self->{_writer}->emptyTag( 'xf', @attributes );

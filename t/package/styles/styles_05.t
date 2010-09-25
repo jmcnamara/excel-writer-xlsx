@@ -35,9 +35,14 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-my $format1   = $workbook->add_format( num_format => 2 );
-my $format2   = $workbook->add_format( num_format => 2, bold => 1 );
-my $format3   = $workbook->add_format( num_format => '0.0' );
+my $format1 = $workbook->add_format( left   => 1 );
+my $format2 = $workbook->add_format( right  => 1 );
+my $format3 = $workbook->add_format( top    => 1 );
+my $format4 = $workbook->add_format( bottom => 1 );
+my $format5 = $workbook->add_format( diag_type => 1, diag_border => 1 );
+my $format6 = $workbook->add_format( diag_type => 2, diag_border => 1 );
+my $format7 = $workbook->add_format( diag_type => 3, diag_border => 1 );
+
 
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
@@ -61,19 +66,8 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <numFmts count="1">
-    <numFmt numFmtId="164" formatCode="0.0"/>
-  </numFmts>
-  <fonts count="2">
+  <fonts count="1">
     <font>
-      <sz val="11"/>
-      <color theme="1"/>
-      <name val="Calibri"/>
-      <family val="2"/>
-      <scheme val="minor"/>
-    </font>
-    <font>
-      <b/>
       <sz val="11"/>
       <color theme="1"/>
       <name val="Calibri"/>
@@ -89,7 +83,7 @@ __DATA__
       <patternFill patternType="gray125"/>
     </fill>
   </fills>
-  <borders count="1">
+  <borders count="8">
     <border>
       <left/>
       <right/>
@@ -97,15 +91,82 @@ __DATA__
       <bottom/>
       <diagonal/>
     </border>
+    <border>
+      <left style="thin">
+        <color auto="1"/>
+      </left>
+      <right/>
+      <top/>
+      <bottom/>
+      <diagonal/>
+    </border>
+    <border>
+      <left/>
+      <right style="thin">
+        <color auto="1"/>
+      </right>
+      <top/>
+      <bottom/>
+      <diagonal/>
+    </border>
+    <border>
+      <left/>
+      <right/>
+      <top style="thin">
+        <color auto="1"/>
+      </top>
+      <bottom/>
+      <diagonal/>
+    </border>
+    <border>
+      <left/>
+      <right/>
+      <top/>
+      <bottom style="thin">
+        <color auto="1"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border diagonalUp="1">
+      <left/>
+      <right/>
+      <top/>
+      <bottom/>
+      <diagonal style="thin">
+        <color auto="1"/>
+      </diagonal>
+    </border>
+    <border diagonalDown="1">
+      <left/>
+      <right/>
+      <top/>
+      <bottom/>
+      <diagonal style="thin">
+        <color auto="1"/>
+      </diagonal>
+    </border>
+    <border diagonalUp="1" diagonalDown="1">
+      <left/>
+      <right/>
+      <top/>
+      <bottom/>
+      <diagonal style="thin">
+        <color auto="1"/>
+      </diagonal>
+    </border>
   </borders>
   <cellStyleXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
   </cellStyleXfs>
-  <cellXfs count="4">
+  <cellXfs count="8">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="2" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
-    <xf numFmtId="2" fontId="1" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/>
-    <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="2" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="3" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="4" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="5" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="6" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="7" xfId="0" applyBorder="1"/>
   </cellXfs>
   <cellStyles count="1">
     <cellStyle name="Normal" xfId="0" builtinId="0"/>

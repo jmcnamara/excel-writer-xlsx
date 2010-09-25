@@ -30,9 +30,10 @@ my $style;
 $caption  = " \tStyles: _write_border()";
 $expected = '<border><left /><right /><top /><bottom /><diagonal /></border>';
 
-$style = _new_style(\$got);
+my $format = Excel::Writer::XLSX::Format->new( 0, has_border => 1 );
 
-$style->_write_border();
+$style = _new_style( \$got );
+$style->_write_border( $format );
 
 is( $got, $expected, $caption );
 

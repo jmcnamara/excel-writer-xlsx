@@ -37,6 +37,8 @@ t/package/styles/styles_01.t
 t/package/styles/styles_02.t
 t/package/styles/styles_03.t
 t/package/styles/styles_04.t
+t/package/styles/styles_05.t
+t/package/styles/styles_06.t
 t/package/styles/sub_write_border.t
 t/package/styles/sub_write_borders.t
 t/package/styles/sub_write_cell_style.t
