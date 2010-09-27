@@ -48,6 +48,7 @@ sub new {
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
     $self->{_border_count}     = 0;
+    $self->{_fill_count}       = 0;
 
     bless $self, $class;
 
@@ -122,6 +123,7 @@ sub _set_style_properties {
     $self->{_font_count}       = shift;
     $self->{_num_format_count} = shift;
     $self->{_border_count}     = shift;
+    $self->{_fill_count}       = shift;
 }
 
 
@@ -377,17 +379,41 @@ sub _write_color {
 sub _write_fills {
 
     my $self  = shift;
-    my $count = 2;
+    my $count = $self->{_fill_count};
 
     my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'fills', @attributes );
 
-    # Write the fill element.
-    $self->_write_fill( 'none' );
-    $self->_write_fill( 'gray125' );
+    # Write the default fill element.
+    $self->_write_default_fill( 'none' );
+    $self->_write_default_fill( 'gray125' );
+
+    # Write the fill elements for format objects that have them.
+    for my $format ( @{ $self->{_formats} } ) {
+        $self->_write_fill( $format ) if $format->{_has_fill};
+    }
 
     $self->{_writer}->endTag( 'fills' );
+}
+
+
+##############################################################################
+#
+# _write_default_fill()
+#
+# Write the <fill> element for the default fllss.
+#
+sub _write_default_fill {
+
+    my $self         = shift;
+    my $pattern_type = shift;
+
+    $self->{_writer}->startTag( 'fill' );
+
+    $self->{_writer}->emptyTag( 'patternFill', 'patternType', $pattern_type );
+
+    $self->{_writer}->endTag( 'fill' );
 }
 
 
@@ -399,13 +425,59 @@ sub _write_fills {
 #
 sub _write_fill {
 
-    my $self         = shift;
-    my $pattern_type = shift;
+    my $self     = shift;
+    my $format   = shift;
+    my $pattern  = $format->{_pattern};
+    my $bg_color = $format->{_bg_color};
+    my $fg_color = $format->{_fg_color};
+
+
+    my @patterns = qw(
+      none
+      solid
+      mediumGray
+      darkGray
+      lightGray
+      darkHorizontal
+      darkVertical
+      darkDown
+      darkUp
+      darkGrid
+      darkTrellis
+      lightHorizontal
+      lightVertical
+      lightDown
+      lightUp
+      lightGrid
+      lightTrellis
+      gray125
+      gray0625
+
+    );
+
 
     $self->{_writer}->startTag( 'fill' );
+    $self->{_writer}->startTag(
+        'patternFill',
+        'patternType',
+        $patterns[ $format->{_pattern} ]
 
-    $self->{_writer}->emptyTag( 'patternFill', 'patternType', $pattern_type );
+    );
 
+    if ( $fg_color ) {
+        $fg_color = $self->_get_palette_color( $fg_color );
+        $self->{_writer}->emptyTag( 'fgColor', 'rgb' => $fg_color );
+    }
+
+    if ( $bg_color ) {
+        $bg_color = $self->_get_palette_color( $bg_color );
+        $self->{_writer}->emptyTag( 'bgColor', 'rgb' => $bg_color );
+    }
+    else {
+        $self->{_writer}->emptyTag( 'bgColor', 'indexed' => 64 );
+    }
+
+    $self->{_writer}->endTag( 'patternFill' );
     $self->{_writer}->endTag( 'fill' );
 }
 
@@ -640,7 +712,7 @@ sub _write_xf {
     my $format     = shift;
     my $num_fmt_id = $format->{_num_format_index};
     my $font_id    = $format->{_font_index};
-    my $fill_id    = 0;
+    my $fill_id    = $format->{_fill_index};
     my $border_id  = $format->{_border_index};
     my $xf_id      = 0;
 
@@ -662,8 +734,13 @@ sub _write_xf {
         push @attributes, ( 'applyFont' => 1 );
     }
 
+    # Add applyFill attribute if XF format uses a fill element.
+    if ( $format->{_fill_index} > 0 ) {
+        push @attributes, ( 'applyFill' => 1 );
+    }
+
     # Add applyBorder attribute if XF format uses a border element.
-    if ( $format->{_has_border} && $format->{_border_index} > 0 ) {
+    if ( $format->{_border_index} > 0 ) {
         push @attributes, ( 'applyBorder' => 1 );
     }
 

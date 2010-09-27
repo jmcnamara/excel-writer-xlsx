@@ -65,11 +65,12 @@ sub new {
         _rotation      => 0,
         _text_vertical => 0,
 
-        _fg_color => 0x00,
-        _bg_color => 0x00,
-
-        _pattern => 0,
-
+        _fg_color   => 0x00,
+        _bg_color   => 0x00,
+        _pattern    => 0,
+        _has_fill   => 0,
+        _fill_index => 0,
+        _fill_count => 0,
 
         _border_index     => 0,
         _has_border       => 0,
@@ -554,6 +555,27 @@ sub get_border_key {
         $self->{_right_color},
         $self->{_top},
         $self->{_top_color},
+
+    );
+
+    return $key;
+}
+
+
+###############################################################################
+#
+# get_fill_key()
+#
+# Returns a unique hash key for a fill style. Used by Workbook.
+#
+sub get_fill_key {
+
+    my $self = shift;
+
+    my $key = join ':', (
+        $self->{_pattern},
+        $self->{_bg_color},
+        $self->{_fg_color},
 
     );
 

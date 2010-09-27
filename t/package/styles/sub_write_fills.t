@@ -31,7 +31,7 @@ $caption  = " \tStyles: _write_fills()";
 $expected = '<fills count="2"><fill><patternFill patternType="none" /></fill><fill><patternFill patternType="gray125" /></fill></fills>';
 
 $style = _new_style(\$got);
-
+$style->{_fill_count} = 2;
 $style->_write_fills();
 
 is( $got, $expected, $caption );

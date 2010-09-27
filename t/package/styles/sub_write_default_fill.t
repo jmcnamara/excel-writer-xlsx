@@ -25,14 +25,14 @@ my $style;
 
 ###############################################################################
 #
-# Test the _write_fill() method.
+# Test the _write_default_fill() method.
 #
-$caption  = " \tStyles: _write_fill()";
+$caption  = " \tStyles: _write_default_fill()";
 $expected = '<fill><patternFill patternType="none" /></fill>';
 
 $style = _new_style(\$got);
 
-$style->_write_fill('none');
+$style->_write_default_fill('none');
 
 is( $got, $expected, $caption );
 

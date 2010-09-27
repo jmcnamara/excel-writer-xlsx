@@ -33,6 +33,8 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 # Test the _assemble_xml_file() method.
 #
+# Tests for diagonal border styles.
+#
 $caption = " \tStyles: _assemble_xml_file()";
 
 my $format1 = $workbook->add_format( left   => 1 );
@@ -47,6 +49,7 @@ my $format7 = $workbook->add_format( diag_type => 3, diag_border => 1 );
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
 $workbook->_prepare_borders();
+$workbook->_prepare_fills();
 
 $style = _new_style( \$got );
 $style->_set_style_properties(
@@ -55,6 +58,7 @@ $style->_set_style_properties(
     $workbook->{_font_count},
     $workbook->{_num_format_count},
     $workbook->{_border_count},
+    $workbook->{_fill_count},
 );
 $style->_assemble_xml_file();
 

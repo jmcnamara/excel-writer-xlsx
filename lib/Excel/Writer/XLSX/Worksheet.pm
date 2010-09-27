@@ -1583,7 +1583,7 @@ sub write_blank {
     my $row  = $_[0];                              # Zero indexed row
     my $col  = $_[1];                              # Zero indexed column
     my $xf   = _XF( $self, $row, $col, $_[2] );    # The cell format
-    my $type = $self->{_datatypes}->{Blank};       # The data type
+    my $type = 'b';                                # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -3999,11 +3999,13 @@ sub _write_cell {
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 'f' ) {
-
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_formula( $value );
         $self->_write_cell_value( $cell->[3] );
         $self->{_writer}->endTag( 'c' );
+    }
+    elsif ( $type eq 'b' ) {
+        $self->{_writer}->emptyTag( 'c', @attributes );
     }
 }
 

@@ -545,6 +545,9 @@ sub _store_workbook {
     # Set the border index for the format objects.
     $self->_prepare_borders();
 
+    # Set the fill index for the format objects.
+    $self->_prepare_fills();
+
     # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
@@ -708,6 +711,76 @@ sub _prepare_borders {
     }
 
     $self->{_border_count} = $index;
+}
+
+
+###############################################################################
+#
+# _prepare_fills()
+#
+# Iterate through the XF Format objects and give them an index to non-default
+# fill elements.
+#
+# The user defined fill properties start from 2 since there are 2 default
+# fills: patternType="none" and patternType="gray125".
+#
+sub _prepare_fills {
+
+    my $self = shift;
+
+    my %fills;
+    my $index = 2; # Start from 2. See above.
+
+    # Add the deafult fills.
+    $fills{'0:0:0'}  = 0;
+    $fills{'17:0:0'} = 1;
+
+    for my $format ( @{ $self->{_formats} } ) {
+
+        # The following logical statements jointly take care of special cases
+        # in relation to cell colours and patterns:
+        # 1. For a solid fill (_pattern == 1) Excel reverses the role of
+        #    foreground and background colours, and
+        # 2. If the user specifies a foreground or background colour without
+        #    a pattern they probably wanted a solid fill, so we fill in the
+        #    defaults.
+        #
+        if ($format->{_pattern}  <= 1 &&
+            $format->{_bg_color} != 0 &&
+            $format->{_fg_color} == 0    )
+        {
+            $format->{_fg_color} = $format->{_bg_color};
+            $format->{_bg_color} = 0;
+            $format->{_pattern}  = 1;
+        }
+
+        if ($format->{_pattern}  <= 1 &&
+            $format->{_bg_color} == 0 &&
+            $format->{_fg_color} != 0    )
+        {
+            $format->{_bg_color} = 0;
+            $format->{_pattern}  = 1;
+        }
+
+        my $key = $format->get_fill_key();
+
+        if ( exists $fills{$key} ) {
+
+            # Fill has already been used.
+            $format->{_fill_index} = $fills{$key};
+            $format->{_has_fill}   = 0;
+        }
+        else {
+
+            # This is a new fill.
+            $fills{$key}           = $index;
+            $format->{_fill_index} = $index;
+            $format->{_has_fill}   = 1;
+            $index++;
+        }
+    }
+
+    $self->{_fill_count} = $index;
 }
 
 

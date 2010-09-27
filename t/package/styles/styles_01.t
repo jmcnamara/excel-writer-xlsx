@@ -33,11 +33,14 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 # Test the _assemble_xml_file() method.
 #
+# Test for styles.xml file with default styles.
+#
 $caption = " \tStyles: _assemble_xml_file()";
 
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
 $workbook->_prepare_borders();
+$workbook->_prepare_fills();
 
 $style = _new_style( \$got );
 $style->_set_style_properties(
@@ -46,6 +49,7 @@ $style->_set_style_properties(
     $workbook->{_font_count},
     $workbook->{_num_format_count},
     $workbook->{_border_count},
+    $workbook->{_fill_count},
 );
 $style->_assemble_xml_file();
 

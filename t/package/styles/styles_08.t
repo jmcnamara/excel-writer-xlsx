@@ -33,24 +33,28 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 # Test the _assemble_xml_file() method.
 #
-# Test for border colour styles.
+# Test for simple fills in the styles.xml file with a default solid pattern.
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
 my $format1 = $workbook->add_format(
-    left         => 1,
-    right        => 1,
-    top          => 1,
-    bottom       => 1,
-    diag_border  => 1,
-    diag_type    => 3,
-    left_color   => 'red',
-    right_color  => 'red',
-    top_color    => 'red',
-    bottom_color => 'red',
-    diag_color   => 'red'
+    pattern  => 1,
+    bg_color => 'red',
+    bold     => 1
+
 );
 
+my $format2 = $workbook->add_format(
+    bg_color => 'red',
+    italic   => 1
+
+);
+
+my $format3 = $workbook->add_format(
+    fg_color  => 'red',
+    underline => 1
+
+);
 
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
@@ -76,7 +80,7 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <fonts count="1">
+  <fonts count="4">
     <font>
       <sz val="11"/>
       <color theme="1"/>
@@ -84,16 +88,46 @@ __DATA__
       <family val="2"/>
       <scheme val="minor"/>
     </font>
+    <font>
+      <b/>
+      <sz val="11"/>
+      <color theme="1"/>
+      <name val="Calibri"/>
+      <family val="2"/>
+      <scheme val="minor"/>
+    </font>
+    <font>
+      <i/>
+      <sz val="11"/>
+      <color theme="1"/>
+      <name val="Calibri"/>
+      <family val="2"/>
+      <scheme val="minor"/>
+    </font>
+    <font>
+      <u/>
+      <sz val="11"/>
+      <color theme="1"/>
+      <name val="Calibri"/>
+      <family val="2"/>
+      <scheme val="minor"/>
+    </font>
   </fonts>
-  <fills count="2">
+  <fills count="3">
     <fill>
       <patternFill patternType="none"/>
     </fill>
     <fill>
       <patternFill patternType="gray125"/>
     </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor rgb="FFFF0000"/>
+        <bgColor indexed="64"/>
+      </patternFill>
+    </fill>
   </fills>
-  <borders count="2">
+  <borders count="1">
     <border>
       <left/>
       <right/>
@@ -101,30 +135,15 @@ __DATA__
       <bottom/>
       <diagonal/>
     </border>
-    <border diagonalUp="1" diagonalDown="1">
-      <left style="thin">
-        <color rgb="FFFF0000"/>
-      </left>
-      <right style="thin">
-        <color rgb="FFFF0000"/>
-      </right>
-      <top style="thin">
-        <color rgb="FFFF0000"/>
-      </top>
-      <bottom style="thin">
-        <color rgb="FFFF0000"/>
-      </bottom>
-      <diagonal style="thin">
-        <color rgb="FFFF0000"/>
-      </diagonal>
-    </border>
   </borders>
   <cellStyleXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
   </cellStyleXfs>
-  <cellXfs count="2">
+  <cellXfs count="4">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>
+    <xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>
+    <xf numFmtId="0" fontId="3" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>
   </cellXfs>
   <cellStyles count="1">
     <cellStyle name="Normal" xfId="0" builtinId="0"/>

@@ -33,22 +33,21 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 # Test the _assemble_xml_file() method.
 #
-# Test for border colour styles.
+# Test for simple fills in the styles.xml file.
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-my $format1 = $workbook->add_format(
-    left         => 1,
-    right        => 1,
-    top          => 1,
-    bottom       => 1,
-    diag_border  => 1,
-    diag_type    => 3,
-    left_color   => 'red',
-    right_color  => 'red',
-    top_color    => 'red',
-    bottom_color => 'red',
-    diag_color   => 'red'
+my $format1 = $workbook->add_format( pattern => 1,  bg_color => 'red' );
+my $format2 = $workbook->add_format( pattern => 11, bg_color => 'red' );
+my $format3 = $workbook->add_format(
+    pattern  => 11,
+    bg_color => 'red',
+    fg_color => 'yellow'
+);
+my $format4 = $workbook->add_format(
+    pattern  => 1,
+    bg_color => 'red',
+    fg_color => 'red'
 );
 
 
@@ -85,15 +84,38 @@ __DATA__
       <scheme val="minor"/>
     </font>
   </fonts>
-  <fills count="2">
+  <fills count="6">
     <fill>
       <patternFill patternType="none"/>
     </fill>
     <fill>
       <patternFill patternType="gray125"/>
     </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor rgb="FFFF0000"/>
+        <bgColor indexed="64"/>
+      </patternFill>
+    </fill>
+    <fill>
+      <patternFill patternType="lightHorizontal">
+        <bgColor rgb="FFFF0000"/>
+      </patternFill>
+    </fill>
+    <fill>
+      <patternFill patternType="lightHorizontal">
+        <fgColor rgb="FFFFFF00"/>
+        <bgColor rgb="FFFF0000"/>
+      </patternFill>
+    </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor rgb="FFFF0000"/>
+        <bgColor rgb="FFFF0000"/>
+      </patternFill>
+    </fill>
   </fills>
-  <borders count="2">
+  <borders count="1">
     <border>
       <left/>
       <right/>
@@ -101,30 +123,16 @@ __DATA__
       <bottom/>
       <diagonal/>
     </border>
-    <border diagonalUp="1" diagonalDown="1">
-      <left style="thin">
-        <color rgb="FFFF0000"/>
-      </left>
-      <right style="thin">
-        <color rgb="FFFF0000"/>
-      </right>
-      <top style="thin">
-        <color rgb="FFFF0000"/>
-      </top>
-      <bottom style="thin">
-        <color rgb="FFFF0000"/>
-      </bottom>
-      <diagonal style="thin">
-        <color rgb="FFFF0000"/>
-      </diagonal>
-    </border>
   </borders>
   <cellStyleXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
   </cellStyleXfs>
-  <cellXfs count="2">
+  <cellXfs count="5">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0" fontId="0" fillId="2" borderId="0" xfId="0" applyFill="1"/>
+    <xf numFmtId="0" fontId="0" fillId="3" borderId="0" xfId="0" applyFill="1"/>
+    <xf numFmtId="0" fontId="0" fillId="4" borderId="0" xfId="0" applyFill="1"/>
+    <xf numFmtId="0" fontId="0" fillId="5" borderId="0" xfId="0" applyFill="1"/>
   </cellXfs>
   <cellStyles count="1">
     <cellStyle name="Normal" xfId="0" builtinId="0"/>
