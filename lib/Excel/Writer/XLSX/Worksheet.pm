@@ -143,6 +143,12 @@ sub new {
     $self->{_filter_range} = [];
     $self->{_filter_cols}  = {};
 
+    $self->{_col_sizes}   = {};
+    $self->{_row_sizes}   = {};
+    $self->{_col_formats} = {};
+    $self->{_row_formats} = {};
+
+
 
     $self->{_datatypes} = {
         String   => 1,
@@ -195,6 +201,9 @@ sub _assemble_xml_file {
 
     # Write the sheet format properties.
     $self->_write_sheet_format_pr();
+
+    # Write the sheet column info.
+    $self->_write_cols();
 
     # Write the worksheet data such as rows columns and cells.
     $self->_write_sheet_data();
@@ -362,50 +371,57 @@ sub protect {
 
 ###############################################################################
 #
-# set_column($firstcol, $lastcol, $width, $format, $hidden, $autofit)
+# set_column($firstcol, $lastcol, $width, $format, $hidden, $level)
 #
 # Set the width of a single column or a range of columns.
-# See also: _store_colinfo
+# See also: _write_col_info
 #
 sub set_column {
 
     my $self = shift;
-    my $cell = $_[0];
+    my @data = @_;
+    my $cell = $data[0];
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ( $cell =~ /^\D/ ) {
-        @_ = $self->_substitute_cellref( @_ );
+    if ($cell =~ /^\D/) {
+        @data = $self->_substitute_cellref(@_);
 
         # Returned values $row1 and $row2 aren't required here. Remove them.
-        shift @_;    # $row1
-        splice @_, 1, 1;    # $row2
+        shift  @data;       # $row1
+        splice @data, 1, 1; # $row2
     }
 
+    return if @data < 3; # Ensure at least $firstcol, $lastcol and $width
+    return if not defined $data[0]; # Columns must be defined.
+    return if not defined $data[1];
 
-    my ( $firstcol, $lastcol ) = @_;
+    # Assume second column is the same as first if 0. Avoids KB918419 bug.
+    $data[1] = $data[0] if $data[1] == 0;
 
-    # Ensure at least $firstcol, $lastcol and $width
-    return if @_ < 3;
-
-    # Check that column number is valid and store the max value
-    return if $self->_check_dimensions( 0, $lastcol );
-
-
-    my $width   = $_[2];
-    my $format  = _XF( $self, 0, 0, $_[3] );
-    my $hidden  = $_[4];
-    my $autofit = $_[5];
-
-    if ( defined $width ) {
-        $width = $self->_size_col( $_[2] );
-
-        # The cell is hidden if the width is zero.
-        $hidden = 1 if $width == 0;
-    }
+    # Ensure 2nd col is larger than first. Also for KB918419 bug.
+    ($data[0], $data[1]) = ($data[1], $data[0]) if $data[0] > $data[1];
 
 
-    foreach my $col ( $firstcol .. $lastcol ) {
-        $self->{_set_cols}->{$col} = [ $width, $format, $hidden, $autofit ];
+    # Check that cola are valid and store max and min values with default row.
+    # NOTE: This isn't strictly correct. Excel only seems to set the dims
+    #       for formatted/hidden columns. Should be conservative at least.
+    return -2 if $self->_check_dimensions( 0, $data[0] );
+    return -2 if $self->_check_dimensions( 0, $data[1] );
+
+    push @{$self->{_colinfo}}, [ @data ];
+
+    # Store the col sizes for use when calculating image vertices taking
+    # hidden columns into account. Also store the column formats.
+    #
+    my $width  = $data[4] ? 0 : $data[2]; # Set width to zero if col is hidden
+       $width  ||= 0;                     # Ensure width isn't undef.
+    my $format = $data[3];
+
+    my ($firstcol, $lastcol) = @data;
+
+    foreach my $col ($firstcol .. $lastcol) {
+        $self->{_col_sizes}->{$col}   = $width;
+        $self->{_col_formats}->{$col} = $format if defined $format;
     }
 }
 
@@ -2428,70 +2444,6 @@ sub _store_defcol {
 
 ###############################################################################
 #
-# _store_colinfo($firstcol, $lastcol, $width, $format, $autofit)
-#
-# Write XML <Column> elements to define column widths.
-#
-#
-sub _store_colinfo {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    # Extract only the columns that have been defined.
-    my @cols = sort { $a <=> $b } keys %{ $self->{_set_cols} };
-    return unless @cols;
-
-    my @attribs;
-    my $previous = -1;
-    my $span     = 0;
-
-    for my $col ( @cols ) {
-        if ( not $span ) {
-            my $width   = $self->{_set_cols}->{$col}->[0];
-            my $format  = $self->{_set_cols}->{$col}->[1];
-            my $hidden  = $self->{_set_cols}->{$col}->[2];
-            my $autofit = $self->{_set_cols}->{$col}->[3] || 0;
-
-            push @attribs, "ss:Index",   $col + 1      if $col != $previous + 1;
-            push @attribs, "ss:StyleID", "s" . $format if $format;
-            push @attribs, "ss:Hidden",  $hidden       if $hidden;
-            push @attribs, "ss:AutoFitWidth", $autofit;
-            push @attribs, "ss:Width", $width if $width;
-
-            # Note. "Overview of SpreadsheetML" states that the ss:Index
-            # attribute is implicit in a Column element directly following a
-            # Column element with an ss:Span attribute. However Excel doesn't
-            # comply. In order to test directly against Excel we follow suit
-            # and make ss:Index explicit. To get the implicit behaviour move
-            # the next line outside the for() loop.
-            $previous = $col;
-        }
-
-        # $previous = $col; # See note above.
-        local $^W = 0;   # Ignore warnings about undefs in array ref comparison.
-
-        # Check if the same attributes are shared over consecutive columns.
-        if ( exists $self->{_set_cols}->{ $col + 1 }
-            and join( "|", @{ $self->{_set_cols}->{$col} } ) eq
-            join( "|", @{ $self->{_set_cols}->{ $col + 1 } } ) )
-        {
-            $span++;
-            next;
-        }
-
-        push @attribs, "ss:Span", $span if $span;
-        $self->_write_xml_element( 3, 1, 0, 'Column', @attribs );
-
-        @attribs = ();
-        $span    = 0;
-    }
-}
-
-
-###############################################################################
-#
 # _store_selection($first_row, $first_col, $last_row, $last_col)
 #
 # Write BIFF record SELECTION.
@@ -3804,6 +3756,97 @@ sub _write_sheet_format_pr {
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
 
     $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_cols()
+#
+# Write the <cols> element and <col> sub elements.
+#
+sub _write_cols {
+
+    my $self = shift;
+
+    # Exit unless some column have been formatted.
+    return unless @{ $self->{_colinfo} };
+
+    $self->{_writer}->startTag( 'cols' );
+
+    for my $col_info ( @{ $self->{_colinfo} } ) {
+        $self->_write_col_info( @$col_info );
+    }
+
+    $self->{_writer}->endTag( 'cols' );
+}
+
+
+##############################################################################
+#
+# _write_col_info()
+#
+# Write the <col> element.
+#
+sub _write_col_info {
+
+    my $self         = shift;
+    my $min          = $_[0] // 0;    # First formatted column.
+    my $max          = $_[1] // 0;    # Last formatted column.
+    my $width        = $_[2];         # Col width in user units.
+    my $format       = $_[3];         # Format object.
+    my $hidden       = $_[4] // 0;    # Hidden flag.
+    my $level        = $_[5] // 0;    # Outline level.
+    my $collapsed    = $_[6] // 0;    # Outline level.
+    my $style        = 0;
+    my $custom_width = 1;
+
+    # Set the Excel default col width.
+    if ( !defined $width ) {
+        if ( !$hidden ) {
+            $width        = 8.43;
+            $custom_width = 0;
+        }
+        else {
+            $width = 0;
+        }
+    }
+    else {
+
+        # Width is defined but same as default.
+        if ( $width == 8.43 ) {
+            $custom_width = 0;
+        }
+    }
+
+
+    # Check for a format object.
+    if ( ref $format ) {
+        $style = $format->get_xf_index();
+    }
+
+
+    # Convert column width from user units to character width.
+    my $max_digit_width = 7;    # For Calabri 11.
+    my $padding         = 5;
+    if ( $width > 0 ) {
+        $width = int(
+            ( $width * $max_digit_width + $padding ) / $max_digit_width * 256 )
+          / 256;
+    }
+
+    my @attributes = (
+        'min'   => $min + 1,
+        'max'   => $max + 1,
+        'width' => $width,
+    );
+
+    push @attributes, ( style       => 1 ) if $style;
+    push @attributes, ( hidden      => 1 ) if $hidden;
+    push @attributes, ( customWidth => 1 ) if $custom_width;
+
+
+    $self->{_writer}->emptyTag( 'col', @attributes );
 }
 
 

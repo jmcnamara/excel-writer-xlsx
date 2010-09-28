@@ -47,8 +47,8 @@ t/package/styles/sub_write_cell_style.t
 t/package/styles/sub_write_cell_style_xfs.t
 t/package/styles/sub_write_cell_styles.t
 t/package/styles/sub_write_cell_xfs.t
-t/package/styles/sub_write_dxfs.t
 t/package/styles/sub_write_default_fill.t
+t/package/styles/sub_write_dxfs.t
 t/package/styles/sub_write_fills.t
 t/package/styles/sub_write_font.t
 t/package/styles/sub_write_fonts.t
@@ -78,6 +78,7 @@ t/workbook/workbook_03.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_write_cell.t
 t/worksheet/sub_write_cell_value.t
+t/worksheet/sub_write_col_info.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
 t/worksheet/sub_write_ext_lst.t
@@ -97,6 +98,7 @@ t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
 t/worksheet/worksheet_01.t
 t/worksheet/worksheet_02.t
+t/worksheet/worksheet_03.t
 
 examples/README
 examples/a_simple.pl  
