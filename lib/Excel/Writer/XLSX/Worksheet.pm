@@ -2062,36 +2062,57 @@ sub insert_bitmap {
 
 ###############################################################################
 #
-# set_row($row, $height, $XF, $hidden, $level)
+# set_row($row, $height, $XF, $hidden, $level, $collapsed)
 #
 # This method is used to set the height and XF format for a row.
 #
 sub set_row {
 
-    my $self = shift;
-    my $row  = $_[0];
+    my $self      = shift;
+    my $row       = shift;          # Row Number.
+    my $height    = shift // 15;    # Row height.
+    my $format    = shift;          # Format object.
+    my $hidden    = shift // 0;     # Hidden flag.
+    my $level     = shift // 0;     # Outline level.
+    my $collapsed = shift // 0;     # Collapsed row.
+    my $style;
 
-    # Ensure at least $row and $height
-    return if @_ < 2;
+    return unless defined $row;     # Ensure at least $row is specified.
 
-    # Check that row number is valid and store the max value
-    return if $self->_check_dimensions( $row, 0 );
+    # Check that row and col are valid and store max and min values.
+    return -2 if $self->_check_dimensions( $row, 0 );
 
 
-    my $height  = $_[1];
-    my $format  = _XF( $self, 0, 0, $_[2] );
-    my $hidden  = $_[3];
-    my $autofit = $_[4];
+    # If the height is 0 the row is hidden and the height is the default.
+    if ($height == 0) {
+        $hidden = 1;
+        $height = 15;
+    }
 
-    if ( $height ) {
-        $height = $self->_size_row( $_[1] );
-
-        # The cell is hidden if the width is zero.
-        $hidden = 1 if $height == 0;
+    # Check for a format object.
+    if ( ref $format ) {
+        $style = $format->get_xf_index();
     }
 
 
-    $self->{_set_rows}->{$row} = [ $height, $format, $hidden, $autofit ];
+    # Set the limits for the outline levels (0 <= x <= 7).
+    $level = 0 if $level < 0;
+    $level = 7 if $level > 7;
+
+    if ( $level > $self->{_outline_row_level} ) {
+        $self->{_outline_row_level} = $level;
+    }
+
+
+    # Store the row properties.
+    $self->{_set_rows}->{$row} =
+      [ $height, $style, $hidden, $level, $collapsed ];
+
+
+    # Store the row sizes for use when calculating image vertices.
+    # Also store the column formats.
+    $self->{_row_sizes}->{ $row } = $height;
+    $self->{_row_formats}->{ $row } = $format if defined $format;
 }
 
 
@@ -3878,12 +3899,9 @@ sub _write_sheet_data {
 #
 # _write_rows()
 #
-# TODO
+# Write out the worksheet data as a series of rows and cells.
 #
 sub _write_rows {
-
-
-    #jmn
 
     my $self = shift;
 
@@ -3891,16 +3909,24 @@ sub _write_rows {
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
-        next
-          unless $self->{_set_rows}->{$row_num}
-              or $self->{_table}->[$row_num];
+        # Skip row if it doesn't contain row formatting or cell data.
+        if ( !$self->{_set_rows}->{$row_num} && !$self->{_table}->[$row_num] ) {
+            next;
+        }
 
-
+        # Write the cells if the row contains data.
         if ( my $row_ref = $self->{_table}->[$row_num] ) {
             my $span_index = int( $row_num / 16 );
             my $span       = $self->{_row_spans}->[$span_index];
 
-            $self->_write_row( $row_num, $span );
+            if ( !$self->{_set_rows}->{$row_num} ) {
+                $self->_write_row( $row_num, $span );
+            }
+            else {
+                $self->_write_row( $row_num, $span,
+                    @{ $self->{_set_rows}->{$row_num} } );
+            }
+
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
                 if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
@@ -3912,7 +3938,9 @@ sub _write_rows {
         }
         else {
 
-            # TODO. Row attributes only.
+            # Row attributes only.
+            $self->_write_empty_row( $row_num, undef,
+                @{ $self->{_set_rows}->{$row_num} } );
         }
     }
 }
@@ -3981,18 +4009,45 @@ sub _calculate_spans {
 #
 sub _write_row {
 
-    my $self  = shift;
-    my $r     = shift;
-    my $spans = shift;
-
+    my $self      = shift;
+    my $r         = shift;
+    my $spans     = shift;
+    my $height    = shift // 15;
+    my $format    = shift;
+    my $hidden    = shift // 0;
+    my $level     = shift // 0;
+    my $collapsed = shift // 0;
+    my $empty_row = shift // 0;
 
     my @attributes = ( 'r' => $r + 1 );
 
-    if ( defined $spans ) {
-        push @attributes, ( 'spans' => $spans );
-    }
+    push @attributes, ( 'spans'        => $spans )  if defined $spans;
+    push @attributes, ( 's'            => $format ) if $format;
+    push @attributes, ( 'customFormat' => 1 )       if $format;
+    push @attributes, ( 'ht'           => $height ) if $height != 15;
+    push @attributes, ( 'hidden'       => 1       ) if $hidden;
+    push @attributes, ( 'customHeight' => 1 )       if $height != 15;
 
-    $self->{_writer}->startTag( 'row', @attributes );
+
+    if ($empty_row) {
+        $self->{_writer}->emptyTag( 'row', @attributes );
+    }
+    else {
+        $self->{_writer}->startTag( 'row', @attributes );
+    }
+}
+
+
+###############################################################################
+#
+# _write_empty_row()
+#
+# Write and empty <row> element, i.e., attributes only, no cell data.
+#
+sub _write_empty_row {
+
+    my $self = shift;
+    $self->_write_row( @_, 1 );
 }
 
 

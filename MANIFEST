@@ -99,6 +99,7 @@ t/worksheet/sub_write_xml_declaration.t
 t/worksheet/worksheet_01.t
 t/worksheet/worksheet_02.t
 t/worksheet/worksheet_03.t
+t/worksheet/worksheet_04.t
 
 examples/README
 examples/a_simple.pl  
