@@ -134,7 +134,7 @@ sub copy {
 #
 # get_align_properties()
 #
-# Return properties for an Excel XML <Alignment> element.
+# Return properties for an Style xf <alignment> sub-element.
 #
 # Excels handling of the vertical align "Bottom" property is different from
 # other properties. It is on by default if any non-vertical property is set.
@@ -168,46 +168,42 @@ sub get_align_properties {
 
 
     # Check for properties that are mutually exclusive.
-    $self->{_rotation} = 0 if $self->{_text_vertical};
-    $self->{_shrink}   = 0 if $self->{_text_wrap};
-    $self->{_shrink}   = 0 if $self->{_text_h_align} == 4;    # Fill
-    $self->{_shrink}   = 0 if $self->{_text_h_align} == 5;    # Justify
-    $self->{_shrink}   = 0 if $self->{_text_h_align} == 7;    # Distributed
-    $self->{_just_distrib} = 0
-      if $self->{_text_h_align} != 7;                         # Distributed TODO
+    $self->{_rotation}     = 0 if $self->{_text_vertical};
+    $self->{_shrink}       = 0 if $self->{_text_wrap};
+    $self->{_shrink}       = 0 if $self->{_text_h_align} == 4;    # Fill
+    $self->{_shrink}       = 0 if $self->{_text_h_align} == 5;    # Justify
+    $self->{_shrink}       = 0 if $self->{_text_h_align} == 7;    # Distributed
+    $self->{_just_distrib} = 0 if $self->{_text_h_align} != 7;    # Distrib TODO
 
 
-    push @align, 'ss:Horizontal', 'Left'    if $self->{_text_h_align} == 1;
-    push @align, 'ss:Horizontal', 'Center'  if $self->{_text_h_align} == 2;
-    push @align, 'ss:Horizontal', 'Right'   if $self->{_text_h_align} == 3;
-    push @align, 'ss:Horizontal', 'Fill'    if $self->{_text_h_align} == 4;
-    push @align, 'ss:Horizontal', 'Justify' if $self->{_text_h_align} == 5;
-    push @align, 'ss:Horizontal', 'CenterAcrossSelection'
+    push @align, 'horizontal', 'left'    if $self->{_text_h_align} == 1;
+    push @align, 'horizontal', 'center'  if $self->{_text_h_align} == 2;
+    push @align, 'horizontal', 'right'   if $self->{_text_h_align} == 3;
+    push @align, 'horizontal', 'fill'    if $self->{_text_h_align} == 4;
+    push @align, 'horizontal', 'justify' if $self->{_text_h_align} == 5;
+    push @align, 'horizontal', 'centerAcrossSelection'
       if $self->{_text_h_align} == 6;
-    push @align, 'ss:Horizontal', 'Distributed' if $self->{_text_h_align} == 7;
+    push @align, 'horizontal', 'Distributed' if $self->{_text_h_align} == 7;
 
-    push @align, 'ss:Vertical', 'Top'         if $self->{_text_v_align} == 0;
-    push @align, 'ss:Vertical', 'Center'      if $self->{_text_v_align} == 1;
-    push @align, 'ss:Vertical', 'Bottom'      if $self->{_text_v_align} == 2;
-    push @align, 'ss:Vertical', 'Justify'     if $self->{_text_v_align} == 3;
-    push @align, 'ss:Vertical', 'Distributed' if $self->{_text_v_align} == 4;
+    push @align, 'vertical', 'top'         if $self->{_text_v_align} == 0;
+    push @align, 'vertical', 'center'      if $self->{_text_v_align} == 1;
+    push @align, 'vertical', 'bottom'      if $self->{_text_v_align} == 2;
+    push @align, 'vertical', 'justify'     if $self->{_text_v_align} == 3;
+    push @align, 'vertical', 'distributed' if $self->{_text_v_align} == 4;
 
     push @align, 'ss:Indent', $self->{_indent}   if $self->{_indent};
-    push @align, 'ss:Rotate', $self->{_rotation} if $self->{_rotation};
+    push @align, 'testRotation', $self->{_rotation} if $self->{_rotation};
 
-    push @align, 'ss:VerticalText', 1 if $self->{_text_vertical};
-    push @align, 'ss:WrapText',     1 if $self->{_text_wrap};
-    push @align, 'ss:ShrinkToFit',  1 if $self->{_shrink};
+    push @align, 'verticalText', 1 if $self->{_text_vertical};
+    push @align, 'wrapText',     1 if $self->{_text_wrap};
+    push @align, 'shrinkToFit',  1 if $self->{_shrink};
 
-    # 'Context' is default property for ReadingOrder.
-    push @align, 'ss:ReadingOrder', 'LeftToRight'
-      if $self->{_reading_order} == 1;
-    push @align, 'ss:ReadingOrder', 'RightToLeft'
-      if $self->{_reading_order} == 2;
+    push @align, 'readingOrder', 1 if $self->{_reading_order} == 1;
+    push @align, 'readingOrder', 2 if $self->{_reading_order} == 2;
 
 
     # TODO
-    #    ss:Horizontal="JustifyDistributed" ss:Vertical="Bottom"
+    #    horizontal="JustifyDistributed" vertical="Bottom"
 
     return @align;
 }
