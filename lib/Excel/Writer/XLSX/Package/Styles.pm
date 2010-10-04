@@ -724,7 +724,7 @@ sub _write_xf {
         'xfId'     => $xf_id,
     );
 
-    # Add applyNumberFormat attribute if XF format uses a number format.
+
     if ( $format->{_num_format_index} > 0 ) {
         push @attributes, ( 'applyNumberFormat' => 1 );
     }
@@ -744,7 +744,32 @@ sub _write_xf {
         push @attributes, ( 'applyBorder' => 1 );
     }
 
-    $self->{_writer}->emptyTag( 'xf', @attributes );
+    # Check if XF format has alignment properties set.
+    my ( $apply_align, @align ) = $format->get_align_properties();
+
+    # Check for cell protection properties.
+    my @protection = $format->get_protection_properties();
+
+    if ( $apply_align ) {
+        push @attributes, ( 'applyAlignment' => 1 );
+    }
+
+    # TODO. Add protection sub element
+    #if ( @protection ) {
+    #    push @attributes, ( 'applyProtection' => 1 );
+    #}
+
+    if ( $apply_align && @align ) {
+        $self->{_writer}->startTag( 'xf', @attributes );
+        $self->{_writer}->emptyTag( 'alignment', @align );
+        $self->{_writer}->endTag( 'xf');
+    }
+    else {
+        $self->{_writer}->emptyTag( 'xf', @attributes );
+    }
+
+
+
 
 }
 

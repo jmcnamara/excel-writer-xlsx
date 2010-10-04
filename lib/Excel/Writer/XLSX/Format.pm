@@ -60,10 +60,9 @@ sub new {
 
         _text_h_align  => 0,
         _text_wrap     => 0,
-        _text_v_align  => -1,
+        _text_v_align  => 0,
         _text_justlast => 0,
         _rotation      => 0,
-        _text_vertical => 0,
 
         _fg_color   => 0x00,
         _bg_color   => 0x00,
@@ -92,9 +91,7 @@ sub new {
         _shrink        => 0,
         _merge_range   => 0,
         _reading_order => 0,
-
-
-        _just_distrib => 0,
+        _just_distrib  => 0,
 
     };
 
@@ -136,13 +133,6 @@ sub copy {
 #
 # Return properties for an Style xf <alignment> sub-element.
 #
-# Excels handling of the vertical align "Bottom" property is different from
-# other properties. It is on by default if any non-vertical property is set.
-# Therefore we set the undefined _text_v_align value to -1 so that we can
-# detect if it has been set by the user. If it hasn't been set then we supply
-# the default "Bottom" value.
-#
-#
 sub get_align_properties {
 
     my $self = shift;
@@ -152,331 +142,62 @@ sub get_align_properties {
     # Check if any alignment options in the format have been changed.
     my $changed =
       (      $self->{_text_h_align} != 0
-          || $self->{_text_v_align} != -1
+          || $self->{_text_v_align} != 0
           || $self->{_indent} != 0
           || $self->{_rotation} != 0
-          || $self->{_text_vertical} != 0
+          || $self->{_rotation} != 0
           || $self->{_text_wrap} != 0
           || $self->{_shrink} != 0
           || $self->{_reading_order} != 0 ) ? 1 : 0;
 
-
     return unless $changed;
 
-    # Excel sets 'ss:Vertical="Bottom"' even when it is the default.
-    $self->{_text_v_align} = 2 if $self->{_text_v_align} == -1;
 
+    # Indent is only allowed for vertical left, right and distributed.
+    if (   $self->{_text_h_align} != 1
+        && $self->{_text_h_align} != 3
+        && $self->{_text_h_align} != 7 )
+    {
+        $self->{_indent} = 0;
+    }
 
     # Check for properties that are mutually exclusive.
-    $self->{_rotation}     = 0 if $self->{_text_vertical};
     $self->{_shrink}       = 0 if $self->{_text_wrap};
     $self->{_shrink}       = 0 if $self->{_text_h_align} == 4;    # Fill
     $self->{_shrink}       = 0 if $self->{_text_h_align} == 5;    # Justify
     $self->{_shrink}       = 0 if $self->{_text_h_align} == 7;    # Distributed
-    $self->{_just_distrib} = 0 if $self->{_text_h_align} != 7;    # Distrib TODO
+    $self->{_just_distrib} = 0 if $self->{_text_h_align} != 7;    # Distributed
+    $self->{_just_distrib} = 0 if $self->{_indent};
 
+    my $continuous = 'centerContinuous';
 
-    push @align, 'horizontal', 'left'    if $self->{_text_h_align} == 1;
-    push @align, 'horizontal', 'center'  if $self->{_text_h_align} == 2;
-    push @align, 'horizontal', 'right'   if $self->{_text_h_align} == 3;
-    push @align, 'horizontal', 'fill'    if $self->{_text_h_align} == 4;
-    push @align, 'horizontal', 'justify' if $self->{_text_h_align} == 5;
-    push @align, 'horizontal', 'centerAcrossSelection'
-      if $self->{_text_h_align} == 6;
-    push @align, 'horizontal', 'Distributed' if $self->{_text_h_align} == 7;
+    push @align, 'horizontal', 'left'        if $self->{_text_h_align} == 1;
+    push @align, 'horizontal', 'center'      if $self->{_text_h_align} == 2;
+    push @align, 'horizontal', 'right'       if $self->{_text_h_align} == 3;
+    push @align, 'horizontal', 'fill'        if $self->{_text_h_align} == 4;
+    push @align, 'horizontal', 'justify'     if $self->{_text_h_align} == 5;
+    push @align, 'horizontal', $continuous   if $self->{_text_h_align} == 6;
+    push @align, 'horizontal', 'distributed' if $self->{_text_h_align} == 7;
 
-    push @align, 'vertical', 'top'         if $self->{_text_v_align} == 0;
-    push @align, 'vertical', 'center'      if $self->{_text_v_align} == 1;
-    push @align, 'vertical', 'bottom'      if $self->{_text_v_align} == 2;
-    push @align, 'vertical', 'justify'     if $self->{_text_v_align} == 3;
-    push @align, 'vertical', 'distributed' if $self->{_text_v_align} == 4;
+    push @align, 'justifyLastLine', 1 if $self->{_just_distrib};
 
-    push @align, 'ss:Indent', $self->{_indent}   if $self->{_indent};
-    push @align, 'testRotation', $self->{_rotation} if $self->{_rotation};
+    # Property 'vertical' => 'bottom' is a default. It sets applyAlignment
+    # without an alignment subelement.
+    push @align, 'vertical', 'top'         if $self->{_text_v_align} == 1;
+    push @align, 'vertical', 'center'      if $self->{_text_v_align} == 2;
+    push @align, 'vertical', 'justify'     if $self->{_text_v_align} == 4;
+    push @align, 'vertical', 'distributed' if $self->{_text_v_align} == 5;
 
-    push @align, 'verticalText', 1 if $self->{_text_vertical};
+    push @align, 'indent',       $self->{_indent}   if $self->{_indent};
+    push @align, 'textRotation', $self->{_rotation} if $self->{_rotation};
+
     push @align, 'wrapText',     1 if $self->{_text_wrap};
     push @align, 'shrinkToFit',  1 if $self->{_shrink};
 
     push @align, 'readingOrder', 1 if $self->{_reading_order} == 1;
     push @align, 'readingOrder', 2 if $self->{_reading_order} == 2;
 
-
-    # TODO
-    #    horizontal="JustifyDistributed" vertical="Bottom"
-
-    return @align;
-}
-
-
-###############################################################################
-#
-# get_border_properties()
-#
-# Return properties for an Excel XML <Border> element.
-#
-sub get_border_properties {
-
-    my $self = shift;
-
-    my @border;    # Attributes to return
-
-
-    my %linetypes = (
-        1  => [ 'ss:LineStyle' => 'Continuous',   'ss:Weight' => 1 ],
-        2  => [ 'ss:LineStyle' => 'Continuous',   'ss:Weight' => 2 ],
-        3  => [ 'ss:LineStyle' => 'Dash',         'ss:Weight' => 1 ],
-        4  => [ 'ss:LineStyle' => 'Dot',          'ss:Weight' => 1 ],
-        5  => [ 'ss:LineStyle' => 'Continuous',   'ss:Weight' => 3 ],
-        6  => [ 'ss:LineStyle' => 'Double',       'ss:Weight' => 3 ],
-        7  => [ 'ss:LineStyle' => 'Continuous' ],
-        8  => [ 'ss:LineStyle' => 'Dash',         'ss:Weight' => 2 ],
-        9  => [ 'ss:LineStyle' => 'DashDot',      'ss:Weight' => 1 ],
-        10 => [ 'ss:LineStyle' => 'DashDot',      'ss:Weight' => 2 ],
-        11 => [ 'ss:LineStyle' => 'DashDotDot',   'ss:Weight' => 1 ],
-        12 => [ 'ss:LineStyle' => 'DashDotDot',   'ss:Weight' => 2 ],
-        13 => [ 'ss:LineStyle' => 'SlantDashDot', 'ss:Weight' => 2 ],
-    );
-
-
-    for my $position ( '_bottom', '_left', '_right', '_top' ) {
-
-        ( my $type = $position ) =~ s/^_//;
-        my @attribs = ( 'ss:Position', ucfirst $type );
-        my $position_color = $position . '_color';
-
-        if ( exists $linetypes{ $self->{$position} } ) {
-
-            push @attribs, @{ $linetypes{ $self->{$position} } };
-
-            if ( my $color = $self->{$position_color} ) {
-                $color = $self->convert_to_html_color( $color );
-                push @attribs, 'ss:Color', $color;
-            }
-
-            push @border, [@attribs];
-        }
-    }
-
-
-    # Handle diagonal borders. Note that in Excel it is only possible to have
-    # one line type and one colour when both diagonals are in use.
-    if ( my $diag_type = $self->{_diag_type} ) {
-
-        # Set a default diagonal border style if none was specified.
-        $self->{_diag_border} = 1 if not $self->{_diag_border};
-
-
-        my @attribs = @{ $linetypes{ $self->{_diag_border} } };
-
-        if ( my $color = $self->{_diag_color} ) {
-            $color = $self->convert_to_html_color( $color );
-            push @attribs, 'ss:Color', $color;
-        }
-
-        if ( $diag_type == 1 or $diag_type == 3 ) {
-            push @border, [ "ss:Position", "DiagonalLeft", @attribs ];
-        }
-
-        if ( $diag_type == 2 or $diag_type == 3 ) {
-            push @border, [ "ss:Position", "DiagonalRight", @attribs ];
-        }
-    }
-
-    return @border;
-}
-
-
-###############################################################################
-#
-# get_font_properties()
-#
-# Return properties for an Excel XML <Font> element.
-#
-sub get_font_properties {
-
-    my $self = shift;
-
-    my @font;    # Attributes to return
-
-    my $color = $self->convert_to_html_color( $self->{_color} );
-
-
-    push @font, 'ss:FontName', $self->{_font} if $self->{_font} ne 'Arial';
-    push @font, 'ss:Size',   $self->{_size} if $self->{_size} != 10;
-    push @font, 'ss:Color',  $color         if $self->{_color};
-    push @font, 'ss:Bold',   1              if $self->{_bold};
-    push @font, 'ss:Italic', 1              if $self->{_italic};
-
-    push @font, 'ss:StrikeThrough', 1 if $self->{_font_strikeout};
-    push @font, 'ss:Outline',       1 if $self->{_font_outline};
-    push @font, 'ss:Shadow',        1 if $self->{_font_shadow};
-
-    push @font, 'ss:VerticalAlign', 'Superscript' if $self->{_font_script} == 1;
-    push @font, 'ss:VerticalAlign', 'Subscript'   if $self->{_font_script} == 2;
-
-    push @font, 'ss:Underline', 'Single'           if $self->{_underline} == 1;
-    push @font, 'ss:Underline', 'Double'           if $self->{_underline} == 2;
-    push @font, 'ss:Underline', 'SingleAccounting' if $self->{_underline} == 33;
-    push @font, 'ss:Underline', 'DoubleAccounting' if $self->{_underline} == 34;
-
-    push @font, 'x:Family',  $self->{_font_family}  if $self->{_font_family};
-    push @font, 'x:CharSet', $self->{_font_charset} if $self->{_font_charset};
-
-    return @font;
-}
-
-
-###############################################################################
-#
-# get_interior_properties()
-#
-# Return properties for an Excel XML <Interior> element.
-#
-sub get_interior_properties {
-
-    my $self = shift;
-
-    # Return undef if the background and foreground colours haven't been set
-    # and the pattern hasn't been set or if it has only been set to solid.
-    # Other patterns will be handled with the default colours.
-    #
-    return
-      if $self->{_fg_color} == 0x00
-          and $self->{_bg_color} == 0x00
-          and $self->{_pattern} <= 0x01;
-
-
-    # Note for XML:
-    #               ss:Color        = _bg_color
-    #               ss:PatternColor = _fg_color
-
-
-    # The following logical statements take care of special cases in relation
-    # to cell colours and patterns:
-    # 1. For a solid fill (_pattern == 1) Excel reverses the role of foreground
-    #    and background colours.
-    # 2. If the user specifies a foreground or background colour without a
-    #    pattern they probably wanted a solid fill, so we fill in the defaults.
-    #
-    if ( $self->{_pattern} <= 0x01 ) {
-        if ( $self->{_bg_color} ) {
-            return 'ss:Color',
-              $self->convert_to_html_color( $self->{_bg_color} ),
-              'ss:Pattern',
-              'Solid';
-        }
-        else {
-            return 'ss:Color',
-              $self->convert_to_html_color( $self->{_fg_color} ),
-              'ss:Pattern',
-              'Solid';
-        }
-    }
-
-
-    # Set default colours if they haven't been set.
-    $self->{_bg_color} = 0x09 if $self->{_bg_color} == 0x00;    # 0x09 = white
-    $self->{_fg_color} = 0x08 if $self->{_fg_color} == 0x00;    # 0x08 = black
-
-    my %patterns = (
-        1  => 'Solid',
-        2  => 'Gray50',
-        3  => 'Gray75',
-        4  => 'Gray25',
-        5  => 'HorzStripe',
-        6  => 'VertStripe',
-        7  => 'ReverseDiagStripe',
-        8  => 'DiagStripe',
-        9  => 'DiagCross',
-        10 => 'ThickDiagCross',
-        11 => 'ThinHorzStripe',
-        12 => 'ThinVertStripe',
-        13 => 'ThinReverseDiagStripe',
-        14 => 'ThinDiagStripe',
-        15 => 'ThinHorzCross',
-        16 => 'ThinDiagCross',
-        17 => 'Gray125',
-        18 => 'Gray0625',
-    );
-
-    return unless exists $patterns{ $self->{_pattern} };
-
-    return 'ss:Color',
-      $self->convert_to_html_color( $self->{_bg_color} ),
-      'ss:Pattern',
-      $patterns{ $self->{_pattern} },
-      'ss:PatternColor',
-      $self->convert_to_html_color( $self->{_fg_color} );
-}
-
-
-###############################################################################
-#
-# get_num_format_properties()
-#
-# Return properties for an Excel XML <NumberFormat> element.
-#
-sub get_num_format_properties {
-
-    my $self = shift;
-
-    return unless defined $self->{_num_format};
-
-
-    # This hash is here mainly to cater for Spreadsheet::WriteExcel programs
-    # and Excel files that use the in-built format codes. ExcelXML users
-    # should specify the format explicitly.
-    #
-    my %num_format = (
-        1  => '0',
-        2  => 'Fixed',
-        3  => '#,##0',
-        4  => 'Standard',
-        5  => '$#,##0;\-$#,##0',
-        6  => '$#,##0;[Red]\-$#,##0',
-        7  => '$#,##0.00;\-$#,##0.00',
-        8  => 'Currency',
-        9  => '0%',
-        10 => 'Percent',
-        11 => 'Scientific',
-        12 => '#\ ?/?',
-        13 => '#\ ??/??',
-        14 => 'Short Date',
-        15 => 'Medium Date',
-        16 => 'dd\-mmm',
-        17 => 'mmm\-yy',
-        18 => 'Medium Time',
-        19 => 'Long Time',
-        20 => 'Short Time',
-        21 => 'hh:mm:ss',
-        22 => 'General Date',
-        37 => '#,##0;\-#,##0',
-        38 => '#,##0;[Red]\-#,##0',
-        39 => '#,##0.00;\-#,##0.00',
-        40 => '#,##0.00;[Red]\-#,##0.00',
-        41 => '_-* #,##0_-;\-* #,##0_-;_-* "-"_-;_-@_-',
-        42 => '_-$* #,##0_-;\-$* #,##0_-;_-$* "-"_-;_-@_-',
-        43 => '_-* #,##0.00_-;\-* #,##0.00_-;_-* "-"??_-;_-@_-',
-        44 => '_-$* #,##0.00_-;\-$* #,##0.00_-;_-$* "-"??_-;_-@_-',
-        45 => 'mm:ss',
-        46 => '[h]:mm:ss',
-        47 => 'mm:ss.0',
-        48 => '##0.0E+0',
-        49 => '@',
-    );
-
-    my $num_format;
-
-    # Num_format is either a built-in code or a user specified string.
-    if ( exists $num_format{ $self->{_num_format} } ) {
-        $num_format = $num_format{ $self->{_num_format} };
-    }
-    else {
-        $num_format = $self->{_num_format};
-    }
-
-    return 'ss:Format', $num_format;
+    return $changed, @align;
 }
 
 
@@ -490,10 +211,10 @@ sub get_protection_properties {
 
     my $self = shift;
 
-    my @attribs;    # Attributes to return
+    my @attribs;
 
-    push @attribs, 'x:HideFormula', 1 if $self->{_hidden};
-    push @attribs, 'ss:Protected',  0 if not $self->{_locked};
+    push @attribs, 'locked', 0 if !$self->{_locked};
+    push @attribs, 'hidden', 1 if $self->{_hidden};
 
     return @attribs;
 }
@@ -680,27 +401,28 @@ sub set_align {
 
     $location = lc( $location );
 
-    $self->set_text_h_align( 1 ) if ( $location eq 'left' );
-    $self->set_text_h_align( 2 ) if ( $location eq 'centre' );
-    $self->set_text_h_align( 2 ) if ( $location eq 'center' );
-    $self->set_text_h_align( 3 ) if ( $location eq 'right' );
-    $self->set_text_h_align( 4 ) if ( $location eq 'fill' );
-    $self->set_text_h_align( 5 ) if ( $location eq 'justify' );
-    $self->set_text_h_align( 6 ) if ( $location eq 'center_across' );
-    $self->set_text_h_align( 6 ) if ( $location eq 'centre_across' );
-    $self->set_text_h_align( 6 ) if ( $location eq 'merge' );        # S:WE name
-    $self->set_text_h_align( 7 ) if ( $location eq 'distributed' );
-    $self->set_text_h_align( 7 ) if ( $location eq 'equal_space' ); # ParseExcel
+    $self->set_text_h_align( 1 ) if $location eq 'left';
+    $self->set_text_h_align( 2 ) if $location eq 'centre';
+    $self->set_text_h_align( 2 ) if $location eq 'center';
+    $self->set_text_h_align( 3 ) if $location eq 'right';
+    $self->set_text_h_align( 4 ) if $location eq 'fill';
+    $self->set_text_h_align( 5 ) if $location eq 'justify';
+    $self->set_text_h_align( 6 ) if $location eq 'center_across';
+    $self->set_text_h_align( 6 ) if $location eq 'centre_across';
+    $self->set_text_h_align( 6 ) if $location eq 'merge';              # Legacy.
+    $self->set_text_h_align( 7 ) if $location eq 'distributed';
+    $self->set_text_h_align( 7 ) if $location eq 'equal_space';        # S::PE.
+    $self->set_text_h_align( 7 ) if $location eq 'justify_distributed';
 
+    $self->{_just_distrib} = 1 if $location eq 'justify_distributed';
 
-    $self->set_text_v_align( 0 ) if ( $location eq 'top' );
-    $self->set_text_v_align( 1 ) if ( $location eq 'vcentre' );
-    $self->set_text_v_align( 1 ) if ( $location eq 'vcenter' );
-    $self->set_text_v_align( 2 ) if ( $location eq 'bottom' );
-    $self->set_text_v_align( 3 ) if ( $location eq 'vjustify' );
-    $self->set_text_v_align( 4 ) if ( $location eq 'vdistributed' );
-    $self->set_text_v_align( 4 )
-      if ( $location eq 'vequal_space' );                           # ParseExcel
+    $self->set_text_v_align( 1 ) if $location eq 'top';
+    $self->set_text_v_align( 2 ) if $location eq 'vcentre';
+    $self->set_text_v_align( 2 ) if $location eq 'vcenter';
+    $self->set_text_v_align( 3 ) if $location eq 'bottom';
+    $self->set_text_v_align( 4 ) if $location eq 'vjustify';
+    $self->set_text_v_align( 5 ) if $location eq 'vdistributed';
+    $self->set_text_v_align( 5 ) if $location eq 'vequal_space';    # S::PE.
 }
 
 
@@ -817,21 +539,17 @@ sub set_rotation {
     $rotation = int $rotation;
 
     if ( $rotation == 270 ) {
-
-        # Special case inherited from the S::WE interface.
-        $self->{_text_vertical} = 1;
-        $self->{_rotation}      = 0;
-        return;
+        $rotation = 255;
     }
-    elsif ( $rotation < -90 or $rotation > 90 ) {
+    elsif ( $rotation >= -90 or $rotation <= 90 ) {
+        $rotation = -$rotation + 90 if $rotation < 0;
+    }
+    else {
         carp "Rotation $rotation outside range: -90 <= angle <= 90";
-        $self->{_rotation} = 0;
-        return;
+        $rotation = 0;
     }
 
-    # Rotation and vertical text are mutually exclusive
-    $self->{_text_vertical} = 0;
-    $self->{_rotation}      = $rotation;
+    $self->{_rotation} = $rotation;
 }
 
 
