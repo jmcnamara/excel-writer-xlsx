@@ -56,17 +56,17 @@ sub new {
     $self->{_str_table}   = $_[6];
     $self->{_1904}        = $_[7];
 
-
     $self->{_ext_sheets}  = [];
     $self->{_fileclosed}  = 0;
-    $self->{_offset}      = 0;
+
     $self->{_xls_rowmax}  = $rowmax;
     $self->{_xls_colmax}  = $colmax;
     $self->{_xls_strmax}  = $strmax;
     $self->{_dim_rowmin}  = undef;
-    $self->{_dim_rowmax}  = undef $self->{_dim_colmin} = undef;
+    $self->{_dim_rowmax}  = undef;
+    $self->{_dim_colmin}  = undef;
     $self->{_dim_colmax}  = undef;
-    $self->{_dim_changed} = 0;
+
     $self->{_colinfo}     = [];
     $self->{_selection}   = [ 0, 0 ];
     $self->{_hidden}      = 0;
@@ -84,8 +84,8 @@ sub new {
     $self->{_footer}        = '';
     $self->{_hcenter}       = 0;
     $self->{_vcenter}       = 0;
-    $self->{_margin_head}   = 0.50;
-    $self->{_margin_foot}   = 0.50;
+    $self->{_margin_header}   = 0.50;
+    $self->{_margin_footer}   = 0.50;
     $self->{_margin_left}   = 0.75;
     $self->{_margin_right}  = 0.75;
     $self->{_margin_top}    = 1.00;
@@ -149,25 +149,6 @@ sub new {
     $self->{_row_formats} = {};
 
 
-
-    $self->{_datatypes} = {
-        String   => 1,
-        Number   => 2,
-        DateTime => 3,
-        Formula  => 4,
-        Blank    => 5,
-        HRef     => 6,
-        Merge    => 7,
-        Comment  => 8,
-    };
-
-    # Set older cell limits if required for backward compatibility.
-    if ( $self->{_lower_cell_limits} ) {
-        $self->{_xls_rowmax} = 65536;
-        $self->{_xls_colmax} = 256;
-    }
-
-
     bless $self, $class;
     return $self;
 }
@@ -211,7 +192,7 @@ sub _assemble_xml_file {
     # Write the worksheet calculation properties.
     #$self->_write_sheet_calc_pr();
 
-    # Write the worksheet phonetic properites.
+    # Write the worksheet phonetic properties.
     #$self->_write_phonetic_pr();
 
     # Write the worksheet page_margins.
@@ -245,27 +226,6 @@ sub _close {
     my $sheetnames = shift;
     my $num_sheets = scalar @$sheetnames;
 
-    $self->_write_xml_start_tag( 1, 1, 0, 'Worksheet', 'ss:Name',
-        $self->{_name} );
-
-    # Write the Name elements such as print area and repeat rows.
-    $self->_write_names();
-
-    # Write the Table element and the child Row, Cell and Data elements.
-    $self->_write_xml_table();
-
-    # Write the worksheet page setup options.
-    $self->_write_worksheet_options();
-
-    # Store horizontal and vertical pagebreaks.
-    $self->_store_pagebreaks();
-
-    # Store autofilter information.
-    $self->_write_autofilter();
-
-    # Close Workbook tag. WriteExcel _store_eof().
-    $self->_write_xml_end_tag( 1, 1, 1, 'Worksheet' );
-
 }
 
 
@@ -294,8 +254,8 @@ sub select {
 
     my $self = shift;
 
-    $self->{_hidden}         = 0; # Selected worksheet can't be hidden.
-    $self->{_selected}       = 1;
+    $self->{_hidden}   = 0;    # Selected worksheet can't be hidden.
+    $self->{_selected} = 1;
 }
 
 
@@ -310,9 +270,9 @@ sub activate {
 
     my $self = shift;
 
-    $self->{_hidden}         = 0; # Active worksheet can't be hidden.
-    $self->{_selected}       = 1;
-    ${$self->{_activesheet}} = $self->{_index};
+    $self->{_hidden}   = 0;    # Active worksheet can't be hidden.
+    $self->{_selected} = 1;
+    ${ $self->{_activesheet} } = $self->{_index};
 }
 
 
@@ -326,12 +286,12 @@ sub hide {
 
     my $self = shift;
 
-    $self->{_hidden}         = 1;
+    $self->{_hidden} = 1;
 
     # A hidden worksheet shouldn't be active or selected.
-    $self->{_selected}       = 0;
-    ${$self->{_activesheet}} = 0;
-    ${$self->{_firstsheet}}  = 0;
+    $self->{_selected} = 0;
+    ${ $self->{_activesheet} } = 0;
+    ${ $self->{_firstsheet} }  = 0;
 }
 
 
@@ -347,8 +307,8 @@ sub set_first_sheet {
 
     my $self = shift;
 
-    $self->{_hidden}         = 0; # Active worksheet can't be hidden.
-    ${$self->{_firstsheet}}  = $self->{_index};
+    $self->{_hidden} = 0;    # Active worksheet can't be hidden.
+    ${ $self->{_firstsheet} } = $self->{_index};
 }
 
 
@@ -383,23 +343,23 @@ sub set_column {
     my $cell = $data[0];
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ($cell =~ /^\D/) {
-        @data = $self->_substitute_cellref(@_);
+    if ( $cell =~ /^\D/ ) {
+        @data = $self->_substitute_cellref( @_ );
 
         # Returned values $row1 and $row2 aren't required here. Remove them.
-        shift  @data;       # $row1
-        splice @data, 1, 1; # $row2
+        shift @data;    # $row1
+        splice @data, 1, 1;    # $row2
     }
 
-    return if @data < 3; # Ensure at least $firstcol, $lastcol and $width
-    return if not defined $data[0]; # Columns must be defined.
+    return if @data < 3;       # Ensure at least $firstcol, $lastcol and $width
+    return if not defined $data[0];    # Columns must be defined.
     return if not defined $data[1];
 
     # Assume second column is the same as first if 0. Avoids KB918419 bug.
     $data[1] = $data[0] if $data[1] == 0;
 
     # Ensure 2nd col is larger than first. Also for KB918419 bug.
-    ($data[0], $data[1]) = ($data[1], $data[0]) if $data[0] > $data[1];
+    ( $data[0], $data[1] ) = ( $data[1], $data[0] ) if $data[0] > $data[1];
 
 
     # Check that cola are valid and store max and min values with default row.
@@ -408,19 +368,19 @@ sub set_column {
     return -2 if $self->_check_dimensions( 0, $data[0] );
     return -2 if $self->_check_dimensions( 0, $data[1] );
 
-    push @{$self->{_colinfo}}, [ @data ];
+    push @{ $self->{_colinfo} }, [@data];
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
     #
-    my $width  = $data[4] ? 0 : $data[2]; # Set width to zero if col is hidden
-       $width  ||= 0;                     # Ensure width isn't undef.
+    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if col is hidden
+    $width ||= 0;                           # Ensure width isn't undef.
     my $format = $data[3];
 
-    my ($firstcol, $lastcol) = @data;
+    my ( $firstcol, $lastcol ) = @data;
 
-    foreach my $col ($firstcol .. $lastcol) {
-        $self->{_col_sizes}->{$col}   = $width;
+    for my $col ( $firstcol .. $lastcol ) {
+        $self->{_col_sizes}->{$col} = $width;
         $self->{_col_formats}->{$col} = $format if defined $format;
     }
 }
@@ -461,6 +421,9 @@ sub freeze_panes {
         @_ = $self->_substitute_cellref( @_ );
     }
 
+    # Extra flag indicated a split and freeze.
+    $self->{_frozen_no_split} = 0 if $_[4];
+
     $self->{_frozen} = 1;
     $self->{_panes}  = [@_];
 }
@@ -468,17 +431,21 @@ sub freeze_panes {
 
 ###############################################################################
 #
-# thaw_panes()
+# split_panes()
 #
-# Set panes and mark them as unfrozen. See also _store_panes().
+# Set panes and mark them as split. See also _store_panes().
 #
-sub thaw_panes {
+sub split_panes {
 
     my $self = shift;
 
     $self->{_frozen} = 0;
+    $self->{_frozen_no_split}   = 0;
     $self->{_panes}  = [@_];
 }
+
+# Older method name for backwards compatibility.
+*thaw_panes = *split_panes;
 
 
 ###############################################################################
@@ -506,6 +473,37 @@ sub set_landscape {
     my $self = shift;
 
     $self->{_orientation} = 0;
+}
+
+
+###############################################################################
+#
+# set_page_view()
+#
+# Set the page view mode for Mac Excel.
+#
+sub set_page_view {
+
+    my $self = shift;
+
+    $self->{_page_view} = defined $_[0] ? $_[0] : 1;
+}
+
+
+###############################################################################
+#
+# set_tab_color()
+#
+# Set the colour of the worksheet colour.
+#
+sub set_tab_color {
+
+    my $self  = shift;
+
+    my $color = &Spreadsheet::WriteExcel::Format::_get_color($_[0]);
+       $color = 0 if $color == 0x7FFF; # Default color.
+
+    $self->{_tab_color} = $color;
 }
 
 
@@ -540,7 +538,7 @@ sub set_header {
     }
 
     $self->{_header} = $string;
-    $self->{_margin_head} = $_[1] || 0.50;
+    $self->{_margin_header} = $_[1] || 0.50;
 }
 
 
@@ -562,7 +560,7 @@ sub set_footer {
 
 
     $self->{_footer} = $string;
-    $self->{_margin_foot} = $_[1] || 0.50;
+    $self->{_margin_footer} = $_[1] || 0.50;
 }
 
 
@@ -589,7 +587,7 @@ sub center_horizontally {
 #
 # center_vertically()
 #
-# Center the page horinzontally.
+# Center the page horizontally.
 #
 sub center_vertically {
 
@@ -1304,7 +1302,7 @@ sub write_row {
     my $error   = 0;
     my $ret;
 
-    foreach my $token ( @$tokens ) {
+    for my $token ( @$tokens ) {
 
         # Check for nested arrays
         if ( ref $token eq "ARRAY" ) {
@@ -1355,7 +1353,7 @@ sub write_col {
     my $error   = 0;
     my $ret;
 
-    foreach my $token ( @$tokens ) {
+    for my $token ( @$tokens ) {
 
         # write() will deal with any nested arrays
         $ret = $self->write( $row, $col, $token, @options );
@@ -1402,7 +1400,7 @@ sub write_comment {
     my $length  = length( $_[2] );
     my $error   = 0;
     my $max_len = 30831;             # Maintain same max as binary file.
-    my $type = $self->{_datatypes}->{Comment};
+    my $type    = 99;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -1513,16 +1511,16 @@ sub write_string {
 
 
     # TODO
-    if (not exists ${$self->{_str_table}}->{$str}) {
-        ${$self->{_str_table}}->{$str} = ${$self->{_str_unique}}++;
+    if ( not exists ${ $self->{_str_table} }->{$str} ) {
+        ${ $self->{_str_table} }->{$str} = ${ $self->{_str_unique} }++;
     }
 
 
-    ${$self->{_str_total}}++;
-    $index = ${$self->{_str_table}}->{$str};
+    ${ $self->{_str_total} }++;
+    $index = ${ $self->{_str_table} }->{$str};
 
 
-    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf];
+    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
     return $str_error;
 }
@@ -1640,7 +1638,7 @@ sub write_formula {
     my $type    = 'f';             # The data type
 
 
-    my $xf = _XF( $self, $row, $col, $_[3] );     # The cell format
+    my $xf = _XF( $self, $row, $col, $_[3] );    # The cell format
 
 
     # Check that row and col are valid and store max and min values
@@ -1689,7 +1687,7 @@ sub write_array_formula {
     my $formula = $_[4];           # The formula text string
 
     my $xf = _XF( $self, $row1, $col1, $_[5] );    # The cell format
-    my $type = $self->{_datatypes}->{Formula};     # The data type
+    my $type = 99;                                 # The data type
 
 
     # Swap last row/col with first row/col as necessary
@@ -1794,7 +1792,7 @@ sub write_url {
     my $str  = $args[3];                              # Alternative label
     my $xf   = _XF( $self, $row, $col, $args[4] );    # Tool tip
     my $tip  = $args[5];                              # XML data type
-    my $type = $self->{_datatypes}->{HRef};
+    my $type = 99;
 
 
     $url =~ s/^internal:/#/;    # Remove designators required by SWE.
@@ -1882,7 +1880,7 @@ sub write_date_time {
     my $col  = $_[1];                              # Zero indexed column
     my $str  = $_[2];
     my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
-    my $type = $self->{_datatypes}->{DateTime};    # The data type
+    my $type = 99;                                 # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -1893,7 +1891,7 @@ sub write_date_time {
 
     # If the date isn't valid then write it as a string.
     if ( not defined $date_time ) {
-        $type      = $self->{_datatypes}->{String};
+        $type      = 99;
         $str_error = -3;
     }
 
@@ -2042,6 +2040,7 @@ sub convert_date_time {
     return $days + $seconds;
 }
 
+
 ###############################################################################
 #
 # insert_bitmap($row, $col, $filename, $x, $y, $scale_x, $scale_y)
@@ -2053,9 +2052,8 @@ sub insert_bitmap {
 
     my $self = shift;
 
-    # Can't store images in ExcelXML
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 
 }
 
@@ -2084,7 +2082,7 @@ sub set_row {
 
 
     # If the height is 0 the row is hidden and the height is the default.
-    if ($height == 0) {
+    if ( $height == 0 ) {
         $hidden = 1;
         $height = 15;
     }
@@ -2111,8 +2109,8 @@ sub set_row {
 
     # Store the row sizes for use when calculating image vertices.
     # Also store the column formats.
-    $self->{_row_sizes}->{ $row } = $height;
-    $self->{_row_formats}->{ $row } = $format if defined $format;
+    $self->{_row_sizes}->{$row} = $height;
+    $self->{_row_formats}->{$row} = $format if defined $format;
 }
 
 
@@ -2330,7 +2328,7 @@ sub store_formula {
 
     my $self = shift;
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2351,7 +2349,7 @@ sub repeat_formula {
 
     my $self = shift;
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2411,42 +2409,6 @@ sub _check_dimensions {
 
 ###############################################################################
 #
-# _store_window2()
-#
-# Write BIFF record Window2.
-#
-sub _store_window2 {
-
-    use integer;    # Avoid << shift bug in Perl 5.6.0 on HP-UX
-
-    my $self   = shift;
-    my $record = 0x023E;    # Record identifier
-    my $length = 0x000A;    # Number of bytes to follow
-
-    my $grbit   = 0x00B6;        # Option flags
-    my $rwTop   = 0x0000;        # Top row visible in window
-    my $colLeft = 0x0000;        # Leftmost column visible in window
-    my $rgbHdr  = 0x00000000;    # Row/column heading and gridline color
-
-    # The options flags that comprise $grbit
-    my $fDspFmla       = 0;                             # 0 - bit
-    my $fDspGrid       = $self->{_screen_gridlines};    # 1
-    my $fDspRwCol      = 1;                             # 2
-    my $fFrozen        = $self->{_frozen};              # 3
-    my $fDspZeros      = 1;                             # 4
-    my $fDefaultHdr    = 1;                             # 5
-    my $fArabic        = 0;                             # 6
-    my $fDspGuts       = $self->{_outline_on};          # 7
-    my $fFrozenNoSplit = 0;                             # 0 - bit
-    my $fSelected      = $self->{_selected};            # 1
-    my $fPaged         = 1;                             # 2
-
-    # TODO Update for ExcelXML format
-}
-
-
-###############################################################################
-#
 # _store_defcol()
 #
 # Write BIFF record DEFCOLWIDTH if COLINFO records are in use.
@@ -2459,7 +2421,7 @@ sub _store_defcol {
 
     my $colwidth = 0x0008;  # Default column width
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2498,7 +2460,7 @@ sub _store_selection {
     }
 
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2525,7 +2487,7 @@ sub _store_externcount {
 
     my $cxals = $_[0];      # Number of external references
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2567,7 +2529,7 @@ sub _store_externsheet {
         $rgch = 0x03;         # Reference to a sheet in the current workbook
     }
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2631,118 +2593,7 @@ sub _store_panes {
 
     $self->{_active_pane} = $pnnAct;              # Used in _store_selection
 
-    # TODO Update for ExcelXML format
-}
-
-
-###############################################################################
-#
-# _store_setup()
-#
-# Store the <WorksheetOptions> child element <PageSetup>.
-#
-sub _store_setup {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    # Write the <Layout> child element.
-    my @layout;
-    push @layout, 'x:Orientation', 'Landscape' if $self->{_orientation} == 0;
-    push @layout, 'x:CenterHorizontal', 1 if $self->{_hcenter} == 1;
-    push @layout, 'x:CenterVertical',   1 if $self->{_vcenter} == 1;
-    push @layout, 'x:StartPageNumber', $self->{_start_page}
-      if $self->{_page_start} > 0;
-
-
-    # Write the <Header> child element.
-    my @header;
-    push @header, 'x:Margin', $self->{_margin_head}
-      if $self->{_margin_head} != 0.5;
-    push @header, 'x:Data', $self->{_header} if $self->{_header} ne '';
-
-
-    # Write the <Footer> child element.
-    my @footer;
-    push @footer, 'x:Margin', $self->{_margin_foot}
-      if $self->{_margin_foot} != 0.5;
-    push @footer, 'x:Data', $self->{_footer} if $self->{_footer} ne '';
-
-
-    # Write the <PageMargins> child element.
-    my @margins;
-    push @margins, 'x:Bottom', $self->{_margin_bottom}
-      if $self->{_margin_bottom} != 1.00;
-    push @margins, 'x:Left', $self->{_margin_left}
-      if $self->{_margin_left} != 0.75;
-    push @margins, 'x:Right', $self->{_margin_right}
-      if $self->{_margin_right} != 0.75;
-    push @margins, 'x:Top', $self->{_margin_top}
-      if $self->{_margin_top} != 1.00;
-
-
-    $self->_write_xml_element( 4, 1, 1, 'Layout',      @layout )  if @layout;
-    $self->_write_xml_element( 4, 1, 1, 'Header',      @header )  if @header;
-    $self->_write_xml_element( 4, 1, 1, 'Footer',      @footer )  if @footer;
-    $self->_write_xml_element( 4, 1, 1, 'PageMargins', @margins ) if @margins;
-}
-
-
-###############################################################################
-#
-# _store_print()
-#
-# Store the <WorksheetOptions> child element <Print>.
-#
-sub _store_print {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-
-    if ( $self->{_fit_width} > 1 ) {
-        $self->_write_xml_start_tag( 4, 0, 0, 'FitWidth' );
-        $self->_write_xml_content( $self->{_fit_width} );
-        $self->_write_xml_end_tag( 0, 1, 0, 'FitWidth' );
-    }
-
-    if ( $self->{_fit_height} > 1 ) {
-        $self->_write_xml_start_tag( 4, 0, 0, 'FitHeight' );
-        $self->_write_xml_content( $self->{_fit_height} );
-        $self->_write_xml_end_tag( 0, 1, 0, 'FitHeight' );
-    }
-
-
-    # Print scale won't work without this.
-    $self->_write_xml_element( 4, 1, 0, 'ValidPrinterInfo' );
-
-
-    $self->_write_xml_element( 4, 1, 0, 'BlackAndWhite' )
-      if $self->{_black_white};
-    $self->_write_xml_element( 4, 1, 0, 'LeftToRight' ) if $self->{_page_order};
-    $self->_write_xml_element( 4, 1, 0, 'DraftQuality' )
-      if $self->{_draft_quality};
-
-
-    if ( $self->{_paper_size} ) {
-        $self->_write_xml_start_tag( 4, 0, 0, 'PaperSizeIndex' );
-        $self->_write_xml_content( $self->{_paper_size} );
-        $self->_write_xml_end_tag( 0, 1, 0, 'PaperSizeIndex' );
-    }
-
-    if ( $self->{_print_scale} != 100 ) {
-        $self->_write_xml_start_tag( 4, 0, 0, 'Scale' );
-        $self->_write_xml_content( $self->{_print_scale} );
-        $self->_write_xml_end_tag( 0, 1, 0, 'Scale' );
-    }
-
-
-    $self->_write_xml_element( 4, 1, 0, 'Gridlines' )
-      if $self->{_print_gridlines};
-    $self->_write_xml_element( 4, 1, 0, 'RowColHeadings' )
-      if $self->{_print_headers};
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2775,8 +2626,6 @@ sub _write_names {
     }
 
 
-    $self->_write_xml_start_tag( 2, 1, 0, 'Names' );
-
     # Sort the <NamedRange> elements lexically and case insensitively.
     for my $key ( sort { lc $a cmp lc $b } keys %{ $self->{_names} } ) {
 
@@ -2790,14 +2639,7 @@ sub _write_names {
         if ( $key eq '_FilterDatabase' ) {
             push @attributes, 'ss:Hidden' => 1;
         }
-
-
-        $self->_write_xml_element( 3, 1, 0, @attributes );
-
     }
-
-    $self->_write_xml_end_tag( 2, 1, 0, 'Names' );
-
 }
 
 
@@ -2816,45 +2658,6 @@ sub _store_pagebreaks {
     return
       if not @{ $self->{_hbreaks} }
           and not @{ $self->{_vbreaks} };
-
-    $self->_write_xml_start_tag( 2, 1, 0, 'PageBreaks', 'xmlns',
-        'urn:schemas-microsoft-com:' . 'office:excel' );
-
-
-    if ( @{ $self->{_vbreaks} } ) {
-        my @breaks = $self->_sort_pagebreaks( @{ $self->{_vbreaks} } );
-
-        $self->_write_xml_start_tag( 3, 1, 0, 'ColBreaks' );
-
-        for my $break ( @breaks ) {
-            $self->_write_xml_start_tag( 4, 0, 0, 'ColBreak' );
-            $self->_write_xml_start_tag( 0, 0, 0, 'Column' );
-            $self->_write_xml_content( $break );
-            $self->_write_xml_end_tag( 0, 0, 0, 'Column' );
-            $self->_write_xml_end_tag( 0, 1, 0, 'ColBreak' );
-        }
-
-        $self->_write_xml_end_tag( 3, 1, 0, 'ColBreaks' );
-
-    }
-
-    if ( @{ $self->{_hbreaks} } ) {
-        my @breaks = $self->_sort_pagebreaks( @{ $self->{_hbreaks} } );
-
-        $self->_write_xml_start_tag( 3, 1, 0, 'RowBreaks' );
-
-        for my $break ( @breaks ) {
-            $self->_write_xml_start_tag( 4, 0, 0, 'RowBreak' );
-            $self->_write_xml_start_tag( 0, 0, 0, 'Row' );
-            $self->_write_xml_content( $break );
-            $self->_write_xml_end_tag( 0, 0, 0, 'Row' );
-            $self->_write_xml_end_tag( 0, 1, 0, 'RowBreak' );
-        }
-
-        $self->_write_xml_end_tag( 3, 1, 0, 'RowBreaks' );
-    }
-
-    $self->_write_xml_end_tag( 2, 1, 0, 'PageBreaks' );
 }
 
 
@@ -2878,7 +2681,7 @@ sub _store_protect {
 
     my $fLock = $self->{_protect};    # Worksheet is protected
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2941,7 +2744,7 @@ sub _store_zoom {
     my $record = 0x00A0;    # Record identifier
     my $length = 0x0004;    # Bytes to follow
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -2959,452 +2762,8 @@ sub _store_comment {
     my $self = shift;
     if ( @_ < 3 ) { return -1 }
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 
-}
-
-
-###############################################################################
-#
-# New XML code
-#
-###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_table()
-#
-# Write the stored data into the <Table> element.
-#
-# TODO Add note about data structure
-#
-sub _write_xml_table {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    # Don't write <Table> element if it contains no data.
-    return unless $self->{_dim_changed};
-
-
-    $self->_write_xml_start_tag(
-        2, 1, 0, 'Table', 'ss:ExpandedColumnCount', $self->{_dim_colmax} + 1,
-        'ss:ExpandedRowCount', $self->{_dim_rowmax} + 1,
-    );
-    $self->_store_colinfo();
-
-    # Write stored <Row> and <Cell> data
-    $self->_write_xml_rows();
-
-    $self->_write_xml_end_tag( 2, 1, 0, 'Table' );
-}
-
-
-###############################################################################
-#
-# _write_xml_rows()
-#
-# Write all <Row> elements.
-#
-sub _write_xml_rows {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    my @attribs;
-    my $previous = -1;
-    my $span     = 0;
-
-    for my $row ( 0 .. $self->{_dim_rowmax} ) {
-
-        next unless $self->{_set_rows}->{$row} or $self->{_table}->[$row];
-
-        if ( not $span ) {
-            my $height  = $self->{_set_rows}->{$row}->[0];
-            my $format  = $self->{_set_rows}->{$row}->[1];
-            my $hidden  = $self->{_set_rows}->{$row}->[2];
-            my $autofit = $self->{_set_rows}->{$row}->[3] || 0;
-
-            push @attribs, "ss:Index", $row + 1 if $row != $previous + 1;
-            push @attribs, "ss:AutoFitHeight", $autofit if $height or $autofit;
-            push @attribs, "ss:Height",        $height  if $height;
-            push @attribs, "ss:Hidden",        $hidden  if $hidden;
-            push @attribs, "ss:StyleID", "s" . $format if $format;
-
-            # See ss:Index note in _store_colinfo
-            $previous = $row;
-        }
-
-        # $previous = $row; # See ss:Index note in _store_colinfo
-        local $^W = 0;   # Ignore warnings about undefs in array ref comparison.
-
-        # Check if the same attributes are shared over consecutive columns.
-        if (    not $self->{_table}->[$row]
-            and not $self->{_table}->[ $row + 1 ]
-            and exists $self->{_set_rows}->{$row}
-            and exists $self->{_set_rows}->{ $row + 1 }
-            and join( "|", @{ $self->{_set_rows}->{$row} } ) eq
-            join( "|", @{ $self->{_set_rows}->{ $row + 1 } } ) )
-        {
-            $span++;
-            next;
-        }
-
-        push @attribs, "ss:Span", $span if $span;
-
-        # Write <Row> with <Cell> data or formatted <Row> without <Cell> data.
-        #
-        if ( my $row_ref = $self->{_table}->[$row] ) {
-            $self->_write_xml_start_tag( 3, 1, 0, 'Row', @attribs );
-
-            my $col = 0;
-            $self->{prev_col} = -1;
-
-            for my $col_ref ( @$row_ref ) {
-                $self->_write_xml_cell( $row, $col ) if $col_ref;
-                $col++;
-            }
-            $self->_write_xml_end_tag( 3, 1, 0, 'Row' );
-        }
-        else {
-            $self->_write_xml_element( 3, 1, 0, 'Row', @attribs );
-        }
-
-
-        @attribs = ();
-        $span    = 0;
-    }
-}
-
-
-###############################################################################
-#
-# _write_xml_cell()
-#
-# Write a <Cell> element start tag.
-#
-sub _write_xml_cell {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    my $row = $_[0];
-    my $col = $_[1];
-
-    my $datatype = $self->{_table}->[$row]->[$col]->[0];
-    my $data     = $self->{_table}->[$row]->[$col]->[1];
-    my $format   = $self->{_table}->[$row]->[$col]->[2];
-
-    my @attribs;
-    my $comment = '';
-
-
-    ###########################################################################
-    #
-    # Only add the cell index if it doesn't follow another cell.
-    #
-    push @attribs, "ss:Index", $col + 1 if $col != $self->{prev_col} + 1;
-
-
-    ###########################################################################
-    #
-    # Check for merged cells.
-    #
-    if (    exists $self->{_merge}->{$row}
-        and exists $self->{_merge}->{$row}->{$col} )
-    {
-        my ( $across, $down ) = @{ $self->{_merge}->{$row}->{$col} };
-
-        push @attribs, "ss:MergeAcross", $across if $across;
-        push @attribs, "ss:MergeDown",   $down   if $down;
-
-        # Fill the merge range to ensure that it doesn't contain any data types.
-        for my $m_row ( 0 .. $down ) {
-            for my $m_col ( 0 .. $across ) {
-                next if $m_row == 0 and $m_col == 0;
-                $self->{_table}->[ $row + $m_row ]->[ $col + $m_col ] = undef;
-            }
-        }
-
-        # Fill the last col so that $self->{prev_col} is incremented correctly.
-        my $type = $self->{_datatypes}->{Merge};
-        $self->{_table}->[$row]->[ $col + $across ] = [$type];
-    }
-
-
-    ###########################################################################
-    #
-    # Check for cell comments.
-    #
-    if (    exists $self->{_comment}->{$row}
-        and exists $self->{_comment}->{$row}->{$col} )
-    {
-        $comment = $self->{_comment}->{$row}->{$col};
-    }
-
-
-    # Add the format attribute.
-    push @attribs, "ss:StyleID", "s" . $format if $format;
-
-
-    # Add to the attribute list for data types with additional options
-    if ( $datatype == $self->{_datatypes}->{Formula} ) {
-        my $array_range = $self->{_table}->[$row]->[$col]->[3];
-
-        push @attribs, "ss:ArrayRange", $array_range if $array_range;
-        push @attribs, "ss:Formula", $data;
-    }
-
-    if ( $datatype == $self->{_datatypes}->{HRef} ) {
-        push @attribs, "ss:HRef", $data;
-
-        my $tip = $self->{_table}->[$row]->[$col]->[4];
-        push @attribs, "x:HRefScreenTip", $tip if defined $tip;
-    }
-
-
-    ###########################################################################
-    #
-    # Write the <Cell> data for various data types.
-    #
-
-    # Write the Number data element
-    if ( $datatype == $self->{_datatypes}->{Number} ) {
-        $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-        $self->_write_xml_cell_data( 'Number', $data );
-        $self->_write_xml_cell_comment( $comment ) if $comment;
-        $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-    }
-
-
-    # Write the String data element
-    elsif ( $datatype == $self->{_datatypes}->{String} ) {
-        my $html = $self->{_table}->[$row]->[$col]->[3];
-
-        $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-
-        if   ( $html ) { $self->_write_xml_html_string( $data ); }
-        else           { $self->_write_xml_cell_data( 'String', $data ); }
-
-        $self->_write_xml_cell_comment( $comment ) if $comment;
-        $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-    }
-
-
-    # Write the DateTime data element
-    elsif ( $datatype == $self->{_datatypes}->{DateTime} ) {
-        $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-        $self->_write_xml_cell_data( 'DateTime', $data );
-        $self->_write_xml_cell_comment( $comment ) if $comment;
-        $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-    }
-
-
-    # Write an empty Data element for a formula data
-    elsif ( $datatype == $self->{_datatypes}->{Formula} ) {
-        if ( $comment ) {
-            $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-            $self->_write_xml_cell_comment( $comment );
-            $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-        }
-        else {
-            $self->_write_xml_element( 4, 1, 0, 'Cell', @attribs );
-        }
-    }
-
-
-    # Write the HRef data element
-    elsif ( $datatype == $self->{_datatypes}->{HRef} ) {
-
-        $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-
-        my $data = $self->{_table}->[$row]->[$col]->[3];
-        my $type;
-
-        # Match DateTime string.
-        if ( $self->convert_date_time( $data ) ) {
-            $type = 'DateTime';
-        }
-
-        # Match integer with leading zero(s)
-        elsif ( $self->{_leading_zeros} and $data =~ /^0\d+$/ ) {
-            $type = 'String';
-        }
-
-        # Match number.
-        elsif ( $data =~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ ) {
-            $type = 'Number';
-        }
-
-        # Default to string.
-        else {
-            $type = 'String';
-        }
-
-        $self->_write_xml_cell_comment( $comment ) if $comment;
-        $self->_write_xml_cell_data( $type, $data );
-        $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-    }
-
-
-    # Write an empty Data element for a blank cell
-    elsif ( $datatype == $self->{_datatypes}->{Blank} ) {
-        if ( $comment ) {
-            $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-            $self->_write_xml_cell_comment( $comment );
-            $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-        }
-        else {
-            $self->_write_xml_element( 4, 1, 0, 'Cell', @attribs );
-        }
-    }
-
-    # Write an empty Data element for an empty cell with a comment;
-    elsif ( $datatype == $self->{_datatypes}->{Comment} ) {
-        if ( $comment ) {
-            $self->_write_xml_start_tag( 4, 1, 0, 'Cell', @attribs );
-            $self->_write_xml_cell_comment( $comment );
-            $self->_write_xml_end_tag( 4, 1, 0, 'Cell' );
-        }
-        else {
-            $self->_write_xml_element( 4, 1, 0, 'Cell', @attribs );
-        }
-    }
-
-    # Ignore merge cells
-    elsif ( $datatype == $self->{_datatypes}->{Merge} ) {
-
-        # Do nothing.
-    }
-
-
-    $self->{prev_col} = $col;
-    return;
-}
-
-
-###############################################################################
-#
-# _write_xml_cell_data()
-#
-# Write a generic Data element.
-#
-sub _write_xml_cell_data {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    my $datatype = $_[0];
-    my $data     = $_[1];
-
-    $self->_write_xml_start_tag( 5, 0, 0, 'Data', 'ss:Type', $datatype );
-
-    if ( $datatype eq 'Number' ) {
-        $self->_write_xml_unencoded_content( $data );
-    }
-    else { $self->_write_xml_content( $data ) }
-
-    $self->_write_xml_end_tag( 0, 1, 0, 'Data' );
-}
-
-
-###############################################################################
-#
-# _write_xml_html_string()
-#
-# Write a string Data element with html text.
-#
-sub _write_xml_html_string {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-    my $data = $_[0];
-
-    $self->_write_xml_start_tag( 5, 0, 0, 'ss:Data', 'ss:Type', 'String',
-        'xmlns', 'http://www.w3.org/TR/REC-html40' );
-
-    $self->_write_xml_unencoded_content( $data );
-
-    $self->_write_xml_end_tag( 0, 1, 0, 'ss:Data' );
-}
-
-
-###############################################################################
-#
-# _write_xml_cell_comment()
-#
-# Write a cell Comment element.
-#
-sub _write_xml_cell_comment {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self    = shift;
-    my $comment = $_[0];
-
-    $self->_write_xml_start_tag( 5, 1, 0, 'Comment' );
-
-    $self->_write_xml_start_tag( 6, 0, 0, 'ss:Data', 'xmlns',
-        'http://www.w3.org/TR/REC-html40' );
-
-    $self->_write_xml_unencoded_content( $comment );
-
-    $self->_write_xml_end_tag( 0, 1, 0, 'ss:Data' );
-
-    $self->_write_xml_end_tag( 5, 1, 0, 'Comment' );
-
-}
-
-
-###############################################################################
-#
-# _write_worksheet_options()
-#
-# Write the <WorksheetOptions> element if the worksheet options have changed.
-#
-sub _write_worksheet_options {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    my ( $options_changed, $print_changed, $setup_changed ) =
-      $self->_options_changed();
-
-    return unless $options_changed;
-
-    $self->_write_xml_start_tag( 2, 1, 0, 'WorksheetOptions', 'xmlns',
-        'urn:schemas-microsoft-com:' . 'office:excel' );
-
-
-    if ( $setup_changed ) {
-        $self->_write_xml_start_tag( 3, 1, 0, 'PageSetup' );
-        $self->_store_setup();
-        $self->_write_xml_end_tag( 3, 1, 0, 'PageSetup' );
-    }
-
-
-    $self->_write_xml_element( 3, 1, 0, 'FitToPage' ) if $self->{_fit_page};
-
-
-    if ( $print_changed ) {
-        $self->_write_xml_start_tag( 3, 1, 0, 'Print' );
-        $self->_store_print();
-        $self->_write_xml_end_tag( 3, 1, 0, 'Print' );
-    }
-
-    $self->_write_xml_element( 3, 1, 0, 'DoNotDisplayGridlines' )
-      if $self->{_screen_gridlines} == 0;
-
-    $self->_write_xml_element( 3, 1, 0, 'FilterOn' ) if $self->{_filter_on};
-
-    $self->_write_xml_end_tag( 2, 1, 0, 'WorksheetOptions' );
 }
 
 
@@ -3428,8 +2787,8 @@ sub _options_changed {
         or $self->{_vcenter} == 1
         or $self->{_header} ne ''
         or $self->{_footer} ne ''
-        or $self->{_margin_head} != 0.50
-        or $self->{_margin_foot} != 0.50
+        or $self->{_margin_header} != 0.50
+        or $self->{_margin_footer} != 0.50
         or $self->{_margin_left} != 0.75
         or $self->{_margin_right} != 0.75
         or $self->{_margin_top} != 1.00
@@ -3492,14 +2851,6 @@ sub _write_autofilter {
 
     return unless $self->{_autofilter};
 
-    $self->_write_xml_start_tag( 2, 1, 0, 'AutoFilter', 'x:Range',
-        $self->{_autofilter}, 'xmlns',
-        'urn:schemas-microsoft-com:' . 'office:excel' );
-
-
-    $self->_write_autofilter_column();
-
-    $self->_write_xml_end_tag( 2, 1, 0, 'AutoFilter' );
 }
 
 
@@ -3528,72 +2879,21 @@ sub _write_autofilter_column {
         # Check for rows with defined filter criteria.
         if ( defined $self->{_filter_cols}->{$col} ) {
 
-            my @attribs = ( 'AutoFilterColumn' );
-
-            # The col indices are relative to the first column
-            push @attribs, "x:Index", $col + 1 - $col_first
-              if $col != $prev_col + 1;
-            push @attribs, "x:Type", 'Custom';
-            $prev_col = $col;
-
-            $self->_write_xml_start_tag( 3, 1, 0, @attribs );
-
-            @tokens = @{ $self->{_filter_cols}->{$col} };
-
-
             # Excel allows either one or two filter conditions
 
             # Single criterion.
             if ( @tokens == 2 ) {
                 my ( $op, $value ) = @tokens;
 
-                $self->_write_xml_element( 4, 1, 0, 'AutoFilterCondition',
-                    'x:Operator', $op, 'x:Value', $value );
             }
 
             # Double criteria, either 'And' or 'Or'.
             else {
                 my ( $op1, $value1, $op2, $op3, $value3 ) = @tokens;
 
-                # <AutoFilterAnd> or <AutoFilterOr>
-                $self->_write_xml_start_tag( 4, 1, 0, $op2 );
-
-                $self->_write_xml_element( 5, 1, 0, 'AutoFilterCondition',
-                    'x:Operator', $op1, 'x:Value', $value1 );
-
-                $self->_write_xml_element( 5, 1, 0, 'AutoFilterCondition',
-                    'x:Operator', $op3, 'x:Value', $value3 );
-
-                $self->_write_xml_end_tag( 4, 1, 0, $op2 );
-
             }
 
-            $self->_write_xml_end_tag( 3, 1, 0, 'AutoFilterColumn' );
         }
-    }
-}
-
-
-###############################################################################
-#
-# _quote_sheetname()
-#
-# Sheetnames used in references should be quoted if they contain any spaces,
-# special characters or if the look like something that isn't a sheet name.
-# However, the rules are complex so for now we just quote anything that doesn't
-# look like a simple sheet name.
-#
-sub _quote_sheetname {
-
-    my $self      = shift;
-    my $sheetname = $_[0];
-
-
-    if ( $sheetname =~ /^Sheet\d+$/ ) {
-        return $sheetname;
-    }
-    else {
-        return "'" . $sheetname . "'";
     }
 }
 
@@ -3667,7 +2967,7 @@ sub _write_dimension {
     if ( not defined $self->{_dim_rowmin} ) {
 
         # If the _dim_row_min is undefined then no dimensions have been set
-        # and we use the fefault 'A1'.
+        # and we use the default 'A1'.
         $ref = 'A1';
     }
     elsif ($self->{_dim_rowmin} == $self->{_dim_rowmax}
@@ -4025,11 +3325,11 @@ sub _write_row {
     push @attributes, ( 's'            => $format ) if $format;
     push @attributes, ( 'customFormat' => 1 )       if $format;
     push @attributes, ( 'ht'           => $height ) if $height != 15;
-    push @attributes, ( 'hidden'       => 1       ) if $hidden;
+    push @attributes, ( 'hidden'       => 1 )       if $hidden;
     push @attributes, ( 'customHeight' => 1 )       if $height != 15;
 
 
-    if ($empty_row) {
+    if ( $empty_row ) {
         $self->{_writer}->emptyTag( 'row', @attributes );
     }
     else {
@@ -4083,14 +3383,14 @@ sub _write_cell {
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 's' ) {
-        push @attributes, ('t' => 's');
+        push @attributes, ( 't' => 's' );
 
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_value( $value );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 's' ) {
-        push @attributes, ('t' => 's');
+        push @attributes, ( 't' => 's' );
 
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_value( $value );
@@ -4116,7 +3416,7 @@ sub _write_cell {
 #
 sub _write_cell_value {
 
-    my $self  = shift;
+    my $self = shift;
     my $value = shift // '';
 
     $self->{_writer}->dataElement( 'v', $value );
@@ -4131,7 +3431,7 @@ sub _write_cell_value {
 #
 sub _write_cell_formula {
 
-    my $self    = shift;
+    my $self = shift;
     my $formula = shift // '';
 
     $self->{_writer}->dataElement( 'f', $formula );
@@ -4314,7 +3614,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMX, John McNamara.
+ï¿½ MM-MMX, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

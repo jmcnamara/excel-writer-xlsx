@@ -182,7 +182,7 @@ sub get_align_properties {
     push @align, 'justifyLastLine', 1 if $self->{_just_distrib};
 
     # Property 'vertical' => 'bottom' is a default. It sets applyAlignment
-    # without an alignment subelement.
+    # without an alignment sub-element.
     push @align, 'vertical', 'top'         if $self->{_text_v_align} == 1;
     push @align, 'vertical', 'center'      if $self->{_text_v_align} == 2;
     push @align, 'vertical', 'justify'     if $self->{_text_v_align} == 4;
@@ -475,8 +475,6 @@ sub set_merge {
 #
 # set_bold()
 #
-# Unlike the binary format in Spreadsheet::WriteExcel bold cannot have a
-# "weight". In the XML format it is either on or off.
 #
 sub set_bold {
 

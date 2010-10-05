@@ -402,7 +402,7 @@ sub _write_fills {
 #
 # _write_default_fill()
 #
-# Write the <fill> element for the default fllss.
+# Write the <fill> element for the default fills.
 #
 sub _write_default_fill {
 
@@ -578,7 +578,7 @@ sub _write_border {
 #
 # _write_sub_border()
 #
-# Write the <border> sub elements such as <rigth>, <top>, etc.
+# Write the <border> sub elements such as <right>, <top>, etc.
 #
 sub _write_sub_border {
 

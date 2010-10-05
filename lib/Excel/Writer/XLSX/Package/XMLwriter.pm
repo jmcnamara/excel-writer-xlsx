@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Package::XMLwriter;
 
 ###############################################################################
 #
-# XMLwriter - A base class for the Excel::Writer::XLSX writer clases.
+# XMLwriter - A base class for the Excel::Writer::XLSX writer classes.
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
@@ -92,7 +92,7 @@ __END__
 
 =head1 NAME
 
-XMLwriter - A base class for the Excel::Writer::XLSX writer clases.
+XMLwriter - A base class for the Excel::Writer::XLSX writer classes.
 
 =head1 SYNOPSIS
 

@@ -138,7 +138,7 @@ sub _assemble_xml_file {
     # Write the worksheet names and ids.
     $self->_write_sheets();
 
-    # Write the workbook calculation properites.
+    # Write the workbook calculation properties.
     $self->_write_calc_pr();
 
     # Write the workbook extension storage.
@@ -185,6 +185,8 @@ sub close {
 sub DESTROY {
 
     my $self = shift;
+
+    local ($@, $!, $^E, $?);
 
     $self->close() if not $self->{_fileclosed};
 }
@@ -259,7 +261,7 @@ sub add_worksheet {
 
     # Check that the worksheet name doesn't already exist: a fatal Excel error.
     # The check must also exclude case insensitive matches.
-    foreach my $tmp ( @{ $self->{_worksheets} } ) {
+    for my $tmp ( @{ $self->{_worksheets} } ) {
         if ( lc $name eq lc $tmp->get_name() ) {
             croak "Worksheet name '$name', with case ignored, "
               . "is already in use";
@@ -482,7 +484,7 @@ sub set_tempdir {
 
     my $self = shift;
 
-    # TODO Update for ExcelXML format
+    # TODO Update for SpreadsheetML format
 }
 
 
@@ -528,7 +530,7 @@ sub _store_workbook {
     }
 
     # Calculate the number of selected sheet tabs and set the active sheet.
-    foreach my $sheet ( @{ $self->{_worksheets} } ) {
+    for my $sheet ( @{ $self->{_worksheets} } ) {
         $self->{_selected}++ if $sheet->{_selected};
         $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
     }
@@ -731,7 +733,7 @@ sub _prepare_fills {
     my %fills;
     my $index = 2; # Start from 2. See above.
 
-    # Add the deafult fills.
+    # Add the default fills.
     $fills{'0:0:0'}  = 0;
     $fills{'17:0:0'} = 1;
 
@@ -1080,6 +1082,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMX, John McNamara.
+ï¿½ MM-MMX, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
