@@ -153,12 +153,16 @@ sub get_align_properties {
     return unless $changed;
 
 
-    # Indent is only allowed for vertical left, right and distributed.
-    if (   $self->{_text_h_align} != 1
+
+    # Indent is only allowed for horizontal left, right and distributed. If it
+    # is defined for any other alignment or no alignment has been set then
+    # default to left alignment.
+    if (   $self->{_indent}
+        && $self->{_text_h_align} != 1
         && $self->{_text_h_align} != 3
         && $self->{_text_h_align} != 7 )
     {
-        $self->{_indent} = 0;
+        $self->{_text_h_align} = 1;
     }
 
     # Check for properties that are mutually exclusive.

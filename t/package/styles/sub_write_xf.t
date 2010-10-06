@@ -10,8 +10,7 @@ use TestFunctions '_new_style';
 use strict;
 use warnings;
 
-#use Test::More tests => 10;
-use Test::More 'no_plan';
+use Test::More tests => 32;
 
 
 ###############################################################################
@@ -386,13 +385,13 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 22. Test the _write_xf() method. Horizontal alignment = center + indent
-#     which should be ignored since it isn't valid.
+# 22. Test the _write_xf() method. Horizontal alignment = indent only.
+#     This should default to left alignment.
 #
-%properties = ( align => 'center', indent => 1 );
+%properties = ( indent => 1 );
 
 $caption  = " \tStyles: _write_xf()";
-$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="center" /></xf>';
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="left" indent="1" /></xf>';
 
 $format = Excel::Writer::XLSX::Format->new( $index, %properties );
 
