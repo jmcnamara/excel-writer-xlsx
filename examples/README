@@ -1,15 +1,28 @@
-The following is a description of the example files that are provided
-with Excel::Writer::XLSX. They are intended to demonstrate the
-different features and options of the module.
+The following is a description of the example files that are provided with 
+Excel::Writer::XLSX. They are intended to demonstrate the different features
+and options of the module.
 
 
 Getting started
 ===============
-bug_report.pl           A template for submitting bug reports.
 a_simple.pl             A simple demo of some of the features.
+bug_report.pl           A template for submitting bug reports.
+demo.pl                 A demo of some of the available features.
+formats.pl              All the available formatting on several worksheets.
+regions.pl              A simple example of multiple worksheets.
+stats.pl                Basic formulas and functions.
+
 
 Intermediate
 ============
+colors.pl               A demo of the colour palette and named colours.
+sales.pl                An example of a simple sales spreadsheet.
+stats_ext.pl            Same as stats.pl with external references.
+stocks.pl               Demonstrates conditional formatting.
+write_handler1.pl       Example of extending the write() method. Step 1.
+write_handler2.pl       Example of extending the write() method. Step 2.
+write_handler3.pl       Example of extending the write() method. Step 3.
+write_handler4.pl       Example of extending the write() method. Step 4.
 
 
 Unicode

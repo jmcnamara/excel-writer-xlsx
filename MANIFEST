@@ -4,6 +4,7 @@ Makefile.PL
 README
 
 lib/Excel/Writer/XLSX.pm
+lib/Excel/Writer/XLSX/Examples.pm
 lib/Excel/Writer/XLSX/Format.pm
 lib/Excel/Writer/XLSX/Package/App.pm
 lib/Excel/Writer/XLSX/Package/ContentTypes.pm
@@ -104,6 +105,17 @@ t/worksheet/worksheet_04.t
 examples/README
 examples/a_simple.pl  
 examples/bug_report.pl
+examples/colors.pl
+examples/demo.pl
+examples/diag_border.pl
+examples/formats.pl
+examples/gen_examples_pod.pl
+examples/indent.pl
+examples/regions.pl
+examples/sales.pl
+examples/stats.pl
+examples/stats_ext.pl
+examples/stocks.pl
 examples/unicode_2022_jp.pl
 examples/unicode_2022_jp.txt
 examples/unicode_8859_11.pl
@@ -123,3 +135,7 @@ examples/unicode_polish_utf8.pl
 examples/unicode_polish_utf8.txt
 examples/unicode_shift_jis.pl
 examples/unicode_shift_jis.txt
+examples/write_handler1.pl
+examples/write_handler2.pl
+examples/write_handler3.pl
+examples/write_handler4.pl
