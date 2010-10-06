@@ -531,6 +531,11 @@ sub _write_border {
         push @attributes, ( diagonalDown => 1 );
     }
 
+    # Ensure that a default diag border is set if the diag type is set.
+    if ( $format->{_diag_type} && !$format->{_diag_border} ) {
+        $format->{_diag_border} = 1;
+    }
+
     # Write the start border tag.
     $self->{_writer}->startTag( 'border', @attributes );
 

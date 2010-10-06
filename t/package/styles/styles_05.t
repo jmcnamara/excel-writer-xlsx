@@ -37,13 +37,13 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-my $format1 = $workbook->add_format( left   => 1 );
-my $format2 = $workbook->add_format( right  => 1 );
-my $format3 = $workbook->add_format( top    => 1 );
-my $format4 = $workbook->add_format( bottom => 1 );
+my $format1 = $workbook->add_format( left      => 1 );
+my $format2 = $workbook->add_format( right     => 1 );
+my $format3 = $workbook->add_format( top       => 1 );
+my $format4 = $workbook->add_format( bottom    => 1 );
 my $format5 = $workbook->add_format( diag_type => 1, diag_border => 1 );
 my $format6 = $workbook->add_format( diag_type => 2, diag_border => 1 );
-my $format7 = $workbook->add_format( diag_type => 3, diag_border => 1 );
+my $format7 = $workbook->add_format( diag_type => 3 );  # Test default border.
 
 
 $workbook->_prepare_fonts();
