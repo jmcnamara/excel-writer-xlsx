@@ -1880,7 +1880,7 @@ sub write_date_time {
     my $col  = $_[1];                              # Zero indexed column
     my $str  = $_[2];
     my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
-    my $type = 99;                                 # The data type
+    my $type = 'n';                                 # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -1891,11 +1891,11 @@ sub write_date_time {
 
     # If the date isn't valid then write it as a string.
     if ( not defined $date_time ) {
-        $type      = 99;
+        $type      = 's';
         $str_error = -3;
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $str, $xf ];
+    $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
 
     return $str_error;
 }
