@@ -1,7 +1,8 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 use ExtUtils::MakeMaker;
 use strict;
+use warnings;
 
 require 5.010;
 
@@ -34,3 +35,9 @@ if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {
 }
 
 WriteMakefile(%params);
+
+sub MY::postamble {
+    "mydocs:\n"
+      . "\tperl -Mblib examples/gen_examples_pod.pl examples "
+      . "> lib/Excel/Writer/XLSX/Examples.pm\n"
+}

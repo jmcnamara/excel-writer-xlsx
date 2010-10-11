@@ -4,9 +4,6 @@ NAME
 
 DESCRIPTION
 
-    *** NOTE. This is pre-release  code only. A CPAN release should
-              be available by mid October, 2010. 
-
     The Excel::Writer::XLSX module can be used to create a new Excel file
     in the 2007+ XLSX format. 
 
@@ -15,10 +12,10 @@ DESCRIPTION
     can be applied to cells. Text, numbers, and formulas can be
     written to the cells.
 
-    Excel::Writer::XLSX uses the same interface as Spreadsheet::WriteExcel.
-
-    This module cannot, as yet, be used to write to an existing
-    Excel XLSX file.
+    Excel::Writer::XLSX uses the same interface as Spreadsheet::WriteExcel
+    but not all of its features are currently implemented. See the 
+    "Compatibility with Spreadsheet::WriteExcel" section of the main
+    documentation for details.
 
 
 SYNOPSIS
@@ -63,8 +60,8 @@ INSTALLATION
             perl Makefile.PL
             make
             make test
-            make install    # You may need to be root
-            make clean      # or make realclean
+            make install    # As sudo/root
+
 
 
 AUTHOR

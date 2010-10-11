@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.01 of Excel::Writer::XLSX, released September XX, 2010.
+This document refers to version 0.01 of Excel::Writer::XLSX, released October 11, 2010.
 
 
 
@@ -91,6 +91,8 @@ To write a string, a formatted string, a number and a formula to the first works
 
 The C<Excel::Writer::XLSX> module can be used to create an Excel file in the 2007+ XLSX format.
 
+The XLSX format is the Office Open XML (OOXML) format used by Excel 2007 and later.
+
 Multiple worksheets can be added to a workbook and formatting can be applied to cells. Text, numbers, and formulas can be written to the cells.
 
 This module cannot, as yet, be used to write to an existing Excel XLSX file.
@@ -100,9 +102,13 @@ This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 =head1 Excel::Writer::XLSX and Spreadsheet::WriteExcel
 
-C<Excel::Writer::XLSX> uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
+C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-While Excel::Writer::XLSX doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will.
+While Excel::Writer::XLSX doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
+
+The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet.
+
+
 
 
 =head1 QUICK START
@@ -167,9 +173,9 @@ Here are some other examples of using C<new()> with filenames:
     my $workbook3 = Excel::Writer::XLSX->new( "c:\\tmp\\filename.xlsx" );
     my $workbook4 = Excel::Writer::XLSX->new( 'c:\tmp\filename.xlsx' );
 
-The last two examples demonstrates how to create a file on DOS or Windows where it is necessary to either escape the directory separator C<\> or to use single quotes to ensure that it isn't interpolated. For more information  see C<perlfaq5: Why can't I use "C:\temp\foo" in DOS paths?>.
+The last two examples demonstrates how to create a file on DOS or Windows where it is necessary to either escape the directory separator C<\> or to use single quotes to ensure that it isn't interpolated. For more information see C<perlfaq5: Why can't I use "C:\temp\foo" in DOS paths?>.
 
-It is recommended that the filename uses the extension C<.xlsx> rather than C<.xls> since the latter will cause a warning when opened by Excel 2007 and later.
+It is recommended that the filename uses the extension C<.xlsx> rather than C<.xls> since the latter causes an Excel warning when used with the XLSX format.
 
 The C<new()> constructor returns a Excel::Writer::XLSX object that you can use to add worksheets and store data. It should be noted that although C<my> is not specifically required it defines the scope of the new workbook variable and, in the majority of cases, ensures that the workbook is closed properly without explicitly calling the C<close()> method.
 
@@ -720,7 +726,7 @@ C<write_string()> if C<keep_leading_zeros()> is set and C<$token> is an integer 
 
 C<write_blank()> if C<$token> is undef or a blank string: C<undef>, C<""> or C<''>.
 
-C<write_url()> if C<$token> is a http, https, ftp or mailto URL based on the following regexes: C<$token =~ m|^[fh]tt?ps?://|> or  C<$token =~ m|^mailto:|>.
+C<write_url()> if C<$token> is a http, https, ftp or mailto URL based on the following regexes: C<$token =~ m|^[fh]tt?ps?://|> or C<$token =~ m|^mailto:|>.
 
 C<write_url()> if C<$token> is an internal or external sheet reference based on the following regex: C<$token =~ m[^(in|ex)ternal:]>.
 
@@ -1065,7 +1071,7 @@ Write a hyperlink to a URL in the cell specified by C<$row> and C<$column>. The 
 
 The label is written using the C<write()> method. Therefore it is possible to write strings, numbers or formulas as labels.
 
-There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and  C<mailto:>:
+There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and C<mailto:>:
 
     $worksheet->write_url( 0, 0,  'ftp://www.perl.org/'                   );
     $worksheet->write_url( 1, 0,  'http://www.perl.com/', 'Perl home'     );
@@ -1101,7 +1107,7 @@ Excel requires that worksheet names containing spaces or non alphanumeric charac
 
 Links to network files are also supported. MS/Novell Network files normally begin with two back slashes as follows C<\\NETWORK\etc>. In order to generate this in a single or double quoted string you will have to escape the backslashes,  C<'\\\\NETWORK\etc'>.
 
-If you are using double quote strings then you should be careful to escape anything that looks like a metacharacter. For more information  see C<perlfaq5: Why can't I use "C:\temp\foo" in DOS paths?>.
+If you are using double quote strings then you should be careful to escape anything that looks like a metacharacter. For more information see C<perlfaq5: Why can't I use "C:\temp\foo" in DOS paths?>.
 
 Finally, you can avoid most of these quoting problems by using forward slashes. These are translated internally to backslashes:
 
@@ -1455,7 +1461,7 @@ BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid 
 
 Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
-This method can be used to insert a Chart object into a worksheet. The Chart must be created by the C<add_chart()> Workbook method  and it must have the C<embedded> option set.
+This method can be used to insert a Chart object into a worksheet. The Chart must be created by the C<add_chart()> Workbook method and it must have the C<embedded> option set.
 
     my $chart = $workbook->add_chart( type => 'line', embedded => 1 );
 
@@ -1671,7 +1677,7 @@ If you wish to set the format without changing the height you can pass C<undef> 
 
     $worksheet->set_row( 0, undef, $format );
 
-The C<$format> parameter will be applied to any cells in the row that don't  have a format. For example
+The C<$format> parameter will be applied to any cells in the row that don't have a format. For example
 
     $worksheet->set_row( 0, undef, $format1 );    # Set the format for row 1
     $worksheet->write( 'A1', 'Hello' );           # Defaults to $format1
@@ -1730,7 +1736,7 @@ As usual the C<$format> parameter is optional, for additional information, see L
 
     $worksheet->set_column( 0, 0, undef, $format );
 
-The C<$format> parameter will be applied to any cells in the column that don't  have a format. For example
+The C<$format> parameter will be applied to any cells in the column that don't have a format. For example
 
     $worksheet->set_column( 'A:A', undef, $format1 );    # Set format for col 1
     $worksheet->write( 'A1', 'Hello' );                  # Defaults to $format1
@@ -1832,7 +1838,7 @@ Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method can be used to divide a worksheet into horizontal or vertical regions known as panes. This method is different from the C<freeze_panes()> method in that the splits between the panes will be visible to the user and each pane will have its own scroll bars.
 
-The parameters C<$y> and C<$x> are used to specify the vertical and horizontal position of the split. The units for C<$y> and C<$x> are the same as those used by Excel to specify row height and column width. However, the vertical and horizontal units are different from each other. Therefore you must specify the C<$y> and C<$x> parameters in terms of the row heights and column widths that you have set or the default values which are C<12.75> for a row and  C<8.43> for a column.
+The parameters C<$y> and C<$x> are used to specify the vertical and horizontal position of the split. The units for C<$y> and C<$x> are the same as those used by Excel to specify row height and column width. However, the vertical and horizontal units are different from each other. Therefore you must specify the C<$y> and C<$x> parameters in terms of the row heights and column widths that you have set or the default values which are C<12.75> for a row and  <8.43> for a column.
 
 You can set one of the C<$y> and C<$x> parameters as zero if you do not want either a vertical or horizontal split. The parameters C<$top_row> and C<$left_col> are optional. They are used to specify the top-most or left-most visible row or column in the bottom-right pane.
 
@@ -3756,7 +3762,7 @@ Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<data_validation()> method is used to construct an Excel data validation.
 
-It can be applied to a single cell or a range of cells. You can pass 3 parameters such as  C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
+It can be applied to a single cell or a range of cells. You can pass 3 parameters such as C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
 
     $worksheet->data_validation( 0, 0,       {...} );
     $worksheet->data_validation( 0, 0, 4, 1, {...} );
@@ -4164,7 +4170,7 @@ Formulas can also refer to cells in other worksheets of the current workbook. Fo
     q{='Test Data'!A1}
     q{='Test Data1:Test Data2'!A1}
 
-The sheet reference and the cell reference are separated by  C<!> the exclamation mark symbol. If worksheet names contain spaces, commas or parentheses then Excel requires that the name is enclosed in single quotes as shown in the last two examples above. In order to avoid using a lot of escape characters you can use the quote operator C<q{}> to protect the quotes. See C<perlop> in the main Perl documentation. Only valid sheet names that have been added using the C<add_worksheet()> method can be used in formulas. You cannot reference external workbooks.
+The sheet reference and the cell reference are separated by C<!> the exclamation mark symbol. If worksheet names contain spaces, commas or parentheses then Excel requires that the name is enclosed in single quotes as shown in the last two examples above. In order to avoid using a lot of escape characters you can use the quote operator C<q{}> to protect the quotes. See C<perlop> in the main Perl documentation. Only valid sheet names that have been added using the C<add_worksheet()> method can be used in formulas. You cannot reference external workbooks.
 
 
 The following table lists the operators that are available in Excel's formulas. The majority of the operators are the same as Perl's, differences are indicated:
@@ -4546,6 +4552,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     ============
     cgi.pl                  A simple CGI program.
     colors.pl               A demo of the colour palette and named colours.
+    diag_border.pl          A simple example of diagonal cell borders.
+    indent.pl               An example of cell indentation.
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     sales.pl                An example of a simple sales spreadsheet.
@@ -4564,6 +4572,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     unicode_big5.pl         Chinese:  BIG5.
     unicode_cp1251.pl       Russian:  CP1251.
     unicode_cp1256.pl       Arabic:   CP1256.
+    unicode_cyrillic.pl     Russian:  Cyrillic.
     unicode_koi8r.pl        Russian:  KOI8-R.
     unicode_polish_utf8.pl  Polish :  UTF8.
     unicode_shift_jis.pl    Japanese: Shift JIS.
@@ -4755,7 +4764,7 @@ A filename must be given in the constructor.
 
 =item Can't open filename. It may be in use or protected.
 
-The file cannot be opened for writing. The directory that you are writing to  may be protected or the file may be in use by another program.
+The file cannot be opened for writing. The directory that you are writing to may be protected or the file may be in use by another program.
 
 =item The file you are trying to open 'file.xls' is in a different format than specified by the file extension.
 
@@ -4848,7 +4857,7 @@ This is an open source "Excel to HTML Converter" C/C++ project at L<http://chica
 
 =item * DBD::Excel (reading)
 
-You can also access Spreadsheet::ParseExcel using the standard DBI interface via  Takanori Kawai's DBD::Excel module L<http://search.cpan.org/dist/DBD-Excel>.
+You can also access Spreadsheet::ParseExcel using the standard DBI interface via Takanori Kawai's DBD::Excel module L<http://search.cpan.org/dist/DBD-Excel>.
 
 =item * Win32::OLE module and office automation (reading)
 

@@ -102,12 +102,10 @@ print "\n    Module versions: (not all are required)\n";
 my @modules = qw(
                   Excel::Writer::XLSX
                   Spreadsheet::WriteExcel
-                  Parse::RecDescent
                   Archive::Zip
                   XML::Writer
                   IO::File
                   File::Temp
-                  OLE::Storage_Lite
                 );
 
 

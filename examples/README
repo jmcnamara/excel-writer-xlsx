@@ -17,6 +17,8 @@ Intermediate
 ============
 cgi.pl                  A simple CGI program.
 colors.pl               A demo of the colour palette and named colours.
+diag_border.pl          A simple example of diagonal cell borders.
+indent.pl               An example of cell indentation.
 mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
 sales.pl                An example of a simple sales spreadsheet.
@@ -35,6 +37,7 @@ unicode_8859_7.pl       Greek:    ISO-8859_7.
 unicode_big5.pl         Chinese:  BIG5.
 unicode_cp1251.pl       Russian:  CP1251.
 unicode_cp1256.pl       Arabic:   CP1256.
+unicode_cyrillic.pl     Russian:  Cyrillic.
 unicode_koi8r.pl        Russian:  KOI8-R.
 unicode_polish_utf8.pl  Polish :  UTF8.
 unicode_shift_jis.pl    Japanese: Shift JIS.

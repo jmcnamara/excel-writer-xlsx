@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 23 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 29 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -55,7 +55,17 @@ The following is a list of the 23 example programs that are included in the Exce
 
 =item * L<Example: stats.pl> Basic formulas and functions.
 
+=item * L<Example: cgi.pl> A simple CGI program.
+
 =item * L<Example: colors.pl> A demo of the colour palette and named colours.
+
+=item * L<Example: diag_border.pl> A simple example of diagonal cell borders.
+
+=item * L<Example: indent.pl> An example of cell indentation.
+
+=item * L<Example: mod_perl1.pl> A simple mod_perl 1 program.
+
+=item * L<Example: mod_perl2.pl> A simple mod_perl 2 program.
 
 =item * L<Example: sales.pl> An example of a simple sales spreadsheet.
 
@@ -82,6 +92,8 @@ The following is a list of the 23 example programs that are included in the Exce
 =item * L<Example: unicode_cp1251.pl> Russian:  CP1251.
 
 =item * L<Example: unicode_cp1256.pl> Arabic:   CP1256.
+
+=item * L<Example: unicode_cyrillic.pl> Russian:  Cyrillic.
 
 =item * L<Example: unicode_koi8r.pl> Russian:  KOI8-R.
 
@@ -270,12 +282,10 @@ Run this program and read the output from the command line.
     my @modules = qw(
                       Excel::Writer::XLSX
                       Spreadsheet::WriteExcel
-                      Parse::RecDescent
                       Archive::Zip
                       XML::Writer
                       IO::File
                       File::Temp
-                      OLE::Storage_Lite
                     );
     
     
@@ -1005,7 +1015,7 @@ Source code for this example:
     use Excel::Writer::XLSX;
     
     # Create a new Excel workbook
-    my $workbook = Excel::Writer::XLSX->new( 'regions.xls' );
+    my $workbook = Excel::Writer::XLSX->new( 'regions.xlsx' );
     
     # Add some worksheets
     my $north = $workbook->add_worksheet( "North" );
@@ -1131,6 +1141,80 @@ Source code for this example:
 
 
 Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/stats.pl>
+
+=head2 Example: cgi.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX module to send an Excel
+file to a browser in a CGI program.
+
+On Windows the hash-bang line should be something like:
+
+    #!C:\Perl\bin\perl.exe
+
+The "Content-Disposition" line will cause a prompt to be generated to save
+the file. If you want to stream the file to the browser instead, comment out
+that line as shown below.
+
+
+
+    #!/usr/bin/perl -w
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX module to send an Excel
+    # file to a browser in a CGI program.
+    #
+    # On Windows the hash-bang line should be something like:
+    #
+    #     #!C:\Perl\bin\perl.exe
+    #
+    # The "Content-Disposition" line will cause a prompt to be generated to save
+    # the file. If you want to stream the file to the browser instead, comment out
+    # that line as shown below.
+    #
+    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    # Set the filename and send the content type
+    my $filename = "cgitest.xlsx";
+    
+    print "Content-type: application/vnd.ms-excel\n";
+    
+    # The Content-Disposition will generate a prompt to save the file. If you want
+    # to stream the file to the browser, comment out the following line.
+    print "Content-Disposition: attachment; filename=$filename\n";
+    print "\n";
+    
+    # Create a new workbook and add a worksheet. The special Perl filehandle - will
+    # redirect the output to STDOUT
+    #
+    my $workbook  = Excel::Writer::XLSX->new( "-" );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Set the column width for column 1
+    $worksheet->set_column( 0, 0, 20 );
+    
+    
+    # Create a format
+    my $format = $workbook->add_format();
+    $format->set_bold();
+    $format->set_size( 15 );
+    $format->set_color( 'blue' );
+    
+    
+    # Write to the workbook
+    $worksheet->write( 0, 0, "Hi Excel!", $format );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/cgi.pl>
 
 =head2 Example: colors.pl
 
@@ -1263,6 +1347,370 @@ Source code for this example:
 
 
 Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/colors.pl>
+
+=head2 Example: diag_border.pl
+
+
+
+A simple formatting example that demonstrates how to add a diagonal cell
+border with Excel::Writer::XLSX
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/diag_border.jpg" width="640" height="420" alt="Output from diag_border.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl -w
+    
+    ##############################################################################
+    #
+    # A simple formatting example that demonstrates how to add a diagonal cell
+    # border with Excel::Writer::XLSX
+    #
+    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'diag_border.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    my $format1 = $workbook->add_format( diag_type => '1' );
+    
+    my $format2 = $workbook->add_format( diag_type => '2' );
+    
+    my $format3 = $workbook->add_format( diag_type => '3' );
+    
+    my $format4 = $workbook->add_format(
+        diag_type   => '3',
+        diag_border => '7',
+        diag_color  => 'red',
+    );
+    
+    
+    $worksheet->write( 'B3',  'Text', $format1 );
+    $worksheet->write( 'B6',  'Text', $format2 );
+    $worksheet->write( 'B9',  'Text', $format3 );
+    $worksheet->write( 'B12', 'Text', $format4 );
+    
+    
+    __END__
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/diag_border.pl>
+
+=head2 Example: indent.pl
+
+
+
+A simple formatting example using Excel::Writer::XLSX.
+
+This program demonstrates the indentation cell format.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/indent.jpg" width="640" height="420" alt="Output from indent.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl -w
+    
+    ##############################################################################
+    #
+    # A simple formatting example using Excel::Writer::XLSX.
+    #
+    # This program demonstrates the indentation cell format.
+    #
+    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    #
+    
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    my $workbook = Excel::Writer::XLSX->new( 'indent.xlsx' );
+    
+    my $worksheet = $workbook->add_worksheet();
+    my $indent1   = $workbook->add_format( indent => 1 );
+    my $indent2   = $workbook->add_format( indent => 2 );
+    
+    $worksheet->set_column( 'A:A', 40 );
+    
+    
+    $worksheet->write( 'A1', "This text is indented 1 level",  $indent1 );
+    $worksheet->write( 'A2', "This text is indented 2 levels", $indent2 );
+    
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/indent.pl>
+
+=head2 Example: mod_perl1.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX module to send an Excel
+file to a browser using mod_perl 1 and Apache
+
+This module ties *XLSX directly to Apache, and with the correct
+content-disposition/types it will prompt the user to save
+the file, or open it at this location.
+
+This script is a modification of the Excel::Writer::XLSX cgi.pl example.
+
+Change the name of this file to Cgi.pm.
+Change the package location to where ever you locate this package.
+In the example below it is located in the WriteExcel directory.
+
+Your httpd.conf entry for this module, should you choose to use it
+as a stand alone app, should look similar to the following:
+
+    <Location /spreadsheet-test>
+      SetHandler perl-script
+      PerlHandler Excel::Writer::XLSX::Cgi
+      PerlSendHeader On
+    </Location>
+
+The PerlHandler name above and the package name below *have* to match.
+
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX module to send an Excel
+    # file to a browser using mod_perl 1 and Apache
+    #
+    # This module ties *XLSX directly to Apache, and with the correct
+    # content-disposition/types it will prompt the user to save
+    # the file, or open it at this location.
+    #
+    # This script is a modification of the Excel::Writer::XLSX cgi.pl example.
+    #
+    # Change the name of this file to Cgi.pm.
+    # Change the package location to where ever you locate this package.
+    # In the example below it is located in the WriteExcel directory.
+    #
+    # Your httpd.conf entry for this module, should you choose to use it
+    # as a stand alone app, should look similar to the following:
+    #
+    #     <Location /spreadsheet-test>
+    #       SetHandler perl-script
+    #       PerlHandler Excel::Writer::XLSX::Cgi
+    #       PerlSendHeader On
+    #     </Location>
+    #
+    # The PerlHandler name above and the package name below *have* to match.
+    
+    # Apr 2001, Thomas Sullivan, webmaster@860.org
+    # Feb 2001, John McNamara, jmcnamara@cpan.org
+    
+    package Excel::Writer::XLSX::Cgi;
+    
+    ##########################################
+    # Pragma Definitions
+    ##########################################
+    use strict;
+    
+    ##########################################
+    # Required Modules
+    ##########################################
+    use Apache::Constants qw(:common);
+    use Apache::Request;
+    use Apache::URI;    # This may not be needed
+    use Excel::Writer::XLSX;
+    
+    ##########################################
+    # Main App Body
+    ##########################################
+    sub handler {
+    
+        # New apache object
+        # Should you decide to use it.
+        my $r = Apache::Request->new( shift );
+    
+        # Set the filename and send the content type
+        # This will appear when they save the spreadsheet
+        my $filename = "cgitest.xlsx";
+    
+        ####################################################
+        ## Send the content type headers
+        ####################################################
+        print "Content-disposition: attachment;filename=$filename\n";
+        print "Content-type: application/vnd.ms-excel\n\n";
+    
+        ####################################################
+        # Tie a filehandle to Apache's STDOUT.
+        # Create a new workbook and add a worksheet.
+        ####################################################
+        tie *XLSX => 'Apache';
+        binmode( *XLSX );
+    
+        my $workbook  = Excel::Writer::XLSX->new( \*XLSX );
+        my $worksheet = $workbook->add_worksheet();
+    
+    
+        # Set the column width for column 1
+        $worksheet->set_column( 0, 0, 20 );
+    
+    
+        # Create a format
+        my $format = $workbook->add_format();
+        $format->set_bold();
+        $format->set_size( 15 );
+        $format->set_color( 'blue' );
+    
+    
+        # Write to the workbook
+        $worksheet->write( 0, 0, "Hi Excel!", $format );
+    
+        # You must close the workbook for Content-disposition
+        $workbook->close();
+    }
+    
+    1;
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/mod_perl1.pl>
+
+=head2 Example: mod_perl2.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX module to send an Excel
+file to a browser using mod_perl 2 and Apache.
+
+This module ties *XLSX directly to Apache, and with the correct
+content-disposition/types it will prompt the user to save
+the file, or open it at this location.
+
+This script is a modification of the Excel::Writer::XLSX cgi.pl example.
+
+Change the name of this file to MP2Test.pm.
+Change the package location to where ever you locate this package.
+In the example below it is located in the WriteExcel directory.
+
+Your httpd.conf entry for this module, should you choose to use it
+as a stand alone app, should look similar to the following:
+
+    PerlModule Apache2::RequestRec
+    PerlModule APR::Table
+    PerlModule Apache2::RequestIO
+
+    <Location /spreadsheet-test>
+       SetHandler perl-script
+       PerlResponseHandler Excel::Writer::XLSX::MP2Test
+    </Location>
+
+The PerlResponseHandler must match the package name below.
+
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX module to send an Excel
+    # file to a browser using mod_perl 2 and Apache.
+    #
+    # This module ties *XLSX directly to Apache, and with the correct
+    # content-disposition/types it will prompt the user to save
+    # the file, or open it at this location.
+    #
+    # This script is a modification of the Excel::Writer::XLSX cgi.pl example.
+    #
+    # Change the name of this file to MP2Test.pm.
+    # Change the package location to where ever you locate this package.
+    # In the example below it is located in the WriteExcel directory.
+    #
+    # Your httpd.conf entry for this module, should you choose to use it
+    # as a stand alone app, should look similar to the following:
+    #
+    #     PerlModule Apache2::RequestRec
+    #     PerlModule APR::Table
+    #     PerlModule Apache2::RequestIO
+    #
+    #     <Location /spreadsheet-test>
+    #        SetHandler perl-script
+    #        PerlResponseHandler Excel::Writer::XLSX::MP2Test
+    #     </Location>
+    #
+    # The PerlResponseHandler must match the package name below.
+    
+    # Jun 2004, Matisse Enzer, matisse@matisse.net  (mod_perl 2 version)
+    # Apr 2001, Thomas Sullivan, webmaster@860.org
+    # Feb 2001, John McNamara, jmcnamara@cpan.org
+    
+    package Excel::Writer::XLSX::MP2Test;
+    
+    ##########################################
+    # Pragma Definitions
+    ##########################################
+    use strict;
+    
+    ##########################################
+    # Required Modules
+    ##########################################
+    use Apache2::Const -compile => qw( :common );
+    use Excel::Writer::XLSX;
+    
+    ##########################################
+    # Main App Body
+    ##########################################
+    sub handler {
+        my ( $r ) = @_;   # Apache request object is passed to handler in mod_perl 2
+    
+        # Set the filename and send the content type
+        # This will appear when they save the spreadsheet
+        my $filename = "mod_perl2_test.xlsx";
+    
+        ####################################################
+        ## Send the content type headers the mod_perl 2 way
+        ####################################################
+        $r->headers_out->{'Content-Disposition'} = "attachment;filename=$filename";
+        $r->content_type( 'application/vnd.ms-excel' );
+    
+        ####################################################
+        # Tie a filehandle to Apache's STDOUT.
+        # Create a new workbook and add a worksheet.
+        ####################################################
+        tie *XLSX => $r;  # The mod_perl 2 way. Tie to the Apache::RequestRec object
+        binmode( *XLSX );
+    
+        my $workbook  = Excel::Writer::XLSX->new( \*XLSX );
+        my $worksheet = $workbook->add_worksheet();
+    
+    
+        # Set the column width for column 1
+        $worksheet->set_column( 0, 0, 20 );
+    
+    
+        # Create a format
+        my $format = $workbook->add_format();
+        $format->set_bold();
+        $format->set_size( 15 );
+        $format->set_color( 'blue' );
+    
+    
+        # Write to the workbook
+        $worksheet->write( 0, 0, 'Hi Excel! from ' . $r->hostname, $format );
+    
+        # You must close the workbook for Content-disposition
+        $workbook->close();
+        return Apache2::Const::OK;
+    }
+    
+    1;
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/mod_perl2.pl>
 
 =head2 Example: sales.pl
 
@@ -2377,6 +2825,76 @@ Source code for this example:
 
 
 Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/unicode_cp1256.pl>
+
+=head2 Example: unicode_cyrillic.pl
+
+
+
+A simple example of writing some Russian cyrillic text using
+Excel::Writer::XLSX.
+
+
+
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/unicode_cyrillic.jpg" width="640" height="420" alt="Output from unicode_cyrillic.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ##############################################################################
+    #
+    # A simple example of writing some Russian cyrillic text using
+    # Excel::Writer::XLSX.
+    #
+    #
+    #
+    #
+    # reverse('©'), March 2005, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    
+    # In this example we generate utf8 strings from character data but in a
+    # real application we would expect them to come from an external source.
+    #
+    
+    
+    # Create a Russian worksheet name in utf8.
+    my $sheet = pack "U*", 0x0421, 0x0442, 0x0440, 0x0430, 0x043D, 0x0438,
+      0x0446, 0x0430;
+    
+    
+    # Create a Russian string.
+    my $str = pack "U*", 0x0417, 0x0434, 0x0440, 0x0430, 0x0432, 0x0441,
+      0x0442, 0x0432, 0x0443, 0x0439, 0x0020, 0x041C,
+      0x0438, 0x0440, 0x0021;
+    
+    
+    my $workbook = Excel::Writer::XLSX->new( 'unicode_cyrillic.xlsx' );
+    
+    die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
+    
+    my $worksheet = $workbook->add_worksheet( $sheet . '1' );
+    
+    $worksheet->set_column( 'A:A', 18 );
+    $worksheet->write( 'A1', $str );
+    
+    
+    __END__
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.01/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
