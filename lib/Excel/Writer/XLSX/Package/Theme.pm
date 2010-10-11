@@ -137,7 +137,7 @@ __END__
 
 =head1 NAME
 
-Foo - A class for writing the Excel XLSX Theme file.
+Theme - A class for writing the Excel XLSX Theme file.
 
 =head1 SYNOPSIS
 
