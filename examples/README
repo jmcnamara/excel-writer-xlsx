@@ -15,7 +15,10 @@ stats.pl                Basic formulas and functions.
 
 Intermediate
 ============
+cgi.pl                  A simple CGI program.
 colors.pl               A demo of the colour palette and named colours.
+mod_perl1.pl            A simple mod_perl 1 program.
+mod_perl2.pl            A simple mod_perl 2 program.
 sales.pl                An example of a simple sales spreadsheet.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
@@ -23,7 +26,6 @@ write_handler1.pl       Example of extending the write() method. Step 1.
 write_handler2.pl       Example of extending the write() method. Step 2.
 write_handler3.pl       Example of extending the write() method. Step 3.
 write_handler4.pl       Example of extending the write() method. Step 4.
-
 
 Unicode
 =======

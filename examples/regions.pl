@@ -12,7 +12,7 @@ use strict;
 use Excel::Writer::XLSX;
 
 # Create a new Excel workbook
-my $workbook = Excel::Writer::XLSX->new( 'regions.xls' );
+my $workbook = Excel::Writer::XLSX->new( 'regions.xlsx' );
 
 # Add some worksheets
 my $north = $workbook->add_worksheet( "North" );

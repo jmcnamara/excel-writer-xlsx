@@ -105,12 +105,15 @@ t/worksheet/worksheet_04.t
 examples/README
 examples/a_simple.pl  
 examples/bug_report.pl
+examples/cgi.pl
 examples/colors.pl
 examples/demo.pl
 examples/diag_border.pl
 examples/formats.pl
 examples/gen_examples_pod.pl
 examples/indent.pl
+examples/mod_perl1.pl
+examples/mod_perl2.pl
 examples/regions.pl
 examples/sales.pl
 examples/stats.pl
