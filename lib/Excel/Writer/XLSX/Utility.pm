@@ -45,7 +45,7 @@ our %EXPORT_TAGS = (
     dates  => \@dates
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 NAME

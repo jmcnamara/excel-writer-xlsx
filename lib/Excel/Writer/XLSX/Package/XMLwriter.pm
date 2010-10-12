@@ -22,7 +22,7 @@ use XML::Writer;
 use IO::File;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 ###############################################################################
