@@ -25,7 +25,7 @@ my %params = (
     'NEEDS_LINKING' => 0,
     'dist'          => { COMPRESS => 'gzip --best', SUFFIX => 'gz' },
     'LICENSE'       => 'perl',
-    'PREREQ_PM'     => {},
+    'PREREQ_PM'     => \%deps,
     'test'          => { TESTS => 't/*/*.t t/*/*/*.t' }
 
 );
