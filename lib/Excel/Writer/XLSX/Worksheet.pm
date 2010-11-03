@@ -3389,13 +3389,6 @@ sub _write_cell {
         $self->_write_cell_value( $value );
         $self->{_writer}->endTag( 'c' );
     }
-    elsif ( $type eq 's' ) {
-        push @attributes, ( 't' => 's' );
-
-        $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $value );
-        $self->{_writer}->endTag( 'c' );
-    }
     elsif ( $type eq 'f' ) {
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_formula( $value );
