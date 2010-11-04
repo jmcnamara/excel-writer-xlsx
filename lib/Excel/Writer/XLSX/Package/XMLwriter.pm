@@ -20,6 +20,7 @@ use Exporter;
 use Carp;
 use XML::Writer;
 use IO::File;
+use Excel::Writer::XLSX::Package::XMLwriterSimple;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.02';
@@ -59,7 +60,8 @@ sub _set_xml_writer {
 
     binmode $fh, ':utf8';
 
-    my $writer = new XML::Writer( OUTPUT => $fh );
+    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($fh);
+
     croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
 
     $self->{_writer} = $writer;
