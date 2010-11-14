@@ -25,7 +25,7 @@ use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell print_memory_usage);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.02';
@@ -513,11 +513,13 @@ sub set_codepage {
 # storage.
 #
 sub _store_workbook {
+    print_memory_usage();
 
     my $self     = shift;
     my $dir      = tempdir();
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
+    print_memory_usage();
 
 
     # Add a default worksheet if non have been added.
@@ -528,15 +530,18 @@ sub _store_workbook {
         @{ $self->{_worksheets} }[0]->{_selected} = 1;
         @{ $self->{_worksheets} }[0]->{_hidden}   = 0;
     }
+    print_memory_usage();
 
     # Calculate the number of selected sheet tabs and set the active sheet.
     for my $sheet ( @{ $self->{_worksheets} } ) {
         $self->{_selected}++ if $sheet->{_selected};
         $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
     }
+    print_memory_usage();
 
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
+    print_memory_usage();
 
     # Set the font index for the format objects.
     $self->_prepare_fonts();
@@ -549,11 +554,18 @@ sub _store_workbook {
 
     # Set the fill index for the format objects.
     $self->_prepare_fills();
+    print_memory_usage();
 
     # Package the workbook.
     $packager->_add_workbook( $self );
+    print_memory_usage();
+
     $packager->_set_package_dir( $dir );
+    print_memory_usage();
+
     $packager->_create_package();
+    print_memory_usage();
+
 
     # Free up the Packager object.
     $packager = undef;
@@ -576,17 +588,20 @@ sub _store_workbook {
 sub _prepare_sst_string_data {
 
     my $self = shift;
+    print_memory_usage();
 
     my @strings;
     $#strings = $self->{_str_unique} - 1;    # Pre-extend array
+    print_memory_usage();
 
     while ( my $key = each %{ $self->{_str_table} } ) {
         $strings[ $self->{_str_table}->{$key} ] = $key;
     }
+    print_memory_usage();
 
     # The SST data could be very large, free some memory (maybe).
     $self->{_str_table} = undef;
-    $self->{_str_array} = [@strings];
+    $self->{_str_array} = \@strings;
 
 }
 

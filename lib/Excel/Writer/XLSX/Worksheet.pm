@@ -20,7 +20,7 @@ use warnings;
 use Carp;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell print_memory_usage);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.02';
@@ -148,7 +148,7 @@ sub new {
     $self->{_col_formats} = {};
     $self->{_row_formats} = {};
 
-
+    print_memory_usage();
     bless $self, $class;
     return $self;
 }
@@ -167,6 +167,7 @@ sub _assemble_xml_file {
     return unless $self->{_writer};
 
     $self->_write_xml_declaration();
+    print_memory_usage();
 
     # Write the root worksheet element.
     $self->_write_worksheet();
@@ -188,6 +189,7 @@ sub _assemble_xml_file {
 
     # Write the worksheet data such as rows columns and cells.
     $self->_write_sheet_data();
+    print_memory_usage();
 
     # Write the worksheet calculation properties.
     #$self->_write_sheet_calc_pr();
@@ -1518,7 +1520,6 @@ sub write_string {
 
     ${ $self->{_str_total} }++;
     $index = ${ $self->{_str_table} }->{$str};
-
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 

@@ -886,6 +886,33 @@ sub xl_date_1904 {
 }
 
 
+###############################################################################
+#
+# Temp profiling function.
+#
+use Proc::ProcessTable;
+@EXPORT  = ( @rowcol, @dates, 'print_memory_usage' );
+
+{
+    my $last = 0;
+
+    sub print_memory_usage {
+
+        my $caption = shift || ( caller( 1 ) )[3] || 'main';
+
+        my $proc_table = Proc::ProcessTable->new();
+        for my $process ( @{ $proc_table->table() } ) {
+            next if not $process->pid eq $$;
+            my $size = $process->size();
+            my $diff = $size - $last;
+            $last = $size;
+
+            printf "%s, %d, %d\n", $caption, $size, $diff;
+            return $size;
+        }
+    }
+}
+
 =head1 REQUIREMENTS
 
 The date and time functions require functions from the C<Date::Manip> and C<Date::Calc> modules. The required functions are "autoused" from these modules so that you do not have to install them unless you wish to use the date and time routines. Therefore it is possible to use the row and column functions without having C<Date::Manip> and C<Date::Calc> installed.
