@@ -134,7 +134,7 @@ sub new {
 
     $self->{prev_col} = -1;
 
-    $self->{_table}   = [];
+    $self->{_table}   = {};
     $self->{_merge}   = {};
     $self->{_comment} = {};
 
@@ -1421,8 +1421,8 @@ sub write_comment {
     # Add a datatype to the cell if it doesn't already contain one.
     # This prevents an empty cell with a comment from being ignored.
     #
-    if ( not $self->{_table}->[$row]->[$col] ) {
-        $self->{_table}->[$row]->[$col] = [$type];
+    if ( not $self->{_table}->{$row}->{$col} ) {
+        $self->{_table}->{$row}->{$col} = [$type];
     }
 
     # Store the comment.
@@ -1465,7 +1465,7 @@ sub write_number {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    $self->{_table}->[$row]->[$col] = [ $type, $num, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $num, $xf ];
 
     return 0;
 }
@@ -1521,7 +1521,7 @@ sub write_string {
     ${ $self->{_str_total} }++;
     $index = ${ $self->{_str_table} }->{$str};
 
-    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $index, $xf ];
 
     return $str_error;
 }
@@ -1603,7 +1603,7 @@ sub write_blank {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    $self->{_table}->[$row]->[$col] = [ $type, undef, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, undef, $xf ];
 
     return 0;
 }
@@ -1649,7 +1649,7 @@ sub write_formula {
     $formula =~ s/^=//;
 
 
-    $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
+    $self->{_table}->{$row}->{$col} = [ $type, $formula, $xf, $value ];
 
     return 0;
 }
@@ -1722,7 +1722,7 @@ sub write_array_formula {
     # Convert A1 style references in the formula to R1C1 references
     $formula = $self->_convert_formula( $row1, $col1, $formula );
 
-    $self->{_table}->[$row1]->[$col1] = [ $type, $formula, $xf, $array_range ];
+    $self->{_table}->{$row1}->{$col1} = [ $type, $formula, $xf, $array_range ];
 
     return 0;
 }
@@ -1806,7 +1806,7 @@ sub write_url {
     my $str_error = 0;
 
 
-    $self->{_table}->[$row]->[$col] = [ $type, $url, $xf, $str, $tip ];
+    $self->{_table}->{$row}->{$col} = [ $type, $url, $xf, $str, $tip ];
 
     return $str_error;
 }
@@ -1896,7 +1896,7 @@ sub write_date_time {
         $str_error = -3;
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $date_time, $xf ];
 
     return $str_error;
 }
@@ -3211,12 +3211,12 @@ sub _write_rows {
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
         # Skip row if it doesn't contain row formatting or cell data.
-        if ( !$self->{_set_rows}->{$row_num} && !$self->{_table}->[$row_num] ) {
+        if ( !$self->{_set_rows}->{$row_num} && !$self->{_table}->{$row_num} ) {
             next;
         }
 
         # Write the cells if the row contains data.
-        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+        if ( my $row_ref = $self->{_table}->{$row_num} ) {
             my $span_index = int( $row_num / 16 );
             my $span       = $self->{_row_spans}->[$span_index];
 
@@ -3230,7 +3230,7 @@ sub _write_rows {
 
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
-                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                if ( my $col_ref = $self->{_table}->{$row_num}->{$col_num} ) {
                     $self->_write_cell( $row_num, $col_num, $col_ref );
                 }
             }
@@ -3267,10 +3267,10 @@ sub _calculate_spans {
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
-        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+        if ( my $row_ref = $self->{_table}->{$row_num} ) {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
-                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                if ( my $col_ref = $self->{_table}->{$row_num}->{$col_num} ) {
 
                     if ( !defined $span_min ) {
                         $span_min = $col_num;
