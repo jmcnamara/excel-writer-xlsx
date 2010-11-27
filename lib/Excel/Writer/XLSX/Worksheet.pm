@@ -47,6 +47,12 @@ sub new {
     my $colmax = 16_384;
     my $strmax = 32767;
 
+    use File::Temp qw(tempfile);
+    use DBM::Deep;
+
+    my $fh = tempfile();
+    my $db = DBM::Deep->new( { fh => $fh } );
+
     $self->{_name}        = $_[0];
     $self->{_index}       = $_[1];
     $self->{_activesheet} = $_[2];
@@ -134,7 +140,7 @@ sub new {
 
     $self->{prev_col} = -1;
 
-    $self->{_table}   = {};
+    $self->{_table}   = $db;
     $self->{_merge}   = {};
     $self->{_comment} = {};
 
