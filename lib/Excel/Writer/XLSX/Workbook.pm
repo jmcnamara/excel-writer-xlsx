@@ -20,7 +20,7 @@ use warnings;
 use Carp;
 use IO::File;
 use File::Temp 'tempdir';
-#use Archive::Zip;
+use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::Packager;
@@ -87,19 +87,19 @@ sub new {
 
 
     # If filename is a reference we assume that it is a valid filehandle.
-    #if ( ref $self->{_filename} ) {
-    #    $self->{_filehandle} = $self->{_filename};
-    #}
-    #else {
-    #    my $fh = IO::File->new( $self->{_filename}, 'w' );
-    #
-    #    return undef unless defined $fh;
-    #
-    #    # TODO check if the FH needs to be binmoded for Archive::Zip.
-    #    #eval q(binmode $fh);
-    #
-    #    $self->{_filehandle} = $fh;
-    #}
+    if ( ref $self->{_filename} ) {
+        $self->{_filehandle} = $self->{_filename};
+    }
+    else {
+        my $fh = IO::File->new( $self->{_filename}, 'w' );
+
+        return undef unless defined $fh;
+
+        # TODO check if the FH needs to be binmoded for Archive::Zip.
+        #eval q(binmode $fh);
+
+        $self->{_filehandle} = $fh;
+    }
 
 
     # Set colour palette.
@@ -518,7 +518,7 @@ sub _store_workbook {
     my $self     = shift;
     my $dir      = tempdir();
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
-    #my $zip      = Archive::Zip->new();
+    my $zip      = Archive::Zip->new();
     print_memory_usage();
 
 
@@ -573,19 +573,19 @@ sub _store_workbook {
 
 
     # Add the files to the zip archive.
-    use Cwd;
-    my $cwd = getcwd;
-    my $filename = $self->{_filename};
+    #use Cwd;
+    #my $cwd = getcwd;
+    #my $filename = $self->{_filename};
+    #
+    #my $error_code = system("cd $dir; zip -qrD $cwd/$filename .");
+    #die "zip failed: $?" if $error_code != 0;
 
-    my $error_code = system("cd $dir; zip -qrD $cwd/$filename .");
-    die "zip failed: $?" if $error_code != 0;
 
+    $zip->addTree( $dir, '', sub { -f } );
 
-    #$zip->addTree( $dir, '', sub { -f } );
-
-    #if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
-    #    carp 'Error writing zip container for xlsx file.';
-    #}
+    if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
+        carp 'Error writing zip container for xlsx file.';
+    }
 }
 
 
