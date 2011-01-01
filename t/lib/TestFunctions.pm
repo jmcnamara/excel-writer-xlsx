@@ -111,7 +111,8 @@ sub _new_object {
     open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
 
     my $object = new $class;
-    my $writer = new XML::Writer( OUTPUT => $got_fh );
+    #my $writer = new XML::Writer( OUTPUT => $got_fh );
+    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($got_fh);
 
     $object->{_writer} = $writer;
 
@@ -157,7 +158,8 @@ sub _new_workbook {
     open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 
     my $workbook = Excel::Writer::XLSX->new( $tmp_fh );
-    my $writer = new XML::Writer( OUTPUT => $got_fh );
+    #my $writer = new XML::Writer( OUTPUT => $got_fh );
+    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($got_fh);
 
     $workbook->{_writer} = $writer;
 
