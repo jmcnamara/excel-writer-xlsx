@@ -78,7 +78,7 @@ sub _assemble_xml_file {
 #
 # _set_xml_writer()
 #
-# Set the filehandle only. This class doesn't use XML::Writer.
+# Set the filehandle only. This class doesn't use a real XML writer class.
 #
 sub _set_xml_writer {
 

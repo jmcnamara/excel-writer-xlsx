@@ -9,7 +9,6 @@ require 5.010;
 my %deps = (
     'Archive::Zip' => 1.30,
     'IO::File'     => 0,
-    'XML::Writer'  => 0.612,
 );
 
 my %resources = (

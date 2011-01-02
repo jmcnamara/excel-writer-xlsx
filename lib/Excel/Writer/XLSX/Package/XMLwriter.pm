@@ -18,7 +18,6 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
-use XML::Writer;
 use IO::File;
 use Excel::Writer::XLSX::Package::XMLwriterSimple;
 
@@ -36,7 +35,10 @@ sub new {
 
     my $class = shift;
 
-    my $self = { _writer => undef };
+    my $self = {
+        _writer           => undef,
+        _use_writer_class => 0,
+    };
 
     bless $self, $class;
 
@@ -48,7 +50,12 @@ sub new {
 #
 # _set_xml_writer()
 #
-# Set the XML::Writer for the object.
+# Set the XML writer class for the object. For speed we use the internal
+# Excel::Writer::XLSX::Package::XMLwriterSimple class but for XML error
+# and correctness checking we can use the CPAN module XML::Writer.
+#
+# In general use we use XMLwriterSimple but maintain compatibility with
+# XML::Writer for testing purposes.
 #
 sub _set_xml_writer {
 
@@ -60,9 +67,18 @@ sub _set_xml_writer {
 
     binmode $fh, ':utf8';
 
-    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($fh);
+    my $writer;
 
-    croak "Couldn't create XML::Writer for $filename.\n" unless $writer;
+    if ( $self->{_use_writer_class} == 1 ) {
+        require XML::Writer;
+        $writer = XML::Writer->new( OUTPUT => $fh );
+    }
+    else {
+        $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $fh );
+
+    }
+
+    croak "Couldn't create XM writer object for $filename.\n" unless $writer;
 
     $self->{_writer} = $writer;
 }
@@ -102,7 +118,7 @@ See the documentation for L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::Writer::XLSX>. This module uses L<XML::Writer>.
+This module is used in conjunction with L<Excel::Writer::XLSX>.
 
 =head1 AUTHOR
 

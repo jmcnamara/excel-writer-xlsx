@@ -143,7 +143,7 @@ sub _write_relationships {
 
     $self->{_writer}->endTag( 'Relationships' );
 
-    # Close the XML::Writer object and filehandle.
+    # Close the XM writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }

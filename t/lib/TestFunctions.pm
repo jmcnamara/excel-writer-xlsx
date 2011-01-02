@@ -13,7 +13,6 @@ use strict;
 use warnings;
 use Test::More;
 use Excel::Writer::XLSX;
-use XML::Writer;
 
 
 our @ISA         = qw(Exporter);
@@ -58,7 +57,7 @@ sub _expected_to_aref {
 
 ###############################################################################
 #
-# Convert an XML string returned by the XML::Writer subclasses into an
+# Convert an XML string returned by the XMLWriter subclasses into an
 # array ref for comparison testing with _expected_to_aref().
 #
 sub _got_to_aref {
@@ -99,9 +98,18 @@ sub _is_deep_diff {
 
 ###############################################################################
 #
-# Create a new XML::Writer sub-classed object based on a class name and bind
+# Create a new XML writer sub-classed object based on a class name and bind
 # the output to the supplied scalar ref for testing. Calls to the objects XML
 # writing subs will add the output to the scalar.
+#
+# We can choose between using the internal XMLwriterSimple module or the CPAN
+# XML::Simple module by using the environmental variable:
+#
+#    export _EXCEL_WRITER_XLSX_TEST_XML_WRITER=1
+#
+# For one off testing we can use the following:
+#
+#    _EXCEL_WRITER_XLSX_TEST_XML_WRITER=1 prove -l -r t
 #
 sub _new_object {
 
@@ -110,9 +118,17 @@ sub _new_object {
 
     open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
 
-    my $object = new $class;
-    #my $writer = new XML::Writer( OUTPUT => $got_fh );
-    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($got_fh);
+    my $object = $class->new();
+
+    my $writer;
+
+    if ( $ENV{_EXCEL_WRITER_XLSX_TEST_XML_WRITER} ) {
+        require XML::Writer;
+        $writer = XML::Writer->new( OUTPUT => $got_fh );
+    }
+    else {
+        $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $got_fh );
+    }
 
     $object->{_writer} = $writer;
 
@@ -158,8 +174,16 @@ sub _new_workbook {
     open my $tmp_fh, '>', \my $tmp or die "Failed to open filehandle: $!";
 
     my $workbook = Excel::Writer::XLSX->new( $tmp_fh );
-    #my $writer = new XML::Writer( OUTPUT => $got_fh );
-    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new($got_fh);
+
+    my $writer;
+
+    if ( $ENV{_EXCEL_WRITER_XLSX_TEST_XML_WRITER} ) {
+        require XML::Writer;
+        $writer = XML::Writer->new( OUTPUT => $got_fh );
+    }
+    else {
+        $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $got_fh );
+    }
 
     $workbook->{_writer} = $writer;
 

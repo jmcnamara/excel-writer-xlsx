@@ -207,7 +207,7 @@ sub _assemble_xml_file {
     # Close the worksheet tag.
     $self->{_writer}->endTag( 'worksheet' );
 
-    # Close the XML::Writer object and filehandle.
+    # Close the XM writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }

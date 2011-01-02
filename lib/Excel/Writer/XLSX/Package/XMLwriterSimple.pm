@@ -202,7 +202,7 @@ See the documentation for L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::Writer::XLSX>. This module uses L<XML::Writer>.
+This module is used in conjunction with L<Excel::Writer::XLSX>.
 
 =head1 AUTHOR
 
