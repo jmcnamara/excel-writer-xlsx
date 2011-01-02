@@ -169,7 +169,7 @@ sub _write_shared_strings_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $sst  = new Excel::Writer::XLSX::Package::SharedStrings;
+    my $sst  = Excel::Writer::XLSX::Package::SharedStrings->new();
 
     mkdir $dir . '/xl';
 
@@ -198,7 +198,7 @@ sub _write_app_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $app  = new Excel::Writer::XLSX::Package::App;
+    my $app  = Excel::Writer::XLSX::Package::App->new();
 
     mkdir $dir . '/docProps';
 
@@ -221,7 +221,7 @@ sub _write_core_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $core = new Excel::Writer::XLSX::Package::Core;
+    my $core = Excel::Writer::XLSX::Package::Core->new();
 
     mkdir $dir . '/docProps';
 
@@ -244,7 +244,7 @@ sub _write_content_types_file {
 
     my $self    = shift;
     my $dir     = $self->{_package_dir};
-    my $content = new Excel::Writer::XLSX::Package::ContentTypes;
+    my $content = Excel::Writer::XLSX::Package::ContentTypes->new();
 
     for my $i ( 1 .. @{ $self->{_sheet_names} } ) {
         $content->_add_sheet_name( 'sheet' . $i );
@@ -277,7 +277,7 @@ sub _write_styles_file {
     my $border_count     = $self->{_workbook}->{_border_count};
     my $fill_count       = $self->{_workbook}->{_fill_count};
 
-    my $rels = new Excel::Writer::XLSX::Package::Styles;
+    my $rels = Excel::Writer::XLSX::Package::Styles->new();
 
     mkdir $dir . '/xl';
 
@@ -306,7 +306,7 @@ sub _write_theme_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::Writer::XLSX::Package::Theme;
+    my $rels = Excel::Writer::XLSX::Package::Theme->new();
 
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/theme';
@@ -326,7 +326,7 @@ sub _write_root_rels_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::Writer::XLSX::Package::Relationships;
+    my $rels = Excel::Writer::XLSX::Package::Relationships->new();
 
     mkdir $dir . '/_rels';
 
@@ -350,7 +350,7 @@ sub _write_workbook_rels_file {
 
     my $self = shift;
     my $dir  = $self->{_package_dir};
-    my $rels = new Excel::Writer::XLSX::Package::Relationships;
+    my $rels = Excel::Writer::XLSX::Package::Relationships->new();
 
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/_rels';

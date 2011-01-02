@@ -85,7 +85,7 @@ sub _set_xml_writer {
     my $self     = shift;
     my $filename = shift;
 
-    my $fh = new IO::File( $filename, 'w' );
+    my $fh = IO::File->new( $filename, 'w' );
     croak "Couldn't open file $filename for writing.\n" unless $fh;
 
     binmode $fh, ':utf8';
