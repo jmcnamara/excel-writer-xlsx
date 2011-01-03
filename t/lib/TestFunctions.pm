@@ -105,11 +105,11 @@ sub _is_deep_diff {
 # We can choose between using the internal XMLwriterSimple module or the CPAN
 # XML::Simple module by using the environmental variable:
 #
-#    export _EXCEL_WRITER_XLSX_TEST_XML_WRITER=1
+#    export _EXCEL_WRITER_XLSX_USE_XML_WRITER=1
 #
 # For one off testing we can use the following:
 #
-#    _EXCEL_WRITER_XLSX_TEST_XML_WRITER=1 prove -l -r t
+#    _EXCEL_WRITER_XLSX_USE_XML_WRITER=1 prove -l -r t
 #
 sub _new_object {
 
@@ -122,7 +122,7 @@ sub _new_object {
 
     my $writer;
 
-    if ( $ENV{_EXCEL_WRITER_XLSX_TEST_XML_WRITER} ) {
+    if ( $ENV{_EXCEL_WRITER_XLSX_USE_XML_WRITER} ) {
         require XML::Writer;
         $writer = XML::Writer->new( OUTPUT => $got_fh );
     }
@@ -177,7 +177,8 @@ sub _new_workbook {
 
     my $writer;
 
-    if ( $ENV{_EXCEL_WRITER_XLSX_TEST_XML_WRITER} ) {
+    # See XML::Writer comment in _new_object() above.
+    if ( $ENV{_EXCEL_WRITER_XLSX_USE_XML_WRITER} ) {
         require XML::Writer;
         $writer = XML::Writer->new( OUTPUT => $got_fh );
     }

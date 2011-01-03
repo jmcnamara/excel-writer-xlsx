@@ -2,9 +2,9 @@ package Excel::Writer::XLSX::Package::XMLwriterSimple;
 
 ###############################################################################
 #
-# XMLwriterSimple - TODO.
+# XMLwriterSimple - Light weight re-implementation of XML::Writer.
 #
-# Used in conjunction with Excel::Writer::XLSX
+# Used in conjunction with Excel::Writer::XLSX.
 #
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
@@ -22,6 +22,12 @@ use Carp;
 our @ISA     = qw(Exporter);
 our $VERSION = '0.02';
 
+#
+# NOTE: this module is a light weight re-implementation of XML::Writer. See
+# the Pod docs below for a full explanation. The methods implemented below
+# are the main XML::Writer methods used by Excel::Writer::XLSX.
+# See XML::Writer for more detailed information on these methods.
+#
 
 ###############################################################################
 #
@@ -45,7 +51,7 @@ sub new {
 #
 # xmlDecl()
 #
-# TODO
+# Write the XML declaration at the start of an XML document.
 #
 sub xmlDecl {
 
@@ -61,7 +67,7 @@ sub xmlDecl {
 #
 # startTag()
 #
-# TODO
+# Write an XML start tag with optional attributes.
 #
 sub startTag {
 
@@ -86,7 +92,7 @@ sub startTag {
 #
 # endTag()
 #
-# TODO
+# Write an XML end tag.
 #
 sub endTag {
 
@@ -101,7 +107,7 @@ sub endTag {
 #
 # emptyTag()
 #
-# TODO
+# Write an empty XML tag with optional attributes.
 #
 sub emptyTag {
 
@@ -118,6 +124,7 @@ sub emptyTag {
         print { $self->{_fh} } qq( $key="$value");
     }
 
+    # Note extra space before closing tag like XML::Writer.
     print { $self->{_fh} } " />";
 
 }
@@ -127,7 +134,8 @@ sub emptyTag {
 #
 # dataElement()
 #
-# TODO
+# Write an XML element containing data with optional attributes.
+# XML characters in the data are escaped.
 #
 sub dataElement {
 
@@ -145,11 +153,14 @@ sub dataElement {
         print { $self->{_fh} } qq( $key="$value");
     }
 
-    for ($data) {
-        s/&/&amp;/g;
-        s/</&lt;/g;
-        s/>/&gt;/g;
-        s/"/&quot;/g;
+    # Escape XML characters.
+    if ( $data =~ m/[&<>"]/ ) {
+        for ( $data ) {
+            s/&/&amp;/g;
+            s/</&lt;/g;
+            s/>/&gt;/g;
+            s/"/&quot;/g;
+        }
     }
 
     print { $self->{_fh} } ">";
@@ -162,7 +173,7 @@ sub dataElement {
 #
 # end()
 #
-# TODO
+# For compatibility with XML::Writer only.
 #
 sub end {
 
@@ -175,7 +186,7 @@ sub end {
 #
 # getOutput()
 #
-# TODO
+# Return the output filehandle.
 #
 sub getOutput {
 
@@ -194,15 +205,32 @@ __END__
 
 =head1 NAME
 
-XMLwriterSimple - TODO.
+XMLwriterSimple - Light weight re-implementation of XML::Writer.
 
-=head1 SYNOPSIS
-
-See the documentation for L<Excel::Writer::XLSX>.
+This module is used internally by L<Excel::Writer::XLSX>.
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with L<Excel::Writer::XLSX>.
+This module is used by L<Excel::Writer::XLSX> for writing XML documents. It is a light weight re-implementation of L<XML::Writer>.
+
+XMLwriterSimple is approximately twice as fast as L<XML::Writer>. This speed is achieved at the expense of error and correctness checking. In addition not all of the L<XML::Writer> methods are implemented. As such, XMLwriterSimple is not recommended for use outside of Excel::Writer::XLSX.
+
+If required XMLwriterSimple can be overridden and XML::Writer can be used in its place by setting an C<_EXCEL_WRITER_XLSX_USE_XML_WRITER> environmental variable:
+
+    export _EXCEL_WRITER_XLSX_USE_XML_WRITER=1
+    perl example.pl
+
+    Or for one off programs:
+
+    _EXCEL_WRITER_XLSX_USE_XML_WRITER=1 perl example.pl
+
+This technique is used for verifying the test suite with both XMLwriterSimple and XML::Writer:
+
+    _EXCEL_WRITER_XLSX_USE_XML_WRITER=1 prove -l -r t
+
+=head1 SEE ALSO
+
+L<XML::Writer>.
 
 =head1 AUTHOR
 

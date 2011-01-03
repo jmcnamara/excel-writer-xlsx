@@ -35,10 +35,7 @@ sub new {
 
     my $class = shift;
 
-    my $self = {
-        _writer           => undef,
-        _use_writer_class => 0,
-    };
+    my $self = { _writer => undef };
 
     bless $self, $class;
 
@@ -55,7 +52,14 @@ sub new {
 # and correctness checking we can use the CPAN module XML::Writer.
 #
 # In general use we use XMLwriterSimple but maintain compatibility with
-# XML::Writer for testing purposes.
+# XML::Writer for testing purposes. We can choose between the two using an
+# environmental variable:
+#
+#    export _EXCEL_WRITER_XLSX_USE_XML_WRITER=1
+#
+# For one off testing we can use the following:
+#
+#    _EXCEL_WRITER_XLSX_USE_XML_WRITER=1 perl example.pl
 #
 sub _set_xml_writer {
 
@@ -69,7 +73,7 @@ sub _set_xml_writer {
 
     my $writer;
 
-    if ( $self->{_use_writer_class} == 1 ) {
+    if ( $ENV{_EXCEL_WRITER_XLSX_USE_XML_WRITER} ) {
         require XML::Writer;
         $writer = XML::Writer->new( OUTPUT => $fh );
     }
@@ -78,7 +82,7 @@ sub _set_xml_writer {
 
     }
 
-    croak "Couldn't create XM writer object for $filename.\n" unless $writer;
+    croak "Couldn't create XML writer object for $filename.\n" unless $writer;
 
     $self->{_writer} = $writer;
 }
