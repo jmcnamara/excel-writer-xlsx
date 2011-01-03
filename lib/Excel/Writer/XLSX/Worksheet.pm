@@ -23,7 +23,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 ###############################################################################
@@ -2121,10 +2121,8 @@ sub set_row {
 #
 # merge_range($first_row, $first_col, $last_row, $last_col, $string, $format)
 #
-# This is a wrapper to ensure correct use of the merge_cells method, i.e. write
-# the first cell of the range, write the formatted blank cells in the range and
-# then call the merge_cells record. Failing to do the steps in this order will
-# cause Excel 97 to crash.
+# Merge a range of cells. The first cell should contain the data and the others
+# should be blank. All cells should contain the same format.
 #
 sub merge_range {
 

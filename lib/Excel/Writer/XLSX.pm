@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.03 of Excel::Writer::XLSX, released January 3, 2011.
+This document refers to version 0.04 of Excel::Writer::XLSX, released January 3, 2011.
 
 
 
@@ -1857,11 +1857,7 @@ See also the C<freeze_panes()> method and the C<panes.pl> program in the C<examp
 
 =head2 merge_range( $first_row, $first_col, $last_row, $last_col, $token, $format )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
-Merging cells can be achieved by setting the C<merge> property of a Format object, see L<CELL FORMATTING>. However, this only allows simple Excel5 style horizontal merging which Excel refers to as "center across selection".
-
-The C<merge_range()> method allows you to do Excel97+ style formatting where the cells can contain other types of alignment in addition to the merging:
+The C<merge_range()> method allows you merge cells that contain other types of alignment in addition to the merging:
 
     my $format = $workbook->add_format(
         border => 6,
@@ -1871,15 +1867,7 @@ The C<merge_range()> method allows you to do Excel97+ style formatting where the
 
     $worksheet->merge_range( 'B3:D4', 'Vertical and horizontal', $format );
 
-B<WARNING>. The format object that is used with a C<merge_range()> method call is marked internally as being associated with a merged range. It is a fatal error to use a merged format in a non-merged cell. Instead you should use separate formats for merged and non-merged cells. This restriction will be removed in a future release.
-
 C<merge_range()> writes its C<$token> argument using the worksheet C<write()> method. Therefore it will handle numbers, strings, formulas or urls as required.
-
-Setting the C<merge> property of the format isn't required when you are using C<merge_range()>. In fact using it will exclude the use of any other horizontal alignment option.
-
-The C<merge_range()> method will also handle strings in C<UTF-8> format.
-
-    $worksheet->merge_range( 'B3:D4', "\x{263a}", $format );    # Smiley
 
 The full possibilities of this method are shown in the C<merge3.pl> to C<merge6.pl> programs in the C<examples> directory of the distribution.
 
@@ -4554,6 +4542,12 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     colors.pl               A demo of the colour palette and named colours.
     diag_border.pl          A simple example of diagonal cell borders.
     indent.pl               An example of cell indentation.
+    merge1.pl               A simple example of cell merging.
+    merge2.pl               A simple example of cell merging with formatting.
+    merge3.pl               Add hyperlinks to merged cells.
+    merge4.pl               An advanced example of merging with formatting.
+    merge5.pl               An advanced example of merging with formatting.
+    merge6.pl               An example of merging with Unicode strings.
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     sales.pl                An example of a simple sales spreadsheet.
@@ -4654,7 +4648,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     outline_settings()          No
     freeze_panes()              No
     split_panes()               No
-    merge_range()               No
+    merge_range()               Yes
     set_zoom()                  No
     right_to_left()             No
     hide_zero()                 No

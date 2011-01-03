@@ -1,5 +1,10 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
+0.04 January 3 2011
+
+     + Added merge_range() for merging cells with tests and examples.
+
+
 0.03 January 3 2011
 
      + Optimisations. The module is now 100% faster.

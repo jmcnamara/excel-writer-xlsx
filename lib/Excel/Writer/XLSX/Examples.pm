@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 29 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 35 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -62,6 +62,18 @@ The following is a list of the 29 example programs that are included in the Exce
 =item * L<Example: diag_border.pl> A simple example of diagonal cell borders.
 
 =item * L<Example: indent.pl> An example of cell indentation.
+
+=item * L<Example: merge1.pl> A simple example of cell merging.
+
+=item * L<Example: merge2.pl> A simple example of cell merging with formatting.
+
+=item * L<Example: merge3.pl> Add hyperlinks to merged cells.
+
+=item * L<Example: merge4.pl> An advanced example of merging with formatting.
+
+=item * L<Example: merge5.pl> An advanced example of merging with formatting.
+
+=item * L<Example: merge6.pl> An example of merging with Unicode strings.
 
 =item * L<Example: mod_perl1.pl> A simple mod_perl 1 program.
 
@@ -166,7 +178,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -316,7 +328,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -455,7 +467,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -982,7 +994,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1049,7 +1061,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1140,7 +1152,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/stats.pl>
 
 =head2 Example: cgi.pl
 
@@ -1214,7 +1226,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/cgi.pl>
 
 =head2 Example: colors.pl
 
@@ -1346,7 +1358,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/colors.pl>
 
 =head2 Example: diag_border.pl
 
@@ -1406,7 +1418,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/diag_border.pl>
 
 =head2 Example: indent.pl
 
@@ -1457,7 +1469,505 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/indent.pl>
+
+=head2 Example: merge1.pl
+
+
+
+Simple example of merging cells using the Excel::Writer::XLSX module.
+
+This example merges three cells using the "Centre Across Selection"
+alignment which was the Excel 5 method of achieving a merge. For a more
+modern approach use the merge_range() worksheet method instead.
+See the merge3.pl - merge6.pl programs.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge1.jpg" width="640" height="420" alt="Output from merge1.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Simple example of merging cells using the Excel::Writer::XLSX module.
+    #
+    # This example merges three cells using the "Centre Across Selection"
+    # alignment which was the Excel 5 method of achieving a merge. For a more
+    # modern approach use the merge_range() worksheet method instead.
+    # See the merge3.pl - merge6.pl programs.
+    #
+    # reverse('©'), August 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge1.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_column( 'B:D', 20 );
+    $worksheet->set_row( 2, 30 );
+    
+    
+    # Create a merge format
+    my $format = $workbook->add_format( center_across => 1 );
+    
+    
+    # Only one cell should contain text, the others should be blank.
+    $worksheet->write( 2, 1, "Center across selection", $format );
+    $worksheet->write_blank( 2, 2, $format );
+    $worksheet->write_blank( 2, 3, $format );
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge1.pl>
+
+=head2 Example: merge2.pl
+
+
+
+Simple example of merging cells using the Excel::Writer::XLSX module
+
+This example merges three cells using the "Centre Across Selection"
+alignment which was the Excel 5 method of achieving a merge. For a more
+modern approach use the merge_range() worksheet method instead.
+See the merge3.pl - merge6.pl programs.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge2.jpg" width="640" height="420" alt="Output from merge2.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Simple example of merging cells using the Excel::Writer::XLSX module
+    #
+    # This example merges three cells using the "Centre Across Selection"
+    # alignment which was the Excel 5 method of achieving a merge. For a more
+    # modern approach use the merge_range() worksheet method instead.
+    # See the merge3.pl - merge6.pl programs.
+    #
+    # reverse('©'), August 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge2.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_column( 1, 2, 30 );
+    $worksheet->set_row( 2, 40 );
+    
+    
+    # Create a merged format
+    my $format = $workbook->add_format(
+        center_across => 1,
+        bold          => 1,
+        size          => 15,
+        pattern       => 1,
+        border        => 6,
+        color         => 'white',
+        fg_color      => 'green',
+        border_color  => 'yellow',
+        align         => 'vcenter',
+    );
+    
+    
+    # Only one cell should contain text, the others should be blank.
+    $worksheet->write( 2, 1, "Center across selection", $format );
+    $worksheet->write_blank( 2, 2, $format );
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge2.pl>
+
+=head2 Example: merge3.pl
+
+
+
+Example of how to use Excel::Writer::XLSX to write a hyperlink in a
+merged cell. There are two options write_url_range() with a standard merge
+format or merge_range().
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge3.jpg" width="640" height="420" alt="Output from merge3.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
+    # merged cell. There are two options write_url_range() with a standard merge
+    # format or merge_range().
+    #
+    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge3.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_row( $_, 30 ) for ( 1, 3, 6, 7 );
+    $worksheet->set_column( 'B:D', 20 );
+    
+    
+    ###############################################################################
+    #
+    # Example 1: Merge cells containing a hyperlink using write_url_range()
+    # and the standard Excel 5+ merge property.
+    #
+    my $format1 = $workbook->add_format(
+        center_across => 1,
+        border        => 1,
+        underline     => 1,
+        color         => 'blue',
+    );
+    
+    # Write the cells to be merged
+    $worksheet->write_url_range( 'B2:D2', 'http://www.perl.com', $format1 );
+    $worksheet->write_blank( 'C2', $format1 );
+    $worksheet->write_blank( 'D2', $format1 );
+    
+    
+    ###############################################################################
+    #
+    # Example 2: Merge cells containing a hyperlink using merge_range().
+    #
+    my $format2 = $workbook->add_format(
+        border    => 1,
+        underline => 1,
+        color     => 'blue',
+        align     => 'center',
+        valign    => 'vcenter',
+    );
+    
+    # Merge 3 cells
+    $worksheet->merge_range( 'B4:D4', 'http://www.perl.com', $format2 );
+    
+    
+    # Merge 3 cells over two rows
+    $worksheet->merge_range( 'B7:D8', 'http://www.perl.com', $format2 );
+    
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge3.pl>
+
+=head2 Example: merge4.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX merge_range() workbook
+method with complex formatting.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge4.jpg" width="640" height="420" alt="Output from merge4.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX merge_range() workbook
+    # method with complex formatting.
+    #
+    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge4.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_row( $_, 30 ) for ( 1 .. 11 );
+    $worksheet->set_column( 'B:D', 20 );
+    
+    
+    ###############################################################################
+    #
+    # Example 1: Text centered vertically and horizontally
+    #
+    my $format1 = $workbook->add_format(
+        border => 6,
+        bold   => 1,
+        color  => 'red',
+        valign => 'vcenter',
+        align  => 'center',
+    );
+    
+    
+    $worksheet->merge_range( 'B2:D3', 'Vertical and horizontal', $format1 );
+    
+    
+    ###############################################################################
+    #
+    # Example 2: Text aligned to the top and left
+    #
+    my $format2 = $workbook->add_format(
+        border => 6,
+        bold   => 1,
+        color  => 'red',
+        valign => 'top',
+        align  => 'left',
+    );
+    
+    
+    $worksheet->merge_range( 'B5:D6', 'Aligned to the top and left', $format2 );
+    
+    
+    ###############################################################################
+    #
+    # Example 3:  Text aligned to the bottom and right
+    #
+    my $format3 = $workbook->add_format(
+        border => 6,
+        bold   => 1,
+        color  => 'red',
+        valign => 'bottom',
+        align  => 'right',
+    );
+    
+    
+    $worksheet->merge_range( 'B8:D9', 'Aligned to the bottom and right', $format3 );
+    
+    
+    ###############################################################################
+    #
+    # Example 4:  Text justified (i.e. wrapped) in the cell
+    #
+    my $format4 = $workbook->add_format(
+        border => 6,
+        bold   => 1,
+        color  => 'red',
+        valign => 'top',
+        align  => 'justify',
+    );
+    
+    
+    $worksheet->merge_range( 'B11:D12', 'Justified: ' . 'so on and ' x 18,
+        $format4 );
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge4.pl>
+
+=head2 Example: merge5.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX merge_cells() workbook
+method with complex formatting and rotation.
+
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge5.jpg" width="640" height="420" alt="Output from merge5.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX merge_cells() workbook
+    # method with complex formatting and rotation.
+    #
+    #
+    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge5.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_row( $_, 36 ) for ( 3 .. 8 );
+    $worksheet->set_column( $_, $_, 15 ) for ( 1, 3, 5 );
+    
+    
+    ###############################################################################
+    #
+    # Rotation 1, letters run from top to bottom
+    #
+    my $format1 = $workbook->add_format(
+        border   => 6,
+        bold     => 1,
+        color    => 'red',
+        valign   => 'vcentre',
+        align    => 'centre',
+        rotation => 270,
+    );
+    
+    
+    $worksheet->merge_range( 'B4:B9', 'Rotation 270', $format1 );
+    
+    
+    ###############################################################################
+    #
+    # Rotation 2, 90° anticlockwise
+    #
+    my $format2 = $workbook->add_format(
+        border   => 6,
+        bold     => 1,
+        color    => 'red',
+        valign   => 'vcentre',
+        align    => 'centre',
+        rotation => 90,
+    );
+    
+    
+    $worksheet->merge_range( 'D4:D9', 'Rotation 90°', $format2 );
+    
+    
+    ###############################################################################
+    #
+    # Rotation 3, 90° clockwise
+    #
+    my $format3 = $workbook->add_format(
+        border   => 6,
+        bold     => 1,
+        color    => 'red',
+        valign   => 'vcentre',
+        align    => 'centre',
+        rotation => -90,
+    );
+    
+    
+    $worksheet->merge_range( 'F4:F9', 'Rotation -90°', $format3 );
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge5.pl>
+
+=head2 Example: merge6.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX merge_cells() workbook
+method with Unicode strings.
+
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/merge6.jpg" width="640" height="420" alt="Output from merge6.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX merge_cells() workbook
+    # method with Unicode strings.
+    #
+    #
+    # reverse('©'), December 2005, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook  = Excel::Writer::XLSX->new( 'merge6.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    # Increase the cell size of the merged cells to highlight the formatting.
+    $worksheet->set_row( $_, 36 ) for 2 .. 9;
+    $worksheet->set_column( 'B:D', 25 );
+    
+    
+    # Format for the merged cells.
+    my $format = $workbook->add_format(
+        border => 6,
+        bold   => 1,
+        color  => 'red',
+        size   => 20,
+        valign => 'vcentre',
+        align  => 'left',
+        indent => 1,
+    );
+    
+    
+    ###############################################################################
+    #
+    # Write an Ascii string.
+    #
+    $worksheet->merge_range( 'B3:D4', 'ASCII: A simple string', $format );
+    
+    
+    ###############################################################################
+    #
+    # Write a UTF-8 Unicode string.
+    #
+    my $smiley = chr 0x263a;
+    $worksheet->merge_range( 'B6:D7', "UTF-8: A Unicode smiley $smiley", $format );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -1582,7 +2092,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -1710,7 +2220,7 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/mod_perl2.pl>
 
 =head2 Example: sales.pl
 
@@ -1833,7 +2343,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/sales.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -1932,7 +2442,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -2031,7 +2541,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/stocks.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -2119,7 +2629,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -2216,7 +2726,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -2305,7 +2815,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -2434,7 +2944,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/write_handler4.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -2499,7 +3009,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -2564,7 +3074,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -2629,7 +3139,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -2694,7 +3204,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -2759,7 +3269,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -2824,7 +3334,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -2894,7 +3404,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -2959,7 +3469,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -3024,7 +3534,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -3089,7 +3599,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.03/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.04/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 
