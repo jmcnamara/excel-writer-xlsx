@@ -586,7 +586,7 @@ sub _prepare_sst_string_data {
 
     # The SST data could be very large, free some memory (maybe).
     $self->{_str_table} = undef;
-    $self->{_str_array} = [@strings];
+    $self->{_str_array} = \@strings;
 
 }
 
