@@ -22,6 +22,7 @@ our @EXPORT_OK   = qw(
   _expected_to_aref
   _got_to_aref
   _is_deep_diff
+  _new_object
   _new_worksheet
   _new_workbook
   _new_style
@@ -110,6 +111,12 @@ sub _is_deep_diff {
 # For one off testing we can use the following:
 #
 #    _EXCEL_WRITER_XLSX_USE_XML_WRITER=1 prove -l -r t
+#
+# Or:
+#
+#     perl Makefile.PL
+#     make test
+#     make test_with_xml_writer
 #
 sub _new_object {
 
