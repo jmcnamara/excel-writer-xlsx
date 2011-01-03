@@ -84,6 +84,8 @@ t/worksheet/sub_write_col_info.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
 t/worksheet/sub_write_ext_lst.t
+t/worksheet/sub_write_merge_cell.t
+t/worksheet/sub_write_merge_cells.t
 t/worksheet/sub_write_mx_plv.t
 t/worksheet/sub_write_page_margins.t
 t/worksheet/sub_write_page_setup.t
@@ -102,6 +104,8 @@ t/worksheet/worksheet_01.t
 t/worksheet/worksheet_02.t
 t/worksheet/worksheet_03.t
 t/worksheet/worksheet_04.t
+t/worksheet/worksheet_merge_cells_01.t
+t/worksheet/worksheet_merge_cells_02.t
 
 examples/README
 examples/a_simple.pl  
@@ -113,6 +117,12 @@ examples/diag_border.pl
 examples/formats.pl
 examples/gen_examples_pod.pl
 examples/indent.pl
+examples/merge1.pl
+examples/merge2.pl
+examples/merge3.pl
+examples/merge4.pl
+examples/merge5.pl
+examples/merge6.pl
 examples/mod_perl1.pl
 examples/mod_perl2.pl
 examples/regions.pl

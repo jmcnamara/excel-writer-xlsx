@@ -135,7 +135,7 @@ sub new {
     $self->{prev_col} = -1;
 
     $self->{_table}   = [];
-    $self->{_merge}   = {};
+    $self->{_merge}   = [];
     $self->{_comment} = {};
 
     $self->{_autofilter}   = '';
@@ -194,6 +194,9 @@ sub _assemble_xml_file {
 
     # Write the worksheet phonetic properties.
     #$self->_write_phonetic_pr();
+
+    # Write the mergeCells element.
+    $self->_write_merge_cells();
 
     # Write the worksheet page_margins.
     $self->_write_page_margins();
@@ -2143,25 +2146,30 @@ sub merge_range {
 
 
     # Excel doesn't allow a single cell to be merged
-    croak "Can't merge single cell"
-      if $rwFirst == $rwLast
-          and $colFirst == $colLast;
+    if ( $rwFirst == $rwLast and $colFirst == $colLast ) {
+        croak "Can't merge single cell";
+    }
 
     # Swap last row/col with first row/col as necessary
     ( $rwFirst,  $rwLast )  = ( $rwLast,  $rwFirst )  if $rwFirst > $rwLast;
     ( $colFirst, $colLast ) = ( $colLast, $colFirst ) if $colFirst > $colLast;
 
-
     # Check that column number is valid and store the max value
     return if $self->_check_dimensions( $rwLast, $colLast );
 
-
-    # Store the merge range as a HoHoHoA
-    $self->{_merge}->{$rwFirst}->{$colFirst} =
-      [ $colLast - $colFirst, $rwLast - $rwFirst ];
+    # Store the merge range.
+    push @{ $self->{_merge} }, [ $rwFirst, $colFirst, $rwLast, $colLast ];
 
     # Write the first cell
-    return $self->write( $rwFirst, $colFirst, $string, $format );
+    $self->write( $rwFirst, $colFirst, $string, $format );
+
+    # Pad out the rest of the area with formatted blank cells.
+    for my $row ( $rwFirst .. $rwLast ) {
+        for my $col ( $colFirst .. $colLast ) {
+            next if $row == $rwFirst and $col == $colFirst;
+            $self->write_blank( $row, $col, $format );
+        }
+    }
 }
 
 
@@ -3580,6 +3588,58 @@ sub _write_mx_plv {
     );
 
     $self->{_writer}->emptyTag( 'mx:PLV', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_merge_cells()
+#
+# Write the <mergeCells> element.
+#
+sub _write_merge_cells {
+
+    my $self         = shift;
+    my $merged_cells = $self->{_merge};
+    my $count        = @$merged_cells;
+
+    return unless $count;
+
+    my @attributes = ( 'count' => $count );
+
+    $self->{_writer}->startTag( 'mergeCells', @attributes );
+
+    for my $merged_range ( @$merged_cells ) {
+
+        # Write the mergeCell element.
+        $self->_write_merge_cell( $merged_range );
+    }
+
+    $self->{_writer}->endTag( 'mergeCells' );
+}
+
+
+##############################################################################
+#
+# _write_merge_cell()
+#
+# Write the <mergeCell> element.
+#
+sub _write_merge_cell {
+
+    my $self         = shift;
+    my $merged_range = shift;
+    my ( $row_min, $col_min, $row_max, $col_max ) = @$merged_range;
+
+
+    # Convert the merge dimensions to a cell range.
+    my $cell_1 = xl_rowcol_to_cell( $row_min, $col_min );
+    my $cell_2 = xl_rowcol_to_cell( $row_max, $col_max );
+    my $ref    = $cell_1 . ':' . $cell_2;
+
+    my @attributes = ( 'ref' => $ref );
+
+    $self->{_writer}->emptyTag( 'mergeCell', @attributes );
 }
 
 
