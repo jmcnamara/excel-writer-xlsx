@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.02 of Excel::Writer::XLSX, released October 12, 2010.
+This document refers to version 0.03 of Excel::Writer::XLSX, released January 3, 2011.
 
 
 
@@ -4799,25 +4799,25 @@ Excel files contain an internal index table that allows them to act like a datab
 
 =item * DBD::Excel
 
-You can also access Excel::Writer::XLSX using the standard DBI interface via Takanori Kawai's DBD::Excel module L<http://search.cpan.org/dist/DBD-Excel>
+You can also access Spreadsheet::WriteExcel using the standard DBI interface via Takanori Kawai's DBD::Excel module L<http://search.cpan.org/dist/DBD-Excel>
 
-=item * Excel::Writer::XLSXXML
+=item * Spreadsheet::WriteExcelXML
 
-This module allows you to create an Excel XML file using the same interface as Excel::Writer::XLSX. See: L<http://search.cpan.org/dist/Spreadsheet-WriteExcelXML>
+This module allows you to create an Excel XML file using the same interface as Spreadsheet::WriteExcel. See: L<http://search.cpan.org/dist/Spreadsheet-WriteExcelXML>
 
 =item * Excel::Template
 
 This module allows you to create an Excel file from an XML template in a manner similar to HTML::Template. See L<http://search.cpan.org/dist/Excel-Template/>.
 
-=item * Excel::Writer::XLSX::FromXML
+=item * Spreadsheet::WriteExcel::FromXML
 
-This module allows you to turn a simple XML file into an Excel file using Excel::Writer::XLSX as a back-end. The format of the XML file is defined by a supplied DTD: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromXML>.
+This module allows you to turn a simple XML file into an Excel file using Spreadsheet::WriteExcel as a back-end. The format of the XML file is defined by a supplied DTD: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromXML>.
 
-=item * Excel::Writer::XLSX::Simple
+=item * Spreadsheet::WriteExcel::Simple
 
-This provides an easier interface to Excel::Writer::XLSX: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-Simple>.
+This provides an easier interface to Spreadsheet::WriteExcel: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-Simple>.
 
-=item * Excel::Writer::XLSX::FromDB
+=item * Spreadsheet::WriteExcel::FromDB
 
 This is a useful module for creating Excel files directly from a DB table: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromDB>.
 
@@ -4958,7 +4958,7 @@ Spreadsheet::ParseExcel: L<http://search.cpan.org/dist/Spreadsheet-ParseExcel>.
 
 Spreadsheet-WriteExcel-FromXML: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromXML>.
 
-Excel::Writer::XLSX::FromDB: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromDB>.
+Spreadsheet::WriteExcel::FromDB: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel-FromDB>.
 
 Excel::Template: L<http://search.cpan.org/~rkinyon/Excel-Template/>.
 
@@ -4975,7 +4975,7 @@ L<http://search.cpan.org/~hmbrand/Text-CSV_XS/MANIFEST>.
 
 The following people contributed to the debugging and testing of Excel::Writer::XLSX:
 
-Rob Messer of Intellisurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format.
+Rob Messer of Intellisurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. Intellisurvey also sponsored some of the optimisations for large files.
 
 
 
@@ -5000,27 +5000,22 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    I thought I might just write a letter
-    Anything to stay away
-    From books and lessons today.
-    Besides, it's part of my induction
-    Into the literate world.
-    I am a literate girl.
+    Scott:  Garlic bread is my favourite food. I could honestly eat it for
+            every meal. Or just all the time without even stopping.
+    Ramona: You'd get fat.
+    Scott:  No.
+    Ramona: You'd get totally fat.
+    Scott:  I don't think I'd get fat. Why would I get fat?
+    Ramona: Bread makes you fat. Butter makes you fat.
+    Scott:  Bread makes you fat??
 
-    I string the words together softly.
-    I lay my love upon you with each line.
-    A gift of improvising,
-    Removes me from revising.
-    I made a daisy chain from
-    Phrase, verse, and punctuation.
-
-        -- God Help the Girl
+        -- Scott Pilgrim vs. the World by Bryan Lee O'Malley
 
 
 
 
 =head1 COPYRIGHT
 
-Copyright MM-MMX, John McNamara.
+Copyright MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

@@ -104,7 +104,7 @@ sub _is_deep_diff {
 # writing subs will add the output to the scalar.
 #
 # We can choose between using the internal XMLwriterSimple module or the CPAN
-# XML::Simple module by using the environmental variable:
+# XML::Writer module by using the environmental variable:
 #
 #    export _EXCEL_WRITER_XLSX_USE_XML_WRITER=1
 #

@@ -15,6 +15,7 @@ lib/Excel/Writer/XLSX/Package/SharedStrings.pm
 lib/Excel/Writer/XLSX/Package/Styles.pm
 lib/Excel/Writer/XLSX/Package/Theme.pm
 lib/Excel/Writer/XLSX/Package/XMLwriter.pm
+lib/Excel/Writer/XLSX/Package/XMLwriterSimple.pm
 lib/Excel/Writer/XLSX/Utility.pm
 lib/Excel/Writer/XLSX/Workbook.pm
 lib/Excel/Writer/XLSX/Worksheet.pm

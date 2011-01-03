@@ -1,9 +1,13 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
+0.03 January 3 2011
+
+     + Optimisations. The module is now 100% faster.
+
 
 0.02 October 12 2010
 
-    Fixed dependencies in Makefile.
+    ! Fixed dependencies in Makefile.
 
 
 0.01 October 11 2010

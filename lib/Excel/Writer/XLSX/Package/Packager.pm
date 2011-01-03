@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Package::Styles;
 use Excel::Writer::XLSX::Package::Theme;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 ###############################################################################
@@ -450,7 +450,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMX, John McNamara.
+© MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
