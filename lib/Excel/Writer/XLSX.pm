@@ -4601,26 +4601,23 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     add_worksheet()             Yes
     add_format()                Yes
     add_chart()                 No
-    add_chart_ext()             Deprecated
     close()                     Yes
-    compatibility_mode()        Deprecated
     set_properties()            No
     define_name()               No
     set_tempdir()               No
     set_custom_color()          No
     sheets()                    Yes
     set_1904()                  No
+    add_chart_ext()             Deprecated
+    compatibility_mode()        Deprecated
     set_codepage()              Deprecated
 
 
     Worksheet Methods           Support
     =================           =======
     write()                     Yes/Partial, not all write_* methods supported.
-    write_number()              No
-    write_string()              No
-    write_utf16be_string()      Deprecated
-    write_utf16le_string()      Deprecated
-    keep_leading_zeros()        Yes
+    write_number()              yes
+    write_string()              Yes
     write_blank()               Yes
     write_row()                 Yes
     write_col()                 Yes
@@ -4628,8 +4625,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     write_url()                 No
     write_url_range()           No
     write_formula()             Yes
-    store_formula()             Deprecated
-    repeat_formula()            Deprecated
+    keep_leading_zeros()        Yes
     write_comment()             No
     show_comments()             No
     add_write_handler()         Yes
@@ -4654,6 +4650,10 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     hide_zero()                 No
     set_tab_color()             No
     autofilter()                No
+    write_utf16be_string()      Deprecated
+    write_utf16le_string()      Deprecated
+    store_formula()             Deprecated
+    repeat_formula()            Deprecated
 
     Page Set-up Methods         Support
     ===================         =======

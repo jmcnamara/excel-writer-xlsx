@@ -1637,12 +1637,17 @@ sub write_formula {
     my $row     = $_[0];           # Zero indexed row
     my $col     = $_[1];           # Zero indexed column
     my $formula = $_[2];           # The formula text string
-    my $value   = $_[4];           # The formula value.
+    my $xf      = $_[3];           # The format object.
+    my $value   = $_[4];           # Optional formula value.
     my $type    = 'f';             # The data type
 
+    # Hand off array formulas.
+    if ( $formula =~ /^{=.*}$/ ) {
+        return $self->write_array_formula( $row, $col, $row, $col, $formula,
+            $xf, $value );
+    }
 
-    my $xf = _XF( $self, $row, $col, $_[3] );    # The cell format
-
+    $xf = _XF( $self, $row, $col, $xf );    # The cell format
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -1683,14 +1688,16 @@ sub write_array_formula {
     my $record = 0x0006;           # Record identifier
     my $length;                    # Bytes to follow
 
-    my $row1    = $_[0];           # First row
-    my $col1    = $_[1];           # First column
-    my $row2    = $_[2];           # Last row
-    my $col2    = $_[3];           # Last column
-    my $formula = $_[4];           # The formula text string
+    my $row1    = $_[0];    # First row
+    my $col1    = $_[1];    # First column
+    my $row2    = $_[2];    # Last row
+    my $col2    = $_[3];    # Last column
+    my $formula = $_[4];    # The formula text string
+    my $xf      = $_[5];    # The format object.
+    my $value   = $_[6];    # Optional formula value.
+    my $type    = 'a';      # The data type
 
-    my $xf = _XF( $self, $row1, $col1, $_[5] );    # The cell format
-    my $type = 99;                                 # The data type
+    $xf = _XF( $self, $row1, $col1, $xf );    # The cell format
 
 
     # Swap last row/col with first row/col as necessary
@@ -1703,28 +1710,23 @@ sub write_array_formula {
 
 
     # Define array range
-    my $array_range;
+    my $range;
 
     if ( $row1 == $row2 and $col1 == $col2 ) {
-        $array_range = 'RC';
+        $range = xl_rowcol_to_cell( $row1, $col1 );
+
     }
     else {
-        $array_range =
+        $range =
             xl_rowcol_to_cell( $row1, $col1 ) . ':'
           . xl_rowcol_to_cell( $row2, $col2 );
-        $array_range = $self->_convert_formula( $row1, $col1, $array_range );
     }
 
-
-    # Remove array formula braces and add = as required.
+    # Remove array formula braces and the leading =.
     $formula =~ s/^{(.*)}$/$1/;
-    $formula =~ s/^([^=])/=$1/;
+    $formula =~ s/^=//;
 
-
-    # Convert A1 style references in the formula to R1C1 references
-    $formula = $self->_convert_formula( $row1, $col1, $formula );
-
-    $self->{_table}->[$row1]->[$col1] = [ $type, $formula, $xf, $array_range ];
+    $self->{_table}->[$row1]->[$col1] = [ $type, $formula, $xf, $range, $value ];
 
     return 0;
 }
@@ -3370,7 +3372,7 @@ sub _write_cell {
     my $col   = shift;
     my $cell  = shift;
     my $type  = $cell->[0];
-    my $value = $cell->[1];
+    my $token = $cell->[1];
     my $xf    = $cell->[2];
 
 
@@ -3382,26 +3384,42 @@ sub _write_cell {
         push @attributes, ( 's' => $xf );
     }
 
-
+    # Write the various cell types.
     if ( $type eq 'n' ) {
+
+        # Write a number.
         $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $value );
+        $self->_write_cell_value( $token );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 's' ) {
+
+        # Write a string.
         push @attributes, ( 't' => 's' );
 
         $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $value );
+        $self->_write_cell_value( $token );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 'f' ) {
+
+        # Write a formula.
         $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_formula( $value );
+        $self->_write_cell_formula( $token );
         $self->_write_cell_value( $cell->[3] );
         $self->{_writer}->endTag( 'c' );
     }
+    elsif ( $type eq 'a' ) {
+
+        # Write an array formula.
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_cell_array_formula( $token, $cell->[3] );
+        $self->_write_cell_value( $cell->[4] );
+        $self->{_writer}->endTag( 'c' );
+    }
     elsif ( $type eq 'b' ) {
+
+        # Write a empty cell.
         $self->{_writer}->emptyTag( 'c', @attributes );
     }
 }
@@ -3434,6 +3452,24 @@ sub _write_cell_formula {
     my $formula = shift // '';
 
     $self->{_writer}->dataElement( 'f', $formula );
+}
+
+
+###############################################################################
+#
+# _write_cell_array_formula()
+#
+# Write the cell array formula <f> element.
+#
+sub _write_cell_array_formula {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $range   = shift;
+
+    my @attributes = ( 't' => 'array', 'ref' => $range );
+
+    $self->{_writer}->dataElement( 'f', $formula, @attributes );
 }
 
 
