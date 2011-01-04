@@ -65,8 +65,8 @@ sub new {
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_writer}    = undef;
-    $self->{_defaults}  = \@defaults;
-    $self->{_overrides} = \@overrides;
+    $self->{_defaults}  = [@defaults];
+    $self->{_overrides} = [@overrides];
 
     bless $self, $class;
 
