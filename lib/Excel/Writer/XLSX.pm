@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.04 of Excel::Writer::XLSX, released January 3, 2011.
+This document refers to version 0.05 of Excel::Writer::XLSX, released January 4, 2011.
 
 
 
@@ -717,6 +717,9 @@ The general rule is that if the data looks like a I<something> then a I<somethin
     $worksheet->write( 'A17,  02                     ); # write_string()
     $worksheet->write( 'A18,  00002                  ); # write_string()
 
+    # Write an array formula. Not available in Spreadsheet::WriteExcel.
+    $worksheet->write( 'A19,  '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
+
 
 The "looks like" rule is defined by regular expressions:
 
@@ -731,6 +734,8 @@ C<write_url()> if C<$token> is a http, https, ftp or mailto URL based on the fol
 C<write_url()> if C<$token> is an internal or external sheet reference based on the following regex: C<$token =~ m[^(in|ex)ternal:]>.
 
 C<write_formula()> if the first character of C<$token> is C<"=">.
+
+C<write_array_formula()> if the C<$token> matches C</^{=.*}$/>.
 
 C<write_row()> if C<$token> is an array ref.
 
@@ -1153,6 +1158,12 @@ Write a formula or function to the cell specified by C<$row> and C<$column>:
     $worksheet->write_formula( 'A5', '=AVERAGE(1, 2, 3, 4)' );
     $worksheet->write_formula( 'A6', '=DATEVALUE("1-Jan-2001")' );
 
+Array formulas are also supported:
+
+    $worksheet->write_formula( 'A7', '{=SUM(A1:B1*A2:B2)}' );
+
+See also the C<write_array_formula()> method below.
+
 See the note about L<Cell notation>. For more information about writing Excel formulas see L<FORMULAS AND FUNCTIONS IN EXCEL>
 
 If required, it is also possible to specify the calculated value of the formula. This is occasionally necessary when working with non-Excel applications that don't calculate the value of the formula. The calculated C<$value> is added at the end of the argument list:
@@ -1160,6 +1171,38 @@ If required, it is also possible to specify the calculated value of the formula.
     $worksheet->write( 'A1', '=2+2', $format, 4 );
 
 However, this probably isn't something that will ever need to do. If you do use this feature then do so with care.
+
+
+
+
+=head2 write_array_formula($first_row, $first_col, $last_row, $last_col, $formula, $format, $value)
+
+Write an array formula to a cell range. In Excel an array formula is a formula that performs a calculation on a set of values. It can return a single value or a range of values.
+
+An array formula is indicated by a pair of braces around the formula: C<{=SUM(A1:B1*A2:B2)}>.  If the array formula returns a single value then the C<$first_> and C<$last_> parameters should be the same:
+
+    $worksheet->write_array_formula('A1:A1', '{=SUM(B1:C1*B2:C2)}');
+
+It this case however it is easier to just use the C<write_formula()> or C<write()> methods:
+
+    # Same as above but more concise.
+    $worksheet->write( 'A1', '{=SUM(B1:C1*B2:C2)}' );
+    $worksheet->write_formula( 'A1', '{=SUM(B1:C1*B2:C2)}' );
+
+For array formulas that return a range of values you must specify the range that the return values will be written to:
+
+    $worksheet->write_array_formula( 'A1:A3',    '{=TREND(C1:C3,B1:B3)}' );
+    $worksheet->write_array_formula( 0, 0, 2, 0, '{=TREND(C1:C3,B1:B3)}' );
+
+If required, it is also possible to specify the calculated value of the formula. This is occasionally necessary when working with non-Excel applications that don't calculate the value of the formula. The calculated C<$value> is added at the end of the argument list:
+
+    $worksheet->write_array_formula( 'A1:A3', '{=TREND(C1:C3,B1:B3)}', $format, 105 );
+
+In addition, some early versions of Excel 2007 don't calculate the values of array formulas when they aren't supplied. Installing the latest Office Service Pack should fix this issue.
+
+See also the C<array_formula.pl> program in the C<examples> directory of the distro.
+
+Note: Array formulas are not supported by Spreadsheet::WriteExcel.
 
 
 
@@ -4538,6 +4581,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
 
     Intermediate
     ============
+    array_formula.pl        Examples of how to write array formulas.
     cgi.pl                  A simple CGI program.
     colors.pl               A demo of the colour palette and named colours.
     diag_border.pl          A simple example of diagonal cell borders.
@@ -4615,7 +4659,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
 
     Worksheet Methods           Support
     =================           =======
-    write()                     Yes/Partial, not all write_* methods supported.
+    write()                     Yes/Partial, not all write_* methods supported yet.
     write_number()              yes
     write_string()              Yes
     write_blank()               Yes
@@ -4625,6 +4669,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     write_url()                 No
     write_url_range()           No
     write_formula()             Yes
+    write_array_formula()       Yes. Not in Spreadsheet::WriteExcel.
     keep_leading_zeros()        Yes
     write_comment()             No
     show_comments()             No
