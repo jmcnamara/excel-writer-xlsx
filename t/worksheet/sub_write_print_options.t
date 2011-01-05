@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('©'), January 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -22,17 +22,16 @@ my $got;
 my $caption;
 my $worksheet;
 
-
 ###############################################################################
 #
-# Test the _write_page_setup() method. Without any page setup.
+# Test the _write_print_options() method. Without any options.
 #
-$caption  = " \tWorksheet: _write_page_setup()";
+$caption  = " \tWorksheet: _write_print_options()";
 $expected = undef;
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_page_setup();
+$worksheet->_write_print_options();
 
 is( $got, $expected, $caption );
 $got = ''; # Reset after previous undef value;
@@ -40,45 +39,46 @@ $got = ''; # Reset after previous undef value;
 
 ###############################################################################
 #
-# Test the _write_page_setup() method. With set_landscape();
+# Test the _write_print_options() method.
 #
-$caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup orientation="landscape" />';
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '<printOptions horizontalCentered="1" />';
 
 $worksheet = _new_worksheet(\$got);
-$worksheet->set_landscape();
+$worksheet->center_horizontally();
 
-$worksheet->_write_page_setup();
+$worksheet->_write_print_options();
 
 is( $got, $expected, $caption );
 
 
 ###############################################################################
 #
-# Test the _write_page_setup() method. With set_portrait();
+# Test the _write_print_options() method.
 #
-$caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup orientation="portrait" />';
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '<printOptions verticalCentered="1" />';
 
 $worksheet = _new_worksheet(\$got);
-$worksheet->set_portrait();
+$worksheet->center_vertically();
 
-$worksheet->_write_page_setup();
+$worksheet->_write_print_options();
 
 is( $got, $expected, $caption );
 
 
 ###############################################################################
 #
-# Test the _write_page_setup() method. With set_paper();
+# Test the _write_print_options() method.
 #
-$caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup paperSize="9" orientation="portrait" />';
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '<printOptions horizontalCentered="1" verticalCentered="1" />';
 
 $worksheet = _new_worksheet(\$got);
-$worksheet->set_paper( 9 );
+$worksheet->center_horizontally();
+$worksheet->center_vertically();
 
-$worksheet->_write_page_setup();
+$worksheet->_write_print_options();
 
 is( $got, $expected, $caption );
 
