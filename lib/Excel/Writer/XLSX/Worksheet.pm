@@ -86,8 +86,9 @@ sub new {
     $self->{_hcenter}               = 0;
     $self->{_vcenter}               = 0;
 
-    $self->{_header}             = '';
-    $self->{_footer}             = '';
+    $self->{_header_footer_changed} = 0;
+    $self->{_header}                = '';
+    $self->{_footer}                = '';
 
     $self->{_margin_left}        = 0.7;
     $self->{_margin_right}       = 0.7;
@@ -211,6 +212,9 @@ sub _assemble_xml_file {
 
     # Write the worksheet page setup.
     $self->_write_page_setup();
+
+    # Write the headerFooter element.
+    $self->_write_header_footer();
 
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
@@ -554,8 +558,9 @@ sub set_header {
         return;
     }
 
-    $self->{_header} = $string;
-    $self->{_margin_header} = $_[1] || 0.3;
+    $self->{_header}                = $string;
+    $self->{_margin_header}         = $_[1] || 0.3;
+    $self->{_header_footer_changed} = 1;
 }
 
 
@@ -575,9 +580,9 @@ sub set_footer {
         return;
     }
 
-
-    $self->{_footer} = $string;
-    $self->{_margin_footer} = $_[1] || 0.3;
+    $self->{_footer}                = $string;
+    $self->{_margin_footer}         = $_[1] || 0.3;
+    $self->{_header_footer_changed} = 1;
 }
 
 
@@ -3709,6 +3714,56 @@ sub _write_print_options {
     }
 
     $self->{_writer}->emptyTag( 'printOptions', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_header_footer()
+#
+# Write the <headerFooter> element.
+#
+sub _write_header_footer {
+
+    my $self = shift;
+
+    return unless $self->{_header_footer_changed};
+
+    $self->{_writer}->startTag( 'headerFooter' );
+    $self->_write_odd_header() if $self->{_header};
+    $self->_write_odd_footer() if $self->{_footer};
+    $self->{_writer}->endTag( 'headerFooter' );
+}
+
+
+##############################################################################
+#
+# _write_odd_header()
+#
+# Write the <oddHeader> element.
+#
+sub _write_odd_header {
+
+    my $self = shift;
+    my $data = $self->{_header};
+
+    $self->{_writer}->dataElement( 'oddHeader', $data );
+}
+
+
+##############################################################################
+#
+# _write_odd_footer()
+#
+# Write the <oddFooter> element.
+#
+sub _write_odd_footer {
+
+    my $self = shift;
+    my $data = $self->{_footer};
+
+    $self->{_writer}->dataElement( 'oddFooter', $data );
 }
 
 
