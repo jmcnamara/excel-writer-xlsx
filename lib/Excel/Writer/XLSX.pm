@@ -2238,7 +2238,7 @@ There are several methods available for setting the worksheet margins on the pri
     set_margin_top();    # Set top margin
     set_margin_bottom(); # Set bottom margin
 
-All of these methods take a distance in inches as a parameter. Note: 1 inch = 25.4mm. ;-) The default left and right margin is 0.75 inch. The default top and bottom margin is 1.00 inch.
+All of these methods take a distance in inches as a parameter. Note: 1 inch = 25.4mm. C<;-)> The default left and right margin is 0.7 inch. The default top and bottom margin is 0.75 inch. Note, these defaults are different from the defaults used in the binary file format by Spreadsheet::WriteExcel.
 
 
 
@@ -2364,7 +2364,7 @@ To include a single literal ampersand C<&> in a header or footer you should use 
 
     $worksheet1->set_header('&CCuriouser && Curiouser - Attorneys at Law');
 
-As stated above the margin parameter is optional. As with the other margins the value should be in inches. The default header and footer margin is 0.50 inch. The header and footer margin size can be set as follows:
+As stated above the margin parameter is optional. As with the other margins the value should be in inches. The default header and footer margin is 0.3 inch. Note, the default margin is different from the default used in the binary file format by Spreadsheet::WriteExcel. The header and footer margin size can be set as follows:
 
     $worksheet->set_header( '&CHello', 0.75 );
 
