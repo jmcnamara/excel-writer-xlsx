@@ -4773,8 +4773,7 @@ The latest version of this module is always available at: L<http://search.cpan.o
 
 =head1 REQUIREMENTS
 
-
-    http://search.cpan.org/search?dist=Archive-Zip/
+L<http://search.cpan.org/search?dist=Archive-Zip/>.
 
 
 
