@@ -41,8 +41,9 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}      = undef;
-    $self->{_sheet_names} = [];
+    $self->{_writer}        = undef;
+    $self->{_part_names}    = [];
+    $self->{_heading_pairs} = [];
 
     bless $self, $class;
 
@@ -85,16 +86,36 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _add_part_names()
+# _add_part_name()
 #
-# Add the name of a workbook parts such as 'Sheet1'.
+# Add the name of a workbook Part such as 'Sheet1' or 'Print_Titles'.
 #
 sub _add_part_name {
 
-    my $self       = shift;
-    my $sheet_name = shift;
+    my $self      = shift;
+    my $part_name = shift;
 
-    push @{ $self->{_sheet_names} }, $sheet_name;
+    push @{ $self->{_part_names} }, $part_name;
+}
+
+
+###############################################################################
+#
+# _add_heading_pair()
+#
+# Add the name of a workbook Heading Pair such as 'Worksheets' or 'Named Ranges'.
+#
+sub _add_heading_pair {
+
+    my $self         = shift;
+    my $heading_pair = shift;
+
+    my @vector = (
+        [ 'lpstr', $heading_pair->[0] ],    # Data name
+        [ 'i4',    $heading_pair->[1] ],    # Data size
+    );
+
+    push @{ $self->{_heading_pairs} }, @vector;
 }
 
 
@@ -186,19 +207,11 @@ sub _write_scale_crop {
 #
 sub _write_heading_pairs {
 
-    my $self        = shift;
-    my $sheet_count = @{ $self->{_sheet_names} };
-
+    my $self = shift;
 
     $self->{_writer}->startTag( 'HeadingPairs' );
 
-    $self->_write_vt_vector(
-        'variant',
-        [
-            [ 'lpstr', 'Worksheets' ],    #
-            [ 'i4',    $sheet_count ],    #
-        ]
-    );
+    $self->_write_vt_vector( 'variant', $self->{_heading_pairs} );
 
     $self->{_writer}->endTag( 'HeadingPairs' );
 }
@@ -218,8 +231,8 @@ sub _write_titles_of_parts {
 
     my @parts_data;
 
-    for my $sheet_name ( @{ $self->{_sheet_names} } ) {
-        push @parts_data, [ 'lpstr', $sheet_name ];
+    for my $part_name ( @{ $self->{_part_names} } ) {
+        push @parts_data, [ 'lpstr', $part_name ];
     }
 
     $self->_write_vt_vector( 'lpstr', \@parts_data );

@@ -29,8 +29,8 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::App' );
 #
 $caption = " \tApp: _assemble_xml_file()";
 
-$obj->_add_part_name('Sheet1');
-$obj->_add_part_name('Sheet2');
+$obj->_add_part_name( 'Sheet1' );
+$obj->_add_heading_pair( [ 'Worksheets', 1 ] );
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();
@@ -50,14 +50,13 @@ __DATA__
         <vt:lpstr>Worksheets</vt:lpstr>
       </vt:variant>
       <vt:variant>
-        <vt:i4>2</vt:i4>
+        <vt:i4>1</vt:i4>
       </vt:variant>
     </vt:vector>
   </HeadingPairs>
   <TitlesOfParts>
-    <vt:vector size="2" baseType="lpstr">
+    <vt:vector size="1" baseType="lpstr">
       <vt:lpstr>Sheet1</vt:lpstr>
-      <vt:lpstr>Sheet2</vt:lpstr>
     </vt:vector>
   </TitlesOfParts>
   <Company>

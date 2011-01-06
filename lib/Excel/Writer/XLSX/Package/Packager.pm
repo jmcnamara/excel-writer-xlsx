@@ -51,6 +51,7 @@ sub new {
         _package_dir => '',
         _workbook    => undef,
         _sheet_names => [],
+        _sheet_count => 0,
     };
 
 
@@ -88,6 +89,7 @@ sub _add_workbook {
 
     $self->{_workbook}    = $workbook;
     $self->{_sheet_names} = \@sheet_names;
+    $self->{_sheet_count} = scalar @sheet_names;
 }
 
 
@@ -205,6 +207,8 @@ sub _write_app_file {
     for my $sheet_name ( @{ $self->{_sheet_names} } ) {
         $app->_add_part_name( $sheet_name );
     }
+
+    $app->_add_heading_pair( [ 'Worksheets', $self->{_sheet_count} ] );
 
     $app->_set_xml_writer( $dir . '/docProps/app.xml' );
     $app->_assemble_xml_file();
@@ -355,14 +359,12 @@ sub _write_workbook_rels_file {
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/_rels';
 
-    my $sheet_count = @{ $self->{_sheet_names} };
-
-    for my $index ( 1 .. $sheet_count ) {
+    for my $index ( 1 .. $self->{_sheet_count} ) {
         $rels->_add_document_relationship( '/worksheet',
             'worksheets/sheet' . $index );
     }
 
-    $rels->_add_document_relationship( '/theme', 'theme/theme1' );
+    $rels->_add_document_relationship( '/theme',  'theme/theme1' );
     $rels->_add_document_relationship( '/styles', 'styles' );
 
     # Add the sharedString rel if there is string data in the workbook.
