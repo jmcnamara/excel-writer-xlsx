@@ -3780,11 +3780,11 @@ Worksheet - A writer class for Excel Worksheets.
 
 =head1 SYNOPSIS
 
-See the documentation for Excel::Writer::XLSX
+See the documentation for L<Excel::Writer::XLSX>
 
 =head1 DESCRIPTION
 
-This module is used in conjunction with Excel::Writer::XLSX.
+This module is used in conjunction with L<Excel::Writer::XLSX>.
 
 =head1 AUTHOR
 

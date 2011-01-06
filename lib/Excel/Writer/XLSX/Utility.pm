@@ -50,13 +50,13 @@ our $VERSION = '0.05';
 
 =head1 NAME
 
-Utility - Helper functions for Excel::Writer::XLSX.
+Utility - Helper functions for L<Excel::Writer::XLSX>.
 
 
 
 =head1 SYNOPSIS
 
-Functions to help with some common tasks when using Excel::Writer::XLSX.
+Functions to help with some common tasks when using L<Excel::Writer::XLSX>.
 
 These functions mainly relate to dealing with rows and columns in A1 notation and to handling dates and times.
 
@@ -77,7 +77,7 @@ These functions mainly relate to dealing with rows and columns in A1 notation an
 
 =head1 DESCRIPTION
 
-This module provides a set of functions to help with some common tasks encountered when using the Excel::Writer::XLSX module. The two main categories of function are:
+This module provides a set of functions to help with some common tasks encountered when using the L<Excel::Writer::XLSX> module. The two main categories of function are:
 
 Row and column functions: these are used to deal with Excel's A1 representation of cells. The functions in this category are:
 
@@ -111,7 +111,7 @@ All of these functions are exported by default. However, you can use import list
 =head1 ROW AND COLUMN FUNCTIONS
 
 
-Excel::Writer::XLSX supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
+L<Excel::Writer::XLSX> supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
 
 Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 16384 in Excel 5 and 65536 in Excel 97. For example:
 
@@ -861,7 +861,7 @@ This function converts an Excel date based on the 1900 epoch into a date based o
     $date2 = xl_date_1904($date1);      # 13 Jan 2002, 1904 epoch
 
 
-See also the C<set_1904()> workbook method in the Excel::Writer::XLSX documentation.
+See also the C<set_1904()> workbook method in the L<Excel::Writer::XLSX> documentation.
 
 =cut
 

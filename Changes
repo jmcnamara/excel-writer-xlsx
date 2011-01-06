@@ -2,18 +2,18 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.05 January 4 2011
 
-     + Added support for array_formulas. See the docs for write_array_formula()
+    + Added support for array_formulas. See the docs for write_array_formula()
        and the example program.
 
 
 0.04 January 3 2011
 
-     + Added merge_range() for merging cells. With tests and examples.
+    + Added merge_range() for merging cells. With tests and examples.
 
 
 0.03 January 3 2011
 
-     + Optimisations. The module is now 100% faster.
+    + Optimisations. The module is now 100% faster.
 
 
 0.02 October 12 2010

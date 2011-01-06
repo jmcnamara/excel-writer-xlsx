@@ -4775,7 +4775,6 @@ The latest version of this module is always available at: L<http://search.cpan.o
 
 
     http://search.cpan.org/search?dist=Archive-Zip/
-    http://search.cpan.org/search?dist=XML-Writer/
 
 
 
@@ -4953,7 +4952,7 @@ The roadmap is as follows:
 
 =head1 REPOSITORY
 
-The Excel::Writer::XLSX source code in host on github: L<http://github.com/jmcnamara/spreadsheet-writeexcel>.
+The Excel::Writer::XLSX source code in host on github: L<http://github.com/jmcnamara/excel-writer-xlsx>.
 
 
 
