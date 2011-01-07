@@ -65,6 +65,7 @@ sub new {
     $self->{_palette}          = [];
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
+    $self->{_defined_names}    = [];
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -1055,6 +1056,53 @@ sub _write_mx_arch_id {
     my @attributes = ( 'Flags' => $Flags, );
 
     $self->{_writer}->emptyTag( 'mx:ArchID', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_defined_names()
+#
+# Write the <definedNames> element.
+#
+sub _write_defined_names {
+
+    my $self = shift;
+
+    next unless @{ $self->{_defined_names} };
+
+
+    $self->{_writer}->startTag( 'definedNames' );
+
+    for my $aref ( @{ $self->{_defined_names} } ) {
+        $self->_write_defined_name( $aref );
+    }
+
+    $self->{_writer}->endTag( 'definedNames' );
+}
+
+
+##############################################################################
+#
+# _write_defined_name()
+#
+# Write the <definedName> element.
+#
+sub _write_defined_name {
+
+    my $self = shift;
+    my $data = shift;
+
+    my $name           = $data->[0];
+    my $local_sheet_id = $data->[1];
+    my $range          = $data->[2];
+
+    my @attributes = (
+        'name'         => $name,
+        'localSheetId' => $local_sheet_id,
+    );
+
+    $self->{_writer}->dataElement( 'definedName', $range, @attributes );
 }
 
 
