@@ -27,6 +27,7 @@ our $VERSION = '0.05';
 my @rowcol = qw(
   xl_rowcol_to_cell
   xl_cell_to_rowcol
+  xl_col_to_name
   xl_range_formula
   xl_inc_row
   xl_dec_row
@@ -60,32 +61,15 @@ our %EXPORT_TAGS = (
 #
 sub xl_rowcol_to_cell {
 
-    my $row     = $_[0];
+    my $row     = $_[0] + 1;          # Change from 0-indexed to 1 indexed.
     my $col     = $_[1];
     my $row_abs = $_[2] ? '$' : '';
     my $col_abs = $_[3] ? '$' : '';
-    my $col_str = '';
 
-    # Change from 0-indexed to 1 indexed.
-    $row++;
-    $col++;
 
-    while ( $col ) {
+    my $col_str = xl_col_to_name( $col, $col_abs );
 
-        # Set remainder from 1 .. 26
-        my $remainder = $col % 26 || 26;
-
-        # Convert the $remainder to a character. C-ishly.
-        my $col_letter = chr( ord( 'A' ) + $remainder - 1 );
-
-        # Accumulate the column letters, right to left.
-        $col_str = $col_letter . $col_str;
-
-        # Get the next order of magnitude.
-        $col = int( ( $col - 1 ) / 26 );
-    }
-
-    return $col_abs . $col_str . $row_abs . $row;
+    return $col_str . $row_abs . $row;
 }
 
 
@@ -126,6 +110,38 @@ sub xl_cell_to_rowcol {
     $col--;
 
     return $row, $col, $row_abs, $col_abs;
+}
+
+
+###############################################################################
+#
+# xl_col_to_name($col, $col_absolute)
+#
+sub xl_col_to_name {
+
+    my $col     = $_[0];
+    my $col_abs = $_[1] ? '$' : '';
+    my $col_str = '';
+
+    # Change from 0-indexed to 1 indexed.
+    $col++;
+
+    while ( $col ) {
+
+        # Set remainder from 1 .. 26
+        my $remainder = $col % 26 || 26;
+
+        # Convert the $remainder to a character. C-ishly.
+        my $col_letter = chr( ord( 'A' ) + $remainder - 1 );
+
+        # Accumulate the column letters, right to left.
+        $col_str = $col_letter . $col_str;
+
+        # Get the next order of magnitude.
+        $col = int( ( $col - 1 ) / 26 );
+    }
+
+    return $col_abs . $col_str;
 }
 
 
@@ -401,6 +417,7 @@ These functions mainly relate to dealing with rows and columns in A1 notation an
 
     ($row, $col)    = xl_cell_to_rowcol('C2');          # (1, 2)
     $str            = xl_rowcol_to_cell(1, 2);          # C2
+    $str            = xl_col_to_name(702);              # AAA
     $str            = xl_inc_col('Z1'  );               # AA1
     $str            = xl_dec_col('AA1' );               # Z1
 
@@ -417,6 +434,7 @@ Row and column functions: these are used to deal with Excel's A1 representation 
 
     xl_rowcol_to_cell
     xl_cell_to_rowcol
+    xl_col_to_name
     xl_range_formula
     xl_inc_row
     xl_dec_row
@@ -518,6 +536,29 @@ This function converts an Excel cell reference in A1 notation to a zero based ro
     my ($row, $col) = xl_cell_to_rowcol('$C2' );   # (1, 2)
     my ($row, $col) = xl_cell_to_rowcol('C$2' );   # (1, 2)
     my ($row, $col) = xl_cell_to_rowcol('$C$2');   # (1, 2)
+
+=head2 xl_col_to_name($col, $col_absolute)
+
+    Parameters: $col:           Integer
+                $col_absolute:  Boolean (1/0) [optional, default is 0]
+
+    Returns:    A column string name.
+
+
+This function converts a zero based column reference to a string:
+
+    $str = xl_col_to_name(0);   # A
+    $str = xl_col_to_name(1);   # B
+    $str = xl_col_to_name(702); # AAA
+
+
+The optional parameter C<$col_absolute> can be used to indicate if the column is absolute:
+
+    $str = xl_col_to_name(0, 0); # A
+    $str = xl_col_to_name(0, 1); # $A
+    $str = xl_col_to_name(1, 1); # $B
+
+See L<ROW AND COLUMN FUNCTIONS> for an explanation of absolute cell references.
 
 =head2 xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
 
