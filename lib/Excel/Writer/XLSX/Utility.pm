@@ -4,24 +4,16 @@ package Excel::Writer::XLSX::Utility;
 #
 # Utility - Helper functions for Excel::Writer::XLSX.
 #
-#
-# Used in conjunction with Excel::Writer::XLSX
-#
 # Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
 #
-# Documentation after __END__
 #
 
-# perltidy with the following options: -mbl=2 -pt=0 -nola
-
 use 5.010000;
-use strict;
 use Exporter;
+use strict;
 use warnings;
 use autouse 'Date::Calc'  => qw(Delta_DHMS Decode_Date_EU Decode_Date_US);
 use autouse 'Date::Manip' => qw(ParseDate Date_Init);
-
-our $VERSION = '0.05';
 
 # Row and column functions
 my @rowcol = qw(
@@ -53,6 +45,141 @@ our %EXPORT_TAGS = (
     dates  => \@dates
 );
 
+our $VERSION = '0.05';
+
+
+=head1 NAME
+
+Utility - Helper functions for L<Excel::Writer::XLSX>.
+
+
+
+=head1 SYNOPSIS
+
+Functions to help with some common tasks when using L<Excel::Writer::XLSX>.
+
+These functions mainly relate to dealing with rows and columns in A1 notation and to handling dates and times.
+
+    use Excel::Writer::XLSX::Utility;               # Import everything
+
+    ($row, $col)    = xl_cell_to_rowcol('C2');          # (1, 2)
+    $str            = xl_rowcol_to_cell(1, 2);          # C2
+    $str            = xl_inc_col('Z1'  );               # AA1
+    $str            = xl_dec_col('AA1' );               # Z1
+
+    $date           = xl_date_list(2002, 1, 1);         # 37257
+    $date           = xl_parse_date("11 July 1997");    # 35622
+    $time           = xl_parse_time('3:21:36 PM');      # 0.64
+    $date           = xl_decode_date_EU("13 May 2002"); # 37389
+
+
+
+
+=head1 DESCRIPTION
+
+This module provides a set of functions to help with some common tasks encountered when using the L<Excel::Writer::XLSX> module. The two main categories of function are:
+
+Row and column functions: these are used to deal with Excel's A1 representation of cells. The functions in this category are:
+
+    xl_rowcol_to_cell
+    xl_cell_to_rowcol
+    xl_range_formula
+    xl_inc_row
+    xl_dec_row
+    xl_inc_col
+    xl_dec_col
+
+Date and Time functions: these are used to convert dates and times to the numeric format used by Excel. The functions in this category are:
+
+    xl_date_list
+    xl_date_1904
+    xl_parse_time
+    xl_parse_date
+    xl_parse_date_init
+    xl_decode_date_EU
+    xl_decode_date_US
+
+All of these functions are exported by default. However, you can use import lists if you wish to limit the functions that are imported:
+
+    use Excel::Writer::XLSX::Utility;                  # Import everything
+    use Excel::Writer::XLSX::Utility qw(xl_date_list); # xl_date_list only
+    use Excel::Writer::XLSX::Utility qw(:rowcol);      # Row/col functions
+    use Excel::Writer::XLSX::Utility qw(:dates);       # Date functions
+
+
+
+=head1 ROW AND COLUMN FUNCTIONS
+
+
+L<Excel::Writer::XLSX> supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
+
+Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 16384 in Excel 5 and 65536 in Excel 97. For example:
+
+    (0, 0)      # The top left cell in row-column notation.
+    ('A1')      # The top left cell in A1 notation.
+
+    (1999, 29)  # Row-column notation.
+    ('AD2000')  # The same cell in A1 notation.
+
+Row-column notation is useful if you are referring to cells programmatically:
+
+    for my $i (0 .. 9) {
+        $worksheet->write($i, 0, 'Hello'); # Cells A1 to A10
+    }
+
+A1 notation is useful for setting up a worksheet manually and for working with formulas:
+
+    $worksheet->write('H1', 200);
+    $worksheet->write('H2', '=H7+1');
+
+The functions in the following sections can be used for dealing with A1 notation, for example:
+
+    ($row, $col)    = xl_cell_to_rowcol('C2');  # (1, 2)
+    $str            = xl_rowcol_to_cell(1, 2);  # C2
+
+
+Cell references in Excel can be either relative or absolute. Absolute references are prefixed by the dollar symbol as shown below:
+
+    A1      # Column and row are relative
+    $A1     # Column is absolute and row is relative
+    A$1     # Column is relative and row is absolute
+    $A$1    # Column and row are absolute
+
+An absolute reference only has an effect if the cell is copied. Refer to the Excel documentation for further details. All of the following functions support absolute references.
+
+=cut
+
+
+###############################################################################
+###############################################################################
+
+=head2 xl_rowcol_to_cell($row, $col, $row_absolute, $col_absolute)
+
+    Parameters: $row:           Integer
+                $col:           Integer
+                $row_absolute:  Boolean (1/0) [optional, default is 0]
+                $col_absolute:  Boolean (1/0) [optional, default is 0]
+
+    Returns:    A string in A1 cell notation
+
+
+This function converts a zero based row and column cell reference to a A1 style string:
+
+    $str = xl_rowcol_to_cell(0, 0); # A1
+    $str = xl_rowcol_to_cell(0, 1); # B1
+    $str = xl_rowcol_to_cell(1, 0); # A2
+
+
+The optional parameters C<$row_absolute> and C<$col_absolute> can be used to indicate if the row or column is absolute:
+
+    $str = xl_rowcol_to_cell(0, 0, 0, 1); # $A1
+    $str = xl_rowcol_to_cell(0, 0, 1, 0); # A$1
+    $str = xl_rowcol_to_cell(0, 0, 1, 1); # $A$1
+
+See L<ROW AND COLUMN FUNCTIONS> for an explanation of absolute cell references.
+
+
+=cut
 
 ###############################################################################
 #
@@ -71,7 +198,6 @@ sub xl_rowcol_to_cell {
     $col++;
 
     while ( $col ) {
-
         # Set remainder from 1 .. 26
         my $remainder = $col % 26 || 26;
 
@@ -88,6 +214,27 @@ sub xl_rowcol_to_cell {
     return $col_abs . $col_str . $row_abs . $row;
 }
 
+
+###############################################################################
+###############################################################################
+
+=head2 xl_cell_to_rowcol($string)
+
+
+    Parameters: $string         String in A1 format
+
+    Returns:    List            ($row, $col)
+
+This function converts an Excel cell reference in A1 notation to a zero based row and column. The function will also handle Excel's absolute, C<$>, cell notation.
+
+    my ($row, $col) = xl_cell_to_rowcol('A1');     # (0, 0)
+    my ($row, $col) = xl_cell_to_rowcol('B1');     # (0, 1)
+    my ($row, $col) = xl_cell_to_rowcol('C2');     # (1, 2)
+    my ($row, $col) = xl_cell_to_rowcol('$C2' );   # (1, 2)
+    my ($row, $col) = xl_cell_to_rowcol('C$2' );   # (1, 2)
+    my ($row, $col) = xl_cell_to_rowcol('$C$2');   # (1, 2)
+
+=cut
 
 ###############################################################################
 #
@@ -130,394 +277,7 @@ sub xl_cell_to_rowcol {
 
 
 ###############################################################################
-#
-# xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
-#
-sub xl_range_formula {
-
-    my ( $sheetname, $row_1, $row_2, $col_1, $col_2 ) = @_;
-
-    # Use Excel's conventions and quote the sheet name if it contains any
-    # non-word character or if it isn't already quoted.
-    if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
-        $sheetname = q(') . $sheetname . q(');
-    }
-
-    my $range1 = xl_rowcol_to_cell( $row_1, $col_1, 1, 1 );
-    my $range2 = xl_rowcol_to_cell( $row_2, $col_2, 1, 1 );
-
-    return '=' . $sheetname . '!' . $range1 . ':' . $range2;
-}
-
-
 ###############################################################################
-#
-# xl_inc_row($string)
-#
-sub xl_inc_row {
-
-    my $cell = shift;
-    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
-
-    return xl_rowcol_to_cell( ++$row, $col, $row_abs, $col_abs );
-}
-
-
-###############################################################################
-#
-# xl_dec_row($string)
-#
-# Decrements the row number of an Excel cell reference in A1 notation.
-# For example C4 to C3
-#
-# Returns: a cell reference string.
-#
-sub xl_dec_row {
-
-    my $cell = shift;
-    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
-
-    return xl_rowcol_to_cell( --$row, $col, $row_abs, $col_abs );
-}
-
-
-###############################################################################
-#
-# xl_inc_col($string)
-#
-# Increments the column number of an Excel cell reference in A1 notation.
-# For example C3 to D3
-#
-# Returns: a cell reference string.
-#
-sub xl_inc_col {
-
-    my $cell = shift;
-    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
-
-    return xl_rowcol_to_cell( $row, ++$col, $row_abs, $col_abs );
-}
-
-
-###############################################################################
-#
-# xl_dec_col($string)
-#
-sub xl_dec_col {
-
-    my $cell = shift;
-    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
-
-    return xl_rowcol_to_cell( $row, --$col, $row_abs, $col_abs );
-}
-
-
-###############################################################################
-#
-# xl_date_list($years, $months, $days, $hours, $minutes, $seconds)
-#
-sub xl_date_list {
-
-    return undef unless @_;
-
-    my $years   = $_[0];
-    my $months  = $_[1] || 1;
-    my $days    = $_[2] || 1;
-    my $hours   = $_[3] || 0;
-    my $minutes = $_[4] || 0;
-    my $seconds = $_[5] || 0;
-
-    my @date = ( $years, $months, $days, $hours, $minutes, $seconds );
-    my @epoch = ( 1899, 12, 31, 0, 0, 0 );
-
-    ( $days, $hours, $minutes, $seconds ) = Delta_DHMS( @epoch, @date );
-
-    my $date =
-      $days + ( $hours * 3600 + $minutes * 60 + $seconds ) / ( 24 * 60 * 60 );
-
-    # Add a day for Excel's missing leap day in 1900
-    $date++ if ( $date > 59 );
-
-    return $date;
-}
-
-
-###############################################################################
-#
-# xl_parse_time($string)
-#
-sub xl_parse_time {
-
-    my $time = shift;
-
-    if ( $time =~ /(\d{1,2}):(\d\d):?((?:\d\d)(?:\.\d+)?)?(?:\s+)?(am|pm)?/i ) {
-
-        my $hours    = $1;
-        my $minutes  = $2;
-        my $seconds  = $3 || 0;
-        my $meridian = lc( $4 ) || '';
-
-        # Normalise midnight and midday
-        $hours = 0 if ( $hours == 12 && $meridian ne '' );
-
-        # Add 12 hours to the pm times. Note: 12.00 pm has been set to 0.00.
-        $hours += 12 if $meridian eq 'pm';
-
-        # Calculate the time as a fraction of 24 hours in seconds
-        return ( $hours * 3600 + $minutes * 60 + $seconds ) / ( 24 * 60 * 60 );
-
-    }
-    else {
-        return undef;    # Not a valid time string
-    }
-}
-
-
-###############################################################################
-#
-# xl_parse_date($string)
-#
-sub xl_parse_date {
-
-    my $date = ParseDate( $_[0] );
-
-    return undef unless defined $date;
-
-    # Unpack the return value from ParseDate()
-    my ( $years, $months, $days, $hours, undef, $minutes, undef, $seconds ) =
-      unpack( "A4     A2      A2     A2      C        A2      C       A2",
-        $date );
-
-    # Convert to Excel date
-    return xl_date_list( $years, $months, $days, $hours, $minutes, $seconds );
-}
-
-
-###############################################################################
-#
-# xl_parse_date_init("variable=value", ...)
-#
-sub xl_parse_date_init {
-
-    Date_Init( @_ );    # How lazy is that.
-}
-
-
-###############################################################################
-#
-# xl_decode_date_EU($string)
-#
-sub xl_decode_date_EU {
-
-    return undef unless @_;
-
-    my $date = shift;
-    my @date;
-    my $time = 0;
-
-    # Remove and decode the time portion of the string
-    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
-        $time = xl_parse_time( $1 );
-        return undef unless defined $time;
-    }
-
-    # Return if the string is now blank, i.e. it contained a time only.
-    return $time if $date =~ /^\s*$/;
-
-    # Decode the date portion of the string
-    @date = Decode_Date_EU( $date );
-    return undef unless @date;
-
-    return xl_date_list( @date ) + $time;
-}
-
-
-###############################################################################
-#
-# xl_decode_date_US($string)
-#
-sub xl_decode_date_US {
-
-    return undef unless @_;
-
-    my $date = shift;
-    my @date;
-    my $time = 0;
-
-    # Remove and decode the time portion of the string
-    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
-        $time = xl_parse_time( $1 );
-        return undef unless defined $time;
-    }
-
-    # Return if the string is now blank, i.e. it contained a time only.
-    return $time if $date =~ /^\s*$/;
-
-    # Decode the date portion of the string
-    @date = Decode_Date_US( $date );
-    return undef unless @date;
-
-    return xl_date_list( @date ) + $time;
-}
-
-
-###############################################################################
-#
-# xl_decode_date_US($string)
-#
-sub xl_date_1904 {
-
-    my $date = $_[0] || 0;
-
-    if ( $date < 1462 ) {
-
-        # before 1904
-        $date = 0;
-    }
-    else {
-        $date -= 1462;
-    }
-
-    return $date;
-}
-
-
-1;
-
-
-__END__
-
-=head1 NAME
-
-Utility - Helper functions for L<Excel::Writer::XLSX>.
-
-=head1 SYNOPSIS
-
-Functions to help with some common tasks when using L<Excel::Writer::XLSX>.
-
-These functions mainly relate to dealing with rows and columns in A1 notation and to handling dates and times.
-
-    use Excel::Writer::XLSX::Utility;               # Import everything
-
-    ($row, $col)    = xl_cell_to_rowcol('C2');          # (1, 2)
-    $str            = xl_rowcol_to_cell(1, 2);          # C2
-    $str            = xl_inc_col('Z1'  );               # AA1
-    $str            = xl_dec_col('AA1' );               # Z1
-
-    $date           = xl_date_list(2002, 1, 1);         # 37257
-    $date           = xl_parse_date("11 July 1997");    # 35622
-    $time           = xl_parse_time('3:21:36 PM');      # 0.64
-    $date           = xl_decode_date_EU("13 May 2002"); # 37389
-
-=head1 DESCRIPTION
-
-This module provides a set of functions to help with some common tasks encountered when using the L<Excel::Writer::XLSX> module. The two main categories of function are:
-
-Row and column functions: these are used to deal with Excel's A1 representation of cells. The functions in this category are:
-
-    xl_rowcol_to_cell
-    xl_cell_to_rowcol
-    xl_range_formula
-    xl_inc_row
-    xl_dec_row
-    xl_inc_col
-    xl_dec_col
-
-Date and Time functions: these are used to convert dates and times to the numeric format used by Excel. The functions in this category are:
-
-    xl_date_list
-    xl_date_1904
-    xl_parse_time
-    xl_parse_date
-    xl_parse_date_init
-    xl_decode_date_EU
-    xl_decode_date_US
-
-All of these functions are exported by default. However, you can use import lists if you wish to limit the functions that are imported:
-
-    use Excel::Writer::XLSX::Utility;                  # Import everything
-    use Excel::Writer::XLSX::Utility qw(xl_date_list); # xl_date_list only
-    use Excel::Writer::XLSX::Utility qw(:rowcol);      # Row/col functions
-    use Excel::Writer::XLSX::Utility qw(:dates);       # Date functions
-
-=head1 ROW AND COLUMN FUNCTIONS
-
-L<Excel::Writer::XLSX> supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
-
-Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 16384 in Excel 5 and 65536 in Excel 97. For example:
-
-    (0, 0)      # The top left cell in row-column notation.
-    ('A1')      # The top left cell in A1 notation.
-
-    (1999, 29)  # Row-column notation.
-    ('AD2000')  # The same cell in A1 notation.
-
-Row-column notation is useful if you are referring to cells programmatically:
-
-    for my $i (0 .. 9) {
-        $worksheet->write($i, 0, 'Hello'); # Cells A1 to A10
-    }
-
-A1 notation is useful for setting up a worksheet manually and for working with formulas:
-
-    $worksheet->write('H1', 200);
-    $worksheet->write('H2', '=H7+1');
-
-The functions in the following sections can be used for dealing with A1 notation, for example:
-
-    ($row, $col)    = xl_cell_to_rowcol('C2');  # (1, 2)
-    $str            = xl_rowcol_to_cell(1, 2);  # C2
-
-
-Cell references in Excel can be either relative or absolute. Absolute references are prefixed by the dollar symbol as shown below:
-
-    A1      # Column and row are relative
-    $A1     # Column is absolute and row is relative
-    A$1     # Column is relative and row is absolute
-    $A$1    # Column and row are absolute
-
-An absolute reference only has an effect if the cell is copied. Refer to the Excel documentation for further details. All of the following functions support absolute references.
-
-=head2 xl_rowcol_to_cell($row, $col, $row_absolute, $col_absolute)
-
-    Parameters: $row:           Integer
-                $col:           Integer
-                $row_absolute:  Boolean (1/0) [optional, default is 0]
-                $col_absolute:  Boolean (1/0) [optional, default is 0]
-
-    Returns:    A string in A1 cell notation
-
-
-This function converts a zero based row and column cell reference to a A1 style string:
-
-    $str = xl_rowcol_to_cell(0, 0); # A1
-    $str = xl_rowcol_to_cell(0, 1); # B1
-    $str = xl_rowcol_to_cell(1, 0); # A2
-
-
-The optional parameters C<$row_absolute> and C<$col_absolute> can be used to indicate if the row or column is absolute:
-
-    $str = xl_rowcol_to_cell(0, 0, 0, 1); # $A1
-    $str = xl_rowcol_to_cell(0, 0, 1, 0); # A$1
-    $str = xl_rowcol_to_cell(0, 0, 1, 1); # $A$1
-
-See L<ROW AND COLUMN FUNCTIONS> for an explanation of absolute cell references.
-
-=head2 xl_cell_to_rowcol($string)
-
-
-    Parameters: $string         String in A1 format
-
-    Returns:    List            ($row, $col)
-
-This function converts an Excel cell reference in A1 notation to a zero based row and column. The function will also handle Excel's absolute, C<$>, cell notation.
-
-    my ($row, $col) = xl_cell_to_rowcol('A1');     # (0, 0)
-    my ($row, $col) = xl_cell_to_rowcol('B1');     # (0, 1)
-    my ($row, $col) = xl_cell_to_rowcol('C2');     # (1, 2)
-    my ($row, $col) = xl_cell_to_rowcol('$C2' );   # (1, 2)
-    my ($row, $col) = xl_cell_to_rowcol('C$2' );   # (1, 2)
-    my ($row, $col) = xl_cell_to_rowcol('$C$2');   # (1, 2)
 
 =head2 xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
 
@@ -551,6 +311,33 @@ This is useful for setting ranges in Chart objects:
         values        => '=Sheet1!$B$2:$B$10',
     );
 
+
+=cut
+
+###############################################################################
+#
+# xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
+#
+sub xl_range_formula {
+
+    my ( $sheetname, $row_1, $row_2, $col_1, $col_2 ) = @_;
+
+    # Use Excel's conventions and quote the sheet name if it contains any
+    # non-word character or if it isn't already quoted.
+    if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
+        $sheetname = q(') . $sheetname . q(');
+    }
+
+    my $range1 = xl_rowcol_to_cell( $row_1, $col_1, 1, 1 );
+    my $range2 = xl_rowcol_to_cell( $row_2, $col_2, 1, 1 );
+
+    return '=' . $sheetname . '!' . $range1 . ':' . $range2;
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_inc_row($string)
 
 
@@ -564,6 +351,25 @@ This functions takes a cell reference string in A1 notation and increments the r
     my $str = xl_inc_row('B$2' ); # B$3
     my $str = xl_inc_row('$C3' ); # $C4
     my $str = xl_inc_row('$D$4'); # $D$5
+
+
+=cut
+
+###############################################################################
+#
+# xl_inc_row($string)
+#
+sub xl_inc_row {
+
+    my $cell = shift;
+    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
+
+    return xl_rowcol_to_cell( ++$row, $col, $row_abs, $col_abs );
+}
+
+
+###############################################################################
+###############################################################################
 
 =head2 xl_dec_row($string)
 
@@ -579,6 +385,30 @@ This functions takes a cell reference string in A1 notation and decrements the r
     my $str = xl_dec_row('$C4' ); # $C3
     my $str = xl_dec_row('$D$5'); # $D$4
 
+
+=cut
+
+###############################################################################
+#
+# xl_dec_row($string)
+#
+# Decrements the row number of an Excel cell reference in A1 notation.
+# For example C4 to C3
+#
+# Returns: a cell reference string.
+#
+sub xl_dec_row {
+
+    my $cell = shift;
+    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
+
+    return xl_rowcol_to_cell( --$row, $col, $row_abs, $col_abs );
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_inc_col($string)
 
 
@@ -593,6 +423,30 @@ This functions takes a cell reference string in A1 notation and increments the c
     my $str = xl_inc_col('$B1' ); # $C1
     my $str = xl_inc_col('$D$5'); # $E$5
 
+
+=cut
+
+###############################################################################
+#
+# xl_inc_col($string)
+#
+# Increments the column number of an Excel cell reference in A1 notation.
+# For example C3 to D3
+#
+# Returns: a cell reference string.
+#
+sub xl_inc_col {
+
+    my $cell = shift;
+    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
+
+    return xl_rowcol_to_cell( $row, ++$col, $row_abs, $col_abs );
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_dec_col($string)
 
     Parameters: $string, a string in A1 format
@@ -605,6 +459,22 @@ This functions takes a cell reference string in A1 notation and decrements the c
     my $str = xl_dec_col('AA1' ); # Z1
     my $str = xl_dec_col('$C1' ); # $B1
     my $str = xl_dec_col('$E$5'); # $D$5
+
+
+=cut
+
+###############################################################################
+#
+# xl_dec_col($string)
+#
+sub xl_dec_col {
+
+    my $cell = shift;
+    my ( $row, $col, $row_abs, $col_abs ) = xl_cell_to_rowcol( $cell );
+
+    return xl_rowcol_to_cell( $row, --$col, $row_abs, $col_abs );
+}
+
 
 =head1 TIME AND DATE FUNCTIONS
 
@@ -632,6 +502,13 @@ To use these functions you must install the C<Date::Manip> and C<Date::Calc> mod
 
 See also the DateTime::Format::Excel module,http://search.cpan.org/search?dist=DateTime-Format-Excel which is part of the DateTime project and which deals specifically with converting dates and times to and from Excel's format.
 
+
+=cut
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_date_list($years, $months, $days, $hours, $minutes, $seconds)
 
 
@@ -655,6 +532,42 @@ This function converts an array of data into a number that represents an Excel d
     $date4 = xl_date_list(2002, 1, 2, 12, 30, 45);  # 2 Jan 2002 12:30:45 pm
 
 This function can be used in conjunction with functions that parse date and time strings. In fact it is used in most of the following functions.
+
+
+=cut
+
+###############################################################################
+#
+# xl_date_list($years, $months, $days, $hours, $minutes, $seconds)
+#
+sub xl_date_list {
+
+    return undef unless @_;
+
+    my $years   = $_[0];
+    my $months  = $_[1] || 1;
+    my $days    = $_[2] || 1;
+    my $hours   = $_[3] || 0;
+    my $minutes = $_[4] || 0;
+    my $seconds = $_[5] || 0;
+
+    my @date = ( $years, $months, $days, $hours, $minutes, $seconds );
+    my @epoch = ( 1899, 12, 31, 0, 0, 0 );
+
+    ( $days, $hours, $minutes, $seconds ) = Delta_DHMS( @epoch, @date );
+
+    my $date =
+      $days + ( $hours * 3600 + $minutes * 60 + $seconds ) / ( 24 * 60 * 60 );
+
+    # Add a day for Excel's missing leap day in 1900
+    $date++ if ( $date > 59 );
+
+    return $date;
+}
+
+
+###############################################################################
+###############################################################################
 
 =head2 xl_parse_time($string)
 
@@ -683,6 +596,43 @@ Time in Excel is expressed as a fraction of the day in seconds. Therefore you ca
 
     $time = ($hours*3600 +$minutes*60 +$seconds)/(24*60*60);
 
+
+=cut
+
+###############################################################################
+#
+# xl_parse_time($string)
+#
+sub xl_parse_time {
+
+    my $time = shift;
+
+    if ( $time =~ /(\d{1,2}):(\d\d):?((?:\d\d)(?:\.\d+)?)?(?:\s+)?(am|pm)?/i ) {
+
+        my $hours    = $1;
+        my $minutes  = $2;
+        my $seconds  = $3 || 0;
+        my $meridian = lc( $4 ) || '';
+
+        # Normalise midnight and midday
+        $hours = 0 if ( $hours == 12 && $meridian ne '' );
+
+        # Add 12 hours to the pm times. Note: 12.00 pm has been set to 0.00.
+        $hours += 12 if $meridian eq 'pm';
+
+        # Calculate the time as a fraction of 24 hours in seconds
+        return ( $hours * 3600 + $minutes * 60 + $seconds ) / ( 24 * 60 * 60 );
+
+    }
+    else {
+        return undef;    # Not a valid time string
+    }
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_parse_date($string)
 
 
@@ -710,6 +660,32 @@ Note, if you parse a string that represents a time but not a date this function 
     $time  = xl_parse_date("10:30 AM");
     $time -= int($time);
 
+
+=cut
+
+###############################################################################
+#
+# xl_parse_date($string)
+#
+sub xl_parse_date {
+
+    my $date = ParseDate( $_[0] );
+
+    return undef unless defined $date;
+
+    # Unpack the return value from ParseDate()
+    my ( $years, $months, $days, $hours, undef, $minutes, undef, $seconds ) =
+      unpack( "A4     A2       A2     A2      C      A2        C      A2",
+        $date );
+
+    # Convert to Excel date
+    return xl_date_list( $years, $months, $days, $hours, $minutes, $seconds );
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_parse_date_init("variable=value", ...)
 
 
@@ -728,6 +704,22 @@ This function is a thin wrapper for the C<Date::Manip::Date_Init()> function. Yo
 
     xl_parse_date_init("TZ=GMT","DateFormat=non-US");
     $date1 = xl_parse_date("11/7/97");  # July 11th 1997
+
+
+=cut
+
+###############################################################################
+#
+# xl_parse_date_init("variable=value", ...)
+#
+sub xl_parse_date_init {
+
+    Date_Init( @_ );    # How lazy is that.
+}
+
+
+###############################################################################
+###############################################################################
 
 =head2 xl_decode_date_EU($string)
 
@@ -756,6 +748,41 @@ Note: the EU in the function name means that a European date format is assumed i
     $date2 = xl_decode_date_EU("Sat 12 Sept 1998");
     $date3 = xl_decode_date_EU("4:30 AM Sat 12 Sept 1998");
 
+
+=cut
+
+###############################################################################
+#
+# xl_decode_date_EU($string)
+#
+sub xl_decode_date_EU {
+
+    return undef unless @_;
+
+    my $date = shift;
+    my @date;
+    my $time = 0;
+
+    # Remove and decode the time portion of the string
+    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
+        $time = xl_parse_time( $1 );
+        return undef unless defined $time;
+    }
+
+    # Return if the string is now blank, i.e. it contained a time only.
+    return $time if $date =~ /^\s*$/;
+
+    # Decode the date portion of the string
+    @date = Decode_Date_EU( $date );
+    return undef unless @date;
+
+    return xl_date_list( @date ) + $time;
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_decode_date_US($string)
 
 
@@ -783,6 +810,41 @@ Note: the US in the function name means that an American date format is assumed 
     $date2 = xl_decode_date_US("12 Sept Saturday 1998");
     $date3 = xl_decode_date_US("4:30 AM 12 Sept Sat 1998");
 
+
+=cut
+
+###############################################################################
+#
+# xl_decode_date_US($string)
+#
+sub xl_decode_date_US {
+
+    return undef unless @_;
+
+    my $date = shift;
+    my @date;
+    my $time = 0;
+
+    # Remove and decode the time portion of the string
+    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
+        $time = xl_parse_time( $1 );
+        return undef unless defined $time;
+    }
+
+    # Return if the string is now blank, i.e. it contained a time only.
+    return $time if $date =~ /^\s*$/;
+
+    # Decode the date portion of the string
+    @date = Decode_Date_US( $date );
+    return undef unless @date;
+
+    return xl_date_list( @date ) + $time;
+}
+
+
+###############################################################################
+###############################################################################
+
 =head2 xl_date_1904($date)
 
 
@@ -801,11 +863,36 @@ This function converts an Excel date based on the 1900 epoch into a date based o
 
 See also the C<set_1904()> workbook method in the L<Excel::Writer::XLSX> documentation.
 
+=cut
+
+###############################################################################
+#
+# xl_decode_date_US($string)
+#
+sub xl_date_1904 {
+
+    my $date = $_[0] || 0;
+
+    if ( $date < 1462 ) {
+
+        # before 1904
+        $date = 0;
+    }
+    else {
+        $date -= 1462;
+    }
+
+    return $date;
+}
+
+
 =head1 REQUIREMENTS
 
 The date and time functions require functions from the C<Date::Manip> and C<Date::Calc> modules. The required functions are "autoused" from these modules so that you do not have to install them unless you wish to use the date and time routines. Therefore it is possible to use the row and column functions without having C<Date::Manip> and C<Date::Calc> installed.
 
 For more information about "autousing" refer to the documentation on the C<autouse> pragma.
+
+
 
 =head1 BUGS
 
@@ -815,13 +902,26 @@ When using the autoused functions from C<Date::Manip> and C<Date::Calc> on Perl 
 
 The current workaround for this is to put C<use warnings;> near the beginning of your program.
 
+
+
 =head1 AUTHOR
 
 John McNamara jmcnamara@cpan.org
+
+
+
 
 =head1 COPYRIGHT
 
 © MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
+
+=cut
+
+
+1;
+
+
+__END__
 
