@@ -28,6 +28,7 @@ my @rowcol = qw(
   xl_rowcol_to_cell
   xl_cell_to_rowcol
   xl_col_to_name
+  xl_range
   xl_range_formula
   xl_inc_row
   xl_dec_row
@@ -142,6 +143,22 @@ sub xl_col_to_name {
     }
 
     return $col_abs . $col_str;
+}
+
+
+###############################################################################
+#
+# xl_range($row_1, $row_2, $col_1, $col_2, $row_abs_1, $row_abs_2, $col_abs_1, $col_abs_2)
+#
+sub xl_range {
+
+    my ( $row_1,     $row_2,     $col_1,     $col_2 )     = @_[ 0 .. 3 ];
+    my ( $row_abs_1, $row_abs_2, $col_abs_1, $col_abs_2 ) = @_[ 4 .. 7 ];
+
+    my $range1 = xl_rowcol_to_cell( $row_1, $col_1, $row_abs_1, $col_abs_1 );
+    my $range2 = xl_rowcol_to_cell( $row_2, $col_2, $row_abs_2, $col_abs_2 );
+
+    return $range1 . ':' . $range2;
 }
 
 
@@ -413,7 +430,7 @@ Functions to help with some common tasks when using L<Excel::Writer::XLSX>.
 
 These functions mainly relate to dealing with rows and columns in A1 notation and to handling dates and times.
 
-    use Excel::Writer::XLSX::Utility;               # Import everything
+    use Excel::Writer::XLSX::Utility;                   # Import everything
 
     ($row, $col)    = xl_cell_to_rowcol('C2');          # (1, 2)
     $str            = xl_rowcol_to_cell(1, 2);          # C2
@@ -435,6 +452,7 @@ Row and column functions: these are used to deal with Excel's A1 representation 
     xl_rowcol_to_cell
     xl_cell_to_rowcol
     xl_col_to_name
+    xl_range
     xl_range_formula
     xl_inc_row
     xl_dec_row
@@ -558,7 +576,28 @@ The optional parameter C<$col_absolute> can be used to indicate if the column is
     $str = xl_col_to_name(0, 1); # $A
     $str = xl_col_to_name(1, 1); # $B
 
-See L<ROW AND COLUMN FUNCTIONS> for an explanation of absolute cell references.
+=head2 xl_range($row_1, $row_2, $col_1, $col_2, $row_abs_1, $row_abs_2, $col_abs_1, $col_abs_2)
+
+    Parameters: $sheetname      String
+                $row_1:         Integer
+                $row_2:         Integer
+                $col_1:         Integer
+                $col_2:         Integer
+                $row_abs_1:     Boolean (1/0) [optional, default is 0]
+                $row_abs_2:     Boolean (1/0) [optional, default is 0]
+                $col_abs_1:     Boolean (1/0) [optional, default is 0]
+                $col_abs_2:     Boolean (1/0) [optional, default is 0]
+
+    Returns:    A worksheet range formula as a string.
+
+This function converts zero based row and column cell references to an A1 style range string:
+
+    my $str = xl_range(0, 9, 0, 0); # A1:A10
+    my $str = xl_range(1, 8, 2, 2); # C2:C9
+
+    my $str = xl_range(0, 3, 0, 4      ); # A1:E4
+    my $str = xl_range(0, 3, 0, 4, 1   ); # A$1:E4
+    my $str = xl_range(0, 3, 0, 4, 1, 1); # A$1:E$4
 
 =head2 xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
 
@@ -576,9 +615,7 @@ This function converts zero based row and column cell references to an A1 style 
     my $str = xl_range_formula('Sheet2',   6, 65, 1, 1); # =Sheet2!$B$7:$B$66
     my $str = xl_range_formula('New data', 1,  8, 2, 2); # ='New data'!$C$2:$C$9
 
-
 This is useful for setting ranges in Chart objects:
-
 
     $chart->add_series(
         categories    => xl_range_formula('Sheet1', 1, 9, 0, 0),
