@@ -26,9 +26,10 @@ our @EXPORT_OK   = qw(
   _new_worksheet
   _new_workbook
   _new_style
+  _compare_xlsx_files
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.05';
 
 
 ###############################################################################
@@ -43,6 +44,9 @@ our $VERSION = '0.01';
 sub _expected_to_aref {
 
     my @data;
+
+    # Ignore warning for files that don't have a 'main::DATA'.
+    no warnings 'once';
 
     while ( <main::DATA> ) {
         chomp;
@@ -65,12 +69,157 @@ sub _got_to_aref {
 
     my $xml_str = shift;
 
-    $xml_str =~ s/\n//g;
+    # Remove the newlines after the XML declaration and any others.
+    $xml_str =~ s/[\r\n]//g;
 
     # Split the XML into chunks at element boundaries.
     my @data = split /(?<=>)(?=<)/, $xml_str;
 
     return \@data;
+}
+
+###############################################################################
+#
+# _xml_str_to_array()
+#
+# Convert an XML string into an array for comparison testing.
+#
+sub _xml_str_to_array {
+
+    my $xml_str = shift;
+    my @xml     = @{ _got_to_aref( $xml_str ) };
+
+    s{(\S)/>$}{$1 />} for @xml;
+
+    return @xml;
+}
+
+
+###############################################################################
+#
+# _compare_xlsx_files()
+#
+# Compare two XLSX files by extracting the XML files from each archive and
+# comparing them.
+#
+# This is used to compare an "expected" file produced by Excel with a "got"
+# file produced by Excel::Writer::XLSX.
+#
+# In order to compare the XLSX files we convert the data in each XML file.
+# contained in the zip archive into arrays of XML elements to make identifying
+# differences easier.
+#
+# This function returns 3 elements suitable for _is_deep_diff() comparison:
+#    return ( $got_aref, $expected_aref, $caption)
+#
+sub _compare_xlsx_files {
+
+    my $got_filename = shift;
+    my $exp_filename = shift;
+    my $got_zip      = Archive::Zip->new();
+    my $exp_zip      = Archive::Zip->new();
+
+    # Suppress Archive::Zip error reporting. We will handle errors.
+    Archive::Zip::setErrorHandler( sub { } );
+
+    # Test the $got file exists.
+    if ( $got_zip->read( $got_filename ) != 0 ) {
+        my $error = "Excel::Write::XML generated file not found.";
+        return ( [$error], [$got_filename], " _compare_xlsx_files(). Files." );
+    }
+
+    # Test the $exp file exists.
+    if ( $exp_zip->read( $exp_filename ) != 0 ) {
+        my $error = "Excel generated comparison file not found.";
+        return ( [$error], [$exp_filename], " _compare_xlsx_files(). Files." );
+    }
+
+    # The zip "members" are the files in the XLSX container.
+    my @got_members = sort $got_zip->memberNames();
+    my @exp_members = sort $exp_zip->memberNames();
+
+    # Check that each XLSX container has the same file members.
+    if ( !_arrays_equal( \@got_members, \@exp_members ) ) {
+        return ( \@got_members, \@exp_members,
+            ' _compare_xlsx_files(). Members.' );
+    }
+
+    # Compare each file in the XLSX containers.
+    for my $filename ( @exp_members ) {
+        my $got_xml_str = $got_zip->contents( $filename );
+        my $exp_xml_str = $exp_zip->contents( $filename );
+
+        # Remove dates and user specific data from the core.xml data.
+        if ( $filename eq 'docProps/core.xml' ) {
+            $exp_xml_str =~ s/John//g;
+            $exp_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
+            $got_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
+        }
+
+        my @got_xml = _xml_str_to_array( $got_xml_str );
+        my @exp_xml = _xml_str_to_array( $exp_xml_str );
+
+        # Reorder the XML elements in the XLSX relationship files.
+        if ( $filename eq '[Content_Types].xml' || $filename =~ /.rels$/ ) {
+            @got_xml = _sort_rel_file_data( @got_xml );
+            @exp_xml = _sort_rel_file_data( @exp_xml );
+        }
+
+        # Comparison of the XML elements in each file.
+        if ( !_arrays_equal( \@got_xml, \@exp_xml ) ) {
+            return ( \@got_xml, \@exp_xml,
+                " _compare_xlsx_files(). $filename" );
+        }
+    }
+
+    # Files were the same. Return values that will evaluate to a test pass.
+    return ( ['ok'], ['ok'], ' _compare_xlsx_files()' );
+}
+
+
+###############################################################################
+#
+# _arrays_equal()
+#
+# Compare two array refs for equality.
+#
+sub _arrays_equal {
+
+    my $exp = shift;
+    my $got = shift;
+
+    if ( @$exp != @$got ) {
+        return 0;
+    }
+
+    for my $i ( 0 .. @$exp - 1 ) {
+        if ( $exp->[$i] ne $got->[$i] ) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+
+###############################################################################
+#
+# _sort_rel_file_data()
+#
+# Re-order the relationship elements in an array of XLSX XML rel (relationship)
+# data. This is necessary for comparison since Excel can produce the elements
+# in a semi-random order.
+#
+sub _sort_rel_file_data {
+
+    my @xml_elements = @_;
+    my $header       = shift @xml_elements;
+    my $tail         = pop @xml_elements;
+
+    # Sort the relationship elements.
+    @xml_elements = sort @xml_elements;
+
+    return $header, @xml_elements, $tail;
 }
 
 

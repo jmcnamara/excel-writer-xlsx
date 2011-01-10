@@ -168,12 +168,12 @@ sub close {
     return if $self->{_fileclosed};
 
     # Test filehandle in case new() failed and the user didn't check.
-    #return unless defined $self->{_filehandle};
+    return unless defined $self->{_filehandle};
 
     $self->{_fileclosed} = 1;
     $self->_store_workbook();
 
-    #return close $self->{_filehandle};
+    return close $self->{_filehandle};
 }
 
 
