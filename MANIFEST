@@ -21,7 +21,9 @@ lib/Excel/Writer/XLSX/Workbook.pm
 lib/Excel/Writer/XLSX/Worksheet.pm
 
 t/lib/TestFunctions.pm
-t/package/app/app.t
+t/package/app/app01.t
+t/package/app/app02.t
+t/package/app/app03.t
 t/package/app/sub_write_xml_declaration.t
 t/package/content_types/content_types.t
 t/package/content_types/sub_write_default.t
@@ -61,9 +63,17 @@ t/package/styles/sub_write_style_xf.t
 t/package/styles/sub_write_xf.t
 t/package/styles/sub_write_xml_declaration.t
 t/package/xml_writer/sub_write_xml_declaration.t
-t/utility/x_rowcol_to_cell.t
+t/regression/simple01.t
+t/regression/simple02.t
+t/regression/xlsx_files/simple01.xlsx
+t/regression/xlsx_files/simple02.xlsx
+t/utility/xl_col_to_name.t
+t/utility/xl_range.t
+t/utility/xl_rowcol_to_cell.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
+t/workbook/sub_write_defined_name.t
+t/workbook/sub_write_defined_names.t
 t/workbook/sub_write_ext.t
 t/workbook/sub_write_ext_lst.t
 t/workbook/sub_write_file_version.t
@@ -84,12 +94,14 @@ t/worksheet/sub_write_col_info.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
 t/worksheet/sub_write_ext_lst.t
+t/worksheet/sub_write_header_footer.t
 t/worksheet/sub_write_merge_cell.t
 t/worksheet/sub_write_merge_cells.t
 t/worksheet/sub_write_mx_plv.t
 t/worksheet/sub_write_page_margins.t
 t/worksheet/sub_write_page_setup.t
 t/worksheet/sub_write_phonetic_pr.t
+t/worksheet/sub_write_print_options.t
 t/worksheet/sub_write_row.t
 t/worksheet/sub_write_selection.t
 t/worksheet/sub_write_sheet_calc_pr.t
