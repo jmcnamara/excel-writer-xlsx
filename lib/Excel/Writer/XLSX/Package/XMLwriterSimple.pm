@@ -77,9 +77,10 @@ sub startTag {
 
     print { $self->{_fh} } "<$tag";
 
-    while (@attributes) {
-        my $key = shift @attributes;
+    while ( @attributes ) {
+        my $key   = shift @attributes;
         my $value = shift @attributes;
+        $value = _escape_xml_chars( $value );
 
         print { $self->{_fh} } qq( $key="$value");
     }
@@ -117,9 +118,10 @@ sub emptyTag {
 
     print { $self->{_fh} } "<$tag";
 
-    while (@attributes) {
-        my $key = shift @attributes;
+    while ( @attributes ) {
+        my $key   = shift @attributes;
         my $value = shift @attributes;
+        $value = _escape_xml_chars( $value );
 
         print { $self->{_fh} } qq( $key="$value");
     }
@@ -146,26 +148,36 @@ sub dataElement {
 
     print { $self->{_fh} } "<$tag";
 
-    while (@attributes) {
-        my $key = shift @attributes;
+    while ( @attributes ) {
+        my $key   = shift @attributes;
         my $value = shift @attributes;
+        $value = _escape_xml_chars( $value );
 
         print { $self->{_fh} } qq( $key="$value");
     }
 
-    # Escape XML characters.
-    if ( $data =~ m/[&<>"]/ ) {
-        for ( $data ) {
-            s/&/&amp;/g;
-            s/</&lt;/g;
-            s/>/&gt;/g;
-            s/"/&quot;/g;
-        }
-    }
+    $data = _escape_xml_chars( $data );
 
     print { $self->{_fh} } ">";
     print { $self->{_fh} } $data;
     print { $self->{_fh} } "</$tag>";
+}
+
+
+###############################################################################
+#
+# characters()
+#
+# For compatibility with XML::Writer only.
+#
+sub characters {
+
+    my $self = shift;
+    my $data = shift;
+
+    $data = _escape_xml_chars( $data );
+
+    print { $self->{_fh} } $data;
 }
 
 
@@ -179,6 +191,7 @@ sub end {
 
     my $self = shift;
 
+    print { $self->{_fh} } "\n";
 }
 
 
@@ -193,6 +206,29 @@ sub getOutput {
     my $self = shift;
 
     return $self->{_fh};
+}
+
+
+###############################################################################
+#
+# _escape_xml_chars()
+#
+# Escape XML characters.
+#
+sub _escape_xml_chars {
+
+    my $str = shift;
+
+    return $str if $str !~ m/[&<>"]/;
+
+    for ( $str ) {
+        s/&/&amp;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+        s/"/&quot;/g;
+    }
+
+    return $str;
 }
 
 
