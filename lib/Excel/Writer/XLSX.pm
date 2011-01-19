@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.05 of Excel::Writer::XLSX, released January 4, 2011.
+This document refers to version 0.06 of Excel::Writer::XLSX, released January 19, 2011.
 
 
 
@@ -2111,8 +2111,6 @@ A common requirement when working with Excel::Writer::XLSX is to apply the same 
 
 =head2 set_landscape()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is used to set the orientation of a worksheet's printed page to landscape:
 
     $worksheet->set_landscape();    # Landscape mode
@@ -2121,8 +2119,6 @@ This method is used to set the orientation of a worksheet's printed page to land
 
 
 =head2 set_portrait()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method is used to set the orientation of a worksheet's printed page to portrait. The default worksheet orientation is portrait, so you won't generally need to call this method.
 
@@ -2141,8 +2137,6 @@ This method is used to display the worksheet in "Page View" mode. This is curren
 
 
 =head2 set_paper( $index )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method is used to set the paper format for the printed output of a worksheet. The following paper styles are available:
 
@@ -2204,8 +2198,6 @@ If you do not specify a paper type the worksheet will print using the printer's 
 
 =head2 center_horizontally()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 Center the worksheet data horizontally between the margins on the printed page:
 
     $worksheet->center_horizontally();
@@ -2215,8 +2207,6 @@ Center the worksheet data horizontally between the margins on the printed page:
 
 =head2 center_vertically()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 Center the worksheet data vertically between the margins on the printed page:
 
     $worksheet->center_vertically();
@@ -2225,8 +2215,6 @@ Center the worksheet data vertically between the margins on the printed page:
 
 
 =head2 set_margins( $inches )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 There are several methods available for setting the worksheet margins on the printed page:
 
@@ -2243,8 +2231,6 @@ All of these methods take a distance in inches as a parameter. Note: 1 inch = 25
 
 
 =head2 set_header( $string, $margin )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Headers and footers are generated using a C<$string> which is a combination of plain text and control characters. The C<$margin> parameter is optional.
 
@@ -2383,8 +2369,6 @@ See, also the C<headers.pl> program in the C<examples> directory of the distribu
 
 
 =head2 set_footer()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The syntax of the C<set_footer()> method is the same as C<set_header()>,  see above.
 
@@ -4702,15 +4686,15 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
 
     Page Set-up Methods         Support
     ===================         =======
-    set_landscape()             No
-    set_portrait()              No
+    set_landscape()             Yes
+    set_portrait()              Yes
     set_page_view()             No
-    set_paper()                 No
-    center_horizontally()       No
-    center_vertically()         No
-    set_margins()               No
-    set_header()                No
-    set_footer()                No
+    set_paper()                 Yes
+    center_horizontally()       Yes
+    center_vertically()         Yes
+    set_margins()               Yes
+    set_header()                Yes
+    set_footer()                Yes
     repeat_rows()               No
     repeat_columns()            No
     hide_gridlines()            No

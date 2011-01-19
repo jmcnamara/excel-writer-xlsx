@@ -63,6 +63,7 @@ t/package/styles/sub_write_style_xf.t
 t/package/styles/sub_write_xf.t
 t/package/styles/sub_write_xml_declaration.t
 t/package/xml_writer/sub_write_xml_declaration.t
+t/package/xml_writer/xml_writer.t
 t/regression/simple01.t
 t/regression/simple02.t
 t/regression/xlsx_files/simple01.xlsx

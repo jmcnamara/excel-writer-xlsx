@@ -1,5 +1,21 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
+0.06 January 4 2011
+
+    ! Added fix for XML characters in attributes.
+      Reported by John Roll.
+
+    + Added initial Page Setup methods.
+      set_landscape()
+      set_portrait()
+      set_paper()
+      center_horizontally()
+      center_vertically()
+      set_margins()
+      set_header()
+      set_footer()
+
+    
 0.05 January 4 2011
 
     + Added support for array_formulas. See the docs for write_array_formula()
