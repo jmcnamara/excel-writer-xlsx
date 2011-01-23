@@ -21,6 +21,9 @@ my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
+my $ignore_members  = [];
+my $ignore_elements = {};
+
 
 ###############################################################################
 #
@@ -42,8 +45,13 @@ $workbook->close();
 # Compare the generated and existing Excel files.
 #
 
-my ( $got, $expected, $caption ) =
-  _compare_xlsx_files( $got_filename, $exp_filename );
+my ( $got, $expected, $caption ) = _compare_xlsx_files(
+
+    $got_filename,
+    $exp_filename,
+    $ignore_members,
+    $ignore_elements,
+);
 
 _is_deep_diff( $got, $expected, $caption );
 

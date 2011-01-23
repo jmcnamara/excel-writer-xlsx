@@ -114,10 +114,12 @@ sub _xml_str_to_array {
 #
 sub _compare_xlsx_files {
 
-    my $got_filename = shift;
-    my $exp_filename = shift;
-    my $got_zip      = Archive::Zip->new();
-    my $exp_zip      = Archive::Zip->new();
+    my $got_filename    = shift;
+    my $exp_filename    = shift;
+    my $ignore_members  = shift;
+    my $ignore_elements = shift;
+    my $got_zip         = Archive::Zip->new();
+    my $exp_zip         = Archive::Zip->new();
 
     # Suppress Archive::Zip error reporting. We will handle errors.
     Archive::Zip::setErrorHandler( sub { } );
@@ -138,10 +140,18 @@ sub _compare_xlsx_files {
     my @got_members = sort $got_zip->memberNames();
     my @exp_members = sort $exp_zip->memberNames();
 
+    # Ignore some test specific filenames.
+    if ( defined $ignore_members && @$ignore_members) {
+        my $ignore_regex = join '|', @$ignore_members;
+
+        @got_members = grep { !/$ignore_regex/ } @got_members;
+        @exp_members = grep { !/$ignore_regex/ } @exp_members;
+    }
+
     # Check that each XLSX container has the same file members.
     if ( !_arrays_equal( \@got_members, \@exp_members ) ) {
         return ( \@got_members, \@exp_members,
-            ' _compare_xlsx_files(). Members.' );
+            ' _compare_xlsx_files(): Members.' );
     }
 
     # Compare each file in the XLSX containers.
@@ -159,6 +169,18 @@ sub _compare_xlsx_files {
         my @got_xml = _xml_str_to_array( $got_xml_str );
         my @exp_xml = _xml_str_to_array( $exp_xml_str );
 
+        # Ignore test specific XML elements for defined filenames.
+        if ( defined $ignore_elements && exists $ignore_elements->{$filename} )
+        {
+            my @ignore_elements = @{ $ignore_elements->{$filename} };
+
+            if ( @ignore_elements ) {
+                my $ignore_regex = join '|', @ignore_elements;
+                @got_xml = grep { !/$ignore_regex/ } @got_xml;
+                @exp_xml = grep { !/$ignore_regex/ } @exp_xml;
+            }
+        }
+
         # Reorder the XML elements in the XLSX relationship files.
         if ( $filename eq '[Content_Types].xml' || $filename =~ /.rels$/ ) {
             @got_xml = _sort_rel_file_data( @got_xml );
@@ -168,7 +190,7 @@ sub _compare_xlsx_files {
         # Comparison of the XML elements in each file.
         if ( !_arrays_equal( \@got_xml, \@exp_xml ) ) {
             return ( \@got_xml, \@exp_xml,
-                " _compare_xlsx_files(). $filename" );
+                " _compare_xlsx_files(): $filename" );
         }
     }
 

@@ -16,34 +16,32 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'simple02.xlsx';
+my $filename     = 'repeat01.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members  = [];
-my $ignore_elements = {};
+my $ignore_members = [
+    qw(
+      xl/printerSettings/printerSettings1.bin
+      xl/worksheets/_rels/sheet1.xml.rels
+      )
+];
+
+my $ignore_elements = { '[Content_Types].xml' => ['<Default Extension="bin"'] };
 
 
 ###############################################################################
 #
-# Test the creation of a simple Excel::Writer::XLSX file.
+# Test the creation of a simple Excel::Writer::XLSX file with repeat rows.
 #
 use Excel::Writer::XLSX;
 
-my $workbook   = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet1 = $workbook->add_worksheet();
-my $worksheet2 = $workbook->add_worksheet('Data Sheet');
-my $worksheet3 = $workbook->add_worksheet();
+my $workbook  = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet = $workbook->add_worksheet();
 
-my $bold = $workbook->add_format( bold => 1 );
-
-$worksheet1->write( 'A1', 'Foo' );
-$worksheet1->write( 'A2', 123 );
-
-$worksheet3->write( 'B2', 'Foo' );
-$worksheet3->write( 'B3', 'Bar', $bold );
-$worksheet3->write( 'C4', 234 );
+$worksheet->write( 'A1', 'Hello' );
+$worksheet->write( 'A2', 123 );
 
 $workbook->close();
 
