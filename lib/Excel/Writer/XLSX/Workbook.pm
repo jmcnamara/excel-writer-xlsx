@@ -66,6 +66,7 @@ sub new {
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
     $self->{_defined_names}    = [];
+    $self->{_named_ranges}     = [];
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -138,6 +139,9 @@ sub _assemble_xml_file {
 
     # Write the worksheet names and ids.
     $self->_write_sheets();
+
+    # Write the workbook defined names.
+    $self->_write_defined_names();
 
     # Write the workbook calculation properties.
     $self->_write_calc_pr();
@@ -1069,8 +1073,7 @@ sub _write_defined_names {
 
     my $self = shift;
 
-    next unless @{ $self->{_defined_names} };
-
+    return unless @{ $self->{_defined_names} };
 
     $self->{_writer}->startTag( 'definedNames' );
 

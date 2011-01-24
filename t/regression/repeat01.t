@@ -28,7 +28,10 @@ my $ignore_members = [
       )
 ];
 
-my $ignore_elements = { '[Content_Types].xml' => ['<Default Extension="bin"'] };
+my $ignore_elements = {
+    '[Content_Types].xml'      => ['<Default Extension="bin"'],
+    'xl/worksheets/sheet1.xml' => ['<pageMargins', '<pageSetup'],
+};
 
 
 ###############################################################################
@@ -40,8 +43,11 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->write( 'A1', 'Hello' );
-$worksheet->write( 'A2', 123 );
+# TODO. Temp Code.
+$workbook->{_named_ranges}  = ['Sheet1!Print_Titles'];
+$workbook->{_defined_names} = [[ '_xlnm.Print_Titles', 0, 'Sheet1!$1:$1' ]];
+
+$worksheet->write( 'A1', 'Foo' );
 
 $workbook->close();
 
