@@ -20,7 +20,8 @@ use warnings;
 use Carp;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Utility
+  qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.06';
@@ -56,22 +57,22 @@ sub new {
     $self->{_str_table}   = $_[6];
     $self->{_1904}        = $_[7];
 
-    $self->{_ext_sheets}  = [];
-    $self->{_fileclosed}  = 0;
+    $self->{_ext_sheets} = [];
+    $self->{_fileclosed} = 0;
 
-    $self->{_xls_rowmax}  = $rowmax;
-    $self->{_xls_colmax}  = $colmax;
-    $self->{_xls_strmax}  = $strmax;
-    $self->{_dim_rowmin}  = undef;
-    $self->{_dim_rowmax}  = undef;
-    $self->{_dim_colmin}  = undef;
-    $self->{_dim_colmax}  = undef;
+    $self->{_xls_rowmax} = $rowmax;
+    $self->{_xls_colmax} = $colmax;
+    $self->{_xls_strmax} = $strmax;
+    $self->{_dim_rowmin} = undef;
+    $self->{_dim_rowmax} = undef;
+    $self->{_dim_colmin} = undef;
+    $self->{_dim_colmax} = undef;
 
-    $self->{_colinfo}     = [];
-    $self->{_selection}   = [ 0, 0 ];
-    $self->{_hidden}      = 0;
-    $self->{_active}      = 0;
-    $self->{_tab_color}   = 0;
+    $self->{_colinfo}   = [];
+    $self->{_selection} = [ 0, 0 ];
+    $self->{_hidden}    = 0;
+    $self->{_active}    = 0;
+    $self->{_tab_color} = 0;
 
     $self->{_panes}       = [];
     $self->{_active_pane} = 3;
@@ -90,12 +91,12 @@ sub new {
     $self->{_header}                = '';
     $self->{_footer}                = '';
 
-    $self->{_margin_left}        = 0.7;
-    $self->{_margin_right}       = 0.7;
-    $self->{_margin_top}         = 0.75;
-    $self->{_margin_bottom}      = 0.75;
-    $self->{_margin_header}      = 0.3;
-    $self->{_margin_footer}      = 0.3;
+    $self->{_margin_left}   = 0.7;
+    $self->{_margin_right}  = 0.7;
+    $self->{_margin_top}    = 0.75;
+    $self->{_margin_bottom} = 0.75;
+    $self->{_margin_header} = 0.3;
+    $self->{_margin_footer} = 0.3;
 
     $self->{_repeat_rows} = '';
     $self->{_repeat_cols} = '';
@@ -454,9 +455,9 @@ sub split_panes {
 
     my $self = shift;
 
-    $self->{_frozen} = 0;
-    $self->{_frozen_no_split}   = 0;
-    $self->{_panes}  = [@_];
+    $self->{_frozen}          = 0;
+    $self->{_frozen_no_split} = 0;
+    $self->{_panes}           = [@_];
 }
 
 # Older method name for backwards compatibility.
@@ -515,10 +516,10 @@ sub set_page_view {
 #
 sub set_tab_color {
 
-    my $self  = shift;
+    my $self = shift;
 
-    my $color = &Spreadsheet::WriteExcel::Format::_get_color($_[0]);
-       $color = 0 if $color == 0x7FFF; # Default color.
+    my $color = &Spreadsheet::WriteExcel::Format::_get_color( $_[0] );
+    $color = 0 if $color == 0x7FFF;    # Default color.
 
     $self->{_tab_color} = $color;
 }
@@ -723,8 +724,7 @@ sub set_margin_bottom {
 #
 # repeat_rows($first_row, $last_row)
 #
-# Set the rows to repeat at the top of each printed page. This is stored as
-# <NamedRange> element.
+# Set the rows to repeat at the top of each printed page.
 #
 sub repeat_rows {
 
@@ -733,20 +733,16 @@ sub repeat_rows {
     my $row_min = $_[0];
     my $row_max = $_[1] || $_[0];    # Second row is optional
 
-    my $area;
 
-    # Convert the zero-indexed rows to R1:R2 notation.
-    if ( $row_min == $row_max ) {
-        $area = 'R' . ( $row_min + 1 );
-    }
-    else {
-        $area = 'R' . ( $row_min + 1 ) . ':' . 'R' . ( $row_max + 1 );
-    }
+    # Convert to 1 based.
+    $row_min++;
+    $row_max++;
 
-    # Build up the print area range "=Sheet2!R1:R2"
+    my $area = '$' . $row_min . ':' . '$' . $row_max;
+
+    # Build up the print titles "Sheet1!$1:$2"
     my $sheetname = $self->_quote_sheetname( $self->{_name} );
     $area = $sheetname . "!" . $area;
-
 
     $self->{_repeat_rows} = $area;
 }
@@ -775,20 +771,15 @@ sub repeat_columns {
     my $col_min = $_[0];
     my $col_max = $_[1] || $_[0];    # Second col is optional
 
-    my $area;
+    # Convert to A notation.
+    $col_min = xl_col_to_name( $_[0], 1 );
+    $col_max = xl_col_to_name( $_[1], 1 );
 
-    # Convert the zero-indexed cols to C1:C2 notation.
-    if ( $col_min == $col_max ) {
-        $area = 'C' . ( $col_min + 1 );
-    }
-    else {
-        $area = 'C' . ( $col_min + 1 ) . ':' . 'C' . ( $col_max + 1 );
-    }
+    my $area = $col_min . ':' . $col_max;
 
     # Build up the print area range "=Sheet2!C1:C2"
     my $sheetname = $self->_quote_sheetname( $self->{_name} );
     $area = $sheetname . "!" . $area;
-
 
     $self->{_repeat_cols} = $area;
 }
@@ -1699,14 +1690,14 @@ sub write_array_formula {
     my $record = 0x0006;           # Record identifier
     my $length;                    # Bytes to follow
 
-    my $row1    = $_[0];    # First row
-    my $col1    = $_[1];    # First column
-    my $row2    = $_[2];    # Last row
-    my $col2    = $_[3];    # Last column
-    my $formula = $_[4];    # The formula text string
-    my $xf      = $_[5];    # The format object.
-    my $value   = $_[6];    # Optional formula value.
-    my $type    = 'a';      # The data type
+    my $row1    = $_[0];           # First row
+    my $col1    = $_[1];           # First column
+    my $row2    = $_[2];           # Last row
+    my $col2    = $_[3];           # Last column
+    my $formula = $_[4];           # The formula text string
+    my $xf      = $_[5];           # The format object.
+    my $value   = $_[6];           # Optional formula value.
+    my $type    = 'a';             # The data type
 
     $xf = _XF( $self, $row1, $col1, $xf );    # The cell format
 
@@ -1737,7 +1728,8 @@ sub write_array_formula {
     $formula =~ s/^{(.*)}$/$1/;
     $formula =~ s/^=//;
 
-    $self->{_table}->[$row1]->[$col1] = [ $type, $formula, $xf, $range, $value ];
+    $self->{_table}->[$row1]->[$col1] =
+      [ $type, $formula, $xf, $range, $value ];
 
     return 0;
 }
@@ -1896,7 +1888,7 @@ sub write_date_time {
     my $col  = $_[1];                              # Zero indexed column
     my $str  = $_[2];
     my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
-    my $type = 'n';                                 # The data type
+    my $type = 'n';                                # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -2215,6 +2207,28 @@ sub _XF {
     }
     else {
         return 0;    # 0x0F for Spreadsheet::WriteExcel
+    }
+}
+
+
+###############################################################################
+#
+# _quote_sheetname()
+#
+# Sheetnames used in references should be quoted if they contain any spaces,
+# special characters or if the look like something that isn't a sheet name.
+# TODO. We need to handle more special cases.
+#
+sub _quote_sheetname {
+
+    my $self      = shift;
+    my $sheetname = $_[0];
+
+    if ( $sheetname =~ /^Sheet\d+$/ ) {
+        return $sheetname;
+    }
+    else {
+        return qq('$sheetname');
     }
 }
 
@@ -3717,7 +3731,6 @@ sub _write_print_options {
 }
 
 
-
 ##############################################################################
 #
 # _write_header_footer()
@@ -3765,7 +3778,6 @@ sub _write_odd_footer {
 
     $self->{_writer}->dataElement( 'oddFooter', $data );
 }
-
 
 
 1;

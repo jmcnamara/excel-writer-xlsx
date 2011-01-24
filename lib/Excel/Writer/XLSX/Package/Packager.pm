@@ -84,9 +84,9 @@ sub _set_package_dir {
 #
 sub _add_workbook {
 
-    my $self         = shift;
-    my $workbook     = shift;
-    my @sheet_names  = @{ $workbook->{_sheetnames} };
+    my $self        = shift;
+    my $workbook    = shift;
+    my @sheet_names = @{ $workbook->{_sheetnames} };
 
     $self->{_workbook}     = $workbook;
     $self->{_sheet_names}  = \@sheet_names;
@@ -177,15 +177,15 @@ sub _write_shared_strings_file {
 
     mkdir $dir . '/xl';
 
-    my $total     =  $self->{_workbook}->{_str_total};
-    my $unique    =  $self->{_workbook}->{_str_unique};
-    my $sst_data  =  $self->{_workbook}->{_str_array};
+    my $total    = $self->{_workbook}->{_str_total};
+    my $unique   = $self->{_workbook}->{_str_unique};
+    my $sst_data = $self->{_workbook}->{_str_array};
 
     return unless $total > 0;
 
-    $sst->_set_string_count($total);
-    $sst->_set_unique_count($unique);
-    $sst->_add_strings($sst_data);
+    $sst->_set_string_count( $total );
+    $sst->_set_unique_count( $unique );
+    $sst->_add_strings( $sst_data );
 
     $sst->_set_xml_writer( $dir . '/xl/sharedStrings.xml' );
     $sst->_assemble_xml_file();
@@ -221,7 +221,7 @@ sub _write_app_file {
     }
 
     # Add the Named Ranges parts.
-    for my $named_range (@{$self->{_named_ranges}} ) {
+    for my $named_range ( @{ $self->{_named_ranges} } ) {
         $app->_add_part_name( $named_range );
     }
 
@@ -271,7 +271,7 @@ sub _write_content_types_file {
     }
 
     # Add the sharedString rel if there is string data in the workbook.
-    if ($self->{_workbook}->{_str_total}) {
+    if ( $self->{_workbook}->{_str_total} ) {
         $content->_add_shared_strings();
     }
 

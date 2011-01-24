@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'repeat01.xlsx';
+my $filename     = 'repeat04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -36,12 +36,13 @@ my $ignore_elements = {
 
 ###############################################################################
 #
-# Test the creation of a simple Excel::Writer::XLSX file with repeat rows.
+# Test the creation of a simple Excel::Writer::XLSX file with repeat rows
+# when the sheet name contains a space.
 #
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
+my $worksheet = $workbook->add_worksheet('Sheet 1');
 
 $worksheet->repeat_rows( 0 );
 

@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'repeat01.xlsx';
+my $filename     = 'repeat05.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -24,28 +24,36 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 my $ignore_members = [
     qw(
       xl/printerSettings/printerSettings1.bin
+      xl/printerSettings/printerSettings2.bin
       xl/worksheets/_rels/sheet1.xml.rels
+      xl/worksheets/_rels/sheet3.xml.rels
       )
 ];
 
 my $ignore_elements = {
     '[Content_Types].xml'      => ['<Default Extension="bin"'],
     'xl/worksheets/sheet1.xml' => ['<pageMargins', '<pageSetup'],
+    'xl/worksheets/sheet3.xml' => ['<pageMargins', '<pageSetup'],
 };
 
 
 ###############################################################################
 #
-# Test the creation of a simple Excel::Writer::XLSX file with repeat rows.
+# Test the creation of a simple Excel::Writer::XLSX file with repeat rows and
+# cols on more than one worksheet.
 #
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
+my $worksheet3 = $workbook->add_worksheet();
 
-$worksheet->repeat_rows( 0 );
+$worksheet1->repeat_rows( 0 );
+$worksheet3->repeat_rows( 2, 3 );
+$worksheet3->repeat_columns( 'B:F' );
 
-$worksheet->write( 'A1', 'Foo' );
+$worksheet1->write( 'A1', 'Foo' );
 
 $workbook->close();
 
