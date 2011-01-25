@@ -86,6 +86,9 @@ sub new {
     $self->{_print_options_changed} = 0;
     $self->{_hcenter}               = 0;
     $self->{_vcenter}               = 0;
+    $self->{_print_gridlines}       = 0;
+    $self->{_screen_gridlines}      = 1;
+    $self->{_print_headers}         = 0;
 
     $self->{_header_footer_changed} = 0;
     $self->{_header}                = '';
@@ -100,10 +103,6 @@ sub new {
 
     $self->{_repeat_rows} = '';
     $self->{_repeat_cols} = '';
-
-    $self->{_print_gridlines}  = 0;
-    $self->{_screen_gridlines} = 1;
-    $self->{_print_headers}    = 0;
 
     $self->{_page_order}     = 0;
     $self->{_black_white}    = 0;
@@ -1153,6 +1152,93 @@ sub keep_leading_zeros {
     else {
         $self->{_leading_zeros} = 1;
     }
+}
+
+
+###############################################################################
+#
+# right_to_left()
+#
+# Display the worksheet right to left for some eastern versions of Excel.
+#
+sub right_to_left {
+
+    my $self = shift;
+
+    $self->{_display_arabic} = defined $_[0] ? $_[0] : 1;
+}
+
+
+###############################################################################
+#
+# hide_zero()
+#
+# Hide cell zero values.
+#
+sub hide_zero {
+
+    my $self = shift;
+
+    $self->{_display_zeros} = defined $_[0] ? not $_[0] : 0;
+}
+
+
+###############################################################################
+#
+# print_across()
+#
+# Set the order in which pages are printed.
+#
+sub print_across {
+
+    my $self = shift;
+    my $page_order = shift // 1;
+
+    if ( $page_order ) {
+        $self->{_page_order}         = 1;
+        $self->{_page_setup_changed} = 1;
+    }
+    else {
+        $self->{_page_order} = 0;
+    }
+}
+
+
+###############################################################################
+#
+# set_start_page()
+#
+# Set the start page number.
+#
+sub set_start_page {
+
+    my $self = shift;
+    return unless defined $_[0];
+
+    $self->{_page_start}    = $_[0];
+    $self->{_custom_start}  = 1;
+}
+
+
+###############################################################################
+#
+# set_first_row_column()
+#
+# Set the topmost and leftmost visible row and column.
+# TODO: Document this when tested fully for interaction with panes.
+#
+sub set_first_row_column {
+
+    my $self = shift;
+
+    my $row  = $_[0] || 0;
+    my $col  = $_[1] || 0;
+
+    $row = 65535 if $row > 65535;
+    $col = 255   if $col > 255;
+
+    $self->{_first_row} = $row;
+    $self->{_first_col} = $col;
 }
 
 
@@ -3571,6 +3657,10 @@ sub _write_page_setup {
         push @attributes, ( 'paperSize' => $self->{_paper_size} );
     }
 
+    # Set the page print direction.
+    if ( $self->{_page_order} ) {
+        push @attributes, ( 'pageOrder' => "overThenDown" );
+    }
 
     # Set page orientation.
     if ( $self->{_orientation} == 0 ) {

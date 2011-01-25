@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 
 ###############################################################################
@@ -77,6 +77,21 @@ $expected = '<pageSetup paperSize="9" orientation="portrait" />';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->set_paper( 9 );
+
+$worksheet->_write_page_setup();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_page_setup() method. With print_across();
+#
+$caption  = " \tWorksheet: _write_page_setup()";
+$expected = '<pageSetup pageOrder="overThenDown" orientation="portrait" />';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->print_across();
 
 $worksheet->_write_page_setup();
 
