@@ -1005,10 +1005,8 @@ sub _convert_name_area {
 #
 sub hide_gridlines {
 
-    my $self   = shift;
-    my $option = $_[0];
-
-    $option = 1 unless defined $option;    # Default to hiding printed gridlines
+    my $self = shift;
+    my $option = $_[0] // 1;    # Default to hiding printed gridlines
 
     if ( $option == 0 ) {
         $self->{_print_gridlines}       = 1;    # 1 = display, 0 = hide
@@ -1036,12 +1034,14 @@ sub hide_gridlines {
 sub print_row_col_headers {
 
     my $self = shift;
+    my $headers = shift // 1;
 
-    if ( defined $_[0] ) {
-        $self->{_print_headers} = $_[0];
+    if ( $headers ) {
+        $self->{_print_headers}         = 1;
+        $self->{_print_options_changed} = 1;
     }
     else {
-        $self->{_print_headers} = 1;
+        $self->{_print_headers} = 0;
     }
 }
 
@@ -3711,11 +3711,6 @@ sub _write_print_options {
 
     return unless $self->{_print_options_changed};
 
-    # Set printed gridlines.
-    if ( $self->{_print_gridlines} ) {
-        push @attributes, ( 'gridLines' => 1 );
-    }
-
     # Set horizontal centering.
     if ( $self->{_hcenter} ) {
         push @attributes, ( 'horizontalCentered' => 1 );
@@ -3725,6 +3720,17 @@ sub _write_print_options {
     if ( $self->{_vcenter} ) {
         push @attributes, ( 'verticalCentered' => 1 );
     }
+
+    # Enable row and column headers.
+    if ( $self->{_print_headers} ) {
+        push @attributes, ( 'headings' => 1 );
+    }
+
+    # Set printed gridlines.
+    if ( $self->{_print_gridlines} ) {
+        push @attributes, ( 'gridLines' => 1 );
+    }
+
 
     $self->{_writer}->emptyTag( 'printOptions', @attributes );
 }
