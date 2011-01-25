@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 6;
 
 ###############################################################################
 #
@@ -47,6 +47,68 @@ $worksheet->select();
 $worksheet->_write_sheet_view();
 
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_sheet_view() method. Tab selected + hide_gridlines().
+#
+$caption  = " \tWorksheet: _write_sheet_view() + hide_gridlines()";
+$expected = '<sheetView tabSelected="1" workbookViewId="0" />';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->select();
+$worksheet->hide_gridlines();
+$worksheet->_write_sheet_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_sheet_view() method. Tab selected + hide_gridlines().
+#
+$caption  = " \tWorksheet: _write_sheet_view() + hide_gridlines(0)";
+$expected = '<sheetView tabSelected="1" workbookViewId="0" />';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->select();
+$worksheet->hide_gridlines( 0 );
+$worksheet->_write_sheet_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_sheet_view() method. Tab selected + hide_gridlines().
+#
+$caption  = " \tWorksheet: _write_sheet_view() + hide_gridlines(1)";
+$expected = '<sheetView tabSelected="1" workbookViewId="0" />';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->select();
+$worksheet->hide_gridlines( 1 );
+$worksheet->_write_sheet_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_sheet_view() method. Tab selected + hide_gridlines().
+#
+$caption  = " \tWorksheet: _write_sheet_view() + hide_gridlines(2)";
+$expected = '<sheetView showGridLines="0" tabSelected="1" workbookViewId="0" />';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->select();
+$worksheet->hide_gridlines( 2 );
+$worksheet->_write_sheet_view();
+
+is( $got, $expected, $caption );
+
+
 
 __END__
 

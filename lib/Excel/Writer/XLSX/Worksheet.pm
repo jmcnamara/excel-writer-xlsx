@@ -1011,8 +1011,9 @@ sub hide_gridlines {
     $option = 1 unless defined $option;    # Default to hiding printed gridlines
 
     if ( $option == 0 ) {
-        $self->{_print_gridlines}  = 1;    # 1 = display, 0 = hide
-        $self->{_screen_gridlines} = 1;
+        $self->{_print_gridlines}       = 1;    # 1 = display, 0 = hide
+        $self->{_screen_gridlines}      = 1;
+        $self->{_print_options_changed} = 1;
     }
     elsif ( $option == 1 ) {
         $self->{_print_gridlines}  = 0;
@@ -1022,20 +1023,6 @@ sub hide_gridlines {
         $self->{_print_gridlines}  = 0;
         $self->{_screen_gridlines} = 0;
     }
-}
-
-
-###############################################################################
-#
-# print_gridlines()
-#
-# Turn on the printed gridlines.
-#
-sub print_gridlines {
-
-    my $self = shift;
-
-    $self->{_print_gridlines} = defined $_[0] ? $_[0] : 1;
 }
 
 
@@ -3056,10 +3043,17 @@ sub _write_sheet_view {
 
     my $self             = shift;
     my $tab_selected     = $self->{_selected};
+    my $gridlines        = $self->{_screen_gridlines};
     my $view             = 'pageLayout';
     my $workbook_view_id = 0;
     my @attributes       = ();
 
+    # Hide screen gridlines if required
+    if ( ! $gridlines ) {
+        push @attributes, ( 'showGridLines' => 0 );
+    }
+
+    # Show that the sheet tab is selected.
     if ( $tab_selected ) {
         push @attributes, ( 'tabSelected' => 1 );
     }
@@ -3716,6 +3710,11 @@ sub _write_print_options {
     my @attributes = ();
 
     return unless $self->{_print_options_changed};
+
+    # Set printed gridlines.
+    if ( $self->{_print_gridlines} ) {
+        push @attributes, ( 'gridLines' => 1 );
+    }
 
     # Set horizontal centering.
     if ( $self->{_hcenter} ) {

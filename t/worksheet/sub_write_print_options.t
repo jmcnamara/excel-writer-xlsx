@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 8;
 
 
 ###############################################################################
@@ -79,6 +79,70 @@ $worksheet->center_horizontally();
 $worksheet->center_vertically();
 
 $worksheet->_write_print_options();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_print_options() method.
+#
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->hide_gridlines();
+
+$worksheet->_write_print_options();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_print_options() method.
+#
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '<printOptions gridLines="1" />';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->hide_gridlines(0);
+
+$worksheet->_write_print_options();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_print_options() method.
+#
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->hide_gridlines();
+
+$worksheet->_write_print_options(1);
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_print_options() method.
+#
+$caption  = " \tWorksheet: _write_print_options()";
+$expected = '<printOptions gridLines="1" />';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->hide_gridlines(0);
+
+$worksheet->_write_print_options(2);
 
 is( $got, $expected, $caption );
 
