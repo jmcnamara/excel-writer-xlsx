@@ -36,7 +36,7 @@ my $ignore_elements = {
 
 ###############################################################################
 #
-# Test the creation of a simple Excel::Writer::XLSX file with fit to print.
+# Test the creation of a simple Excel::Writer::XLSX file with fit across.
 #
 use Excel::Writer::XLSX;
 
