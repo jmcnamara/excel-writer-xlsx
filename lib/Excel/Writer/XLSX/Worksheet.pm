@@ -103,6 +103,7 @@ sub new {
 
     $self->{_repeat_rows} = '';
     $self->{_repeat_cols} = '';
+    $self->{_print_area}  = '';
 
     $self->{_page_order}     = 0;
     $self->{_black_white}    = 0;
@@ -816,7 +817,7 @@ sub print_area {
     # Build up the print area range "=Sheet2!R1C1:R2C1"
     my $area = $self->_convert_name_area( $row1, $col1, $row2, $col2 );
 
-    $self->{_names}->{'Print_Area'} = $area;
+    $self->{_print_area} = $area;
 }
 
 
@@ -944,50 +945,56 @@ sub filter_column {
 #
 # _convert_name_area($first_row, $first_col, $last_row, $last_col)
 #
-# Convert zero indexed rows and columns to the R1C1 range required by worksheet
-# named ranges, eg, "=Sheet2!R1C1:R2C1".
+# Convert zero indexed rows and columns to the format required by worksheet
+# named ranges, eg, "Sheet1!$A$1:$C$13".
 #
 sub _convert_name_area {
 
     my $self = shift;
 
-    my $row1 = $_[0];
-    my $col1 = $_[1];
-    my $row2 = $_[2];
-    my $col2 = $_[3];
+    my $row_num_1 = $_[0];
+    my $col_num_1 = $_[1];
+    my $row_num_2 = $_[2];
+    my $col_num_2 = $_[3];
 
-    my $range1 = '';
-    my $range2 = '';
+    my $range1       = '';
+    my $range2       = '';
+    my $row_col_only = 0;
     my $area;
 
+    # Convert to A1 notation.
+    my $col_char_1 = xl_col_to_name( $col_num_1, 1 );
+    my $col_char_2 = xl_col_to_name( $col_num_2, 1 );
+    my $row_char_1 = '$' . ( $row_num_1 + 1 );
+    my $row_char_2 = '$' . ( $row_num_2 + 1 );
 
     # We need to handle some special cases that refer to rows or columns only.
-    if ( $row1 == 0 and $row2 == $self->{_xls_rowmax} - 1 ) {
-        $range1 = 'C' . ( $col1 + 1 );
-        $range2 = 'C' . ( $col2 + 1 );
+    if ( $row_num_1 == 0 and $row_num_2 == $self->{_xls_rowmax} - 1 ) {
+        $range1       = $col_char_1;
+        $range2       = $col_char_2;
+        $row_col_only = 1;
     }
-    elsif ( $col1 == 0 and $col2 == $self->{_xls_colmax} - 1 ) {
-        $range1 = 'R' . ( $row1 + 1 );
-        $range2 = 'R' . ( $row2 + 1 );
+    elsif ( $col_num_1 == 0 and $col_num_2 == $self->{_xls_colmax} - 1 ) {
+        $range1       = $row_char_1;
+        $range2       = $row_char_2;
+        $row_col_only = 1;
     }
     else {
-        $range1 = 'R' . ( $row1 + 1 ) . 'C' . ( $col1 + 1 );
-        $range2 = 'R' . ( $row2 + 1 ) . 'C' . ( $col2 + 1 );
+        $range1 = $col_char_1 . $row_char_1;
+        $range2 = $col_char_2 . $row_char_2;
     }
 
-
-    # A repeated range is only written once.
-    if ( $range1 eq $range2 ) {
+    # A repeated range is only written once (if it isn't a special case).
+    if ( $range1 eq $range2 && !$row_col_only ) {
         $area = $range1;
     }
     else {
         $area = $range1 . ':' . $range2;
     }
 
-    # Build up the print area range "=Sheet2!R1C1:R2C1"
+    # Build up the print area range "Sheet1!$A$1:$C$13".
     my $sheetname = $self->_quote_sheetname( $self->{_name} );
-    $area = '=' . $sheetname . "!" . $area;
-
+    $area = $sheetname . "!" . $area;
 
     return $area;
 }
