@@ -1136,10 +1136,11 @@ sub set_print_scale {
         $scale = 100;
     }
 
-    # Turn off "fit to page" option
+    # Turn off "fit to page" option.
     $self->{_fit_page} = 0;
 
-    $self->{_print_scale} = int $scale;
+    $self->{_print_scale}        = int $scale;
+    $self->{_page_setup_changed} = 1;
 }
 
 
@@ -3678,6 +3679,7 @@ sub _write_page_margins {
 #
 # <pageSetup
 #     paperSize="9"
+#     scale="110"
 #     fitToWidth="2"
 #     fitToHeight="2"
 #     pageOrder="overThenDown"
@@ -3701,17 +3703,19 @@ sub _write_page_setup {
         push @attributes, ( 'paperSize' => $self->{_paper_size} );
     }
 
-    # Set the "Fit to page" properties.
-    if ( $self->{_fit_page} ) {
+    # Set the print_scale
+    if ( $self->{_print_scale} != 100 ) {
+        push @attributes, ( 'scale' => $self->{_print_scale} );
+    }
 
-        # These properties are only set for values greater than 1 sheet.
-        if ( $self->{_fit_width} > 1 ) {
-            push @attributes, ( 'fitToWidth' => $self->{_fit_width} );
-        }
+    # Set the "Fit to page" properties. These properties are only set
+    # for values greater than 1 sheet.
+    if ( $self->{_fit_width} > 1 ) {
+        push @attributes, ( 'fitToWidth' => $self->{_fit_width} );
+    }
 
-        if ( $self->{_fit_height} > 1 ) {
-            push @attributes, ( 'fitToHeight' => $self->{_fit_height} );
-        }
+    if ( $self->{_fit_height} > 1 ) {
+        push @attributes, ( 'fitToHeight' => $self->{_fit_height} );
     }
 
     # Set the page print direction.
