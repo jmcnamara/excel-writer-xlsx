@@ -166,6 +166,13 @@ sub _compare_xlsx_files {
             $got_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
         }
 
+        # Remove printer specific settings from Worksheet pageSetup elements.
+        if ( $filename =~ m(xl/worksheets/sheet\d.xml) ) {
+            $exp_xml_str =~ s/horizontalDpi="200" //;
+            $exp_xml_str =~ s/verticalDpi="200" //;
+            $exp_xml_str =~ s/(<pageSetup.* )r:id="rId1"/$1/;
+        }
+
         my @got_xml = _xml_str_to_array( $got_xml_str );
         my @exp_xml = _xml_str_to_array( $exp_xml_str );
 

@@ -179,7 +179,7 @@ sub _assemble_xml_file {
     $self->_write_worksheet();
 
     # Write the worksheet properties.
-    #$self->_write_sheet_pr();
+    $self->_write_sheet_pr();
 
     # Write the worksheet dimensions.
     $self->_write_dimension();
@@ -1063,9 +1063,10 @@ sub fit_to_pages {
 
     my $self = shift;
 
-    $self->{_fit_page}   = 1;
-    $self->{_fit_width}  = $_[0] || 1;
-    $self->{_fit_height} = $_[1] || 1;
+    $self->{_fit_page}           = 1;
+    $self->{_fit_width}          = $_[0] || 1;
+    $self->{_fit_height}         = $_[1] || 1;
+    $self->{_page_setup_changed} = 1;
 }
 
 
@@ -3056,12 +3057,33 @@ sub _write_sheet_pr {
     my $published               = 0;
     my $conditional_calculation = 0;
 
+    return unless $self->{_fit_page};
+
     my @attributes = (
-        'published'                         => $published,
-        'enableFormatConditionsCalculation' => $conditional_calculation,
+
+        # 'published'                         => $published,
+        # 'enableFormatConditionsCalculation' => $conditional_calculation,
     );
 
-    $self->{_writer}->emptyTag( 'sheetPr', @attributes );
+    $self->{_writer}->startTag( 'sheetPr', @attributes );
+    $self->_write_page_set_up_pr();
+    $self->{_writer}->endTag( 'sheetPr' );
+}
+
+
+##############################################################################
+#
+# _write_page_set_up_pr()
+#
+# Write the <pageSetUpPr> element.
+#
+sub _write_page_set_up_pr {
+
+    my $self = shift;
+
+    my @attributes = ( 'fitToPage' => 1 );
+
+    $self->{_writer}->emptyTag( 'pageSetUpPr', @attributes );
 }
 
 
@@ -3652,6 +3674,21 @@ sub _write_page_margins {
 #
 # Write the <pageSetup> element.
 #
+# TODO: The following is for reference during development. Remove later.
+#
+# <pageSetup
+#     paperSize="9"
+#     fitToWidth="2"
+#     fitToHeight="2"
+#     pageOrder="overThenDown"
+#     orientation="portrait"
+#     blackAndWhite="1"
+#     draft="1"
+#     horizontalDpi="200"
+#     verticalDpi="200"
+#     r:id="rId1"
+# />
+#
 sub _write_page_setup {
 
     my $self       = shift;
@@ -3662,6 +3699,19 @@ sub _write_page_setup {
     # Set paper size.
     if ( $self->{_paper_size} ) {
         push @attributes, ( 'paperSize' => $self->{_paper_size} );
+    }
+
+    # Set the "Fit to page" properties.
+    if ( $self->{_fit_page} ) {
+
+        # These properties are only set for values greater than 1 sheet.
+        if ( $self->{_fit_width} > 1 ) {
+            push @attributes, ( 'fitToWidth' => $self->{_fit_width} );
+        }
+
+        if ( $self->{_fit_height} > 1 ) {
+            push @attributes, ( 'fitToHeight' => $self->{_fit_height} );
+        }
     }
 
     # Set the page print direction.

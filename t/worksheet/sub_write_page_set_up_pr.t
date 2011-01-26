@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('©'), January 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -22,17 +22,16 @@ my $got;
 my $caption;
 my $worksheet;
 
-
 ###############################################################################
 #
-# Test the _write_sheet_pr() method.
+# Test the _write_page_set_up_pr() method.
 #
-$caption  = " \tWorksheet: _write_sheet_pr()";
-$expected = '<sheetPr><pageSetUpPr fitToPage="1" /></sheetPr>';
+$caption  = " \tWorksheet: _write_page_set_up_pr()";
+$expected = '<pageSetUpPr fitToPage="1" />';
 
 $worksheet = _new_worksheet(\$got);
-$worksheet->{_fit_page} = 1;
-$worksheet->_write_sheet_pr();
+
+$worksheet->_write_page_set_up_pr();
 
 is( $got, $expected, $caption );
 
