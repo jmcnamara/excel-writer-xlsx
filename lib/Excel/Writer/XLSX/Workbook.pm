@@ -807,6 +807,22 @@ sub _prepare_defined_names {
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
+        # Check for Print Area settings.
+        if ( $sheet->{_print_area} ) {
+
+            my $range = $sheet->{_print_area};
+
+            # Store the defined names.
+            push @{ $self->{_defined_names} },
+              [ '_xlnm.Print_Area', $sheet->{_index}, $range ];
+
+            # Store the named ranges.
+            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
+            my $print_title = $sheetname . '!Print_Area';
+
+            push @{ $self->{_named_ranges} }, $print_title;
+        }
+
         # Check for repeat rows/cols. aka, Print Titles.
         if ( $sheet->{_repeat_cols} || $sheet->{_repeat_rows} ) {
             my $range = '';
@@ -825,22 +841,6 @@ sub _prepare_defined_names {
             # Store the named ranges.
             my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
             my $print_title = $sheetname . '!Print_Titles';
-
-            push @{ $self->{_named_ranges} }, $print_title;
-        }
-
-        # Check for Print Area settings.
-        if ( $sheet->{_print_area} ) {
-
-            my $range = $sheet->{_print_area};
-
-            # Store the defined names.
-            push @{ $self->{_defined_names} },
-              [ '_xlnm.Print_Area', $sheet->{_index}, $range ];
-
-            # Store the named ranges.
-            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
-            my $print_title = $sheetname . '!Print_Area';
 
             push @{ $self->{_named_ranges} }, $print_title;
         }
