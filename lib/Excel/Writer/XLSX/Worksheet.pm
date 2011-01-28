@@ -217,6 +217,12 @@ sub _assemble_xml_file {
     # Write the headerFooter element.
     $self->_write_header_footer();
 
+    # Write the rowBreaks element.
+    $self->_write_row_breaks();
+
+    # Write the colBreaks element.
+    $self->_write_col_breaks();
+
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
 
@@ -2405,7 +2411,6 @@ sub _cell_to_rowcol {
 #
 # _sort_pagebreaks()
 #
-#
 # This is an internal method that is used to filter elements of the array of
 # pagebreaks used in the _store_hbreak() and _store_vbreak() methods. It:
 #   1. Removes duplicate entries from the list.
@@ -2416,6 +2421,8 @@ sub _sort_pagebreaks {
 
     my $self = shift;
 
+    return () unless @_;
+
     my %hash;
     my @array;
 
@@ -2423,9 +2430,10 @@ sub _sort_pagebreaks {
     @array = sort { $a <=> $b } keys %hash;    # Numerical sort
     shift @array if $array[0] == 0;            # Remove zero
 
-    # 1000 vertical pagebreaks appears to be an internal Excel 5 limit.
-    # It is slightly higher in Excel 97/200, approx. 1026
-    splice( @array, 1000 ) if ( @array > 1000 );
+    # The Excel 2007 specification says that the maximum number of page breaks
+    # is 1026. However, in practice it is actually 1023.
+    my $max_num_breaks = 1023;
+    splice( @array, $max_num_breaks ) if @array > $max_num_breaks;
 
     return @array;
 }
@@ -3933,6 +3941,89 @@ sub _write_odd_footer {
     my $data = $self->{_footer};
 
     $self->{_writer}->dataElement( 'oddFooter', $data );
+}
+
+
+##############################################################################
+#
+# _write_row_breaks()
+#
+# Write the <rowBreaks> element.
+#
+sub _write_row_breaks {
+
+    my $self = shift;
+
+    my @page_breaks = $self->_sort_pagebreaks( @{ $self->{_hbreaks} } );
+    my $count       = scalar @page_breaks;
+
+    return unless @page_breaks;
+
+    my @attributes = (
+        'count'            => $count,
+        'manualBreakCount' => $count,
+    );
+
+    $self->{_writer}->startTag( 'rowBreaks', @attributes );
+
+    for my $row_num ( @page_breaks ) {
+        $self->_write_brk( $row_num, 16383 );
+    }
+
+    $self->{_writer}->endTag( 'rowBreaks' );
+}
+
+
+##############################################################################
+#
+# _write_col_breaks()
+#
+# Write the <colBreaks> element.
+#
+sub _write_col_breaks {
+
+    my $self = shift;
+
+    my @page_breaks = $self->_sort_pagebreaks( @{ $self->{_vbreaks} } );
+    my $count       = scalar @page_breaks;
+
+    return unless @page_breaks;
+
+    my @attributes = (
+        'count'            => $count,
+        'manualBreakCount' => $count,
+    );
+
+    $self->{_writer}->startTag( 'colBreaks', @attributes );
+
+    for my $col_num ( @page_breaks ) {
+        $self->_write_brk( $col_num, 1048575 );
+    }
+
+    $self->{_writer}->endTag( 'colBreaks' );
+}
+
+
+##############################################################################
+#
+# _write_brk()
+#
+# Write the <brk> element.
+#
+sub _write_brk {
+
+    my $self                 = shift;
+    my $id                   = shift;
+    my $max                  = shift;
+    my $man                  = 1;
+
+    my @attributes = (
+        'id'                 => $id,
+        'max'                => $max,
+        'man'                => $man,
+    );
+
+    $self->{_writer}->emptyTag( 'brk', @attributes );
 }
 
 
