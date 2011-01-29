@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.06 of Excel::Writer::XLSX, released January 19, 2011.
+This document refers to version 0.07 of Excel::Writer::XLSX, released January 28, 2011.
 
 
 
@@ -2128,9 +2128,7 @@ This method is used to set the orientation of a worksheet's printed page to port
 
 =head2 set_page_view()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
-This method is used to display the worksheet in "Page View" mode. This is currently only supported by Mac Excel, where it is the default.
+This method is used to display the worksheet in "Page View/Layout" mode.
 
     $worksheet->set_page_view();
 
@@ -2377,8 +2375,6 @@ The syntax of the C<set_footer()> method is the same as C<set_header()>,  see ab
 
 =head2 repeat_rows( $first_row, $last_row )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 Set the number of rows to repeat at the top of each printed page.
 
 For large Excel documents it is often desirable to have the first row or rows of the worksheet print out at the top of each page. This can be achieved by using the C<repeat_rows()> method. The parameters C<$first_row> and C<$last_row> are zero based. The C<$last_row> parameter is optional if you only wish to specify one row:
@@ -2390,8 +2386,6 @@ For large Excel documents it is often desirable to have the first row or rows of
 
 
 =head2 repeat_columns( $first_col, $last_col )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Set the columns to repeat at the left hand side of each printed page.
 
@@ -2406,8 +2400,6 @@ For large Excel documents it is often desirable to have the first column or colu
 
 
 =head2 hide_gridlines( $option )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method is used to hide the gridlines on the screen and printed page. Gridlines are the lines that divide the cells on a worksheet. Screen and printed gridlines are turned on by default in an Excel worksheet. If you have defined your own cell borders you may wish to hide the default gridlines.
 
@@ -2425,8 +2417,6 @@ If you don't supply an argument or use C<undef> the default option is 1, i.e. on
 
 
 =head2 print_row_col_headers()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Set the option to print the row and column headers on the printed page.
 
@@ -2452,8 +2442,6 @@ Do not confuse these headers with page headers as described in the C<set_header(
 
 =head2 print_area( $first_row, $first_col, $last_row, $last_col )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is used to specify the area of the worksheet that will be printed. All four parameters must be specified. You can also use A1 notation, see the note about L<Cell notation>.
 
 
@@ -2465,8 +2453,6 @@ This method is used to specify the area of the worksheet that will be printed. A
 
 
 =head2 print_across()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<print_across> method is used to change the default print direction. This is referred to by Excel as the sheet "page order".
 
@@ -2486,8 +2472,6 @@ However, by using the C<print_across> method the print order will be changed to 
 
 
 =head2 fit_to_pages( $width, $height )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<fit_to_pages()> method is used to fit the printed area to a specific number of pages both vertically and horizontally. If the printed area exceeds the specified number of pages it will be scaled down to fit. This guarantees that the printed area will always appear on the specified number of pages even if the page size or margins change.
 
@@ -2512,8 +2496,6 @@ Note that C<fit_to_pages()> will override any manual page breaks that are define
 
 =head2 set_start_page( $start_page )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<set_start_page()> method is used to set the number of the starting page when the worksheet is printed out. The default value is 1.
 
     $worksheet->set_start_page( 2 );
@@ -2522,8 +2504,6 @@ The C<set_start_page()> method is used to set the number of the starting page wh
 
 
 =head2 set_print_scale( $scale )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Set the scale factor of the printed page. Scale factors in the range C<10 E<lt>= $scale E<lt>= 400> are valid:
 
@@ -2540,8 +2520,6 @@ Note also that although it is valid to use both C<fit_to_pages()> and C<set_prin
 
 
 =head2 set_h_pagebreaks( @breaks )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Add horizontal page breaks to a worksheet. A page break causes all the data that follows it to be printed on the next page. Horizontal page breaks act between rows. To create a page break between rows 20 and 21 you must specify the break at row 21. However in zero index notation this is actually row 20. So you can pretend for a small while that you are using 1 index notation:
 
@@ -2560,8 +2538,6 @@ There is a silent limitation of about 1000 horizontal page breaks per worksheet 
 
 
 =head2 set_v_pagebreaks( @breaks )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 Add vertical page breaks to a worksheet. A page break causes all the data that follows it to be printed on the next page. Vertical page breaks act between columns. To create a page break between columns 20 and 21 you must specify the break at column 21. However in zero index notation this is actually column 20. So you can pretend for a small while that you are using 1 index notation:
 
@@ -4569,6 +4545,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     cgi.pl                  A simple CGI program.
     colors.pl               A demo of the colour palette and named colours.
     diag_border.pl          A simple example of diagonal cell borders.
+    headers.pl              Examples of worksheet headers and footers.
     indent.pl               An example of cell indentation.
     merge1.pl               A simple example of cell merging.
     merge2.pl               A simple example of cell merging with formatting.
@@ -4688,24 +4665,24 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     ===================         =======
     set_landscape()             Yes
     set_portrait()              Yes
-    set_page_view()             No
+    set_page_view()             Yes
     set_paper()                 Yes
     center_horizontally()       Yes
     center_vertically()         Yes
     set_margins()               Yes
     set_header()                Yes
     set_footer()                Yes
-    repeat_rows()               No
-    repeat_columns()            No
-    hide_gridlines()            No
-    print_row_col_headers()     No
-    print_area()                No
-    print_across()              No
-    fit_to_pages()              No
-    set_start_page()            No
-    set_print_scale()           No
-    set_h_pagebreaks()          No
-    set_v_pagebreaks()          No
+    repeat_rows()               Yes
+    repeat_columns()            Yes
+    hide_gridlines()            Yes
+    print_row_col_headers()     Yes
+    print_area()                Yes
+    print_across()              Yes
+    fit_to_pages()              Yes
+    set_start_page()            Yes
+    set_print_scale()           Yes
+    set_h_pagebreaks()          Yes
+    set_v_pagebreaks()          Yes
 
     Format Methods              Support
     ==============              =======
