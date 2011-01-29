@@ -3168,7 +3168,7 @@ sub _write_sheet_view {
     my $self             = shift;
     my $tab_selected     = $self->{_selected};
     my $gridlines        = $self->{_screen_gridlines};
-    my $view             = 'pageLayout';
+    my $view             = $self->{_page_view};
     my $workbook_view_id = 0;
     my @attributes       = ();
 
@@ -3180,6 +3180,11 @@ sub _write_sheet_view {
     # Show that the sheet tab is selected.
     if ( $tab_selected ) {
         push @attributes, ( 'tabSelected' => 1 );
+    }
+
+    # Set the page view/layout mode if required.
+    if ( $view ) {
+        push @attributes, ( 'view' => 'pageLayout' );
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
