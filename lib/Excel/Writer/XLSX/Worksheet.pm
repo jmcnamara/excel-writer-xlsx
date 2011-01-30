@@ -21,7 +21,7 @@ use Carp;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility
-  qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name);
+  qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.07';
@@ -204,6 +204,9 @@ sub _assemble_xml_file {
 
     # Write the mergeCells element.
     $self->_write_merge_cells();
+
+    # Write the autoFilter element.
+    $self->_write_auto_filter();
 
     # Write the worksheet page_margins.
     $self->_write_page_margins();
@@ -846,18 +849,17 @@ sub autofilter {
 
     my ( $row1, $col1, $row2, $col2 ) = @_;
 
+    # Reverse max and min values if necessary.
+    ($row1, $row2) = ($row2, $row1) if $row2 < $row1;
+    ($col1, $col2) = ($col2, $col1) if $col2 < $col1;
 
-    # Build up the print area range "=Sheet2!R1C1:R2C1"
+    # Build up the print area range "Sheet1!$A$1:$C$13".
     my $area = $self->_convert_name_area( $row1, $col1, $row2, $col2 );
+    my $ref = xl_range( $row1, $row2, $col1, $col2 );
 
-
-    # Store the filter as a named range
-    $self->{_names}->{'_FilterDatabase'} = $area;
-
-    # Store the <Autofilter> information
-    $area =~ s/[^!]+!//;    # Remove sheet name
-    $self->{_autofilter} = $area;
-    $self->{_filter_range} = [ $col1, $col2 ];
+    $self->{_autofilter}     = $area;
+    $self->{_autofilter_ref} = $ref;
+    $self->{_filter_range}   = [ $col1, $col2 ];
 }
 
 
@@ -872,6 +874,10 @@ sub filter_column {
     my $self       = shift;
     my $col        = $_[0];
     my $expression = $_[1];
+
+    croak "Must call autofilter() before filter_column()"
+      unless $self->{_autofilter};
+    croak "Incorrect number of arguments to filter_column()" unless @_ == 2;
 
 
     # Check for a column reference in A1 notation and substitute.
@@ -2962,23 +2968,6 @@ sub _options_changed {
 
 ###############################################################################
 #
-# _write_autofilter()
-#
-# Write the <AutoFilter> element.
-#
-sub _write_autofilter {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    return unless $self->{_autofilter};
-
-}
-
-
-###############################################################################
-#
 # _write_autofilter_column()
 #
 # Write the <AutoFilterColumn> and <AutoFilterCondition> elements. The format
@@ -3062,21 +3051,24 @@ sub _write_worksheet {
 #
 sub _write_sheet_pr {
 
-    my $self                    = shift;
-    my $published               = 0;
-    my $conditional_calculation = 0;
+    my $self       = shift;
+    my @attributes = ();
 
-    return unless $self->{_fit_page};
+    if ( !$self->{_fit_page} && !$self->{_filter_on} ) {
+        return;
+    }
 
-    my @attributes = (
+    push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
 
-        # 'published'                         => $published,
-        # 'enableFormatConditionsCalculation' => $conditional_calculation,
-    );
+    if ( $self->{_fit_page} ) {
+        $self->{_writer}->startTag( 'sheetPr', @attributes );
+        $self->_write_page_set_up_pr();
+        $self->{_writer}->endTag( 'sheetPr' );
 
-    $self->{_writer}->startTag( 'sheetPr', @attributes );
-    $self->_write_page_set_up_pr();
-    $self->{_writer}->endTag( 'sheetPr' );
+    }
+    else {
+        $self->{_writer}->emptyTag( 'sheetPr', @attributes );
+    }
 }
 
 
@@ -4030,6 +4022,26 @@ sub _write_brk {
 
     $self->{_writer}->emptyTag( 'brk', @attributes );
 }
+
+
+##############################################################################
+#
+# _write_auto_filter()
+#
+# Write the <autoFilter> element.
+#
+sub _write_auto_filter {
+
+    my $self = shift;
+    my $ref  = $self->{_autofilter_ref};
+
+    return unless $ref;
+
+    my @attributes = ( 'ref' => $ref );
+
+    $self->{_writer}->emptyTag( 'autoFilter', @attributes );
+}
+
 
 
 1;
