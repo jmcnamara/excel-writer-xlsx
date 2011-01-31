@@ -887,6 +887,8 @@ sub filter_column {
 
         # Convert col ref to a cell ref and then to a col number.
         ( undef, $col ) = $self->_substitute_cellref( $col . '1' );
+
+        croak "Invalid column '$col_letter'" if $col >= $self->{_xls_colmax};
     }
 
     my ( $col_first, $col_last ) = @{ $self->{_filter_range} };
