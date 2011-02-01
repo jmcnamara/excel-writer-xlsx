@@ -24,13 +24,14 @@ my $worksheet;
 
 ###############################################################################
 #
-# Test the _write_filter_column() method.
+# Test the _write_custom_filter() method.
 #
-$caption  = " \tWorksheet: _write_filter_column()";
-$expected = '<filterColumn colId="0"><filters><filter val="East" /></filters></filterColumn>';
+$caption  = " \tWorksheet: _write_custom_filter()";
+$expected = '<customFilter operator="greaterThan" val="3000" />';
 
-$worksheet = _new_worksheet( \$got );
-$worksheet->_write_filter_column( 0, 1, ['East'] );
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->_write_custom_filter( 4, 3000 );
 
 is( $got, $expected, $caption );
 

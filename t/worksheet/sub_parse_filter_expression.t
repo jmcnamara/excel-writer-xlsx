@@ -117,12 +117,12 @@ my @tests = (
 
     [
         'x =  NonBlanks',
-        [2, 'nonblanks'],
+        [5, ' '],
     ],
 
     [
         'x <> Blanks',
-        [2, 'nonblanks'],
+        [5, ' '],
     ],
 
     [

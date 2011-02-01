@@ -217,7 +217,7 @@ sub getOutput {
 #
 sub _escape_xml_chars {
 
-    my $str = shift;
+    my $str = shift // '';
 
     return $str if $str !~ m/[&<>"]/;
 

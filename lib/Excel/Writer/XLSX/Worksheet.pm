@@ -884,6 +884,7 @@ sub filter_column {
 
     # Check for a column reference in A1 notation and substitute.
     if ( $col =~ /^\D/ ) {
+        my $col_letter = $col;
 
         # Convert col ref to a cell ref and then to a col number.
         ( undef, $col ) = $self->_substitute_cellref( $col . '1' );
@@ -1106,14 +1107,17 @@ sub _parse_filter_tokens {
         # the binary record. Therefore we convert <> to =.
         if ( $token eq 'blanks' ) {
             if ( $operator == 5 ) {
-                $operator = 2;
-                $token    = 'nonblanks';
+                $token    = ' ';
             }
         }
         else {
             if ( $operator == 5 ) {
                 $operator = 2;
                 $token    = 'blanks';
+            }
+            else {
+                $operator = 5;
+                $token    = ' ';
             }
         }
     }
@@ -4196,7 +4200,7 @@ sub _write_auto_filter {
 # _write_autofilters()
 #
 # Function to iterate through the columns that form part of an autofilter
-# range and write the appropriate filter.
+# range and write the appropriate filters.
 #
 sub _write_autofilters {
 
@@ -4211,8 +4215,9 @@ sub _write_autofilters {
 
         # Retrieve the filter tokens and write the autofilter records.
         my @tokens = @{ $self->{_filter_cols}->{$col} };
+        my $type   = $self->{_filter_type}->{$col};
 
-        $self->_write_filter_column( $col, \@tokens );
+        $self->_write_filter_column( $col, $type, \@tokens );
     }
 }
 
@@ -4227,12 +4232,26 @@ sub _write_filter_column {
 
     my $self    = shift;
     my $col_id  = shift;
+    my $type    = shift;
     my $filters = shift;
 
     my @attributes = ( 'colId' => $col_id );
 
     $self->{_writer}->startTag( 'filterColumn', @attributes );
-    $self->_write_filters( $filters );
+
+
+    if ( $type == 1 ) {
+
+        # Type == 1 is the new XLSX style filter.
+        $self->_write_filters( @$filters );
+
+    }
+    else {
+
+        # Type == 0 is the classic "custom" filter.
+        $self->_write_custom_filters( @$filters );
+    }
+
     $self->{_writer}->endTag( 'filterColumn' );
 }
 
@@ -4246,9 +4265,9 @@ sub _write_filter_column {
 sub _write_filters {
 
     my $self    = shift;
-    my $filters = shift;
+    my @filters = @_;
 
-    if ( @$filters == 1 && $filters->[0] eq 'blanks' ) {
+    if ( @filters == 1 && $filters[0] eq 'blanks' ) {
 
         # Special case for blank cells only.
         $self->{_writer}->emptyTag( 'filters', 'blank' => 1 );
@@ -4258,7 +4277,7 @@ sub _write_filters {
         # General case.
         $self->{_writer}->startTag( 'filters' );
 
-        for my $filter ( @$filters ) {
+        for my $filter ( @filters ) {
             $self->_write_filter( $filter );
         }
 
@@ -4281,6 +4300,88 @@ sub _write_filter {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'filter', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_custom_filters()
+#
+# Write the <customFilters> element.
+#
+sub _write_custom_filters {
+
+    my $self   = shift;
+    my @tokens = @_;
+
+    if ( @tokens == 2 ) {
+
+        # One filter expression only.
+        $self->{_writer}->startTag( 'customFilters' );
+        $self->_write_custom_filter( @tokens );
+        $self->{_writer}->endTag( 'customFilters' );
+
+    }
+    else {
+
+        # Two filter expressions.
+
+        my @attributes;
+
+        # Check if the "join" operand is "and" or "or".
+        if ( $tokens[2] == 0 ) {
+            @attributes = ( 'and' => 1 );
+        }
+        else {
+            @attributes = ( 'and' => 0 );
+        }
+
+        # Write the two custom filters.
+        $self->{_writer}->startTag( 'customFilters', @attributes );
+        $self->_write_custom_filter( $tokens[0], $tokens[1] );
+        $self->_write_custom_filter( $tokens[3], $tokens[4] );
+        $self->{_writer}->endTag( 'customFilters' );
+    }
+}
+
+
+##############################################################################
+#
+# _write_custom_filter()
+#
+# Write the <customFilter> element.
+#
+sub _write_custom_filter {
+
+    my $self     = shift;
+    my $operator = shift;
+    my $val      = shift;
+
+
+    my %operators = (
+        1 => 'lessThan',
+        2 => 'equal',
+        3 => 'lessThanOrEqual',
+        4 => 'greaterThan',
+        5 => 'notEqual',
+        6 => 'greaterThanOrEqual',
+    );
+
+    # Convert the operator from a number to a descriptive string.
+    if ( defined $operators{$operator} ) {
+        $operator = $operators{$operator};
+    }
+    else {
+        croak "Unknown operator = $operator\n";
+    }
+
+
+    my @attributes = (
+        'operator' => $operator,
+        'val'      => $val,
+    );
+
+    $self->{_writer}->emptyTag( 'customFilter', @attributes );
 }
 
 

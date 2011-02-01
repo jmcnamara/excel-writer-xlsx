@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More tests => 2;
 
 
 ###############################################################################
@@ -22,44 +22,31 @@ my $got;
 my $caption;
 my $worksheet;
 
+
 ###############################################################################
 #
-# Test the _write_filters() method.
+# Test the _write_custom_filters() method.
 #
-$caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters><filter val="East" /></filters>';
+$caption  = " \tWorksheet: _write_custom_filters()";
+$expected = '<customFilters><customFilter operator="greaterThan" val="4000" /></customFilters>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_filters( 'East' );
+$worksheet->_write_custom_filters( 4, 4000 );
 
 is( $got, $expected, $caption );
 
 
 ###############################################################################
 #
-# Test the _write_filters() method.
+# Test the _write_custom_filters() method.
 #
-$caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters><filter val="East" /><filter val="South" /></filters>';
+$caption  = " \tWorksheet: _write_custom_filters()";
+$expected = '<customFilters and="1"><customFilter operator="greaterThan" val="3000" /><customFilter operator="lessThan" val="8000" /></customFilters>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_filters( 'East', 'South' );
-
-is( $got, $expected, $caption );
-
-
-###############################################################################
-#
-# Test the _write_filters() method.
-#
-$caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters blank="1" />';
-
-$worksheet = _new_worksheet(\$got);
-
-$worksheet->_write_filters( 'blanks' );
+$worksheet->_write_custom_filters( 4, 3000, 0, 1, 8000 );
 
 is( $got, $expected, $caption );
 
