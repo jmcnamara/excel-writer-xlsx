@@ -171,6 +171,7 @@ t/workbook/workbook_03.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_extract_filter_tokens.t
 t/worksheet/sub_parse_filter_expression.t
+t/worksheet/sub_write_auto_filter.t
 t/worksheet/sub_write_brk.t
 t/worksheet/sub_write_cell.t
 t/worksheet/sub_write_cell_value.t
@@ -213,6 +214,7 @@ t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 
 examples/README
+examples/autofilter.pl  
 examples/a_simple.pl  
 examples/array_formula.pl
 examples/bug_report.pl

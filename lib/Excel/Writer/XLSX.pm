@@ -4541,6 +4541,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
 
     Intermediate
     ============
+    autofilter.pl           Examples of worksheet autofilters.
     array_formula.pl        Examples of how to write array formulas.
     cgi.pl                  A simple CGI program.
     colors.pl               A demo of the colour palette and named colours.
