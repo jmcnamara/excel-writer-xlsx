@@ -875,7 +875,7 @@ sub filter_column {
     my $col        = $_[0];
     my $expression = $_[1];
 
-
+return unless $expression; # TODO remove after testing.
     croak "Must call autofilter() before filter_column()"
       unless $self->{_autofilter};
     croak "Incorrect number of arguments to filter_column()"
@@ -4353,19 +4353,21 @@ sub _write_custom_filters {
 #
 sub _write_custom_filter {
 
-    my $self     = shift;
-    my $operator = shift;
-    my $val      = shift;
-
+    my $self       = shift;
+    my $operator   = shift;
+    my $val        = shift;
+    my @attributes = ();
 
     my %operators = (
-        1 => 'lessThan',
-        2 => 'equal',
-        3 => 'lessThanOrEqual',
-        4 => 'greaterThan',
-        5 => 'notEqual',
-        6 => 'greaterThanOrEqual',
+        1  => 'lessThan',
+        2  => 'equal',
+        3  => 'lessThanOrEqual',
+        4  => 'greaterThan',
+        5  => 'notEqual',
+        6  => 'greaterThanOrEqual',
+        22 => 'equal',
     );
+
 
     # Convert the operator from a number to a descriptive string.
     if ( defined $operators{$operator} ) {
@@ -4375,11 +4377,9 @@ sub _write_custom_filter {
         croak "Unknown operator = $operator\n";
     }
 
-
-    my @attributes = (
-        'operator' => $operator,
-        'val'      => $val,
-    );
+    # The 'equal' operator is the default attibute and isn't stored.
+    push @attributes, ( 'operator' => $operator ) unless $operator eq 'equal';
+    push @attributes, ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'customFilter', @attributes );
 }
