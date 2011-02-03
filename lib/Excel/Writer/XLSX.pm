@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.07 of Excel::Writer::XLSX, released January 28, 2011.
+This document refers to version 0.08 of Excel::Writer::XLSX, released February 3, 2011.
 
 
 
@@ -5022,16 +5022,20 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    Scott:  Garlic bread is my favourite food. I could honestly eat it for
-            every meal. Or just all the time without even stopping.
-    Ramona: You'd get fat.
-    Scott:  No.
-    Ramona: You'd get totally fat.
-    Scott:  I don't think I'd get fat. Why would I get fat?
-    Ramona: Bread makes you fat. Butter makes you fat.
-    Scott:  Bread makes you fat??
+    You have no fear,
+    You have no fear,
+    But you are much too scared to call.
 
-        -- Scott Pilgrim vs. the World by Bryan Lee O'Malley
+    Fifteen years,
+    Fifteen years,
+    And you're scared you've seen it all.
+
+    You want to be a lost soul just like your father.
+    You don't fit the mould and it's just what he asked for.
+    I was stupidly thinking you'd stay a while after,
+    We'll pretend that nothing happened if that's what you'd rather.
+
+      -- Pull In Emergency
 
 
 

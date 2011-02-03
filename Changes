@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
     - Removed feature.
     ! Bug fix.
 
+0.08 February 3 2011
+
+    + Added autofilter(), column_filter() and column_filter_list() methods.
+
+    + Added autofilter.pl example program.
+
+
 0.07 January 28 2011
 
     + Added additional Page Setup methods.
