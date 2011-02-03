@@ -875,7 +875,6 @@ sub filter_column {
     my $col        = $_[0];
     my $expression = $_[1];
 
-return unless $expression; # TODO remove after testing.
     croak "Must call autofilter() before filter_column()"
       unless $self->{_autofilter};
     croak "Incorrect number of arguments to filter_column()"
@@ -909,30 +908,72 @@ return unless $expression; # TODO remove after testing.
 
     @tokens = $self->_parse_filter_expression( $expression, @tokens );
 
-    # TODO. Explain or extract to subroutine.
+    # Excel handles single or double custom filters as default filters. We need
+    # to check for them and handle them accordingly.
     if ( @tokens == 2 && $tokens[0] == 2 ) {
 
-        $self->{_filter_cols}->{$col} = [ $tokens[1] ];
-        $self->{_filter_type}->{$col} = 1;                # Default style.
-
+        # Single equality.
+        $self->filter_column_list( $col, $tokens[1] );
     }
     elsif (@tokens == 5
         && $tokens[0] == 2
         && $tokens[2] == 1
         && $tokens[3] == 2 )
     {
-        $self->{_filter_cols}->{$col} = [ $tokens[1], $tokens[4] ];
-        $self->{_filter_type}->{$col} = 1;                # Default style.
 
+        # Double equality with "or" operator.
+        $self->filter_column_list( $col, $tokens[1], $tokens[4] );
     }
     else {
+
+        # Non defaul custom filter.
         $self->{_filter_cols}->{$col} = [@tokens];
-        $self->{_filter_type}->{$col} = 0;                # Custom style.
+        $self->{_filter_type}->{$col} = 0;
 
     }
 
-
     $self->{_filter_on} = 1;
+}
+
+
+###############################################################################
+#
+# filter_column_list($column, @matches )
+#
+# Set the column filter criteria in Excel 2007 list style.
+#
+sub filter_column_list {
+
+    my $self   = shift;
+    my $col    = shift;
+    my @tokens = @_;
+
+    croak "Must call autofilter() before filter_column_list()"
+      unless $self->{_autofilter};
+    croak "Incorrect number of arguments to filter_column_list()"
+      unless @tokens;
+
+    # Check for a column reference in A1 notation and substitute.
+    if ( $col =~ /^\D/ ) {
+        my $col_letter = $col;
+
+        # Convert col ref to a cell ref and then to a col number.
+        ( undef, $col ) = $self->_substitute_cellref( $col . '1' );
+
+        croak "Invalid column '$col_letter'" if $col >= $self->{_xls_colmax};
+    }
+
+    my ( $col_first, $col_last ) = @{ $self->{_filter_range} };
+
+    # Reject column if it is outside filter range.
+    if ( $col < $col_first or $col > $col_last ) {
+        croak "Column '$col' outside autofilter() column range "
+          . "($col_first .. $col_last)";
+    }
+
+    $self->{_filter_cols}->{$col} = [@tokens];
+    $self->{_filter_type}->{$col} = 1;           # Default style.
+    $self->{_filter_on}           = 1;
 }
 
 
@@ -1790,7 +1831,7 @@ sub write_string {
     }
 
 
-    # TODO
+    # Add the string to the shared string table if it isn't already there.
     if ( not exists ${ $self->{_str_table} }->{$str} ) {
         ${ $self->{_str_table} }->{$str} = ${ $self->{_str_unique} }++;
     }
@@ -2904,70 +2945,6 @@ sub _store_panes {
     $self->{_active_pane} = $pnnAct;              # Used in _store_selection
 
     # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
-# _write_names()
-#
-# Write the <Worksheet> <Names> element.
-#
-sub _write_names {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-
-    if (    not keys %{ $self->{_names} }
-        and not $self->{_repeat_rows}
-        and not $self->{_repeat_cols} )
-    {
-        return;
-    }
-
-
-    if ( $self->{_repeat_rows} or $self->{_repeat_cols} ) {
-        $self->{_names}->{Print_Titles} = '='
-          . join ',',
-          grep { /\S/ } $self->{_repeat_cols},
-          $self->{_repeat_rows};
-    }
-
-
-    # Sort the <NamedRange> elements lexically and case insensitively.
-    for my $key ( sort { lc $a cmp lc $b } keys %{ $self->{_names} } ) {
-
-        my @attributes = (
-            'NamedRange', 'ss:Name', $key, 'ss:RefersTo',
-            $self->{_names}->{$key}
-        );
-
-        # Temp workaround to hide _FilterDatabase.
-        # TODO. make this configurable later.
-        if ( $key eq '_FilterDatabase' ) {
-            push @attributes, 'ss:Hidden' => 1;
-        }
-    }
-}
-
-
-###############################################################################
-#
-# _store_pagebreaks()
-#
-# Store horizontal and vertical pagebreaks.
-#
-sub _store_pagebreaks {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    return
-      if not @{ $self->{_hbreaks} }
-          and not @{ $self->{_vbreaks} };
 }
 
 

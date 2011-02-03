@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 19;
+use Test::More tests => 21;
 
 
 ###############################################################################
@@ -22,7 +22,7 @@ my $got;
 my $caption;
 my $worksheet;
 my $filter;
-
+my @matches;
 
 ###############################################################################
 #
@@ -37,24 +37,6 @@ $worksheet->autofilter( 'A1:D51' );
 $worksheet->_write_auto_filter();
 
 is( $got, $expected, " \tWorksheet: filter_column()" );
-
-
-###############################################################################
-#
-# Test the _write_auto_filter() method for the following filter:
-#
-$filter = 'x == East';
-
-$expected = '<autoFilter ref="A1:D51"><filterColumn colId="0"><filters><filter val="East" /></filters></filterColumn></autoFilter>';
-
-$worksheet = _new_worksheet( \$got );
-$worksheet->{_name} = 'Sheet1';
-$worksheet->autofilter( 'A1:D51' );
-
-$worksheet->filter_column( 'A', $filter );
-$worksheet->_write_auto_filter();
-
-is( $got, $expected, " \tWorksheet: filter_column( '$filter' )" );
 
 
 ###############################################################################
@@ -361,6 +343,61 @@ $worksheet->filter_column( 'C', $filter );
 $worksheet->_write_auto_filter();
 
 is( $got, $expected, " \tWorksheet: filter_column( '$filter' )" );
+
+
+###############################################################################
+#
+# Test the _write_auto_filter_list() method for the following filter:
+#
+@matches = qw( East );
+
+$expected = '<autoFilter ref="A1:D51"><filterColumn colId="0"><filters><filter val="East" /></filters></filterColumn></autoFilter>';
+
+$worksheet = _new_worksheet( \$got );
+$worksheet->{_name} = 'Sheet1';
+$worksheet->autofilter( 'A1:D51' );
+
+$worksheet->filter_column_list( 'A', @matches );
+$worksheet->_write_auto_filter();
+
+is( $got, $expected, " \tWorksheet: filter_column( '@matches' )" );
+
+
+###############################################################################
+#
+# Test the _write_auto_filter_list() method for the following filter:
+#
+@matches = qw( East North );
+
+$expected = '<autoFilter ref="A1:D51"><filterColumn colId="0"><filters><filter val="East" /><filter val="North" /></filters></filterColumn></autoFilter>';
+
+$worksheet = _new_worksheet( \$got );
+$worksheet->{_name} = 'Sheet1';
+$worksheet->autofilter( 'A1:D51' );
+
+$worksheet->filter_column_list( 'A', @matches );
+$worksheet->_write_auto_filter();
+
+is( $got, $expected, " \tWorksheet: filter_column( '@matches' )" );
+
+
+###############################################################################
+#
+# Test the _write_auto_filter_list() method for the following filter:
+#
+@matches = qw( February January July June );
+
+$expected = '<autoFilter ref="A1:D51"><filterColumn colId="3"><filters><filter val="February" /><filter val="January" /><filter val="July" /><filter val="June" /></filters></filterColumn></autoFilter>';
+
+$worksheet = _new_worksheet( \$got );
+$worksheet->{_name} = 'Sheet1';
+$worksheet->autofilter( 'A1:D51' );
+
+$worksheet->filter_column_list( 'D', @matches );
+$worksheet->_write_auto_filter();
+
+is( $got, $expected, " \tWorksheet: filter_column( '@matches' )" );
+
 
 
 __END__
