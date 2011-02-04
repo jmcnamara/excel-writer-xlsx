@@ -155,6 +155,7 @@ sub new {
     $self->{_col_formats} = {};
     $self->{_row_formats} = {};
 
+    $self->{_hlink_refs} = [];
 
     bless $self, $class;
     return $self;
@@ -4360,6 +4361,55 @@ sub _write_custom_filter {
 
     $self->{_writer}->emptyTag( 'customFilter', @attributes );
 }
+
+
+##############################################################################
+#
+# _write_hyperlinks()
+#
+# Write the <hyperlinks> element.
+#
+sub _write_hyperlinks {
+
+    my $self       = shift;
+    my @hlink_refs = @{ $self->{_hlink_refs} };
+
+    return unless @hlink_refs;
+
+    $self->{_writer}->startTag( 'hyperlinks' );
+
+    for my $aref ( @hlink_refs ) {
+        $self->_write_hyperlink( @$aref );
+    }
+
+    $self->{_writer}->endTag( 'hyperlinks' );
+}
+
+
+##############################################################################
+#
+# _write_hyperlink()
+#
+# Write the <hyperlink> element.
+#
+sub _write_hyperlink {
+
+    my $self = shift;
+    my $row  = shift;
+    my $col  = shift;
+    my $id   = shift;
+
+    my $ref  = xl_rowcol_to_cell( $row, $col );
+    my $r_id = 'rId' . $id;
+
+    my @attributes = (
+        'ref'  => $ref,
+        'r:id' => $r_id,
+    );
+
+    $self->{_writer}->emptyTag( 'hyperlink', @attributes );
+}
+
 
 
 1;
