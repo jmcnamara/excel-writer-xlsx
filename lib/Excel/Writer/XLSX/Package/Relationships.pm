@@ -109,6 +109,28 @@ sub _add_package_relationship {
 }
 
 
+
+###############################################################################
+#
+# _add_woksheet_relationship()
+#
+# Add worksheet relationship to sheet.rels xml files.
+#
+sub _add_worksheet_relationship {
+
+    my $self        = shift;
+    my $type        = shift;
+    my $target      = shift;
+    my $target_mode = shift;
+
+    $type   = $document_schema . $type;
+    $target = $target;
+
+    push @{ $self->{_rels} }, [ $type, $target, $target_mode ];
+}
+
+
+
 ###############################################################################
 #
 # Internal methods.
@@ -157,15 +179,18 @@ sub _write_relationships {
 #
 sub _write_relationship {
 
-    my $self   = shift;
-    my $type   = shift;
-    my $target = shift;
+    my $self        = shift;
+    my $type        = shift;
+    my $target      = shift;
+    my $target_mode = shift;
 
     my @attributes = (
         'Id'     => 'rId' . $self->{_id}++,
         'Type'   => $type,
         'Target' => $target,
     );
+
+    push @attributes, ( 'TargetMode' => $target_mode ) if $target_mode;
 
     $self->{_writer}->emptyTag( 'Relationship', @attributes );
 }

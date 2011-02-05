@@ -4379,7 +4379,11 @@ sub _write_hyperlinks {
     $self->{_writer}->startTag( 'hyperlinks' );
 
     for my $aref ( @hlink_refs ) {
-        $self->_write_hyperlink( @$aref );
+        my ( $type, @args ) = @$aref;
+
+        if ( $type == 1 ) {
+            $self->_write_hyperlink_external( @args );
+        }
     }
 
     $self->{_writer}->endTag( 'hyperlinks' );
@@ -4388,11 +4392,11 @@ sub _write_hyperlinks {
 
 ##############################################################################
 #
-# _write_hyperlink()
+# _write_hyperlink_external()
 #
-# Write the <hyperlink> element.
+# Write the <hyperlink> element for external links.
 #
-sub _write_hyperlink {
+sub _write_hyperlink_external {
 
     my $self = shift;
     my $row  = shift;

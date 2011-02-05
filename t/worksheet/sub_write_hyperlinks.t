@@ -31,7 +31,7 @@ $expected = '<hyperlinks><hyperlink ref="A1" r:id="rId1" /></hyperlinks>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->{_hlink_refs} = [ [ 0, 0, 1 ] ];
+$worksheet->{_hlink_refs} = [[ 1, 0, 0, 1 ]];
 $worksheet->_write_hyperlinks();
 
 is( $got, $expected, $caption );

@@ -24,14 +24,14 @@ my $worksheet;
 
 ###############################################################################
 #
-# Test the _write_hyperlink() method.
+# Test the _write_hyperlink_external() method.
 #
-$caption  = " \tWorksheet: _write_hyperlink()";
+$caption  = " \tWorksheet: _write_hyperlink_external()";
 $expected = '<hyperlink ref="A1" r:id="rId1" />';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_hyperlink( 0, 0, 1 );
+$worksheet->_write_hyperlink_external( 0, 0, 1 );
 
 is( $got, $expected, $caption );
 
