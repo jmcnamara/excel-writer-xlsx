@@ -815,20 +815,6 @@ See also the note about L<Cell notation>.
 
 
 
-=head2 write_utf16be_string( $row, $column, $string, $format )
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
-
-
-
-
-=head2 write_utf16le_string( $row, $column, $string, $format )
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
-
-
-
-
 =head2 keep_leading_zeros()
 
 This method changes the default handling of integers with leading zeros when using the C<write()> method.
