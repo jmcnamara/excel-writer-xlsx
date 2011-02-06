@@ -29,7 +29,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::Relationships' );
 #
 $caption = " \tRelationships: _assemble_xml_file()";
 
-$obj->_add_worksheet_relationship( '/hyperlink', 'foo',         'External' );
+$obj->_add_worksheet_relationship( '/hyperlink', 'www.foo.com', 'External' );
 $obj->_add_worksheet_relationship( '/hyperlink', 'link00.xlsx', 'External' );
 $obj->_assemble_xml_file();
 
@@ -41,6 +41,6 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="foo" TargetMode="External"/>
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="www.foo.com" TargetMode="External"/>
   <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="link00.xlsx" TargetMode="External"/>
 </Relationships>

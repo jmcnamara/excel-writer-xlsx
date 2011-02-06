@@ -115,7 +115,7 @@ sub _create_package {
     $self->_write_theme_file();
     $self->_write_root_rels_file();
     $self->_write_workbook_rels_file();
-
+    $self->_write_worksheet_rels_files();
 }
 
 
@@ -390,6 +390,47 @@ sub _write_workbook_rels_file {
 
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
     $rels->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_worksheet_rels_files()
+#
+# Write the worksheet .rels files for worksheets that contain links to external
+# data such as hyperlinks.
+#
+sub _write_worksheet_rels_files {
+
+    my $self              = shift;
+    my $dir               = $self->{_package_dir};
+    my $existing_rels_dir = 0;
+
+
+    my $index = 0;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        $index++;
+        next unless $worksheet->{_external_links};
+
+        # Create the worksheet .rels dir if required.
+        if ( !$existing_rels_dir ) {
+            mkdir $dir . '/xl';
+            mkdir $dir . '/xl/worksheets';
+            mkdir $dir . '/xl/worksheets/_rels';
+            $existing_rels_dir = 1;
+        }
+
+        my $rels = Excel::Writer::XLSX::Package::Relationships->new();
+
+        for my $link_data ( @{ $worksheet->{_external_links} } ) {
+            $rels->_add_worksheet_relationship( @$link_data );
+        }
+
+        # Create the .rels file such as /xl/worksheets/_rels/sheet1.xml.rels.
+        $rels->_set_xml_writer(
+            $dir . '/xl/worksheets/_rels/sheet' . $index . '.xml.rels' );
+        $rels->_assemble_xml_file();
+    }
 }
 
 

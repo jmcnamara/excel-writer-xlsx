@@ -203,11 +203,14 @@ sub _assemble_xml_file {
     # Write the worksheet phonetic properties.
     #$self->_write_phonetic_pr();
 
+    # Write the autoFilter element.
+    $self->_write_auto_filter();
+
     # Write the mergeCells element.
     $self->_write_merge_cells();
 
-    # Write the autoFilter element.
-    $self->_write_auto_filter();
+    # Write the hyperlink element.
+    $self->_write_hyperlinks();
 
     # Write the worksheet page_margins.
     $self->_write_page_margins();
@@ -1820,27 +1823,18 @@ sub write_string {
     my $html    = $_[4] || 0;                         # Cell contains html text
     my $comment = '';                                 # Cell comment
     my $type    = 's';                                # The data type
-    my $index;
-    my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    if ( length $str > $self->{_xls_strmax} ) {    # LABEL must be < 32767 chars
+    # Check that the string is < 32767 chars
+    my $str_error = 0;
+    if ( length $str > $self->{_xls_strmax} ) {
         $str = substr( $str, 0, $self->{_xls_strmax} );
         $str_error = -3;
     }
 
-
-    # Add the string to the shared string table if it isn't already there.
-    if ( not exists ${ $self->{_str_table} }->{$str} ) {
-        ${ $self->{_str_table} }->{$str} = ${ $self->{_str_unique} }++;
-    }
-
-
-    ${ $self->{_str_total} }++;
-    $index = ${ $self->{_str_table} }->{$str};
-
+    my $index = $self->_get_shared_string_index( $str );
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2106,19 +2100,18 @@ sub write_url {
     # Reverse the order of $string and $format if necessary. We work on a copy
     # in order to protect the callers args. We don't use "local @_" in case of
     # perl50005 threads.
-    #
     my @args = @_;
     ( $args[3], $args[4] ) = ( $args[4], $args[3] ) if ref $args[3];
 
 
-    my $row  = $args[0];                              # Zero indexed row
-    my $col  = $args[1];                              # Zero indexed column
-    my $url  = $args[2];                              # URL string
-    my $str  = $args[3];                              # Alternative label
-    my $xf   = _XF( $self, $row, $col, $args[4] );    # Tool tip
-    my $tip  = $args[5];                              # XML data type
-    my $type = 99;
-
+    my $row       = $args[0];                              # Zero indexed row
+    my $col       = $args[1];                              # Zero indexed column
+    my $url       = $args[2];                              # URL string
+    my $str       = $args[3];                              # Alternative label
+    my $xf        = _XF( $self, $row, $col, $args[4] );    # Tool tip
+    my $tip       = $args[5];                              # XML data type
+    my $type      = 'l';
+    my $link_type = 1;
 
     $url =~ s/^internal:/#/;    # Remove designators required by SWE.
     $url =~ s/^external://;     # Remove designators required by SWE.
@@ -2127,10 +2120,17 @@ sub write_url {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
+    # Check that the string is < 32767 chars
     my $str_error = 0;
+    if ( length $str > $self->{_xls_strmax} ) {
+        $str = substr( $str, 0, $self->{_xls_strmax} );
+        $str_error = -3;
+    }
 
+    my $index = $self->_get_shared_string_index( $str );
 
-    $self->{_table}->[$row]->[$col] = [ $type, $url, $xf, $str, $tip ];
+    $self->{_table}->[$row]->[$col] =
+      [ $type, $index, $xf, $link_type, $url, $tip ];
 
     return $str_error;
 }
@@ -3127,6 +3127,30 @@ sub _options_changed {
 
 ###############################################################################
 #
+# _get_shared_string_index()
+#
+# Add a string to the shared string table, if it isn't already there, and
+# return the string index.
+#
+sub _get_shared_string_index {
+
+    my $self = shift;
+    my $str  = shift;
+
+    # Add the string to the shared string table.
+    if ( not exists ${ $self->{_str_table} }->{$str} ) {
+        ${ $self->{_str_table} }->{$str} = ${ $self->{_str_unique} }++;
+    }
+
+    ${ $self->{_str_total} }++;
+    my $index = ${ $self->{_str_table} }->{$str};
+
+    return $index;
+}
+
+
+###############################################################################
+#
 # XML writing methods.
 #
 ###############################################################################
@@ -3671,6 +3695,19 @@ sub _write_cell {
         $self->_write_cell_array_formula( $token, $cell->[3] );
         $self->_write_cell_value( $cell->[4] );
         $self->{_writer}->endTag( 'c' );
+    }
+    elsif ( $type eq 'l' ) {
+
+        # Write the string part a hyperlink.
+        push @attributes, ( 't' => 's' );
+
+        $self->{_writer}->startTag( 'c', @attributes );
+        $self->_write_cell_value( $token );
+        $self->{_writer}->endTag( 'c' );
+
+        push @{ $self->{_external_links} },
+          [ '/hyperlink', $cell->[4], 'External' ];
+        push @{ $self->{_hlink_refs} }, [ $cell->[3], $row, $col, 1 ];
     }
     elsif ( $type eq 'b' ) {
 

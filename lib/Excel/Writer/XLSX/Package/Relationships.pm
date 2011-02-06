@@ -112,7 +112,7 @@ sub _add_package_relationship {
 
 ###############################################################################
 #
-# _add_woksheet_relationship()
+# _add_worksheet_relationship()
 #
 # Add worksheet relationship to sheet.rels xml files.
 #
