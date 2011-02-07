@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'hyperlink01.xlsx';
+my $filename     = 'hyperlink05.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -37,7 +37,10 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->write_url( 'A1', 'http://www.perl.org/' );
+$worksheet->write_url( 'A1',  'http://www.perl.org/' );
+$worksheet->write_url( 'A3',  'http://www.perl.org/', 'Perl home' );
+$worksheet->write_url( 'A5',  'http://www.perl.org/', 'Perl home', undef, 'Tool Tip' );
+$worksheet->write_url( 'A7',  'http://www.cpan.org/', 'CPAN', undef, 'Download' );
 
 $workbook->close();
 

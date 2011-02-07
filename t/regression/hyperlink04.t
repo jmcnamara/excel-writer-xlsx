@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'hyperlink01.xlsx';
+my $filename     = 'hyperlink04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,10 +34,18 @@ my $ignore_elements = {};
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
+my $workbook   = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
+my $worksheet3 = $workbook->add_worksheet('Data Sheet');
 
-$worksheet->write_url( 'A1', 'http://www.perl.org/' );
+$worksheet1->write_url( 'A1',   q(internal:Sheet2!A1) );
+$worksheet1->write_url( 'A3',   q(internal:Sheet2!A1:A5) );
+$worksheet1->write_url( 'A5',   q(internal:'Data Sheet'!D5), 'Some text' );
+$worksheet1->write_url( 'E12',  q(internal:Sheet1!J1) );
+$worksheet1->write_url( 'G17',  q(internal:Sheet2!A1), 'Some text', undef );
+$worksheet1->write_url( 'A18',  q(internal:Sheet2!A1), undef, undef, 'Tool Tip 1' );
+$worksheet1->write_url( 'A20',  q(internal:Sheet2!A1), 'More text', undef, 'Tool Tip 2' );
 
 $workbook->close();
 

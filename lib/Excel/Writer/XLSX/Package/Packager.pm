@@ -410,7 +410,7 @@ sub _write_worksheet_rels_files {
     my $index = 0;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
         $index++;
-        next unless $worksheet->{_external_links};
+        next unless $worksheet->{_hlink_count};
 
         # Create the worksheet .rels dir if required.
         if ( !$existing_rels_dir ) {

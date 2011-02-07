@@ -155,7 +155,9 @@ sub new {
     $self->{_col_formats} = {};
     $self->{_row_formats} = {};
 
-    $self->{_hlink_refs} = [];
+    $self->{_hlink_refs}     = [];
+    $self->{_external_links} = [];
+    $self->{_hlink_count}    = 0;
 
     bless $self, $class;
     return $self;
@@ -930,7 +932,7 @@ sub filter_column {
     }
     else {
 
-        # Non defaul custom filter.
+        # Non default custom filter.
         $self->{_filter_cols}->{$col} = [@tokens];
         $self->{_filter_type}->{$col} = 0;
 
@@ -2113,8 +2115,18 @@ sub write_url {
     my $type      = 'l';
     my $link_type = 1;
 
-    $url =~ s/^internal:/#/;    # Remove designators required by SWE.
-    $url =~ s/^external://;     # Remove designators required by SWE.
+
+    # Remove the URI scheme from internal links.
+    if ( $url =~ s/^internal:// ) {
+        $link_type = 2;
+    }
+
+    # Remove the URI scheme from external links.
+    if ( $url =~ s/^external:// ) {
+        $link_type = 3;
+    }
+
+    # The displayed string defaults to the url string.
     $str = $url unless defined $str;
 
     # Check that row and col are valid and store max and min values
@@ -2127,10 +2139,35 @@ sub write_url {
         $str_error = -3;
     }
 
+    # Store the URL displayed text in the shared string table.
     my $index = $self->_get_shared_string_index( $str );
 
+    # External links to URLs and to other Excel workbooks have slightly
+    # different characteristics that we have to account for.
+    if ( $link_type == 1 ) {
+
+        # Ordinary URL style external links don't have a "location" string.
+        $str = undef;
+    }
+    elsif ( $link_type == 3 ) {
+
+        # External Workbook links need to be modified into the right format.
+        # The URL will look something like 'c:\temp\file.xlsx#Sheet!A1'.
+        # We need the part to the left of the # as the URL and the part to
+        # the right as the "location" string (if it exists)
+        ( $url, $str ) = split /#/, $url;
+
+        # Add the file:/// URI to the $url if required.
+        $url = 'file:///' . $url  unless $url =~ m{^file:///};
+
+        # Treat as a default external link now that the data has been modified.
+        $link_type = 1;
+    }
+
     $self->{_table}->[$row]->[$col] =
-      [ $type, $index, $xf, $link_type, $url, $tip ];
+
+      # 0      1       2    3           4     5     6
+      [ $type, $index, $xf, $link_type, $url, $str, $tip ];
 
     return $str_error;
 }
@@ -3642,7 +3679,20 @@ sub _write_empty_row {
 #
 # _write_cell()
 #
-# Write the <cell> element.
+# Write the <cell> element. This is the innermost loop so efficiency is
+# important where possible. The basic methodology is that the data of every
+# cell type is passed in as follows:
+#
+#      [ $row, $col, $aref]
+#
+# The aref, called $cell below, contains the following structure in all types:
+#
+#     [ $type, $token, $xf, @args ]
+#
+# Where $type:  represents the cell type, such as string, number, formula, etc.
+#       $token: is the actual data for the string, number, formula, etc.
+#       $xf:    is the XF format object index.
+#       @args:  additional args relevant to the specific data type.
 #
 sub _write_cell {
 
@@ -3662,6 +3712,7 @@ sub _write_cell {
     if ( $xf ) {
         push @attributes, ( 's' => $xf );
     }
+
 
     # Write the various cell types.
     if ( $type eq 'n' ) {
@@ -3697,6 +3748,7 @@ sub _write_cell {
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 'l' ) {
+        my $link_type = $cell->[3];
 
         # Write the string part a hyperlink.
         push @attributes, ( 't' => 's' );
@@ -3705,9 +3757,25 @@ sub _write_cell {
         $self->_write_cell_value( $token );
         $self->{_writer}->endTag( 'c' );
 
-        push @{ $self->{_external_links} },
-          [ '/hyperlink', $cell->[4], 'External' ];
-        push @{ $self->{_hlink_refs} }, [ $cell->[3], $row, $col, 1 ];
+        if ( $link_type == 1 ) {
+
+            # External link with rel file relationship.
+            push @{ $self->{_hlink_refs} },
+              [
+                $link_type,              $row,       $col,
+                ++$self->{_hlink_count}, $cell->[5], $cell->[6]
+              ];
+
+            push @{ $self->{_external_links} },
+              [ '/hyperlink', $cell->[4], 'External' ];
+        }
+        elsif ( $link_type ) {
+
+            # External link with rel file relationship.
+            push @{ $self->{_hlink_refs} },
+              [ $link_type, $row, $col, $cell->[4], $cell->[5], $cell->[6] ];
+        }
+
     }
     elsif ( $type eq 'b' ) {
 
@@ -4392,7 +4460,7 @@ sub _write_custom_filter {
         croak "Unknown operator = $operator\n";
     }
 
-    # The 'equal' operator is the default attibute and isn't stored.
+    # The 'equal' operator is the default attribute and isn't stored.
     push @attributes, ( 'operator' => $operator ) unless $operator eq 'equal';
     push @attributes, ( 'val' => $val );
 
@@ -4404,7 +4472,8 @@ sub _write_custom_filter {
 #
 # _write_hyperlinks()
 #
-# Write the <hyperlinks> element.
+# Write the <hyperlinks> element. The attributes are different for internal
+# and external links.
 #
 sub _write_hyperlinks {
 
@@ -4421,6 +4490,9 @@ sub _write_hyperlinks {
         if ( $type == 1 ) {
             $self->_write_hyperlink_external( @args );
         }
+        elsif ( $type == 2 ) {
+            $self->_write_hyperlink_internal( @args );
+        }
     }
 
     $self->{_writer}->endTag( 'hyperlinks' );
@@ -4435,18 +4507,49 @@ sub _write_hyperlinks {
 #
 sub _write_hyperlink_external {
 
-    my $self = shift;
-    my $row  = shift;
-    my $col  = shift;
-    my $id   = shift;
+    my $self     = shift;
+    my $row      = shift;
+    my $col      = shift;
+    my $id       = shift;
+    my $location = shift;
+    my $tooltip  = shift;
 
-    my $ref  = xl_rowcol_to_cell( $row, $col );
+    my $ref = xl_rowcol_to_cell( $row, $col );
     my $r_id = 'rId' . $id;
 
     my @attributes = (
         'ref'  => $ref,
         'r:id' => $r_id,
     );
+
+    push @attributes, ( 'location' => $location ) if defined $location;
+    push @attributes, ( 'tooltip'  => $tooltip )  if defined $tooltip;
+
+    $self->{_writer}->emptyTag( 'hyperlink', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_hyperlink_internal()
+#
+# Write the <hyperlink> element for internal links.
+#
+sub _write_hyperlink_internal {
+
+    my $self     = shift;
+    my $row      = shift;
+    my $col      = shift;
+    my $location = shift;
+    my $display  = shift;
+    my $tooltip  = shift;
+
+    my $ref = xl_rowcol_to_cell( $row, $col );
+
+    my @attributes = ( 'ref' => $ref, 'location' => $location );
+
+    push @attributes, ( 'tooltip' => $tooltip ) if defined $tooltip;
+    push @attributes, ( 'display' => $display );
 
     $self->{_writer}->emptyTag( 'hyperlink', @attributes );
 }

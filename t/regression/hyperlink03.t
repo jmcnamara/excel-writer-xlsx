@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'hyperlink01.xlsx';
+my $filename     = 'hyperlink03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,10 +34,19 @@ my $ignore_elements = {};
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
+my $workbook   = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
 
-$worksheet->write_url( 'A1', 'http://www.perl.org/' );
+$worksheet1->write_url( 'A1',  'http://www.perl.org/' );
+$worksheet1->write_url( 'D4',  'http://www.perl.org/' );
+$worksheet1->write_url( 'A8',  'http://www.perl.org/' );
+$worksheet1->write_url( 'B6',  'http://www.cpan.org/' );
+$worksheet1->write_url( 'F12', 'http://www.cpan.org/' );
+
+$worksheet2->write_url( 'C2',  'http://www.google.com/' );
+$worksheet2->write_url( 'C5',  'http://www.cpan.org/' );
+$worksheet2->write_url( 'C7',  'http://www.perl.org/' );
 
 $workbook->close();
 
