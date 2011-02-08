@@ -2129,6 +2129,12 @@ sub write_url {
     # The displayed string defaults to the url string.
     $str = $url unless defined $str;
 
+    # For external links change the directory separator from Unix to Dos.
+    if ( $link_type == 3 ) {
+        $url =~ s[/][\\]g;
+        $str =~ s[/][\\]g;
+    }
+
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
@@ -2157,8 +2163,10 @@ sub write_url {
         # the right as the "location" string (if it exists)
         ( $url, $str ) = split /#/, $url;
 
-        # Add the file:/// URI to the $url if required.
-        $url = 'file:///' . $url  unless $url =~ m{^file:///};
+        # Add the file:/// URI to the $url if non-local.
+        if ($url =~ m{[\\/]} && $url !~ m{^\.\.}) {
+            $url = 'file:///' . $url;
+        }
 
         # Treat as a default external link now that the data has been modified.
         $link_type = 1;
