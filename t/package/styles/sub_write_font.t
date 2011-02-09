@@ -10,7 +10,7 @@ use TestFunctions qw(_new_style _new_workbook);
 use strict;
 use warnings;
 
-use Test::More tests => 16;
+use Test::More tests => 17;
 
 
 ###############################################################################
@@ -240,7 +240,7 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 14. Test the _write_font() method. Dooble underline.
+# 14. Test the _write_font() method. Double underline.
 #
 %properties = ( underline => 2 );
 $caption    = " \tStyles: _write_font()";
@@ -255,7 +255,7 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 15. Test the _write_font() method. Doouble underline.
+# 15. Test the _write_font() method. Double underline.
 #
 %properties = ( underline => 33 );
 $caption    = " \tStyles: _write_font()";
@@ -270,7 +270,7 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 16. Test the _write_font() method. Doouble underline.
+# 16. Test the _write_font() method. Double underline.
 #
 %properties = ( underline => 34 );
 $caption    = " \tStyles: _write_font()";
@@ -282,6 +282,20 @@ $style->_write_font( $format );
 
 is( $got, $expected, $caption );
 
+
+###############################################################################
+#
+# 17. Test the _write_font() method. Hyperlink.
+#
+%properties = ( hyperlink => 1 );
+$caption    = " \tStyles: _write_font()";
+$expected   = '<font><u /><sz val="11" /><color theme="10" /><name val="Calibri" /><family val="2" /></font>';
+
+$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$style  = _new_style( \$got );
+$style->_write_font( $format );
+
+is( $got, $expected, $caption );
 
 
 
