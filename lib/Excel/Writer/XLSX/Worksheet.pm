@@ -2135,6 +2135,9 @@ sub write_url {
         $str =~ s[/][\\]g;
     }
 
+    # TODO
+    $str =~ s/^mailto://;
+
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 

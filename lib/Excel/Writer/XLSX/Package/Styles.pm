@@ -284,7 +284,10 @@ sub _write_font {
 
     $self->{_writer}->emptyTag( 'sz', 'val', $format->{_size} );
 
-    if ( my $color = $format->{_color} ) {
+    if ( my $theme = $format->{_theme} ) {
+        $self->_write_color( 'theme' => $theme );
+    }
+    elsif ( my $color = $format->{_color} ) {
         $color = $self->_get_palette_color( $color );
 
         $self->_write_color( 'rgb' => $color );
@@ -296,7 +299,7 @@ sub _write_font {
     $self->{_writer}->emptyTag( 'name',   'val', $format->{_font} );
     $self->{_writer}->emptyTag( 'family', 'val', $format->{_font_family} );
 
-    if ( $format->{_font} eq 'Calibri' ) {
+    if ( $format->{_font} eq 'Calibri' && ! $format->{_hyperlink} ) {
         $self->{_writer}->emptyTag( 'scheme', 'val', $format->{_font_scheme} );
     }
 

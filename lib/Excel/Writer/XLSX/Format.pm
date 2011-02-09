@@ -54,6 +54,8 @@ sub new {
         _font_family      => 2,
         _font_charset     => 0,
         _font_scheme      => 'minor',
+        _theme            => 0,
+        _hyperlink        => 0,
 
         _hidden => 0,
         _locked => 1,
@@ -554,6 +556,25 @@ sub set_rotation {
     }
 
     $self->{_rotation} = $rotation;
+}
+
+
+###############################################################################
+#
+# set_hyperlink()
+#
+# Set the properties for the hyperlink style. TODO. This doesn't currently
+# work. Fix it when styles are supported.
+#
+sub set_hyperlink {
+
+    my $self = shift;
+
+    $self->{_hyperlink} = 1;
+
+    $self->set_underline( 1 );
+    $self->set_theme( 10 );
+    $self->set_align( 'top' );
 }
 
 
