@@ -12,10 +12,7 @@ use strict;
 use Excel::Writer::XLSX;
 
 # Create a new workbook called simple.xls and add a worksheet
-my $workbook = Excel::Writer::XLSX->new( 'a_simple.xlsx' );
-
-die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
-
+my $workbook  = Excel::Writer::XLSX->new( 'a_simple.xlsx' );
 my $worksheet = $workbook->add_worksheet();
 
 # The general syntax is write($row, $column, $token). Note that row and
@@ -34,11 +31,16 @@ $worksheet->write( 5, 0, 3.14159 );    # TeX revision no.?
 
 
 # Write some formulas
-$worksheet->write(7, 0,  '=A3 + A6');
-$worksheet->write(8, 0,  '=IF(A5>3,"Yes", "No")');
+$worksheet->write( 7, 0, '=A3 + A6' );
+$worksheet->write( 8, 0, '=IF(A5>3,"Yes", "No")' );
 
 
 # Write a hyperlink
-#$worksheet->write(10, 0, 'http://www.perl.com/');
+my $hyperlink_format = $workbook->add_format(
+    color     => 'blue',
+    underline => 1,
+);
+
+$worksheet->write( 10, 0, 'http://www.perl.com/', $hyperlink_format );
 
 __END__

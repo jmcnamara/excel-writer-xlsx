@@ -37,6 +37,12 @@ my $heading = $workbook->add_format(
     align => 'vcenter',
 );
 
+my $hyperlink_format = $workbook->add_format(
+    color => 'blue',
+    underline => 1,
+);
+
+
 my @headings = ( 'Features of Excel::Writer::XLSX', '' );
 $worksheet->write_row( 'A1', \@headings, $heading );
 
@@ -53,17 +59,13 @@ my $text_format = $workbook->add_format(
     font   => 'Lucida Calligraphy'
 );
 
-# A phrase in Cyrillic
-my $unicode = pack "H*", "042d0442043e002004440440043004370430002004"
-  . "3d043000200440044304410441043a043e043c0021";
-
 
 $worksheet->write( 'A2', "Text" );
 $worksheet->write( 'B2', "Hello Excel" );
 $worksheet->write( 'A3', "Formatted text" );
 $worksheet->write( 'B3', "Hello Excel", $text_format );
 $worksheet->write( 'A4', "Unicode text" );
-$worksheet->write_utf16be_string( 'B4', $unicode );
+$worksheet->write( 'B4', "\x{0410} \x{0411} \x{0412} \x{0413} \x{0414}" );
 
 #######################################################################
 #
@@ -95,15 +97,16 @@ $worksheet->write( 'B8', '=SIN(PI()/4)' );
 # Hyperlinks
 #
 $worksheet->write( 'A9', "Hyperlinks" );
-$worksheet->write( 'B9', 'http://www.perl.com/' );
+$worksheet->write( 'B9', 'http://www.perl.com/', $hyperlink_format );
 
 
 #######################################################################
 #
 # Images
 #
-$worksheet->write( 'A10', "Images" );
-$worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
+# Not implemented yet.
+#$worksheet->write( 'A10', "Images" );
+#$worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
 
 
 #######################################################################

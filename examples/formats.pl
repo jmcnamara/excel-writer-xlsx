@@ -76,27 +76,38 @@ sub intro {
     $format2->set_bold();
     $format2->set_color( 'blue' );
 
+    my $format3 = $workbook->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+
     $worksheet->write( 2, 0, 'This workbook demonstrates some of', $format );
     $worksheet->write( 3, 0, 'the formatting options provided by', $format );
     $worksheet->write( 4, 0, 'the Excel::Writer::XLSX module.',    $format );
+    $worksheet->write( 'A7', 'Sections:', $format2 );
 
-    $worksheet->write( 'A7', 'Sections:',                  $format2 );
-    $worksheet->write( 'A8', "internal:Fonts!A1",          'Fonts' );
-    $worksheet->write( 'A9', "internal:'Named colors'!A1", 'Named colors' );
+    $worksheet->write( 'A8', "internal:Fonts!A1", 'Fonts', $format3 );
+
+    $worksheet->write( 'A9', "internal:'Named colors'!A1",
+        'Named colors', $format3 );
+
     $worksheet->write(
         'A10',
         "internal:'Standard colors'!A1",
-        'Standard colors'
+        'Standard colors', $format3
     );
+
     $worksheet->write(
         'A11',
         "internal:'Numeric formats'!A1",
-        'Numeric formats'
+        'Numeric formats', $format3
     );
-    $worksheet->write( 'A12', "internal:Borders!A1",       'Borders' );
-    $worksheet->write( 'A13', "internal:Patterns!A1",      'Patterns' );
-    $worksheet->write( 'A14', "internal:Alignment!A1",     'Alignment' );
-    $worksheet->write( 'A15', "internal:Miscellaneous!A1", 'Miscellaneous' );
+
+    $worksheet->write( 'A12', "internal:Borders!A1", 'Borders', $format3 );
+    $worksheet->write( 'A13', "internal:Patterns!A1", 'Patterns', $format3 );
+    $worksheet->write( 'A14', "internal:Alignment!A1", 'Alignment', $format3 );
+    $worksheet->write( 'A15', "internal:Miscellaneous!A1", 'Miscellaneous',
+        $format3 );
 
 }
 
