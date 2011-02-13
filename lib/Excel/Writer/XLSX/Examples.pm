@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 38 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 40 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -66,6 +66,10 @@ The following is a list of the 38 example programs that are included in the Exce
 =item * L<Example: diag_border.pl> A simple example of diagonal cell borders.
 
 =item * L<Example: headers.pl> Examples of worksheet headers and footers.
+
+=item * L<Example: hyperlink1.pl> Shows how to create web hyperlinks.
+
+=item * L<Example: hyperlink2.pl> Examples of internal and external hyperlinks.
 
 =item * L<Example: indent.pl> An example of cell indentation.
 
@@ -152,10 +156,7 @@ Source code for this example:
     use Excel::Writer::XLSX;
     
     # Create a new workbook called simple.xls and add a worksheet
-    my $workbook = Excel::Writer::XLSX->new( 'a_simple.xlsx' );
-    
-    die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
-    
+    my $workbook  = Excel::Writer::XLSX->new( 'a_simple.xlsx' );
     my $worksheet = $workbook->add_worksheet();
     
     # The general syntax is write($row, $column, $token). Note that row and
@@ -174,17 +175,22 @@ Source code for this example:
     
     
     # Write some formulas
-    $worksheet->write(7, 0,  '=A3 + A6');
-    $worksheet->write(8, 0,  '=IF(A5>3,"Yes", "No")');
+    $worksheet->write( 7, 0, '=A3 + A6' );
+    $worksheet->write( 8, 0, '=IF(A5>3,"Yes", "No")' );
     
     
     # Write a hyperlink
-    #$worksheet->write(10, 0, 'http://www.perl.com/');
+    my $hyperlink_format = $workbook->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+    
+    $worksheet->write( 10, 0, 'http://www.perl.com/', $hyperlink_format );
     
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -334,7 +340,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -394,6 +400,12 @@ Source code for this example:
         align => 'vcenter',
     );
     
+    my $hyperlink_format = $workbook->add_format(
+        color => 'blue',
+        underline => 1,
+    );
+    
+    
     my @headings = ( 'Features of Excel::Writer::XLSX', '' );
     $worksheet->write_row( 'A1', \@headings, $heading );
     
@@ -410,17 +422,13 @@ Source code for this example:
         font   => 'Lucida Calligraphy'
     );
     
-    # A phrase in Cyrillic
-    my $unicode = pack "H*", "042d0442043e002004440440043004370430002004"
-      . "3d043000200440044304410441043a043e043c0021";
-    
     
     $worksheet->write( 'A2', "Text" );
     $worksheet->write( 'B2', "Hello Excel" );
     $worksheet->write( 'A3', "Formatted text" );
     $worksheet->write( 'B3', "Hello Excel", $text_format );
     $worksheet->write( 'A4', "Unicode text" );
-    $worksheet->write_utf16be_string( 'B4', $unicode );
+    $worksheet->write( 'B4', "\x{0410} \x{0411} \x{0412} \x{0413} \x{0414}" );
     
     #######################################################################
     #
@@ -452,15 +460,16 @@ Source code for this example:
     # Hyperlinks
     #
     $worksheet->write( 'A9', "Hyperlinks" );
-    $worksheet->write( 'B9', 'http://www.perl.com/' );
+    $worksheet->write( 'B9', 'http://www.perl.com/', $hyperlink_format );
     
     
     #######################################################################
     #
     # Images
     #
-    $worksheet->write( 'A10', "Images" );
-    $worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
+    # Not implemented yet.
+    #$worksheet->write( 'A10', "Images" );
+    #$worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
     
     
     #######################################################################
@@ -473,7 +482,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -573,27 +582,38 @@ Source code for this example:
         $format2->set_bold();
         $format2->set_color( 'blue' );
     
+        my $format3 = $workbook->add_format(
+            color     => 'blue',
+            underline => 1,
+        );
+    
         $worksheet->write( 2, 0, 'This workbook demonstrates some of', $format );
         $worksheet->write( 3, 0, 'the formatting options provided by', $format );
         $worksheet->write( 4, 0, 'the Excel::Writer::XLSX module.',    $format );
+        $worksheet->write( 'A7', 'Sections:', $format2 );
     
-        $worksheet->write( 'A7', 'Sections:',                  $format2 );
-        $worksheet->write( 'A8', "internal:Fonts!A1",          'Fonts' );
-        $worksheet->write( 'A9', "internal:'Named colors'!A1", 'Named colors' );
+        $worksheet->write( 'A8', "internal:Fonts!A1", 'Fonts', $format3 );
+    
+        $worksheet->write( 'A9', "internal:'Named colors'!A1",
+            'Named colors', $format3 );
+    
         $worksheet->write(
             'A10',
             "internal:'Standard colors'!A1",
-            'Standard colors'
+            'Standard colors', $format3
         );
+    
         $worksheet->write(
             'A11',
             "internal:'Numeric formats'!A1",
-            'Numeric formats'
+            'Numeric formats', $format3
         );
-        $worksheet->write( 'A12', "internal:Borders!A1",       'Borders' );
-        $worksheet->write( 'A13', "internal:Patterns!A1",      'Patterns' );
-        $worksheet->write( 'A14', "internal:Alignment!A1",     'Alignment' );
-        $worksheet->write( 'A15', "internal:Miscellaneous!A1", 'Miscellaneous' );
+    
+        $worksheet->write( 'A12', "internal:Borders!A1", 'Borders', $format3 );
+        $worksheet->write( 'A13', "internal:Patterns!A1", 'Patterns', $format3 );
+        $worksheet->write( 'A14', "internal:Alignment!A1", 'Alignment', $format3 );
+        $worksheet->write( 'A15', "internal:Miscellaneous!A1", 'Miscellaneous',
+            $format3 );
     
     }
     
@@ -1000,7 +1020,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1067,7 +1087,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1158,7 +1178,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/stats.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1458,7 +1478,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1505,7 +1525,7 @@ array formulas.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1579,7 +1599,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/cgi.pl>
 
 =head2 Example: colors.pl
 
@@ -1711,7 +1731,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/colors.pl>
 
 =head2 Example: diag_border.pl
 
@@ -1771,7 +1791,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/diag_border.pl>
 
 =head2 Example: headers.pl
 
@@ -1937,7 +1957,255 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/headers.pl>
+
+=head2 Example: hyperlink1.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX module to write hyperlinks
+
+See also hyperlink2.pl for worksheet URL examples.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/hyperlink1.jpg" width="640" height="420" alt="Output from hyperlink1.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX module to write hyperlinks
+    #
+    # See also hyperlink2.pl for worksheet URL examples.
+    #
+    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add a worksheet
+    my $workbook = Excel::Writer::XLSX->new( 'hyperlink.xlsx' );
+    
+    
+    my $worksheet = $workbook->add_worksheet( 'Hyperlinks' );
+    
+    # Format the first column
+    $worksheet->set_column( 'A:A', 30 );
+    $worksheet->set_selection( 'B1' );
+    
+    
+    # Add the standard url link format.
+    my $url_format = $workbook->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+    
+    # Add a sample format.
+    my $red_format = $workbook->add_format(
+        color     => 'red',
+        bold      => 1,
+        underline => 1,
+        size      => 12,
+    );
+    
+    # Add an alternate description string to the URL.
+    my $str = 'Perl home.';
+    
+    # Add a "tool tip" to the URL.
+    my $tip = 'Get the latest Perl news here.';
+    
+    
+    # Write some hyperlinks
+    $worksheet->write( 'A1', 'http://www.perl.com/', $url_format );
+    $worksheet->write( 'A3', 'http://www.perl.com/', $url_format, $str );
+    $worksheet->write( 'A5', 'http://www.perl.com/', $url_format, $str, $tip );
+    $worksheet->write( 'A7', 'http://www.perl.com/', $red_format );
+    $worksheet->write( 'A9', 'mailto:jmcnamara@cpan.org', $url_format, 'Mail me' );
+    
+    # Write a URL that isn't a hyperlink
+    $worksheet->write_string( 'A11', 'http://www.perl.com/' );
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/hyperlink1.pl>
+
+=head2 Example: hyperlink2.pl
+
+
+
+Example of how to use the Excel::Writer::XLSX module to write internal and
+external hyperlinks.
+
+If you wish to run this program and follow the hyperlinks you should create
+the following directory structure:
+
+C:\ -- Temp --+-- Europe
+              |
+              \-- Asia
+
+
+See also hyperlink1.pl for web URL examples.
+
+
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to use the Excel::Writer::XLSX module to write internal and
+    # external hyperlinks.
+    #
+    # If you wish to run this program and follow the hyperlinks you should create
+    # the following directory structure:
+    #
+    # C:\ -- Temp --+-- Europe
+    #               |
+    #               \-- Asia
+    #
+    #
+    # See also hyperlink1.pl for web URL examples.
+    #
+    # reverse('©'), February 2002, John McNamara, jmcnamara@cpan.org
+    #
+    
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create three workbooks:
+    #   C:\Temp\Europe\Ireland.xlsx
+    #   C:\Temp\Europe\Italy.xlsx
+    #   C:\Temp\Asia\China.xlsx
+    #
+    
+    my $ireland = Excel::Writer::XLSX->new( 'C:\Temp\Europe\Ireland.xlsx' );
+    
+    my $ire_links      = $ireland->add_worksheet( 'Links' );
+    my $ire_sales      = $ireland->add_worksheet( 'Sales' );
+    my $ire_data       = $ireland->add_worksheet( 'Product Data' );
+    my $ire_url_format = $ireland->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+    
+    
+    my $italy = Excel::Writer::XLSX->new( 'C:\Temp\Europe\Italy.xlsx' );
+    
+    my $ita_links      = $italy->add_worksheet( 'Links' );
+    my $ita_sales      = $italy->add_worksheet( 'Sales' );
+    my $ita_data       = $italy->add_worksheet( 'Product Data' );
+    my $ita_url_format = $italy->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+    
+    
+    my $china = Excel::Writer::XLSX->new( 'C:\Temp\Asia\China.xlsx' );
+    
+    my $cha_links      = $china->add_worksheet( 'Links' );
+    my $cha_sales      = $china->add_worksheet( 'Sales' );
+    my $cha_data       = $china->add_worksheet( 'Product Data' );
+    my $cha_url_format = $china->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+    
+    
+    # Add an alternative format
+    my $format = $ireland->add_format( color => 'green', bold => 1 );
+    $ire_links->set_column( 'A:B', 25 );
+    
+    
+    ###############################################################################
+    #
+    # Examples of internal links
+    #
+    $ire_links->write( 'A1', 'Internal links', $format );
+    
+    # Internal link
+    $ire_links->write_url( 'A2', 'internal:Sales!A2', $ire_url_format );
+    
+    # Internal link to a range
+    $ire_links->write_url( 'A3', 'internal:Sales!A3:D3', $ire_url_format );
+    
+    # Internal link with an alternative string
+    $ire_links->write_url( 'A4', 'internal:Sales!A4', $ire_url_format, 'Link' );
+    
+    # Internal link with an alternative format
+    $ire_links->write_url( 'A5', 'internal:Sales!A5', $format );
+    
+    # Internal link with an alternative string and format
+    $ire_links->write_url( 'A6', 'internal:Sales!A6', $ire_url_format, 'Link' );
+    
+    # Internal link (spaces in worksheet name)
+    $ire_links->write_url( 'A7', q{internal:'Product Data'!A7}, $ire_url_format );
+    
+    
+    ###############################################################################
+    #
+    # Examples of external links
+    #
+    $ire_links->write( 'B1', 'External links', $format );
+    
+    # External link to a local file
+    $ire_links->write_url( 'B2', 'external:Italy.xlsx', $ire_url_format );
+    
+    # External link to a local file with worksheet
+    $ire_links->write_url( 'B3', 'external:Italy.xlsx#Sales!B3', $ire_url_format );
+    
+    # External link to a local file with worksheet and alternative string
+    $ire_links->write_url( 'B4', 'external:Italy.xlsx#Sales!B4', $ire_url_format, 'Link' );
+    
+    # External link to a local file with worksheet and format
+    $ire_links->write_url( 'B5', 'external:Italy.xlsx#Sales!B5', $format );
+    
+    # External link to a remote file, absolute path
+    $ire_links->write_url( 'B6', 'external:C:/Temp/Asia/China.xlsx', $ire_url_format );
+    
+    # External link to a remote file, relative path
+    $ire_links->write_url( 'B7', 'external:../Asia/China.xlsx', $ire_url_format );
+    
+    # External link to a remote file with worksheet
+    $ire_links->write_url( 'B8', 'external:C:/Temp/Asia/China.xlsx#Sales!B8', $ire_url_format );
+    
+    # External link to a remote file with worksheet (with spaces in the name)
+    $ire_links->write_url( 'B9', q{external:C:/Temp/Asia/China.xlsx#'Product Data'!B9}, $ire_url_format );
+    
+    
+    ###############################################################################
+    #
+    # Some utility links to return to the main sheet
+    #
+    $ire_sales->write_url( 'A2', 'internal:Links!A2', $ire_url_format, 'Back' );
+    $ire_sales->write_url( 'A3', 'internal:Links!A3', $ire_url_format, 'Back' );
+    $ire_sales->write_url( 'A4', 'internal:Links!A4', $ire_url_format, 'Back' );
+    $ire_sales->write_url( 'A5', 'internal:Links!A5', $ire_url_format, 'Back' );
+    $ire_sales->write_url( 'A6', 'internal:Links!A6', $ire_url_format, 'Back' );
+    $ire_data->write_url ( 'A7', 'internal:Links!A7', $ire_url_format, 'Back' );
+    
+    $ita_links->write_url( 'A1', 'external:Ireland.xlsx#Links!B2', $ita_url_format, 'Back' );
+    $ita_sales->write_url( 'B3', 'external:Ireland.xlsx#Links!B3', $ita_url_format, 'Back' );
+    $ita_sales->write_url( 'B4', 'external:Ireland.xlsx#Links!B4', $ita_url_format, 'Back' );
+    $ita_sales->write_url( 'B5', 'external:Ireland.xlsx#Links!B5', $ita_url_format, 'Back' );
+    $cha_links->write_url( 'A1', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B6', $cha_url_format, 'Back' );
+    $cha_sales->write_url( 'B8', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B8', $cha_url_format, 'Back' );
+    $cha_data->write_url ( 'B9', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B9', $cha_url_format, 'Back' );
+    
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -1988,7 +2256,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/indent.pl>
 
 =head2 Example: merge1.pl
 
@@ -2050,7 +2318,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -2121,15 +2389,14 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
 
 
 Example of how to use Excel::Writer::XLSX to write a hyperlink in a
-merged cell. There are two options write_url_range() with a standard merge
-format or merge_range().
+merged cell.
 
 
 
@@ -2146,8 +2413,7 @@ Source code for this example:
     ###############################################################################
     #
     # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
-    # merged cell. There are two options write_url_range() with a standard merge
-    # format or merge_range().
+    # merged cell.
     #
     # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
     #
@@ -2162,33 +2428,15 @@ Source code for this example:
     
     
     # Increase the cell size of the merged cells to highlight the formatting.
-    $worksheet->set_row( $_, 30 ) for ( 1, 3, 6, 7 );
+    $worksheet->set_row( $_, 30 ) for ( 3, 6, 7 );
     $worksheet->set_column( 'B:D', 20 );
     
     
     ###############################################################################
     #
-    # Example 1: Merge cells containing a hyperlink using write_url_range()
-    # and the standard Excel 5+ merge property.
+    # Example: Merge cells containing a hyperlink using merge_range().
     #
-    my $format1 = $workbook->add_format(
-        center_across => 1,
-        border        => 1,
-        underline     => 1,
-        color         => 'blue',
-    );
-    
-    # Write the cells to be merged
-    $worksheet->write_url_range( 'B2:D2', 'http://www.perl.com', $format1 );
-    $worksheet->write_blank( 'C2', $format1 );
-    $worksheet->write_blank( 'D2', $format1 );
-    
-    
-    ###############################################################################
-    #
-    # Example 2: Merge cells containing a hyperlink using merge_range().
-    #
-    my $format2 = $workbook->add_format(
+    my $format = $workbook->add_format(
         border    => 1,
         underline => 1,
         color     => 'blue',
@@ -2197,16 +2445,16 @@ Source code for this example:
     );
     
     # Merge 3 cells
-    $worksheet->merge_range( 'B4:D4', 'http://www.perl.com', $format2 );
+    $worksheet->merge_range( 'B4:D4', 'http://www.perl.com', $format );
     
     
     # Merge 3 cells over two rows
-    $worksheet->merge_range( 'B7:D8', 'http://www.perl.com', $format2 );
+    $worksheet->merge_range( 'B7:D8', 'http://www.perl.com', $format );
     
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -2315,7 +2563,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -2412,7 +2660,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -2486,7 +2734,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -2611,7 +2859,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -2739,7 +2987,7 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/mod_perl2.pl>
 
 =head2 Example: sales.pl
 
@@ -2862,7 +3110,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/sales.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -2961,7 +3209,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -3060,7 +3308,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/stocks.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -3148,7 +3396,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -3245,7 +3493,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -3334,7 +3582,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -3463,7 +3711,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/write_handler4.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -3528,7 +3776,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -3593,7 +3841,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -3658,7 +3906,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -3723,7 +3971,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -3788,7 +4036,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -3853,7 +4101,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -3923,7 +4171,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -3988,7 +4236,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -4053,7 +4301,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -4118,7 +4366,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.08/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.09/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 

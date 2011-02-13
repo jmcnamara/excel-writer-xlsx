@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
     - Removed feature.
     ! Bug fix.
 
+0.09 February 13 2011
+
+    + Added write_url() for internal and external hyperlinks.
+
+    + Added hyperlink1+2.pl example programs.
+
+
 0.08 February 3 2011
 
     + Added autofilter(), column_filter() and column_filter_list() methods.

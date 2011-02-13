@@ -24,7 +24,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 
 ###############################################################################
@@ -2186,17 +2186,12 @@ sub write_url {
 
 ###############################################################################
 #
-# write_url_range($row1, $col1, $row2, $col2, $url, $string, $format)
-#
-# This is the more general form of write_url(). It allows a hyperlink to be
-# written to a range of cells. This function also decides the type of hyperlink
-# to be written. These are either, Web (http, ftp, mailto), Internal
-# (Sheet1!A1) or external ('c:\temp\foo.xls#Sheet1!A1').
-#
-# See also write_url() above for a general description and return values.
+# write_url_range()
 #
 sub write_url_range {
 
+    # This method was mainly only required for Excel 5. It is deprecated in
+    # Excel::Writer::XLSX.
 }
 
 

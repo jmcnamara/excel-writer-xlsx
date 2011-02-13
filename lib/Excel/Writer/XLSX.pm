@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.08 of Excel::Writer::XLSX, released February 3, 2011.
+This document refers to version 0.09 of Excel::Writer::XLSX, released February 13, 2011.
 
 
 
@@ -1066,7 +1066,7 @@ The suggested format is:
 
     my $format = $workbook->add_format( color => 'blue', underline => 1 );
 
-B<Note>, this behaviour is different from Spreadsheet::WriteExcel which provides a default hyplerlink format if one isn't specified by the user.
+B<Note>, this behaviour is different from Spreadsheet::WriteExcel which provides a default hyperlink format if one isn't specified by the user.
 
 There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and C<mailto:>:
 

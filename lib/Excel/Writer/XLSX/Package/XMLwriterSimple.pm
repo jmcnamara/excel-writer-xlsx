@@ -20,7 +20,7 @@ use Exporter;
 use Carp;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 #
 # NOTE: this module is a light weight re-implementation of XML::Writer. See
