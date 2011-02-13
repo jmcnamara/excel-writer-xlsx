@@ -2197,32 +2197,6 @@ sub write_url {
 #
 sub write_url_range {
 
-    my $self = shift;
-
-    # Check for a cell reference in A1 notation and substitute row and column
-    if ( $_[0] =~ /^\D/ ) {
-        @_ = $self->_substitute_cellref( @_ );
-    }
-
-    # Check the number of args
-    return -1 if @_ < 5;
-
-
-    # Reverse the order of $string and $format if necessary. We work on a copy
-    # in order to protect the callers args. We don't use "local @_" in case of
-    # perl50005 threads.
-    #
-    my @args = @_;
-
-    ( $args[5], $args[6] ) = ( $args[6], $args[5] ) if ref $args[5];
-
-    my $url = $args[4];
-
-
-    # Check for internal/external sheet links or default to web link
-    return $self->_write_url_internal( @args ) if $url =~ m[^internal:];
-    return $self->_write_url_external( @args ) if $url =~ m[^external:];
-    return $self->_write_url_web( @args );
 }
 
 

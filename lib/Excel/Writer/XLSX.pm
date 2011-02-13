@@ -1056,33 +1056,36 @@ See also the date_time.pl program in the C<examples> directory of the distro.
 
 
 
-=head2 write_url( $row, $col, $url, $label, $format )
+=head2 write_url( $row, $col, $url, $format, $label )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+Write a hyperlink to a URL in the cell specified by C<$row> and C<$column>. The hyperlink is comprised of two elements: the visible label and the invisible link. The visible label is the same as the link unless an alternative label is specified. The C<$label> parameter is optional. The label is written using the C<write()> method. Therefore it is possible to write strings, numbers or formulas as labels.
 
-Write a hyperlink to a URL in the cell specified by C<$row> and C<$column>. The hyperlink is comprised of two elements: the visible label and the invisible link. The visible label is the same as the link unless an alternative label is specified. The parameters C<$label> and the C<$format> are optional and their position is interchangeable.
+The C<$format> parameter is also optional, however, without a format the link won't look like a format.
 
-The label is written using the C<write()> method. Therefore it is possible to write strings, numbers or formulas as labels.
+The suggested format is:
+
+    my $format = $workbook->add_format( color => 'blue', underline => 1 );
+
+B<Note>, this behaviour is different from Spreadsheet::WriteExcel which provides a default hyplerlink format if one isn't specified by the user.
 
 There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and C<mailto:>:
 
-    $worksheet->write_url( 0, 0,  'ftp://www.perl.org/'                   );
-    $worksheet->write_url( 1, 0,  'http://www.perl.com/', 'Perl home'     );
-    $worksheet->write_url( 'A3',  'http://www.perl.com/', $format         );
-    $worksheet->write_url( 'A4',  'http://www.perl.com/', 'Perl', $format );
-    $worksheet->write_url( 'A5',  'mailto:jmcnamara@cpan.org'             );
+    $worksheet->write_url( 0, 0, 'ftp://www.perl.org/', $format );
+    $worksheet->write_url( 1, 0, 'http://www.perl.com/', $format, 'Perl' );
+    $worksheet->write_url( 'A3', 'http://www.perl.com/',      $format );
+    $worksheet->write_url( 'A4', 'mailto:jmcnamara@cpan.org', $format );
 
 There are two local URIs supported: C<internal:> and C<external:>. These are used for hyperlinks to internal worksheet references or external workbook and worksheet references:
 
-    $worksheet->write_url( 'A6',  'internal:Sheet2!A1'                   );
-    $worksheet->write_url( 'A7',  'internal:Sheet2!A1',   $format        );
-    $worksheet->write_url( 'A8',  'internal:Sheet2!A1:B2'                );
-    $worksheet->write_url( 'A9',  q{internal:'Sales Data'!A1}            );
-    $worksheet->write_url( 'A10', 'external:c:\temp\foo.xlsx'            );
-    $worksheet->write_url( 'A11', 'external:c:\temp\foo.xlsx#Sheet2!A1'  );
-    $worksheet->write_url( 'A12', 'external:..\..\..\foo.xlsx'           );
-    $worksheet->write_url( 'A13', 'external:..\..\..\foo.xlsx#Sheet2!A1' );
-    $worksheet->write_url( 'A13', 'external:\\\\NETWORK\share\foo.xlsx'  );
+    $worksheet->write_url( 'A6',  'internal:Sheet2!A1',              $format );
+    $worksheet->write_url( 'A7',  'internal:Sheet2!A1',              $format );
+    $worksheet->write_url( 'A8',  'internal:Sheet2!A1:B2',           $format );
+    $worksheet->write_url( 'A9',  q{internal:'Sales Data'!A1},       $format );
+    $worksheet->write_url( 'A10', 'external:c:\temp\foo.xlsx',       $format );
+    $worksheet->write_url( 'A11', 'external:c:\foo.xlsx#Sheet2!A1',  $format );
+    $worksheet->write_url( 'A12', 'external:..\foo.xlsx',            $format );
+    $worksheet->write_url( 'A13', 'external:..\foo.xlsx#Sheet2!A1',  $format );
+    $worksheet->write_url( 'A13', 'external:\\\\NET\share\foo.xlsx', $format );
 
 All of the these URI types are recognised by the C<write()> method, see above.
 
@@ -1093,8 +1096,6 @@ In external links the workbook and worksheet name must be separated by the C<#> 
 You can also link to a named range in the target worksheet. For example say you have a named range called C<my_name> in the workbook C<c:\temp\foo.xlsx> you could link to it as follows:
 
     $worksheet->write_url( 'A14', 'external:c:\temp\foo.xlsx#my_name' );
-
-Note, you cannot currently create named ranges with C<Excel::Writer::XLSX>.
 
 Excel requires that worksheet names containing spaces or non alphanumeric characters are single quoted as follows C<'Sales Data'!A1>. If you need to do this in a single quoted string then you can either escape the single quotes C<\'> or use the quote operator C<q{}> as described in C<perlop> in the main Perl documentation.
 
@@ -1112,25 +1113,11 @@ See also, the note about L<Cell notation>.
 
 
 
-=head2 write_url_range( $row1, $col1, $row2, $col2, $url, $string, $format )
+=head2 write_url_range()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+This method was mainly only required for Excel 5. It is deprecated in Excel::Writer::XLSX.
 
-This method is essentially the same as the C<write_url()> method described above. The main difference is that you can specify a link for a range of cells:
-
-    $worksheet->write_url( 0, 0, 0, 3, 'ftp://www.perl.org/'               );
-    $worksheet->write_url( 1, 0, 0, 3, 'http://www.perl.com/', 'Perl home' );
-    $worksheet->write_url( 'A3:D3',    'internal:Sheet2!A1'                );
-    $worksheet->write_url( 'A4:D4',    'external:c:\temp\foo.xlsx'         );
-
-
-This method is generally only required when used in conjunction with merged cells. See the C<merge_range()> method and the C<merge> property of a Format object, L<CELL FORMATTING>.
-
-There is no way to force this behaviour through the C<write()> method.
-
-The parameters C<$string> and the C<$format> are optional and their position is interchangeable. However, they are applied only to the first cell in the range.
-
-See also, the note about L<Cell notation>.
+Use C<merge_range()> instead.
 
 
 
@@ -4637,8 +4624,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     write_row()                 Yes
     write_col()                 Yes
     write_date_time()           Yes
-    write_url()                 No
-    write_url_range()           No
+    write_url()                 Yes
     write_formula()             Yes
     write_array_formula()       Yes. Not in Spreadsheet::WriteExcel.
     keep_leading_zeros()        Yes
@@ -4672,6 +4658,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     write_utf16le_string()      Deprecated
     store_formula()             Deprecated
     repeat_formula()            Deprecated
+    write_url_range()           Deprecated
 
     Page Set-up Methods         Support
     ===================         =======
