@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 
 ###############################################################################
@@ -97,6 +97,22 @@ $worksheet = _new_worksheet(\$got);
 
 $worksheet->select();
 $worksheet->freeze_panes( 'G4' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 6. Test the _write_sheet_views() method with panes.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><pane xSplit="6" ySplit="3" topLeftCell="G4" activePane="bottomRight" state="frozenSplit" /><selection pane="topRight" activeCell="G1" sqref="G1" /><selection pane="bottomLeft" activeCell="A4" sqref="A4" /><selection pane="bottomRight" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->freeze_panes(  3, 6, 3, 6, 1 );
 $worksheet->_write_sheet_views();
 
 is( $got, $expected, $caption );
