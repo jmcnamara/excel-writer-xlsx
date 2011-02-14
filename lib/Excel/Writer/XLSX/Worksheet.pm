@@ -68,15 +68,14 @@ sub new {
     $self->{_dim_colmin} = undef;
     $self->{_dim_colmax} = undef;
 
-    $self->{_colinfo}   = [];
-    $self->{_selection} = [ 0, 0 ];
-    $self->{_hidden}    = 0;
-    $self->{_active}    = 0;
-    $self->{_tab_color} = 0;
+    $self->{_colinfo}    = [];
+    $self->{_selections} = [];
+    $self->{_hidden}     = 0;
+    $self->{_active}     = 0;
+    $self->{_tab_color}  = 0;
 
     $self->{_panes}       = [];
     $self->{_active_pane} = 3;
-    $self->{_frozen}      = 0;
     $self->{_selected}    = 0;
 
     $self->{_page_setup_changed} = 0;
@@ -428,12 +427,14 @@ sub set_selection {
 
     my $self = shift;
 
+    return; # TODO.
+
     # Check for a cell reference in A1 notation and substitute row and column
     if ( $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
 
-    $self->{_selection} = [@_];
+    $self->{_selections} = [@_];
 }
 
 
@@ -447,16 +448,22 @@ sub freeze_panes {
 
     my $self = shift;
 
-    # Check for a cell reference in A1 notation and substitute row and column
+    return unless @_;
+
+    # Check for a cell reference in A1 notation and substitute row and column.
     if ( $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
 
-    # Extra flag indicated a split and freeze.
-    $self->{_frozen_no_split} = 0 if $_[4];
+    my $row      = shift;
+    my $col      = shift // 0;
+    my $top_row  = shift // $row;
+    my $left_col = shift // $col;
+    my $type     = shift // 0;
 
-    $self->{_frozen} = 1;
-    $self->{_panes}  = [@_];
+    $type = 1 if $type; # Only allow a value of 0 or 1.
+
+    $self->{_panes} = [ $row, $col, $top_row, $left_col, $type ];
 }
 
 
@@ -3337,11 +3344,31 @@ sub _write_sheet_view {
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
 
-    $self->{_writer}->emptyTag( 'sheetView', @attributes );
+    if ( @{ $self->{_panes} } ) {
+        $self->{_writer}->startTag( 'sheetView', @attributes );
+        $self->_write_pane();
+        $self->_write_selections();
+        $self->{_writer}->endTag( 'sheetView' );
+    }
+    else {
+        $self->{_writer}->emptyTag( 'sheetView', @attributes );
+    }
+}
 
-    # TODO. Add selection later.
-    #$self->_write_selection();
-    #$self->{_writer}->endTag( 'sheetView' );
+
+###############################################################################
+#
+# _write_selections()
+#
+# Write the <selection> elements.
+#
+sub _write_selections {
+
+    my $self = shift;
+
+    for my $selection ( @{ $self->{_selections} } ) {
+        $self->_write_selection( @$selection );
+    }
 }
 
 
@@ -3354,13 +3381,14 @@ sub _write_sheet_view {
 sub _write_selection {
 
     my $self        = shift;
-    my $active_cell = 'A1';
-    my $sqref       = 'A1';
+    my $pane        = shift;
+    my $active_cell = shift;
+    my $sqref       = shift;
+    my @attributes  = ();
 
-    my @attributes = (
-        'activeCell' => $active_cell,
-        'sqref'      => $sqref,
-    );
+    push @attributes, ( 'pane'       => $pane )        if $pane;
+    push @attributes, ( 'activeCell' => $active_cell ) if $active_cell;
+    push @attributes, ( 'sqref'      => $sqref )       if $sqref;
 
     $self->{_writer}->emptyTag( 'selection', @attributes );
 }
@@ -4534,6 +4562,74 @@ sub _write_hyperlink_internal {
     $self->{_writer}->emptyTag( 'hyperlink', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_pane()
+#
+# Write the <pane> element.
+#
+sub _write_pane {
+
+    my $self = shift;
+    my @attributes;
+    my @panes = @{ $self->{_panes} };
+
+    return unless @panes;
+
+    my ( $row, $col, $top_row, $left_col, $type ) = @panes;
+
+    my $y_split       = $row;
+    my $x_split       = $col;
+    my $top_left_cell = xl_rowcol_to_cell( $top_row, $left_col );
+    my $active_pane;
+    my $state;
+
+    # Set the active pane.
+    if ( $row && $col ) {
+        $active_pane = 'bottomRight';
+
+        my $row_cell = xl_rowcol_to_cell( $top_row, 0 );
+        my $col_cell = xl_rowcol_to_cell( 0,        $left_col );
+
+        push @{ $self->{_selections} },
+          (
+            [ 'topRight',   $col_cell, $col_cell ],
+            [ 'bottomLeft', $row_cell, $row_cell ],
+            ['bottomRight']
+          );
+    }
+    elsif ( $col ) {
+        $active_pane = 'topRight';
+        push @{ $self->{_selections} }, ['topRight'];
+    }
+    else {
+        $active_pane = 'bottomLeft';
+        push @{ $self->{_selections} }, ['bottomLeft'];
+    }
+
+    # Set the pane type.
+    if ( $type == 0 ) {
+        $state = 'frozen';
+    }
+    elsif ( $type == 1 ) {
+        $state = 'frozenSplit';
+    }
+    else {
+        $state = 'split';
+    }
+
+
+    push @attributes, ( 'xSplit' => $x_split ) if $x_split;
+    push @attributes, ( 'ySplit' => $y_split ) if $y_split;
+
+    push @attributes, ( 'topLeftCell' => $top_left_cell );
+    push @attributes, ( 'activePane'  => $active_pane );
+    push @attributes, ( 'state'       => $state );
+
+
+    $self->{_writer}->emptyTag( 'pane', @attributes );
+}
 
 
 1;
