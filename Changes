@@ -1,8 +1,15 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
-    + New feature.
-    - Removed feature.
-    ! Bug fix.
++ New feature. 
+- Removed/deprected feature.
+! Bug fix.
+
+0.10 February XX 2011
+
+    + Added freeze_panes() and split_panes().
+
+    + Added panes.pl example program.
+
 
 0.09 February 13 2011
 

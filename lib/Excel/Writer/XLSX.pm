@@ -1821,8 +1821,6 @@ The worksheet parameters controlled by C<outline_settings()> are rarely used.
 
 =head2 freeze_panes( $row, $col, $top_row, $left_col )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method can be used to divide a worksheet into horizontal or vertical regions known as panes and to also "freeze" these panes so that the splitter bars are not visible. This is the same as the C<Window-E<gt>Freeze Panes> menu command in Excel
 
 The parameters C<$row> and C<$col> are used to specify the location of the split. It should be noted that the split is specified at the top or left of a cell and that the method uses zero based indexing. Therefore to freeze the first row of a worksheet it is necessary to specify the split at row 2 (which is 1 as the zero-based index). This might lead you to think that you are using a 1 based index but this is not the case.
@@ -1852,19 +1850,18 @@ See also the C<panes.pl> program in the C<examples> directory of the distributio
 
 =head2 split_panes( $y, $x, $top_row, $left_col )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method can be used to divide a worksheet into horizontal or vertical regions known as panes. This method is different from the C<freeze_panes()> method in that the splits between the panes will be visible to the user and each pane will have its own scroll bars.
 
-The parameters C<$y> and C<$x> are used to specify the vertical and horizontal position of the split. The units for C<$y> and C<$x> are the same as those used by Excel to specify row height and column width. However, the vertical and horizontal units are different from each other. Therefore you must specify the C<$y> and C<$x> parameters in terms of the row heights and column widths that you have set or the default values which are C<12.75> for a row and  <8.43> for a column.
+The parameters C<$y> and C<$x> are used to specify the vertical and horizontal position of the split. The units for C<$y> and C<$x> are the same as those used by Excel to specify row height and column width. However, the vertical and horizontal units are different from each other. Therefore you must specify the C<$y> and C<$x> parameters in terms of the row heights and column widths that you have set or the default values which are C<15> for a row and C<8.43> for a column.
 
 You can set one of the C<$y> and C<$x> parameters as zero if you do not want either a vertical or horizontal split. The parameters C<$top_row> and C<$left_col> are optional. They are used to specify the top-most or left-most visible row or column in the bottom-right pane.
 
 Example:
 
-    $worksheet->split_panes( 12.75, 0,    1, 0 );    # First row
-    $worksheet->split_panes( 0,     8.43, 0, 1 );    # First column
-    $worksheet->split_panes( 12.75, 8.43, 1, 1 );    # First row and column
+    $worksheet->split_panes( 15, 0,   );    # First row
+    $worksheet->split_panes( 0,  8.43 );    # First column
+    $worksheet->split_panes( 15, 8.43 );    # First row and column
 
 You cannot use A1 notation with this method.
 
@@ -4552,6 +4549,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     merge6.pl               An example of merging with Unicode strings.
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
+    panes.pl                An examples of how to create panes.
     sales.pl                An example of a simple sales spreadsheet.
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
@@ -4644,8 +4642,8 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_row()                   Yes/Partial, see docs.
     set_column()                Yes/Partial, see docs.
     outline_settings()          No
-    freeze_panes()              No
-    split_panes()               No
+    freeze_panes()              Yes
+    split_panes()               Yes
     merge_range()               Yes
     set_zoom()                  No
     right_to_left()             No

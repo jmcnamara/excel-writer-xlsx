@@ -32,6 +32,7 @@ merge5.pl               An advanced example of merging with formatting.
 merge6.pl               An example of merging with Unicode strings.
 mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
+panes.pl                An examples of how to create panes.
 sales.pl                An example of a simple sales spreadsheet.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
