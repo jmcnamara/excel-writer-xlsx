@@ -32,7 +32,7 @@ $expected = '<selection activeCell="A1" sqref="A1" />';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_selection();
+$worksheet->_write_selection( undef, 'A1', 'A1' );
 
 is( $got, $expected, $caption );
 

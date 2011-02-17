@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 14;
 
 
 ###############################################################################
@@ -113,12 +113,15 @@ $worksheet->_write_panes();
 is( $got, $expected, $caption );
 
 
+# Split panes tests.
+
+
 ###############################################################################
 #
 # 7. Test the _write_panes() method. Split panes.
 #
 $caption  = " \tWorksheet: _write_panes()";
-$expected = '<pane ySplit="600" activePane="bottomLeft" />';
+$expected = '<pane ySplit="600" topLeftCell="A2" />';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -133,11 +136,11 @@ is( $got, $expected, $caption );
 # 8. Test the _write_panes() method. Split panes.
 #
 $caption  = " \tWorksheet: _write_panes()";
-$expected = '<pane xSplit="1280" />';
+$expected = '<pane ySplit="900" topLeftCell="A3" />';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->split_panes( 0, 8.43 );
+$worksheet->split_panes( 30 );
 $worksheet->_write_panes();
 
 is( $got, $expected, $caption );
@@ -148,7 +151,22 @@ is( $got, $expected, $caption );
 # 9. Test the _write_panes() method. Split panes.
 #
 $caption  = " \tWorksheet: _write_panes()";
-$expected = '<pane xSplit="1280" />';
+$expected = '<pane ySplit="2400" topLeftCell="A8" />';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->split_panes( 105 );
+$worksheet->_write_panes();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 10. Test the _write_panes() method. Split panes.
+#
+$caption  = " \tWorksheet: _write_panes()";
+$expected = '<pane xSplit="1350" topLeftCell="B1" />';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -160,14 +178,14 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 10. Test the _write_panes() method. Split panes.
+# 11. Test the _write_panes() method. Split panes.
 #
 $caption  = " \tWorksheet: _write_panes()";
-$expected = '<pane ySplit="600" topLeftCell="A20" activePane="bottomLeft" />';
+$expected = '<pane xSplit="2310" topLeftCell="C1" />';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->split_panes( 15, 0, 19 );
+$worksheet->split_panes( 0, 17.57 );
 $worksheet->_write_panes();
 
 is( $got, $expected, $caption );
@@ -175,14 +193,44 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# 10. Test the _write_panes() method. Split panes.
+# 12. Test the _write_panes() method. Split panes.
 #
 $caption  = " \tWorksheet: _write_panes()";
-$expected = '<pane xSplit="6150" ySplit="1200" />';
+$expected = '<pane xSplit="5190" topLeftCell="F1" />';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->split_panes( 45, 42.15 );
+$worksheet->split_panes( 0, 45 );
+$worksheet->_write_panes();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 13. Test the _write_panes() method. Split panes.
+#
+$caption  = " \tWorksheet: _write_panes()";
+$expected = '<pane xSplit="1350" ySplit="600" topLeftCell="B2" />';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->split_panes( 15, 8.43 );
+$worksheet->_write_panes();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 14. Test the _write_panes() method. Split panes.
+#
+$caption  = " \tWorksheet: _write_panes()";
+$expected = '<pane xSplit="6150" ySplit="1200" topLeftCell="G4" />';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->split_panes( 45, 54.14 );
 $worksheet->_write_panes();
 
 is( $got, $expected, $caption );

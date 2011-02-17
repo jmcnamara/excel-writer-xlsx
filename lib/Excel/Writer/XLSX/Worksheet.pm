@@ -4597,62 +4597,50 @@ sub _write_split_panes {
 
     my ( $row, $col, $top_row, $left_col, $type ) = @_;
 
-    my $y_split       = $row;
-    my $x_split       = $col;
-    my $top_left_cell = xl_rowcol_to_cell( $top_row, $left_col );
-    my $use_top_left  = 0;
-    my $active_pane;
-    my $state;
+    my $y_split = $row;
+    my $x_split = $col;
 
     # Convert the row and col to 1/20 twip units with padding.
     $y_split = int( 20 * $y_split + 300 ) if $y_split;
     $x_split = $self->_calculate_x_split_width( $x_split ) if $x_split;
 
-    # TODO
-    if ( $top_row != $row || $left_col != $col ) {
-        $use_top_left = 1;
+    # For non-explicit topLeft definitions, estimate the cell offset based
+    # on the pixels dimensions. This is only a workaround and doesn't take
+    # adjusted cell dimensions into account.
+    if ( $top_row == $row && $left_col == $col ) {
+        $top_row  = int( 0.5 + ( $y_split - 300 ) / 20 / 15 );
+        $left_col = int( 0.5 + ( $x_split - 390 ) / 20 / 3 * 4 / 64 );
     }
 
-    # Set the active pane.
+    my $top_left_cell = xl_rowcol_to_cell( $top_row, $left_col );
+
+    # Set the Cell selections.
     if ( $row && $col ) {
-        $active_pane = '';    # Default for split panes.
 
         my $row_cell = xl_rowcol_to_cell( $top_row, 0 );
         my $col_cell = xl_rowcol_to_cell( 0,        $left_col );
 
         push @{ $self->{_selections} },
           (
-            [ 'topRight',   $col_cell, $col_cell ],
-            [ 'bottomLeft', $row_cell, $row_cell ],
-            ['bottomRight']
+            [ 'topRight',    $col_cell,      $col_cell ],
+            [ 'bottomLeft',  $row_cell,      $row_cell ],
+            [ 'bottomRight', $top_left_cell, $top_left_cell ]
           );
     }
     elsif ( $col ) {
-        $active_pane = '';    # Default for split panes.
-        push @{ $self->{_selections} }, ['topRight'];
+
+        push @{ $self->{_selections} },
+          [ 'topRight', $top_left_cell, $top_left_cell ];
     }
     else {
-        $active_pane = 'bottomLeft';
-        push @{ $self->{_selections} }, ['bottomLeft'];
+
+        push @{ $self->{_selections} },
+          [ 'bottomLeft', $top_left_cell, $top_left_cell ];
     }
 
-    # Set the pane type.
-    if ( $type == 0 ) {
-        $state = 'frozen';
-    }
-    elsif ( $type == 1 ) {
-        $state = 'frozenSplit';
-    }
-    else {
-        $state = 'split';
-    }
-
-
-    push @attributes, ( 'xSplit'      => $x_split )       if $x_split;
-    push @attributes, ( 'ySplit'      => $y_split )       if $y_split;
-    push @attributes, ( 'topLeftCell' => $top_left_cell ) if $use_top_left;
-    push @attributes, ( 'activePane'  => $active_pane )   if $active_pane;
-
+    push @attributes, ( 'xSplit' => $x_split ) if $x_split;
+    push @attributes, ( 'ySplit' => $y_split ) if $y_split;
+    push @attributes, ( 'topLeftCell' => $top_left_cell );
 
     $self->{_writer}->emptyTag( 'pane', @attributes );
 }
@@ -4692,8 +4680,6 @@ sub _calculate_x_split_width {
 
     return $width;
 }
-
-
 
 
 1;
