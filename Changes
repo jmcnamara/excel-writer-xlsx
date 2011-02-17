@@ -4,6 +4,14 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprected feature.
 ! Bug fix.
 
+
+0.11 February 17 2011
+
+    ! Fix for temp dirs not been removed after xlsx file creation.
+      http://rt.cpan.org/Ticket/Display.html?id=65816
+      Reported by Andreas Koenig.
+
+
 0.10 February 17 2011
 
     + Added freeze_panes() and split_panes().
