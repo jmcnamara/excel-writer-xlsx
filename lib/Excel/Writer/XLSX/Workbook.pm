@@ -519,7 +519,7 @@ sub set_codepage {
 sub _store_workbook {
 
     my $self     = shift;
-    my $dir      = tempdir();
+    my $dir      = tempdir( CLEANUP => 1 );
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
