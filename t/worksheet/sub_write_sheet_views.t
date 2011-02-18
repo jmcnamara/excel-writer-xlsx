@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 28;
 
 
 ###############################################################################
@@ -383,6 +383,104 @@ $worksheet->_write_sheet_views();
 
 is( $got, $expected, $caption );
 
+
+# Test for set_selection().
+
+
+###############################################################################
+#
+# 23. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0" /></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'A1' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 24. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'A2' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 25. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="B1" sqref="B1" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'B1' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 26. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'D3' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 27. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3:F4" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'D3:F4' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 28. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="F4" sqref="D3:F4" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'F4:D3' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
 
 
 __END__

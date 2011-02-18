@@ -420,21 +420,58 @@ sub set_column {
 #
 # set_selection()
 #
-# Set which cell or cells are selected in a worksheet: see also the
-# sub _store_selection
+# Set which cell or cells are selected in a worksheet.
 #
 sub set_selection {
 
     my $self = shift;
+    my $pane;
+    my $active_cell;
+    my $sqref;
 
-    return; # TODO.
+    return unless @_;
 
-    # Check for a cell reference in A1 notation and substitute row and column
+    # Check for a cell reference in A1 notation and substitute row and column.
     if ( $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
 
-    $self->{_selections} = [@_];
+
+    # There should be either 2 or 4 arguments.
+    if ( @_ == 2 ) {
+
+        # Single cell selection.
+        $active_cell = xl_rowcol_to_cell( $_[0], $_[1] );
+        $sqref = $active_cell;
+    }
+    elsif ( @_ == 4 ) {
+
+        # Range selection.
+        $active_cell = xl_rowcol_to_cell( $_[0], $_[1] );
+
+        my ( $row_first, $col_first, $row_last, $col_last ) = @_;
+
+        # Swap last row/col for first row/col as necessary
+        if ( $row_first > $row_last ) {
+            ( $row_first, $row_last ) = ( $row_last, $row_first );
+        }
+
+        if ( $col_first > $col_last ) {
+            ( $col_first, $col_last ) = ( $col_last, $col_first );
+        }
+
+        $sqref = xl_range( $row_first, $col_first, $row_last, $col_last );
+    }
+    else {
+
+        # User supplied wrong number or arguments.
+        return;
+    }
+
+    # Selection isn't set for cell A1.
+    return if $sqref eq 'A1';
+
+    $self->{_selections} = [ [ $pane, $active_cell, $sqref ] ];
 }
 
 
@@ -1912,10 +1949,6 @@ sub write_blank {
     # Don't write a blank cell unless it has a format
     return 0 if not defined $_[2];
 
-
-    my $record = 0x0201;    # Record identifier
-    my $length = 0x0006;    # Number of bytes to follow
-
     my $row  = $_[0];                              # Zero indexed row
     my $col  = $_[1];                              # Zero indexed column
     my $xf   = _XF( $self, $row, $col, $_[2] );    # The cell format
@@ -2003,9 +2036,6 @@ sub write_array_formula {
     }
 
     if ( @_ < 5 ) { return -1 }    # Check the number of args
-
-    my $record = 0x0006;           # Record identifier
-    my $length;                    # Bytes to follow
 
     my $row1    = $_[0];           # First row
     my $col1    = $_[1];           # First column
@@ -2800,45 +2830,6 @@ sub _store_defcol {
 
 ###############################################################################
 #
-# _store_selection($first_row, $first_col, $last_row, $last_col)
-#
-# Write BIFF record SELECTION.
-#
-sub _store_selection {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self   = shift;
-    my $record = 0x001D;    # Record identifier
-    my $length = 0x000F;    # Number of bytes to follow
-
-    my $pnn     = $self->{_active_pane};    # Pane position
-    my $rwAct   = $_[0];                    # Active row
-    my $colAct  = $_[1];                    # Active column
-    my $irefAct = 0;                        # Active cell ref
-    my $cref    = 1;                        # Number of refs
-
-    my $rwFirst  = $_[0];                   # First row in reference
-    my $colFirst = $_[1];                   # First col in reference
-    my $rwLast   = $_[2] || $rwFirst;       # Last  row in reference
-    my $colLast  = $_[3] || $colFirst;      # Last  col in reference
-
-    # Swap last row/col for first row/col as necessary
-    if ( $rwFirst > $rwLast ) {
-        ( $rwFirst, $rwLast ) = ( $rwLast, $rwFirst );
-    }
-
-    if ( $colFirst > $colLast ) {
-        ( $colFirst, $colLast ) = ( $colLast, $colFirst );
-    }
-
-
-    # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
 # _store_externcount($count)
 #
 # Write BIFF record EXTERNCOUNT to indicate the number of external sheet
@@ -3277,7 +3268,7 @@ sub _write_sheet_view {
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
 
-    if ( @{ $self->{_panes} } ) {
+    if ( @{ $self->{_panes} } || @{ $self->{_selections} } ) {
         $self->{_writer}->startTag( 'sheetView', @attributes );
         $self->_write_panes();
         $self->_write_selections();
