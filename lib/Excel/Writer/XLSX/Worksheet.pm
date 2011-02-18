@@ -4504,18 +4504,18 @@ sub _write_panes {
         $self->_write_split_panes( @panes );
     }
     else {
-        $self->_write_frozen_panes( @panes );
+        $self->_write_freeze_panes( @panes );
     }
 }
 
 
 ##############################################################################
 #
-# _write_frozen_panes()
+# _write_freeze_panes()
 #
-# Write the <pane> element for frozen panes.
+# Write the <pane> element for freeze panes.
 #
-sub _write_frozen_panes {
+sub _write_freeze_panes {
 
     my $self = shift;
     my @attributes;
@@ -4527,6 +4527,14 @@ sub _write_frozen_panes {
     my $top_left_cell = xl_rowcol_to_cell( $top_row, $left_col );
     my $active_pane;
     my $state;
+    my $active_cell;
+    my $sqref;
+
+    # Move user cell selection to the panes.
+    if ( @{ $self->{_selections} } ) {
+        ( undef, $active_cell, $sqref ) = @{ $self->{_selections}->[0] };
+        $self->{_selections} = [];
+    }
 
     # Set the active pane.
     if ( $row && $col ) {
@@ -4537,18 +4545,18 @@ sub _write_frozen_panes {
 
         push @{ $self->{_selections} },
           (
-            [ 'topRight',   $col_cell, $col_cell ],
-            [ 'bottomLeft', $row_cell, $row_cell ],
-            ['bottomRight']
+            [ 'topRight',    $col_cell,    $col_cell ],
+            [ 'bottomLeft',  $row_cell,    $row_cell ],
+            [ 'bottomRight', $active_cell, $sqref ]
           );
     }
     elsif ( $col ) {
         $active_pane = 'topRight';
-        push @{ $self->{_selections} }, ['topRight'];
+        push @{ $self->{_selections} }, [ 'topRight', $active_cell, $sqref ];
     }
     else {
         $active_pane = 'bottomLeft';
-        push @{ $self->{_selections} }, ['bottomLeft'];
+        push @{ $self->{_selections} }, [ 'bottomLeft', $active_cell, $sqref ];
     }
 
     # Set the pane type.
