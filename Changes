@@ -5,7 +5,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
-0.12 February XX 2011
+0.12 February 19 2011
 
     + Added set_selection() method for selecting cells.
 

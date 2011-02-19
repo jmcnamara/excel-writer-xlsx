@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.11 of Excel::Writer::XLSX, released February 17, 2011.
+This document refers to version 0.12 of Excel::Writer::XLSX, released February 19, 2011.
 
 
 
@@ -5014,20 +5014,25 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    You have no fear,
-    You have no fear,
-    But you are much too scared to call.
 
-    Fifteen years,
-    Fifteen years,
-    And you're scared you've seen it all.
+    I walked bang into him, said Mr Dedalus for the fourth time,
+    just at the corner of the square.
 
-    You want to be a lost soul just like your father.
-    You don't fit the mould and it's just what he asked for.
-    I was stupidly thinking you'd stay a while after,
-    We'll pretend that nothing happened if that's what you'd rather.
+    Then I suppose, said Mrs Dedalus, he will be able to arrange
+    it. I mean about Belvedere.
 
-      -- Pull In Emergency
+    Of course he will, said Mr Dedalus. Don't I tell you he's
+    provincial of the order now?
+
+    I never liked the idea of sending him to the christian brothers
+    myself, said Mrs Dedalus.
+
+    Christian brothers be damned! said Mr Dedalus. Is it with Paddy
+    Stink and Micky Mud? No, let him stick to the jesuits in God's
+    name since he began with them. They'll be of service to him in
+    after years. Those are the fellows that can get you a position.
+
+      -- James Joyce. A Portrait Of The Artist As A Young Man.
 
 
 

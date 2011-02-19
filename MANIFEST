@@ -290,6 +290,9 @@ t/worksheet/sub_write_sheet_views3.t
 t/worksheet/sub_write_sheet_views4.t
 t/worksheet/sub_write_sheet_views5.t
 t/worksheet/sub_write_sheet_views6.t
+t/worksheet/sub_write_sheet_views7.t
+t/worksheet/sub_write_sheet_views8.t
+t/worksheet/sub_write_sheet_views9.t
 t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
 t/worksheet/worksheet_01.t
