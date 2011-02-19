@@ -477,7 +477,7 @@ sub set_selection {
 
 ###############################################################################
 #
-# freeze_panes()
+# freeze_panes( $row, $col, $top_row, $left_col )
 #
 # Set panes and mark them as frozen.
 #
@@ -504,9 +504,17 @@ sub freeze_panes {
 
 ###############################################################################
 #
-# split_panes()
+# split_panes( $y, $x, $top_row, $left_col )
 #
 # Set panes and mark them as split.
+#
+# Implementers note. The API for this method doesn't map well from the XLS
+# file format and isn't sufficient to describe all cases of split panes.
+# It should probably be something like:
+#
+#     split_panes( $y, $x, $top_row, $left_col, $offset_row, $offset_col )
+#
+# I'll look at changing this if it becomes an issue.
 #
 sub split_panes {
 
@@ -4588,6 +4596,8 @@ sub _write_freeze_panes {
 # _write_split_panes()
 #
 # Write the <pane> element for split panes.
+#
+# See also, implementers note for split_panes().
 #
 sub _write_split_panes {
 
