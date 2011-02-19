@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Package::XMLwriter methods.
 #
-# reverse('�'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('(c)'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
