@@ -1195,7 +1195,7 @@ sub _parse_filter_tokens {
         # the binary record. Therefore we convert <> to =.
         if ( $token eq 'blanks' ) {
             if ( $operator == 5 ) {
-                $token    = ' ';
+                $token = ' ';
             }
         }
         else {
@@ -2169,7 +2169,7 @@ sub write_url {
         $str =~ s[/][\\]g;
     }
 
-    # TODO
+    # Strip the mailto header.
     $str =~ s/^mailto://;
 
     # Check that row and col are valid and store max and min values
@@ -2201,7 +2201,7 @@ sub write_url {
         ( $url, $str ) = split /#/, $url;
 
         # Add the file:/// URI to the $url if non-local.
-        if ($url =~ m{[\\/]} && $url !~ m{^\.\.}) {
+        if ( $url =~ m{[\\/]} && $url !~ m{^\.\.} ) {
             $url = 'file:///' . $url;
         }
 
@@ -4540,8 +4540,8 @@ sub _write_freeze_panes {
     if ( $row && $col ) {
         $active_pane = 'bottomRight';
 
-        my $row_cell = xl_rowcol_to_cell( $top_row, 0 );
-        my $col_cell = xl_rowcol_to_cell( 0,        $left_col );
+        my $row_cell = xl_rowcol_to_cell( $row, 0 );
+        my $col_cell = xl_rowcol_to_cell( 0,    $col );
 
         push @{ $self->{_selections} },
           (
@@ -4593,11 +4593,23 @@ sub _write_split_panes {
 
     my $self = shift;
     my @attributes;
+    my $y_split;
+    my $x_split;
+    my $has_selection = 0;
+    my $active_pane;
+    my $active_cell;
+    my $sqref;
 
     my ( $row, $col, $top_row, $left_col, $type ) = @_;
+    $y_split = $row;
+    $x_split = $col;
 
-    my $y_split = $row;
-    my $x_split = $col;
+    # Move user cell selection to the panes.
+    if ( @{ $self->{_selections} } ) {
+        ( undef, $active_cell, $sqref ) = @{ $self->{_selections}->[0] };
+        $self->{_selections} = [];
+        $has_selection = 1;
+    }
 
     # Convert the row and col to 1/20 twip units with padding.
     $y_split = int( 20 * $y_split + 300 ) if $y_split;
@@ -4613,33 +4625,39 @@ sub _write_split_panes {
 
     my $top_left_cell = xl_rowcol_to_cell( $top_row, $left_col );
 
+    # If there is no selection set the active cell to the top left cell.
+    if ( !$has_selection ) {
+        $active_cell = $top_left_cell;
+        $sqref       = $top_left_cell;
+    }
+
     # Set the Cell selections.
     if ( $row && $col ) {
+        $active_pane = 'bottomRight';
 
         my $row_cell = xl_rowcol_to_cell( $top_row, 0 );
         my $col_cell = xl_rowcol_to_cell( 0,        $left_col );
 
         push @{ $self->{_selections} },
           (
-            [ 'topRight',    $col_cell,      $col_cell ],
-            [ 'bottomLeft',  $row_cell,      $row_cell ],
-            [ 'bottomRight', $top_left_cell, $top_left_cell ]
+            [ 'topRight',    $col_cell,    $col_cell ],
+            [ 'bottomLeft',  $row_cell,    $row_cell ],
+            [ 'bottomRight', $active_cell, $sqref ]
           );
     }
     elsif ( $col ) {
-
-        push @{ $self->{_selections} },
-          [ 'topRight', $top_left_cell, $top_left_cell ];
+        $active_pane = 'topRight';
+        push @{ $self->{_selections} }, [ 'topRight', $active_cell, $sqref ];
     }
     else {
-
-        push @{ $self->{_selections} },
-          [ 'bottomLeft', $top_left_cell, $top_left_cell ];
+        $active_pane = 'bottomLeft';
+        push @{ $self->{_selections} }, [ 'bottomLeft', $active_cell, $sqref ];
     }
 
     push @attributes, ( 'xSplit' => $x_split ) if $x_split;
     push @attributes, ( 'ySplit' => $y_split ) if $y_split;
     push @attributes, ( 'topLeftCell' => $top_left_cell );
+    push @attributes, ( 'activePane'  => $active_pane ) if $has_selection;
 
     $self->{_writer}->emptyTag( 'pane', @attributes );
 }
@@ -4653,7 +4671,7 @@ sub _write_split_panes {
 #
 sub _calculate_x_split_width {
 
-    my $self = shift;
+    my $self  = shift;
     my $width = shift;
 
     my $max_digit_width = 7;    # For Calabri 11.
