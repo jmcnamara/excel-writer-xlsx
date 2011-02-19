@@ -1,8 +1,16 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
-+ New feature. 
++ New feature.
 - Removed/deprecated feature.
 ! Bug fix.
+
+
+0.13 February xx 2011
+
+    + Added additional page setup methods
+     set_zoom()
+     right_to_left()
+     hide_zero()
 
 
 0.12 February 19 2011
@@ -55,7 +63,7 @@ Revision history for Perl module Excel::Writer::XLSX.
       set_v_pagebreaks()
 
     + Added headers.pl example program.
-  
+
 
 0.06 January 19 2011
 
@@ -72,7 +80,7 @@ Revision history for Perl module Excel::Writer::XLSX.
       set_header()
       set_footer()
 
-    
+
 0.05 January 4 2011
 
     + Added support for array_formulas. See the docs for write_array_formula()

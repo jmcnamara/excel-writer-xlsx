@@ -123,9 +123,10 @@ sub new {
     $self->{_set_cols} = {};
     $self->{_set_rows} = {};
 
-    $self->{_zoom}        = 100;
-    $self->{_print_scale} = 100;
-
+    $self->{_zoom}          = 100;
+    $self->{_print_scale}   = 100;
+    $self->{_right_to_left} = 0;
+    $self->{_show_zeros}    = 1;
     $self->{_leading_zeros} = 0;
 
     $self->{_outline_row_level} = 0;
@@ -1389,7 +1390,7 @@ sub set_v_pagebreaks {
 
 ###############################################################################
 #
-# set_zoom($scale)
+# set_zoom( $scale )
 #
 # Set the worksheet zoom factor.
 #
@@ -1463,7 +1464,7 @@ sub right_to_left {
 
     my $self = shift;
 
-    $self->{_display_arabic} = defined $_[0] ? $_[0] : 1;
+    $self->{_right_to_left} = defined $_[0] ? $_[0] : 1;
 }
 
 
@@ -1477,7 +1478,7 @@ sub hide_zero {
 
     my $self = shift;
 
-    $self->{_display_zeros} = defined $_[0] ? not $_[0] : 0;
+    $self->{_show_zeros} = defined $_[0] ? not $_[0] : 0;
 }
 
 
@@ -3250,12 +3251,30 @@ sub _write_sheet_views {
 #
 # Write the <sheetView> element.
 #
+# Sample structure:
+#     <sheetView
+#         showGridLines="0"
+#         showRowColHeaders="0"
+#         showZeros="0"
+#         rightToLeft="1"
+#         tabSelected="1"
+#         showRuler="0"
+#         showOutlineSymbols="0"
+#         view="pageLayout"
+#         zoomScale="121"
+#         zoomScaleNormal="121"
+#         workbookViewId="0"
+#      />
+#
 sub _write_sheet_view {
 
     my $self             = shift;
-    my $tab_selected     = $self->{_selected};
     my $gridlines        = $self->{_screen_gridlines};
+    my $show_zeros       = $self->{_show_zeros};
+    my $right_to_left    = $self->{_right_to_left};
+    my $tab_selected     = $self->{_selected};
     my $view             = $self->{_page_view};
+    my $zoom             = $self->{_zoom};
     my $workbook_view_id = 0;
     my @attributes       = ();
 
@@ -3264,14 +3283,31 @@ sub _write_sheet_view {
         push @attributes, ( 'showGridLines' => 0 );
     }
 
+    # Hide zeroes in cells.
+    if ( ! $show_zeros ) {
+        push @attributes, ( 'showZeros' => 0 );
+    }
+
+    # Display worksheet right to left for Hebrew, Arabic and others.
+    if ( $right_to_left ) {
+        push @attributes, ( 'rightToLeft' => 1 );
+    }
+
     # Show that the sheet tab is selected.
     if ( $tab_selected ) {
         push @attributes, ( 'tabSelected' => 1 );
     }
 
     # Set the page view/layout mode if required.
+    # TODO. Add pageBreakPreview mode when requested.
     if ( $view ) {
         push @attributes, ( 'view' => 'pageLayout' );
+    }
+
+    # Set the zoom level.
+    if ( $zoom != 100 ) {
+        push @attributes, ( 'zoomScale'       => $zoom ) unless $view;
+        push @attributes, ( 'zoomScaleNormal' => $zoom );
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
