@@ -1663,8 +1663,6 @@ Note, the worksheet level password in Excel provides very weak protection. It do
 
 =head2 set_selection( $first_row, $first_col, $last_row, $last_col )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method can be used to specify which cell or cells are selected in a worksheet. The most common requirement is to select a single cell, in which case C<$last_row> and C<$last_col> can be omitted. The active cell within a selected range is determined by the order in which C<$first> and C<$last> are specified. It is also possible to specify a cell or a range using A1 notation. See the note about L<Cell notation>.
 
 Examples:
@@ -4638,7 +4636,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     hide()                      Yes
     set_first_sheet()           Yes
     protect()                   No
-    set_selection()             No
+    set_selection()             Yes
     set_row()                   Yes/Partial, see docs.
     set_column()                Yes/Partial, see docs.
     outline_settings()          No
@@ -4717,9 +4715,30 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_left_color()            Yes
     set_right_color()           Yes
 
-All non-deprecated methods will be supported in time.
+All non-deprecated methods will be supported in time. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
+    set_zoom()
+    right_to_left()
+    hide_zero()
+    set_custom_color()
+    set_tab_color()
+    protect()
 
+    define_name()
+    insert_image()
+
+    set_properties()
+    set_tempdir()
+    set_1904()
+    set_locked()
+    set_hidden()
+
+    write_comment()
+    data_validation()
+    outline_settings()
+    add_chart()
+
+If you would care to you can sponsor a feature to move it up the list. See L<DONATIONS and SPONSORSHIP>
 
 
 =head1 DOWNLOADING
@@ -4938,9 +4957,9 @@ There is a Google group for discussing and asking questions about Excel::Writer:
 
 
 
-=head1 DONATIONS
+=head1 DONATIONS and SPONSORSHIP
 
-If you'd care to donate to the Excel::Writer::XLSX project, you can do so via PayPal: L<http://tinyurl.com/7ayes>.
+If you'd care to donate to the Excel::Writer::XLSX project or sponsor a new feature, you can do so via PayPal: L<http://tinyurl.com/7ayes>.
 
 
 
