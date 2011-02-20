@@ -56,6 +56,7 @@ sub new {
     $self->{_str_unique}  = $_[5];
     $self->{_str_table}   = $_[6];
     $self->{_1904}        = $_[7];
+    $self->{_palette}     = $_[8];
 
     $self->{_ext_sheets} = [];
     $self->{_fileclosed} = 0;
@@ -577,14 +578,12 @@ sub set_page_view {
 #
 # set_tab_color()
 #
-# Set the colour of the worksheet colour.
+# Set the colour of the worksheet tab.
 #
 sub set_tab_color {
 
-    my $self = shift;
-
-    my $color = &Spreadsheet::WriteExcel::Format::_get_color( $_[0] );
-    $color = 0 if $color == 0x7FFF;    # Default color.
+    my $self  = shift;
+    my $color = &Excel::Writer::XLSX::Format::_get_color( $_[0] );
 
     $self->{_tab_color} = $color;
 }
@@ -1347,7 +1346,7 @@ sub print_row_col_headers {
 # fit_to_pages($width, $height)
 #
 # Store the vertical and horizontal number of pages that will define the
-# maximum area printed. See also _store_setup() and _store_wsbool() below.
+# maximum area printed.
 #
 sub fit_to_pages {
 
@@ -2562,6 +2561,30 @@ sub merge_range {
 
 ###############################################################################
 #
+# _get_palette_color()
+#
+# Convert from an Excel internal colour index to a XML style #RRGGBB index
+# based on the default or user defined values in the Workbook palette.
+#
+sub _get_palette_color {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $palette = $self->{_palette};
+
+    # Adjust the colour index.
+    $index -= 8;
+
+    # Palette is passed in from the Workbook class.
+    my @rgb = @{ $palette->[$index] };
+
+    # TODO Add the alpha part to the RGB.
+    return sprintf "FF%02X%02X%02X", @rgb;
+}
+
+
+###############################################################################
+#
 # _XF()
 #
 # Returns an index to the XF record in the workbook.
@@ -3150,17 +3173,17 @@ sub _write_sheet_pr {
     my $self       = shift;
     my @attributes = ();
 
-    if ( !$self->{_fit_page} && !$self->{_filter_on} ) {
+    if ( !$self->{_fit_page} && !$self->{_filter_on} && !$self->{_tab_color} ) {
         return;
     }
 
     push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
 
-    if ( $self->{_fit_page} ) {
+    if ( $self->{_fit_page} || $self->{_tab_color} ) {
         $self->{_writer}->startTag( 'sheetPr', @attributes );
+        $self->_write_tab_color();
         $self->_write_page_set_up_pr();
         $self->{_writer}->endTag( 'sheetPr' );
-
     }
     else {
         $self->{_writer}->emptyTag( 'sheetPr', @attributes );
@@ -3177,6 +3200,8 @@ sub _write_sheet_pr {
 sub _write_page_set_up_pr {
 
     my $self = shift;
+
+    return unless $self->{_fit_page};
 
     my @attributes = ( 'fitToPage' => 1 );
 
@@ -3284,7 +3309,7 @@ sub _write_sheet_view {
     }
 
     # Hide zeroes in cells.
-    if ( ! $show_zeros ) {
+    if ( !$show_zeros ) {
         push @attributes, ( 'showZeros' => 0 );
     }
 
@@ -3306,7 +3331,7 @@ sub _write_sheet_view {
 
     # Set the zoom level.
     if ( $zoom != 100 ) {
-        push @attributes, ( 'zoomScale'       => $zoom ) unless $view;
+        push @attributes, ( 'zoomScale' => $zoom ) unless $view;
         push @attributes, ( 'zoomScaleNormal' => $zoom );
     }
 
@@ -4703,7 +4728,7 @@ sub _write_split_panes {
     push @attributes, ( 'xSplit' => $x_split ) if $x_split;
     push @attributes, ( 'ySplit' => $y_split ) if $y_split;
     push @attributes, ( 'topLeftCell' => $top_left_cell );
-    push @attributes, ( 'activePane'  => $active_pane ) if $has_selection;
+    push @attributes, ( 'activePane' => $active_pane ) if $has_selection;
 
     $self->{_writer}->emptyTag( 'pane', @attributes );
 }
@@ -4742,6 +4767,27 @@ sub _calculate_x_split_width {
     $width = $twips + 390;
 
     return $width;
+}
+
+
+##############################################################################
+#
+# _write_tab_color()
+#
+# Write the <tabColor> element.
+#
+sub _write_tab_color {
+
+    my $self        = shift;
+    my $color_index = $self->{_tab_color};
+
+    return unless $color_index;
+
+    my $rgb = $self->_get_palette_color( $color_index );
+
+    my @attributes = ( 'rgb' => $rgb, );
+
+    $self->{_writer}->emptyTag( 'tabColor', @attributes );
 }
 
 

@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# reverse('©'), January 2011, John McNamara, jmcnamara@cpan.org
+# reverse('(c)'), February 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -22,18 +22,21 @@ my $got;
 my $caption;
 my $worksheet;
 
+
 ###############################################################################
 #
-# Test the _write_page_set_up_pr() method.
+# Test the _write_tab_color() method.
 #
-$caption  = " \tWorksheet: _write_page_set_up_pr()";
-$expected = '<pageSetUpPr fitToPage="1" />';
+$caption  = " \tWorksheet: _write_tab_color()";
+$expected = '<tabColor rgb="FFFF0000" />';
 
 $worksheet = _new_worksheet(\$got);
+# Mock up the color palette.
+$worksheet->{_tab_color} = 0x0A;
+$worksheet->{_palette}->[2] = [ 0xff, 0x00, 0x00, 0x00 ];
 
-$worksheet->{_fit_page} = 1;
 
-$worksheet->_write_page_set_up_pr();
+$worksheet->_write_tab_color(  );
 
 is( $got, $expected, $caption );
 

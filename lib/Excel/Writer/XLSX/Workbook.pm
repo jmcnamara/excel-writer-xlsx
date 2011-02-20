@@ -292,6 +292,7 @@ sub add_worksheet {
         \$self->{_str_table},
 
         $self->{_1904},
+        $self->{_palette},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
