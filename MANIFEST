@@ -27,10 +27,12 @@ examples/mod_perl1.pl
 examples/mod_perl2.pl
 examples/panes.pl
 examples/regions.pl
+examples/right_to_left.pl
 examples/sales.pl
 examples/stats.pl
 examples/stats_ext.pl
 examples/stocks.pl
+examples/tab_colors.pl
 examples/unicode_2022_jp.pl
 examples/unicode_2022_jp.txt
 examples/unicode_8859_11.pl
@@ -171,6 +173,7 @@ t/regression/repeat04.t
 t/regression/repeat05.t
 t/regression/simple01.t
 t/regression/simple02.t
+t/regression/tab_color01.t
 t/regression/xlsx_files/autofilter00.xlsx
 t/regression/xlsx_files/autofilter01.xlsx
 t/regression/xlsx_files/autofilter02.xlsx
@@ -227,6 +230,7 @@ t/regression/xlsx_files/repeat04.xlsx
 t/regression/xlsx_files/repeat05.xlsx
 t/regression/xlsx_files/simple01.xlsx
 t/regression/xlsx_files/simple02.xlsx
+t/regression/xlsx_files/tab_color01.xlsx
 t/utility/xl_col_to_name.t
 t/utility/xl_range.t
 t/utility/xl_rowcol_to_cell.t
@@ -293,6 +297,7 @@ t/worksheet/sub_write_sheet_views6.t
 t/worksheet/sub_write_sheet_views7.t
 t/worksheet/sub_write_sheet_views8.t
 t/worksheet/sub_write_sheet_views9.t
+t/worksheet/sub_write_tab_color.t
 t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
 t/worksheet/worksheet_01.t

@@ -4548,9 +4548,11 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
+    right_to_left.pl        Change default sheet direction to right to left.
     sales.pl                An example of a simple sales spreadsheet.
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
+    tab_colors.pl           Example of how to set worksheet tab colours.
     write_handler1.pl       Example of extending the write() method. Step 1.
     write_handler2.pl       Example of extending the write() method. Step 2.
     write_handler3.pl       Example of extending the write() method. Step 3.
