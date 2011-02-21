@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 
 ###############################################################################
@@ -118,6 +118,22 @@ $worksheet = _new_worksheet(\$got);
 
 $worksheet->select();
 $worksheet->set_selection( 'F4:D3' );
+$worksheet->_write_sheet_views();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 7. Test the _write_sheet_views() method with selection set.
+#
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2" /></sheetView></sheetViews>';
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->select();
+$worksheet->set_selection( 'A2:A2' ); # Should be the same as 'A2'
 $worksheet->_write_sheet_views();
 
 is( $got, $expected, $caption );
