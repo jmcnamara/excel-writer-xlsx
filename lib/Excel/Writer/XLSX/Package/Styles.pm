@@ -716,13 +716,15 @@ sub _write_style_xf {
 #
 sub _write_xf {
 
-    my $self       = shift;
-    my $format     = shift;
-    my $num_fmt_id = $format->{_num_format_index};
-    my $font_id    = $format->{_font_index};
-    my $fill_id    = $format->{_fill_index};
-    my $border_id  = $format->{_border_index};
-    my $xf_id      = 0;
+    my $self        = shift;
+    my $format      = shift;
+    my $num_fmt_id  = $format->{_num_format_index};
+    my $font_id     = $format->{_font_index};
+    my $fill_id     = $format->{_fill_index};
+    my $border_id   = $format->{_border_index};
+    my $xf_id       = 0;
+    my $has_align   = 0;
+    my $has_protect = 0;
 
     my @attributes = (
         'numFmtId' => $num_fmt_id,
@@ -755,30 +757,32 @@ sub _write_xf {
     # Check if XF format has alignment properties set.
     my ( $apply_align, @align ) = $format->get_align_properties();
 
-    # Check for cell protection properties.
-    my @protection = $format->get_protection_properties();
+    # Check if an alignment sub-element should be written.
+    $has_align = 1 if $apply_align && @align;
 
+    # We can also have applyAlignment without a sub-element.
     if ( $apply_align ) {
         push @attributes, ( 'applyAlignment' => 1 );
     }
 
-    # TODO. Add protection sub element
-    #if ( @protection ) {
-    #    push @attributes, ( 'applyProtection' => 1 );
-    #}
+    # Check for cell protection properties.
+    my @protection = $format->get_protection_properties();
 
-    if ( $apply_align && @align ) {
+    if ( @protection ) {
+        push @attributes, ( 'applyProtection' => 1 );
+        $has_protect = 1;
+    }
+
+    # Write XF with sub-elements if required.
+    if ( $has_align || $has_protect ) {
         $self->{_writer}->startTag( 'xf', @attributes );
-        $self->{_writer}->emptyTag( 'alignment', @align );
-        $self->{_writer}->endTag( 'xf');
+        $self->{_writer}->emptyTag( 'alignment',  @align )      if $has_align;
+        $self->{_writer}->emptyTag( 'protection', @protection ) if $has_protect;
+        $self->{_writer}->endTag( 'xf' );
     }
     else {
         $self->{_writer}->emptyTag( 'xf', @attributes );
     }
-
-
-
-
 }
 
 

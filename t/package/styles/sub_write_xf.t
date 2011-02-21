@@ -10,7 +10,7 @@ use TestFunctions '_new_style';
 use strict;
 use warnings;
 
-use Test::More tests => 32;
+use Test::More tests => 36;
 
 
 ###############################################################################
@@ -564,6 +564,74 @@ is( $got, $expected, $caption );
 
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="180" /></xf>';
+
+$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+
+$style = _new_style(\$got);
+$style->_write_xf( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 33. Test the _write_xf() method. With cell protection.
+#
+%properties = ( locked => 0 );
+
+$caption  = " \tStyles: _write_xf()";
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection locked="0" /></xf>';
+
+$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+
+$style = _new_style(\$got);
+$style->_write_xf( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 34. Test the _write_xf() method. With cell protection.
+#
+%properties = ( hidden => 1 );
+
+$caption  = " \tStyles: _write_xf()";
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection hidden="1" /></xf>';
+
+$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+
+$style = _new_style(\$got);
+$style->_write_xf( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 35. Test the _write_xf() method. With cell protection.
+#
+%properties = ( locked => 0, hidden => 1 );
+
+$caption  = " \tStyles: _write_xf()";
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection locked="0" hidden="1" /></xf>';
+
+$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+
+$style = _new_style(\$got);
+$style->_write_xf( $format );
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# 36. Test the _write_xf() method. With cell protection + align.
+#
+%properties = ( align => 'right', locked => 0, hidden => 1 );
+
+$caption  = " \tStyles: _write_xf()";
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1" applyProtection="1"><alignment horizontal="right" /><protection locked="0" hidden="1" /></xf>';
 
 $format = Excel::Writer::XLSX::Format->new( $index, %properties );
 
