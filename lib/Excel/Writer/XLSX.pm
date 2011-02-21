@@ -4548,6 +4548,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
+    protection.pl           Example of cell locking and formula hiding.
     right_to_left.pl        Change default sheet direction to right to left.
     sales.pl                An example of a simple sales spreadsheet.
     stats_ext.pl            Same as stats.pl with external references.
@@ -4719,12 +4720,12 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
 
 All non-deprecated methods will be supported in time. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
-    set_zoom()
-    right_to_left()
-    hide_zero()
+    set_zoom() +
+    right_to_left() +
+    hide_zero() +
     set_custom_color()
-    set_tab_color()
-    protect()
+    set_tab_color() +
+    protect() +
 
     define_name()
     insert_image()
@@ -4732,8 +4733,8 @@ All non-deprecated methods will be supported in time. The missing features will 
     set_properties()
     set_tempdir()
     set_1904()
-    set_locked()
-    set_hidden()
+    set_locked() +
+    set_hidden() +
 
     write_comment()
     data_validation()

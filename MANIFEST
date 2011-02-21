@@ -26,6 +26,7 @@ examples/merge6.pl
 examples/mod_perl1.pl
 examples/mod_perl2.pl
 examples/panes.pl
+examples/protection.pl
 examples/regions.pl
 examples/right_to_left.pl
 examples/sales.pl
@@ -287,6 +288,7 @@ t/worksheet/sub_write_sheet_calc_pr.t
 t/worksheet/sub_write_sheet_data.t
 t/worksheet/sub_write_sheet_format_pr.t
 t/worksheet/sub_write_sheet_pr.t
+t/worksheet/sub_write_sheet_protection.t
 t/worksheet/sub_write_sheet_view.t
 t/worksheet/sub_write_sheet_views1.t
 t/worksheet/sub_write_sheet_views2.t
