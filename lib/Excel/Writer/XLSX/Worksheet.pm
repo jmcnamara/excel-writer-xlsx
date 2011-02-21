@@ -200,6 +200,9 @@ sub _assemble_xml_file {
     # Write the worksheet data such as rows columns and cells.
     $self->_write_sheet_data();
 
+    # Write the sheetProtection element.
+    $self->_write_sheet_protection();
+
     # Write the worksheet calculation properties.
     #$self->_write_sheet_calc_pr();
 
@@ -346,18 +349,94 @@ sub set_first_sheet {
 
 ###############################################################################
 #
-# protect($password)
+# protect( $password )
 #
-# Set the worksheet protection flag to prevent accidental modification and to
-# hide formulas if the locked and hidden format properties have been set.
+# Set the worksheet protection flags to prevent modification of worksheet
+# objects.
 #
 sub protect {
 
-    my $self = shift;
+    my $self     = shift;
+    my $password = shift // '';
+    my $options  = shift // {};
 
-    $self->{_protect} = 1;
+    if ( $password ne '' ) {
+        $password = $self->_encode_password( $password );
+    }
 
-    # No password in XML format.
+    # Default values for objects that can be protected.
+    my %defaults = (
+        objects               => 0,
+        scenarios             => 0,
+        format_cells          => 0,
+        format_columns        => 0,
+        format_rows           => 0,
+        insert_columns        => 0,
+        insert_rows           => 0,
+        insert_hyperlinks     => 0,
+        delete_columns        => 0,
+        delete_rows           => 0,
+        select_locked_cells   => 1,
+        sort                  => 0,
+        autofilter            => 0,
+        pivot_tables          => 0,
+        select_unlocked_cells => 1,
+    );
+
+
+    # Overwrite the defaults with user specified values.
+    for my $key ( keys %{$options} ) {
+
+        if ( exists $defaults{$key} ) {
+            $defaults{$key} = $options->{$key};
+        }
+        else {
+            carp "Unknown protection object: $key\n";
+        }
+    }
+
+    # Set the password after the user defined values.
+    $defaults{password} = $password;
+
+    $self->{_protect} = \%defaults;
+}
+
+
+###############################################################################
+#
+# _encode_password($password)
+#
+# Based on the algorithm provided by Daniel Rentz of OpenOffice.
+#
+sub _encode_password {
+
+    use integer;
+
+    my $self      = shift;
+    my $plaintext = $_[0];
+    my $password;
+    my $count;
+    my @chars;
+    my $i = 0;
+
+    $count = @chars = split //, $plaintext;
+
+    foreach my $char ( @chars ) {
+        my $low_15;
+        my $high_15;
+        $char    = ord( $char ) << ++$i;
+        $low_15  = $char & 0x7fff;
+        $high_15 = $char & 0x7fff << 15;
+        $high_15 = $high_15 >> 15;
+        $char    = $low_15 | $high_15;
+    }
+
+    $password = 0x0000;
+    $password ^= $_ for @chars;
+    $password ^= $count;
+    $password ^= 0xCE4B;
+
+    return sprintf "%X", $password;
 }
 
 
@@ -4788,6 +4867,50 @@ sub _write_tab_color {
     my @attributes = ( 'rgb' => $rgb, );
 
     $self->{_writer}->emptyTag( 'tabColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_sheet_protection()
+#
+# Write the <sheetProtection> element.
+#
+sub _write_sheet_protection {
+
+    my $self = shift;
+    my @attributes;
+
+    return unless $self->{_protect};
+
+    my %arg = %{ $self->{_protect} };
+
+    push @attributes, ( "password" => $arg{password} ) if $arg{password};
+    push @attributes, ( "sheet" => 1 );
+
+    push @attributes, ( "objects"          => 1 ) if !$arg{objects};
+    push @attributes, ( "scenarios"        => 1 ) if !$arg{scenarios};
+    push @attributes, ( "formatCells"      => 0 ) if $arg{format_cells};
+    push @attributes, ( "formatColumns"    => 0 ) if $arg{format_columns};
+    push @attributes, ( "formatRows"       => 0 ) if $arg{format_rows};
+    push @attributes, ( "insertColumns"    => 0 ) if $arg{insert_columns};
+    push @attributes, ( "insertRows"       => 0 ) if $arg{insert_rows};
+    push @attributes, ( "insertHyperlinks" => 0 ) if $arg{insert_hyperlinks};
+    push @attributes, ( "deleteColumns"    => 0 ) if $arg{delete_columns};
+    push @attributes, ( "deleteRows"       => 0 ) if $arg{delete_rows};
+
+    push @attributes, ( "selectLockedCells" => 1 )
+      if !$arg{select_locked_cells};
+
+    push @attributes, ( "sort"        => 0 ) if $arg{sort};
+    push @attributes, ( "autoFilter"  => 0 ) if $arg{autofilter};
+    push @attributes, ( "pivotTables" => 0 ) if $arg{pivot_tables};
+
+    push @attributes, ( "selectUnlockedCells" => 1 )
+      if !$arg{select_unlocked_cells};
+
+
+    $self->{_writer}->emptyTag( 'sheetProtection', @attributes );
 }
 
 
