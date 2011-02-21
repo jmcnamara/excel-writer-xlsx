@@ -14,6 +14,7 @@ examples/diag_border.pl
 examples/formats.pl
 examples/gen_examples_pod.pl
 examples/headers.pl
+examples/hide_sheet.pl
 examples/hyperlink1.pl
 examples/hyperlink2.pl
 examples/indent.pl

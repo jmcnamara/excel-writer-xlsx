@@ -4536,6 +4536,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     colors.pl               A demo of the colour palette and named colours.
     diag_border.pl          A simple example of diagonal cell borders.
     headers.pl              Examples of worksheet headers and footers.
+    hide_sheet.pl           Simple example of hiding a worksheet.
     hyperlink1.pl           Shows how to create web hyperlinks.
     hyperlink2.pl           Examples of internal and external hyperlinks.
     indent.pl               An example of cell indentation.

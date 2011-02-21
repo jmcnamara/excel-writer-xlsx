@@ -7,10 +7,22 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.13 February xx 2011
 
-    + Added additional page setup methods
-     set_zoom()
-     right_to_left()
-     hide_zero()
+    + Added additional page setup methods:
+      set_zoom()
+      right_to_left()
+      hide_zero()
+      set_tab_color()
+      protect()
+
+    + Added Cell property methods:
+      set_locked()
+      set_hidden()
+
+    + Added example programs:
+      hide_sheet.pl
+      protection.pl
+      right_to_left.p 
+      tab_colors.pl
 
 
 0.12 February 19 2011
