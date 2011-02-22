@@ -570,8 +570,6 @@ Array slices are explained in the perldata manpage.
 
 =head2 set_1904()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 Excel stores dates as real numbers where the integer part stores the number of days since the epoch and the fractional part stores the percentage of the day. The epoch can be either 1900 or 1904. Excel for Windows uses 1900 and Excel for Macintosh uses 1904. However, Excel on either platform will convert automatically between one system and the other.
 
 Excel::Writer::XLSX stores dates in the 1900 format by default. If you wish to change this you can call the C<set_1904()> workbook method. You can query the current value by calling the C<get_1904()> workbook method. This returns 0 for 1900 and 1 for 1904.
@@ -2053,6 +2051,17 @@ One or more criteria can be selected:
 
 B<NOTE:> It isn't sufficient to just specify the filter condition. You must also hide any rows that don't match the filter condition. Rows are hidden using the C<set_row()> C<visible> parameter. C<Excel::Writer::XLSX> cannot do this automatically since it isn't part of the file format. See the C<autofilter.pl> program in the examples directory of the distro for an example.
 e conditions for the filter are specified using simple expressions:
+
+
+
+
+=head2 convert_date_time( $date_string )
+
+The C<convert_date_time()> method is used internally by the C<write_date_time()> method to convert date strings to a number that represents an Excel date and time.
+
+It is exposed as a public method for utility purposes.
+
+The C<$date_string> format is detailed in the C<write_date_time()> method.
 
 
 
@@ -3602,6 +3611,8 @@ For a slightly more advanced solution you can modify the C<write()> method to ha
 
 The C<write_date_time()> method above is just one way of handling dates and times.
 
+You can also use the C<convert_date_time()> worksheet method to convert from an ISO8601 style date string to an Excel date and time number.
+
 The L<Excel::Writer::XLSX::Utility> module which is included in the distro has date/time handling functions:
 
     use Excel::Writer::XLSX::Utility;
@@ -4601,7 +4612,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_tempdir()               No
     set_custom_color()          Yes
     sheets()                    Yes
-    set_1904()                  No
+    set_1904()                  Yes
     add_chart_ext()             Deprecated
     compatibility_mode()        Deprecated
     set_codepage()              Deprecated
@@ -4609,8 +4620,8 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
 
     Worksheet Methods           Support
     =================           =======
-    write()                     Yes/Partial, not all write_* methods supported yet.
-    write_number()              yes
+    write()                     Yes
+    write_number()              Yes
     write_string()              Yes
     write_blank()               Yes
     write_row()                 Yes
@@ -4718,7 +4729,6 @@ All non-deprecated methods will be supported in time. The missing features will 
 
     set_properties()
     set_tempdir()
-    set_1904()
 
     write_comment()
     data_validation()

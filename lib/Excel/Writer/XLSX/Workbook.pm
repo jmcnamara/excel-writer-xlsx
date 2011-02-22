@@ -980,13 +980,14 @@ sub _write_file_version {
 sub _write_workbook_pr {
 
     my $self                   = shift;
-    my $date_1904              = 1;
+    my $date_1904              = $self->{_1904};
     my $show_ink_annotation    = 0;
     my $auto_compress_pictures = 0;
     my $default_theme_version  = 124226;
+    my @attributes;
 
-
-    my @attributes = ( 'defaultThemeVersion' => $default_theme_version, );
+    push @attributes, ( 'date1904' => 1 ) if $date_1904;
+    push @attributes, ( 'defaultThemeVersion' => $default_theme_version );
 
     $self->{_writer}->emptyTag( 'workbookPr', @attributes );
 }
