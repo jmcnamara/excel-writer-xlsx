@@ -9,6 +9,8 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added set_1904() method for dates with a 1904 epoch.
 
+    + Added date_time.pl example program.
+
 
 0.13 February 22 2011
 
@@ -27,7 +29,7 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Added example programs:
       hide_sheet.pl
       protection.pl
-      right_to_left.p 
+      right_to_left.p
       tab_colors.pl
 
 

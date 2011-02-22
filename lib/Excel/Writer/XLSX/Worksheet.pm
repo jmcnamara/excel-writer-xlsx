@@ -2360,9 +2360,8 @@ sub write_date_time {
     my $date_time = $self->convert_date_time( $str );
 
     # If the date isn't valid then write it as a string.
-    if ( not defined $date_time ) {
-        $type      = 's';
-        $str_error = -3;
+    if ( !defined $date_time ) {
+        return $self->write_string( @_ );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
