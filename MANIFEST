@@ -9,6 +9,7 @@ examples/autofilter.pl
 examples/bug_report.pl
 examples/cgi.pl
 examples/colors.pl
+examples/date_time.pl
 examples/demo.pl
 examples/diag_border.pl
 examples/formats.pl
@@ -129,6 +130,8 @@ t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
 t/regression/custom_colors01.t
+t/regression/date_1904_01.t
+t/regression/date_1904_02.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
@@ -187,6 +190,8 @@ t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
+t/regression/xlsx_files/date_1904_01.xlsx
+t/regression/xlsx_files/date_1904_02.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx
@@ -258,6 +263,9 @@ t/workbook/workbook_01.t
 t/workbook/workbook_02.t
 t/workbook/workbook_03.t
 t/worksheet/sub_calculate_spans.t
+t/worksheet/sub_convert_date_time_01.t
+t/worksheet/sub_convert_date_time_02.t
+t/worksheet/sub_convert_date_time_03.t
 t/worksheet/sub_extract_filter_tokens.t
 t/worksheet/sub_parse_filter_expression.t
 t/worksheet/sub_write_auto_filter.t
