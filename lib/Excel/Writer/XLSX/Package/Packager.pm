@@ -296,6 +296,7 @@ sub _write_styles_file {
     my $num_format_count = $self->{_workbook}->{_num_format_count};
     my $border_count     = $self->{_workbook}->{_border_count};
     my $fill_count       = $self->{_workbook}->{_fill_count};
+    my $custom_colors    = $self->{_workbook}->{_custom_colors};
 
     my $rels = Excel::Writer::XLSX::Package::Styles->new();
 
@@ -307,7 +308,8 @@ sub _write_styles_file {
         $font_count,
         $num_format_count,
         $border_count,
-        $fill_count
+        $fill_count,
+        $custom_colors,
 
     );
 

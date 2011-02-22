@@ -49,6 +49,7 @@ sub new {
     $self->{_num_format_count} = 0;
     $self->{_border_count}     = 0;
     $self->{_fill_count}       = 0;
+    $self->{_custom_colors}    = [];
 
     bless $self, $class;
 
@@ -100,6 +101,9 @@ sub _assemble_xml_file {
     # Write the tableStyles element.
     $self->_write_table_styles();
 
+    # Write the colors element.
+    $self->_write_colors();
+
     # Close the style sheet tag.
     $self->{_writer}->endTag( 'styleSheet' );
 
@@ -124,6 +128,7 @@ sub _set_style_properties {
     $self->{_num_format_count} = shift;
     $self->{_border_count}     = shift;
     $self->{_fill_count}       = shift;
+    $self->{_custom_colors}    = shift;
 }
 
 
@@ -868,6 +873,47 @@ sub _write_table_styles {
     );
 
     $self->{_writer}->emptyTag( 'tableStyles', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_colors()
+#
+# Write the <colors> element.
+#
+sub _write_colors {
+
+    my $self          = shift;
+    my @custom_colors = @{ $self->{_custom_colors} };
+
+    return unless @custom_colors;
+
+    $self->{_writer}->startTag( 'colors' );
+    $self->_write_mru_colors( @custom_colors );
+    $self->{_writer}->endTag( 'colors' );
+}
+
+
+##############################################################################
+#
+# _write_mru_colors()
+#
+# Write the <mruColors> element.
+#
+sub _write_mru_colors {
+
+    my $self          = shift;
+    my @custom_colors = @_;
+
+    $self->{_writer}->startTag( 'mruColors' );
+
+    # Write the custom colors in reverse order.
+    for my $color ( reverse @custom_colors ) {
+        $self->_write_color( 'rgb' => $color );
+    }
+
+    $self->{_writer}->endTag( 'mruColors' );
 }
 
 

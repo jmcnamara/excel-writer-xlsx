@@ -50,6 +50,7 @@ $style->_set_style_properties(
     $workbook->{_num_format_count},
     $workbook->{_border_count},
     $workbook->{_fill_count},
+    $workbook->{_custom_colors},
 );
 $style->_assemble_xml_file();
 
