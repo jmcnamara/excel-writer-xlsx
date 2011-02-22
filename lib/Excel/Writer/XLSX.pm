@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.12 of Excel::Writer::XLSX, released February 19, 2011.
+This document refers to version 0.13 of Excel::Writer::XLSX, released February 22, 2011.
 
 
 
@@ -487,8 +487,6 @@ One disadvantage of using the C<set_tempdir()> method is that on some Windows sy
 
 =head2 set_custom_color( $index, $red, $green, $blue )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<set_custom_color()> method can be used to override one of the built-in palette values with a more suitable colour.
 
 The value for C<$index> should be in the range 8..63, see L<COLOURS IN EXCEL>.
@@ -532,6 +530,7 @@ The return value from C<set_custom_color()> is the index of the colour that was 
         border   => 1
     );
 
+Note, In the XLSX format the color palette isn't actually confined to 53 unique colors. The Excel::Writer::XLSX module will be extended at a later stage to support the newer, semi-infinite, palette.
 
 
 
@@ -1622,41 +1621,48 @@ This method is not required very often. The default value is the first worksheet
 
 
 
-=head2 protect( $password )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+=head2 protect( $password, \%options )
 
 The C<protect()> method is used to protect a worksheet from modification:
 
     $worksheet->protect();
 
-It can be turned off in Excel via the C<Tools-E<gt>Protection-E<gt>Unprotect Sheet> menu command.
+The C<protect()> method also has the effect of enabling a cell's C<locked> and C<hidden> properties if they have been set. A I<locked> cell cannot be edited and this property is on by default for all cells. A I<hidden> cell will display the results of a formula but not the formula itself.
 
-The C<protect()> method also has the effect of enabling a cell's C<locked> and C<hidden> properties if they have been set. A "locked" cell cannot be edited. A "hidden" cell will display the results of a formula but not the formula itself. In Excel a cell's locked property is on by default.
-
-    # Set some format properties
-    my $unlocked = $workbook->add_format( locked => 0 );
-    my $hidden   = $workbook->add_format( hidden => 1 );
-
-    # Enable worksheet protection
-    $worksheet->protect();
-
-    # This cell cannot be edited, it is locked by default
-    $worksheet->write( 'A1', '=1+2' );
-
-    # This cell can be edited
-    $worksheet->write( 'A2', '=1+2', $unlocked );
-
-    # The formula in this cell isn't visible
-    $worksheet->write( 'A3', '=1+2', $hidden );
-
-See also the C<set_locked> and C<set_hidden> format methods in L<CELL FORMATTING>.
+See the C<protection.pl> program in the examples directory of the distro for an illustrative example and the C<set_locked> and C<set_hidden> format methods in L<CELL FORMATTING>.
 
 You can optionally add a password to the worksheet protection:
 
     $worksheet->protect( 'drowssap' );
 
-Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data in any way and it is very easy to deactivate. Therefore, do not use the above method if you wish to protect sensitive data or calculations. However, before you get worried, Excel's own workbook level password protection does provide strong encryption in Excel 97+. For technical reasons this will never be supported by C<Excel::Writer::XLSX>.
+Passing the empty string C<''> is the same as turning on protection without a password.
+
+Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data and is very easy to deactivate. Full workbook encryption is not supported by C<Excel::Writer::XLSX> since it requires a completely different file format and would take several man months to implement.
+
+You can specify which worksheet elements that you which to protect by passing a hash_ref with any or all of the following keys:
+
+    # Default shown.
+    %options = (
+        objects               => 0,
+        scenarios             => 0,
+        format_cells          => 0,
+        format_columns        => 0,
+        format_rows           => 0,
+        insert_columns        => 0,
+        insert_rows           => 0,
+        insert_hyperlinks     => 0,
+        delete_columns        => 0,
+        delete_rows           => 0,
+        select_locked_cells   => 1,
+        sort                  => 0,
+        autofilter            => 0,
+        pivot_tables          => 0,
+        select_unlocked_cells => 1,
+    );
+
+The default boolean values are shown above. Individual elements can be protected as follows:
+
+    $worksheet->protect( 'drowssap', { insert_rows => 1 } );
 
 
 
@@ -1889,8 +1895,6 @@ The full possibilities of this method are shown in the C<merge3.pl> to C<merge6.
 
 =head2 set_zoom( $scale )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 Set the worksheet zoom factor in the range C<10 E<lt>= $scale E<lt>= 400>:
 
     $worksheet1->set_zoom( 50 );
@@ -1907,8 +1911,6 @@ Note, C<set_zoom()> does not affect the scale of the printed page. For that you 
 
 =head2 right_to_left()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<right_to_left()> method is used to change the default direction of the worksheet from left-to-right, with the A1 cell in the top left, to right-to-left, with the he A1 cell in the top right.
 
     $worksheet->right_to_left();
@@ -1919,8 +1921,6 @@ This is useful when creating Arabic, Hebrew or other near or far eastern workshe
 
 
 =head2 hide_zero()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<hide_zero()> method is used to hide any zero values that appear in cells.
 
@@ -1933,8 +1933,6 @@ In Excel this option is found under Tools->Options->View.
 
 =head2 set_tab_color()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<set_tab_color()> method is used to change the colour of the worksheet tab. This feature is only available in Excel 2002 and later. You can use one of the standard colour names provided by the Format object or a colour index. See L<COLOURS IN EXCEL> and the C<set_custom_color()> method.
 
     $worksheet1->set_tab_color( 'red' );
@@ -1946,8 +1944,6 @@ See the C<tab_colors.pl> program in the examples directory of the distro.
 
 
 =head2 autofilter( $first_row, $first_col, $last_row, $last_col )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method allows an autofilter to be added to a worksheet. An autofilter is a way of adding drop down lists to the headers of a 2D range of worksheet data. This is turn allow users to filter the data based on simple criteria so that some data is shown and some is hidden.
 
@@ -3031,8 +3027,6 @@ Note 2. In Excel 5 the dollar sign appears as a dollar sign. In Excel 97-2000 it
 
 =head2 set_locked()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
     Default state:      Cell locking is on
     Default action:     Turn locking on
     Valid args:         0, 1
@@ -3060,8 +3054,6 @@ Note: This offers weak protection even with a password, see the note in relation
 
 
 =head2 set_hidden()
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
     Default state:      Formula hiding is off
     Default action:     Turn hiding on
@@ -4607,7 +4599,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_properties()            No
     define_name()               No
     set_tempdir()               No
-    set_custom_color()          No
+    set_custom_color()          Yes
     sheets()                    Yes
     set_1904()                  No
     add_chart_ext()             Deprecated
@@ -4639,7 +4631,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     select()                    Yes
     hide()                      Yes
     set_first_sheet()           Yes
-    protect()                   No
+    protect()                   Yes
     set_selection()             Yes
     set_row()                   Yes/Partial, see docs.
     set_column()                Yes/Partial, see docs.
@@ -4647,10 +4639,10 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     freeze_panes()              Yes
     split_panes()               Yes
     merge_range()               Yes
-    set_zoom()                  No
-    right_to_left()             No
-    hide_zero()                 No
-    set_tab_color()             No
+    set_zoom()                  Yes
+    right_to_left()             Yes
+    hide_zero()                 Yes
+    set_tab_color()             Yes
     autofilter()                Yes
     filter_column()             Yes
     filter_column_list()        Yes. Not in Spreadsheet::WriteExcel.
@@ -4696,8 +4688,8 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_font_outline()          Yes
     set_font_shadow()           Yes
     set_num_format()            Yes
-    set_locked()                No
-    set_hidden()                No
+    set_locked()                Yes
+    set_hidden()                Yes
     set_align()                 Yes
     set_rotation()              Yes
     set_text_wrap()             Yes
@@ -4721,21 +4713,12 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
 
 All non-deprecated methods will be supported in time. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
-    set_zoom() +
-    right_to_left() +
-    hide_zero() +
-    set_custom_color()
-    set_tab_color() +
-    protect() +
-
     define_name()
     insert_image()
 
     set_properties()
     set_tempdir()
     set_1904()
-    set_locked() +
-    set_hidden() +
 
     write_comment()
     data_validation()

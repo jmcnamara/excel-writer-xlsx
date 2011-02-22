@@ -106,11 +106,13 @@ t/package/styles/sub_write_cell_style.t
 t/package/styles/sub_write_cell_style_xfs.t
 t/package/styles/sub_write_cell_styles.t
 t/package/styles/sub_write_cell_xfs.t
+t/package/styles/sub_write_colors.t
 t/package/styles/sub_write_default_fill.t
 t/package/styles/sub_write_dxfs.t
 t/package/styles/sub_write_fills.t
 t/package/styles/sub_write_font.t
 t/package/styles/sub_write_fonts.t
+t/package/styles/sub_write_mru_colors.t
 t/package/styles/sub_write_num_fmt.t
 t/package/styles/sub_write_num_fmts.t
 t/package/styles/sub_write_style_sheet.t
@@ -126,6 +128,7 @@ t/regression/autofilter03.t
 t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
+t/regression/custom_colors01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
@@ -183,6 +186,7 @@ t/regression/xlsx_files/autofilter03.xlsx
 t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
+t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx
