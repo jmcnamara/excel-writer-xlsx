@@ -185,8 +185,8 @@ sub _write_sst_strings {
 #
 sub _write_si {
 
-    my $self   = shift;
-    my $string = shift;
+    my $self       = shift;
+    my $string     = shift;
     my @attributes = ();
 
     if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
@@ -194,7 +194,15 @@ sub _write_si {
     }
 
     $self->{_writer}->startTag( 'si' );
-    $self->{_writer}->dataElement( 't', $string, @attributes );
+
+    if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
+        my $fh = $self->{_writer}->getOutput();
+        print $fh $string;
+    }
+    else {
+        $self->{_writer}->dataElement( 't', $string, @attributes );
+    }
+
     $self->{_writer}->endTag( 'si' );
 }
 

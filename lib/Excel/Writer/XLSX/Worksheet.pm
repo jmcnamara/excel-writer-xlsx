@@ -160,6 +160,9 @@ sub new {
     $self->{_external_links} = [];
     $self->{_hlink_count}    = 0;
 
+    $self->{_rstring} = '';
+
+
     bless $self, $class;
     return $self;
 }
@@ -1933,7 +1936,7 @@ sub write_number {
 
 ###############################################################################
 #
-# write_string ($row, $col, $string, $format, $html)
+# write_string ($row, $col, $string, $format)
 #
 # Write a string to the specified row and column (zero indexed).
 # $format is optional.
@@ -1957,8 +1960,6 @@ sub write_string {
     my $col     = $_[1];                              # Zero indexed column
     my $str     = $_[2];
     my $xf      = _XF( $self, $row, $col, $_[3] );    # The cell format
-    my $html    = $_[4] || 0;                         # Cell contains html text
-    my $comment = '';                                 # Cell comment
     my $type    = 's';                                # The data type
 
     # Check that row and col are valid and store max and min values
@@ -1978,19 +1979,19 @@ sub write_string {
     return $str_error;
 }
 
-
 ###############################################################################
 #
-# write_html_string ($row, $col, $string, $format)
+# write_rich_string ($row, $col, $string, $format)
 #
+# TODO: Rewrite.
 # Write a string to the specified row and column (zero indexed).
-#
+# $format is optional.
 # Returns  0 : normal termination
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
 #         -3 : long string truncated to 32767 chars
 #
-sub write_html_string {
+sub write_rich_string {
 
     my $self = shift;
 
@@ -2001,14 +2002,56 @@ sub write_html_string {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row  = $_[0];              # Zero indexed row
-    my $col  = $_[1];              # Zero indexed column
-    my $str  = $_[2];
-    my $xf   = $_[3];              # The cell format
-    my $html = 1;                  # Cell contains html text
+    my $row  = shift;    # Zero indexed row.
+    my $col  = shift;    # Zero indexed column.
+    my $str     ='';
+    my $xf      = 0;
+    my $type = 's';      # The data type.
+    my $length = 0;      # String length.
+
+    # Check that row and col are valid and store max and min values
+    return -2 if $self->_check_dimensions( $row, $col );
 
 
-    return $self->write_string( $row, $col, $str, $xf, $html );
+    # TODO
+    open my $str_fh, '>', \$str or die "Failed to open filehandle: $!";
+    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $str_fh );
+    $self->{_rstring} = $writer;
+
+    for my $token ( @_ ) {
+        if ( ref $token ) {
+            $self->{_rstring}->startTag( 'r' );
+            $self->_write_font($token);
+            $self->{_rstring}->endTag( 'r' );
+        }
+        else {
+            my @attributes = ();
+
+            if ( $token =~ /^\s/ || $token =~ /\s$/ ) {
+                push @attributes, ( 'xml:space' => 'preserve' );
+            }
+
+            $self->{_rstring}->startTag( 'r' );
+            $self->{_rstring}->dataElement( 't', $token, @attributes );
+            $self->{_rstring}->endTag( 'r' );
+        }
+    }
+
+
+    #print ">>$str<<\n";
+
+
+    # Check that the string is < 32767 chars.
+    my $str_error = 0;
+    if ( $length > $self->{_xls_strmax} ) {
+        return -3;
+    }
+
+    my $index = $self->_get_shared_string_index( $str );
+
+    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
+
+    return $str_error;
 }
 
 
@@ -4920,6 +4963,138 @@ sub _write_sheet_protection {
 }
 
 
+#
+# Note, the following font methods are, more or less, duplicated from the
+# Excel::Writer::XLSX::Package::Styles class. I will look at implementing
+# this is a cleaner encapsulated mode at a later stage.
+#
+
+
+
+##############################################################################
+#
+# _write_font()
+#
+# Write the <font> element.
+#
+sub _write_font {
+
+    my $self   = shift;
+    my $format = shift;
+
+    $self->{_rstring}->startTag( 'rPr' );
+
+    $self->{_rstring}->emptyTag( 'b' )       if $format->{_bold};
+    $self->{_rstring}->emptyTag( 'i' )       if $format->{_italic};
+    $self->{_rstring}->emptyTag( 'strike' )  if $format->{_font_strikeout};
+    $self->{_rstring}->emptyTag( 'outline' ) if $format->{_font_outline};
+    $self->{_rstring}->emptyTag( 'shadow' )  if $format->{_font_shadow};
+
+    # Handle the underline variants.
+    $self->_write_underline( $format->{_underline} ) if $format->{_underline};
+
+    $self->_write_vert_align( 'superscript' ) if $format->{_font_script} == 1;
+    $self->_write_vert_align( 'subscript' )   if $format->{_font_script} == 2;
+
+    $self->{_rstring}->emptyTag( 'sz', 'val', $format->{_size} );
+
+    if ( my $theme = $format->{_theme} ) {
+        $self->_write_color( 'theme' => $theme );
+    }
+    elsif ( my $color = $format->{_color} ) {
+        $color = $self->_get_palette_color( $color );
+
+        $self->_write_color( 'rgb' => $color );
+    }
+    else {
+        $self->_write_color( 'theme' => 1 );
+    }
+
+    $self->{_rstring}->emptyTag( 'rFont',   'val', $format->{_font} );
+    $self->{_rstring}->emptyTag( 'family', 'val', $format->{_font_family} );
+
+    if ( $format->{_font} eq 'Calibri' && ! $format->{_hyperlink} ) {
+        $self->{_rstring}->emptyTag( 'scheme', 'val', $format->{_font_scheme} );
+    }
+
+    $self->{_rstring}->endTag( 'rPr' );
+}
+
+
+###############################################################################
+#
+# _write_underline()
+#
+# Write the underline font element.
+#
+sub _write_underline {
+
+    my $self      = shift;
+    my $underline = shift;
+    my @attributes;
+
+    # Handle the underline variants.
+    if ( $underline == 2 ) {
+        @attributes = ( val => 'double' );
+    }
+    elsif ( $underline == 33 ) {
+        @attributes = ( val => 'singleAccounting' );
+    }
+    elsif ( $underline == 34 ) {
+        @attributes = ( val => 'doubleAccounting' );
+    }
+    else {
+        @attributes = ();    # Default to single underline.
+    }
+
+    $self->{_rstring}->emptyTag( 'u', @attributes );
+
+}
+
+
+##############################################################################
+#
+# _write_vert_align()
+#
+# Write the <vertAlign> font sub-element.
+#
+sub _write_vert_align {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_rstring}->emptyTag( 'vertAlign', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color()
+#
+# Write the <color> element.
+#
+sub _write_color {
+
+    my $self  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    my @attributes = ( $name => $value );
+
+    $self->{_rstring}->emptyTag( 'color', @attributes );
+}
+
+
+#
+# End font duplication code.
+#
+
+
+
+
+
 1;
 
 
@@ -4944,7 +5119,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Â© MM-MMXI, John McNamara.
+© MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
