@@ -187,9 +187,14 @@ sub _write_si {
 
     my $self   = shift;
     my $string = shift;
+    my @attributes = ();
+
+    if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
+        push @attributes, ( 'xml:space' => 'preserve' );
+    }
 
     $self->{_writer}->startTag( 'si' );
-    $self->{_writer}->dataElement( 't', $string );
+    $self->{_writer}->dataElement( 't', $string, @attributes );
     $self->{_writer}->endTag( 'si' );
 }
 
