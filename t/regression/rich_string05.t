@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'rich_string01.xlsx';
+my $filename     = 'rich_string05.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,12 +34,14 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+$worksheet->set_column( 'A:A', 30 );
+
 my $bold   = $workbook->add_format( bold   => 1 );
 my $italic = $workbook->add_format( italic => 1 );
 
 $worksheet->write( 'A1', 'Foo', $bold );
 $worksheet->write( 'A2', 'Bar', $italic );
-$worksheet->write_rich_string( 'A3', 'a', $bold, 'bc', 'defg' );
+$worksheet->write_rich_string( 'A3', 'This is ', $bold, 'bold', ' and this is ', $italic, 'italic' );
 
 $workbook->close();
 

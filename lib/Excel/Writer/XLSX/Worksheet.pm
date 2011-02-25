@@ -1979,6 +1979,7 @@ sub write_string {
     return $str_error;
 }
 
+
 ###############################################################################
 #
 # write_rich_string ($row, $col, $string, $format)
@@ -2002,56 +2003,104 @@ sub write_rich_string {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row  = shift;    # Zero indexed row.
-    my $col  = shift;    # Zero indexed column.
-    my $str     ='';
-    my $xf      = 0;
-    my $type = 's';      # The data type.
-    my $length = 0;      # String length.
+    my $row    = shift;    # Zero indexed row.
+    my $col    = shift;    # Zero indexed column.
+    my $str    = '';
+    my $xf     = 0;
+    my $type   = 's';      # The data type.
+    my $length = 0;        # String length.
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
 
-    # TODO
+    # Create a temp XML::Writer object and use it to write the rich string
+    # XML to a string.
     open my $str_fh, '>', \$str or die "Failed to open filehandle: $!";
+
     my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $str_fh );
+
     $self->{_rstring} = $writer;
 
+    # Create a temp format with the default font for unformatted fragments.
+    my $default = Excel::Writer::XLSX::Format->new();
+
+    # Convert the list of $format, $string tokens to pairs of ($format, $string)
+    # except for the first $string fragment which doesn't require a default
+    # formatting run. Use the default for strings without a leading format.
+    my @fragments;
+    my $last = 'format';
+
     for my $token ( @_ ) {
-        if ( ref $token ) {
-            $self->{_rstring}->startTag( 'r' );
-            $self->_write_font($token);
-            $self->{_rstring}->endTag( 'r' );
+        if ( !ref $token ) {
+
+            # Token is a string.
+            if ( $last ne 'format' ) {
+
+                # If previous token wasn't a format add one before the string.
+                push @fragments, ( $default, $token );
+            }
+            else {
+
+                # If previous token was a format just add the string.
+                push @fragments, $token;
+            }
+
+            $length += length $token;    # Keep track of actual string length.
+            $last = 'string';
         }
         else {
+
+            # Token is a format object. Add it to the fragment list.
+            push @fragments, $token;
+            $last = 'format';
+        }
+    }
+
+
+    # If the first token is a string start the <r> element.
+    if (!ref $fragments[0]) {
+            $self->{_rstring}->startTag( 'r' );
+    }
+
+    # Write the XML elements for the $format $string fragments.
+    for my $token ( @fragments ) {
+        if ( ref $token ) {
+
+            # Write the font run.
+            $self->{_rstring}->startTag( 'r' );
+            $self->_write_font($token);
+        }
+        else {
+
+            # Write the string fragment part, with whitespace handling.
             my @attributes = ();
 
             if ( $token =~ /^\s/ || $token =~ /\s$/ ) {
                 push @attributes, ( 'xml:space' => 'preserve' );
             }
 
-            $self->{_rstring}->startTag( 'r' );
             $self->{_rstring}->dataElement( 't', $token, @attributes );
             $self->{_rstring}->endTag( 'r' );
         }
     }
 
-
-    #print ">>$str<<\n";
+    # TODO remove debug.
+    #print ">> ", join "|", @fragments, "\n";
+    #print ">>| $str\n";
 
 
     # Check that the string is < 32767 chars.
-    my $str_error = 0;
     if ( $length > $self->{_xls_strmax} ) {
         return -3;
     }
 
+    # Add the XML string to the shared string table.
     my $index = $self->_get_shared_string_index( $str );
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
-    return $str_error;
+    return 0;
 }
 
 
