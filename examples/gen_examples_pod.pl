@@ -320,6 +320,7 @@ properties.jpg
 protection.jpg
 regions.jpg
 repeat.jpg
+rich_strings.jpg
 right_to_left.jpg
 row_wrap.jpg
 sales.jpg

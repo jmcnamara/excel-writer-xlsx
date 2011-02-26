@@ -812,6 +812,90 @@ See also the note about L<Cell notation>.
 
 
 
+=head2 write_rich_string( $row, $column, $format, $string, ..., $cell_format )
+
+The C<write_rich_string()> method is used to write strings with multiple formats. For example to write the string "This is B<bold> and this is I<italic>" you would use the following:
+
+    my $bold   = $workbook->add_format( bold   => 1 );
+    my $italic = $workbook->add_format( italic => 1 );
+
+    $worksheet->write_rich_string( 'A1',
+        'This is ', $bold, 'bold', ' and this is ', $italic, 'italic' );
+
+The basic rule is to break the string into fragments and put a C<$format> object before the fragment that you want to format. For example:
+
+    # Unformatted string.
+      'This is an example string'
+
+    # Break it into fragments.
+      'This is an ', 'example', ' string'
+
+    # Add formatting before the fragments you want formatted.
+      'This is an ', $format, 'example', ' string'
+
+    # In Excel::Writer::XLSX.
+    $worksheet->write_rich_string( 'A1',
+        'This is an ', $format, 'example', ' string' );
+
+String fragments that don't have a format are given a default format. So for example when writing the string "Some B<bold> text" you would use the first example below but it would be equivalent to the second:
+
+    # With default formatting:
+    my $bold    = $workbook->add_format( bold => 1 );
+
+    $worksheet->write_rich_string( 'A1',
+        'Some ', $bold, 'bold', ' text' );
+
+    # Or more explicitly:
+    my $bold    = $workbook->add_format( bold => 1 );
+    my $default = $workbook->add_format();
+
+    $worksheet->write_rich_string( 'A1',
+        $default, 'Some ', $bold, 'bold', $default, ' text' );
+
+As with Excel, only the font properties of the format such as font name, style, size, underline, color and effects are applied to the string fragments. Other features such as border, background and alignment must be applied to the cell.
+
+The C<write_rich_string()> method allows you to do this by using the last argument as a cell format (if it is a format object). The following example centers a rich string in the cell:
+
+    my $bold   = $workbook->add_format( bold  => 1 );
+    my $center = $workbook->add_format( align => 'center' );
+
+    $worksheet->write_rich_string( 'A5',
+        'Some ', $bold, 'bold text', ' centered', $center );
+
+See the C<rich_strings.pl> example in the distro for more examples.
+
+    my $bold   = $workbook->add_format( bold        => 1 );
+    my $italic = $workbook->add_format( italic      => 1 );
+    my $red    = $workbook->add_format( color       => 'red' );
+    my $blue   = $workbook->add_format( color       => 'blue' );
+    my $center = $workbook->add_format( align       => 'center' );
+    my $super  = $workbook->add_format( font_script => 1 );
+
+
+    # Write some strings with multiple formats.
+    $worksheet->write_rich_string( 'A1',
+        'This is ', $bold, 'bold', ' and this is ', $italic, 'italic' );
+
+    $worksheet->write_rich_string( 'A3',
+        'This is ', $red, 'red', ' and this is ', $blue, 'blue' );
+
+    $worksheet->write_rich_string( 'A5',
+        'Some ', $bold, 'bold text', ' centered', $center );
+
+    $worksheet->write_rich_string( 'A7',
+        $italic, 'j = k', $super, '(n-1)', $center );
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
+
+=end html
+
+As with C<write_sting()> the maximum string size is 32767 characters. See also the note about L<Cell notation>.
+
+
+
+
 =head2 keep_leading_zeros()
 
 This method changes the default handling of integers with leading zeros when using the C<write()> method.
@@ -2882,7 +2966,7 @@ Set the strikeout property of the font.
                         1  = Superscript
                         2  = Subscript
 
-Set the superscript/subscript property of the font. This format is currently not very useful.
+Set the superscript/subscript property of the font.
 
 
 
@@ -4554,6 +4638,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
     protection.pl           Example of cell locking and formula hiding.
+    rich_strings.pl         Example of strings with multiple formats.
     right_to_left.pl        Change default sheet direction to right to left.
     sales.pl                An example of a simple sales spreadsheet.
     stats_ext.pl            Same as stats.pl with external references.
