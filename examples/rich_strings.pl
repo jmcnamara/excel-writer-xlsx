@@ -2,8 +2,8 @@
 
 #######################################################################
 #
-# An Excel::Writer::XLSX showing how to use "rich strings", strings
-# with multiple formatting.
+# An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
+# strings with multiple formatting.
 #
 # reverse('©'), February 2011, John McNamara, jmcnamara@cpan.org
 #

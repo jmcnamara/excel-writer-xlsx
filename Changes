@@ -5,11 +5,19 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
-0.14 February XX 2011
+0.14 February 26 2011
+
+    + Added write_rich_string() method to write a string with multiple
+      formats.
+
+    + Added rich_strings.pl example program.
 
     + Added set_1904() method for dates with a 1904 epoch.
 
     + Added date_time.pl example program.
+
+    ! Fixed issue where leading and trailing whitespace in cell strings 
+      wasn't preserved.
 
 
 0.13 February 22 2011

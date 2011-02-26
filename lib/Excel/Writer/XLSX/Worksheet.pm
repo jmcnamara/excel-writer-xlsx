@@ -24,7 +24,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 
 ###############################################################################
@@ -1982,15 +1982,17 @@ sub write_string {
 
 ###############################################################################
 #
-# write_rich_string ($row, $col, $string, $format)
+# write_rich_string( $row, $column, $format, $string, ..., $cell_format )
 #
-# TODO: Rewrite.
-# Write a string to the specified row and column (zero indexed).
-# $format is optional.
-# Returns  0 : normal termination
-#         -1 : insufficient number of arguments
-#         -2 : row or column out of range
-#         -3 : long string truncated to 32767 chars
+# The write_rich_string() method is used to write strings with multiple formats.
+# The method receives string fragments prefixed by format objects. The final
+# format object is used as the cell format.
+#
+# Returns  0 : normal termination.
+#         -1 : insufficient number of arguments.
+#         -2 : row or column out of range.
+#         -3 : long string truncated to 32767 chars.
+#         -4 : 2 consequtive formats used.
 #
 sub write_rich_string {
 
@@ -2037,6 +2039,7 @@ sub write_rich_string {
     # formatting run. Use the default for strings without a leading format.
     my @fragments;
     my $last = 'format';
+    my $pos  = 0;
 
     for my $token ( @_ ) {
         if ( !ref $token ) {
@@ -2058,10 +2061,17 @@ sub write_rich_string {
         }
         else {
 
+            # Can't allow 2 formats in a row.
+            if ( $last eq 'format' && $pos > 0 ) {
+                return -4;
+            }
+
             # Token is a format object. Add it to the fragment list.
             push @fragments, $token;
             $last = 'format';
         }
+
+        $pos++;
     }
 
 
