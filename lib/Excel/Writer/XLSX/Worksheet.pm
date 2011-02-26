@@ -2006,12 +2006,19 @@ sub write_rich_string {
     my $row    = shift;    # Zero indexed row.
     my $col    = shift;    # Zero indexed column.
     my $str    = '';
-    my $xf     = 0;
+    my $xf     = undef;
     my $type   = 's';      # The data type.
     my $length = 0;        # String length.
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
+
+
+    # If the last arg is a format we use it as the cell format.
+    if ( ref $_[-1] ) {
+        $xf = pop @_;
+        $xf = _XF( $self, $row, $col, $xf );
+    }
 
 
     # Create a temp XML::Writer object and use it to write the rich string
@@ -2084,11 +2091,6 @@ sub write_rich_string {
             $self->{_rstring}->endTag( 'r' );
         }
     }
-
-    # TODO remove debug.
-    #print ">> ", join "|", @fragments, "\n";
-    #print ">>| $str\n";
-
 
     # Check that the string is < 32767 chars.
     if ( $length > $self->{_xls_strmax} ) {
