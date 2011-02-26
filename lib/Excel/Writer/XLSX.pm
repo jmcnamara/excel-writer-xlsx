@@ -600,6 +600,7 @@ The following methods are available through a new worksheet:
     write()
     write_number()
     write_string()
+    write_rich_string()
     keep_leading_zeros()
     write_blank()
     write_row()
@@ -4709,6 +4710,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     write()                     Yes
     write_number()              Yes
     write_string()              Yes
+    write_rich_string()         Yes. Not in Spreadsheet::WriteExcel.
     write_blank()               Yes
     write_row()                 Yes
     write_col()                 Yes
