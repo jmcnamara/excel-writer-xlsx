@@ -220,11 +220,11 @@ sub _assemble_xml_file {
     # Write the hyperlink element.
     $self->_write_hyperlinks();
 
-    # Write the worksheet page_margins.
-    $self->_write_page_margins();
-
     # Write the printOptions element.
     $self->_write_print_options();
+
+    # Write the worksheet page_margins.
+    $self->_write_page_margins();
 
     # Write the worksheet page setup.
     $self->_write_page_setup();
