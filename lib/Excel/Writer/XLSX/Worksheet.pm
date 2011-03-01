@@ -1930,7 +1930,7 @@ sub write_number {
 
     my $row  = $_[0];                  # Zero indexed row
     my $col  = $_[1];                  # Zero indexed column
-    my $num  = $_[2];
+    my $num  = $_[2] + 0;
     my $xf   = _XF( $self, $_[3] );    # The cell format
     my $type = 'n';                    # The data type
 

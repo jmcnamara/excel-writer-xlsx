@@ -10,6 +10,9 @@ Revision history for Perl module Excel::Writer::XLSX.
     ! Fix for center_horizontally() issue.
       Reported by Giulio Orsero.
 
+    ! Fix for number like strings getting written as strings instead of numbers.
+      Reported by Giulio Orsero.
+
 
 0.15 March 1 2011
 
