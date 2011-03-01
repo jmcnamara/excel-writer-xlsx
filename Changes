@@ -5,6 +5,14 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.15 March 1 2011
+
+    ! Fixe for issues with set_row() not passing on format to cells
+      in the row. Reported by Giulioo.
+
+    ! Fixes for related issue in set_column().
+
+
 0.14 February 26 2011
 
     + Added write_rich_string() method to write a string with multiple

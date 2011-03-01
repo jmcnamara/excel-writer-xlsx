@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.14 of Excel::Writer::XLSX, released February 26, 2011.
+This document refers to version 0.15 of Excel::Writer::XLSX, released March 1, 2011.
 
 
 
@@ -4215,7 +4215,7 @@ A formula is a string that begins with an equals sign:
 
 The formula can contain numbers, strings, boolean values, cell references, cell ranges and functions. Named ranges are not supported. Formulas should be written as they appear in Excel, that is cells and functions must be in uppercase.
 
-Cells in Excel are referenced using the A1 notation system where the column is designated by a letter and the row by a number. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 65536. The C<Excel::Writer::XLSX::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
+Cells in Excel are referenced using the A1 notation system where the column is designated by a letter and the row by a number. Columns range from A to XFD i.e. 0 to 16384, rows range from 1 to 1048576. The C<Excel::Writer::XLSX::Utility> module that is included in the distro contains helper functions for dealing with A1 notation, for example:
 
     use Excel::Writer::XLSX::Utility;
 
