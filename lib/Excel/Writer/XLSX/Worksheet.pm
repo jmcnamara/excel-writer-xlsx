@@ -483,8 +483,10 @@ sub set_column {
     $ignore_col = 0 if ref $data[3];          # Column has a format.
     $ignore_col = 0 if $data[2] && $data[4];  # Column has a width but is hidden
 
-    return -2 if $self->_check_dimensions( 0, $data[0], $ignore_row, $ignore_col );
-    return -2 if $self->_check_dimensions( 0, $data[1], $ignore_row, $ignore_col );
+    return -2
+      if $self->_check_dimensions( 0, $data[0], $ignore_row, $ignore_col );
+    return -2
+      if $self->_check_dimensions( 0, $data[1], $ignore_row, $ignore_col );
 
     # Convert the format object.
     $data[3] = _XF( $self, $data[3] );
@@ -494,14 +496,14 @@ sub set_column {
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
-    my $width  = $data[4] ? 0 : $data[2]; # Set width to zero if col is hidden
-       $width  ||= 0;                     # Ensure width isn't undef.
+    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if col is hidden
+    $width ||= 0;                           # Ensure width isn't undef.
     my $format = $data[3];
 
-    my ($firstcol, $lastcol) = @data;
+    my ( $firstcol, $lastcol ) = @data;
 
-    foreach my $col ($firstcol .. $lastcol) {
-        $self->{_col_sizes}->{$col}   = $width;
+    foreach my $col ( $firstcol .. $lastcol ) {
+        $self->{_col_sizes}->{$col} = $width;
         $self->{_col_formats}->{$col} = $format if $format;
     }
 }
@@ -1926,11 +1928,11 @@ sub write_number {
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
 
-    my $row  = $_[0];                              # Zero indexed row
-    my $col  = $_[1];                              # Zero indexed column
+    my $row  = $_[0];                  # Zero indexed row
+    my $col  = $_[1];                  # Zero indexed column
     my $num  = $_[2];
     my $xf   = _XF( $self, $_[3] );    # The cell format
-    my $type = 'n';                                # The data type
+    my $type = 'n';                    # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -1963,11 +1965,11 @@ sub write_string {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row     = $_[0];                              # Zero indexed row
-    my $col     = $_[1];                              # Zero indexed column
-    my $str     = $_[2];
-    my $xf      = _XF( $self, $_[3] );    # The cell format
-    my $type    = 's';                                # The data type
+    my $row  = $_[0];                  # Zero indexed row
+    my $col  = $_[1];                  # Zero indexed column
+    my $str  = $_[2];
+    my $xf   = _XF( $self, $_[3] );    # The cell format
+    my $type = 's';                    # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2012,12 +2014,12 @@ sub write_rich_string {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row    = shift;    # Zero indexed row.
-    my $col    = shift;    # Zero indexed column.
+    my $row    = shift;            # Zero indexed row.
+    my $col    = shift;            # Zero indexed column.
     my $str    = '';
     my $xf     = undef;
-    my $type   = 's';      # The data type.
-    my $length = 0;        # String length.
+    my $type   = 's';              # The data type.
+    my $length = 0;                # String length.
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2083,8 +2085,8 @@ sub write_rich_string {
 
 
     # If the first token is a string start the <r> element.
-    if (!ref $fragments[0]) {
-            $self->{_rstring}->startTag( 'r' );
+    if ( !ref $fragments[0] ) {
+        $self->{_rstring}->startTag( 'r' );
     }
 
     # Write the XML elements for the $format $string fragments.
@@ -2093,7 +2095,7 @@ sub write_rich_string {
 
             # Write the font run.
             $self->{_rstring}->startTag( 'r' );
-            $self->_write_font($token);
+            $self->_write_font( $token );
         }
         else {
 
@@ -2154,10 +2156,10 @@ sub write_blank {
     # Don't write a blank cell unless it has a format
     return 0 if not defined $_[2];
 
-    my $row  = $_[0];                              # Zero indexed row
-    my $col  = $_[1];                              # Zero indexed column
+    my $row  = $_[0];                  # Zero indexed row
+    my $col  = $_[1];                  # Zero indexed column
     my $xf   = _XF( $self, $_[2] );    # The cell format
-    my $type = 'b';                                # The data type
+    my $type = 'b';                    # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2204,7 +2206,7 @@ sub write_formula {
             $xf, $value );
     }
 
-    $xf = _XF( $self, $xf );    # The cell format
+    $xf = _XF( $self, $xf );       # The cell format
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2345,12 +2347,12 @@ sub write_url {
     ( $args[3], $args[4] ) = ( $args[4], $args[3] ) if ref $args[3];
 
 
-    my $row       = $args[0];                              # Zero indexed row
-    my $col       = $args[1];                              # Zero indexed column
-    my $url       = $args[2];                              # URL string
-    my $str       = $args[3];                              # Alternative label
+    my $row       = $args[0];                  # Zero indexed row
+    my $col       = $args[1];                  # Zero indexed column
+    my $url       = $args[2];                  # URL string
+    my $str       = $args[3];                  # Alternative label
     my $xf        = _XF( $self, $args[4] );    # Tool tip
-    my $tip       = $args[5];                              # XML data type
+    my $tip       = $args[5];                  # XML data type
     my $type      = 'l';
     my $link_type = 1;
 
@@ -2457,11 +2459,11 @@ sub write_date_time {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row  = $_[0];                              # Zero indexed row
-    my $col  = $_[1];                              # Zero indexed column
+    my $row  = $_[0];                  # Zero indexed row
+    my $col  = $_[1];                  # Zero indexed column
     my $str  = $_[2];
     my $xf   = _XF( $self, $_[3] );    # The cell format
-    my $type = 'n';                                # The data type
+    my $type = 'n';                    # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -2679,8 +2681,7 @@ sub set_row {
 
 
     # Store the row properties.
-    $self->{_set_rows}->{$row} =
-      [ $height, $xf, $hidden, $level, $collapsed ];
+    $self->{_set_rows}->{$row} = [ $height, $xf, $hidden, $level, $collapsed ];
 
 
     # Store the row sizes for use when calculating image vertices.
@@ -3909,7 +3910,7 @@ sub _write_cell {
         push @attributes, ( 's' => $row_xf );
     }
     elsif ( $self->{_col_formats}->{$col} ) {
-        my $col_xf =  $self->{_col_formats}->{$col};
+        my $col_xf = $self->{_col_formats}->{$col};
         push @attributes, ( 's' => $col_xf );
     }
 
@@ -5041,7 +5042,6 @@ sub _write_sheet_protection {
 #
 
 
-
 ##############################################################################
 #
 # _write_font()
@@ -5081,10 +5081,10 @@ sub _write_font {
         $self->_write_color( 'theme' => 1 );
     }
 
-    $self->{_rstring}->emptyTag( 'rFont',   'val', $format->{_font} );
+    $self->{_rstring}->emptyTag( 'rFont',  'val', $format->{_font} );
     $self->{_rstring}->emptyTag( 'family', 'val', $format->{_font_family} );
 
-    if ( $format->{_font} eq 'Calibri' && ! $format->{_hyperlink} ) {
+    if ( $format->{_font} eq 'Calibri' && !$format->{_hyperlink} ) {
         $self->{_rstring}->emptyTag( 'scheme', 'val', $format->{_font_scheme} );
     }
 
@@ -5161,9 +5161,6 @@ sub _write_color {
 #
 # End font duplication code.
 #
-
-
-
 
 
 1;
