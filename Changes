@@ -5,10 +5,16 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.16 March XX 2011
+
+    ! Fix for center_horizontally() issue.
+      Reported by Giulio Orsero.
+
+
 0.15 March 1 2011
 
-    ! Fixe for issues with set_row() not passing on format to cells
-      in the row. Reported by Giulioo.
+    ! Fix for issues with set_row() not passing on format to cells
+      in the row. Reported by Giulio Orsero.
 
     ! Fixes for related issue in set_column().
 
