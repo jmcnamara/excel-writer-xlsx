@@ -154,7 +154,6 @@ sub new {
     $self->{_col_sizes}   = {};
     $self->{_row_sizes}   = {};
     $self->{_col_formats} = {};
-    $self->{_row_formats} = {};
 
     $self->{_hlink_refs}     = [];
     $self->{_external_links} = [];
@@ -476,26 +475,34 @@ sub set_column {
     ( $data[0], $data[1] ) = ( $data[1], $data[0] ) if $data[0] > $data[1];
 
 
-    # Check that cola are valid and store max and min values with default row.
-    # NOTE: This isn't strictly correct. Excel only seems to set the dims
-    #       for formatted/hidden columns. Should be conservative at least.
-    return -2 if $self->_check_dimensions( 0, $data[0] );
-    return -2 if $self->_check_dimensions( 0, $data[1] );
+    # Check that cols are valid and store max and min values with default row.
+    # NOTE: The check shouldn't modify the row dimensions and should only modify
+    #       the column dimensions in certain cases.
+    my $ignore_row = 1;
+    my $ignore_col = 1;
+    $ignore_col = 0 if ref $data[3];          # Column has a format.
+    $ignore_col = 0 if $data[2] && $data[4];  # Column has a width but is hidden
 
+    return -2 if $self->_check_dimensions( 0, $data[0], $ignore_row, $ignore_col );
+    return -2 if $self->_check_dimensions( 0, $data[1], $ignore_row, $ignore_col );
+
+    # Convert the format object.
+    $data[3] = _XF( $self, $data[3] );
+
+    # Store the column data.
     push @{ $self->{_colinfo} }, [@data];
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
-    #
-    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if col is hidden
-    $width ||= 0;                           # Ensure width isn't undef.
+    my $width  = $data[4] ? 0 : $data[2]; # Set width to zero if col is hidden
+       $width  ||= 0;                     # Ensure width isn't undef.
     my $format = $data[3];
 
-    my ( $firstcol, $lastcol ) = @data;
+    my ($firstcol, $lastcol) = @data;
 
-    for my $col ( $firstcol .. $lastcol ) {
-        $self->{_col_sizes}->{$col} = $width;
-        $self->{_col_formats}->{$col} = $format if defined $format;
+    foreach my $col ($firstcol .. $lastcol) {
+        $self->{_col_sizes}->{$col}   = $width;
+        $self->{_col_formats}->{$col} = $format if $format;
     }
 }
 
@@ -1922,7 +1929,7 @@ sub write_number {
     my $row  = $_[0];                              # Zero indexed row
     my $col  = $_[1];                              # Zero indexed column
     my $num  = $_[2];
-    my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
+    my $xf   = _XF( $self, $_[3] );    # The cell format
     my $type = 'n';                                # The data type
 
     # Check that row and col are valid and store max and min values
@@ -1959,7 +1966,7 @@ sub write_string {
     my $row     = $_[0];                              # Zero indexed row
     my $col     = $_[1];                              # Zero indexed column
     my $str     = $_[2];
-    my $xf      = _XF( $self, $row, $col, $_[3] );    # The cell format
+    my $xf      = _XF( $self, $_[3] );    # The cell format
     my $type    = 's';                                # The data type
 
     # Check that row and col are valid and store max and min values
@@ -2019,7 +2026,7 @@ sub write_rich_string {
     # If the last arg is a format we use it as the cell format.
     if ( ref $_[-1] ) {
         $xf = pop @_;
-        $xf = _XF( $self, $row, $col, $xf );
+        $xf = _XF( $self, $xf );
     }
 
 
@@ -2149,7 +2156,7 @@ sub write_blank {
 
     my $row  = $_[0];                              # Zero indexed row
     my $col  = $_[1];                              # Zero indexed column
-    my $xf   = _XF( $self, $row, $col, $_[2] );    # The cell format
+    my $xf   = _XF( $self, $_[2] );    # The cell format
     my $type = 'b';                                # The data type
 
     # Check that row and col are valid and store max and min values
@@ -2197,7 +2204,7 @@ sub write_formula {
             $xf, $value );
     }
 
-    $xf = _XF( $self, $row, $col, $xf );    # The cell format
+    $xf = _XF( $self, $xf );    # The cell format
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2342,7 +2349,7 @@ sub write_url {
     my $col       = $args[1];                              # Zero indexed column
     my $url       = $args[2];                              # URL string
     my $str       = $args[3];                              # Alternative label
-    my $xf        = _XF( $self, $row, $col, $args[4] );    # Tool tip
+    my $xf        = _XF( $self, $args[4] );    # Tool tip
     my $tip       = $args[5];                              # XML data type
     my $type      = 'l';
     my $link_type = 1;
@@ -2453,7 +2460,7 @@ sub write_date_time {
     my $row  = $_[0];                              # Zero indexed row
     my $col  = $_[1];                              # Zero indexed column
     my $str  = $_[2];
-    my $xf   = _XF( $self, $row, $col, $_[3] );    # The cell format
+    my $xf   = _XF( $self, $_[3] );    # The cell format
     my $type = 'n';                                # The data type
 
 
@@ -2642,11 +2649,10 @@ sub set_row {
     my $self      = shift;
     my $row       = shift;          # Row Number.
     my $height    = shift // 15;    # Row height.
-    my $format    = shift;          # Format object.
+    my $xf        = shift;          # Format object.
     my $hidden    = shift // 0;     # Hidden flag.
     my $level     = shift // 0;     # Outline level.
     my $collapsed = shift // 0;     # Collapsed row.
-    my $style;
 
     return unless defined $row;     # Ensure at least $row is specified.
 
@@ -2660,11 +2666,8 @@ sub set_row {
         $height = 15;
     }
 
-    # Check for a format object.
-    if ( ref $format ) {
-        $style = $format->get_xf_index();
-    }
-
+    # Convert the format object.
+    $xf = _XF( $self, $xf );
 
     # Set the limits for the outline levels (0 <= x <= 7).
     $level = 0 if $level < 0;
@@ -2677,13 +2680,11 @@ sub set_row {
 
     # Store the row properties.
     $self->{_set_rows}->{$row} =
-      [ $height, $style, $hidden, $level, $collapsed ];
+      [ $height, $xf, $hidden, $level, $collapsed ];
 
 
     # Store the row sizes for use when calculating image vertices.
-    # Also store the column formats.
     $self->{_row_sizes}->{$row} = $height;
-    $self->{_row_formats}->{$row} = $format if defined $format;
 }
 
 
@@ -2782,20 +2783,14 @@ sub _get_palette_color {
 #
 sub _XF {
 
-    # TODO $row and $col aren't actually required in the XML version and
-    # should eventually be removed. They are required in the Biff version
-    # to allow for row and col formats.
-
     my $self   = $_[0];
-    my $row    = $_[1];
-    my $col    = $_[2];
-    my $format = $_[3];
+    my $format = $_[1];
 
     if ( ref( $format ) ) {
         return $format->get_xf_index();
     }
     else {
-        return 0;    # 0x0F for Spreadsheet::WriteExcel
+        return 0;
     }
 }
 
@@ -2982,7 +2977,7 @@ sub repeat_formula {
 # _check_dimensions($row, $col, $ignore_row, $ignore_col)
 #
 # Check that $row and $col are valid and store max and min values for use in
-# DIMENSIONS record. See, _store_dimensions().
+# other methods/elements.
 #
 # The $ignore_row/$ignore_col flags is used to indicate that we wish to
 # perform the dimension check without storing the value.
@@ -3113,8 +3108,6 @@ sub _store_externsheet {
         $cch    = length( $sheetname );
         $rgch = 0x03;         # Reference to a sheet in the current workbook
     }
-
-    # TODO Update for SpreadsheetML format
 }
 
 
@@ -3137,8 +3130,6 @@ sub _store_protect {
     my $length = 0x0002;    # Bytes to follow
 
     my $fLock = $self->{_protect};    # Worksheet is protected
-
-    # TODO Update for SpreadsheetML format
 }
 
 
@@ -3200,8 +3191,6 @@ sub _store_zoom {
 
     my $record = 0x00A0;    # Record identifier
     my $length = 0x0004;    # Bytes to follow
-
-    # TODO Update for SpreadsheetML format
 }
 
 
@@ -3410,11 +3399,31 @@ sub _write_dimension {
     my $self = shift;
     my $ref;
 
-    if ( not defined $self->{_dim_rowmin} ) {
+    if ( !defined $self->{_dim_rowmin} && !defined $self->{_dim_colmin} ) {
 
-        # If the _dim_row_min is undefined then no dimensions have been set
+        # If the min dims are undefined then no dimensions have been set
         # and we use the default 'A1'.
         $ref = 'A1';
+    }
+    elsif ( !defined $self->{_dim_rowmin} && defined $self->{_dim_colmin} ) {
+
+        # If the row dims aren't set but the column dims are then they
+        # have been changed via set_column().
+
+        if ( $self->{_dim_colmin} == $self->{_dim_colmax} ) {
+
+            # The dimensions are a single cell and not a range.
+            $ref = xl_rowcol_to_cell( 0, $self->{_dim_colmin} );
+        }
+        else {
+
+            # The dimensions are a cell range.
+            my $cell_1 = xl_rowcol_to_cell( 0, $self->{_dim_colmin} );
+            my $cell_2 = xl_rowcol_to_cell( 0, $self->{_dim_colmax} );
+
+            $ref = $cell_1 . ':' . $cell_2;
+        }
+
     }
     elsif ($self->{_dim_rowmin} == $self->{_dim_rowmax}
         && $self->{_dim_colmin} == $self->{_dim_colmax} )
@@ -3629,11 +3638,10 @@ sub _write_col_info {
     my $min          = $_[0] // 0;    # First formatted column.
     my $max          = $_[1] // 0;    # Last formatted column.
     my $width        = $_[2];         # Col width in user units.
-    my $format       = $_[3];         # Format object.
+    my $format       = $_[3];         # Format index.
     my $hidden       = $_[4] // 0;    # Hidden flag.
     my $level        = $_[5] // 0;    # Outline level.
     my $collapsed    = $_[6] // 0;    # Outline level.
-    my $style        = 0;
     my $custom_width = 1;
 
     # Set the Excel default col width.
@@ -3655,12 +3663,6 @@ sub _write_col_info {
     }
 
 
-    # Check for a format object.
-    if ( ref $format ) {
-        $style = $format->get_xf_index();
-    }
-
-
     # Convert column width from user units to character width.
     my $max_digit_width = 7;    # For Calabri 11.
     my $padding         = 5;
@@ -3676,9 +3678,9 @@ sub _write_col_info {
         'width' => $width,
     );
 
-    push @attributes, ( style       => 1 ) if $style;
-    push @attributes, ( hidden      => 1 ) if $hidden;
-    push @attributes, ( customWidth => 1 ) if $custom_width;
+    push @attributes, ( style       => $format ) if $format;
+    push @attributes, ( hidden      => 1 )       if $hidden;
+    push @attributes, ( customWidth => 1 )       if $custom_width;
 
 
     $self->{_writer}->emptyTag( 'col', @attributes );
@@ -3901,6 +3903,14 @@ sub _write_cell {
     # Add the cell format index.
     if ( $xf ) {
         push @attributes, ( 's' => $xf );
+    }
+    elsif ( $self->{_set_rows}->{$row} && $self->{_set_rows}->{$row}->[1] ) {
+        my $row_xf = $self->{_set_rows}->{$row}->[1];
+        push @attributes, ( 's' => $row_xf );
+    }
+    elsif ( $self->{_col_formats}->{$col} ) {
+        my $col_xf =  $self->{_col_formats}->{$col};
+        push @attributes, ( 's' => $col_xf );
     }
 
 

@@ -50,7 +50,7 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <dimension ref="B1:L1"/>
+  <dimension ref="F1:H1"/>
   <sheetViews>
     <sheetView tabSelected="1" workbookViewId="0"/>
   </sheetViews>
@@ -62,7 +62,6 @@ __DATA__
     <col min="10" max="10" width="2.7109375" customWidth="1"/>
     <col min="12" max="12" width="0" hidden="1" customWidth="1"/>
   </cols>
-  <sheetData>
-  </sheetData>
+  <sheetData/>
   <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
 </worksheet>
