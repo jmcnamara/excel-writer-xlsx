@@ -58,7 +58,6 @@ sub new {
     $self->{_fileclosed}       = 0;
     $self->{_biffsize}         = 0;
     $self->{_sheetname}        = "Sheet";
-    $self->{_codepage}         = 0x04E4;
     $self->{_worksheets}       = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
@@ -500,23 +499,6 @@ sub set_tempdir {
 
 ###############################################################################
 #
-# set_codepage()
-#
-# See also the _store_codepage method. This is used to store the code page, i.e.
-# the character set used in the workbook.
-#
-sub set_codepage {
-
-    my $self = shift;
-    my $codepage = $_[0] || 1;
-    $codepage = 0x04E4 if $codepage == 1;
-    $codepage = 0x8000 if $codepage == 2;
-    $self->{_codepage} = $codepage;
-}
-
-
-###############################################################################
-#
 # _store_workbook()
 #
 # Assemble worksheets into a workbook and send the BIFF data to an OLE
@@ -915,6 +897,17 @@ sub _quote_sheetname {
         return qq('$sheetname');
     }
 }
+
+
+###############################################################################
+#
+# Deprecated methods for backwards compatibility.
+#
+###############################################################################
+
+# No longer required by Excel::Writer::XLSX.
+sub compatibility_mode { }
+sub set_codepage       { }
 
 
 ###############################################################################

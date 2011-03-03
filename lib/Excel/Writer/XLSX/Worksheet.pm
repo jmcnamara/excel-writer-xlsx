@@ -2427,17 +2427,6 @@ sub write_url {
 
 ###############################################################################
 #
-# write_url_range()
-#
-sub write_url_range {
-
-    # This method was mainly only required for Excel 5. It is deprecated in
-    # Excel::Writer::XLSX.
-}
-
-
-###############################################################################
-#
 # write_date_time ($row, $col, $string, $format)
 #
 # Write a datetime string in ISO8601 "yyyy-mm-ddThh:mm:ss.ss" format as a
@@ -2938,43 +2927,6 @@ sub _sort_pagebreaks {
 
 ###############################################################################
 #
-# store_formula($formula)
-#
-# Pre-parse a formula. This is used in conjunction with repeat_formula()
-# to repetitively rewrite a formula without re-parsing it.
-#
-sub store_formula {
-
-
-    my $self = shift;
-
-    # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
-# repeat_formula($row, $col, $formula, $format, ($pattern => $replacement,...))
-#
-# Write a formula to the specified row and column (zero indexed) by
-# substituting $pattern $replacement pairs in the $formula created via
-# store_formula(). This allows the user to repetitively rewrite a formula
-# without the significant overhead of parsing.
-#
-# Returns  0 : normal termination
-#         -1 : insufficient number of arguments
-#         -2 : row or column out of range
-#
-sub repeat_formula {
-
-    my $self = shift;
-
-    # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
 # _check_dimensions($row, $col, $ignore_row, $ignore_col)
 #
 # Check that $row and $col are valid and store max and min values for use in
@@ -3306,6 +3258,74 @@ sub _get_shared_string_index {
 
     return $index;
 }
+
+
+###############################################################################
+#
+# Deprecated methods for backwards compatibility.
+#
+###############################################################################
+
+
+# This method was mainly only required for Excel 5.
+sub write_url_range { }
+
+# Deprecated UTF-16 method required for the Excel 5 format.
+sub write_utf16be_string {
+
+    my $self = shift;
+
+    # Convert A1 notation if present.
+    @_ = $self->_substitute_cellref( @_ ) if $_[0] =~ /^\D/;
+
+    # Check the number of args.
+    return -1 if @_ < 3;
+
+    # Convert UTF16 string to UTF8.
+    require Encode;
+    my $utf8_string = Encode::decode( 'UTF-16BE', $_[2] );
+
+    return $self->write_string( $_[0], $_[1], $utf8_string, $_[3] );
+}
+
+# Deprecated UTF-16 method required for the Excel 5 format.
+sub write_utf16le_string {
+
+    my $self = shift;
+
+    # Convert A1 notation if present.
+    @_ = $self->_substitute_cellref( @_ ) if $_[0] =~ /^\D/;
+
+    # Check the number of args.
+    return -1 if @_ < 3;
+
+    # Convert UTF16 string to UTF8.
+    require Encode;
+    my $utf8_string = Encode::decode( 'UTF-16LE', $_[2] );
+
+    return $self->write_string( $_[0], $_[1], $utf8_string, $_[3] );
+}
+
+# No longer required. Only partially supported.
+sub store_formula {
+
+    my $self   = shift;
+    my $string = shift;
+
+    return $string;
+}
+
+# No longer required. Only partially supported. Doesn't do token substitution.
+sub repeat_formula {
+
+    my $self = shift;
+
+    # Convert A1 notation if present.
+    @_ = $self->_substitute_cellref( @_ ) if $_[0] =~ /^\D/;
+
+    return $self->write_formula( $_[0], $_[1], $_[2], $_[3] );
+}
+
 
 
 ###############################################################################

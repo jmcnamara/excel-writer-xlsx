@@ -144,7 +144,6 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     add_worksheet()
     add_format()
     add_chart()
-    add_chart_ext()
     close()
     set_properties()
     define_name()
@@ -333,13 +332,6 @@ See Excel::Writer::XLSX::Chart (eventually) for details on how to configure the 
 
 
 
-=head2 add_chart_ext( $chart_data, $chartname )
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
-
-
-
-
 =head2 close()
 
 In general your Excel file will be closed automatically when your program ends or when the Workbook object goes out of scope, however the C<close()> method can be used to explicitly close an Excel file.
@@ -369,13 +361,6 @@ In general, if you create a file with a size of 0 bytes or you fail to create a 
 The return value of C<close()> is the same as that returned by perl when it closes the file created by C<new()>. This allows you to handle error conditions in the usual way:
 
     $workbook->close() or die "Error closing file: $!";
-
-
-
-
-=head2 compatibility_mode()
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
 
 
 
@@ -577,13 +562,6 @@ Excel::Writer::XLSX stores dates in the 1900 format by default. If you wish to c
 See also L<DATES AND TIME IN EXCEL> for more information about working with Excel's date system.
 
 In general you probably won't need to use C<set_1904()>.
-
-
-
-
-=head2 set_codepage( $codepage )
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
 
 
 
@@ -1266,14 +1244,20 @@ Note: Array formulas are not supported by Spreadsheet::WriteExcel.
 
 =head2 store_formula( $formula )
 
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
+Deprecated. This is a Spreadsheet::WriteExcel method that is no longer required by Excel::Writer::XLSX. See below.
 
 
 
 
-=head2 repeat_formula( $row, $col, $formula, $format, ($pattern => $replace, ... ) )
+=head2 repeat_formula( $row, $col, $formula, $format )
 
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
+Deprecated. This is a Spreadsheet::WriteExcel method that is no longer required by Excel::Writer::XLSX.
+
+In Spreadsheet::WriteExcel it was computationally expensive to write formulas since they were parsed by a recursive descent parser. The C<store_formula()> and C<repeat_formula()> methods were used as a way of avoiding the overhead of repeated formulas by reusing a pre-parsed formula.
+
+In Excel::Writer::XLSX this is no longer necessary since it is just as quick to write a formula as it is to write a string or a number.
+
+The methods remain for backward compatibility but C<repeat_formula()> no longer does token replacement. If you convert a program from Spreadsheet::WriteExcel to Excel::Writer::XLSX you should convert the store/repeat method calls to simpler variable expansions.
 
 
 
@@ -1587,13 +1571,6 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted ima
 The easiest way to calculate the required scaling is to create a test chart worksheet with Excel::Writer::XLSX. Then open the file, select the chart and drag the corner to get the required size. While holding down the mouse the scale of the resized chart is shown to the left of the formula bar.
 
 Note: you must call C<set_row()> or C<set_column()> before C<insert_chart()> if you wish to change the default dimensions of any of the rows or columns that the chart occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your chart. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
-
-
-
-
-=head2 embed_chart( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
-
-Deprecated. Spreadsheet::WriteExcel method not required by Excel::Writer::XLSX.
 
 
 
@@ -4685,7 +4662,17 @@ The following limits are imposed by Excel 2007+:
 
 The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The following is a list of methods that are supported, deprecated or not yet supported.
+However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
+
+    Images
+    Charts.
+    Defined names.
+    Cell comments.
+    Document properties.
+    Data validation.
+    Outlines.
+
+The following is a full list of the module methods and their support status:
 
     Workbook Methods            Support
     ================            ======
@@ -4700,9 +4687,9 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_custom_color()          Yes
     sheets()                    Yes
     set_1904()                  Yes
-    add_chart_ext()             Deprecated
-    compatibility_mode()        Deprecated
-    set_codepage()              Deprecated
+    add_chart_ext()             Not supported. Not required in Excel::Writer::XLSX.
+    compatibility_mode()        Deprecated.    Not required in Excel::Writer::XLSX.
+    set_codepage()              Deprecated.    Not required in Excel::Writer::XLSX.
 
 
     Worksheet Methods           Support
@@ -4745,11 +4732,11 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     autofilter()                Yes
     filter_column()             Yes
     filter_column_list()        Yes. Not in Spreadsheet::WriteExcel.
-    write_utf16be_string()      Deprecated
-    write_utf16le_string()      Deprecated
-    store_formula()             Deprecated
-    repeat_formula()            Deprecated
-    write_url_range()           Deprecated
+    write_utf16be_string()      Deprecated. Use Perl utf8 strings instead.
+    write_utf16le_string()      Deprecated. Use Perl utf8 strings instead.
+    store_formula()             Deprecated. See docs.
+    repeat_formula()            Deprecated. See docs.
+    write_url_range()           Not supported. Not required in Excel::Writer::XLSX.
 
     Page Set-up Methods         Support
     ===================         =======
@@ -4810,7 +4797,7 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     set_left_color()            Yes
     set_right_color()           Yes
 
-All non-deprecated methods will be supported in time. The missing features will be added in approximately the following order which is based on work effort and desirability:
+All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
     define_name()
     insert_image()
