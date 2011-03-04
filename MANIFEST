@@ -207,6 +207,8 @@ t/regression/row_col_format14.t
 t/regression/simple01.t
 t/regression/simple02.t
 t/regression/tab_color01.t
+t/regression/utf8_01.t
+t/regression/utf8_02.t
 t/regression/xlsx_files/autofilter00.xlsx
 t/regression/xlsx_files/autofilter01.xlsx
 t/regression/xlsx_files/autofilter02.xlsx
@@ -290,6 +292,8 @@ t/regression/xlsx_files/row_col_format14.xlsx
 t/regression/xlsx_files/simple01.xlsx
 t/regression/xlsx_files/simple02.xlsx
 t/regression/xlsx_files/tab_color01.xlsx
+t/regression/xlsx_files/utf8_01.xlsx
+t/regression/xlsx_files/utf8_02.xlsx
 t/utility/xl_col_to_name.t
 t/utility/xl_range.t
 t/utility/xl_rowcol_to_cell.t
