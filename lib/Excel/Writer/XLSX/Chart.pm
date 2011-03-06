@@ -76,6 +76,42 @@ sub new {
 
 ###############################################################################
 #
+# _assemble_xml_file()
+#
+# Assemble and write the XML file.
+#
+sub _assemble_xml_file {
+
+    my $self = shift;
+
+    return unless $self->{_writer};
+
+    $self->_write_xml_declaration();
+
+
+    # Write the c:chartSpace element.
+    $self->_write_chart_space();
+
+    # Write the c:lang element.
+    $self->_write_lang();
+
+    # Write the c:chart element.
+    $self->_write_chart();
+
+    # Write the c:printSettings element.
+    $self->_write_print_settings();
+
+    # Close the worksheet tag.
+    $self->{_writer}->endTag( 'c:chartSpace' );
+
+    # Close the XML writer object and filehandle.
+    $self->{_writer}->end();
+    $self->{_writer}->getOutput()->close();
+}
+
+
+###############################################################################
+#
 # Public methods.
 #
 ###############################################################################
@@ -693,10 +729,777 @@ sub _set_embedded_config_data {
 ###############################################################################
 
 
+##############################################################################
+#
+# _write_chart_space()
+#
+# Write the <c:chartSpace> element.
+#
+sub _write_chart_space {
+
+    my $self    = shift;
+    my $schema  = 'http://schemas.openxmlformats.org/';
+    my $xmlns_c = $schema . 'drawingml/2006/chart';
+    my $xmlns_a = $schema . 'drawingml/2006/main';
+    my $xmlns_r = $schema . 'officeDocument/2006/relationships';
+
+    my @attributes = (
+        'xmlns:c' => $xmlns_c,
+        'xmlns:a' => $xmlns_a,
+        'xmlns:r' => $xmlns_r,
+    );
+
+    $self->{_writer}->startTag( 'c:chartSpace', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_lang()
+#
+# Write the <c:lang> element.
+#
+sub _write_lang {
+
+    my $self = shift;
+    my $val  = 'en-US';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:lang', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_chart()
+#
+# Write the <c:chart> element.
+#
+sub _write_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:chart' );
+
+    # Write the c:plotArea element.
+    $self->_write_plot_area();
+
+    # Write the c:legend element.
+    $self->_write_legend();
+
+    # Write the c:plotVisOnly element.
+    $self->_write_plot_vis_only();
+
+    $self->{_writer}->endTag( 'c:chart' );
+}
+
+
+##############################################################################
+#
+# _write_plot_area()
+#
+# Write the <c:plotArea> element.
+#
+sub _write_plot_area {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:plotArea' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the subclass chart type element.
+    $self->_write_chart_type();
+
+    # Write the c:catAx element.
+    $self->_write_cat_axis();
+
+    # Write the c:catAx element.
+    $self->_write_val_axis();
+
+
+    $self->{_writer}->endTag( 'c:plotArea' );
+}
+
+
+##############################################################################
+#
+# _write_layout()
+#
+# Write the <c:layout> element.
+#
+sub _write_layout {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'c:layout' );
+}
+
+
+##############################################################################
+#
+# _write_chart_type()
+#
+# Write the chart type element. This method should be overridden by the
+# subclasses.
+#
+sub _write_chart_type {
+
+    my $self                 = shift;
+
+    # TODO push this down into the subclass.
+
+    # Write the c:barChart element.
+    $self->_write_bar_chart();
+
+
+
+}
+
+
+##############################################################################
+#
+# _write_bar_chart()
+#
+# Write the <c:barChart> element.
+#
+sub _write_bar_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:barChart' );
+
+    # Write the c:barDir element.
+    $self->_write_bar_dir();
+
+    # Write the c:grouping element.
+    $self->_write_grouping();
+
+    # Write the series elements.
+    $self->_write_series();
+
+
+    $self->{_writer}->endTag( 'c:barChart' );
+}
+
+
+##############################################################################
+#
+# _write_bar_dir()
+#
+# Write the <c:barDir> element.
+#
+sub _write_bar_dir {
+
+    my $self = shift;
+    my $val  = 'bar';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:barDir', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_grouping()
+#
+# Write the <c:grouping> element.
+#
+sub _write_grouping {
+
+    my $self = shift;
+    my $val  = 'clustered';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:grouping', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_series()
+#
+# Write the series elements.
+#
+sub _write_series {
+
+    my $self = shift;
+
+    # Write the c:ser element.
+    $self->_write_ser();
+    $self->_write_ser();
+
+    # Write the c:axId element.
+    $self->_write_axis_id( 53850880 );
+    $self->_write_axis_id( 82642816 );
+
+}
+
+
+##############################################################################
+#
+# _write_ser()
+#
+# Write the <c:ser> element.
+#
+sub _write_ser {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:ser' );
+
+    # Write the c:idx element.
+    $self->_write_idx( 0 );
+
+    # Write the c:order element.
+    $self->_write_order( 0 );
+
+    # Write the c:val element.
+    $self->_write_val();
+
+
+    $self->{_writer}->endTag( 'c:ser' );
+}
+
+
+##############################################################################
+#
+# _write_idx()
+#
+# Write the <c:idx> element.
+#
+sub _write_idx {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:idx', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_order()
+#
+# Write the <c:order> element.
+#
+sub _write_order {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:order', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_val()
+#
+# Write the <c:val> element.
+#
+sub _write_val {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:val' );
+
+    # Write the c:numRef element.
+    $self->_write_num_ref();
+
+    $self->{_writer}->endTag( 'c:val' );
+}
+
+
+
+##############################################################################
+#
+# _write_num_ref()
+#
+# Write the <c:numRef> element.
+#
+sub _write_num_ref {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:numRef' );
+
+    # Write the c:f element.
+    $self->_write_series_formula();
+
+    $self->{_writer}->endTag( 'c:numRef' );
+}
+
+
+##############################################################################
+#
+# _write_series_formula()
+#
+# Write the <c:f> element.
+#
+sub _write_series_formula {
+
+    my $self                 = shift;
+    my $data                 = 'Sheet1!$A$1:$A$5';
+
+    $self->{_writer}->dataElement( 'c:f', $data) ;
+}
+
+
+##############################################################################
+#
+# _write_axis_id()
+#
+# Write the <c:axId> element.
+#
+sub _write_axis_id {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:axId', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_cat_axis()
+#
+# Write the <c:catAx> element.
+#
+sub _write_cat_axis {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:catAx' );
+
+    $self->_write_axis_id( 53850880 );
+
+    # Write the c:scaling element.
+    $self->_write_scaling();
+
+    # Write the c:axPos element.
+    $self->_write_axis_pos( 'l' );
+
+    # Write the c:tickLblPos element.
+    $self->_write_tick_label_pos( 'nextTo' );
+
+    # Write the c:crossAx element.
+    $self->_write_cross_axis( 82642816 );
+
+    # Write the c:crosses element.
+    $self->_write_crosses( 'autoZero' );
+
+    # Write the c:auto element.
+    $self->_write_auto( 1 );
+
+    # Write the c:labelAlign element.
+    $self->_write_label_align( 'ctr' );
+
+    # Write the c:labelOffset element.
+    $self->_write_label_offset( 100 );
+
+    $self->{_writer}->endTag( 'c:catAx' );
+}
+
+
+##############################################################################
+#
+# _write_val_axis()
+#
+# Write the <c:valAx> element.
+#
+sub _write_val_axis {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:valAx' );
+
+    $self->_write_axis_id( 82642816 );
+
+    # Write the c:scaling element.
+    $self->_write_scaling();
+
+    # Write the c:axPos element.
+    $self->_write_axis_pos( 'b' );
+
+    # Write the c:majorGridlines element.
+    $self->_write_major_gridlines();
+
+    # Write the c:numberFormat element.
+    $self->_write_number_format();
+
+    # Write the c:tickLblPos element.
+    $self->_write_tick_label_pos( 'nextTo' );
+
+    # Write the c:crossAx element.
+    $self->_write_cross_axis( 53850880 );
+
+    # Write the c:crosses element.
+    $self->_write_crosses( 'autoZero' );
+
+    # Write the c:crossBetween element.
+    $self->_write_cross_between();
+
+    $self->{_writer}->endTag( 'c:valAx' );
+}
+
+
+##############################################################################
+#
+# _write_scaling()
+#
+# Write the <c:scaling> element.
+#
+sub _write_scaling {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:scaling' );
+
+    # Write the c:orientation element.
+    $self->_write_orientation();
+
+    $self->{_writer}->endTag( 'c:scaling' );
+}
+
+
+##############################################################################
+#
+# _write_orientation()
+#
+# Write the <c:orientation> element.
+#
+sub _write_orientation {
+
+    my $self = shift;
+    my $val  = 'minMax';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:orientation', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_axis_pos()
+#
+# Write the <c:axPos> element.
+#
+sub _write_axis_pos {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:axPos', @attributes );
+}
+
+##############################################################################
+#
+# _write_tick_label_pos()
+#
+# Write the <c:tickLblPos> element.
+#
+sub _write_tick_label_pos {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:tickLblPos', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_cross_axis()
+#
+# Write the <c:crossAx> element.
+#
+sub _write_cross_axis {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:crossAx', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_crosses()
+#
+# Write the <c:crosses> element.
+#
+sub _write_crosses {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:crosses', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_auto()
+#
+# Write the <c:auto> element.
+#
+sub _write_auto {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:auto', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_label_align()
+#
+# Write the <c:labelAlign> element.
+#
+sub _write_label_align {
+
+    my $self = shift;
+    my $val  = 'ctr';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:lblAlgn', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_label_offset()
+#
+# Write the <c:labelOffset> element.
+#
+sub _write_label_offset {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:lblOffset', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_major_gridlines()
+#
+# Write the <c:majorGridlines> element.
+#
+sub _write_major_gridlines {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'c:majorGridlines' );
+}
+
+
+
+##############################################################################
+#
+# _write_number_format()
+#
+# Write the <c:numberFormat> element.
+#
+sub _write_number_format {
+
+    my $self          = shift;
+    my $format_code   = 'General';
+    my $source_linked = 1;
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
+}
+
+##############################################################################
+#
+# _write_cross_between()
+#
+# Write the <c:crossBetween> element.
+#
+sub _write_cross_between {
+
+    my $self = shift;
+    my $val  = 'between';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_legend()
+#
+# Write the <c:legend> element.
+#
+sub _write_legend {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:legend' );
+
+    # Write the c:legendPos element.
+    $self->_write_legend_pos( 'r' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    $self->{_writer}->endTag( 'c:legend' );
+}
+
+
+##############################################################################
+#
+# _write_legend_pos()
+#
+# Write the <c:legendPos> element.
+#
+sub _write_legend_pos {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
+}
 
 
 
 
+##############################################################################
+#
+# _write_plot_vis_only()
+#
+# Write the <c:plotVisOnly> element.
+#
+sub _write_plot_vis_only {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:plotVisOnly', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_print_settings()
+#
+# Write the <c:printSettings> element.
+#
+sub _write_print_settings {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:printSettings' );
+
+    # Write the c:headerFooter element.
+    $self->_write_header_footer();
+
+    # Write the c:pageMargins element.
+    $self->_write_page_margins();
+
+    # Write the c:pageSetup element.
+    $self->_write_page_setup();
+
+    $self->{_writer}->endTag( 'c:printSettings' );
+}
+
+
+##############################################################################
+#
+# _write_header_footer()
+#
+# Write the <c:headerFooter> element.
+#
+sub _write_header_footer {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'c:headerFooter' );
+}
+
+
+##############################################################################
+#
+# _write_page_margins()
+#
+# Write the <c:pageMargins> element.
+#
+sub _write_page_margins {
+
+    my $self   = shift;
+    my $b      = 0.75;
+    my $l      = 0.7;
+    my $r      = 0.7;
+    my $t      = 0.75;
+    my $header = 0.3;
+    my $footer = 0.3;
+
+    my @attributes = (
+        'b'      => $b,
+        'l'      => $l,
+        'r'      => $r,
+        't'      => $t,
+        'header' => $header,
+        'footer' => $footer,
+    );
+
+    $self->{_writer}->emptyTag( 'c:pageMargins', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_page_setup()
+#
+# Write the <c:pageSetup> element.
+#
+sub _write_page_setup {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'c:pageSetup' );
+}
 
 1;
 
