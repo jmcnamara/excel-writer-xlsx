@@ -130,22 +130,12 @@ sub add_series {
 
     croak "Must specify 'values' in add_series()" if !exists $arg{values};
 
-    # Parse the ranges to validate them and extract salient information.
-    my @value_data    = $self->_parse_series_formula( $arg{values} );
-    my @category_data = $self->_parse_series_formula( $arg{categories} );
-    my $name_formula  = $self->_parse_series_formula( $arg{name_formula} );
-
-    # Default category count to the same as the value count if not defined.
-    if ( !defined $category_data[1] ) {
-        $category_data[1] = $value_data[1];
-    }
-
-    # Add the parsed data to the user supplied data.
+    # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
         @_,
-        _values       => \@value_data,
-        _categories   => \@category_data,
-        _name_formula => $name_formula
+        _values       => $arg{values},
+        _categories   => $arg{categories},
+        _name_formula => $arg{name_formula},
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -347,67 +337,6 @@ sub set_chartarea {
 # structuring of the Chart object and file format.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _parse_series_formula()
-#
-# Parse the formula used to define a series. We also extract some range
-# information required for _store_series() and the SERIES record.
-#
-sub _parse_series_formula {
-
-    my $self = shift;
-
-    my $formula  = $_[0];
-    my $encoding = 0;
-    my $length   = 0;
-    my $count    = 0;
-    my @tokens;
-
-    return '' if !defined $formula;
-
-    # Strip the = sign at the beginning of the formula string
-    $formula =~ s(^=)();
-
-    # Parse the formula using the parser in Formula.pm
-    my $parser = $self->{_parser};
-
-    # In order to raise formula errors from the point of view of the calling
-    # program we use an eval block and re-raise the error from here.
-    #
-    eval { @tokens = $parser->parse_formula( $formula ) };
-
-    if ( $@ ) {
-        $@ =~ s/\n$//;    # Strip the \n used in the Formula.pm die().
-        croak $@;         # Re-raise the error.
-    }
-
-    # Force ranges to be a reference class.
-    s/_ref3d/_ref3dR/     for @tokens;
-    s/_range3d/_range3dR/ for @tokens;
-    s/_name/_nameR/       for @tokens;
-
-    # Parse the tokens into a formula string.
-    $formula = $parser->parse_tokens( @tokens );
-
-    # Return formula for a single cell as used by title and series name.
-    if ( ord $formula == 0x3A ) {
-        return $formula;
-    }
-
-    # Extract the range from the parse formula.
-    if ( ord $formula == 0x3B ) {
-        my ( $ptg, $ext_ref, $row_1, $row_2, $col_1, $col_2 ) = unpack 'Cv5',
-          $formula;
-
-        # TODO. Remove high bit on relative references.
-        $count = $row_2 - $row_1 + 1;
-    }
-
-    return ( $formula, $count );
-}
 
 
 ###############################################################################

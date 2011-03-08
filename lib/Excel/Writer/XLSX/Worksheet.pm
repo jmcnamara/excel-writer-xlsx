@@ -3260,6 +3260,59 @@ sub _get_shared_string_index {
 }
 
 
+
+
+###############################################################################
+#
+# insert_chart($row, $col, $chart, $x, $y, $scale_x, $scale_y)
+#
+# Insert a chart into a worksheet. The $chart argument should be a Chart
+# object or else it is assumed to be a filename of an external binary file.
+# The latter is for backwards compatibility.
+#
+sub insert_chart {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row      = $_[0];
+    my $col      = $_[1];
+    my $chart    = $_[2];
+    my $x_offset = $_[3] || 0;
+    my $y_offset = $_[4] || 0;
+    my $scale_x  = $_[5] || 1;
+    my $scale_y  = $_[6] || 1;
+
+    croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
+
+    if ( ref $chart ) {
+
+        # Check for a Chart object.
+        croak "Not a Chart object in insert_chart()"
+          unless $chart->isa( 'Excel::Writer::XLSX::Chart' );
+
+        # Check that the chart is an embedded style chart.
+        croak "Not a embedded style Chart object in insert_chart()"
+          unless $chart->{_embedded};
+
+    }
+    else {
+
+        # Assume an external bin filename.
+        croak "Couldn't locate $chart in insert_chart(): $!" unless -e $chart;
+    }
+
+    $self->{_charts}->{$row}->{$col} =
+      [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y, ];
+
+}
+
+
+
 ###############################################################################
 #
 # Deprecated methods for backwards compatibility.

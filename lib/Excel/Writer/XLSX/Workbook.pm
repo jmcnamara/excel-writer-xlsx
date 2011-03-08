@@ -23,6 +23,7 @@ use File::Temp 'tempdir';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Chart;
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
@@ -57,7 +58,10 @@ sub new {
     $self->{_xf_index}         = 0;
     $self->{_fileclosed}       = 0;
     $self->{_biffsize}         = 0;
-    $self->{_sheetname}        = "Sheet";
+    $self->{_sheet_name}             = 'Sheet';
+    $self->{_chart_name}             = 'Chart';
+    $self->{_sheet_count}           = 0;
+    $self->{_chart_count}           = 0;
     $self->{_worksheets}       = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
@@ -249,29 +253,9 @@ sub worksheets {
 #
 sub add_worksheet {
 
-    my $self = shift;
-    my $name = $_[0] || "";
-
-    # Check that sheetname is <= 31 chars (Excel limit).
-    croak "Sheetname $name must be <= 31 chars" if length $name > 31;
-
-    # Check that sheetname doesn't contain any invalid characters
-    croak 'Invalid Excel character [:*?/\\] in worksheet name: ' . $name
-      if $name =~ m{[:*?/\\]};
-
-    my $index     = @{ $self->{_worksheets} };
-    my $sheetname = $self->{_sheetname};
-
-    if ( $name eq "" ) { $name = $sheetname . ( $index + 1 ) }
-
-    # Check that the worksheet name doesn't already exist: a fatal Excel error.
-    # The check must also exclude case insensitive matches.
-    for my $tmp ( @{ $self->{_worksheets} } ) {
-        if ( lc $name eq lc $tmp->get_name() ) {
-            croak "Worksheet name '$name', with case ignored, "
-              . "is already in use";
-        }
-    }
+    my $self  = shift;
+    my $index = @{ $self->{_worksheets} };
+    my $name  = $self->_check_sheetname( $_[0] );
 
 
     # Porters take note, the following scheme of passing references to Workbook
@@ -299,6 +283,114 @@ sub add_worksheet {
     $self->{_worksheets}->[$index] = $worksheet;    # Store ref for iterator
     $self->{_sheetnames}->[$index] = $name;         # Store EXTERNSHEET names
     return $worksheet;
+}
+
+
+
+###############################################################################
+#
+# add_chart(%args)
+#
+# Create a chart for embedding or as as new sheet.
+#
+#
+sub add_chart {
+
+    my $self     = shift;
+    my %arg      = @_;
+    my $name     = '';
+    my $index    = @{ $self->{_worksheets} };
+
+    # Type must be specified so we can create the required chart instance.
+    my $type = $arg{type};
+    if ( !defined $type ) {
+        croak "Must define chart type in add_chart()";
+    }
+
+    # Ensure that the chart defaults to non embedded.
+    my $embedded = $arg{embedded} ||= 0;
+
+    # Check the worksheet name for non-embedded charts.
+    if ( !$embedded ) {
+        $name = $self->_check_sheetname( $arg{name}, 1 );
+    }
+
+    my @init_data = (); # TODO for non-embedded charts.
+
+
+    my $chart = Excel::Writer::XLSX::Chart->factory( $type );
+
+    # If the chart isn't embedded let the workbook control it.
+    if ( !$embedded ) {
+        $self->{_worksheets}->[$index] = $chart;    # Store ref for iterator
+        $self->{_sheetnames}->[$index] = $name;     # Store EXTERNSHEET names
+    }
+    else {
+
+        # Set index to 0 so that the activate() and set_first_sheet() methods
+        # point back to the first worksheet if used for embedded charts.
+        $chart->{_index} = 0;
+
+        $chart->_set_embedded_config_data();
+    }
+
+    return $chart;
+}
+
+
+###############################################################################
+#
+# _check_sheetname( $name )
+#
+# Check for valid worksheet names. We check the length, if it contains any
+# invalid characters and if the name is unique in the workbook.
+#
+sub _check_sheetname {
+
+    my $self         = shift;
+    my $name         = shift // "";
+    my $chart        = shift // 0;
+    my $invalid_char = qr([\[\]:*?/\\]);
+
+    # Increment the Sheet/Chart number used for default sheet names below.
+    if ( $chart ) {
+        $self->{_chart_count}++;
+    }
+    else {
+        $self->{_sheet_count}++;
+    }
+
+    # Supply default Sheet/Chart name if none has been defined.
+    if ( $name eq "" ) {
+
+        if ( $chart ) {
+            $name = $self->{_chart_name} . $self->{_chart_count};
+        }
+        else {
+            $name = $self->{_sheet_name} . $self->{_sheet_count};
+        }
+    }
+
+    # Check that sheet name is <= 31. Excel limit.
+    croak "Sheetname $name must be <= 31 chars" if length $name > 31;
+
+    # Check that sheetname doesn't contain any invalid characters
+    if ( $name =~ $invalid_char ) {
+        croak 'Invalid character []:*?/\\ in worksheet name: ' . $name;
+    }
+
+    # Check that the worksheet name doesn't already exist since this is a fatal
+    # error in Excel 97. The check must also exclude case insensitive matches.
+    foreach my $worksheet ( @{ $self->{_worksheets} } ) {
+        my $name_a = $name;
+        my $name_b = $worksheet->{_name};
+
+        if ( lc( $name_a ) eq lc( $name_b ) ) {
+            croak "Worksheet name '$name', with case ignored, is already used.";
+        }
+    }
+
+    return $name;
 }
 
 
