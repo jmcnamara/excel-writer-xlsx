@@ -157,6 +157,7 @@ sub new {
 
     $self->{_hlink_refs}     = [];
     $self->{_external_links} = [];
+    $self->{_drawing_links}  = [];
     $self->{_hlink_count}    = 0;
 
     $self->{_rstring} = '';
@@ -3300,14 +3301,17 @@ sub insert_chart {
           unless $chart->{_embedded};
 
     }
-    else {
-
-        # Assume an external bin filename.
-        croak "Couldn't locate $chart in insert_chart(): $!" unless -e $chart;
-    }
 
     $self->{_charts}->{$row}->{$col} =
       [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y, ];
+
+
+    push @{ $self->{_external_links} },
+      [ '/drawing', '../drawings/drawing1.xml' ];
+
+    push @{ $self->{_drawing_links} },
+      [ '/chart', '../charts/chart1.xml' ];
+
 
 }
 

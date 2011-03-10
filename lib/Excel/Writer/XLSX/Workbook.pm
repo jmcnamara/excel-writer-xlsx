@@ -24,6 +24,7 @@ use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Chart;
+use Excel::Writer::XLSX::Drawing; # TODO remove
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
@@ -58,11 +59,13 @@ sub new {
     $self->{_xf_index}         = 0;
     $self->{_fileclosed}       = 0;
     $self->{_biffsize}         = 0;
-    $self->{_sheet_name}             = 'Sheet';
-    $self->{_chart_name}             = 'Chart';
-    $self->{_sheet_count}           = 0;
-    $self->{_chart_count}           = 0;
+    $self->{_sheet_name}       = 'Sheet';
+    $self->{_chart_name}       = 'Chart';
+    $self->{_sheet_count}      = 0;
+    $self->{_chart_count}      = 0;
     $self->{_worksheets}       = [];
+    $self->{_charts}           = [];
+    $self->{_drawings}         = []; # TODO remove.
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
     $self->{_palette}          = [];
@@ -289,7 +292,7 @@ sub add_worksheet {
 
 ###############################################################################
 #
-# add_chart(%args)
+# add_chart( %args )
 #
 # Create a chart for embedding or as as new sheet.
 #
@@ -326,6 +329,11 @@ sub add_chart {
         $self->{_sheetnames}->[$index] = $name;     # Store EXTERNSHEET names
     }
     else {
+
+        my $drawing = Excel::Writer::XLSX::Drawing->new();
+        push @{ $self->{_drawings} }, $drawing;
+
+        push @{ $self->{_charts} }, $chart;
 
         # Set index to 0 so that the activate() and set_first_sheet() methods
         # point back to the first worksheet if used for embedded charts.
