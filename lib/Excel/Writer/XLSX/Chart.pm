@@ -66,6 +66,8 @@ sub new {
     $self->{_orientation} = 0x0;
     $self->{_series}      = [];
     $self->{_embedded}    = 0;
+    $self->{_id}          = '';
+    $self->{_axis_ids}    = [];
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -508,6 +510,26 @@ sub _get_line_weight {
 
 ###############################################################################
 #
+# _add_axis_id()
+#
+# Add a unique id for an axis.
+#
+sub _add_axis_id {
+
+    my $self       = shift;
+    my $chart_id   = 1 + $self->{_id};
+    my $axis_count = 1 + @{ $self->{_axis_ids} };
+
+    my $axis_id = sprintf '5%03d%04d', $chart_id, $axis_count;
+
+    push @{ $self->{_axis_ids} }, $axis_id;
+
+    return $axis_id;
+}
+
+
+###############################################################################
+#
 # Config data.
 #
 ###############################################################################
@@ -858,14 +880,19 @@ sub _write_series {
 
     my $self = shift;
 
-    # Write the c:ser element.
-    $self->_write_ser();
-    $self->_write_ser();
+    # Write each series with subelements.
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        $self->_write_ser( $index++, $series->{categories}, $series->{values} );
+    }
+
+    # Generate the axis ids.
+    $self->_add_axis_id();
+    $self->_add_axis_id();
 
     # Write the c:axId element.
-    $self->_write_axis_id( 53850880 );
-    $self->_write_axis_id( 82642816 );
-
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
 }
 
 
@@ -877,18 +904,24 @@ sub _write_series {
 #
 sub _write_ser {
 
-    my $self = shift;
+    my $self       = shift;
+    my $index      = shift;
+    my $categories = shift;
+    my $values     = shift;
 
     $self->{_writer}->startTag( 'c:ser' );
 
     # Write the c:idx element.
-    $self->_write_idx( 0 );
+    $self->_write_idx( $index );
 
     # Write the c:order element.
-    $self->_write_order( 0 );
+    $self->_write_order( $index );
+
+    # Write the c:cat element.
+    $self->_write_cat( $categories );
 
     # Write the c:val element.
-    $self->_write_val();
+    $self->_write_val( $values );
 
 
     $self->{_writer}->endTag( 'c:ser' );
@@ -931,18 +964,39 @@ sub _write_order {
 
 ##############################################################################
 #
+# _write_cat()
+#
+# Write the <c:cat> element.
+#
+sub _write_cat {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->{_writer}->startTag( 'c:cat' );
+
+    # Write the c:numRef element.
+    $self->_write_num_ref( $formula );
+
+    $self->{_writer}->endTag( 'c:cat' );
+}
+
+
+##############################################################################
+#
 # _write_val()
 #
 # Write the <c:val> element.
 #
 sub _write_val {
 
-    my $self = shift;
+    my $self    = shift;
+    my $formula = shift;
 
     $self->{_writer}->startTag( 'c:val' );
 
     # Write the c:numRef element.
-    $self->_write_num_ref();
+    $self->_write_num_ref( $formula );
 
     $self->{_writer}->endTag( 'c:val' );
 }
@@ -957,12 +1011,13 @@ sub _write_val {
 #
 sub _write_num_ref {
 
-    my $self = shift;
+    my $self    = shift;
+    my $formula = shift;
 
     $self->{_writer}->startTag( 'c:numRef' );
 
     # Write the c:f element.
-    $self->_write_series_formula();
+    $self->_write_series_formula( $formula );
 
     $self->{_writer}->endTag( 'c:numRef' );
 }
@@ -976,10 +1031,13 @@ sub _write_num_ref {
 #
 sub _write_series_formula {
 
-    my $self                 = shift;
-    my $data                 = 'Sheet1!$A$1:$A$5';
+    my $self    = shift;
+    my $formula = shift;
 
-    $self->{_writer}->dataElement( 'c:f', $data) ;
+    # Strip the leading '=' from the formula.
+    $formula =~ s/^=//;
+
+    $self->{_writer}->dataElement( 'c:f', $formula );
 }
 
 
@@ -1012,7 +1070,7 @@ sub _write_cat_axis {
 
     $self->{_writer}->startTag( 'c:catAx' );
 
-    $self->_write_axis_id( 53850880 );
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
     $self->_write_scaling();
@@ -1020,11 +1078,14 @@ sub _write_cat_axis {
     # Write the c:axPos element.
     $self->_write_axis_pos( 'l' );
 
+    # Write the c:numFmt element.
+    $self->_write_num_fmt();
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( 'nextTo' );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( 82642816 );
+    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
     # Write the c:crosses element.
     $self->_write_crosses( 'autoZero' );
@@ -1054,7 +1115,7 @@ sub _write_val_axis {
 
     $self->{_writer}->startTag( 'c:valAx' );
 
-    $self->_write_axis_id( 82642816 );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
 
     # Write the c:scaling element.
     $self->_write_scaling();
@@ -1072,7 +1133,7 @@ sub _write_val_axis {
     $self->_write_tick_label_pos( 'nextTo' );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( 53850880 );
+    $self->_write_cross_axis( $self->{_axis_ids}->[0] );
 
     # Write the c:crosses element.
     $self->_write_crosses( 'autoZero' );
@@ -1134,6 +1195,27 @@ sub _write_axis_pos {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:axPos', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_num_fmt()
+#
+# Write the <c:numFmt> element.
+#
+sub _write_num_fmt {
+
+    my $self          = shift;
+    my $format_code   = 'General';
+    my $source_linked = 1;
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
 }
 
 ##############################################################################

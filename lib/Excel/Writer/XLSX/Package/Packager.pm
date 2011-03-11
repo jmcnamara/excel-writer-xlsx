@@ -48,11 +48,13 @@ sub new {
     my $class = shift;
 
     my $self = {
-        _package_dir  => '',
-        _workbook     => undef,
-        _sheet_names  => [],
-        _sheet_count  => 0,
-        _named_ranges => [],
+        _package_dir   => '',
+        _workbook      => undef,
+        _sheet_names   => [],
+        _sheet_count   => 0,
+        _chart_count   => 0,
+        _drawing_count => 0,
+        _named_ranges  => [],
     };
 
 
@@ -88,10 +90,12 @@ sub _add_workbook {
     my $workbook    = shift;
     my @sheet_names = @{ $workbook->{_sheetnames} };
 
-    $self->{_workbook}     = $workbook;
-    $self->{_sheet_names}  = \@sheet_names;
-    $self->{_sheet_count}  = scalar @sheet_names;
-    $self->{_named_ranges} = $workbook->{_named_ranges};
+    $self->{_workbook}      = $workbook;
+    $self->{_sheet_names}   = \@sheet_names;
+    $self->{_sheet_count}   = scalar @sheet_names;
+    $self->{_chart_count}   = scalar @{ $workbook->{_charts} };
+    $self->{_drawing_count} = scalar @{ $workbook->{_drawings} };
+    $self->{_named_ranges}  = $workbook->{_named_ranges};
 }
 
 
@@ -202,7 +206,7 @@ sub _write_drawing_files {
     my $self = shift;
     my $dir  = $self->{_package_dir};
 
-    return unless @{ $self->{_workbook}->{_drawings} };
+    return unless $self->{_drawing_count};
 
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/drawings';
@@ -320,8 +324,16 @@ sub _write_content_types_file {
     my $dir     = $self->{_package_dir};
     my $content = Excel::Writer::XLSX::Package::ContentTypes->new();
 
-    for my $i ( 1 .. @{ $self->{_sheet_names} } ) {
+    for my $i ( 1 .. $self->{_sheet_count} ) {
         $content->_add_sheet_name( 'sheet' . $i );
+    }
+
+    for my $i ( 1 .. $self->{_chart_count} ) {
+        $content->_add_chart_name( 'chart' . $i );
+    }
+
+    for my $i ( 1 .. $self->{_drawing_count} ) {
+        $content->_add_drawing_name( 'drawing' . $i );
     }
 
     # Add the sharedString rel if there is string data in the workbook.

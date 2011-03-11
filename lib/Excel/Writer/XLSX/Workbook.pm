@@ -323,6 +323,10 @@ sub add_chart {
 
     my $chart = Excel::Writer::XLSX::Chart->factory( $type );
 
+    # Get an incremental id to use for axes ids.
+    my $chart_index = scalar @{ $self->{_charts} };
+    $chart->{_id} = $chart_index;
+
     # If the chart isn't embedded let the workbook control it.
     if ( !$embedded ) {
         $self->{_worksheets}->[$index] = $chart;    # Store ref for iterator
@@ -332,6 +336,8 @@ sub add_chart {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
         push @{ $self->{_drawings} }, $drawing;
+        $self->{_drawing_count}++;
+
 
         push @{ $self->{_charts} }, $chart;
 

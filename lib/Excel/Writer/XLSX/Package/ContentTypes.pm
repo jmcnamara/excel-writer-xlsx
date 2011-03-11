@@ -153,6 +153,42 @@ sub _add_sheet_name {
 
 ###############################################################################
 #
+# _add_chart_name()
+#
+# Add the name of a chart to the ContentTypes overrides.
+#
+sub _add_chart_name {
+
+    my $self       = shift;
+    my $chart_name = shift;
+
+    $chart_name = "/xl/charts/$chart_name.xml";
+
+    $self->_add_override( $chart_name,
+        $app_document . 'drawingml.chart+xml' );
+}
+
+
+###############################################################################
+#
+# _add_drawing_name()
+#
+# Add the name of a drawing to the ContentTypes overrides.
+#
+sub _add_drawing_name {
+
+    my $self       = shift;
+    my $drawing_name = shift;
+
+    $drawing_name = "/xl/drawings/$drawing_name.xml";
+
+    $self->_add_override( $drawing_name,
+        $app_document . 'drawing+xml' );
+}
+
+
+###############################################################################
+#
 # _Add_shared_strings()
 #
 # Add the sharedStrings link to the ContentTypes overrides.
