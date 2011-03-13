@@ -79,6 +79,27 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
+# _set_dimensions()
+#
+# Set the dimensions of the drawing.
+#
+sub _set_dimensions {
+
+    my $self = shift;
+
+    $self->{_col_from}        = shift;
+    $self->{_row_from}        = shift;
+    $self->{_col_from_offset} = shift;
+    $self->{_row_from_offset} = shift;
+    $self->{_col_to}          = shift;
+    $self->{_row_to}          = shift;
+    $self->{_col_to_offset}   = shift;
+    $self->{_row_to_offset}   = shift;
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
@@ -126,10 +147,22 @@ sub _write_two_cell_anchor {
     $self->{_writer}->startTag( 'xdr:twoCellAnchor' );
 
     # Write the xdr:from element.
-    $self->_write_from();
+    $self->_write_from(
+        $self->{_col_from},
+        $self->{_row_from},
+        $self->{_col_from_offset},
+        $self->{_row_from_offset},
+
+    );
 
     # Write the xdr:from element.
-    $self->_write_to();
+    $self->_write_to(
+        $self->{_col_to},
+        $self->{_row_to},
+        $self->{_col_to_offset},
+        $self->{_row_to_offset},
+
+    );
 
     # Write the xdr:graphicFrame element.
     $self->_write_graphic_frame();
@@ -149,21 +182,25 @@ sub _write_two_cell_anchor {
 #
 sub _write_from {
 
-    my $self = shift;
+    my $self       = shift;
+    my $col        = shift;
+    my $row        = shift;
+    my $col_offset = shift;
+    my $row_offset = shift;
 
     $self->{_writer}->startTag( 'xdr:from' );
 
     # Write the xdr:col element.
-    $self->_write_col( 4 );
+    $self->_write_col( $col );
 
     # Write the xdr:colOff element.
-    $self->_write_col_off( 457200 );
+    $self->_write_col_off( $col_offset );
 
     # Write the xdr:row element.
-    $self->_write_row( 8 );
+    $self->_write_row( $row );
 
     # Write the xdr:rowOff element.
-    $self->_write_row_off( 104775 );
+    $self->_write_row_off( $row_offset );
 
     $self->{_writer}->endTag( 'xdr:from' );
 }
@@ -177,21 +214,25 @@ sub _write_from {
 #
 sub _write_to {
 
-    my $self = shift;
+    my $self       = shift;
+    my $col        = shift;
+    my $row        = shift;
+    my $col_offset = shift;
+    my $row_offset = shift;
 
     $self->{_writer}->startTag( 'xdr:to' );
 
     # Write the xdr:col element.
-    $self->_write_col( 12 );
+    $self->_write_col( $col );
 
     # Write the xdr:colOff element.
-    $self->_write_col_off( 152400 );
+    $self->_write_col_off( $col_offset );
 
     # Write the xdr:row element.
-    $self->_write_row( 22 );
+    $self->_write_row( $row );
 
     # Write the xdr:rowOff element.
-    $self->_write_row_off( 180975 );
+    $self->_write_row_off( $row_offset );
 
     $self->{_writer}->endTag( 'xdr:to' );
 }

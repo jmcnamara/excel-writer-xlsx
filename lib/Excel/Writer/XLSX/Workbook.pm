@@ -335,6 +335,9 @@ sub add_chart {
     else {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
+
+        $drawing->_set_dimensions( 4, 8, 0, 0, 11, 22, 304800, 76200 );
+
         push @{ $self->{_drawings} }, $drawing;
         $self->{_drawing_count}++;
 

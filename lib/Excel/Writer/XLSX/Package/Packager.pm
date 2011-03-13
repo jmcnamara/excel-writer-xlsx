@@ -531,7 +531,7 @@ sub _write_drawing_rels_files {
         my $rels = Excel::Writer::XLSX::Package::Relationships->new();
 
         for my $drawing_data ( @{ $worksheet->{_drawing_links} } ) {
-            $rels->_add_package_relationship( @$drawing_data );
+            $rels->_add_document_relationship( @$drawing_data );
         }
 
         # Create the .rels file such as /xl/drawings/_rels/sheet1.xml.rels.

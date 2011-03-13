@@ -25,7 +25,7 @@ my $ignore_members  = [];
 
 my $ignore_elements = {
 
-    # Remove the numCaches
+    # Ignore the numCaches
     'xl/charts/chart1.xml' => [
 
         '<c:numCache',
@@ -51,12 +51,12 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'bar', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 64056320, 64262912 ];
+$chart->{_axis_ids} = [ 64052224, 64055552 ];
 
 my $data = [
-    [ 2, 3, 4, 5, 6, 7 ],
-    [ 1, 4, 5, 2, 1, 5 ],
-    [ 3, 6, 7, 5, 4, 3 ],
+    [ 1, 2, 3, 4,  5 ],
+    [ 2, 4, 6, 8,  10 ],
+    [ 3, 6, 9, 12, 15 ],
 
 ];
 

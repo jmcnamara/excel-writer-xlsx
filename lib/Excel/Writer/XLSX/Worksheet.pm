@@ -239,6 +239,9 @@ sub _assemble_xml_file {
     # Write the colBreaks element.
     $self->_write_col_breaks();
 
+    # Write the drawing element.
+    $self->_write_drawings();
+
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
 
@@ -3306,11 +3309,12 @@ sub insert_chart {
       [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y, ];
 
 
+    # TODO. Harcoded for sinle chart at the moment.
     push @{ $self->{_external_links} },
       [ '/drawing', '../drawings/drawing1.xml' ];
 
     push @{ $self->{_drawing_links} },
-      [ '/chart', '../charts/chart1.xml' ];
+      [ '/chart', '../charts/chart1' ];
 
 
 }
@@ -5062,7 +5066,7 @@ sub _write_tab_color {
 
     my $rgb = $self->_get_palette_color( $color_index );
 
-    my @attributes = ( 'rgb' => $rgb, );
+    my @attributes = ( 'rgb' => $rgb );
 
     $self->{_writer}->emptyTag( 'tabColor', @attributes );
 }
@@ -5109,6 +5113,40 @@ sub _write_sheet_protection {
 
 
     $self->{_writer}->emptyTag( 'sheetProtection', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_drawings()
+#
+# Write the <drawing> elements.
+#
+sub _write_drawings {
+
+    my $self = shift;
+
+    for my $index ( 1 .. @{ $self->{_drawing_links} } ) {
+        $self->_write_drawing( $index );
+    }
+}
+
+
+##############################################################################
+#
+# _write_drawing()
+#
+# Write the <drawing> element.
+#
+sub _write_drawing {
+
+    my $self = shift;
+    my $id   = shift;
+    my $r_id = 'rId' . $id;
+
+    my @attributes = ( 'r:id' => $r_id );
+
+    $self->{_writer}->emptyTag( 'drawing', @attributes );
 }
 
 
