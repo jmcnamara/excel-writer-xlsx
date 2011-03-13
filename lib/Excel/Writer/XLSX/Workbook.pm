@@ -24,7 +24,6 @@ use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Chart;
-use Excel::Writer::XLSX::Drawing; # TODO remove
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
@@ -61,11 +60,11 @@ sub new {
     $self->{_biffsize}         = 0;
     $self->{_sheet_name}       = 'Sheet';
     $self->{_chart_name}       = 'Chart';
-    $self->{_sheet_count}      = 0;
-    $self->{_chart_count}      = 0;
+    $self->{_sheetname_count}  = 0;
+    $self->{_chartname_count}  = 0;
     $self->{_worksheets}       = [];
     $self->{_charts}           = [];
-    $self->{_drawings}         = []; # TODO remove.
+    $self->{_drawings}         = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
     $self->{_palette}          = [];
@@ -334,21 +333,12 @@ sub add_chart {
     }
     else {
 
-        my $drawing = Excel::Writer::XLSX::Drawing->new();
-
-        $drawing->_set_dimensions( 4, 8, 0, 0, 11, 22, 304800, 76200 );
-
-        push @{ $self->{_drawings} }, $drawing;
-        $self->{_drawing_count}++;
-
-
-        push @{ $self->{_charts} }, $chart;
-
         # Set index to 0 so that the activate() and set_first_sheet() methods
         # point back to the first worksheet if used for embedded charts.
         $chart->{_index} = 0;
-
         $chart->_set_embedded_config_data();
+        push @{ $self->{_charts} }, $chart;
+
     }
 
     return $chart;
@@ -371,20 +361,20 @@ sub _check_sheetname {
 
     # Increment the Sheet/Chart number used for default sheet names below.
     if ( $chart ) {
-        $self->{_chart_count}++;
+        $self->{_chartname_count}++;
     }
     else {
-        $self->{_sheet_count}++;
+        $self->{_sheetname_count}++;
     }
 
     # Supply default Sheet/Chart name if none has been defined.
     if ( $name eq "" ) {
 
         if ( $chart ) {
-            $name = $self->{_chart_name} . $self->{_chart_count};
+            $name = $self->{_chart_name} . $self->{_chartname_count};
         }
         else {
-            $name = $self->{_sheet_name} . $self->{_sheet_count};
+            $name = $self->{_sheet_name} . $self->{_sheetname_count};
         }
     }
 
@@ -654,6 +644,9 @@ sub _store_workbook {
     # Set the defined names for the worsheets such as Print Titles.
     $self->_prepare_defined_names();
 
+    # Prepare the charts and drawings.
+    $self->_prepare_charts();
+
     # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
@@ -889,14 +882,13 @@ sub _prepare_fills {
     $self->{_fill_count} = $index;
 }
 
+
 ###############################################################################
 #
 # _prepare_defined_names()
 #
 # Iterate through the worksheets and store any defined names. Stores the
 # defined name for the Workbook.xml and the named ranges for App.xml.
-#
-# TODO. Currently only supports Repeat rows/cols.
 #
 sub _prepare_defined_names {
 
@@ -956,6 +948,38 @@ sub _prepare_defined_names {
         }
 
     }
+}
+
+
+###############################################################################
+#
+# _prepare_charts()
+#
+# Iterate through the worksheets and set up any chart/drawings.
+#
+sub _prepare_charts {
+
+    my $self       = shift;
+    my $chart_id   = 0;
+    my $drawing_id = 0;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        my $chart_count = scalar @{ $sheet->{_charts} };
+        next unless $chart_count;
+
+        $drawing_id++;
+
+        for my $index ( 0 .. $chart_count - 1 ) {
+            $chart_id++;
+            $sheet->_prepare_chart( $index, $chart_id, $drawing_id );
+        }
+
+        my $drawing = $sheet->{_drawing};
+        push @{ $self->{_drawings} }, $drawing;
+    }
+
+    $self->{_drawing_count} = $drawing_id;
 }
 
 

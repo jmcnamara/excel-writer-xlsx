@@ -517,8 +517,8 @@ sub _write_drawing_rels_files {
 
     my $index = 0;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        $index++;
         next unless @{ $worksheet->{_drawing_links} };
+        $index++;
 
         # Create the drawing .rels dir if required.
         if ( !$existing_rels_dir ) {

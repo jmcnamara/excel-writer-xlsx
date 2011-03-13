@@ -41,7 +41,8 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer} = undef;
+    $self->{_writer}   = undef;
+    $self->{_drawings} = [];
 
     bless $self, $class;
 
@@ -66,8 +67,12 @@ sub _assemble_xml_file {
     # Write the xdr:wsDr element.
     $self->_write_drawing_workspace();
 
-    # Write the xdr:twoCellAnchor element.
-    $self->_write_two_cell_anchor();
+    my $index = 0;
+    for my $dimensions ( @{ $self->{_drawings} } ) {
+
+        # Write the xdr:twoCellAnchor element.
+        $self->_write_two_cell_anchor( ++$index, @$dimensions );
+    }
 
     $self->{_writer}->endTag( 'xdr:wsDr' );
 
@@ -87,14 +92,7 @@ sub _set_dimensions {
 
     my $self = shift;
 
-    $self->{_col_from}        = shift;
-    $self->{_row_from}        = shift;
-    $self->{_col_from_offset} = shift;
-    $self->{_row_from_offset} = shift;
-    $self->{_col_to}          = shift;
-    $self->{_row_to}          = shift;
-    $self->{_col_to_offset}   = shift;
-    $self->{_row_to_offset}   = shift;
+    push @{ $self->{_drawings} }, [@_];
 }
 
 
@@ -142,30 +140,39 @@ sub _write_drawing_workspace {
 #
 sub _write_two_cell_anchor {
 
-    my $self = shift;
+    my $self            = shift;
+    my $index           = shift;
+    my $col_from        = shift;
+    my $row_from        = shift;
+    my $col_from_offset = shift;
+    my $row_from_offset = shift;
+    my $col_to          = shift;
+    my $row_to          = shift;
+    my $col_to_offset   = shift;
+    my $row_to_offset   = shift;
 
     $self->{_writer}->startTag( 'xdr:twoCellAnchor' );
 
     # Write the xdr:from element.
     $self->_write_from(
-        $self->{_col_from},
-        $self->{_row_from},
-        $self->{_col_from_offset},
-        $self->{_row_from_offset},
+        $col_from,
+        $row_from,
+        $col_from_offset,
+        $row_from_offset,
 
     );
 
     # Write the xdr:from element.
     $self->_write_to(
-        $self->{_col_to},
-        $self->{_row_to},
-        $self->{_col_to_offset},
-        $self->{_row_to_offset},
+        $col_to,
+        $row_to,
+        $col_to_offset,
+        $row_to_offset,
 
     );
 
     # Write the xdr:graphicFrame element.
-    $self->_write_graphic_frame();
+    $self->_write_graphic_frame( $index );
 
     # Write the xdr:clientData element.
     $self->_write_client_data();
@@ -306,21 +313,22 @@ sub _write_row_off {
 #
 sub _write_graphic_frame {
 
-    my $self  = shift;
-    my $macro = '';
+    my $self   = shift;
+    my $index  = shift;
+    my $macro  = '';
 
     my @attributes = ( 'macro' => $macro );
 
     $self->{_writer}->startTag( 'xdr:graphicFrame', @attributes );
 
     # Write the xdr:nvGraphicFramePr element.
-    $self->_write_nv_graphic_frame_pr();
+    $self->_write_nv_graphic_frame_pr( $index );
 
     # Write the xdr:xfrm element.
     $self->_write_xfrm();
 
     # Write the a:graphic element.
-    $self->_write_atag_graphic();
+    $self->_write_atag_graphic( $index );
 
     $self->{_writer}->endTag( 'xdr:graphicFrame' );
 }
@@ -334,12 +342,13 @@ sub _write_graphic_frame {
 #
 sub _write_nv_graphic_frame_pr {
 
-    my $self = shift;
+    my $self  = shift;
+    my $index  = shift;
 
     $self->{_writer}->startTag( 'xdr:nvGraphicFramePr' );
 
     # Write the xdr:cNvPr element.
-    $self->_write_c_nv_pr( 2, 'Chart 1' );
+    $self->_write_c_nv_pr( $index + 1, 'Chart ' . $index );
 
     # Write the xdr:cNvGraphicFramePr element.
     $self->_write_c_nv_graphic_frame_pr();
@@ -455,12 +464,13 @@ sub _write_xfrm_extension {
 #
 sub _write_atag_graphic {
 
-    my $self = shift;
+    my $self  = shift;
+    my $index = shift;
 
     $self->{_writer}->startTag( 'a:graphic' );
 
     # Write the a:graphicData element.
-    $self->_write_atag_graphic_data();
+    $self->_write_atag_graphic_data( $index );
 
     $self->{_writer}->endTag( 'a:graphic' );
 }
@@ -474,15 +484,16 @@ sub _write_atag_graphic {
 #
 sub _write_atag_graphic_data {
 
-    my $self = shift;
-    my $uri  = 'http://schemas.openxmlformats.org/drawingml/2006/chart';
+    my $self  = shift;
+    my $index = shift;
+    my $uri   = 'http://schemas.openxmlformats.org/drawingml/2006/chart';
 
     my @attributes = ( 'uri' => $uri, );
 
     $self->{_writer}->startTag( 'a:graphicData', @attributes );
 
     # Write the c:chart element.
-    $self->_write_c_chart( 'rId1' );
+    $self->_write_c_chart( 'rId' . $index );
 
     $self->{_writer}->endTag( 'a:graphicData' );
 }

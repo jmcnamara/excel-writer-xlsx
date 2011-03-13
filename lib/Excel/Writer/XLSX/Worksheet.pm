@@ -19,6 +19,7 @@ use strict;
 use warnings;
 use Carp;
 use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
@@ -155,10 +156,12 @@ sub new {
     $self->{_row_sizes}   = {};
     $self->{_col_formats} = {};
 
+    $self->{_hlink_count}    = 0;
     $self->{_hlink_refs}     = [];
     $self->{_external_links} = [];
     $self->{_drawing_links}  = [];
-    $self->{_hlink_count}    = 0;
+    $self->{_charts}         = [];
+    $self->{_drawing}        = 0;
 
     $self->{_rstring} = '';
 
@@ -3305,20 +3308,47 @@ sub insert_chart {
 
     }
 
-    $self->{_charts}->{$row}->{$col} =
-      [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y, ];
-
-
-    # TODO. Harcoded for sinle chart at the moment.
-    push @{ $self->{_external_links} },
-      [ '/drawing', '../drawings/drawing1.xml' ];
-
-    push @{ $self->{_drawing_links} },
-      [ '/chart', '../charts/chart1' ];
-
-
+    push @{ $self->{_charts} },
+      [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ];
 }
 
+
+###############################################################################
+#
+# _prepare_chart()
+#
+# Set up chart/drawings.
+#
+sub _prepare_chart {
+
+    my $self       = shift;
+    my $index      = shift;
+    my $chart_id   = shift;
+    my $drawing_id = shift;
+
+    my ( $row, $col ) = @{ $self->{_charts}->[$index] };
+
+    # TODO. Need to replace this with real dimension calculations.
+    my @dimensions = ( $col, $row, 0, 0, $col + 7, $row + 14, 304800, 76200 );
+
+    if ( !$self->{_drawing} ) {
+
+        my $drawing = Excel::Writer::XLSX::Drawing->new();
+        $drawing->_set_dimensions( @dimensions );
+        $self->{_drawing} = $drawing;
+
+        push @{ $self->{_external_links} },
+          [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+    }
+    else {
+        my $drawing = $self->{_drawing};
+        $drawing->_set_dimensions( @dimensions );
+
+    }
+
+    push @{ $self->{_drawing_links} },
+      [ '/chart', '../charts/chart' . $chart_id ];
+}
 
 
 ###############################################################################
@@ -5126,9 +5156,9 @@ sub _write_drawings {
 
     my $self = shift;
 
-    for my $index ( 1 .. @{ $self->{_drawing_links} } ) {
-        $self->_write_drawing( $index );
-    }
+    return unless $self->{_drawing};
+
+    $self->_write_drawing( 1 );
 }
 
 

@@ -71,7 +71,6 @@ sub new {
 
     bless $self, $class;
     $self->_set_default_properties();
-    $self->_set_default_config_data();
     return $self;
 }
 
@@ -585,43 +584,6 @@ sub _set_default_properties {
 
 ###############################################################################
 #
-# _set_default_config_data()
-#
-# Setup the default configuration data for a chart.
-#
-sub _set_default_config_data {
-
-    my $self = shift;
-
-    #<<< Perltidy ignore this.
-    $self->{_config} = {
-        _axisparent      => [ 0, 0x00F8, 0x01F5, 0x0E7F, 0x0B36              ],
-        _axisparent_pos  => [ 2, 2, 0x008C, 0x01AA, 0x0EEA, 0x0C52           ],
-        _chart           => [ 0x0000, 0x0000, 0x02DD51E0, 0x01C2B838         ],
-        _font_numbers    => [ 5, 10, 0x38B8, 0x22A1, 0x0000                  ],
-        _font_series     => [ 6, 10, 0x38B8, 0x22A1, 0x0001                  ],
-        _font_title      => [ 7, 12, 0x38B8, 0x22A1, 0x0000                  ],
-        _font_axes       => [ 8, 10, 0x38B8, 0x22A1, 0x0001                  ],
-        _legend          => [ 0x05F9, 0x0EE9, 0x047D, 0x9C, 0x00, 0x01, 0x0F ],
-        _legend_pos      => [ 5, 2, 0x05F9, 0x0EE9, 0, 0                     ],
-        _legend_text     => [ 0xFFFFFF46, 0xFFFFFF06, 0, 0, 0x00B1, 0x0000   ],
-        _legend_text_pos => [ 2, 2, 0, 0, 0, 0                               ],
-        _series_text     => [ 0xFFFFFF46, 0xFFFFFF06, 0, 0, 0x00B1, 0x1020   ],
-        _series_text_pos => [ 2, 2, 0, 0, 0, 0                               ],
-        _title_text      => [ 0x06E4, 0x0051, 0x01DB, 0x00C4, 0x0081, 0x1030 ],
-        _title_text_pos  => [ 2, 2, 0, 0, 0x73, 0x1D                         ],
-        _x_axis_text     => [ 0x07E1, 0x0DFC, 0xB2, 0x9C, 0x0081, 0x0000     ],
-        _x_axis_text_pos => [ 2, 2, 0, 0,  0x2B,  0x17                       ],
-        _y_axis_text     => [ 0x002D, 0x06AA, 0x5F, 0x1CC, 0x0281, 0x00, 90  ],
-        _y_axis_text_pos => [ 2, 2, 0, 0, 0x17,  0x44                        ],
-    }; #>>>
-
-
-}
-
-
-###############################################################################
-#
 # _set_embedded_config_data()
 #
 # Setup the default configuration data for an embedded chart.
@@ -631,6 +593,8 @@ sub _set_embedded_config_data {
     my $self = shift;
 
     $self->{_embedded} = 1;
+
+    # TODO. We may be able to remove this after refactoring.
 
     $self->{_chartarea} = {
         _visible          => 1,
@@ -647,29 +611,6 @@ sub _set_embedded_config_data {
         _line_options     => 0x0009,
     };
 
-
-    #<<< Perltidy ignore this.
-    $self->{_config} = {
-        _axisparent      => [ 0, 0x01D8, 0x031D, 0x0D79, 0x07E9              ],
-        _axisparent_pos  => [ 2, 2, 0x010C, 0x0292, 0x0E46, 0x09FD           ],
-        _chart           => [ 0x0000, 0x0000, 0x01847FE8, 0x00F47FE8         ],
-        _font_numbers    => [ 5, 10, 0x1DC4, 0x1284, 0x0000                  ],
-        _font_series     => [ 6, 10, 0x1DC4, 0x1284, 0x0001                  ],
-        _font_title      => [ 7, 12, 0x1DC4, 0x1284, 0x0000                  ],
-        _font_axes       => [ 8, 10, 0x1DC4, 0x1284, 0x0001                  ],
-        _legend          => [ 0x044E, 0x0E4A, 0x088D, 0x0123, 0x0, 0x1, 0xF  ],
-        _legend_pos      => [ 5, 2, 0x044E, 0x0E4A, 0, 0                     ],
-        _legend_text     => [ 0xFFFFFFD9, 0xFFFFFFC1, 0, 0, 0x00B1, 0x0000   ],
-        _legend_text_pos => [ 2, 2, 0, 0, 0, 0                               ],
-        _series_text     => [ 0xFFFFFFD9, 0xFFFFFFC1, 0, 0, 0x00B1, 0x1020   ],
-        _series_text_pos => [ 2, 2, 0, 0, 0, 0                               ],
-        _title_text      => [ 0x060F, 0x004C, 0x038A, 0x016F, 0x0081, 0x1030 ],
-        _title_text_pos  => [ 2, 2, 0, 0, 0x73, 0x1D                         ],
-        _x_axis_text     => [ 0x07EF, 0x0C8F, 0x153, 0x123, 0x81, 0x00       ],
-        _x_axis_text_pos => [ 2, 2, 0, 0, 0x2B, 0x17                         ],
-        _y_axis_text     => [ 0x0057, 0x0564, 0xB5, 0x035D, 0x0281, 0x00, 90 ],
-        _y_axis_text_pos => [ 2, 2, 0, 0, 0x17, 0x44                         ],
-    }; #>>>
 }
 
 
@@ -798,58 +739,7 @@ sub _write_layout {
 #
 sub _write_chart_type {
 
-    my $self                 = shift;
-
-    # TODO push this down into the subclass.
-
-    # Write the c:barChart element.
-    $self->_write_bar_chart();
-
-
-
-}
-
-
-##############################################################################
-#
-# _write_bar_chart()
-#
-# Write the <c:barChart> element.
-#
-sub _write_bar_chart {
-
     my $self = shift;
-
-    $self->{_writer}->startTag( 'c:barChart' );
-
-    # Write the c:barDir element.
-    $self->_write_bar_dir();
-
-    # Write the c:grouping element.
-    $self->_write_grouping();
-
-    # Write the series elements.
-    $self->_write_series();
-
-
-    $self->{_writer}->endTag( 'c:barChart' );
-}
-
-
-##############################################################################
-#
-# _write_bar_dir()
-#
-# Write the <c:barDir> element.
-#
-sub _write_bar_dir {
-
-    my $self = shift;
-    my $val  = 'bar';
-
-    my @attributes = ( 'val' => $val );
-
-    $self->{_writer}->emptyTag( 'c:barDir', @attributes );
 }
 
 

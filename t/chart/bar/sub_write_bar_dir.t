@@ -9,7 +9,7 @@ use lib 't/lib';
 use TestFunctions '_new_object';
 use strict;
 use warnings;
-use Excel::Writer::XLSX::Chart;
+use Excel::Writer::XLSX::Chart::Bar;
 
 use Test::More tests => 1;
 
@@ -31,7 +31,7 @@ my $chart;
 $caption  = " \tChart: _write_bar_dir()";
 $expected = '<c:barDir val="bar" />';
 
-$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Bar' );
 
 $chart->_write_bar_dir();
 

@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_bar01.xlsx';
+my $filename     = 'chart_bar04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,8 +34,24 @@ my $ignore_elements = {
         '<c:pt',
         '<c:v>',
         '</c:pt>',
-        '</c:numCache>'
+        '</c:numCache>',
+        '<c:pageMargins',
     ],
+
+    'xl/charts/chart2.xml' => [
+
+        '<c:numCache',
+        '<c:formatCode',
+        '<c:ptCount',
+        '<c:pt',
+        '<c:v>',
+        '</c:pt>',
+        '</c:numCache>',
+        '<c:pageMargins',
+    ],
+
+    # Ignore the workbookView.
+    'xl/workbook.xml' => ['<workbookView'],
 
 };
 
@@ -46,12 +62,15 @@ my $ignore_elements = {
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'bar', embedded => 1 );
+my $workbook   = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
+my $chart1     = $workbook->add_chart( type => 'bar', embedded => 1 );
+my $chart2     = $workbook->add_chart( type => 'bar', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 64052224, 64055552 ];
+$chart1->{_axis_ids} = [ 64446848, 64448384 ];
+$chart2->{_axis_ids} = [ 85389696, 85391232 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -60,18 +79,35 @@ my $data = [
 
 ];
 
-$worksheet->write( 'A1', $data );
+# Sheet 1
+$worksheet1->write( 'A1', $data );
 
-$chart->add_series(
+$chart1->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
 );
 
-$chart->add_series(
+$chart1->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
-$worksheet->insert_chart( 'E9', $chart );
+
+$worksheet1->insert_chart( 'E9', $chart1 );
+
+# Sheet 2
+$worksheet2->write( 'A1', $data );
+
+$chart2->add_series(
+    categories => '=Sheet2!$A$1:$A$5',
+    values     => '=Sheet2!$B$1:$B$5',
+);
+
+$chart2->add_series(
+    categories => '=Sheet2!$A$1:$A$5',
+    values     => '=Sheet2!$C$1:$C$5',
+);
+
+$worksheet2->insert_chart( 'E9', $chart2 );
 
 $workbook->close();
 
@@ -99,6 +135,3 @@ _is_deep_diff( $got, $expected, $caption );
 unlink $got_filename;
 
 __END__
-
-
-

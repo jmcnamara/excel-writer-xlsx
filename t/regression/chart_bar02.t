@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_bar01.xlsx';
+my $filename     = 'chart_bar02.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,8 +34,12 @@ my $ignore_elements = {
         '<c:pt',
         '<c:v>',
         '</c:pt>',
-        '</c:numCache>'
+        '</c:numCache>',
+        '<c:pageMargins',
     ],
+
+    # Ignore the workbookView.
+    'xl/workbook.xml' => ['<workbookView'],
 
 };
 
@@ -46,12 +50,13 @@ my $ignore_elements = {
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'bar', embedded => 1 );
+my $workbook   = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
+my $chart      = $workbook->add_chart( type => 'bar', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 64052224, 64055552 ];
+$chart->{_axis_ids} = [ 93218304, 93219840 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -60,18 +65,20 @@ my $data = [
 
 ];
 
-$worksheet->write( 'A1', $data );
+$worksheet1->write( 'A1', 'Foo' );
+
+$worksheet2->write( 'A1', $data );
 
 $chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$B$1:$B$5',
+    categories => 'Sheet2!$A$1:$A$5',
+    values     => 'Sheet2!$B$1:$B$5',
 );
 
 $chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$C$1:$C$5',
+    categories => 'Sheet2!$A$1:$A$5',
+    values     => 'Sheet2!$C$1:$C$5',
 );
-$worksheet->insert_chart( 'E9', $chart );
+$worksheet2->insert_chart( 'E9', $chart );
 
 $workbook->close();
 
