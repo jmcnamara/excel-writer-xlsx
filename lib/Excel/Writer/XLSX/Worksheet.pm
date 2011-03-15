@@ -3095,24 +3095,154 @@ sub _store_protect {
 
 ###############################################################################
 #
+#  _position_object()
+#
+# Calculate the vertices that define the position of a graphical object within
+# the worksheet.
+#
+#         +------------+------------+
+#         |     A      |      B     |
+#   +-----+------------+------------+
+#   |     |(x1,y1)     |            |
+#   |  1  |(A1)._______|______      |
+#   |     |    |              |     |
+#   |     |    |              |     |
+#   +-----+----|    BITMAP    |-----+
+#   |     |    |              |     |
+#   |  2  |    |______________.     |
+#   |     |            |        (B2)|
+#   |     |            |     (x2,y2)|
+#   +---- +------------+------------+
+#
+# Example of an object that covers some of the area from cell A1 to cell B2.
+#
+# Based on the width and height of the object we need to calculate 8 vars:
+#
+#     $col_start, $row_start, $col_end, $row_end, $x1, $y1, $x2, $y2.
+#
+# The width and height of the cells are also variable and have to be taken into
+# account.
+#
+# The values of $col_start and $row_start are passed in from the calling
+# function. The values of $col_end and $row_end are calculated by subtracting
+# the width and height of the object from the width and height of the
+# underlying cells.
+#
+# The vertices are expressed as English Metric Units (EMUs). There are 12,700
+# EMUs per point. Therefore, 12,700 * 3 /4 = 9,525 EMUs per pixel.
+#
+sub _position_object {
+
+    my $self = shift;
+
+    my $col_start;    # Col containing upper left corner of object.
+    my $x1;           # Distance to left side of object.
+
+    my $row_start;    # Row containing top left corner of object.
+    my $y1;           # Distance to top of object.
+
+    my $col_end;      # Col containing lower right corner of object.
+    my $x2;           # Distance to right side of object.
+
+    my $row_end;      # Row containing bottom right corner of object.
+    my $y2;           # Distance to bottom of object.
+
+    my $width;        # Width of object frame.
+    my $height;       # Height of object frame.
+
+    ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+
+
+    # Adjust start column for offsets that are greater than the col width.
+    while ( $x1 >= $self->_size_col( $col_start ) ) {
+        $x1 -= $self->_size_col( $col_start );
+        $col_start++;
+    }
+
+    # Adjust start row for offsets that are greater than the row height.
+    while ( $y1 >= $self->_size_row( $row_start ) ) {
+        $y1 -= $self->_size_row( $row_start );
+        $row_start++;
+    }
+
+
+    # Initialise end cell to the same as the start cell.
+    $col_end = $col_start;
+    $row_end = $row_start;
+
+    $width  = $width + $x1;
+    $height = $height + $y1;
+
+
+    # Subtract the underlying cell widths to find the end cell of the object.
+    while ( $width >= $self->_size_col( $col_end ) ) {
+        $width -= $self->_size_col( $col_end );
+        $col_end++;
+    }
+
+
+    # Subtract the underlying cell heights to find the end cell of the object.
+    while ( $height >= $self->_size_row( $row_end ) ) {
+        $height -= $self->_size_row( $row_end );
+        $row_end++;
+    }
+
+
+    $col_end-- if $width == 0;
+    $row_end-- if $height == 0;
+
+
+    # The end vertices are whatever is left from the width and height.
+    $x2 = $width;
+    $y2 = $height;
+
+    # Convert the pixel values to EMUs. See above.
+    $x1 *= 9_525;
+    $y1 *= 9_525;
+    $x2 *= 9_525;
+    $y2 *= 9_525;
+
+    return ( $col_start, $row_start, $x1, $y1, $col_end, $row_end, $x2, $y2 );
+}
+
+
+###############################################################################
+#
 # _size_col($col)
 #
 # Convert the width of a cell from user's units to pixels. Excel rounds the
-# column width to the nearest pixel. Excel XML also scales the pixel value
-# by 0.75.
+# column width to the nearest pixel. If the width hasn't been set by the user
+# we use the default value. If the column is hidden it has a value of zero.
 #
 sub _size_col {
 
-    my $self  = shift;
-    my $width = $_[0];
+    my $self = shift;
+    my $col  = shift;
 
-    # The relationship is different for user units less than 1.
-    if ( $width < 1 ) {
-        return 0.75 * int( $width * 12 );
+    my $max_digit_width = 7;    # For Calabri 11.
+    my $padding         = 5;
+    my $pixels;
+
+    # Look up the cell value to see if it has been changed.
+    if ( exists $self->{_col_sizes}->{$col} ) {
+        my $width = $self->{_col_sizes}->{$col};
+
+        # Convert to pixels.
+        if ( $width == 0) {
+            $pixels = 0;
+        }
+        elsif ( $width < 1 ) {
+            $pixels = int( $width * 12 + 0.5 );
+        }
+        else {
+            $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
+        }
     }
     else {
-        return 0.75 * ( int( $width * 7 ) + 5 );
+        $pixels = 64;
     }
+
+    return $pixels;
 }
 
 
@@ -3120,15 +3250,32 @@ sub _size_col {
 #
 # _size_row($row)
 #
-# Convert the height of a cell from user's units to pixels. By interpolation
-# the relationship is: y = 4/3x. Excel XML also scales the pixel value by 0.75.
+# Convert the height of a cell from user's units to pixels. If the height
+# hasn't been set by the user we use the default value. If the row is hidden
+# it has a value of zero.
 #
 sub _size_row {
 
-    my $self   = shift;
-    my $height = $_[0];
+    my $self = shift;
+    my $row  = shift;
+    my $pixels;
 
-    return 0.75 * int( 4 / 3 * $height );
+    # Look up the cell value to see if it has been changed
+    if ( exists $self->{_row_sizes}->{$row} ) {
+        my $height = $self->{_row_sizes}->{$row};
+
+        if ( $height == 0 ) {
+            $pixels = 0;
+        }
+        else {
+            $pixels = int( 4 / 3 * $height );
+        }
+    }
+    else {
+        $pixels = 20;
+    }
+
+    return $pixels;
 }
 
 
