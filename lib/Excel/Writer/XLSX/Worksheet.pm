@@ -3473,10 +3473,16 @@ sub _prepare_chart {
     my $chart_id   = shift;
     my $drawing_id = shift;
 
-    my ( $row, $col ) = @{ $self->{_charts}->[$index] };
+    my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
+      @{ $self->{_charts}->[$index] };
 
-    # TODO. Need to replace this with real dimension calculations.
-    my @dimensions = ( $col, $row, 0, 0, $col + 7, $row + 14, 304800, 76200 );
+    my $width  = 480 * $scale_x;
+    my $height = 288 * $scale_y;
+
+    my @dimensions =
+      $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
+        $height );
+
 
     if ( !$self->{_drawing} ) {
 
