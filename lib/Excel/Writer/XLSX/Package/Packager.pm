@@ -602,10 +602,10 @@ At its simplest an Excel XLSX file contains the following elements:
     | |____ theme
     | | |____ theme1.xml
     | |
-    | |____ _rels
+    | |_____rels
     |   |____ workbook.xml.rels
     |
-    |____ _rels
+    |_____rels
       |____ .rels
 
 

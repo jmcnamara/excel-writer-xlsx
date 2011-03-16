@@ -62,12 +62,14 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_sheet_type}  = 0x0200;
-    $self->{_orientation} = 0x0;
-    $self->{_series}      = [];
-    $self->{_embedded}    = 0;
-    $self->{_id}          = '';
-    $self->{_axis_ids}    = [];
+    $self->{_sheet_type}        = 0x0200;
+    $self->{_orientation}       = 0x0;
+    $self->{_series}            = [];
+    $self->{_embedded}          = 0;
+    $self->{_id}                = '';
+    $self->{_axis_ids}          = [];
+    $self->{_has_category}      = 0;
+    $self->{_requires_category} = 0;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -129,7 +131,15 @@ sub add_series {
     my $self = shift;
     my %arg  = @_;
 
-    croak "Must specify 'values' in add_series()" if !exists $arg{values};
+    # Check that the required input has been specified.
+    if ( !exists $arg{values} ) {
+        croak "Must specify 'values' in add_series()";
+    }
+
+    if ( $self->{_requires_category} && !exists $arg{categories} ) {
+        croak "Must specify 'categories' in add_series() for this chart type";
+    }
+
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
@@ -863,6 +873,11 @@ sub _write_cat {
     my $self    = shift;
     my $formula = shift;
 
+    # Ignore <c:cat> elements for charts without category values.
+    return unless $formula;
+
+    $self->{_has_category} = 1;
+
     $self->{_writer}->startTag( 'c:cat' );
 
     # Write the c:numRef element.
@@ -1099,6 +1114,9 @@ sub _write_num_fmt {
     my $self          = shift;
     my $format_code   = 'General';
     my $source_linked = 1;
+
+    # These elements are only required for charts with categories.
+    return unless $self->{_has_category};
 
     my @attributes = (
         'formatCode'   => $format_code,
