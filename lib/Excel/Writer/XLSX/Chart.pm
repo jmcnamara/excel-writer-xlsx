@@ -165,7 +165,7 @@ sub set_x_axis {
     my %arg  = @_;
 
     $self->{_x_axis_name}    = $arg{name};
-    $self->{_x_axis_formula} = $arg{formula};
+    $self->{_x_axis_formula} = $arg{name_formula};
 }
 
 
@@ -181,7 +181,7 @@ sub set_y_axis {
     my %arg  = @_;
 
     $self->{_y_axis_name}    = $arg{name};
-    $self->{_y_axis_formula} = $arg{formula};
+    $self->{_y_axis_formula} = $arg{name_formula};
 }
 
 
@@ -197,7 +197,7 @@ sub set_title {
     my %arg  = @_;
 
     $self->{_title_name}    = $arg{name};
-    $self->{_title_formula} = $arg{formula};
+    $self->{_title_formula} = $arg{name_formula};
 }
 
 
@@ -685,8 +685,12 @@ sub _write_chart {
     $self->{_writer}->startTag( 'c:chart' );
 
     # Write the chart title elements.
-    if ( my $title = $self->{_title_name} ) {
-        $self->_write_title( $title );
+    my $title;
+    if ( $title = $self->{_title_formula} ) {
+        $self->_write_title_formula( $title );
+    }
+    elsif ( $title = $self->{_title_name} ) {
+        $self->_write_title_rich( $title );
     }
 
     # Write the c:plotArea element.
@@ -988,8 +992,12 @@ sub _write_cat_axis {
     $self->_write_axis_pos( 'l' );
 
     # Write the axis title elements.
-    if ( my $title = $self->{_y_axis_name} ) {
-        $self->_write_title( $title, 1 );
+    my $title;
+    if ( $title = $self->{_y_axis_formula} ) {
+        $self->_write_title_formula( $title, 1 );
+    }
+    elsif ( $title = $self->{_y_axis_name} ) {
+        $self->_write_title_rich( $title, 1 );
     }
 
     # Write the c:numFmt element.
@@ -1041,8 +1049,12 @@ sub _write_val_axis {
     $self->_write_major_gridlines();
 
     # Write the axis title elements.
-    if ( my $title = $self->{_x_axis_name} ) {
-        $self->_write_title( $title );
+    my $title;
+    if ( $title = $self->{_x_axis_formula} ) {
+        $self->_write_title_formula( $title );
+    }
+    elsif ( $title = $self->{_x_axis_name} ) {
+        $self->_write_title_rich( $title );
     }
 
     # Write the c:numberFormat element.
@@ -1433,11 +1445,11 @@ sub _write_page_setup {
 
 ##############################################################################
 #
-# _write_title()
+# _write_title_rich()
 #
-# Write the <c:title> element.
+# Write the <c:title> element for a rich string.
 #
-sub _write_title {
+sub _write_title_rich {
 
     my $self  = shift;
     my $title = shift;
@@ -1446,7 +1458,7 @@ sub _write_title {
     $self->{_writer}->startTag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx( $title, $horiz );
+    $self->_write_tx_rich( $title, $horiz );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -1457,11 +1469,38 @@ sub _write_title {
 
 ##############################################################################
 #
-# _write_tx()
+# _write_title_formula()
+#
+# Write the <c:title> element for a rich string.
+#
+sub _write_title_formula {
+
+    my $self  = shift;
+    my $title = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:title' );
+
+    # Write the c:tx element.
+    $self->_write_tx_formula( $title, $horiz );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the c:txPr element.
+    $self->_write_tx_pr( $horiz );
+
+    $self->{_writer}->endTag( 'c:title' );
+}
+
+
+##############################################################################
+#
+# _write_tx_rich()
 #
 # Write the <c:tx> element.
 #
-sub _write_tx {
+sub _write_tx_rich {
 
     my $self  = shift;
     my $title = shift;
@@ -1471,6 +1510,27 @@ sub _write_tx {
 
     # Write the c:rich element.
     $self->_write_rich( $title, $horiz );
+
+    $self->{_writer}->endTag( 'c:tx' );
+}
+
+
+##############################################################################
+#
+# _write_tx_formula()
+#
+# Write the <c:tx> element.
+#
+sub _write_tx_formula {
+
+    my $self  = shift;
+    my $title = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:tx' );
+
+    # Write the c:strRef element.
+    $self->_write_str_ref( $title );
 
     $self->{_writer}->endTag( 'c:tx' );
 }
@@ -1497,7 +1557,7 @@ sub _write_rich {
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p( $title );
+    $self->_write_a_p_rich( $title );
 
 
     $self->{_writer}->endTag( 'c:rich' );
@@ -1544,11 +1604,11 @@ sub _write_a_lst_style {
 
 ##############################################################################
 #
-# _write_a_p()
+# _write_a_p_rich()
 #
-# Write the <a:p> element.
+# Write the <a:p> element for rich string titles.
 #
-sub _write_a_p {
+sub _write_a_p_rich {
 
     my $self  = shift;
     my $title = shift;
@@ -1556,7 +1616,7 @@ sub _write_a_p {
     $self->{_writer}->startTag( 'a:p' );
 
     # Write the a:pPr element.
-    $self->_write_a_p_pr();
+    $self->_write_a_p_pr_rich();
 
     # Write the a:r element.
     $self->_write_a_r( $title );
@@ -1567,11 +1627,53 @@ sub _write_a_p {
 
 ##############################################################################
 #
-# _write_a_p_pr()
+# _write_a_p_formula()
 #
-# Write the <a:pPr> element.
+# Write the <a:p> element for formula titles.
 #
-sub _write_a_p_pr {
+sub _write_a_p_formula {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->startTag( 'a:p' );
+
+    # Write the a:pPr element.
+    $self->_write_a_p_pr_formula();
+
+    # Write the a:endParaRPr element.
+    $self->_write_a_end_para_rpr();
+
+    $self->{_writer}->endTag( 'a:p' );
+}
+
+
+##############################################################################
+#
+# _write_a_p_pr_rich()
+#
+# Write the <a:pPr> element for rich string titles.
+#
+sub _write_a_p_pr_rich {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'a:pPr' );
+
+    # Write the a:defRPr element.
+    $self->_write_a_def_rpr();
+
+    $self->{_writer}->endTag( 'a:pPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_p_pr_formula()
+#
+# Write the <a:pPr> element for formula titles.
+#
+sub _write_a_p_pr_formula {
 
     my $self = shift;
 
@@ -1595,6 +1697,23 @@ sub _write_a_def_rpr {
     my $self = shift;
 
     $self->{_writer}->emptyTag( 'a:defRPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_end_para_rpr()
+#
+# Write the <a:endParaRPr> element.
+#
+sub _write_a_end_para_rpr {
+
+    my $self = shift;
+    my $lang = 'en-US';
+
+    my @attributes = ( 'lang' => $lang );
+
+    $self->{_writer}->emptyTag( 'a:endParaRPr', @attributes );
 }
 
 
@@ -1650,6 +1769,52 @@ sub _write_a_t {
     my $title = shift;
 
     $self->{_writer}->dataElement( 'a:t', $title );
+}
+
+
+##############################################################################
+#
+# _write_str_ref()
+#
+# Write the <c:strRef> element.
+#
+sub _write_str_ref {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->{_writer}->startTag( 'c:strRef' );
+
+    # Write the c:f element.
+    $self->_write_series_formula( $formula );
+
+    $self->{_writer}->endTag( 'c:strRef' );
+}
+
+
+##############################################################################
+#
+# _write_tx_pr()
+#
+# Write the <c:txPr> element.
+#
+sub _write_tx_pr {
+
+    my $self  = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:txPr' );
+
+    # Write the a:bodyPr element.
+    $self->_write_a_body_pr( $horiz );
+
+    # Write the a:lstStyle element.
+    $self->_write_a_lst_style();
+
+    # Write the a:p element.
+    $self->_write_a_p_formula();
+
+    $self->{_writer}->endTag( 'c:txPr' );
 }
 
 

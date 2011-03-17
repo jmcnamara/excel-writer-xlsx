@@ -188,6 +188,9 @@ t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
 t/regression/chart_bar04.t
+t/regression/chart_bar05.t
+t/regression/chart_bar06.t
+t/regression/chart_bar07.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -277,6 +280,9 @@ t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
 t/regression/xlsx_files/chart_bar04.xlsx
+t/regression/xlsx_files/chart_bar05.xlsx
+t/regression/xlsx_files/chart_bar06.xlsx
+t/regression/xlsx_files/chart_bar07.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
@@ -381,6 +387,7 @@ t/worksheet/sub_convert_date_time_02.t
 t/worksheet/sub_convert_date_time_03.t
 t/worksheet/sub_extract_filter_tokens.t
 t/worksheet/sub_parse_filter_expression.t
+t/worksheet/sub_position_object.t
 t/worksheet/sub_write_auto_filter.t
 t/worksheet/sub_write_brk.t
 t/worksheet/sub_write_cell.t
