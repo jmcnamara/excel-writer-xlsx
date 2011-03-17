@@ -180,8 +180,8 @@ sub set_y_axis {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_y_axis_name}     = $arg{name};
-    $self->{_y_axis_formula}  = $arg{formula};
+    $self->{_y_axis_name}    = $arg{name};
+    $self->{_y_axis_formula} = $arg{formula};
 }
 
 
@@ -196,8 +196,8 @@ sub set_title {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_title_name}     = $arg{name};
-    $self->{_title_formula}  = $arg{formula};
+    $self->{_title_name}    = $arg{name};
+    $self->{_title_formula} = $arg{formula};
 }
 
 
@@ -684,6 +684,11 @@ sub _write_chart {
 
     $self->{_writer}->startTag( 'c:chart' );
 
+    # Write the chart title elements.
+    if ( my $title = $self->{_title_name} ) {
+        $self->_write_title( $title );
+    }
+
     # Write the c:plotArea element.
     $self->_write_plot_area();
 
@@ -907,7 +912,6 @@ sub _write_val {
 }
 
 
-
 ##############################################################################
 #
 # _write_num_ref()
@@ -983,6 +987,11 @@ sub _write_cat_axis {
     # Write the c:axPos element.
     $self->_write_axis_pos( 'l' );
 
+    # Write the axis title elements.
+    if ( my $title = $self->{_y_axis_name} ) {
+        $self->_write_title( $title, 1 );
+    }
+
     # Write the c:numFmt element.
     $self->_write_num_fmt();
 
@@ -1030,6 +1039,11 @@ sub _write_val_axis {
 
     # Write the c:majorGridlines element.
     $self->_write_major_gridlines();
+
+    # Write the axis title elements.
+    if ( my $title = $self->{_x_axis_name} ) {
+        $self->_write_title( $title );
+    }
 
     # Write the c:numberFormat element.
     $self->_write_number_format();
@@ -1242,7 +1256,6 @@ sub _write_major_gridlines {
 }
 
 
-
 ##############################################################################
 #
 # _write_number_format()
@@ -1278,7 +1291,6 @@ sub _write_cross_between {
 
     $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
 }
-
 
 
 ##############################################################################
@@ -1318,8 +1330,6 @@ sub _write_legend_pos {
 
     $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
 }
-
-
 
 
 ##############################################################################
@@ -1419,6 +1429,229 @@ sub _write_page_setup {
 
     $self->{_writer}->emptyTag( 'c:pageSetup' );
 }
+
+
+##############################################################################
+#
+# _write_title()
+#
+# Write the <c:title> element.
+#
+sub _write_title {
+
+    my $self  = shift;
+    my $title = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:title' );
+
+    # Write the c:tx element.
+    $self->_write_tx( $title, $horiz );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    $self->{_writer}->endTag( 'c:title' );
+}
+
+
+##############################################################################
+#
+# _write_tx()
+#
+# Write the <c:tx> element.
+#
+sub _write_tx {
+
+    my $self  = shift;
+    my $title = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:tx' );
+
+    # Write the c:rich element.
+    $self->_write_rich( $title, $horiz );
+
+    $self->{_writer}->endTag( 'c:tx' );
+}
+
+
+##############################################################################
+#
+# _write_rich()
+#
+# Write the <c:rich> element.
+#
+sub _write_rich {
+
+    my $self  = shift;
+    my $title = shift;
+    my $horiz = shift;
+
+    $self->{_writer}->startTag( 'c:rich' );
+
+    # Write the a:bodyPr element.
+    $self->_write_a_body_pr( $horiz );
+
+    # Write the a:lstStyle element.
+    $self->_write_a_lst_style();
+
+    # Write the a:p element.
+    $self->_write_a_p( $title );
+
+
+    $self->{_writer}->endTag( 'c:rich' );
+}
+
+
+##############################################################################
+#
+# _write_a_body_pr()
+#
+# Write the <a:bodyPr> element.
+#
+sub _write_a_body_pr {
+
+    my $self  = shift;
+    my $horiz = shift;
+    my $rot   = -5400000;
+    my $vert  = 'horz';
+
+    my @attributes = (
+        'rot'  => $rot,
+        'vert' => $vert,
+    );
+
+    @attributes = () if !$horiz;
+
+    $self->{_writer}->emptyTag( 'a:bodyPr', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_lst_style()
+#
+# Write the <a:lstStyle> element.
+#
+sub _write_a_lst_style {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:lstStyle' );
+}
+
+
+##############################################################################
+#
+# _write_a_p()
+#
+# Write the <a:p> element.
+#
+sub _write_a_p {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->startTag( 'a:p' );
+
+    # Write the a:pPr element.
+    $self->_write_a_p_pr();
+
+    # Write the a:r element.
+    $self->_write_a_r( $title );
+
+    $self->{_writer}->endTag( 'a:p' );
+}
+
+
+##############################################################################
+#
+# _write_a_p_pr()
+#
+# Write the <a:pPr> element.
+#
+sub _write_a_p_pr {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'a:pPr' );
+
+    # Write the a:defRPr element.
+    $self->_write_a_def_rpr();
+
+    $self->{_writer}->endTag( 'a:pPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_def_rpr()
+#
+# Write the <a:defRPr> element.
+#
+sub _write_a_def_rpr {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:defRPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_r()
+#
+# Write the <a:r> element.
+#
+sub _write_a_r {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->startTag( 'a:r' );
+
+    # Write the a:rPr element.
+    $self->_write_a_r_pr();
+
+    # Write the a:t element.
+    $self->_write_a_t( $title );
+
+    $self->{_writer}->endTag( 'a:r' );
+}
+
+
+##############################################################################
+#
+# _write_a_r_pr()
+#
+# Write the <a:rPr> element.
+#
+sub _write_a_r_pr {
+
+    my $self = shift;
+    my $lang = 'en-US';
+
+    my @attributes = ( 'lang' => $lang, );
+
+    $self->{_writer}->emptyTag( 'a:rPr', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_t()
+#
+# Write the <a:t> element.
+#
+sub _write_a_t {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->dataElement( 'a:t', $title );
+}
+
 
 1;
 
