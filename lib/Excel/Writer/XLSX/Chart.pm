@@ -67,6 +67,7 @@ sub new {
     $self->{_series}            = [];
     $self->{_embedded}          = 0;
     $self->{_id}                = '';
+    $self->{_style_id}          = 2;
     $self->{_axis_ids}          = [];
     $self->{_has_category}      = 0;
     $self->{_requires_category} = 0;
@@ -97,6 +98,9 @@ sub _assemble_xml_file {
 
     # Write the c:lang element.
     $self->_write_lang();
+
+    # Write the c:style element.
+    $self->_write_style();
 
     # Write the c:chart element.
     $self->_write_chart();
@@ -339,6 +343,25 @@ sub set_chartarea {
         $area->{_line_color_index} = 0x4F if !defined $arg{line_color};
         $area->{_visible}          = 1;
     }
+}
+
+
+###############################################################################
+#
+# set_style()
+#
+# Set on of the 42 built-in Excel chart styles. The default style is 2.
+#
+sub set_style {
+
+    my $self = shift;
+    my $style_id = shift // 2;
+
+    if ( $style_id < 0 || $style_id > 42 ) {
+        $style_id = 2;
+    }
+
+    $self->{_style_id} = $style_id;
 }
 
 
@@ -669,6 +692,26 @@ sub _write_lang {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:lang', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_style()
+#
+# Write the <c:style> element.
+#
+sub _write_style {
+
+    my $self     = shift;
+    my $style_id = $self->{_style_id};
+
+    # Don't write an element for the default style, 2.
+    return if $style_id == 2;
+
+    my @attributes = ( 'val' => $style_id );
+
+    $self->{_writer}->emptyTag( 'c:style', @attributes );
 }
 
 
@@ -2114,6 +2157,14 @@ Here is an example of setting several properties:
         line_weight  => 3,
     );
 
+
+=head2 set_style()
+
+The C<set_style()> method is used to set the style of the chart to one of the 42 built-in styles available on the 'Design' tab in Excel:
+
+    $chart->set_style( 4 );
+
+The default style is 2.
 
 
 =head1 WORKSHEET METHODS
