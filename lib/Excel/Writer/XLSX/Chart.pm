@@ -71,6 +71,7 @@ sub new {
     $self->{_axis_ids}          = [];
     $self->{_has_category}      = 0;
     $self->{_requires_category} = 0;
+    $self->{_legend_position}   = 'right';
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -216,11 +217,7 @@ sub set_legend {
     my $self = shift;
     my %arg  = @_;
 
-    if ( defined $arg{position} ) {
-        if ( lc $arg{position} eq 'none' ) {
-            $self->{_legend}->{_visible} = 0;
-        }
-    }
+    $self->{_legend_position} = $arg{position} // 'right';
 }
 
 
@@ -576,12 +573,6 @@ sub _add_axis_id {
 sub _set_default_properties {
 
     my $self = shift;
-
-    $self->{_legend} = {
-        _visible  => 1,
-        _position => 0,
-        _vertical => 0,
-    };
 
     $self->{_chartarea} = {
         _visible          => 0,
@@ -1357,14 +1348,35 @@ sub _write_cross_between {
 sub _write_legend {
 
     my $self = shift;
+    my $position = $self->{_legend_position};
+    my $overlay = 0;
+
+    if ($position =~ s/^overlay_//) {
+        $overlay = 1;
+    }
+
+    my %allowed = (
+        right  => 'r',
+        left   => 'l',
+        top    => 't',
+        bottom => 'b',
+    );
+
+    return if $position eq 'none';
+    return unless exists $allowed{$position};
+
+    $position = $allowed{$position};
 
     $self->{_writer}->startTag( 'c:legend' );
 
     # Write the c:legendPos element.
-    $self->_write_legend_pos( 'r' );
+    $self->_write_legend_pos( $position );
 
     # Write the c:layout element.
     $self->_write_layout();
+
+    # Write the c:overlay element.
+    $self->_write_overlay() if $overlay;
 
     $self->{_writer}->endTag( 'c:legend' );
 }
@@ -1384,6 +1396,23 @@ sub _write_legend_pos {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_overlay()
+#
+# Write the <c:overlay> element.
+#
+sub _write_overlay {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:overlay', @attributes );
 }
 
 
@@ -2069,14 +2098,17 @@ The properties that can be set are:
 
 Set the position of the chart legend.
 
-    $chart->set_legend( position => 'none' );
+    $chart->set_legend( position => 'bottom' );
 
-The default legend position is C<bottom>. The currently supported chart positions are:
+The default legend position is C<right>. The available positions are:
 
-    none
+    right
+    left
+    top
     bottom
-
-The other legend positions will be added soon.
+    none
+    overlay_right
+    overlay_left
 
 =back
 
