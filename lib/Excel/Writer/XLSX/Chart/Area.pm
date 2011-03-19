@@ -35,8 +35,48 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_cross_between} = 'midCat';
+
     bless $self, $class;
     return $self;
+}
+
+
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:areaChart element.
+    $self->_write_area_chart();
+}
+
+
+##############################################################################
+#
+# _write_area_chart()
+#
+# Write the <c:areaChart> element.
+#
+sub _write_area_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:areaChart' );
+
+    # Write the c:grouping element.
+    $self->_write_grouping( 'standard' );
+
+    # Write the series elements.
+    $self->_write_series();
+
+
+    $self->{_writer}->endTag( 'c:areaChart' );
 }
 
 

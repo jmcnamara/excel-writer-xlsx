@@ -1339,7 +1339,7 @@ sub _write_number_format {
 sub _write_cross_between {
 
     my $self = shift;
-    my $val  = 'between';
+    my $val  = $self->{_cross_between} // 'between';
 
     my @attributes = ( 'val' => $val );
 
