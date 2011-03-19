@@ -807,7 +807,7 @@ sub _write_chart_type {
 sub _write_grouping {
 
     my $self = shift;
-    my $val  = 'clustered';
+    my $val  = shift;
 
     my @attributes = ( 'val' => $val );
 
@@ -830,6 +830,9 @@ sub _write_series {
     for my $series ( @{ $self->{_series} } ) {
         $self->_write_ser( $index++, $series->{categories}, $series->{values} );
     }
+
+    # Write the c:marker element.
+    $self->_write_marker_value();
 
     # Generate the axis ids.
     $self->_add_axis_id();
@@ -861,6 +864,9 @@ sub _write_ser {
 
     # Write the c:order element.
     $self->_write_order( $index );
+
+    # Write the c:marker element.
+    $self->_write_marker();
 
     # Write the c:cat element.
     $self->_write_cat( $categories );
@@ -1889,6 +1895,64 @@ sub _write_tx_pr {
     $self->_write_a_p_formula();
 
     $self->{_writer}->endTag( 'c:txPr' );
+}
+
+
+##############################################################################
+#
+# _write_marker()
+#
+# Write the <c:marker> element.
+#
+sub _write_marker {
+
+    my $self  = shift;
+    my $style = $self->{_default_marker};
+
+    return unless $style;
+
+    $self->{_writer}->startTag( 'c:marker' );
+
+    # Write the c:symbol element.
+    $self->_write_symbol( $style );
+
+    $self->{_writer}->endTag( 'c:marker' );
+}
+
+
+##############################################################################
+#
+# _write_marker_value()
+#
+# Write the <c:marker> element without a sub-element.
+#
+sub _write_marker_value {
+
+    my $self  = shift;
+    my $style = $self->{_default_marker};
+
+    return unless $style;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->{_writer}->emptyTag( 'c:marker', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_symbol()
+#
+# Write the <c:symbol> element.
+#
+sub _write_symbol {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:symbol', @attributes );
 }
 
 

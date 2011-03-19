@@ -75,7 +75,7 @@ sub _write_bar_chart {
     $self->_write_bar_dir();
 
     # Write the c:grouping element.
-    $self->_write_grouping();
+    $self->_write_grouping( 'clustered' );
 
     # Write the series elements.
     $self->_write_series();

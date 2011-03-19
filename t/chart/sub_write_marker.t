@@ -26,14 +26,16 @@ my $chart;
 
 ###############################################################################
 #
-# Test the _write_grouping() method.
+# Test the _write_marker() method.
 #
-$caption  = " \tChart: _write_grouping()";
-$expected = '<c:grouping val="clustered" />';
+$caption  = " \tChart: _write_marker()";
+$expected = '<c:marker><c:symbol val="none" /></c:marker>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
-$chart->_write_grouping( 'clustered' );
+$chart->{_default_marker} = 'none';
+
+$chart->_write_marker();
 
 is( $got, $expected, $caption );
 

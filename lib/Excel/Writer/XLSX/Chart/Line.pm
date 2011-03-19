@@ -35,10 +35,50 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_default_marker} = 'none';
+
     bless $self, $class;
     return $self;
 }
 
+
+
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:lineChart element.
+    $self->_write_line_chart();
+}
+
+
+##############################################################################
+#
+# _write_line_chart()
+#
+# Write the <c:lineChart> element.
+#
+sub _write_line_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:lineChart' );
+
+    # Write the c:grouping element.
+    $self->_write_grouping( 'standard' );
+
+    # Write the series elements.
+    $self->_write_series();
+
+
+    $self->{_writer}->endTag( 'c:lineChart' );
+}
 
 
 1;
