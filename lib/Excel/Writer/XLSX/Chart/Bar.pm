@@ -35,6 +35,9 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_cat_axis_position} = 'l';
+    $self->{_val_axis_position} = 'b';
+
     bless $self, $class;
 
     return $self;

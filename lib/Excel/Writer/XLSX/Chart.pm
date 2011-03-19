@@ -72,6 +72,8 @@ sub new {
     $self->{_has_category}      = 0;
     $self->{_requires_category} = 0;
     $self->{_legend_position}   = 'right';
+    $self->{_cat_axis_position} = 'b';
+    $self->{_val_axis_position} = 'l';
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -1023,7 +1025,7 @@ sub _write_cat_axis {
     $self->_write_scaling();
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( 'l' );
+    $self->_write_axis_pos( $self->{_cat_axis_position} );
 
     # Write the axis title elements.
     my $title;
@@ -1077,7 +1079,7 @@ sub _write_val_axis {
     $self->_write_scaling();
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( 'b' );
+    $self->_write_axis_pos( $self->{_val_axis_position} );
 
     # Write the c:majorGridlines element.
     $self->_write_major_gridlines();

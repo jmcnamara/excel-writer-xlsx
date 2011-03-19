@@ -40,6 +40,63 @@ sub new {
 }
 
 
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:barChart element.
+    $self->_write_bar_chart();
+}
+
+
+##############################################################################
+#
+# _write_bar_chart()
+#
+# Write the <c:barChart> element.
+#
+sub _write_bar_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:barChart' );
+
+    # Write the c:barDir element.
+    $self->_write_bar_dir();
+
+    # Write the c:grouping element.
+    $self->_write_grouping();
+
+    # Write the series elements.
+    $self->_write_series();
+
+
+    $self->{_writer}->endTag( 'c:barChart' );
+}
+
+
+##############################################################################
+#
+# _write_bar_dir()
+#
+# Write the <c:barDir> element.
+#
+sub _write_bar_dir {
+
+    my $self = shift;
+    my $val  = 'col';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:barDir', @attributes );
+}
+
 
 1;
 
