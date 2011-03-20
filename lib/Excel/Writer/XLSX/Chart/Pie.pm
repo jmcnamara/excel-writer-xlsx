@@ -42,6 +42,246 @@ sub new {
 }
 
 
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:pieChart element.
+    $self->_write_pie_chart();
+}
+
+
+##############################################################################
+#
+# _write_pie_chart()
+#
+# Write the <c:pieChart> element.
+#
+sub _write_pie_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:pieChart' );
+
+    # Write the c:varyColors element.
+    $self->_write_vary_colors();
+
+    # Write the series elements.
+    $self->_write_series();
+
+   # Write the c:firstSliceAng element.
+    $self->_write_first_slice_ang();
+
+    $self->{_writer}->endTag( 'c:pieChart' );
+}
+
+
+##############################################################################
+#
+# _write_plot_area().
+#
+# Over-ridden method to remove the cat_axis() and val_axis() code since
+# Pie charts don't require those axes.
+#
+# Write the <c:plotArea> element.
+#
+sub _write_plot_area {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:plotArea' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the subclass chart type element.
+    $self->_write_chart_type();
+
+    $self->{_writer}->endTag( 'c:plotArea' );
+}
+
+
+##############################################################################
+#
+# _write_series().
+#
+# Over-ridden method to remove axis_id code since Pie charts  don't require
+# val and cat axes.
+#
+# Write the series elements.
+#
+sub _write_series {
+
+    my $self = shift;
+
+    # Write each series with subelements.
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        $self->_write_ser( $index++, $series->{categories}, $series->{values} );
+    }
+}
+
+
+
+##############################################################################
+#
+# _write_legend().
+#
+# Over-ridden method to add <c:txPr> to legend.
+#
+# Write the <c:legend> element.
+#
+sub _write_legend {
+
+    my $self = shift;
+    my $position = $self->{_legend_position};
+    my $overlay = 0;
+
+    if ($position =~ s/^overlay_//) {
+        $overlay = 1;
+    }
+
+    my %allowed = (
+        right  => 'r',
+        left   => 'l',
+        top    => 't',
+        bottom => 'b',
+    );
+
+    return if $position eq 'none';
+    return unless exists $allowed{$position};
+
+    $position = $allowed{$position};
+
+    $self->{_writer}->startTag( 'c:legend' );
+
+    # Write the c:legendPos element.
+    $self->_write_legend_pos( $position );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the c:overlay element.
+    $self->_write_overlay() if $overlay;
+
+    # Write the c:txPr element. Over-ridden.
+    $self->_write_tx_pr_legend();
+
+    $self->{_writer}->endTag( 'c:legend' );
+}
+
+
+
+##############################################################################
+#
+# _write_tx_pr_legend()
+#
+# Write the <c:txPr> element for legends.
+#
+sub _write_tx_pr_legend {
+
+    my $self  = shift;
+    my $horiz = 0;
+
+    $self->{_writer}->startTag( 'c:txPr' );
+
+    # Write the a:bodyPr element.
+    $self->_write_a_body_pr( $horiz );
+
+    # Write the a:lstStyle element.
+    $self->_write_a_lst_style();
+
+    # Write the a:p element.
+    $self->_write_a_p_legend();
+
+    $self->{_writer}->endTag( 'c:txPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_p_legend()
+#
+# Write the <a:p> element for legends.
+#
+sub _write_a_p_legend {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->startTag( 'a:p' );
+
+    # Write the a:pPr element.
+    $self->_write_a_p_pr_legend();
+
+    # Write the a:endParaRPr element.
+    $self->_write_a_end_para_rpr();
+
+    $self->{_writer}->endTag( 'a:p' );
+}
+
+
+##############################################################################
+#
+# _write_a_p_pr_legend()
+#
+# Write the <a:pPr> element for legends.
+#
+sub _write_a_p_pr_legend {
+
+    my $self = shift;
+    my $rtl  = 0;
+
+    my @attributes = ( 'rtl' => $rtl );
+
+    $self->{_writer}->startTag( 'a:pPr', @attributes );
+
+    # Write the a:defRPr element.
+    $self->_write_a_def_rpr();
+
+    $self->{_writer}->endTag( 'a:pPr' );
+}
+
+
+##############################################################################
+#
+# _write_vary_colors()
+#
+# Write the <c:varyColors> element.
+#
+sub _write_vary_colors {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:varyColors', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_first_slice_ang()
+#
+# Write the <c:firstSliceAng> element.
+#
+sub _write_first_slice_ang {
+
+    my $self = shift;
+    my $val  = 0;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:firstSliceAng', @attributes );
+}
+
 1;
 
 
