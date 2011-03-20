@@ -766,7 +766,6 @@ sub _write_plot_area {
     # Write the c:catAx element.
     $self->_write_val_axis();
 
-
     $self->{_writer}->endTag( 'c:plotArea' );
 }
 
@@ -1022,6 +1021,7 @@ sub _write_axis_id {
 sub _write_cat_axis {
 
     my $self = shift;
+    my $position = shift // $self->{_cat_axis_position};
 
     $self->{_writer}->startTag( 'c:catAx' );
 
@@ -1031,7 +1031,7 @@ sub _write_cat_axis {
     $self->_write_scaling();
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $self->{_cat_axis_position} );
+    $self->_write_axis_pos( $position );
 
     # Write the axis title elements.
     my $title;
@@ -1075,7 +1075,9 @@ sub _write_cat_axis {
 #
 sub _write_val_axis {
 
-    my $self = shift;
+    my $self                 = shift;
+    my $position             = shift // $self->{_val_axis_position};
+    my $hide_major_gridlines = shift;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
@@ -1085,10 +1087,10 @@ sub _write_val_axis {
     $self->_write_scaling();
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $self->{_val_axis_position} );
+    $self->_write_axis_pos( $position );
 
     # Write the c:majorGridlines element.
-    $self->_write_major_gridlines();
+    $self->_write_major_gridlines() if not $hide_major_gridlines;
 
     # Write the axis title elements.
     my $title;

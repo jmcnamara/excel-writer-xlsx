@@ -35,8 +35,231 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_cross_between} = 'midCat';
+
     bless $self, $class;
     return $self;
+}
+
+
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:scatterChart element.
+    $self->_write_scatter_chart();
+}
+
+
+##############################################################################
+#
+# _write_scatter_chart()
+#
+# Write the <c:scatterChart> element.
+#
+sub _write_scatter_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:scatterChart' );
+
+    # Write the c:scatterStyle element.
+    $self->_write_scatter_style();
+
+    # Write the series elements.
+    $self->_write_series();
+
+
+    $self->{_writer}->endTag( 'c:scatterChart' );
+}
+
+
+##############################################################################
+#
+# _write_ser()
+#
+# Over-ridden to write c:xVal/c:yVal instead of c:cat/c:val elements.
+#
+# Write the <c:ser> element.
+#
+sub _write_ser {
+
+    my $self       = shift;
+    my $index      = shift;
+    my $categories = shift;
+    my $values     = shift;
+
+    $self->{_writer}->startTag( 'c:ser' );
+
+    # Write the c:idx element.
+    $self->_write_idx( $index );
+
+    # Write the c:order element.
+    $self->_write_order( $index );
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr();
+
+    # Write the c:marker element.
+    $self->_write_marker();
+
+    # Write the c:xVal element.
+    $self->_write_x_val( $categories );
+
+    # Write the c:yVal element.
+    $self->_write_y_val( $values );
+
+
+    $self->{_writer}->endTag( 'c:ser' );
+}
+
+
+##############################################################################
+#
+# _write_plot_area()
+#
+# Over-ridden to have 2 valAx elements for scatter charts instead of
+# catAx/valAx.
+#
+# Write the <c:plotArea> element.
+#
+sub _write_plot_area {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:plotArea' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the subclass chart type element.
+    $self->_write_chart_type();
+
+    # Write the c:catAx element.
+    $self->_write_val_axis( 'b', 1 );
+
+    # Write the c:catAx element.
+    $self->_write_val_axis( 'l' );
+
+    $self->{_writer}->endTag( 'c:plotArea' );
+}
+
+
+##############################################################################
+#
+# _write_x_val()
+#
+# Write the <c:xVal> element.
+#
+sub _write_x_val {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->{_writer}->startTag( 'c:xVal' );
+
+    # Write the c:numRef element.
+    $self->_write_num_ref( $formula );
+
+    $self->{_writer}->endTag( 'c:xVal' );
+}
+
+
+##############################################################################
+#
+# _write_y_val()
+#
+# Write the <c:yVal> element.
+#
+sub _write_y_val {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->{_writer}->startTag( 'c:yVal' );
+
+    # Write the c:numRef element.
+    $self->_write_num_ref( $formula );
+
+    $self->{_writer}->endTag( 'c:yVal' );
+}
+
+
+##############################################################################
+#
+# _write_scatter_style()
+#
+# Write the <c:scatterStyle> element.
+#
+sub _write_scatter_style {
+
+    my $self = shift;
+    my $val  = 'lineMarker';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:scatterStyle', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_sp_pr()
+#
+# Write the <c:spPr> element.
+#
+sub _write_sp_pr {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:spPr' );
+
+    # Write the a:ln element.
+    $self->_write_a_ln();
+
+    $self->{_writer}->endTag( 'c:spPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_ln()
+#
+# Write the <a:ln> element.
+#
+sub _write_a_ln {
+
+    my $self = shift;
+    my $w    = 28575;
+
+    my @attributes = ( 'w' => $w );
+
+    $self->{_writer}->startTag( 'a:ln', @attributes );
+
+    # Write the a:noFill element.
+    $self->_write_a_no_fill();
+
+    $self->{_writer}->endTag( 'a:ln' );
+}
+
+
+##############################################################################
+#
+# _write_a_no_fill()
+#
+# Write the <a:noFill> element.
+#
+sub _write_a_no_fill {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:noFill' );
 }
 
 
