@@ -208,61 +208,6 @@ sub _write_scatter_style {
 }
 
 
-##############################################################################
-#
-# _write_sp_pr()
-#
-# Write the <c:spPr> element.
-#
-sub _write_sp_pr {
-
-    my $self = shift;
-
-    $self->{_writer}->startTag( 'c:spPr' );
-
-    # Write the a:ln element.
-    $self->_write_a_ln();
-
-    $self->{_writer}->endTag( 'c:spPr' );
-}
-
-
-##############################################################################
-#
-# _write_a_ln()
-#
-# Write the <a:ln> element.
-#
-sub _write_a_ln {
-
-    my $self = shift;
-    my $w    = 28575;
-
-    my @attributes = ( 'w' => $w );
-
-    $self->{_writer}->startTag( 'a:ln', @attributes );
-
-    # Write the a:noFill element.
-    $self->_write_a_no_fill();
-
-    $self->{_writer}->endTag( 'a:ln' );
-}
-
-
-##############################################################################
-#
-# _write_a_no_fill()
-#
-# Write the <a:noFill> element.
-#
-sub _write_a_no_fill {
-
-    my $self = shift;
-
-    $self->{_writer}->emptyTag( 'a:noFill' );
-}
-
-
 1;
 
 

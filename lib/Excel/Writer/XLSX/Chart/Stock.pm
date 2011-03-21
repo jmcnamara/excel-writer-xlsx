@@ -35,8 +35,145 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_default_marker} = 'none';
+
     bless $self, $class;
     return $self;
+}
+
+
+##############################################################################
+#
+# _write_chart_type()
+#
+# Override the virtual superclass method with a chart specific method.
+#
+sub _write_chart_type {
+
+    my $self = shift;
+
+    # Write the c:stockChart element.
+    $self->_write_stock_chart();
+}
+
+
+##############################################################################
+#
+# _write_stock_chart()
+#
+# Write the <c:stockChart> element.
+#
+sub _write_stock_chart {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:stockChart' );
+
+    # Write the series elements.
+    $self->_write_series();
+
+    $self->{_writer}->endTag( 'c:stockChart' );
+}
+
+
+##############################################################################
+#
+# _write_series()
+#
+# Over-ridden to add hi_low_lines(). TODO. Refactor up into the SUPER class.
+#
+# Write the series elements.
+#
+sub _write_series {
+
+    my $self = shift;
+
+    # Write each series with subelements.
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        if ( $index == 2 ) {
+            $self->{_default_marker} = 'dot';
+        }
+
+        $self->_write_ser( $index++, $series->{categories}, $series->{values} );
+    }
+
+    # Write the c:hiLowLines element.
+    $self->_write_hi_low_lines();
+
+    # Generate the axis ids.
+    $self->_add_axis_id();
+    $self->_add_axis_id();
+
+    # Write the c:axId element.
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+}
+
+
+
+##############################################################################
+#
+# _write_ser()
+#
+# Write the <c:ser> element.
+#
+sub _write_ser {
+
+    my $self       = shift;
+    my $index      = shift;
+    my $categories = shift;
+    my $values     = shift;
+
+    $self->{_writer}->startTag( 'c:ser' );
+
+    # Write the c:idx element.
+    $self->_write_idx( $index );
+
+    # Write the c:order element.
+    $self->_write_order( $index );
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr();
+
+    # Write the c:marker element.
+    $self->_write_marker( );
+
+    # Write the c:cat element.
+    $self->_write_cat( $categories );
+
+    # Write the c:val element.
+    $self->_write_val( $values );
+
+    $self->{_writer}->endTag( 'c:ser' );
+}
+
+
+##############################################################################
+#
+# _write_plot_area()
+#
+# Write the <c:plotArea> element.
+#
+sub _write_plot_area {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:plotArea' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the subclass chart type element.
+    $self->_write_chart_type();
+
+    # Write the c:dateAx element.
+    $self->_write_date_axis();
+
+    # Write the c:catAx element.
+    $self->_write_val_axis();
+
+    $self->{_writer}->endTag( 'c:plotArea' );
 }
 
 

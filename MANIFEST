@@ -108,6 +108,9 @@ t/chart/sub_write_layout.t
 t/chart/sub_write_legend.t
 t/chart/sub_write_legend_pos.t
 t/chart/sub_write_major_gridlines.t
+t/chart/sub_write_marker.t
+t/chart/sub_write_marker_size.t
+t/chart/sub_write_marker_value.t
 t/chart/sub_write_num_fmt.t
 t/chart/sub_write_number_format.t
 t/chart/sub_write_order.t
@@ -116,6 +119,8 @@ t/chart/sub_write_page_margins.t
 t/chart/sub_write_page_setup.t
 t/chart/sub_write_plot_vis_only.t
 t/chart/sub_write_series_formula.t
+t/chart/sub_write_style.t
+t/chart/sub_write_symbol.t
 t/chart/sub_write_tick_lbl_pos.t
 t/chart/sub_write_xml_declaration.t
 t/drawing/drawing_chart_01.t
@@ -184,6 +189,7 @@ t/regression/autofilter03.t
 t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
+t/regression/chart_area01.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -191,6 +197,12 @@ t/regression/chart_bar04.t
 t/regression/chart_bar05.t
 t/regression/chart_bar06.t
 t/regression/chart_bar07.t
+t/regression/chart_column01.t
+t/regression/chart_line01.t
+t/regression/chart_pie01.t
+t/regression/chart_scatter01.t
+t/regression/chart_stock01.t
+t/regression/chart_stock01.xlsx
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -276,6 +288,7 @@ t/regression/xlsx_files/autofilter03.xlsx
 t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
+t/regression/xlsx_files/chart_area01.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -283,6 +296,11 @@ t/regression/xlsx_files/chart_bar04.xlsx
 t/regression/xlsx_files/chart_bar05.xlsx
 t/regression/xlsx_files/chart_bar06.xlsx
 t/regression/xlsx_files/chart_bar07.xlsx
+t/regression/xlsx_files/chart_column01.xlsx
+t/regression/xlsx_files/chart_line01.xlsx
+t/regression/xlsx_files/chart_pie01.xlsx
+t/regression/xlsx_files/chart_scatter01.xlsx
+t/regression/xlsx_files/chart_stock01.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx

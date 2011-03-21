@@ -1122,6 +1122,58 @@ sub _write_val_axis {
 
 ##############################################################################
 #
+# _write_date_axis()
+#
+# Write the <c:dateAx> element.
+#
+sub _write_date_axis {
+
+    my $self = shift;
+    my $position = shift // $self->{_cat_axis_position};
+
+    $self->{_writer}->startTag( 'c:dateAx' );
+
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+
+    # Write the c:scaling element.
+    $self->_write_scaling();
+
+    # Write the c:axPos element.
+    $self->_write_axis_pos( $position );
+
+    # Write the axis title elements.
+    my $title;
+    if ( $title = $self->{_y_axis_formula} ) {
+        $self->_write_title_formula( $title, 1 );
+    }
+    elsif ( $title = $self->{_y_axis_name} ) {
+        $self->_write_title_rich( $title, 1 );
+    }
+
+    # Write the c:numFmt element.
+    $self->_write_num_fmt( 'dd/mm/yyyy' );
+
+    # Write the c:tickLblPos element.
+    $self->_write_tick_label_pos( 'nextTo' );
+
+    # Write the c:crossAx element.
+    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
+
+    # Write the c:crosses element.
+    $self->_write_crosses( 'autoZero' );
+
+    # Write the c:auto element.
+    $self->_write_auto( 1 );
+
+    # Write the c:labelOffset element.
+    $self->_write_label_offset( 100 );
+
+    $self->{_writer}->endTag( 'c:dateAx' );
+}
+
+
+##############################################################################
+#
 # _write_scaling()
 #
 # Write the <c:scaling> element.
@@ -1182,7 +1234,7 @@ sub _write_axis_pos {
 sub _write_num_fmt {
 
     my $self          = shift;
-    my $format_code   = 'General';
+    my $format_code   = shift // 'General';
     my $source_linked = 1;
 
     # These elements are only required for charts with categories.
@@ -1909,7 +1961,7 @@ sub _write_tx_pr {
 sub _write_marker {
 
     my $self  = shift;
-    my $style = $self->{_default_marker};
+    my $style = shift // $self->{_default_marker};
 
     return unless $style;
 
@@ -1917,6 +1969,9 @@ sub _write_marker {
 
     # Write the c:symbol element.
     $self->_write_symbol( $style );
+
+    # Write the c:size element.
+    $self->_write_marker_size( 3 ) if $style eq 'dot';
 
     $self->{_writer}->endTag( 'c:marker' );
 }
@@ -1943,6 +1998,23 @@ sub _write_marker_value {
 
 ##############################################################################
 #
+# _write_marker_size()
+#
+# Write the <c:size> element.
+#
+sub _write_marker_size {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:size', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_symbol()
 #
 # Write the <c:symbol> element.
@@ -1955,6 +2027,75 @@ sub _write_symbol {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:symbol', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_sp_pr()
+#
+# Write the <c:spPr> element.
+#
+sub _write_sp_pr {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'c:spPr' );
+
+    # Write the a:ln element.
+    $self->_write_a_ln();
+
+    $self->{_writer}->endTag( 'c:spPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_ln()
+#
+# Write the <a:ln> element.
+#
+sub _write_a_ln {
+
+    my $self = shift;
+    my $w    = 28575;
+
+    my @attributes = ( 'w' => $w );
+
+    $self->{_writer}->startTag( 'a:ln', @attributes );
+
+    # Write the a:noFill element.
+    $self->_write_a_no_fill();
+
+    $self->{_writer}->endTag( 'a:ln' );
+}
+
+
+##############################################################################
+#
+# _write_a_no_fill()
+#
+# Write the <a:noFill> element.
+#
+sub _write_a_no_fill {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:noFill' );
+}
+
+
+##############################################################################
+#
+# _write_hi_low_lines()
+#
+# Write the <c:hiLowLines> element.
+#
+sub _write_hi_low_lines {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'c:hiLowLines' );
 }
 
 
