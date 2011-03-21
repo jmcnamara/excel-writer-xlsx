@@ -142,7 +142,7 @@ sub _write_plot_area {
     $self->_write_chart_type();
 
     # Write the c:catAx element.
-    $self->_write_val_axis( 'b', 1 );
+    $self->_write_val_axis( 'b', 1, 0, 1 );
 
     # Write the c:catAx element.
     $self->_write_val_axis( 'l' );

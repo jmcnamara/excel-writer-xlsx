@@ -35,9 +35,6 @@ my $ignore_elements = {
         '<c:v>',
         '</c:pt>',
         '</c:numCache>',
-
-        '<c:axId',
-        '<c:crossAx',
     ],
 
 };

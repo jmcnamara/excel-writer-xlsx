@@ -1073,15 +1073,19 @@ sub _write_cat_axis {
 #
 # Write the <c:valAx> element.
 #
+# TODO. Maybe should have a _write_cat_val_axis() method as well for scatter.
+#
 sub _write_val_axis {
 
     my $self                 = shift;
     my $position             = shift // $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
+    my $axis_1_id            = shift // 1;
+    my $axis_2_id            = shift // 0;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+    $self->_write_axis_id( $self->{_axis_ids}->[$axis_1_id] );
 
     # Write the c:scaling element.
     $self->_write_scaling();
@@ -1108,7 +1112,7 @@ sub _write_val_axis {
     $self->_write_tick_label_pos( 'nextTo' );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[0] );
+    $self->_write_cross_axis( $self->{_axis_ids}->[$axis_2_id] );
 
     # Write the c:crosses element.
     $self->_write_crosses( 'autoZero' );
