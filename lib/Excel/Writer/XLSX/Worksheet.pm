@@ -156,12 +156,13 @@ sub new {
     $self->{_row_sizes}   = {};
     $self->{_col_formats} = {};
 
-    $self->{_hlink_count}    = 0;
-    $self->{_hlink_refs}     = [];
-    $self->{_external_links} = [];
-    $self->{_drawing_links}  = [];
-    $self->{_charts}         = [];
-    $self->{_drawing}        = 0;
+    $self->{_hlink_count}     = 0;
+    $self->{_hlink_refs}      = [];
+    $self->{_external_hlinks} = [];
+    $self->{_external_dlinks} = [];
+    $self->{_drawing_links}   = [];
+    $self->{_charts}          = [];
+    $self->{_drawing}         = 0;
 
     $self->{_rstring} = '';
 
@@ -3490,7 +3491,7 @@ sub _prepare_chart {
         $drawing->_set_dimensions( @dimensions );
         $self->{_drawing} = $drawing;
 
-        push @{ $self->{_external_links} },
+        push @{ $self->{_external_dlinks} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
@@ -4231,7 +4232,7 @@ sub _write_cell {
                 ++$self->{_hlink_count}, $cell->[5], $cell->[6]
               ];
 
-            push @{ $self->{_external_links} },
+            push @{ $self->{_external_hlinks} },
               [ '/hyperlink', $cell->[4], 'External' ];
         }
         elsif ( $link_type ) {
@@ -5311,7 +5312,7 @@ sub _write_drawings {
 
     return unless $self->{_drawing};
 
-    $self->_write_drawing( 1 );
+    $self->_write_drawing( $self->{_hlink_count} + 1 );
 }
 
 

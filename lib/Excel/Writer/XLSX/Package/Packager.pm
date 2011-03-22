@@ -478,7 +478,11 @@ sub _write_worksheet_rels_files {
     my $index = 0;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
         $index++;
-        next unless @{ $worksheet->{_external_links} };
+
+        my @external_links = (@{ $worksheet->{_external_hlinks} },
+          @{ $worksheet->{_external_dlinks} });
+
+        next unless @external_links;
 
         # Create the worksheet .rels dir if required.
         if ( !$existing_rels_dir ) {
@@ -490,7 +494,7 @@ sub _write_worksheet_rels_files {
 
         my $rels = Excel::Writer::XLSX::Package::Relationships->new();
 
-        for my $link_data ( @{ $worksheet->{_external_links} } ) {
+        for my $link_data ( @external_links ) {
             $rels->_add_worksheet_relationship( @$link_data );
         }
 

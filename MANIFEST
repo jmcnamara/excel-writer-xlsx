@@ -197,12 +197,15 @@ t/regression/chart_bar04.t
 t/regression/chart_bar05.t
 t/regression/chart_bar06.t
 t/regression/chart_bar07.t
+t/regression/chart_bar08.t
+t/regression/chart_bar09.t
+t/regression/chart_bar10.t
+t/regression/chart_bar11.t
 t/regression/chart_column01.t
 t/regression/chart_line01.t
 t/regression/chart_pie01.t
 t/regression/chart_scatter01.t
 t/regression/chart_stock01.t
-t/regression/chart_stock01.xlsx
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -296,6 +299,10 @@ t/regression/xlsx_files/chart_bar04.xlsx
 t/regression/xlsx_files/chart_bar05.xlsx
 t/regression/xlsx_files/chart_bar06.xlsx
 t/regression/xlsx_files/chart_bar07.xlsx
+t/regression/xlsx_files/chart_bar08.xlsx
+t/regression/xlsx_files/chart_bar09.xlsx
+t/regression/xlsx_files/chart_bar10.xlsx
+t/regression/xlsx_files/chart_bar11.xlsx
 t/regression/xlsx_files/chart_column01.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
