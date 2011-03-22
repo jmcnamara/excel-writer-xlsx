@@ -62,6 +62,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
+    $self->{_subtype}           = shift;
     $self->{_sheet_type}        = 0x0200;
     $self->{_orientation}       = 0x0;
     $self->{_series}            = [];
@@ -1252,6 +1253,7 @@ sub _write_num_fmt {
     $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
 }
 
+
 ##############################################################################
 #
 # _write_tick_label_pos()
@@ -1373,6 +1375,8 @@ sub _write_major_gridlines {
 # _write_number_format()
 #
 # Write the <c:numberFormat> element.
+#
+# TODO. Merge/replace with _write_num_fmt().
 #
 sub _write_number_format {
 
@@ -2105,6 +2109,22 @@ sub _write_hi_low_lines {
 
 1;
 
+
+##############################################################################
+#
+# _write_overlap()
+#
+# Write the <c:overlap> element.
+#
+sub _write_overlap {
+
+    my $self = shift;
+    my $val  = 100;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:overlap', @attributes );
+}
 
 __END__
 

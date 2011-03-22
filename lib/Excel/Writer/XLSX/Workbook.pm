@@ -320,7 +320,7 @@ sub add_chart {
     my @init_data = (); # TODO for non-embedded charts.
 
 
-    my $chart = Excel::Writer::XLSX::Chart->factory( $type );
+    my $chart = Excel::Writer::XLSX::Chart->factory( $type, $arg{subtype} );
 
     # Get an incremental id to use for axes ids.
     my $chart_index = scalar @{ $self->{_charts} };
