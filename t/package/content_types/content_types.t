@@ -29,7 +29,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::ContentTypes' );
 #
 $caption = " \tContentTypes: _assemble_xml_file()";
 
-$obj->_add_sheet_name( 'sheet1' );
+$obj->_add_worksheet_name( 'sheet1' );
 $obj->_add_default( 'jpeg', 'image/jpeg' );
 $obj->_add_shared_strings();
 $obj->_add_calc_chain();

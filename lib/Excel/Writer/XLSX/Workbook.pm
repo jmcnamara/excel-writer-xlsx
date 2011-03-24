@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
-# Worksheet - A writer class for Excel Worksheets.
+# Workbook - A writer class for Excel Workbooks.
 #
 #
 # Used in conjunction with Excel::Writer::XLSX
@@ -22,6 +22,7 @@ use IO::File;
 use File::Temp 'tempdir';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
+use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Chart;
 use Excel::Writer::XLSX::Package::Packager;
@@ -282,8 +283,9 @@ sub add_worksheet {
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
-    $self->{_worksheets}->[$index] = $worksheet;    # Store ref for iterator
-    $self->{_sheetnames}->[$index] = $name;         # Store EXTERNSHEET names
+    $self->{_worksheets}->[$index] = $worksheet;
+    $self->{_sheetnames}->[$index] = $name;
+
     return $worksheet;
 }
 
@@ -294,7 +296,6 @@ sub add_worksheet {
 # add_chart( %args )
 #
 # Create a chart for embedding or as as new sheet.
-#
 #
 sub add_chart {
 
@@ -310,14 +311,28 @@ sub add_chart {
     }
 
     # Ensure that the chart defaults to non embedded.
-    my $embedded = $arg{embedded} ||= 0;
+    my $embedded = $arg{embedded} // 0;
 
     # Check the worksheet name for non-embedded charts.
     if ( !$embedded ) {
         $name = $self->_check_sheetname( $arg{name}, 1 );
     }
 
-    my @init_data = (); # TODO for non-embedded charts.
+
+    my @init_data = (
+        $name,
+        $index,
+
+        \$self->{_activesheet},
+        \$self->{_firstsheet},
+
+        \$self->{_str_total},
+        \$self->{_str_unique},
+        \$self->{_str_table},
+
+        $self->{_1904},
+        $self->{_palette},
+    );
 
 
     my $chart = Excel::Writer::XLSX::Chart->factory( $type, $arg{subtype} );
@@ -328,8 +343,15 @@ sub add_chart {
 
     # If the chart isn't embedded let the workbook control it.
     if ( !$embedded ) {
-        $self->{_worksheets}->[$index] = $chart;    # Store ref for iterator
-        $self->{_sheetnames}->[$index] = $name;     # Store EXTERNSHEET names
+        my $chartsheet = Excel::Writer::XLSX::Chartsheet->new( @init_data );
+        $chartsheet->{_chart} = $chart;
+
+        $self->{_worksheets}->[$index] = $chartsheet;
+        $self->{_sheetnames}->[$index] = $name;
+
+        push @{ $self->{_charts} }, $chart;
+
+        return $chartsheet;
     }
     else {
 
@@ -339,9 +361,9 @@ sub add_chart {
         $chart->_set_embedded_config_data();
         push @{ $self->{_charts} }, $chart;
 
+        return $chart;
     }
 
-    return $chart;
 }
 
 

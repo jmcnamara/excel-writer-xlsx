@@ -103,12 +103,15 @@ sub _add_part_name {
 #
 # _add_heading_pair()
 #
-# Add the name of a workbook Heading Pair such as 'Worksheets' or 'Named Ranges'.
+# Add the name of a workbook Heading Pair such as 'Worksheets', 'Charts' or
+# 'Named Ranges'.
 #
 sub _add_heading_pair {
 
     my $self         = shift;
     my $heading_pair = shift;
+
+    return unless $heading_pair->[1];  # Ignore empty pairs such as chartsheets.
 
     my @vector = (
         [ 'lpstr', $heading_pair->[0] ],    # Data name

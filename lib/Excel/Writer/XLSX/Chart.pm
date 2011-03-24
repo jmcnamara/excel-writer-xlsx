@@ -110,7 +110,7 @@ sub _assemble_xml_file {
     $self->_write_chart();
 
     # Write the c:printSettings element.
-    $self->_write_print_settings();
+    $self->_write_print_settings() if $self->{_embedded};;
 
     # Close the worksheet tag.
     $self->{_writer}->endTag( 'c:chartSpace' );

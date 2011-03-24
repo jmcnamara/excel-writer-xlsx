@@ -48,13 +48,14 @@ sub new {
     my $class = shift;
 
     my $self = {
-        _package_dir   => '',
-        _workbook      => undef,
-        _sheet_names   => [],
-        _sheet_count   => 0,
-        _chart_count   => 0,
-        _drawing_count => 0,
-        _named_ranges  => [],
+        _package_dir      => '',
+        _workbook         => undef,
+        _sheet_names      => [],
+        _worksheet_count  => 0,
+        _chartsheet_count => 0,
+        _chart_count      => 0,
+        _drawing_count    => 0,
+        _named_ranges     => [],
     };
 
 
@@ -92,10 +93,18 @@ sub _add_workbook {
 
     $self->{_workbook}      = $workbook;
     $self->{_sheet_names}   = \@sheet_names;
-    $self->{_sheet_count}   = scalar @sheet_names;
     $self->{_chart_count}   = scalar @{ $workbook->{_charts} };
     $self->{_drawing_count} = scalar @{ $workbook->{_drawings} };
     $self->{_named_ranges}  = $workbook->{_named_ranges};
+
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        if ( $worksheet->{_is_chartsheet} ) {
+            $self->{_chartsheet_count}++;
+        }
+        else {
+            $self->{_worksheet_count}++;
+        }
+    }
 }
 
 
@@ -111,6 +120,7 @@ sub _create_package {
 
     $self->_write_workbook_file();
     $self->_write_worksheet_files();
+    $self->_write_chartsheet_files();
     $self->_write_chart_files();
     $self->_write_drawing_files();
     $self->_write_shared_strings_file();
@@ -122,6 +132,7 @@ sub _create_package {
     $self->_write_root_rels_file();
     $self->_write_workbook_rels_file();
     $self->_write_worksheet_rels_files();
+    $self->_write_chartsheet_rels_files();
     $self->_write_drawing_rels_files();
 }
 
@@ -161,8 +172,36 @@ sub _write_worksheet_files {
 
     my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next if $worksheet->{_is_chartsheet};
+
         $worksheet->_set_xml_writer(
             $dir . '/xl/worksheets/sheet' . $index++ . '.xml' );
+        $worksheet->_assemble_xml_file();
+
+    }
+}
+
+
+###############################################################################
+#
+# _write_chartsheet_files()
+#
+# Write the chartsheet files.
+#
+sub _write_chartsheet_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/chartsheets';
+
+    my $index = 1;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next unless $worksheet->{_is_chartsheet};
+
+        $worksheet->_set_xml_writer(
+            $dir . '/xl/chartsheets/sheet' . $index++ . '.xml' );
         $worksheet->_assemble_xml_file();
 
     }
@@ -265,13 +304,15 @@ sub _write_app_file {
     mkdir $dir . '/docProps';
 
     # Add the Worksheet heading pairs.
-    $app->_add_heading_pair( [ 'Worksheets', $self->{_sheet_count} ] );
+    $app->_add_heading_pair( [ 'Worksheets', $self->{_worksheet_count} ] );
+
+    # Add the Chartsheet heading pairs.
+    $app->_add_heading_pair( [ 'Charts', $self->{_chartsheet_count} ] );
 
     # Add the Worksheet parts.
     for my $sheet_name ( @{ $self->{_sheet_names} } ) {
         $app->_add_part_name( $sheet_name );
     }
-
 
     # Add the Named Range heading pairs.
     if ( my $range_count = scalar @{ $self->{_named_ranges} } ) {
@@ -324,8 +365,15 @@ sub _write_content_types_file {
     my $dir     = $self->{_package_dir};
     my $content = Excel::Writer::XLSX::Package::ContentTypes->new();
 
-    for my $i ( 1 .. $self->{_sheet_count} ) {
-        $content->_add_sheet_name( 'sheet' . $i );
+    my $worksheet_index  = 1;
+    my $chartsheet_index = 1;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        if ( $worksheet->{_is_chartsheet} ) {
+            $content->_add_chartsheet_name( 'sheet' . $chartsheet_index++ );
+        }
+        else {
+            $content->_add_worksheet_name( 'sheet' . $worksheet_index++ );
+        }
     }
 
     for my $i ( 1 .. $self->{_chart_count} ) {
@@ -443,9 +491,18 @@ sub _write_workbook_rels_file {
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/_rels';
 
-    for my $index ( 1 .. $self->{_sheet_count} ) {
-        $rels->_add_document_relationship( '/worksheet',
-            'worksheets/sheet' . $index );
+    my $worksheet_index  = 1;
+    my $chartsheet_index = 1;
+
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        if ( $worksheet->{_is_chartsheet} ) {
+            $rels->_add_document_relationship( '/chartsheet',
+                'chartsheets/sheet' . $chartsheet_index++ );
+        }
+        else {
+            $rels->_add_document_relationship( '/worksheet',
+                'worksheets/sheet' . $worksheet_index++ );
+        }
     }
 
     $rels->_add_document_relationship( '/theme',  'theme/theme1' );
@@ -477,6 +534,9 @@ sub _write_worksheet_rels_files {
 
     my $index = 0;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+
+        next if $worksheet->{_is_chartsheet};
+
         $index++;
 
         my @external_links = (@{ $worksheet->{_external_hlinks} },
@@ -501,6 +561,52 @@ sub _write_worksheet_rels_files {
         # Create the .rels file such as /xl/worksheets/_rels/sheet1.xml.rels.
         $rels->_set_xml_writer(
             $dir . '/xl/worksheets/_rels/sheet' . $index . '.xml.rels' );
+        $rels->_assemble_xml_file();
+    }
+}
+
+
+###############################################################################
+#
+# _write_chartsheet_rels_files()
+#
+# Write the chartsheet .rels files for links to drawing files.
+#
+sub _write_chartsheet_rels_files {
+
+    my $self              = shift;
+    my $dir               = $self->{_package_dir};
+    my $existing_rels_dir = 0;
+
+
+    my $index = 0;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+
+        next unless $worksheet->{_is_chartsheet};
+
+        $index++;
+
+        my @external_links = @{ $worksheet->{_external_dlinks} };
+
+        next unless @external_links;
+
+        # Create the chartsheet .rels dir if required.
+        if ( !$existing_rels_dir ) {
+            mkdir $dir . '/xl';
+            mkdir $dir . '/xl/chartsheets';
+            mkdir $dir . '/xl/chartsheets/_rels';
+            $existing_rels_dir = 1;
+        }
+
+        my $rels = Excel::Writer::XLSX::Package::Relationships->new();
+
+        for my $link_data ( @external_links ) {
+            $rels->_add_worksheet_relationship( @$link_data );
+        }
+
+        # Create the .rels file such as /xl/chartsheets/_rels/sheet1.xml.rels.
+        $rels->_set_xml_writer(
+            $dir . '/xl/chartsheets/_rels/sheet' . $index . '.xml.rels' );
         $rels->_assemble_xml_file();
     }
 }
