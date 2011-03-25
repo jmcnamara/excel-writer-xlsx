@@ -127,11 +127,14 @@ t/chart/sub_write_xml_declaration.t
 t/chartsheet/chartsheet01.t
 t/chartsheet/sub_write_xml_declaration.t
 t/drawing/drawing_chart_01.t
+t/drawing/sub_write_a_graphic_frame_locks.t
 t/drawing/sub_write_c_chart.t
 t/drawing/sub_write_c_nv_graphic_frame_pr.t
 t/drawing/sub_write_c_nv_pr.t
 t/drawing/sub_write_col.t
 t/drawing/sub_write_col_off.t
+t/drawing/sub_write_ext.t
+t/drawing/sub_write_pos.t
 t/drawing/sub_write_row.t
 t/drawing/sub_write_row_off.t
 t/drawing/sub_write_xfrm_extension.t
@@ -205,6 +208,9 @@ t/regression/chart_bar09.t
 t/regression/chart_bar10.t
 t/regression/chart_bar11.t
 t/regression/chart_bar12.t
+t/regression/chart_bar13.t
+t/regression/chart_bar14.t
+t/regression/chart_bar15.t
 t/regression/chart_column01.t
 t/regression/chart_line01.t
 t/regression/chart_pie01.t
@@ -308,6 +314,9 @@ t/regression/xlsx_files/chart_bar09.xlsx
 t/regression/xlsx_files/chart_bar10.xlsx
 t/regression/xlsx_files/chart_bar11.xlsx
 t/regression/xlsx_files/chart_bar12.xlsx
+t/regression/xlsx_files/chart_bar13.xlsx
+t/regression/xlsx_files/chart_bar14.xlsx
+t/regression/xlsx_files/chart_bar15.xlsx
 t/regression/xlsx_files/chart_column01.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx

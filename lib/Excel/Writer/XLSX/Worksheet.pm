@@ -3489,6 +3489,8 @@ sub _prepare_chart {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
         $drawing->_set_dimensions( @dimensions );
+        $drawing->{_embedded} = 1;
+
         $self->{_drawing} = $drawing;
 
         push @{ $self->{_external_dlinks} },

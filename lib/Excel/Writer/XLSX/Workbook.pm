@@ -343,8 +343,12 @@ sub add_chart {
 
     # If the chart isn't embedded let the workbook control it.
     if ( !$embedded ) {
+
+        my $drawing    = Excel::Writer::XLSX::Drawing->new();
         my $chartsheet = Excel::Writer::XLSX::Chartsheet->new( @init_data );
-        $chartsheet->{_chart} = $chart;
+
+        $chartsheet->{_chart}   = $chart;
+        $chartsheet->{_drawing} = $drawing;
 
         $self->{_worksheets}->[$index] = $chartsheet;
         $self->{_sheetnames}->[$index] = $name;

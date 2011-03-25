@@ -43,6 +43,8 @@ sub new {
 
     $self->{_writer}   = undef;
     $self->{_drawings} = [];
+    $self->{_embedded} = 0;
+
 
     bless $self, $class;
 
@@ -67,11 +69,21 @@ sub _assemble_xml_file {
     # Write the xdr:wsDr element.
     $self->_write_drawing_workspace();
 
-    my $index = 0;
-    for my $dimensions ( @{ $self->{_drawings} } ) {
+    if ( $self->{_embedded} ) {
 
-        # Write the xdr:twoCellAnchor element.
-        $self->_write_two_cell_anchor( ++$index, @$dimensions );
+        my $index = 0;
+        for my $dimensions ( @{ $self->{_drawings} } ) {
+
+            # Write the xdr:twoCellAnchor element.
+            $self->_write_two_cell_anchor( ++$index, @$dimensions );
+        }
+
+    }
+    else {
+        my $index = 0;
+
+        # Write the xdr:absoluteAnchor element.
+        $self->_write_absolute_anchor( ++$index );
     }
 
     $self->{_writer}->endTag( 'xdr:wsDr' );
@@ -178,6 +190,35 @@ sub _write_two_cell_anchor {
     $self->_write_client_data();
 
     $self->{_writer}->endTag( 'xdr:twoCellAnchor' );
+}
+
+
+##############################################################################
+#
+# _write_absolute_anchor()
+#
+# Write the <xdr:absoluteAnchor> element.
+#
+sub _write_absolute_anchor {
+
+    my $self  = shift;
+    my $index = shift;
+
+    $self->{_writer}->startTag( 'xdr:absoluteAnchor' );
+
+    # Write the xdr:pos element.
+    $self->_write_pos( 0, 0 );
+
+    # Write the xdr:ext element.
+    $self->_write_ext( 9308969, 6078325 );
+
+    # Write the xdr:graphicFrame element.
+    $self->_write_graphic_frame( $index );
+
+    # Write the xdr:clientData element.
+    $self->_write_client_data();
+
+    $self->{_writer}->endTag( 'xdr:absoluteAnchor' );
 }
 
 
@@ -307,6 +348,48 @@ sub _write_row_off {
 
 ##############################################################################
 #
+# _write_pos()
+#
+# Write the <xdr:pos> element.
+#
+sub _write_pos {
+
+    my $self = shift;
+    my $x    = shift;
+    my $y    = shift;
+
+    my @attributes = (
+        'x' => $x,
+        'y' => $y,
+    );
+
+    $self->{_writer}->emptyTag( 'xdr:pos', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_ext()
+#
+# Write the <xdr:ext> element.
+#
+sub _write_ext {
+
+    my $self = shift;
+    my $cx   = shift;
+    my $cy   = shift;
+
+    my @attributes = (
+        'cx' => $cx,
+        'cy' => $cy,
+    );
+
+    $self->{_writer}->emptyTag( 'xdr:ext', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_graphic_frame()
 #
 # Write the <xdr:graphicFrame> element.
@@ -388,7 +471,34 @@ sub _write_c_nv_graphic_frame_pr {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'xdr:cNvGraphicFramePr' );
+    if ( $self->{_embedded} ) {
+        $self->{_writer}->emptyTag( 'xdr:cNvGraphicFramePr' );
+    }
+    else {
+        $self->{_writer}->startTag( 'xdr:cNvGraphicFramePr' );
+
+        # Write the a:graphicFrameLocks element.
+        $self->_write_a_graphic_frame_locks();
+
+        $self->{_writer}->endTag( 'xdr:cNvGraphicFramePr' );
+    }
+}
+
+
+##############################################################################
+#
+# _write_a_graphic_frame_locks()
+#
+# Write the <a:graphicFrameLocks> element.
+#
+sub _write_a_graphic_frame_locks {
+
+    my $self   = shift;
+    my $no_grp = 1;
+
+    my @attributes = ( 'noGrp' => $no_grp );
+
+    $self->{_writer}->emptyTag( 'a:graphicFrameLocks', @attributes );
 }
 
 

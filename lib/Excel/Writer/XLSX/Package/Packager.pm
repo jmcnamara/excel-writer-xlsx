@@ -310,8 +310,15 @@ sub _write_app_file {
     $app->_add_heading_pair( [ 'Charts', $self->{_chartsheet_count} ] );
 
     # Add the Worksheet parts.
-    for my $sheet_name ( @{ $self->{_sheet_names} } ) {
-        $app->_add_part_name( $sheet_name );
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next if $worksheet->{_is_chartsheet};
+        $app->_add_part_name( $worksheet->get_name() );
+    }
+
+    # Add the Chartsheet parts.
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next unless $worksheet->{_is_chartsheet};
+        $app->_add_part_name( $worksheet->get_name() );
     }
 
     # Add the Named Range heading pairs.

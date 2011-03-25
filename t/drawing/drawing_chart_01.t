@@ -31,6 +31,8 @@ $caption = " \tDrawing: _assemble_xml_file()";
 
 $drawing->_set_dimensions( 4, 8, 457200, 104775, 12, 22, 152400, 180975 );
 
+$drawing->{_embedded} = 1;
+
 $drawing->_assemble_xml_file();
 
 $expected = _expected_to_aref();
