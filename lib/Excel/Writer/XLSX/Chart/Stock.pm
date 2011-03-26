@@ -95,7 +95,8 @@ sub _write_series {
             $self->{_default_marker} = 'dot';
         }
 
-        $self->_write_ser( $index++, $series->{categories}, $series->{values} );
+        $self->_write_ser( $index++, $series->{_categories},
+            $series->{_values} );
     }
 
     # Write the c:hiLowLines element.

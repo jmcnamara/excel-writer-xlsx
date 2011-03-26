@@ -20,8 +20,10 @@ use warnings;
 use Carp;
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility
-  qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
+  xl_rowcol_to_cell
+  xl_col_to_name xl_range
+  xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.16';
@@ -148,12 +150,15 @@ sub add_series {
         croak "Must specify 'categories' in add_series() for this chart type";
     }
 
+    my $values     = $self->_aref_to_formula( $arg{values} );
+    my $categories = $self->_aref_to_formula( $arg{categories} );
+
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
-        @_,
-        _values       => $arg{values},
-        _categories   => $arg{categories},
+        _values       => $values,
+        _categories   => $categories,
+        _name         => $arg{name},
         _name_formula => $arg{name_formula},
     );
 
@@ -371,6 +376,26 @@ sub set_style {
 # structuring of the Chart object and file format.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _aref_to_formula()
+#
+# Convert and aref of row col values to a range formula.
+#
+sub _aref_to_formula {
+
+    my $self = shift;
+    my $data = shift;
+
+    # If it isn't an array ref it is probably a formula already.
+    return $data if !ref $data;
+
+    my $formula = xl_range_formula( @$data );
+
+    return $formula;
+}
 
 
 ###############################################################################
@@ -828,7 +853,8 @@ sub _write_series {
     # Write each series with subelements.
     my $index = 0;
     for my $series ( @{ $self->{_series} } ) {
-        $self->_write_ser( $index++, $series->{categories}, $series->{values} );
+        $self->_write_ser( $index++, $series->{_categories},
+            $series->{_values} );
     }
 
     # Write the c:marker element.
