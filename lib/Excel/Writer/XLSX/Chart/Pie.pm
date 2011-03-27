@@ -123,8 +123,7 @@ sub _write_series {
     # Write each series with subelements.
     my $index = 0;
     for my $series ( @{ $self->{_series} } ) {
-        $self->_write_ser( $index++, $series->{_categories},
-            $series->{_values} );
+        $self->_write_ser( $index++, $series );
     }
 }
 
