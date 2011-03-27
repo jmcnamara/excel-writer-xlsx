@@ -2205,24 +2205,26 @@ To create a simple Excel file with a chart using Excel::Writer::XLSX:
     use strict;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
-    my $chart     = $workbook->add_chart( type => 'column' );
+    # Add the worksheet data the chart refers to.
+    my $data = [
+        [ 'Category', 2, 3, 4, 5, 6, 7 ],
+        [ 'Value',    1, 4, 5, 2, 1, 5 ],
+
+    ];
+
+    $worksheet->write( 'A1', $data );
+
+    # Add a worksheet chart.
+    my $chart = $workbook->add_chart( type => 'column' );
 
     # Configure the chart.
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$7',
         values     => '=Sheet1!$B$2:$B$7',
     );
-
-    # Add the worksheet data the chart refers to.
-    my $data = [
-        [ 'Category', 2, 3, 4, 5, 6, 7 ],
-        [ 'Value',    1, 4, 5, 2, 1, 5 ],
-    ];
-
-    $worksheet->write( 'A1', $data );
 
     __END__
 
@@ -2251,7 +2253,7 @@ Currently the supported chart types are:
 
 =item * C<scatter>: Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
 
-=item * C<stock>: Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
+=item * C<stock>: Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>. (Not fully supported yet. See documentation).
 
 =back
 
@@ -2263,7 +2265,7 @@ Methods that are common to all chart types are documented below.
 
 =head2 add_series()
 
-In an Excel chart a "series" is a collection of information such as values, x-axis labels and the name that define which data is plotted. These settings are displayed when you select the C<< Chart -> Source Data... >> menu option.
+In an Excel chart a "series" is a collection of information such as values, x-axis labels and the name that define which data is plotted.
 
 With a Excel::Writer::XLSX chart object the C<add_series()> method is used to set the properties for a series:
 
@@ -2271,7 +2273,6 @@ With a Excel::Writer::XLSX chart object the C<add_series()> method is used to se
         categories    => '=Sheet1!$A$2:$A$10',
         values        => '=Sheet1!$B$2:$B$10',
         name          => 'Series name',
-        name_formula  => '=Sheet1!$B$1',
     );
 
 The properties that can be set are:
@@ -2289,10 +2290,6 @@ This sets the chart category labels. The category is more or less the same as th
 =item * C<name>
 
 Set the name for the series. The name is displayed in the chart legend and in the formula bar. The name property is optional and if it isn't supplied will default to C<Series 1 .. n>.
-
-=item * C<name_formula>
-
-Optional, can be used to link the name to a worksheet cell. See L</Chart names and links>.
 
 =back
 
@@ -2328,10 +2325,6 @@ The properties that can be set are:
 
 Set the name (title or caption) for the axis. The name is displayed below the X axis. This property is optional. The default is to have no axis name.
 
-=item * C<name_formula>
-
-Optional, can be used to link the name to a worksheet cell. See L</Chart names and links>.
-
 =back
 
 Additional axis properties such as range, divisions and ticks will be made available in later releases. See the L</TODO> section.
@@ -2351,10 +2344,6 @@ The properties that can be set are:
 
 Set the name (title or caption) for the axis. The name is displayed to the left of the Y axis. This property is optional. The default is to have no axis name.
 
-=item * C<name_formula>
-
-Optional, can be used to link the name to a worksheet cell. See L</Chart names and links>.
-
 =back
 
 Additional axis properties such as range, divisions and ticks will be made available in later releases. See the L</TODO> section.
@@ -2372,10 +2361,6 @@ The properties that can be set are:
 =item * C<name>
 
 Set the name (title) for the chart. The name is displayed above the chart. This property is optional. The default is to have no chart title.
-
-=item * C<name_formula>
-
-Optional, can be used to link the name to a worksheet cell. See L</Chart names and links>.
 
 =back
 
@@ -2411,80 +2396,15 @@ The default legend position is C<right>. The available positions are:
 
 =head2 set_chartarea()
 
-The C<set_chartarea()> method is used to set the properties of the chart area. In Excel the chart area is the background area behind the chart.
+The C<set_chartarea()> method is used to set the properties of the chart area.
 
-The properties that can be set are:
-
-=over
-
-=item * C<color>
-
-Set the colour of the chart area. The Excel default chart area color is 'white', index 9. See L</Chart object colours>.
-
-=item * C<line_color>
-
-Set the colour of the chart area border line. The Excel default border line colour is 'black', index 9.  See L</Chart object colours>.
-
-=item * C<line_pattern>
-
-Set the pattern of the of the chart area border line. The Excel default pattern is 'none', index 0 for a chart sheet and 'solid', index 1, for an embedded chart. See L</Chart line patterns>.
-
-=item * C<line_weight>
-
-Set the weight of the of the chart area border line. The Excel default weight is 'narrow', index 2. See L</Chart line weights>.
-
-=back
-
-Here is an example of setting several properties:
-
-    $chart->set_chartarea(
-        color        => 'red',
-        line_color   => 'black',
-        line_pattern => 2,
-        line_weight  => 3,
-    );
-
-Note, for chart sheets the chart area border is off by default. For embedded charts is is on by default.
+This method isn't implemented yet an is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
 
 =head2 set_plotarea()
 
-The C<set_plotarea()> method is used to set properties of the plot area of a chart. In Excel the plot area is the area between the axes on which the chart series are plotted.
+The C<set_plotarea()> method is used to set properties of the plot area of a chart.
 
-The properties that can be set are:
-
-=over
-
-=item * C<visible>
-
-Set the visibility of the plot area. The default is 1 for visible. Set to 0 to hide the plot area and have the same colour as the background chart area.
-
-=item * C<color>
-
-Set the colour of the plot area. The Excel default plot area color is 'silver', index 23. See L</Chart object colours>.
-
-=item * C<line_color>
-
-Set the colour of the plot area border line. The Excel default border line colour is 'gray', index 22. See L</Chart object colours>.
-
-=item * C<line_pattern>
-
-Set the pattern of the of the plot area border line. The Excel default pattern is 'solid', index 1. See L</Chart line patterns>.
-
-=item * C<line_weight>
-
-Set the weight of the of the plot area border line. The Excel default weight is 'narrow', index 2. See L</Chart line weights>.
-
-=back
-
-Here is an example of setting several properties:
-
-    $chart->set_plotarea(
-        color        => 'red',
-        line_color   => 'black',
-        line_pattern => 2,
-        line_weight  => 3,
-    );
-
+This method isn't implemented yet an is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
 
 =head2 set_style()
 
@@ -2582,117 +2502,6 @@ Here is a complete example that demonstrates some of the available features when
 =end html
 
 
-=head1 Chart object colours
-
-Many of the chart objects supported by Spreadsheet::WriteExcl allow the default colours to be changed. Excel provides a palette of 56 colours and in Excel::Writer::XLSX these colours are accessed via their palette index in the range 8..63.
-
-The most commonly used colours can be accessed by name or index.
-
-    black   =>   8,    green    =>  17,    navy     =>  18,
-    white   =>   9,    orange   =>  53,    pink     =>  33,
-    red     =>  10,    gray     =>  23,    purple   =>  20,
-    blue    =>  12,    lime     =>  11,    silver   =>  22,
-    yellow  =>  13,    cyan     =>  15,
-    brown   =>  16,    magenta  =>  14,
-
-For example the following are equivalent.
-
-    $chart->set_plotarea( color => 10    );
-    $chart->set_plotarea( color => 'red' );
-
-The colour palette is shown in C<palette.html> in the C<docs> directory  of the distro. An Excel version of the palette can be generated using C<colors.pl> in the C<examples> directory.
-
-User defined colours can be set using the C<set_custom_color()> workbook method. This and other aspects of using colours are discussed in the "Colours in Excel" section of the main Excel::Writer::XLSX documentation: L<http://search.cpan.org/dist/Spreadsheet-WriteExcel/lib/Spreadsheet/WriteExcel.pm#COLOURS_IN_EXCEL>.
-
-=head1 Chart line patterns
-
-Chart lines patterns can be set using either an index or a name:
-
-    $chart->set_plotarea( weight => 2      );
-    $chart->set_plotarea( weight => 'dash' );
-
-Chart lines have 9 possible patterns are follows:
-
-    'none'         => 0,
-    'solid'        => 1,
-    'dash'         => 2,
-    'dot'          => 3,
-    'dash-dot'     => 4,
-    'dash-dot-dot' => 5,
-    'medium-gray'  => 6,
-    'dark-gray'    => 7,
-    'light-gray'   => 8,
-
-The patterns 1-8 are shown in order in the drop down dialog boxes in Excel. The default pattern is 'solid', index 1.
-
-
-=head1 Chart line weights
-
-Chart lines weights can be set using either an index or a name:
-
-    $chart->set_plotarea( weight => 1          );
-    $chart->set_plotarea( weight => 'hairline' );
-
-Chart lines have 4 possible weights are follows:
-
-    'hairline' => 1,
-    'narrow'   => 2,
-    'medium'   => 3,
-    'wide'     => 4,
-
-The weights 1-4 are shown in order in the drop down dialog boxes in Excel. The default weight is 'narrow', index 2.
-
-
-=head1 Chart names and links
-
-The C<add_series())>, C<set_x_axis()>, C<set_y_axis()> and C<set_title()> methods all support a C<name> property. In general these names can be either a static string or a link to a worksheet cell. If you choose to use the C<name_formula> property to specify a link then you should also the C<name> property. This isn't strictly required by Excel but some third party applications expect it to be present.
-
-    $chart->set_title(
-        name          => 'Year End Results',
-        name_formula  => '=Sheet1!$C$1',
-    );
-
-These links should be used sparingly since they aren't commonly used in Excel charts.
-
-
-
-
-=head1 Working with Cell Ranges
-
-
-In the section on C<add_series()> it was noted that the series must be defined using a range formula:
-
-    $chart->add_series( values => '=Sheet1!$B$2:$B$10' );
-
-The worksheet name must be specified (even for embedded charts) and the cell references must be "absolute" references, i.e., they must contain C<$> signs. This is the format that is required by Excel for chart references.
-
-Since it isn't very convenient to work with this type of string programmatically the L<Excel::Writer::XLSX::Utility> module, which is included with Excel::Writer::XLSX, provides a function called C<xl_range_formula()> to convert from zero based row and column cell references to an A1 style formula string.
-
-The syntax is:
-
-    xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
-
-If you include it in your program, using the standard import syntax, you can use the function as follows:
-
-
-    # Include the Utility module or just the function you need.
-    use Excel::Writer::XLSX::Utility qw( xl_range_formula );
-    ...
-
-    # Then use it as required.
-    $chart->add_series(
-        categories    => xl_range_formula( 'Sheet1', 1, 9, 0, 0 ),
-        values        => xl_range_formula( 'Sheet1', 1, 9, 1, 1 ),
-    );
-
-    # Which is the same as:
-    $chart->add_series(
-        categories    => '=Sheet1!$A$2:$A$10',
-        values        => '=Sheet1!$B$2:$B$10',
-    );
-
-See L<Excel::Writer::XLSX::Utility> for more details.
-
 
 =head1 TODO
 
@@ -2722,11 +2531,9 @@ If you are interested in sponsoring a feature let me know.
 
 =over
 
-=item * Currently charts don't contain embedded data from which the charts can be rendered. Excel and most other third party applications ignore this and read the data via the links that have been specified. However, some applications may complain or not render charts correctly. The preview option in Mac OS X is an known example. This will be fixed in a later release.
+=item * Currently charts don't contain embedded data from which the charts can be rendered. Excel and most other third party applications ignore this and read the data via the links that have been specified. However, some applications may complain or not render charts correctly. This will be fixed in a later release.
 
-=item * When there are several charts with titles set in a workbook some of the titles may display at a font size of 10 instead of the default 12 until another chart with the title set is viewed.
-
-=item * Stock (and other) charts should have the X-axis dates aligned at an angle for clarity. This will be fixed at a later stage.
+=item * Stock charts don't currently render correctly. This will be fixed soon.
 
 =back
 
