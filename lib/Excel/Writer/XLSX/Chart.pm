@@ -150,16 +150,18 @@ sub add_series {
         croak "Must specify 'categories' in add_series() for this chart type";
     }
 
-    my $values     = $self->_aref_to_formula( $arg{values} );
-    my $categories = $self->_aref_to_formula( $arg{categories} );
+    my $values       = $self->_aref_to_formula( $arg{values} );
+    my $categories   = $self->_aref_to_formula( $arg{categories} );
 
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
         _values       => $values,
         _categories   => $categories,
-        _name         => $arg{name},
-        _name_formula => $arg{name_formula},
+        _name         => $name,
+        _name_formula => $name_formula,
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -177,8 +179,11 @@ sub set_x_axis {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_x_axis_name}    = $arg{name};
-    $self->{_x_axis_formula} = $arg{name_formula};
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
+
+    $self->{_x_axis_name}    = $name;
+    $self->{_x_axis_formula} = $name_formula;
 }
 
 
@@ -193,8 +198,11 @@ sub set_y_axis {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_y_axis_name}    = $arg{name};
-    $self->{_y_axis_formula} = $arg{name_formula};
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
+
+    $self->{_y_axis_name}    = $name;
+    $self->{_y_axis_formula} = $name_formula;
 }
 
 
@@ -209,8 +217,11 @@ sub set_title {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_title_name}    = $arg{name};
-    $self->{_title_formula} = $arg{name_formula};
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
+
+    $self->{_title_name}    = $name;
+    $self->{_title_formula} = $name_formula;
 }
 
 
@@ -236,6 +247,8 @@ sub set_legend {
 # Set the properties of the chart plotarea.
 #
 sub set_plotarea {
+
+    # TODO. Need to refactor for XLSX format.
 
     my $self = shift;
     my %arg  = @_;
@@ -293,6 +306,8 @@ sub set_plotarea {
 # Set the properties of the chart chartarea.
 #
 sub set_chartarea {
+
+    # TODO. Need to refactor for XLSX format.
 
     my $self = shift;
     my %arg  = @_;
@@ -395,6 +410,28 @@ sub _aref_to_formula {
     my $formula = xl_range_formula( @$data );
 
     return $formula;
+}
+
+
+###############################################################################
+#
+# _process_names()
+#
+# Switch name and name_formula parameters if required.
+#
+sub _process_names {
+
+    my $self         = shift;
+    my $name         = shift;
+    my $name_formula = shift;
+
+    # Name looks like a formula, use it to set name_formula.
+    if ( defined $name && $name =~ m/^=[^!]+!\$/ ) {
+        $name_formula = $name;
+        $name         = '';
+    }
+
+    return ( $name, $name_formula );
 }
 
 

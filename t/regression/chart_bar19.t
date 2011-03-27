@@ -69,9 +69,9 @@ $chart->add_series( values => [ 'Sheet1', 0, 4, 0, 0 ] );
 $chart->add_series( values => [ 'Sheet1', 0, 4, 1, 1 ] );
 $chart->add_series( values => [ 'Sheet1', 0, 4, 2, 2 ] );
 
-$chart->set_x_axis( name_formula => '=Sheet1!$A$2' );
-$chart->set_y_axis( name_formula => '=Sheet1!$A$3' );
-$chart->set_title(  name_formula => '=Sheet1!$A$1' );
+$chart->set_x_axis( name => '=Sheet1!$A$2' );
+$chart->set_y_axis( name => '=Sheet1!$A$3' );
+$chart->set_title(  name => '=Sheet1!$A$1' );
 
 $worksheet->insert_chart( 'E9', $chart );
 
