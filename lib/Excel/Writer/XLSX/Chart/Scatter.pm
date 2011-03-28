@@ -75,7 +75,6 @@ sub _write_scatter_chart {
     # Write the series elements.
     $self->_write_series();
 
-
     $self->{_writer}->endTag( 'c:scatterChart' );
 }
 
@@ -103,6 +102,9 @@ sub _write_ser {
 
     # Write the c:order element.
     $self->_write_order( $index );
+
+    # Write the series name.
+    $self->_write_series_name( $series );
 
     # Write the c:spPr element.
     $self->_write_sp_pr();

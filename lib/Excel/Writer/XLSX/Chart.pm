@@ -928,6 +928,9 @@ sub _write_ser {
     # Write the c:order element.
     $self->_write_order( $index );
 
+    # Write the series name.
+    $self->_write_series_name( $series );
+
     # Write the c:marker element.
     $self->_write_marker();
 
@@ -973,6 +976,28 @@ sub _write_order {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:order', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_series_name()
+#
+# Write the series name.
+#
+sub _write_series_name {
+
+    my $self   = shift;
+    my $series = shift;
+
+    my $name;
+    if ( $name = $series->{_name_formula} ) {
+        $self->_write_tx_formula( $name );
+    }
+    elsif ( $name = $series->{_name} ) {
+        $self->_write_tx_value( $name );
+    }
+
 }
 
 
@@ -1720,6 +1745,27 @@ sub _write_tx_rich {
 }
 
 
+
+##############################################################################
+#
+# _write_tx_value()
+#
+# Write the <c:tx> element with a simple value such as for series names.
+#
+sub _write_tx_value {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->{_writer}->startTag( 'c:tx' );
+
+    # Write the c:v element.
+    $self->_write_v( $title );
+
+    $self->{_writer}->endTag( 'c:tx' );
+}
+
+
 ##############################################################################
 #
 # _write_tx_formula()
@@ -2188,6 +2234,22 @@ sub _write_overlap {
 
     $self->{_writer}->emptyTag( 'c:overlap', @attributes );
 }
+
+
+##############################################################################
+#
+# _write_v()
+#
+# Write the <c:v> element.
+#
+sub _write_v {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->{_writer}->dataElement( 'c:v', $data );
+}
+
 
 __END__
 
