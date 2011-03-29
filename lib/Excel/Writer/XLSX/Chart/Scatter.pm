@@ -92,8 +92,6 @@ sub _write_ser {
     my $self       = shift;
     my $index      = shift;
     my $series     = shift;
-    my $categories = $series->{_categories};
-    my $values     = $series->{_values};
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -113,10 +111,10 @@ sub _write_ser {
     $self->_write_marker();
 
     # Write the c:xVal element.
-    $self->_write_x_val( $categories );
+    $self->_write_x_val( $series );
 
     # Write the c:yVal element.
-    $self->_write_y_val( $values );
+    $self->_write_y_val( $series );
 
 
     $self->{_writer}->endTag( 'c:ser' );
@@ -163,12 +161,27 @@ sub _write_plot_area {
 sub _write_x_val {
 
     my $self    = shift;
-    my $formula = shift;
+    my $series  = shift;
+    my $formula = $series->{_categories};
+    my $data    = $series->{_cat_data};
 
     $self->{_writer}->startTag( 'c:xVal' );
 
-    # Write the c:numRef element.
-    $self->_write_num_ref( $formula );
+    # Check the type of cached data.
+    my $type = $self->_get_data_type( $data );
+
+    # TODO. Can a scatter plot have non-numeric data.
+
+    if ( $type eq 'str' ) {
+
+        # Write the c:numRef element.
+        $self->_write_str_ref( $formula, $data, $type );
+    }
+    else {
+
+        # Write the c:numRef element.
+        $self->_write_num_ref( $formula, $data, $type );
+    }
 
     $self->{_writer}->endTag( 'c:xVal' );
 }
@@ -183,12 +196,25 @@ sub _write_x_val {
 sub _write_y_val {
 
     my $self    = shift;
-    my $formula = shift;
+    my $series  = shift;
+    my $formula = $series->{_values};
+    my $data    = $series->{_val_data};
 
     $self->{_writer}->startTag( 'c:yVal' );
 
-    # Write the c:numRef element.
-    $self->_write_num_ref( $formula );
+    # Check the type of cached data.
+    my $type = $self->_get_data_type( $data );
+
+    if ( $type eq 'str' ) {
+
+        # Write the c:numRef element.
+        $self->_write_str_ref( $formula, $data, $type );
+    }
+    else {
+
+        # Write the c:numRef element.
+        $self->_write_num_ref( $formula, $data, $type );
+    }
 
     $self->{_writer}->endTag( 'c:yVal' );
 }

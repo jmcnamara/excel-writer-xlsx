@@ -150,11 +150,16 @@ sub add_series {
         croak "Must specify 'categories' in add_series() for this chart type";
     }
 
+
+    # Convert aref params into a formula string.
     my $values       = $self->_aref_to_formula( $arg{values} );
     my $categories   = $self->_aref_to_formula( $arg{categories} );
 
+
+    # Switch name and name_formula parameters if required.
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
+
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
@@ -162,6 +167,8 @@ sub add_series {
         _categories   => $categories,
         _name         => $name,
         _name_formula => $name_formula,
+        _val_data     => $arg{values_data},
+        _cat_data     => $arg{categories_data},
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -432,6 +439,34 @@ sub _process_names {
     }
 
     return ( $name, $name_formula );
+}
+
+
+###############################################################################
+#
+# _get_data_type()
+#
+# Find the overall type of the data associated with a series.
+#
+# TODO. Need to handle date type.
+#
+sub _get_data_type {
+
+    my $self = shift;
+    my $data = shift;
+
+    # Check for no data in the series.
+    return 'none' if !defined $data;
+    return 'none' if @$data == 0;
+
+    # If the token isn't a number assume it is a string.
+    for my $token ( @$data ) {
+        return 'str'
+          if $token !~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/;
+    }
+
+    # The series data was all numeric.
+    return 'num';
 }
 
 
@@ -917,8 +952,6 @@ sub _write_ser {
     my $self       = shift;
     my $index      = shift;
     my $series     = shift;
-    my $categories = $series->{_categories};
-    my $values     = $series->{_values};
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -935,11 +968,10 @@ sub _write_ser {
     $self->_write_marker();
 
     # Write the c:cat element.
-    $self->_write_cat( $categories );
+    $self->_write_cat( $series );
 
     # Write the c:val element.
-    $self->_write_val( $values );
-
+    $self->_write_val( $series );
 
     $self->{_writer}->endTag( 'c:ser' );
 }
@@ -1010,7 +1042,9 @@ sub _write_series_name {
 sub _write_cat {
 
     my $self    = shift;
-    my $formula = shift;
+    my $series  = shift;
+    my $formula = $series->{_categories};
+    my $data    = $series->{_cat_data};
 
     # Ignore <c:cat> elements for charts without category values.
     return unless $formula;
@@ -1019,8 +1053,21 @@ sub _write_cat {
 
     $self->{_writer}->startTag( 'c:cat' );
 
-    # Write the c:numRef element.
-    $self->_write_num_ref( $formula );
+    # Check the type of cached data.
+    my $type = $self->_get_data_type( $data );
+
+    if ( $type eq 'str' ) {
+
+        $self->{_has_category} = 0;
+
+        # Write the c:numRef element.
+        $self->_write_str_ref( $formula, $data, $type );
+    }
+    else {
+
+        # Write the c:numRef element.
+        $self->_write_num_ref( $formula, $data, $type );
+    }
 
     $self->{_writer}->endTag( 'c:cat' );
 }
@@ -1035,12 +1082,25 @@ sub _write_cat {
 sub _write_val {
 
     my $self    = shift;
-    my $formula = shift;
+    my $series  = shift;
+    my $formula = $series->{_values};
+    my $data    = $series->{_val_data};
 
     $self->{_writer}->startTag( 'c:val' );
 
-    # Write the c:numRef element.
-    $self->_write_num_ref( $formula );
+    # Check the type of cached data.
+    my $type = $self->_get_data_type( $data );
+
+    if ( $type eq 'str' ) {
+
+        # Write the c:numRef element.
+        $self->_write_str_ref( $formula, $data, $type );
+    }
+    else {
+
+        # Write the c:numRef element.
+        $self->_write_num_ref( $formula, $data, $type );
+    }
 
     $self->{_writer}->endTag( 'c:val' );
 }
@@ -1056,13 +1116,60 @@ sub _write_num_ref {
 
     my $self    = shift;
     my $formula = shift;
+    my $data    = shift;
+    my $type    = shift;
 
     $self->{_writer}->startTag( 'c:numRef' );
 
     # Write the c:f element.
     $self->_write_series_formula( $formula );
 
+    if ( $type eq 'num' ) {
+
+        # Write the c:numCache element.
+        $self->_write_num_cache( $data );
+    }
+    elsif ( $type eq 'str' ) {
+
+        # Write the c:strCache element.
+        $self->_write_str_cache( $data );
+    }
+
     $self->{_writer}->endTag( 'c:numRef' );
+}
+
+
+
+##############################################################################
+#
+# _write_str_ref()
+#
+# Write the <c:strRef> element.
+#
+sub _write_str_ref {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $data    = shift;
+    my $type    = shift;
+
+    $self->{_writer}->startTag( 'c:strRef' );
+
+    # Write the c:f element.
+    $self->_write_series_formula( $formula );
+
+    if ( $type eq 'num' ) {
+
+        # Write the c:numCache element.
+        $self->_write_num_cache( $data );
+    }
+    elsif ( $type eq 'str' ) {
+
+        # Write the c:strCache element.
+        $self->_write_str_cache( $data );
+    }
+
+    $self->{_writer}->endTag( 'c:strRef' );
 }
 
 
@@ -1781,7 +1888,7 @@ sub _write_tx_formula {
     $self->{_writer}->startTag( 'c:tx' );
 
     # Write the c:strRef element.
-    $self->_write_str_ref( $title );
+    $self->_write_str_ref( $title, undef, 'none' );
 
     $self->{_writer}->endTag( 'c:tx' );
 }
@@ -2025,26 +2132,6 @@ sub _write_a_t {
 
 ##############################################################################
 #
-# _write_str_ref()
-#
-# Write the <c:strRef> element.
-#
-sub _write_str_ref {
-
-    my $self    = shift;
-    my $formula = shift;
-
-    $self->{_writer}->startTag( 'c:strRef' );
-
-    # Write the c:f element.
-    $self->_write_series_formula( $formula );
-
-    $self->{_writer}->endTag( 'c:strRef' );
-}
-
-
-##############################################################################
-#
 # _write_tx_pr()
 #
 # Write the <c:txPr> element.
@@ -2216,9 +2303,6 @@ sub _write_hi_low_lines {
 }
 
 
-1;
-
-
 ##############################################################################
 #
 # _write_overlap()
@@ -2238,6 +2322,118 @@ sub _write_overlap {
 
 ##############################################################################
 #
+# _write_num_cache()
+#
+# Write the <c:numCache> element.
+#
+sub _write_num_cache {
+
+    my $self  = shift;
+    my $data  = shift;
+    my $count = @$data;
+
+    $self->{_writer}->startTag( 'c:numCache' );
+
+    # Write the c:formatCode element.
+    $self->_write_format_code( 'General' );
+
+    # Write the c:ptCount element.
+    $self->_write_pt_count( $count );
+
+    for my $i ( 0 .. $count - 1 ) {
+
+        # Write the c:pt element.
+        $self->_write_pt( $i, $data->[$i] );
+    }
+
+    $self->{_writer}->endTag( 'c:numCache' );
+}
+
+
+##############################################################################
+#
+# _write_str_cache()
+#
+# Write the <c:strCache> element.
+#
+sub _write_str_cache {
+
+    my $self  = shift;
+    my $data  = shift;
+    my $count = @$data;
+
+    $self->{_writer}->startTag( 'c:strCache' );
+
+    # Write the c:ptCount element.
+    $self->_write_pt_count( $count );
+
+    for my $i ( 0 .. $count - 1 ) {
+
+        # Write the c:pt element.
+        $self->_write_pt( $i, $data->[$i] );
+    }
+
+    $self->{_writer}->endTag( 'c:strCache' );
+}
+
+
+##############################################################################
+#
+# _write_format_code()
+#
+# Write the <c:formatCode> element.
+#
+sub _write_format_code {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->{_writer}->dataElement( 'c:formatCode', $data );
+}
+
+
+##############################################################################
+#
+# _write_pt_count()
+#
+# Write the <c:ptCount> element.
+#
+sub _write_pt_count {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:ptCount', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_pt()
+#
+# Write the <c:pt> element.
+#
+sub _write_pt {
+
+    my $self  = shift;
+    my $idx   = shift;
+    my $value = shift;
+
+    my @attributes = ( 'idx' => $idx );
+
+    $self->{_writer}->startTag( 'c:pt', @attributes );
+
+    # Write the c:v element.
+    $self->_write_v( $value );
+
+    $self->{_writer}->endTag( 'c:pt' );
+}
+
+
+##############################################################################
+#
 # _write_v()
 #
 # Write the <c:v> element.
@@ -2250,6 +2446,8 @@ sub _write_v {
     $self->{_writer}->dataElement( 'c:v', $data );
 }
 
+
+1;
 
 __END__
 

@@ -123,8 +123,6 @@ sub _write_ser {
     my $self       = shift;
     my $index      = shift;
     my $series     = shift;
-    my $categories = $series->{_categories};
-    my $values     = $series->{_values};
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -144,10 +142,10 @@ sub _write_ser {
     $self->_write_marker( );
 
     # Write the c:cat element.
-    $self->_write_cat( $categories );
+    $self->_write_cat( $series );
 
     # Write the c:val element.
-    $self->_write_val( $values );
+    $self->_write_val( $series );
 
     $self->{_writer}->endTag( 'c:ser' );
 }

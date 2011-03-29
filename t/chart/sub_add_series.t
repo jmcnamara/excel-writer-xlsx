@@ -34,7 +34,9 @@ $expected = [
         _categories   => undef,
         _values       => '=Sheet1!$A$1:$A$5',
         _name         => undef,
-        _name_formula => undef
+        _name_formula => undef,
+        _cat_data     => undef,
+        _val_data     => undef,
     }
 ];
 
@@ -57,7 +59,9 @@ $expected = [
         _categories   => '=Sheet1!$A$1:$A$5',
         _values       => '=Sheet1!$B$1:$B$5',
         _name         => 'Text',
-        _name_formula => undef
+        _name_formula => undef,
+        _cat_data     => undef,
+        _val_data     => undef,
     }
 ];
 
@@ -84,7 +88,9 @@ $expected = [
         _categories   => undef,
         _values       => '=Sheet1!$A$1:$A$5',
         _name         => undef,
-        _name_formula => undef
+        _name_formula => undef,
+        _cat_data     => undef,
+        _val_data     => undef,
     }
 ];
 
@@ -107,7 +113,9 @@ $expected = [
         _categories   => '=Sheet1!$A$1:$A$5',
         _values       => '=Sheet1!$B$1:$B$5',
         _name         => 'Text',
-        _name_formula => undef
+        _name_formula => undef,
+        _cat_data     => undef,
+        _val_data     => undef,
     }
 ];
 
