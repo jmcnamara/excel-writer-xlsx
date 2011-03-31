@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_bar22.xlsx';
+my $filename     = 'chart_bar23.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -64,22 +64,16 @@ $worksheet->write( 'A2', $data );
 $chart->add_series(
     categories      => '=Sheet1!$A$2:$A$5',
     values          => '=Sheet1!$B$2:$B$5',
-    categories_data => $data->[0],
-    values_data     => $data->[1],
 );
 
 $chart->add_series(
     categories      => '=Sheet1!$A$2:$A$5',
     values          => '=Sheet1!$C$2:$C$5',
-    categories_data => $data->[0],
-    values_data     => $data->[2],
 );
 
 $chart->add_series(
     categories      => '=Sheet1!$A$2:$A$5',
     values          => '=Sheet1!$D$2:$D$5',
-    categories_data => $data->[0],
-    values_data     => $data->[3],
 );
 
 

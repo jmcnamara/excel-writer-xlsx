@@ -163,7 +163,8 @@ sub _write_x_val {
     my $self    = shift;
     my $series  = shift;
     my $formula = $series->{_categories};
-    my $data    = $series->{_cat_data};
+    my $data_id = $series->{_cat_data_id};
+    my $data    = $self->{_formula_data}->[$data_id];
 
     $self->{_writer}->startTag( 'c:xVal' );
 
@@ -198,7 +199,8 @@ sub _write_y_val {
     my $self    = shift;
     my $series  = shift;
     my $formula = $series->{_values};
-    my $data    = $series->{_val_data};
+    my $data_id = $series->{_val_data_id};
+    my $data    = $self->{_formula_data}->[$data_id];
 
     $self->{_writer}->startTag( 'c:yVal' );
 

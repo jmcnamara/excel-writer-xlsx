@@ -77,6 +77,9 @@ sub new {
     $self->{_legend_position}   = 'right';
     $self->{_cat_axis_position} = 'b';
     $self->{_val_axis_position} = 'l';
+    $self->{_formula_ids}       = {};
+    $self->{_formula_data}      = [];
+
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -160,6 +163,9 @@ sub add_series {
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
+    # Get an id for the data equivalent to the range formaul.
+    my $cat_id = $self->_get_data_id( $categories, $arg{categories_data} );
+    my $val_id = $self->_get_data_id( $values,     $arg{values_data} );
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
@@ -167,8 +173,8 @@ sub add_series {
         _categories   => $categories,
         _name         => $name,
         _name_formula => $name_formula,
-        _val_data     => $arg{values_data},
-        _cat_data     => $arg{categories_data},
+        _val_data_id  => $val_id,
+        _cat_data_id  => $cat_id,
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -467,6 +473,42 @@ sub _get_data_type {
 
     # The series data was all numeric.
     return 'num';
+}
+
+
+###############################################################################
+#
+# _get_data_id()
+#
+# Store unique formula data and return an id to it.
+#
+sub _get_data_id {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $data    = shift;
+    my $id;
+
+    return unless $formula;
+
+    # Strip the leading '=' from the formula.
+    $formula =~ s/^=//;
+
+    if ( exists $self->{_formula_ids}->{$formula} ) {
+        $id = $self->{_formula_ids}->{$formula};
+
+        if ( !defined $self->{_formula_data}->[$id] ) {
+            $self->{_formula_data}->[$id] = $data;
+        }
+    }
+    else {
+        $id = @{ $self->{_formula_data} };
+
+        push @{ $self->{_formula_data} }, $data;
+        $self->{_formula_ids}->{$formula} = $id;
+    }
+
+    return $id;
 }
 
 
@@ -1044,7 +1086,12 @@ sub _write_cat {
     my $self    = shift;
     my $series  = shift;
     my $formula = $series->{_categories};
-    my $data    = $series->{_cat_data};
+    my $data_id = $series->{_cat_data_id};
+    my $data;
+
+    if ( defined $data_id ) {
+        $data = $self->{_formula_data}->[$data_id];
+    }
 
     # Ignore <c:cat> elements for charts without category values.
     return unless $formula;
@@ -1084,7 +1131,8 @@ sub _write_val {
     my $self    = shift;
     my $series  = shift;
     my $formula = $series->{_values};
-    my $data    = $series->{_val_data};
+    my $data_id = $series->{_val_data_id};
+    my $data    = $self->{_formula_data}->[$data_id];
 
     $self->{_writer}->startTag( 'c:val' );
 

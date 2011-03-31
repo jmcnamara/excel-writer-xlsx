@@ -3507,6 +3507,83 @@ sub _prepare_chart {
 }
 
 
+
+###############################################################################
+#
+# _get_range_data
+#
+# TODO
+#
+sub _get_range_data {
+
+    my $self = shift;
+    my @data;
+    my ( $row_start, $col_start, $row_end, $col_end ) = @_;
+
+
+    return undef if $row_start < $self->{_dim_rowmin};
+    return undef if $row_end < $self->{_dim_rowmin};
+    return undef if $row_start > $self->{_dim_rowmax};
+    return undef if $row_end > $self->{_dim_rowmax};
+    return undef if $col_start < $self->{_dim_colmin};
+    return undef if $col_end < $self->{_dim_colmin};
+    return undef if $col_start > $self->{_dim_colmax};
+    return undef if $col_end > $self->{_dim_colmax};
+
+
+    for my $row_num ( $row_start .. $row_end ) {
+
+        return undef if !$self->{_table}->[$row_num];
+
+        for my $col_num ( $col_start .. $col_end ) {
+
+            if ( my $cell = $self->{_table}->[$row_num]->[$col_num] ) {
+
+                my $type  = $cell->[0];
+                my $token = $cell->[1];
+
+
+                if ( $type eq 'n' ) {
+
+                    # Write a number.
+                    push @data, $token;
+                }
+                elsif ( $type eq 's' ) {
+
+                    # Write a string.
+                    push @data, { 'sst_id' => $token};
+                }
+                elsif ( $type eq 'f' ) {
+
+                    # Write a formula.
+                    push @data, $cell->[3];
+                }
+                elsif ( $type eq 'a' ) {
+
+                    # Write an array formula.
+                    push @data, $cell->[4];
+                }
+                elsif ( $type eq 'l' ) {
+
+                    # Write the string part a hyperlink.
+                    push @data, { 'sst_id' => $token};
+                }
+                elsif ( $type eq 'b' ) {
+
+                    # Write a empty cell.
+                    push @data, '';
+                }
+            }
+            else {
+                return undef;
+            }
+        }
+    }
+
+    return @data;
+}
+
+
 ###############################################################################
 #
 # Deprecated methods for backwards compatibility.
@@ -3978,6 +4055,7 @@ sub _write_sheet_data {
     }
 
 }
+
 
 ###############################################################################
 #

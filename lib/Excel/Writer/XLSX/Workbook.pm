@@ -673,6 +673,9 @@ sub _store_workbook {
     # Prepare the charts and drawings.
     $self->_prepare_charts();
 
+    # Add cached data to charts.
+    $self->_add_chart_data();
+
     # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $dir );
@@ -1006,6 +1009,76 @@ sub _prepare_charts {
     }
 
     $self->{_drawing_count} = $drawing_id;
+}
+
+
+###############################################################################
+#
+# _add_chart_data()
+#
+# Add "cached" data to the charts to provide the numCache and strCache data.
+#
+sub _add_chart_data {
+
+    my $self = shift;
+    my %sheet_ids;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+        my $name  = $sheet->{_name};
+        my $index = $sheet->{_index};
+        $sheet_ids{$name} = $index;
+    }
+
+    CHART:
+    for my $chart ( @{ $self->{_charts} } ) {
+
+        RANGE:
+        while ( my ( $range, $id ) = each %{ $chart->{_formula_ids} } ) {
+
+            next RANGE if defined $chart->{_formula_data}->[$id];
+
+            my ( $sheetname, @cells ) = $self->_get_chart_range( $range );
+
+            next RANGE if !defined $sheetname;
+            next RANGE if !exists $sheet_ids{$sheetname};
+
+            my $worksheet_id = $sheet_ids{$sheetname};
+            my $worksheet    = $self->{_worksheets}->[$worksheet_id];
+
+            my @data = $worksheet->_get_range_data( @cells );
+
+            for my $token ( @data ) {
+                if ( ref $token ) {
+                    $token = $self->{_str_array}->[ $token->{sst_id} ];
+                }
+            }
+
+            $chart->{_formula_data}->[$id] = \@data;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# _get_chart_range()
+#
+# TODO
+#
+sub _get_chart_range {
+
+    my $self  = shift;
+    my $range = shift;
+
+    my ( $sheetname, $cells ) = split /!/, $range;
+    my ( $cell_1, $cell_2 ) = split /:/, $cells;
+
+    $sheetname =~ s/'//g;
+
+    my ($row_start, $col_start) = xl_cell_to_rowcol($cell_1);
+    my ($row_end, $col_end) = xl_cell_to_rowcol($cell_2);
+
+   return ( $sheetname, $row_start, $col_start, $row_end, $col_end );
 }
 
 
