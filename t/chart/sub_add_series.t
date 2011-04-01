@@ -34,6 +34,7 @@ $expected = {
     _values       => '=Sheet1!$A$1:$A$5',
     _name         => undef,
     _name_formula => undef,
+    _name_id      => undef,
     _cat_data_id  => undef,
     _val_data_id  => 0,
 };
@@ -58,6 +59,7 @@ $expected = [
         _values       => '=Sheet1!$B$1:$B$5',
         _name         => 'Text',
         _name_formula => undef,
+        _name_id      => undef,
         _cat_data_id  => 0,
         _val_data_id  => 1,
     }
@@ -87,6 +89,7 @@ $expected = [
         _values       => '=Sheet1!$A$1:$A$5',
         _name         => undef,
         _name_formula => undef,
+        _name_id      => undef,
         _cat_data_id  => undef,
         _val_data_id  => 0,
     }
@@ -111,6 +114,7 @@ $expected = {
     _values       => '=Sheet1!$B$1:$B$5',
     _name         => 'Text',
     _name_formula => undef,
+    _name_id      => undef,
     _cat_data_id  => 0,
     _val_data_id  => 1,
 };

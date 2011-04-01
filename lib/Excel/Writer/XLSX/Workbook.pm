@@ -1016,17 +1016,17 @@ sub _prepare_charts {
 #
 # _add_chart_data()
 #
-# Add "cached" data to the charts to provide the numCache and strCache data.
+# Add "cached" data to charts to provide the numCache and strCache data for
+# series and title/axis ranges.
 #
 sub _add_chart_data {
 
     my $self = shift;
-    my %sheet_ids;
+    my %worksheets;
 
-    for my $sheet ( @{ $self->{_worksheets} } ) {
-        my $name  = $sheet->{_name};
-        my $index = $sheet->{_index};
-        $sheet_ids{$name} = $index;
+    # Map worksheet names to worksheet objects.
+    for my $worksheet ( @{ $self->{_worksheets} } ) {
+        $worksheets{ $worksheet->{_name} } = $worksheet;
     }
 
     CHART:
@@ -1035,24 +1035,33 @@ sub _add_chart_data {
         RANGE:
         while ( my ( $range, $id ) = each %{ $chart->{_formula_ids} } ) {
 
+            # Skip if the series has user defined data.
             next RANGE if defined $chart->{_formula_data}->[$id];
 
+            # Convert the range formula to a sheet name and cell range.
             my ( $sheetname, @cells ) = $self->_get_chart_range( $range );
 
+            # Skip if we couldn't parse the formula.
             next RANGE if !defined $sheetname;
-            next RANGE if !exists $sheet_ids{$sheetname};
 
-            my $worksheet_id = $sheet_ids{$sheetname};
-            my $worksheet    = $self->{_worksheets}->[$worksheet_id];
+            # Skip if the sheet name is know. Probably should throw exception.
+            next RANGE if !exists $worksheets{$sheetname};
 
+            # Find the worksheet object based on the sheet name.
+            my $worksheet = $worksheets{$sheetname};
+
+            # Get the data from the worksheet table.
             my @data = $worksheet->_get_range_data( @cells );
 
+            # Convert shared string indexes to strings.
+            # TODO. Need to handle (or not handle) rich strings.
             for my $token ( @data ) {
                 if ( ref $token ) {
                     $token = $self->{_str_array}->[ $token->{sst_id} ];
                 }
             }
 
+            # Add the data to the chart.
             $chart->{_formula_data}->[$id] = \@data;
         }
     }
@@ -1063,22 +1072,50 @@ sub _add_chart_data {
 #
 # _get_chart_range()
 #
-# TODO
+# Convert a range formula such as Sheet1!$B$1:$B$5 into a sheet name and cell
+# range such as ( 'Sheet1', 0, 1, 4, 1 ).
 #
 sub _get_chart_range {
 
     my $self  = shift;
     my $range = shift;
+    my $cell_1;
+    my $cell_2;
+    my $sheetname;
+    my $cells;
 
-    my ( $sheetname, $cells ) = split /!/, $range;
-    my ( $cell_1, $cell_2 ) = split /:/, $cells;
+    # Split the range formula into sheetname and cells at the last '!'.
+    my $pos = rindex $range, '!';
+    if ( $pos > 0 ) {
+        $sheetname = substr $range, 0, $pos;
+        $cells = substr $range, $pos + 1;
+    }
+    else {
+        return undef;
+    }
 
-    $sheetname =~ s/'//g;
+    # Split the cell range into 2 cells or else use single cell for both.
+    if ( $cells =~ ':' ) {
+        ( $cell_1, $cell_2 ) = split /:/, $cells;
+    }
+    else {
+        ( $cell_1, $cell_2 ) = ( $cells, $cells );
+    }
 
-    my ($row_start, $col_start) = xl_cell_to_rowcol($cell_1);
-    my ($row_end, $col_end) = xl_cell_to_rowcol($cell_2);
+    # Remove leading/trailing apostrophes and convert escaped quotes to single.
+    $sheetname =~ s/^'//g;
+    $sheetname =~ s/'$//g;
+    $sheetname =~ s/''/'/g;
 
-   return ( $sheetname, $row_start, $col_start, $row_end, $col_end );
+    my ( $row_start, $col_start ) = xl_cell_to_rowcol( $cell_1 );
+    my ( $row_end,   $col_end )   = xl_cell_to_rowcol( $cell_2 );
+
+    # Check that we have a 1D range only.
+    if ( $row_start != $row_end && $col_start != $col_end ) {
+        return undef;
+    }
+
+    return ( $sheetname, $row_start, $col_start, $row_end, $col_end );
 }
 
 

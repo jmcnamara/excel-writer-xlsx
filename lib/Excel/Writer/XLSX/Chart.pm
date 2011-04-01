@@ -163,9 +163,10 @@ sub add_series {
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
-    # Get an id for the data equivalent to the range formaul.
-    my $cat_id = $self->_get_data_id( $categories, $arg{categories_data} );
-    my $val_id = $self->_get_data_id( $values,     $arg{values_data} );
+    # Get an id for the data equivalent to the range formula.
+    my $cat_id  = $self->_get_data_id( $categories,   $arg{categories_data} );
+    my $val_id  = $self->_get_data_id( $values,       $arg{values_data} );
+    my $name_id = $self->_get_data_id( $name_formula, $arg{name_data} );
 
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
@@ -173,6 +174,7 @@ sub add_series {
         _categories   => $categories,
         _name         => $name,
         _name_formula => $name_formula,
+        _name_id      => $name_id,
         _val_data_id  => $val_id,
         _cat_data_id  => $cat_id,
     );
@@ -195,8 +197,11 @@ sub set_x_axis {
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
+    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
+
     $self->{_x_axis_name}    = $name;
     $self->{_x_axis_formula} = $name_formula;
+    $self->{_x_axis_data_id} = $data_id;
 }
 
 
@@ -214,8 +219,11 @@ sub set_y_axis {
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
+    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
+
     $self->{_y_axis_name}    = $name;
     $self->{_y_axis_formula} = $name_formula;
+    $self->{_y_axis_data_id} = $data_id;
 }
 
 
@@ -233,8 +241,11 @@ sub set_title {
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
+    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
+
     $self->{_title_name}    = $name;
     $self->{_title_formula} = $name_formula;
+    $self->{_title_data_id} = $data_id;
 }
 
 
@@ -480,7 +491,12 @@ sub _get_data_type {
 #
 # _get_data_id()
 #
-# Store unique formula data and return an id to it.
+# Assign an id to a each unique series formula or title/axis formula. Repeated
+# formulas such as for categories get the same id. If the series or title
+# has user specified data associated with it then that is also stored. This
+# data is used to populate cached Excel data when creating a chart.
+# If there is no user defined data then it will be populated by the parent
+# workbook in Workbook::_add_chart_data()
 #
 sub _get_data_id {
 
@@ -489,23 +505,31 @@ sub _get_data_id {
     my $data    = shift;
     my $id;
 
+    # Ignore series without a range formula.
     return unless $formula;
 
     # Strip the leading '=' from the formula.
     $formula =~ s/^=//;
 
-    if ( exists $self->{_formula_ids}->{$formula} ) {
-        $id = $self->{_formula_ids}->{$formula};
+    # Store the data id in a hash keyed by the formula and store the data
+    # in a separate array with the same id.
+    if ( !exists $self->{_formula_ids}->{$formula} ) {
 
-        if ( !defined $self->{_formula_data}->[$id] ) {
-            $self->{_formula_data}->[$id] = $data;
-        }
-    }
-    else {
+        # Haven't seen this formula before.
         $id = @{ $self->{_formula_data} };
 
         push @{ $self->{_formula_data} }, $data;
         $self->{_formula_ids}->{$formula} = $id;
+    }
+    else {
+
+        # Formula already seen. Return existing id.
+        $id = $self->{_formula_ids}->{$formula};
+
+        # Store user defined data if it isn't already there.
+        if ( !defined $self->{_formula_data}->[$id] ) {
+            $self->{_formula_data}->[$id] = $data;
+        }
     }
 
     return $id;
@@ -863,7 +887,7 @@ sub _write_chart {
     # Write the chart title elements.
     my $title;
     if ( $title = $self->{_title_formula} ) {
-        $self->_write_title_formula( $title );
+        $self->_write_title_formula( $title, $self->{_title_data_id} );
     }
     elsif ( $title = $self->{_title_name} ) {
         $self->_write_title_rich( $title );
@@ -1066,7 +1090,7 @@ sub _write_series_name {
 
     my $name;
     if ( $name = $series->{_name_formula} ) {
-        $self->_write_tx_formula( $name );
+        $self->_write_tx_formula( $name, $series->{_name_id} );
     }
     elsif ( $name = $series->{_name} ) {
         $self->_write_tx_value( $name );
@@ -1280,7 +1304,7 @@ sub _write_cat_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $self->{_y_axis_formula} ) {
-        $self->_write_title_formula( $title, 1 );
+        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, 1 );
     }
     elsif ( $title = $self->{_y_axis_name} ) {
         $self->_write_title_rich( $title, 1 );
@@ -1343,7 +1367,7 @@ sub _write_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $self->{_x_axis_formula} ) {
-        $self->_write_title_formula( $title );
+        $self->_write_title_formula( $title, $self->{_x_axis_data_id} );
     }
     elsif ( $title = $self->{_x_axis_name} ) {
         $self->_write_title_rich( $title );
@@ -1392,7 +1416,7 @@ sub _write_date_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $self->{_y_axis_formula} ) {
-        $self->_write_title_formula( $title, 1 );
+        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, 1 );
     }
     elsif ( $title = $self->{_y_axis_name} ) {
         $self->_write_title_rich( $title, 1 );
@@ -1860,14 +1884,15 @@ sub _write_title_rich {
 #
 sub _write_title_formula {
 
-    my $self  = shift;
-    my $title = shift;
-    my $horiz = shift;
+    my $self    = shift;
+    my $title   = shift;
+    my $data_id = shift;
+    my $horiz   = shift;
 
     $self->{_writer}->startTag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx_formula( $title, $horiz );
+    $self->_write_tx_formula( $title, $data_id );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -1929,14 +1954,19 @@ sub _write_tx_value {
 #
 sub _write_tx_formula {
 
-    my $self  = shift;
-    my $title = shift;
-    my $horiz = shift;
+    my $self    = shift;
+    my $title   = shift;
+    my $data_id = shift;
+    my $data;
+
+    if ( defined $data_id ) {
+        $data = $self->{_formula_data}->[$data_id];
+    }
 
     $self->{_writer}->startTag( 'c:tx' );
 
     # Write the c:strRef element.
-    $self->_write_str_ref( $title, undef, 'none' );
+    $self->_write_str_ref( $title, $data, 'str' );
 
     $self->{_writer}->endTag( 'c:tx' );
 }

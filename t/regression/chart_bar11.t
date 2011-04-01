@@ -25,16 +25,8 @@ my $ignore_members  = [];
 
 my $ignore_elements = {
 
-    # Ignore the numCaches.
+    # Ignore the page margins.
     'xl/charts/chart1.xml' => [
-
-        '<c:numCache',
-        '<c:formatCode',
-        '<c:ptCount',
-        '<c:pt',
-        '<c:v>',
-        '</c:pt>',
-        '</c:numCache>',
 
         '<c:axId',
         '<c:crossAx',
@@ -44,14 +36,6 @@ my $ignore_elements = {
 
     'xl/charts/chart2.xml' => [
 
-        '<c:numCache',
-        '<c:formatCode',
-        '<c:ptCount',
-        '<c:pt',
-        '<c:v>',
-        '</c:pt>',
-        '</c:numCache>',
-
         '<c:axId',
         '<c:crossAx',
 
@@ -59,14 +43,6 @@ my $ignore_elements = {
     ],
 
     'xl/charts/chart3.xml' => [
-
-        '<c:numCache',
-        '<c:formatCode',
-        '<c:ptCount',
-        '<c:pt',
-        '<c:v>',
-        '</c:pt>',
-        '</c:numCache>',
 
         '<c:axId',
         '<c:crossAx',

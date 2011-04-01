@@ -25,20 +25,9 @@ my $ignore_members  = [];
 
 my $ignore_elements = {
 
-    # Ignore the numCaches and strCaches.
+    # Ignore the page margins.
     'xl/charts/chart1.xml' => [
-
-        '<c:numCache',
-        '<c:formatCode',
-        '<c:ptCount',
-        '<c:pt',
-        '<c:v>',
-        '</c:pt>',
-        '</c:numCache>',
         '<c:pageMargins',
-        '<c:strCache',
-        '</c:strCache>',
-
         '<c:axId',
         '<c:crossAx',
     ],
@@ -69,9 +58,9 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-$chart->set_x_axis( name_formula => '=Sheet1!$A$2' );
-$chart->set_y_axis( name_formula => '=Sheet1!$A$3' );
-$chart->set_title(  name_formula => '=Sheet1!$A$1' );
+$chart->set_x_axis( name_formula => '=Sheet1!$A$2', data => [2] );
+$chart->set_y_axis( name_formula => '=Sheet1!$A$3', data => [3] );
+$chart->set_title(  name_formula => '=Sheet1!$A$1', data => [1] );
 
 $worksheet->insert_chart( 'E9', $chart );
 

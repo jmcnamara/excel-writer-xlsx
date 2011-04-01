@@ -28,16 +28,6 @@ my $ignore_elements = {
     # Ignore the numCaches.
     'xl/charts/chart1.xml' => [
 
-        '<c:numCache',
-        '<c:formatCode',
-        '<c:ptCount',
-        '<c:pt',
-        '<c:v>',
-        '</c:pt>',
-        '</c:numCache>',
-        '<c:strCache',
-        '</c:strCache>',
-
         '<c:axId',
         '<c:crossAx',
     ],
