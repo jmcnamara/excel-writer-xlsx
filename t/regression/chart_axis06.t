@@ -36,9 +36,6 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'pie', embedded => 1 );
 
-# For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 47076480, 47078016 ];
-
 my $data = [
     [  2,  4,  6 ],
     [ 60, 30, 10 ],

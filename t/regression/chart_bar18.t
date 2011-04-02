@@ -37,15 +37,7 @@ my $ignore_elements = {
 
       ],
 
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [
-
-        '<c:pageMargins',
-
-        '<c:axId',
-        '<c:crossAx',
-
-    ],
+    'xl/charts/chart1.xml' => ['<c:pageMargins'],
 
 };
 
@@ -61,7 +53,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'bar' );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 64053248, 64446464 ];
+$chart->{_chart}->{_axis_ids} = [ 40294272, 40295808 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],

@@ -23,16 +23,7 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
-my $ignore_elements = {
-
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [
-
-        '<c:axId',
-        '<c:crossAx',
-    ],
-
-};
+my $ignore_elements = {};
 
 
 ###############################################################################

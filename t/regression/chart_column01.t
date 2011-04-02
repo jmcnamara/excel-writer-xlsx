@@ -23,16 +23,7 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
-my $ignore_elements = {
-
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [
-
-        '<c:axId',
-        '<c:crossAx',
-    ],
-
-};
+my $ignore_elements = {};
 
 
 ###############################################################################
@@ -44,6 +35,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
+
+# For testing, copy the randomly generated axis ids in the target xlsx file.
+$chart->{_axis_ids} = [ 43424000, 43434368 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],

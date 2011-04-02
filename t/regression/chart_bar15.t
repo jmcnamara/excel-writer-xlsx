@@ -24,25 +24,8 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 my $ignore_members  = [];
 
 my $ignore_elements = {
-
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [
-
-        '<c:axId',
-        '<c:crossAx',
-
-        '<c:pageMargins',
-    ],
-
-    # Ignore the numCaches.
-    'xl/charts/chart2.xml' => [
-
-        '<c:axId',
-        '<c:crossAx',
-
-        '<c:pageMargins',
-    ],
-
+    'xl/charts/chart1.xml' => ['<c:pageMargins'],
+    'xl/charts/chart2.xml' => ['<c:pageMargins'],
 };
 
 
@@ -57,6 +40,10 @@ my $worksheet1 = $workbook->add_worksheet();
 my $chart1     = $workbook->add_chart( type => 'bar' );
 my $worksheet2 = $workbook->add_worksheet();
 my $chart2     = $workbook->add_chart( type => 'column' );
+
+# For testing, copy the randomly generated axis ids in the target xlsx file.
+$chart1->{_chart}->{_axis_ids} = [ 62576896, 62582784 ];
+$chart2->{_chart}->{_axis_ids} = [ 65979904, 65981440 ];
 
 
 my $data = [
