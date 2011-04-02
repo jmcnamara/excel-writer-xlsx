@@ -36,6 +36,7 @@ sub new {
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
     $self->{_cross_between} = 'midCat';
+    $self->{_horiz_val_axis}    = 0;
 
     bless $self, $class;
     return $self;
@@ -143,9 +144,10 @@ sub _write_plot_area {
     $self->_write_chart_type();
 
     # Write the c:catAx element.
-    $self->_write_val_axis( 'b', 1, 0, 1 );
+    $self->_write_cat_val_axis( 'b', 1 );
 
     # Write the c:catAx element.
+    $self->{_horiz_val_axis} = 1;
     $self->_write_val_axis( 'l' );
 
     $self->{_writer}->endTag( 'c:plotArea' );

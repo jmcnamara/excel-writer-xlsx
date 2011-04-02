@@ -38,6 +38,8 @@ sub new {
     $self->{_subtype}           = $self->{_subtype} // 'clustered';
     $self->{_cat_axis_position} = 'l';
     $self->{_val_axis_position} = 'b';
+    $self->{_horiz_val_axis}    = 0;
+    $self->{_horiz_cat_axis}    = 1;
 
     bless $self, $class;
 
@@ -54,6 +56,19 @@ sub new {
 sub _write_chart_type {
 
     my $self = shift;
+
+    # Reverse meaning of X and Y axis for Bar charts.
+    my $name         = $self->{_y_axis_name};
+    my $name_formula = $self->{_y_axis_formula};
+    my $data_id      = $self->{_y_axis_data_id};
+
+    $self->{_y_axis_name}    = $self->{_x_axis_name};
+    $self->{_y_axis_formula} = $self->{_x_axis_formula};
+    $self->{_y_axis_data_id} = $self->{_x_axis_data_id};
+
+    $self->{_x_axis_name}    = $name;
+    $self->{_x_axis_formula} = $name_formula;
+    $self->{_x_axis_data_id} = $data_id;
 
     # Write the c:barChart element.
     $self->_write_bar_chart();

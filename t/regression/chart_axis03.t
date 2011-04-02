@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_area01.xlsx';
+my $filename     = 'chart_axis03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -25,8 +25,10 @@ my $ignore_members  = [];
 
 my $ignore_elements = {
 
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [ ],
+    'xl/charts/chart1.xml' => [ '<c:formatCode', '<c:pageMargins' ],
+
+    # Ignore the workbookView.
+    'xl/workbook.xml' => ['<workbookView'],
 
 };
 
@@ -37,21 +39,33 @@ my $ignore_elements = {
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'area', embedded => 1 );
+my $workbook    = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet   = $workbook->add_worksheet();
+my $chart       = $workbook->add_chart( type => 'stock', embedded => 1 );
+my $date_format = $workbook->add_format( num_format => 14 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 43407616, 43433984 ];
+$chart->{_axis_ids} = [ 65514112, 65556864 ];
 
 my $data = [
-    [ 1, 2, 3, 4,  5 ],
-    [ 8, 7, 6, 8,  10 ],
-    [ 3, 6, 9, 12, 15 ],
+
+    [ '2007-01-01T', '2007-01-02T', '2007-01-03T', '2007-01-04T', '2007-01-05T' ],
+    [ 27.2,  25.03, 19.05, 20.34, 18.5 ],
+    [ 23.49, 19.55, 15.12, 17.84, 16.34 ],
+    [ 25.45, 23.05, 17.32, 20.45, 17.34 ],
 
 ];
 
-$worksheet->write( 'A1', $data );
+for my $row ( 0 .. 4 ) {
+    $worksheet->write_date_time( $row, 0, $data->[0]->[$row], $date_format );
+    $worksheet->write( $row, 1, $data->[1]->[$row] );
+    $worksheet->write( $row, 2, $data->[2]->[$row] );
+    $worksheet->write( $row, 3, $data->[3]->[$row] );
+
+}
+
+$worksheet->set_column( 'A:D', 11 );
+
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
@@ -62,6 +76,15 @@ $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
+
+$chart->add_series(
+    categories => '=Sheet1!$A$1:$A$5',
+    values     => '=Sheet1!$D$1:$D$5',
+);
+
+$chart->set_title( name => 'Title' );
+$chart->set_x_axis( name => 'XXX' );
+$chart->set_y_axis( name => 'YYY' );
 
 $worksheet->insert_chart( 'E9', $chart );
 

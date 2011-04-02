@@ -16,19 +16,14 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_area01.xlsx';
+my $filename     = 'chart_axis07.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
-my $ignore_elements = {
-
-    # Ignore the numCaches.
-    'xl/charts/chart1.xml' => [ ],
-
-};
+my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:pageMargins'] };
 
 
 ###############################################################################
@@ -42,7 +37,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'area', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 43407616, 43433984 ];
+$chart->{_axis_ids} = [ 43321216, 47077248 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -62,6 +57,9 @@ $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
+
+$chart->set_x_axis( name => 'XXX' );
+$chart->set_y_axis( name => 'YYY' );
 
 $worksheet->insert_chart( 'E9', $chart );
 

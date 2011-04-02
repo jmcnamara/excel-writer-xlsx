@@ -35,6 +35,8 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_horiz_val_axis} = 0;
+
     bless $self, $class;
     return $self;
 }

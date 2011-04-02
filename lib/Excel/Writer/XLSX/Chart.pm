@@ -79,7 +79,8 @@ sub new {
     $self->{_val_axis_position} = 'l';
     $self->{_formula_ids}       = {};
     $self->{_formula_data}      = [];
-
+    $self->{_horiz_cat_axis}    = 0;
+    $self->{_horiz_val_axis}    = 1;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -1288,8 +1289,9 @@ sub _write_axis_id {
 #
 sub _write_cat_axis {
 
-    my $self = shift;
+    my $self     = shift;
     my $position = shift // $self->{_cat_axis_position};
+    my $horiz    = $self->{_horiz_cat_axis};
 
     $self->{_writer}->startTag( 'c:catAx' );
 
@@ -1303,11 +1305,11 @@ sub _write_cat_axis {
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_y_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, 1 );
+    if ( $title = $self->{_x_axis_formula} ) {
+        $self->_write_title_formula( $title, $self->{_x_axis_data_id}, $horiz );
     }
-    elsif ( $title = $self->{_y_axis_name} ) {
-        $self->_write_title_rich( $title, 1 );
+    elsif ( $title = $self->{_x_axis_name} ) {
+        $self->_write_title_rich( $title, $horiz );
     }
 
     # Write the c:numFmt element.
@@ -1348,12 +1350,66 @@ sub _write_val_axis {
     my $self                 = shift;
     my $position             = shift // $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
-    my $axis_1_id            = shift // 1;
-    my $axis_2_id            = shift // 0;
+    my $horiz                = $self->{_horiz_val_axis};
 
     $self->{_writer}->startTag( 'c:valAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[$axis_1_id] );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+
+    # Write the c:scaling element.
+    $self->_write_scaling();
+
+    # Write the c:axPos element.
+    $self->_write_axis_pos( $position );
+
+    # Write the c:majorGridlines element.
+    $self->_write_major_gridlines() if not $hide_major_gridlines;
+
+    # Write the axis title elements.
+    my $title;
+    if ( $title = $self->{_y_axis_formula} ) {
+        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, $horiz );
+    }
+    elsif ( $title = $self->{_y_axis_name} ) {
+        $self->_write_title_rich( $title, $horiz );
+    }
+
+    # Write the c:numberFormat element.
+    $self->_write_number_format();
+
+    # Write the c:tickLblPos element.
+    $self->_write_tick_label_pos( 'nextTo' );
+
+    # Write the c:crossAx element.
+    $self->_write_cross_axis( $self->{_axis_ids}->[0] );
+
+    # Write the c:crosses element.
+    $self->_write_crosses( 'autoZero' );
+
+    # Write the c:crossBetween element.
+    $self->_write_cross_between();
+
+    $self->{_writer}->endTag( 'c:valAx' );
+}
+
+
+##############################################################################
+#
+# _write_cat_val_axis()
+#
+# Write the <c:valAx> element. This is for the second valAx in scatter plots.
+#
+#
+sub _write_cat_val_axis {
+
+    my $self                 = shift;
+    my $position             = shift // $self->{_val_axis_position};
+    my $hide_major_gridlines = shift;
+    my $horiz                = $self->{_horiz_val_axis};
+
+    $self->{_writer}->startTag( 'c:valAx' );
+
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
     $self->_write_scaling();
@@ -1367,10 +1423,10 @@ sub _write_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $self->{_x_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_x_axis_data_id} );
+        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, $horiz );
     }
     elsif ( $title = $self->{_x_axis_name} ) {
-        $self->_write_title_rich( $title );
+        $self->_write_title_rich( $title, $horiz );
     }
 
     # Write the c:numberFormat element.
@@ -1380,7 +1436,7 @@ sub _write_val_axis {
     $self->_write_tick_label_pos( 'nextTo' );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[$axis_2_id] );
+    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
     # Write the c:crosses element.
     $self->_write_crosses( 'autoZero' );
@@ -1415,11 +1471,11 @@ sub _write_date_axis {
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_y_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, 1 );
+    if ( $title = $self->{_x_axis_formula} ) {
+        $self->_write_title_formula( $title, $self->{_x_axis_data_id} );
     }
-    elsif ( $title = $self->{_y_axis_name} ) {
-        $self->_write_title_rich( $title, 1 );
+    elsif ( $title = $self->{_x_axis_name} ) {
+        $self->_write_title_rich( $title );
     }
 
     # Write the c:numFmt element.
