@@ -2591,7 +2591,7 @@ Currently the supported chart types are:
 
 =item * C<scatter>: Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
 
-=item * C<stock>: Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>. (Not fully supported yet. See documentation).
+=item * C<stock>: Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
 
 =back
 
@@ -2619,7 +2619,7 @@ The properties that can be set are:
 
 =item * C<values>
 
-This is the most important property of a series and must be set for every chart object. It links the chart with the worksheet data that it displays. Note the format that should be used for the formula. See L</Working with Cell Ranges>.
+This is the most important property of a series and must be set for every chart object. It links the chart with the worksheet data that it displays. Note the format that should be used for the formula.
 
 =item * C<categories>
 
@@ -2630,6 +2630,15 @@ This sets the chart category labels. The category is more or less the same as th
 Set the name for the series. The name is displayed in the chart legend and in the formula bar. The name property is optional and if it isn't supplied will default to C<Series 1 .. n>.
 
 =back
+
+The C<categories> and C<values> can take either a range formula such as C<=Sheet1!$A$2:$A$7> or, more usefully when generating the range programatically, an array ref with zero indexed row/column values:
+
+     [ $sheetname, $row_start, $row_end, $col_start, $col_end ]
+
+As such the following are equivalent:
+
+    $chart->add_series( categories => '=Sheet1!$A$2:$A$7' );      # Same as ...
+    $chart->add_series( categories => [ 'Sheet1', 1, 6, 0, 0 ] ); # Zero-indexed.
 
 You can add more than one series to a chart, in fact some chart types such as C<stock> require it. The series numbering and order in the final chart is the same as the order in which that are added.
 
@@ -2661,11 +2670,11 @@ The properties that can be set are:
 
 =item * C<name>
 
-Set the name (title or caption) for the axis. The name is displayed below the X axis. This property is optional. The default is to have no axis name.
+Set the name (title or caption) for the axis. The name is displayed below the X axis. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no axis name.
 
 =back
 
-Additional axis properties such as range, divisions and ticks will be made available in later releases. See the L</TODO> section.
+Additional axis properties such as range, divisions and ticks will be made available in later releases.
 
 
 =head2 set_y_axis()
@@ -2680,11 +2689,11 @@ The properties that can be set are:
 
 =item * C<name>
 
-Set the name (title or caption) for the axis. The name is displayed to the left of the Y axis. This property is optional. The default is to have no axis name.
+Set the name (title or caption) for the axis. The name is displayed to the left of the Y axis. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no axis name.
 
 =back
 
-Additional axis properties such as range, divisions and ticks will be made available in later releases. See the L</TODO> section.
+Additional axis properties such as range, divisions and ticks will be made available in later releases.
 
 =head2 set_title()
 
@@ -2698,7 +2707,7 @@ The properties that can be set are:
 
 =item * C<name>
 
-Set the name (title) for the chart. The name is displayed above the chart. This property is optional. The default is to have no chart title.
+Set the name (title) for the chart. The name is displayed above the chart. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no chart title.
 
 =back
 
@@ -2736,13 +2745,13 @@ The default legend position is C<right>. The available positions are:
 
 The C<set_chartarea()> method is used to set the properties of the chart area.
 
-This method isn't implemented yet an is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
+This method isn't implemented yet and is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
 
 =head2 set_plotarea()
 
 The C<set_plotarea()> method is used to set properties of the plot area of a chart.
 
-This method isn't implemented yet an is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
+This method isn't implemented yet and is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
 
 =head2 set_style()
 
@@ -2851,29 +2860,17 @@ Features that are on the TODO list and will be added are:
 
 =item *  Chart sub-types.
 
-=item * Colours and formatting options. For now you will have to make do with the default Excel colours and formats.
+=item * Colours and formatting options. For now try the C<set_style()> method.
 
 =item * Axis controls, gridlines.
 
 =item * 3D charts.
-
-=item * Embedded data in charts for third party application support. See Known Issues.
 
 =item * Additional chart types such as Bubble and Radar. Send an email if you are interested in other types and they will be added to the queue.
 
 =back
 
 If you are interested in sponsoring a feature let me know.
-
-=head1 KNOWN ISSUES
-
-=over
-
-=item * Currently charts don't contain embedded data from which the charts can be rendered. Excel and most other third party applications ignore this and read the data via the links that have been specified. However, some applications may complain or not render charts correctly. This will be fixed in a later release.
-
-=item * Stock charts don't currently render correctly. This will be fixed soon.
-
-=back
 
 
 =head1 AUTHOR
