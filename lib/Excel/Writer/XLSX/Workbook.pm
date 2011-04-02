@@ -159,7 +159,7 @@ sub _assemble_xml_file {
     # Close the workbook tag.
     $self->{_writer}->endTag( 'workbook' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -667,7 +667,7 @@ sub _store_workbook {
     # Set the fill index for the format objects.
     $self->_prepare_fills();
 
-    # Set the defined names for the worsheets such as Print Titles.
+    # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
 
     # Prepare the charts and drawings.
@@ -1023,6 +1023,7 @@ sub _add_chart_data {
 
     my $self = shift;
     my %worksheets;
+    my %seen_ranges;
 
     # Map worksheet names to worksheet objects.
     for my $worksheet ( @{ $self->{_worksheets} } ) {
@@ -1036,7 +1037,21 @@ sub _add_chart_data {
         while ( my ( $range, $id ) = each %{ $chart->{_formula_ids} } ) {
 
             # Skip if the series has user defined data.
-            next RANGE if defined $chart->{_formula_data}->[$id];
+            if ( defined $chart->{_formula_data}->[$id] ) {
+                if (   !exists $seen_ranges{$range}
+                    || !defined $seen_ranges{$range} )
+                {
+                    my $data = $chart->{_formula_data}->[$id];
+                    $seen_ranges{$range} = $data;
+                }
+                next RANGE;
+            }
+
+            # Check to see if the data is already cached locally.
+            if ( exists $seen_ranges{$range} ) {
+                $chart->{_formula_data}->[$id] = $seen_ranges{$range};
+                next RANGE;
+            }
 
             # Convert the range formula to a sheet name and cell range.
             my ( $sheetname, @cells ) = $self->_get_chart_range( $range );
@@ -1044,7 +1059,7 @@ sub _add_chart_data {
             # Skip if we couldn't parse the formula.
             next RANGE if !defined $sheetname;
 
-            # Skip if the sheet name is know. Probably should throw exception.
+            # Skip if the name is unknow. Probably should throw exception.
             next RANGE if !exists $worksheets{$sheetname};
 
             # Find the worksheet object based on the sheet name.
@@ -1054,15 +1069,22 @@ sub _add_chart_data {
             my @data = $worksheet->_get_range_data( @cells );
 
             # Convert shared string indexes to strings.
-            # TODO. Need to handle (or not handle) rich strings.
             for my $token ( @data ) {
                 if ( ref $token ) {
                     $token = $self->{_str_array}->[ $token->{sst_id} ];
+
+                    # Ignore rich strings for now. Deparse later if necessary.
+                    if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+                        $token = '';
+                    }
                 }
             }
 
             # Add the data to the chart.
             $chart->{_formula_data}->[$id] = \@data;
+
+            # Store range data locally to avoid lookup if seen again.
+            $seen_ranges{$range} = \@data;
         }
     }
 }

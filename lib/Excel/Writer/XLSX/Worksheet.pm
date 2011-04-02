@@ -3512,7 +3512,9 @@ sub _prepare_chart {
 #
 # _get_range_data
 #
-# TODO
+# Returns a range of data from the worksheet _table to be used in chart
+# cached data. If any error is encountered it returns an empty array.
+# Strings are returns as SST ids and decode in the workbook.
 #
 sub _get_range_data {
 
@@ -3520,7 +3522,7 @@ sub _get_range_data {
     my @data;
     my ( $row_start, $col_start, $row_end, $col_end ) = @_;
 
-
+    # Ignore data outside the table range.
     return undef if $row_start < $self->{_dim_rowmin};
     return undef if $row_end < $self->{_dim_rowmin};
     return undef if $row_start > $self->{_dim_rowmax};
@@ -3530,9 +3532,10 @@ sub _get_range_data {
     return undef if $col_start > $self->{_dim_colmax};
     return undef if $col_end > $self->{_dim_colmax};
 
-
+    # Iterate through the table data.
     for my $row_num ( $row_start .. $row_end ) {
 
+        # Return undef if row doesn't exist.
         return undef if !$self->{_table}->[$row_num];
 
         for my $col_num ( $col_start .. $col_end ) {
@@ -3545,36 +3548,38 @@ sub _get_range_data {
 
                 if ( $type eq 'n' ) {
 
-                    # Write a number.
+                    # Store a number.
                     push @data, $token;
                 }
                 elsif ( $type eq 's' ) {
 
-                    # Write a string.
+                    # Store a string.
                     push @data, { 'sst_id' => $token};
                 }
                 elsif ( $type eq 'f' ) {
 
-                    # Write a formula.
+                    # Store a formula.
                     push @data, $cell->[3];
                 }
                 elsif ( $type eq 'a' ) {
 
-                    # Write an array formula.
+                    # Store an array formula.
                     push @data, $cell->[4];
                 }
                 elsif ( $type eq 'l' ) {
 
-                    # Write the string part a hyperlink.
+                    # Store the string part a hyperlink.
                     push @data, { 'sst_id' => $token};
                 }
                 elsif ( $type eq 'b' ) {
 
-                    # Write a empty cell.
+                    # Store a empty cell.
                     push @data, '';
                 }
             }
             else {
+
+                # Return undef if col doesn't exist.
                 return undef;
             }
         }
