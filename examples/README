@@ -18,6 +18,13 @@ Intermediate
 autofilter.pl           Examples of worksheet autofilters.
 array_formula.pl        Examples of how to write array formulas.
 cgi.pl                  A simple CGI program.
+chart_area.pl           A demo of area style charts.
+chart_bar.pl            A demo of bar (vertical histogram) style charts.
+chart_column.pl         A demo of column (histogram) style charts.
+chart_line.pl           A demo of line style charts.
+chart_pie.pl            A demo of pie style charts.
+chart_scatter.pl        A demo of scatter style charts.
+chart_stock.pl          A demo of stock style charts.
 colors.pl               A demo of the colour palette and named colours.
 date_time.pl            Write dates and times with write_date_time().
 diag_border.pl          A simple example of diagonal cell borders.

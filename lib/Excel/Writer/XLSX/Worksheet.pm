@@ -19,6 +19,7 @@ use strict;
 use warnings;
 use Carp;
 use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
@@ -124,11 +125,12 @@ sub new {
     $self->{_set_cols} = {};
     $self->{_set_rows} = {};
 
-    $self->{_zoom}          = 100;
-    $self->{_print_scale}   = 100;
-    $self->{_right_to_left} = 0;
-    $self->{_show_zeros}    = 1;
-    $self->{_leading_zeros} = 0;
+    $self->{_zoom}              = 100;
+    $self->{_zoom_scale_normal} = 1;
+    $self->{_print_scale}       = 100;
+    $self->{_right_to_left}     = 0;
+    $self->{_show_zeros}        = 1;
+    $self->{_leading_zeros}     = 0;
 
     $self->{_outline_row_level} = 0;
     $self->{_outline_style}     = 0;
@@ -155,9 +157,13 @@ sub new {
     $self->{_row_sizes}   = {};
     $self->{_col_formats} = {};
 
-    $self->{_hlink_refs}     = [];
-    $self->{_external_links} = [];
-    $self->{_hlink_count}    = 0;
+    $self->{_hlink_count}     = 0;
+    $self->{_hlink_refs}      = [];
+    $self->{_external_hlinks} = [];
+    $self->{_external_dlinks} = [];
+    $self->{_drawing_links}   = [];
+    $self->{_charts}          = [];
+    $self->{_drawing}         = 0;
 
     $self->{_rstring} = '';
 
@@ -237,6 +243,9 @@ sub _assemble_xml_file {
 
     # Write the colBreaks element.
     $self->_write_col_breaks();
+
+    # Write the drawing element.
+    $self->_write_drawings();
 
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
@@ -368,6 +377,8 @@ sub protect {
 
     # Default values for objects that can be protected.
     my %defaults = (
+        sheet                 => 1,
+        content               => 0,
         objects               => 0,
         scenarios             => 0,
         format_cells          => 0,
@@ -3066,23 +3077,114 @@ sub _store_externsheet {
 
 ###############################################################################
 #
-# _store_protect()
+#  _position_object()
 #
-# Set the Biff PROTECT record to indicate that the worksheet is protected.
+# Calculate the vertices that define the position of a graphical object within
+# the worksheet.
 #
-sub _store_protect {
-
-    # TODO. Unused. Remove after refactoring.
+#         +------------+------------+
+#         |     A      |      B     |
+#   +-----+------------+------------+
+#   |     |(x1,y1)     |            |
+#   |  1  |(A1)._______|______      |
+#   |     |    |              |     |
+#   |     |    |              |     |
+#   +-----+----|    BITMAP    |-----+
+#   |     |    |              |     |
+#   |  2  |    |______________.     |
+#   |     |            |        (B2)|
+#   |     |            |     (x2,y2)|
+#   +---- +------------+------------+
+#
+# Example of an object that covers some of the area from cell A1 to cell B2.
+#
+# Based on the width and height of the object we need to calculate 8 vars:
+#
+#     $col_start, $row_start, $col_end, $row_end, $x1, $y1, $x2, $y2.
+#
+# The width and height of the cells are also variable and have to be taken into
+# account.
+#
+# The values of $col_start and $row_start are passed in from the calling
+# function. The values of $col_end and $row_end are calculated by subtracting
+# the width and height of the object from the width and height of the
+# underlying cells.
+#
+# The vertices are expressed as English Metric Units (EMUs). There are 12,700
+# EMUs per point. Therefore, 12,700 * 3 /4 = 9,525 EMUs per pixel.
+#
+sub _position_object {
 
     my $self = shift;
 
-    # Exit unless sheet protection has been specified
-    return unless $self->{_protect};
+    my $col_start;    # Col containing upper left corner of object.
+    my $x1;           # Distance to left side of object.
 
-    my $record = 0x0012;    # Record identifier
-    my $length = 0x0002;    # Bytes to follow
+    my $row_start;    # Row containing top left corner of object.
+    my $y1;           # Distance to top of object.
 
-    my $fLock = $self->{_protect};    # Worksheet is protected
+    my $col_end;      # Col containing lower right corner of object.
+    my $x2;           # Distance to right side of object.
+
+    my $row_end;      # Row containing bottom right corner of object.
+    my $y2;           # Distance to bottom of object.
+
+    my $width;        # Width of object frame.
+    my $height;       # Height of object frame.
+
+    ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+
+
+    # Adjust start column for offsets that are greater than the col width.
+    while ( $x1 >= $self->_size_col( $col_start ) ) {
+        $x1 -= $self->_size_col( $col_start );
+        $col_start++;
+    }
+
+    # Adjust start row for offsets that are greater than the row height.
+    while ( $y1 >= $self->_size_row( $row_start ) ) {
+        $y1 -= $self->_size_row( $row_start );
+        $row_start++;
+    }
+
+
+    # Initialise end cell to the same as the start cell.
+    $col_end = $col_start;
+    $row_end = $row_start;
+
+    $width  = $width + $x1;
+    $height = $height + $y1;
+
+
+    # Subtract the underlying cell widths to find the end cell of the object.
+    while ( $width >= $self->_size_col( $col_end ) ) {
+        $width -= $self->_size_col( $col_end );
+        $col_end++;
+    }
+
+
+    # Subtract the underlying cell heights to find the end cell of the object.
+    while ( $height >= $self->_size_row( $row_end ) ) {
+        $height -= $self->_size_row( $row_end );
+        $row_end++;
+    }
+
+
+    $col_end-- if $width == 0;
+    $row_end-- if $height == 0;
+
+
+    # The end vertices are whatever is left from the width and height.
+    $x2 = $width;
+    $y2 = $height;
+
+    # Convert the pixel values to EMUs. See above.
+    $x1 *= 9_525;
+    $y1 *= 9_525;
+    $x2 *= 9_525;
+    $y2 *= 9_525;
+
+    return ( $col_start, $row_start, $x1, $y1, $col_end, $row_end, $x2, $y2 );
 }
 
 
@@ -3091,21 +3193,38 @@ sub _store_protect {
 # _size_col($col)
 #
 # Convert the width of a cell from user's units to pixels. Excel rounds the
-# column width to the nearest pixel. Excel XML also scales the pixel value
-# by 0.75.
+# column width to the nearest pixel. If the width hasn't been set by the user
+# we use the default value. If the column is hidden it has a value of zero.
 #
 sub _size_col {
 
-    my $self  = shift;
-    my $width = $_[0];
+    my $self = shift;
+    my $col  = shift;
 
-    # The relationship is different for user units less than 1.
-    if ( $width < 1 ) {
-        return 0.75 * int( $width * 12 );
+    my $max_digit_width = 7;    # For Calabri 11.
+    my $padding         = 5;
+    my $pixels;
+
+    # Look up the cell value to see if it has been changed.
+    if ( exists $self->{_col_sizes}->{$col} ) {
+        my $width = $self->{_col_sizes}->{$col};
+
+        # Convert to pixels.
+        if ( $width == 0) {
+            $pixels = 0;
+        }
+        elsif ( $width < 1 ) {
+            $pixels = int( $width * 12 + 0.5 );
+        }
+        else {
+            $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
+        }
     }
     else {
-        return 0.75 * ( int( $width * 7 ) + 5 );
+        $pixels = 64;
     }
+
+    return $pixels;
 }
 
 
@@ -3113,37 +3232,32 @@ sub _size_col {
 #
 # _size_row($row)
 #
-# Convert the height of a cell from user's units to pixels. By interpolation
-# the relationship is: y = 4/3x. Excel XML also scales the pixel value by 0.75.
+# Convert the height of a cell from user's units to pixels. If the height
+# hasn't been set by the user we use the default value. If the row is hidden
+# it has a value of zero.
 #
 sub _size_row {
 
-    my $self   = shift;
-    my $height = $_[0];
-
-    return 0.75 * int( 4 / 3 * $height );
-}
-
-
-###############################################################################
-#
-# _store_zoom($zoom)
-#
-#
-# Store the window zoom factor. This should be a reduced fraction but for
-# simplicity we will store all fractions with a numerator of 100.
-#
-sub _store_zoom {
-
-    # TODO. Unused. Remove after refactoring.
-
     my $self = shift;
+    my $row  = shift;
+    my $pixels;
 
-    # If scale is 100 we don't need to write a record
-    return if $self->{_zoom} == 100;
+    # Look up the cell value to see if it has been changed
+    if ( exists $self->{_row_sizes}->{$row} ) {
+        my $height = $self->{_row_sizes}->{$row};
 
-    my $record = 0x00A0;    # Record identifier
-    my $length = 0x0004;    # Bytes to follow
+        if ( $height == 0 ) {
+            $pixels = 0;
+        }
+        else {
+            $pixels = int( 4 / 3 * $height );
+        }
+    }
+    else {
+        $pixels = 20;
+    }
+
+    return $pixels;
 }
 
 
@@ -3257,6 +3371,180 @@ sub _get_shared_string_index {
     my $index = ${ $self->{_str_table} }->{$str};
 
     return $index;
+}
+
+
+
+
+###############################################################################
+#
+# insert_chart($row, $col, $chart, $x, $y, $scale_x, $scale_y)
+#
+# Insert a chart into a worksheet. The $chart argument should be a Chart
+# object or else it is assumed to be a filename of an external binary file.
+# The latter is for backwards compatibility.
+#
+sub insert_chart {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row      = $_[0];
+    my $col      = $_[1];
+    my $chart    = $_[2];
+    my $x_offset = $_[3] || 0;
+    my $y_offset = $_[4] || 0;
+    my $scale_x  = $_[5] || 1;
+    my $scale_y  = $_[6] || 1;
+
+    croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
+
+    if ( ref $chart ) {
+
+        # Check for a Chart object.
+        croak "Not a Chart object in insert_chart()"
+          unless $chart->isa( 'Excel::Writer::XLSX::Chart' );
+
+        # Check that the chart is an embedded style chart.
+        croak "Not a embedded style Chart object in insert_chart()"
+          unless $chart->{_embedded};
+
+    }
+
+    push @{ $self->{_charts} },
+      [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ];
+}
+
+
+###############################################################################
+#
+# _prepare_chart()
+#
+# Set up chart/drawings.
+#
+sub _prepare_chart {
+
+    my $self       = shift;
+    my $index      = shift;
+    my $chart_id   = shift;
+    my $drawing_id = shift;
+
+    my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
+      @{ $self->{_charts}->[$index] };
+
+    my $width  = 480 * $scale_x;
+    my $height = 288 * $scale_y;
+
+    my @dimensions =
+      $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
+        $height );
+
+
+    if ( !$self->{_drawing} ) {
+
+        my $drawing = Excel::Writer::XLSX::Drawing->new();
+        $drawing->_set_dimensions( @dimensions );
+        $drawing->{_embedded} = 1;
+
+        $self->{_drawing} = $drawing;
+
+        push @{ $self->{_external_dlinks} },
+          [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+    }
+    else {
+        my $drawing = $self->{_drawing};
+        $drawing->_set_dimensions( @dimensions );
+
+    }
+
+    push @{ $self->{_drawing_links} },
+      [ '/chart', '../charts/chart' . $chart_id ];
+}
+
+
+
+###############################################################################
+#
+# _get_range_data
+#
+# Returns a range of data from the worksheet _table to be used in chart
+# cached data. If any error is encountered it returns an empty array.
+# Strings are returns as SST ids and decode in the workbook.
+#
+sub _get_range_data {
+
+    my $self = shift;
+    my @data;
+    my ( $row_start, $col_start, $row_end, $col_end ) = @_;
+
+    # Ignore data outside the table range.
+    return undef if $row_start < $self->{_dim_rowmin};
+    return undef if $row_end < $self->{_dim_rowmin};
+    return undef if $row_start > $self->{_dim_rowmax};
+    return undef if $row_end > $self->{_dim_rowmax};
+    return undef if $col_start < $self->{_dim_colmin};
+    return undef if $col_end < $self->{_dim_colmin};
+    return undef if $col_start > $self->{_dim_colmax};
+    return undef if $col_end > $self->{_dim_colmax};
+
+    # Iterate through the table data.
+    for my $row_num ( $row_start .. $row_end ) {
+
+        # Return undef if row doesn't exist.
+        return undef if !$self->{_table}->[$row_num];
+
+        for my $col_num ( $col_start .. $col_end ) {
+
+            if ( my $cell = $self->{_table}->[$row_num]->[$col_num] ) {
+
+                my $type  = $cell->[0];
+                my $token = $cell->[1];
+
+
+                if ( $type eq 'n' ) {
+
+                    # Store a number.
+                    push @data, $token;
+                }
+                elsif ( $type eq 's' ) {
+
+                    # Store a string.
+                    push @data, { 'sst_id' => $token};
+                }
+                elsif ( $type eq 'f' ) {
+
+                    # Store a formula.
+                    push @data, $cell->[3];
+                }
+                elsif ( $type eq 'a' ) {
+
+                    # Store an array formula.
+                    push @data, $cell->[4];
+                }
+                elsif ( $type eq 'l' ) {
+
+                    # Store the string part a hyperlink.
+                    push @data, { 'sst_id' => $token};
+                }
+                elsif ( $type eq 'b' ) {
+
+                    # Store a empty cell.
+                    push @data, '';
+                }
+            }
+            else {
+
+                # Return undef if col doesn't exist.
+                return undef;
+            }
+        }
+    }
+
+    return @data;
 }
 
 
@@ -3551,7 +3839,8 @@ sub _write_sheet_view {
     # Set the zoom level.
     if ( $zoom != 100 ) {
         push @attributes, ( 'zoomScale' => $zoom ) unless $view;
-        push @attributes, ( 'zoomScaleNormal' => $zoom );
+        push @attributes, ( 'zoomScaleNormal' => $zoom )
+          if $self->{_zoom_scale_normal};
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
@@ -3731,6 +4020,7 @@ sub _write_sheet_data {
     }
 
 }
+
 
 ###############################################################################
 #
@@ -3987,7 +4277,7 @@ sub _write_cell {
                 ++$self->{_hlink_count}, $cell->[5], $cell->[6]
               ];
 
-            push @{ $self->{_external_links} },
+            push @{ $self->{_external_hlinks} },
               [ '/hyperlink', $cell->[4], 'External' ];
         }
         elsif ( $link_type ) {
@@ -5005,7 +5295,7 @@ sub _write_tab_color {
 
     my $rgb = $self->_get_palette_color( $color_index );
 
-    my @attributes = ( 'rgb' => $rgb, );
+    my @attributes = ( 'rgb' => $rgb );
 
     $self->{_writer}->emptyTag( 'tabColor', @attributes );
 }
@@ -5027,8 +5317,8 @@ sub _write_sheet_protection {
     my %arg = %{ $self->{_protect} };
 
     push @attributes, ( "password" => $arg{password} ) if $arg{password};
-    push @attributes, ( "sheet" => 1 );
-
+    push @attributes, ( "sheet"            => 1 ) if $arg{sheet};
+    push @attributes, ( "content"          => 1 ) if $arg{content};
     push @attributes, ( "objects"          => 1 ) if !$arg{objects};
     push @attributes, ( "scenarios"        => 1 ) if !$arg{scenarios};
     push @attributes, ( "formatCells"      => 0 ) if $arg{format_cells};
@@ -5052,6 +5342,40 @@ sub _write_sheet_protection {
 
 
     $self->{_writer}->emptyTag( 'sheetProtection', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_drawings()
+#
+# Write the <drawing> elements.
+#
+sub _write_drawings {
+
+    my $self = shift;
+
+    return unless $self->{_drawing};
+
+    $self->_write_drawing( $self->{_hlink_count} + 1 );
+}
+
+
+##############################################################################
+#
+# _write_drawing()
+#
+# Write the <drawing> element.
+#
+sub _write_drawing {
+
+    my $self = shift;
+    my $id   = shift;
+    my $r_id = 'rId' . $id;
+
+    my @attributes = ( 'r:id' => $r_id );
+
+    $self->{_writer}->emptyTag( 'drawing', @attributes );
 }
 
 

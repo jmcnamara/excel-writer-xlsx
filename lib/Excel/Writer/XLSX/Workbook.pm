@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
-# Worksheet - A writer class for Excel Worksheets.
+# Workbook - A writer class for Excel Workbooks.
 #
 #
 # Used in conjunction with Excel::Writer::XLSX
@@ -22,7 +22,9 @@ use IO::File;
 use File::Temp 'tempdir';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
+use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Chart;
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
@@ -57,8 +59,13 @@ sub new {
     $self->{_xf_index}         = 0;
     $self->{_fileclosed}       = 0;
     $self->{_biffsize}         = 0;
-    $self->{_sheetname}        = "Sheet";
+    $self->{_sheet_name}       = 'Sheet';
+    $self->{_chart_name}       = 'Chart';
+    $self->{_sheetname_count}  = 0;
+    $self->{_chartname_count}  = 0;
     $self->{_worksheets}       = [];
+    $self->{_charts}           = [];
+    $self->{_drawings}         = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
     $self->{_palette}          = [];
@@ -152,7 +159,7 @@ sub _assemble_xml_file {
     # Close the workbook tag.
     $self->{_writer}->endTag( 'workbook' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -249,29 +256,9 @@ sub worksheets {
 #
 sub add_worksheet {
 
-    my $self = shift;
-    my $name = $_[0] || "";
-
-    # Check that sheetname is <= 31 chars (Excel limit).
-    croak "Sheetname $name must be <= 31 chars" if length $name > 31;
-
-    # Check that sheetname doesn't contain any invalid characters
-    croak 'Invalid Excel character [:*?/\\] in worksheet name: ' . $name
-      if $name =~ m{[:*?/\\]};
-
-    my $index     = @{ $self->{_worksheets} };
-    my $sheetname = $self->{_sheetname};
-
-    if ( $name eq "" ) { $name = $sheetname . ( $index + 1 ) }
-
-    # Check that the worksheet name doesn't already exist: a fatal Excel error.
-    # The check must also exclude case insensitive matches.
-    for my $tmp ( @{ $self->{_worksheets} } ) {
-        if ( lc $name eq lc $tmp->get_name() ) {
-            croak "Worksheet name '$name', with case ignored, "
-              . "is already in use";
-        }
-    }
+    my $self  = shift;
+    my $index = @{ $self->{_worksheets} };
+    my $name  = $self->_check_sheetname( $_[0] );
 
 
     # Porters take note, the following scheme of passing references to Workbook
@@ -296,9 +283,147 @@ sub add_worksheet {
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
-    $self->{_worksheets}->[$index] = $worksheet;    # Store ref for iterator
-    $self->{_sheetnames}->[$index] = $name;         # Store EXTERNSHEET names
+    $self->{_worksheets}->[$index] = $worksheet;
+    $self->{_sheetnames}->[$index] = $name;
+
     return $worksheet;
+}
+
+
+
+###############################################################################
+#
+# add_chart( %args )
+#
+# Create a chart for embedding or as as new sheet.
+#
+sub add_chart {
+
+    my $self     = shift;
+    my %arg      = @_;
+    my $name     = '';
+    my $index    = @{ $self->{_worksheets} };
+
+    # Type must be specified so we can create the required chart instance.
+    my $type = $arg{type};
+    if ( !defined $type ) {
+        croak "Must define chart type in add_chart()";
+    }
+
+    # Ensure that the chart defaults to non embedded.
+    my $embedded = $arg{embedded} // 0;
+
+    # Check the worksheet name for non-embedded charts.
+    if ( !$embedded ) {
+        $name = $self->_check_sheetname( $arg{name}, 1 );
+    }
+
+
+    my @init_data = (
+        $name,
+        $index,
+
+        \$self->{_activesheet},
+        \$self->{_firstsheet},
+
+        \$self->{_str_total},
+        \$self->{_str_unique},
+        \$self->{_str_table},
+
+        $self->{_1904},
+        $self->{_palette},
+    );
+
+
+    my $chart = Excel::Writer::XLSX::Chart->factory( $type, $arg{subtype} );
+
+    # Get an incremental id to use for axes ids.
+    my $chart_index = scalar @{ $self->{_charts} };
+    $chart->{_id} = $chart_index;
+
+    # If the chart isn't embedded let the workbook control it.
+    if ( !$embedded ) {
+
+        my $drawing    = Excel::Writer::XLSX::Drawing->new();
+        my $chartsheet = Excel::Writer::XLSX::Chartsheet->new( @init_data );
+
+        $chartsheet->{_chart}   = $chart;
+        $chartsheet->{_drawing} = $drawing;
+
+        $self->{_worksheets}->[$index] = $chartsheet;
+        $self->{_sheetnames}->[$index] = $name;
+
+        push @{ $self->{_charts} }, $chart;
+
+        return $chartsheet;
+    }
+    else {
+
+        # Set index to 0 so that the activate() and set_first_sheet() methods
+        # point back to the first worksheet if used for embedded charts.
+        $chart->{_index} = 0;
+        $chart->_set_embedded_config_data();
+        push @{ $self->{_charts} }, $chart;
+
+        return $chart;
+    }
+
+}
+
+
+###############################################################################
+#
+# _check_sheetname( $name )
+#
+# Check for valid worksheet names. We check the length, if it contains any
+# invalid characters and if the name is unique in the workbook.
+#
+sub _check_sheetname {
+
+    my $self         = shift;
+    my $name         = shift // "";
+    my $chart        = shift // 0;
+    my $invalid_char = qr([\[\]:*?/\\]);
+
+    # Increment the Sheet/Chart number used for default sheet names below.
+    if ( $chart ) {
+        $self->{_chartname_count}++;
+    }
+    else {
+        $self->{_sheetname_count}++;
+    }
+
+    # Supply default Sheet/Chart name if none has been defined.
+    if ( $name eq "" ) {
+
+        if ( $chart ) {
+            $name = $self->{_chart_name} . $self->{_chartname_count};
+        }
+        else {
+            $name = $self->{_sheet_name} . $self->{_sheetname_count};
+        }
+    }
+
+    # Check that sheet name is <= 31. Excel limit.
+    croak "Sheetname $name must be <= 31 chars" if length $name > 31;
+
+    # Check that sheetname doesn't contain any invalid characters
+    if ( $name =~ $invalid_char ) {
+        croak 'Invalid character []:*?/\\ in worksheet name: ' . $name;
+    }
+
+    # Check that the worksheet name doesn't already exist since this is a fatal
+    # error in Excel 97. The check must also exclude case insensitive matches.
+    foreach my $worksheet ( @{ $self->{_worksheets} } ) {
+        my $name_a = $name;
+        my $name_b = $worksheet->{_name};
+
+        if ( lc( $name_a ) eq lc( $name_b ) ) {
+            croak "Worksheet name '$name', with case ignored, is already used.";
+        }
+    }
+
+    return $name;
 }
 
 
@@ -517,13 +642,12 @@ sub _store_workbook {
 
     # Ensure that at least one worksheet has been selected.
     if ( $self->{_activesheet} == 0 ) {
-        @{ $self->{_worksheets} }[0]->{_selected} = 1;
-        @{ $self->{_worksheets} }[0]->{_hidden}   = 0;
+        $self->{_worksheets}->[0]->{_selected} = 1;
+        $self->{_worksheets}->[0]->{_hidden}   = 0;
     }
 
-    # Calculate the number of selected sheet tabs and set the active sheet.
+    # Set the active sheet.
     for my $sheet ( @{ $self->{_worksheets} } ) {
-        $self->{_selected}++ if $sheet->{_selected};
         $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
     }
 
@@ -542,8 +666,14 @@ sub _store_workbook {
     # Set the fill index for the format objects.
     $self->_prepare_fills();
 
-    # Set the defined names for the worsheets such as Print Titles.
+    # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
+
+    # Prepare the charts and drawings.
+    $self->_prepare_charts();
+
+    # Add cached data to charts.
+    $self->_add_chart_data();
 
     # Package the workbook.
     $packager->_add_workbook( $self );
@@ -780,14 +910,13 @@ sub _prepare_fills {
     $self->{_fill_count} = $index;
 }
 
+
 ###############################################################################
 #
 # _prepare_defined_names()
 #
 # Iterate through the worksheets and store any defined names. Stores the
 # defined name for the Workbook.xml and the named ranges for App.xml.
-#
-# TODO. Currently only supports Repeat rows/cols.
 #
 sub _prepare_defined_names {
 
@@ -847,6 +976,167 @@ sub _prepare_defined_names {
         }
 
     }
+}
+
+
+###############################################################################
+#
+# _prepare_charts()
+#
+# Iterate through the worksheets and set up any chart/drawings.
+#
+sub _prepare_charts {
+
+    my $self       = shift;
+    my $chart_id   = 0;
+    my $drawing_id = 0;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        my $chart_count = scalar @{ $sheet->{_charts} };
+        next unless $chart_count;
+
+        $drawing_id++;
+
+        for my $index ( 0 .. $chart_count - 1 ) {
+            $chart_id++;
+            $sheet->_prepare_chart( $index, $chart_id, $drawing_id );
+        }
+
+        my $drawing = $sheet->{_drawing};
+        push @{ $self->{_drawings} }, $drawing;
+    }
+
+    $self->{_drawing_count} = $drawing_id;
+}
+
+
+###############################################################################
+#
+# _add_chart_data()
+#
+# Add "cached" data to charts to provide the numCache and strCache data for
+# series and title/axis ranges.
+#
+sub _add_chart_data {
+
+    my $self = shift;
+    my %worksheets;
+    my %seen_ranges;
+
+    # Map worksheet names to worksheet objects.
+    for my $worksheet ( @{ $self->{_worksheets} } ) {
+        $worksheets{ $worksheet->{_name} } = $worksheet;
+    }
+
+    CHART:
+    for my $chart ( @{ $self->{_charts} } ) {
+
+        RANGE:
+        while ( my ( $range, $id ) = each %{ $chart->{_formula_ids} } ) {
+
+            # Skip if the series has user defined data.
+            if ( defined $chart->{_formula_data}->[$id] ) {
+                if (   !exists $seen_ranges{$range}
+                    || !defined $seen_ranges{$range} )
+                {
+                    my $data = $chart->{_formula_data}->[$id];
+                    $seen_ranges{$range} = $data;
+                }
+                next RANGE;
+            }
+
+            # Check to see if the data is already cached locally.
+            if ( exists $seen_ranges{$range} ) {
+                $chart->{_formula_data}->[$id] = $seen_ranges{$range};
+                next RANGE;
+            }
+
+            # Convert the range formula to a sheet name and cell range.
+            my ( $sheetname, @cells ) = $self->_get_chart_range( $range );
+
+            # Skip if we couldn't parse the formula.
+            next RANGE if !defined $sheetname;
+
+            # Skip if the name is unknow. Probably should throw exception.
+            next RANGE if !exists $worksheets{$sheetname};
+
+            # Find the worksheet object based on the sheet name.
+            my $worksheet = $worksheets{$sheetname};
+
+            # Get the data from the worksheet table.
+            my @data = $worksheet->_get_range_data( @cells );
+
+            # Convert shared string indexes to strings.
+            for my $token ( @data ) {
+                if ( ref $token ) {
+                    $token = $self->{_str_array}->[ $token->{sst_id} ];
+
+                    # Ignore rich strings for now. Deparse later if necessary.
+                    if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+                        $token = '';
+                    }
+                }
+            }
+
+            # Add the data to the chart.
+            $chart->{_formula_data}->[$id] = \@data;
+
+            # Store range data locally to avoid lookup if seen again.
+            $seen_ranges{$range} = \@data;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# _get_chart_range()
+#
+# Convert a range formula such as Sheet1!$B$1:$B$5 into a sheet name and cell
+# range such as ( 'Sheet1', 0, 1, 4, 1 ).
+#
+sub _get_chart_range {
+
+    my $self  = shift;
+    my $range = shift;
+    my $cell_1;
+    my $cell_2;
+    my $sheetname;
+    my $cells;
+
+    # Split the range formula into sheetname and cells at the last '!'.
+    my $pos = rindex $range, '!';
+    if ( $pos > 0 ) {
+        $sheetname = substr $range, 0, $pos;
+        $cells = substr $range, $pos + 1;
+    }
+    else {
+        return undef;
+    }
+
+    # Split the cell range into 2 cells or else use single cell for both.
+    if ( $cells =~ ':' ) {
+        ( $cell_1, $cell_2 ) = split /:/, $cells;
+    }
+    else {
+        ( $cell_1, $cell_2 ) = ( $cells, $cells );
+    }
+
+    # Remove leading/trailing apostrophes and convert escaped quotes to single.
+    $sheetname =~ s/^'//g;
+    $sheetname =~ s/'$//g;
+    $sheetname =~ s/''/'/g;
+
+    my ( $row_start, $col_start ) = xl_cell_to_rowcol( $cell_1 );
+    my ( $row_end,   $col_end )   = xl_cell_to_rowcol( $cell_2 );
+
+    # Check that we have a 1D range only.
+    if ( $row_start != $row_end && $col_start != $col_end ) {
+        return undef;
+    }
+
+    return ( $sheetname, $row_start, $col_start, $row_end, $col_end );
 }
 
 
