@@ -81,6 +81,7 @@ sub new {
     $self->{_formula_data}      = [];
     $self->{_horiz_cat_axis}    = 0;
     $self->{_horiz_val_axis}    = 1;
+    $self->{_protection}        = 0;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -111,6 +112,9 @@ sub _assemble_xml_file {
 
     # Write the c:style element.
     $self->_write_style();
+
+    # Write the c:protection element.
+    $self->_write_protection();
 
     # Write the c:chart element.
     $self->_write_chart();
@@ -2578,6 +2582,22 @@ sub _write_v {
     my $data = shift;
 
     $self->{_writer}->dataElement( 'c:v', $data );
+}
+
+
+##############################################################################
+#
+# _write_protection()
+#
+# Write the <c:protection> element.
+#
+sub _write_protection {
+
+    my $self = shift;
+
+    return unless $self->{_protection};
+
+    $self->{_writer}->emptyTag( 'c:protection' );
 }
 
 

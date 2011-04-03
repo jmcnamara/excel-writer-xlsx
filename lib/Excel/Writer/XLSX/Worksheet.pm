@@ -125,11 +125,12 @@ sub new {
     $self->{_set_cols} = {};
     $self->{_set_rows} = {};
 
-    $self->{_zoom}          = 100;
-    $self->{_print_scale}   = 100;
-    $self->{_right_to_left} = 0;
-    $self->{_show_zeros}    = 1;
-    $self->{_leading_zeros} = 0;
+    $self->{_zoom}              = 100;
+    $self->{_zoom_scale_normal} = 1;
+    $self->{_print_scale}       = 100;
+    $self->{_right_to_left}     = 0;
+    $self->{_show_zeros}        = 1;
+    $self->{_leading_zeros}     = 0;
 
     $self->{_outline_row_level} = 0;
     $self->{_outline_style}     = 0;
@@ -376,6 +377,8 @@ sub protect {
 
     # Default values for objects that can be protected.
     my %defaults = (
+        sheet                 => 1,
+        content               => 0,
         objects               => 0,
         scenarios             => 0,
         format_cells          => 0,
@@ -3074,28 +3077,6 @@ sub _store_externsheet {
 
 ###############################################################################
 #
-# _store_protect()
-#
-# Set the Biff PROTECT record to indicate that the worksheet is protected.
-#
-sub _store_protect {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    # Exit unless sheet protection has been specified
-    return unless $self->{_protect};
-
-    my $record = 0x0012;    # Record identifier
-    my $length = 0x0002;    # Bytes to follow
-
-    my $fLock = $self->{_protect};    # Worksheet is protected
-}
-
-
-###############################################################################
-#
 #  _position_object()
 #
 # Calculate the vertices that define the position of a graphical object within
@@ -3277,28 +3258,6 @@ sub _size_row {
     }
 
     return $pixels;
-}
-
-
-###############################################################################
-#
-# _store_zoom($zoom)
-#
-#
-# Store the window zoom factor. This should be a reduced fraction but for
-# simplicity we will store all fractions with a numerator of 100.
-#
-sub _store_zoom {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    # If scale is 100 we don't need to write a record
-    return if $self->{_zoom} == 100;
-
-    my $record = 0x00A0;    # Record identifier
-    my $length = 0x0004;    # Bytes to follow
 }
 
 
@@ -3880,7 +3839,8 @@ sub _write_sheet_view {
     # Set the zoom level.
     if ( $zoom != 100 ) {
         push @attributes, ( 'zoomScale' => $zoom ) unless $view;
-        push @attributes, ( 'zoomScaleNormal' => $zoom );
+        push @attributes, ( 'zoomScaleNormal' => $zoom )
+          if $self->{_zoom_scale_normal};
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
@@ -5357,8 +5317,8 @@ sub _write_sheet_protection {
     my %arg = %{ $self->{_protect} };
 
     push @attributes, ( "password" => $arg{password} ) if $arg{password};
-    push @attributes, ( "sheet" => 1 );
-
+    push @attributes, ( "sheet"            => 1 ) if $arg{sheet};
+    push @attributes, ( "content"          => 1 ) if $arg{content};
     push @attributes, ( "objects"          => 1 ) if !$arg{objects};
     push @attributes, ( "scenarios"        => 1 ) if !$arg{scenarios};
     push @attributes, ( "formatCells"      => 0 ) if $arg{format_cells};

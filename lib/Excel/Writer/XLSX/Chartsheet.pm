@@ -42,10 +42,12 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Worksheet->new( @_ );
 
-    $self->{_drawing}       = 1;
-    $self->{_is_chartsheet} = 1;
-    $self->{_chart}         = undef;
-    $self->{_charts}        = [1];
+    $self->{_drawing}           = 1;
+    $self->{_is_chartsheet}     = 1;
+    $self->{_chart}             = undef;
+    $self->{_charts}            = [1];
+    $self->{_zoom_scale_normal} = 0;
+    $self->{_orientation}       = 0;
 
     bless $self, $class;
 
@@ -76,6 +78,9 @@ sub _assemble_xml_file {
     # Write the sheet view properties.
     $self->_write_sheet_views();
 
+    # Write the sheetProtection element.
+    $self->_write_sheet_protection();
+
     # Write the printOptions element.
     $self->_write_print_options();
 
@@ -97,6 +102,29 @@ sub _assemble_xml_file {
     # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
+}
+
+
+###############################################################################
+#
+# Public methods.
+#
+###############################################################################
+
+# Over-ride parent protect() method to protect both worksheet and chart.
+sub protect {
+
+    my $self     = shift;
+    my $password = shift // '';
+    my $options  = shift // {};
+
+    $self->{_chart}->{_protection} = 1;
+
+    $options->{sheet}     = 0;
+    $options->{content}   = 1;
+    $options->{scenarios} = 1;
+
+    $self->SUPER::protect( $password, $options );
 }
 
 
@@ -140,6 +168,7 @@ sub _prepare_chart {
 
     my $drawing = Excel::Writer::XLSX::Drawing->new();
     $self->{_drawing} = $drawing;
+    $self->{_drawing}->{_orientation} = $self->{_orientation};
 
     push @{ $self->{_external_dlinks} },
       [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];

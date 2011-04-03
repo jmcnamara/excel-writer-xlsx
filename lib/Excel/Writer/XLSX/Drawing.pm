@@ -41,10 +41,10 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}   = undef;
-    $self->{_drawings} = [];
-    $self->{_embedded} = 0;
-
+    $self->{_writer}      = undef;
+    $self->{_drawings}    = [];
+    $self->{_embedded}    = 0;
+    $self->{_orientation} = 0;
 
     bless $self, $class;
 
@@ -206,11 +206,26 @@ sub _write_absolute_anchor {
 
     $self->{_writer}->startTag( 'xdr:absoluteAnchor' );
 
-    # Write the xdr:pos element.
-    $self->_write_pos( 0, 0 );
+    # Different co-ordinates for horizonatal (= 0) and vertical (= 1).
+    if ( $self->{_orientation} == 0 ) {
 
-    # Write the xdr:ext element.
-    $self->_write_ext( 9308969, 6078325 );
+        # Write the xdr:pos element.
+        $self->_write_pos( 0, 0 );
+
+        # Write the xdr:ext element.
+        $self->_write_ext( 9308969, 6078325 );
+
+    }
+    else {
+
+        # Write the xdr:pos element.
+        $self->_write_pos( 0, -47625 );
+
+        # Write the xdr:ext element.
+        $self->_write_ext( 6162675, 6124575 );
+
+    }
+
 
     # Write the xdr:graphicFrame element.
     $self->_write_graphic_frame( $index );

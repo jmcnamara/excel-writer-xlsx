@@ -642,13 +642,12 @@ sub _store_workbook {
 
     # Ensure that at least one worksheet has been selected.
     if ( $self->{_activesheet} == 0 ) {
-        @{ $self->{_worksheets} }[0]->{_selected} = 1;
-        @{ $self->{_worksheets} }[0]->{_hidden}   = 0;
+        $self->{_worksheets}->[0]->{_selected} = 1;
+        $self->{_worksheets}->[0]->{_hidden}   = 0;
     }
 
-    # Calculate the number of selected sheet tabs and set the active sheet.
+    # Set the active sheet.
     for my $sheet ( @{ $self->{_worksheets} } ) {
-        $self->{_selected}++ if $sheet->{_selected};
         $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
     }
 
