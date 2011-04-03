@@ -296,12 +296,13 @@ Pie - A writer class for Excel Pie charts.
 
 To create a simple Excel file with a Pie chart using Excel::Writer::XLSX:
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
     my $chart     = $workbook->add_chart( type => 'pie' );
@@ -348,12 +349,13 @@ A Pie chart doesn't have an X or Y axis so the following common chart methods ar
 
 Here is a complete example that demonstrates most of the available features when creating a chart.
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart_pie.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_pie.xlsx' );
     my $worksheet = $workbook->add_worksheet();
     my $bold      = $workbook->add_format( bold => 1 );
 
@@ -370,16 +372,19 @@ Here is a complete example that demonstrates most of the available features when
     # Create a new chart object. In this case an embedded chart.
     my $chart = $workbook->add_chart( type => 'pie', embedded => 1 );
 
-    # Configure the series.
+    # Configure the series. Note the use of the array ref to define ranges:
+    # [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => 'Pie sales data',
-        categories => '=Sheet1!$A$2:$A$4',
-        values     => '=Sheet1!$B$2:$B$4',
+        categories => [ 'Sheet1', 1, 3, 0, 0 ],
+        values     => [ 'Sheet1', 1, 3, 1, 1 ],
     );
 
     # Add a title.
     $chart->set_title( name => 'Popular Pie Types' );
 
+    # Set an Excel chart style. Colors with white outline and shadow.
+    $chart->set_style( 10 );
 
     # Insert the chart into the worksheet (with an offset).
     $worksheet->insert_chart( 'C2', $chart, 25, 10 );
@@ -391,7 +396,7 @@ Here is a complete example that demonstrates most of the available features when
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/pie1.jpg" width="527" height="320" alt="Chart example." /></center></p>
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/2007/pie1.jpg" width="483" height="291" alt="Chart example." /></center></p>
 
 =end html
 
@@ -402,7 +407,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMX, John McNamara.
+Copyright MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

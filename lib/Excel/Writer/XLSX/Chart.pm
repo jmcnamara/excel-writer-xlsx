@@ -2594,9 +2594,10 @@ Chart - A writer class for Excel Charts.
 
 To create a simple Excel file with a chart using Excel::Writer::XLSX:
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
     my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
@@ -2635,27 +2636,44 @@ Currently the supported chart types are:
 
 =over
 
-=item * C<area>: Creates an Area (filled line) style chart. See L<Excel::Writer::XLSX::Chart::Area>.
+=item * C<area>
 
-=item * C<bar>: Creates a Bar style (transposed histogram) chart. See L<Excel::Writer::XLSX::Chart::Bar>.
+Creates an Area (filled line) style chart. See L<Excel::Writer::XLSX::Chart::Area>.
 
-=item * C<column>: Creates a column style (histogram) chart. See L<Excel::Writer::XLSX::Chart::Column>.
+=item * C<bar>
 
-=item * C<line>: Creates a Line style chart. See L<Excel::Writer::XLSX::Chart::Line>.
+Creates a Bar style (transposed histogram) chart. See L<Excel::Writer::XLSX::Chart::Bar>.
 
-=item * C<pie>: Creates an Pie style chart. See L<Excel::Writer::XLSX::Chart::Pie>.
+=item * C<column>
 
-=item * C<scatter>: Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
+Creates a column style (histogram) chart. See L<Excel::Writer::XLSX::Chart::Column>.
 
-=item * C<stock>: Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
+=item * C<line>
 
-=back
+Creates a Line style chart. See L<Excel::Writer::XLSX::Chart::Line>.
+
+=item * C<pie>
+
+Creates an Pie style chart. See L<Excel::Writer::XLSX::Chart::Pie>.
+
+=item * C<scatter>
+
+Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
+
+=item * C<stock>
+
+Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
+
+=item * C<...>
 
 More charts and sub-types will be supported in time. See the L</TODO> section.
 
-Methods that are common to all chart types are documented below.
+=back
+
 
 =head1 CHART METHODS
+
+Methods that are common to all chart types are documented below. See the documentation for each sub class for chart specific information.
 
 =head2 add_series()
 
@@ -2664,9 +2682,9 @@ In an Excel chart a "series" is a collection of information such as values, x-ax
 With a Excel::Writer::XLSX chart object the C<add_series()> method is used to set the properties for a series:
 
     $chart->add_series(
-        categories    => '=Sheet1!$A$2:$A$10',
-        values        => '=Sheet1!$B$2:$B$10',
-        name          => 'Series name',
+        categories => '=Sheet1!$A$2:$A$10', # Optional, depending on chart type.
+        values     => '=Sheet1!$B$2:$B$10', # Required for all chart types.
+        name       => 'Series name',        # Optional.
     );
 
 The properties that can be set are:
@@ -2675,7 +2693,7 @@ The properties that can be set are:
 
 =item * C<values>
 
-This is the most important property of a series and must be set for every chart object. It links the chart with the worksheet data that it displays. Note the format that should be used for the formula.
+This is the most important property of a series and must be set for every chart object. It links the chart with the worksheet data that it displays. A formula or array ref can be used for the data range, see below.
 
 =item * C<categories>
 
@@ -2687,13 +2705,13 @@ Set the name for the series. The name is displayed in the chart legend and in th
 
 =back
 
-The C<categories> and C<values> can take either a range formula such as C<=Sheet1!$A$2:$A$7> or, more usefully when generating the range programatically, an array ref with zero indexed row/column values:
+The C<categories> and C<values> can take either a range formula such as C<=Sheet1!$A$2:$A$7> or, more usefully when generating the range programmatically, an array ref with zero indexed row/column values:
 
      [ $sheetname, $row_start, $row_end, $col_start, $col_end ]
 
-As such the following are equivalent:
+The following are equivalent:
 
-    $chart->add_series( categories => '=Sheet1!$A$2:$A$7' );      # Same as ...
+    $chart->add_series( categories => '=Sheet1!$A$2:$A$7'      ); # Same as ...
     $chart->add_series( categories => [ 'Sheet1', 1, 6, 0, 0 ] ); # Zero-indexed.
 
 You can add more than one series to a chart, in fact some chart types such as C<stock> require it. The series numbering and order in the final chart is the same as the order in which that are added.
@@ -2820,9 +2838,9 @@ The default style is 2.
 
 =head1 WORKSHEET METHODS
 
-In Excel a chart sheet (i.e, a chart that isn't embedded) shares properties with data worksheets such as tab selection, headers, footers, margins and print properties.
+In Excel a chartsheet (i.e, a chart that isn't embedded) shares properties with data worksheets such as tab selection, headers, footers, margins and print properties.
 
-In Excel::Writer::XLSX you can set chart sheet properties using the same methods that are used for Worksheet objects.
+In Excel::Writer::XLSX you can set chartsheet properties using the same methods that are used for Worksheet objects.
 
 The following Worksheet methods are also available through a non-embedded Chart object:
 
@@ -2848,53 +2866,58 @@ See L<Excel::Writer::XLSX> for a detailed explanation of these methods.
 
 Here is a complete example that demonstrates some of the available features when creating a chart.
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart_area.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
     my $bold      = $workbook->add_format( bold => 1 );
 
     # Add the worksheet data that the charts will refer to.
-    my $headings = [ 'Number', 'Sample 1', 'Sample 2' ];
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
     my $data = [
-        [ 2, 3, 4, 5, 6, 7 ],
-        [ 1, 4, 5, 2, 1, 5 ],
-        [ 3, 6, 7, 5, 4, 3 ],
+        [ 2,  3,  4,  5,  6,  7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+
     ];
 
     $worksheet->write( 'A1', $headings, $bold );
     $worksheet->write( 'A2', $data );
 
     # Create a new chart object. In this case an embedded chart.
-    my $chart = $workbook->add_chart( type => 'area', embedded => 1 );
+    my $chart = $workbook->add_chart( type => 'column', embedded => 1 );
 
-    # Configure the first series. (Sample 1)
+    # Configure the first series.
     $chart->add_series(
-        name       => 'Sample 1',
+        name       => '=Sheet1!$B$1',
         categories => '=Sheet1!$A$2:$A$7',
         values     => '=Sheet1!$B$2:$B$7',
     );
 
-    # Configure the second series. (Sample 2)
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
-        name       => 'Sample 2',
-        categories => '=Sheet1!$A$2:$A$7',
-        values     => '=Sheet1!$C$2:$C$7',
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
     );
 
     # Add a chart title and some axis labels.
     $chart->set_title ( name => 'Results of sample analysis' );
     $chart->set_x_axis( name => 'Test number' );
-    $chart->set_y_axis( name => 'Sample length (cm)' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+
+    # Set an Excel chart style. Blue colors with white outline and shadow.
+    $chart->set_style( 11 );
 
     # Insert the chart into the worksheet (with an offset).
     $worksheet->insert_chart( 'D2', $chart, 25, 10 );
 
     __END__
-
 
 =begin html
 
@@ -2905,28 +2928,27 @@ Here is a complete example that demonstrates some of the available features when
 =end html
 
 
-
 =head1 TODO
 
-Charts in Excel::Writer::XLSX are a work in progress. More chart types and features will be added in time. Please be patient. Even a small feature can take a week or more to implement, test and document.
+Charts in Excel::Writer::XLSX is under active development. More chart types and features will be added in time.
 
 Features that are on the TODO list and will be added are:
 
 =over
 
-=item *  Chart sub-types.
+=item * Chart sub-types such as stacked and percent stacked.
 
 =item * Colours and formatting options. For now try the C<set_style()> method.
 
-=item * Axis controls, gridlines.
+=item * Axis controls, range limits, gridlines.
 
 =item * 3D charts.
 
-=item * Additional chart types such as Bubble and Radar. Send an email if you are interested in other types and they will be added to the queue.
+=item * Additional chart types such as Bubble and Radar.
 
 =back
 
-If you are interested in sponsoring a feature let me know.
+If you are interested in sponsoring a feature to have it implemented or expedited let me know.
 
 
 =head1 AUTHOR
@@ -2935,7 +2957,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMX, John McNamara.
+Copyright MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

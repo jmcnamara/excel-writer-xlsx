@@ -196,12 +196,13 @@ Bar - A writer class for Excel Bar charts.
 
 To create a simple Excel file with a Bar chart using Excel::Writer::XLSX:
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
     my $chart     = $workbook->add_chart( type => 'bar' );
@@ -245,21 +246,23 @@ There aren't currently any bar chart specific methods. See the TODO section of L
 
 Here is a complete example that demonstrates most of the available features when creating a chart.
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart_bar.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_bar.xlsx' );
     my $worksheet = $workbook->add_worksheet();
     my $bold      = $workbook->add_format( bold => 1 );
 
     # Add the worksheet data that the charts will refer to.
-    my $headings = [ 'Number', 'Sample 1', 'Sample 2' ];
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
     my $data = [
-        [ 2, 3, 4, 5, 6, 7 ],
-        [ 1, 4, 5, 2, 1, 5 ],
-        [ 3, 6, 7, 5, 4, 3 ],
+        [ 2,  3,  4,  5,  6,  7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+
     ];
 
     $worksheet->write( 'A1', $headings, $bold );
@@ -268,24 +271,28 @@ Here is a complete example that demonstrates most of the available features when
     # Create a new chart object. In this case an embedded chart.
     my $chart = $workbook->add_chart( type => 'bar', embedded => 1 );
 
-    # Configure the first series. (Sample 1)
+    # Configure the first series.
     $chart->add_series(
-        name       => 'Sample 1',
+        name       => '=Sheet1!$B$1',
         categories => '=Sheet1!$A$2:$A$7',
         values     => '=Sheet1!$B$2:$B$7',
     );
 
-    # Configure the second series. (Sample 2)
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
-        name       => 'Sample 2',
-        categories => '=Sheet1!$A$2:$A$7',
-        values     => '=Sheet1!$C$2:$C$7',
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
     );
 
     # Add a chart title and some axis labels.
     $chart->set_title ( name => 'Results of sample analysis' );
     $chart->set_x_axis( name => 'Test number' );
-    $chart->set_y_axis( name => 'Sample length (cm)' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+
+    # Set an Excel chart style. Blue colors with white outline and shadow.
+    $chart->set_style( 11 );
 
     # Insert the chart into the worksheet (with an offset).
     $worksheet->insert_chart( 'D2', $chart, 25, 10 );
@@ -297,7 +304,7 @@ Here is a complete example that demonstrates most of the available features when
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/bar1.jpg" width="527" height="320" alt="Chart example." /></center></p>
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/2007/bar1.jpg" width="483" height="291" alt="Chart example." /></center></p>
 
 =end html
 
@@ -308,7 +315,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMX, John McNamara.
+Copyright MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

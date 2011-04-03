@@ -198,16 +198,15 @@ To create a simple Excel file with a Stock chart using Excel::Writer::XLSX:
     use strict;
     use Excel::Writer::XLSX;
 
-    my $workbook  = Excel::Writer::XLSX->new( 'chart.xls' );
+    my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
     my $chart     = $workbook->add_chart( type => 'stock' );
 
-    # Add a series for each Open-High-Low-Close.
+    # Add a series for each High-Low-Close.
     $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$B$2:$B$6' );
     $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$C$2:$C$6' );
     $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$D$2:$D$6' );
-    $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$E$2:$E$6' );
 
     # Add the worksheet data the chart refers to.
     # ... See the full example below.
@@ -234,90 +233,81 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 There aren't currently any stock chart specific methods. See the TODO section of L<Excel::Writer::XLSX::Chart>.
 
-The default Stock chart is an Open-High-Low-Close chart. A series must be added for each of these data sources.
+The default Stock chart is an High-Low-Close chart. A series must be added for each of these data sources.
 
-The default Stock chart is in black and white. User defined colours will be added at a later stage.
 
 =head1 EXAMPLE
 
 Here is a complete example that demonstrates most of the available features when creating a Stock chart.
 
-    #!/usr/bin/perl -w
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
     use Excel::Writer::XLSX;
 
-    my $workbook    = Excel::Writer::XLSX->new( 'chart_stock_ex.xls' );
+    my $workbook    = Excel::Writer::XLSX->new( 'chart_stock.xlsx' );
     my $worksheet   = $workbook->add_worksheet();
     my $bold        = $workbook->add_format( bold => 1 );
     my $date_format = $workbook->add_format( num_format => 'dd/mm/yyyy' );
+    my $chart       = $workbook->add_chart( type => 'stock', embedded => 1 );
+
 
     # Add the worksheet data that the charts will refer to.
-    my $headings = [ 'Date', 'Open', 'High', 'Low', 'Close' ];
-    my @data = (
-        [ '2009-08-23', 110.75, 113.48, 109.05, 109.40 ],
-        [ '2009-08-24', 111.24, 111.60, 103.57, 104.87 ],
-        [ '2009-08-25', 104.96, 108.00, 103.88, 106.00 ],
-        [ '2009-08-26', 104.95, 107.95, 104.66, 107.91 ],
-        [ '2009-08-27', 108.10, 108.62, 105.69, 106.15 ],
-    );
+    my $headings = [ 'Date', 'High', 'Low', 'Close' ];
+    my $data = [
+
+        [ '2007-01-01T', '2007-01-02T', '2007-01-03T', '2007-01-04T', '2007-01-05T' ],
+        [ 27.2,  25.03, 19.05, 20.34, 18.5 ],
+        [ 23.49, 19.55, 15.12, 17.84, 16.34 ],
+        [ 25.45, 23.05, 17.32, 20.45, 17.34 ],
+
+    ];
 
     $worksheet->write( 'A1', $headings, $bold );
 
-    my $row = 1;
-    for my $data ( @data ) {
-        $worksheet->write( $row, 0, $data->[0], $date_format );
-        $worksheet->write( $row, 1, $data->[1] );
-        $worksheet->write( $row, 2, $data->[2] );
-        $worksheet->write( $row, 3, $data->[3] );
-        $worksheet->write( $row, 4, $data->[4] );
-        $row++;
+    for my $row ( 0 .. 4 ) {
+        $worksheet->write_date_time( $row+1, 0, $data->[0]->[$row], $date_format );
+        $worksheet->write( $row+1, 1, $data->[1]->[$row] );
+        $worksheet->write( $row+1, 2, $data->[2]->[$row] );
+        $worksheet->write( $row+1, 3, $data->[3]->[$row] );
+
     }
 
-    # Create a new chart object. In this case an embedded chart.
-    my $chart = $workbook->add_chart( type => 'stock', embedded => 1 );
+    $worksheet->set_column( 'A:D', 11 );
 
-    # Add a series for each of the Open-High-Low-Close columns.
+    # Add a series for each of the High-Low-Close columns.
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$6',
         values     => '=Sheet1!$B$2:$B$6',
-        name       => 'Open',
     );
 
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$6',
         values     => '=Sheet1!$C$2:$C$6',
-        name       => 'High',
     );
 
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$6',
         values     => '=Sheet1!$D$2:$D$6',
-        name       => 'Low',
-    );
-
-    $chart->add_series(
-        categories => '=Sheet1!$A$2:$A$6',
-        values     => '=Sheet1!$E$2:$E$6',
-        name       => 'Close',
     );
 
     # Add a chart title and some axis labels.
-    $chart->set_title( name => 'Open-High-Low-Close', );
+    $chart->set_title ( name => 'High-Low-Close', );
     $chart->set_x_axis( name => 'Date', );
     $chart->set_y_axis( name => 'Share price', );
 
-    # Insert the chart into the worksheet (with an offset).
-    $worksheet->insert_chart( 'F2', $chart, 25, 10 );
+
+    $worksheet->insert_chart( 'E9', $chart );
 
     __END__
-
 
 =begin html
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/stock1.jpg" width="527" height="320" alt="Chart example." /></center></p>
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/2007/stock1.jpg" width="483" height="291" alt="Chart example." /></center></p>
 
 =end html
 
@@ -328,7 +318,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMX, John McNamara.
+Copyright MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
