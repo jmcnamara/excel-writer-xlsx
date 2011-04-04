@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Worksheet;
 
 ###############################################################################
 #
-# Worksheet - A writer class for Excel Worksheets.
+# Worksheet - A class for writing Excel Worksheets.
 #
 #
 # Used in conjunction with Excel::Writer::XLSX
@@ -5515,7 +5515,7 @@ __END__
 
 =head1 NAME
 
-Worksheet - A writer class for Excel Worksheets.
+Worksheet - A class for writing Excel Worksheets.
 
 =head1 SYNOPSIS
 

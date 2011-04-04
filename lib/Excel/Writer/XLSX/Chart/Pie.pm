@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Chart::Pie;
 
 ###############################################################################
 #
-# Pie - A writer class for Excel Pie charts.
+# Pie - A class for writing Excel Pie charts.
 #
 # Used in conjunction with Excel::Writer::XLSX::Chart.
 #
@@ -290,7 +290,7 @@ __END__
 
 =head1 NAME
 
-Pie - A writer class for Excel Pie charts.
+Pie - A class for writing Excel Pie charts.
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Chart;
 
 ###############################################################################
 #
-# Chart - A writer class for Excel Charts.
+# Chart - A class for writing Excel Charts.
 #
 #
 # Used in conjunction with Excel::Writer::XLSX.
@@ -2608,7 +2608,7 @@ __END__
 
 =head1 NAME
 
-Chart - A writer class for Excel Charts.
+Chart - A class for writing Excel Charts.
 
 =head1 SYNOPSIS
 
@@ -2918,7 +2918,7 @@ Here is a complete example that demonstrates some of the available features when
         values     => '=Sheet1!$B$2:$B$7',
     );
 
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
@@ -2943,7 +2943,7 @@ Here is a complete example that demonstrates some of the available features when
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/area1.jpg" width="527" height="320" alt="Chart example." /></center></p>
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/2007/area1.jpg" width="527" height="320" alt="Chart example." /></center></p>
 
 =end html
 

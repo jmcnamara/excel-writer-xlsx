@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Chart::Stock;
 
 ###############################################################################
 #
-# Stock - A writer class for Excel Stock charts.
+# Stock - A class for writing Excel Stock charts.
 #
 # Used in conjunction with Excel::Writer::XLSX::Chart.
 #
@@ -187,7 +187,7 @@ __END__
 
 =head1 NAME
 
-Stock - A writer class for Excel Stock charts.
+Stock - A class for writing Excel Stock charts.
 
 =head1 SYNOPSIS
 

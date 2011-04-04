@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
-# Workbook - A writer class for Excel Workbooks.
+# Workbook - A class for writing Excel Workbooks.
 #
 #
 # Used in conjunction with Excel::Writer::XLSX
@@ -1503,7 +1503,7 @@ __END__
 
 =head1 NAME
 
-Workbook - A writer class for Excel Workbooks.
+Workbook - A class for writing Excel Workbooks.
 
 =head1 SYNOPSIS
 

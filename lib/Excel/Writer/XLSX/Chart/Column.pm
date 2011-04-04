@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Chart::Column;
 
 ###############################################################################
 #
-# Column - A writer class for Excel Column charts.
+# Column - A class for writing Excel Column charts.
 #
 # Used in conjunction with Excel::Writer::XLSX::Chart.
 #
@@ -108,7 +108,7 @@ __END__
 
 =head1 NAME
 
-Column - A writer class for Excel Column charts.
+Column - A class for writing Excel Column charts.
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ Here is a complete example that demonstrates most of the available features when
         values     => '=Sheet1!$B$2:$B$7',
     );
 
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',

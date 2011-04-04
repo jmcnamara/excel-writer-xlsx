@@ -1684,7 +1684,7 @@ Source code for this example:
         values     => '=Sheet1!$B$2:$B$7',
     );
     
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
@@ -1763,7 +1763,7 @@ Source code for this example:
         values     => '=Sheet1!$B$2:$B$7',
     );
     
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
@@ -1842,7 +1842,7 @@ Source code for this example:
         values     => '=Sheet1!$B$2:$B$7',
     );
     
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
@@ -1921,7 +1921,7 @@ Source code for this example:
         values     => '=Sheet1!$B$2:$B$7',
     );
     
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
@@ -2068,7 +2068,7 @@ Source code for this example:
         values     => '=Sheet1!$B$2:$B$7',
     );
     
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',

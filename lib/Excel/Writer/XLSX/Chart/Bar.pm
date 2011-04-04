@@ -2,7 +2,7 @@ package Excel::Writer::XLSX::Chart::Bar;
 
 ###############################################################################
 #
-# Bar - A writer class for Excel Bar charts.
+# Bar - A class for writing Excel Bar charts.
 #
 # Used in conjunction with Excel::Writer::XLSX::Chart.
 #
@@ -190,7 +190,7 @@ __END__
 
 =head1 NAME
 
-Bar - A writer class for Excel Bar charts.
+Bar - A class for writing Excel Bar charts.
 
 =head1 SYNOPSIS
 
@@ -278,7 +278,7 @@ Here is a complete example that demonstrates most of the available features when
         values     => '=Sheet1!$B$2:$B$7',
     );
 
-    # Configure the second series. Note the use of the array ref to define
+    # Configure second series. Note alternative use of array ref to define
     # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
     $chart->add_series(
         name       => '=Sheet1!$C$1',
