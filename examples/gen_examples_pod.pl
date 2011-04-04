@@ -82,7 +82,7 @@ sub print_header {
     print "# program that is also included in the examples directory.\n";
     print "#\n";
 
-    print "# Copyright 2000-2010, John McNamara, jmcnamara\@cpan.org\n";
+    print "# Copyright 2000-2011, John McNamara, jmcnamara\@cpan.org\n";
     print "#\n";
     print "# Documentation after __END__\n";
     print "#\n\n";

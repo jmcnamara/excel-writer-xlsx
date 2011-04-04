@@ -6,7 +6,7 @@
 #
 
 use lib 't/lib';
-use TestFunctions qw(_new_workbook _is_deep_diff);
+use TestFunctions qw(_new_workbook);
 use strict;
 use warnings;
 
@@ -37,7 +37,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -67,7 +67,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -82,7 +82,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -97,7 +97,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -112,7 +112,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 ###############################################################################
@@ -127,7 +127,7 @@ $workbook = _new_workbook( \$tmp_str );
 
 @got = $workbook->_get_chart_range( $formula );
 
-_is_deep_diff( \@got, \@expected, $caption );
+is_deeply( \@got, \@expected, $caption );
 
 
 __END__

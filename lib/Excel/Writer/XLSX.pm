@@ -6,7 +6,7 @@ package Excel::Writer::XLSX;
 #
 # Excel::Writer::XLSX - Create an Excel file in XML format.
 #
-# Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2011, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.16 of Excel::Writer::XLSX, released March 4, 2011.
+This document refers to version 0.17 of Excel::Writer::XLSX, released April 4, 2011.
 
 
 
@@ -277,8 +277,6 @@ See the L<CELL FORMATTING> section for more details about Format properties and 
 
 =head2 add_chart( %properties )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is use to create a new chart either as a standalone worksheet (the default) or as an embeddable object that can be inserted into a worksheet via the C<insert_chart()> Worksheet method.
 
     my $chart = $workbook->add_chart( type => 'column' );
@@ -327,7 +325,7 @@ Specifies that the Chart object will be inserted in a worksheet via the C<insert
 
 =back
 
-See Excel::Writer::XLSX::Chart (eventually) for details on how to configure the chart object once it is created. See also the C<chart_*.pl> programs in the examples directory of the distro.
+See Excel::Writer::XLSX::Chart for details on how to configure the chart object once it is created. See also the C<chart_*.pl> programs in the examples directory of the distro.
 
 
 
@@ -1543,8 +1541,6 @@ BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid 
 
 =head2 insert_chart( $row, $col, $chart, $x, $y, $scale_x, $scale_y )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method can be used to insert a Chart object into a worksheet. The Chart must be created by the C<add_chart()> Workbook method and it must have the C<embedded> option set.
 
     my $chart = $workbook->add_chart( type => 'line', embedded => 1 );
@@ -1567,10 +1563,6 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted ima
 
     # Scale the width by 120% and the height by 150%
     $worksheet->insert_chart( 'E2', $chart, 0, 0, 1.2, 1.5 );
-
-The easiest way to calculate the required scaling is to create a test chart worksheet with Excel::Writer::XLSX. Then open the file, select the chart and drag the corner to get the required size. While holding down the mouse the scale of the resized chart is shown to the left of the formula bar.
-
-Note: you must call C<set_row()> or C<set_column()> before C<insert_chart()> if you wish to change the default dimensions of any of the rows or columns that the chart occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your chart. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
 
 
 
@@ -4672,7 +4664,6 @@ The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::
 However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
 
     Images
-    Charts.
     Defined names.
     Cell comments.
     Document properties.
@@ -4686,7 +4677,7 @@ The following is a full list of the module methods and their support status:
     new()                       Yes
     add_worksheet()             Yes
     add_format()                Yes
-    add_chart()                 No
+    add_chart()                 Yes
     close()                     Yes
     set_properties()            No
     define_name()               No
@@ -4717,7 +4708,7 @@ The following is a full list of the module methods and their support status:
     show_comments()             No
     add_write_handler()         Yes
     insert_image()              No
-    insert_chart()              No
+    insert_chart()              Yes
     data_validation()           No
     get_name()                  Yes
     activate()                  Yes
@@ -4815,7 +4806,6 @@ All non-deprecated methods will be supported in time unless no longer required. 
     write_comment()
     data_validation()
     outline_settings()
-    add_chart()
 
 If you would care to you can sponsor a feature to move it up the list. See L<DONATIONS and SPONSORSHIP>
 

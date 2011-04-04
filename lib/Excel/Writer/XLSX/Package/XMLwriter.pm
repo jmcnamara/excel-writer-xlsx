@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::XMLwriter;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2011, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -22,7 +22,7 @@ use IO::File;
 use Excel::Writer::XLSX::Package::XMLwriterSimple;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 
 ###############################################################################

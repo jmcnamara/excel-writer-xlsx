@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2010, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2011, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 47 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 54 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -60,6 +60,20 @@ The following is a list of the 47 example programs that are included in the Exce
 =item * L<Example: array_formula.pl> Examples of how to write array formulas.
 
 =item * L<Example: cgi.pl> A simple CGI program.
+
+=item * L<Example: chart_area.pl> A demo of area style charts.
+
+=item * L<Example: chart_bar.pl> A demo of bar (vertical histogram) style charts.
+
+=item * L<Example: chart_column.pl> A demo of column (histogram) style charts.
+
+=item * L<Example: chart_line.pl> A demo of line style charts.
+
+=item * L<Example: chart_pie.pl> A demo of pie style charts.
+
+=item * L<Example: chart_scatter.pl> A demo of scatter style charts.
+
+=item * L<Example: chart_stock.pl> A demo of stock style charts.
 
 =item * L<Example: colors.pl> A demo of the colour palette and named colours.
 
@@ -204,7 +218,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -354,7 +368,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -496,7 +510,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -1034,7 +1048,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1101,7 +1115,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1192,7 +1206,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/stats.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1492,7 +1506,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1539,7 +1553,7 @@ array formulas.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1613,7 +1627,559 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/cgi.pl>
+
+=head2 Example: chart_area.pl
+
+
+
+A demo of an Area chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_area.jpg" width="640" height="420" alt="Output from chart_area.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl -w
+    
+    #######################################################################
+    #
+    # A demo of an Area chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_area.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2, 3, 4, 5, 6, 7 ],
+        [ 40, 40, 50, 30, 25, 50 ],
+        [ 30, 25, 30, 10,  5, 10 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'area', embedded => 1 );
+    
+    # Configure the first series.
+    $chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+    
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'Results of sample analysis' );
+    $chart->set_x_axis( name => 'Test number' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+    
+    # Set an Excel chart style. Blue colors with white outline and shadow.
+    $chart->set_style( 11 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_area.pl>
+
+=head2 Example: chart_bar.pl
+
+
+
+A demo of a Bar chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_bar.jpg" width="640" height="420" alt="Output from chart_bar.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Bar chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_bar.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2,  3,  4,  5,  6,  7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'bar', embedded => 1 );
+    
+    # Configure the first series.
+    $chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+    
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'Results of sample analysis' );
+    $chart->set_x_axis( name => 'Test number' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+    
+    # Set an Excel chart style. Blue colors with white outline and shadow.
+    $chart->set_style( 11 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_bar.pl>
+
+=head2 Example: chart_column.pl
+
+
+
+A demo of a Column chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_column.jpg" width="640" height="420" alt="Output from chart_column.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Column chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_column.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2, 3, 4, 5, 6, 7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'column', embedded => 1 );
+    
+    # Configure the first series.
+    $chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+    
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'Results of sample analysis' );
+    $chart->set_x_axis( name => 'Test number' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+    
+    # Set an Excel chart style. Blue colors with white outline and shadow.
+    $chart->set_style( 11 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_column.pl>
+
+=head2 Example: chart_line.pl
+
+
+
+A demo of a Line chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_line.jpg" width="640" height="420" alt="Output from chart_line.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Line chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_line.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2, 3, 4, 5, 6, 7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'line', embedded => 1 );
+    
+    # Configure the first series.
+    $chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+    
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'Results of sample analysis' );
+    $chart->set_x_axis( name => 'Test number' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+    
+    # Set an Excel chart style. Colors with white outline and shadow.
+    $chart->set_style( 10 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_line.pl>
+
+=head2 Example: chart_pie.pl
+
+
+
+A demo of a Pie chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_pie.jpg" width="640" height="420" alt="Output from chart_pie.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Pie chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_pie.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Category', 'Values' ];
+    my $data = [
+        [ 'Apple', 'Cherry', 'Pecan' ],
+        [ 60,       30,       10     ],
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'pie', embedded => 1 );
+    
+    # Configure the series. Note the use of the array ref to define ranges:
+    # [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => 'Pie sales data',
+        categories => [ 'Sheet1', 1, 3, 0, 0 ],
+        values     => [ 'Sheet1', 1, 3, 1, 1 ],
+    );
+    
+    # Add a title.
+    $chart->set_title( name => 'Popular Pie Types' );
+    
+    # Set an Excel chart style. Colors with white outline and shadow.
+    $chart->set_style( 10 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'C2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_pie.pl>
+
+=head2 Example: chart_scatter.pl
+
+
+
+A demo of a Scatter chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_scatter.jpg" width="640" height="420" alt="Output from chart_scatter.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Scatter chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_scatter.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2, 3, 4, 5, 6, 7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'scatter', embedded => 1 );
+    
+    # Configure the first series.
+    $chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+    
+    # Configure the second series. Note the use of the array ref to define
+    # ranges: [ $sheetname, $row_start, $row_end, $col_start, $col_end ].
+    $chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => [ 'Sheet1', 1, 6, 0, 0 ],
+        values     => [ 'Sheet1', 1, 6, 2, 2 ],
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'Results of sample analysis' );
+    $chart->set_x_axis( name => 'Test number' );
+    $chart->set_y_axis( name => 'Sample length (mm)' );
+    
+    # Set an Excel chart style. Colors with white outline and shadow.
+    $chart->set_style( 10 );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_scatter.pl>
+
+=head2 Example: chart_stock.pl
+
+
+
+A demo of a Stock chart in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/chart_stock.jpg" width="640" height="420" alt="Output from chart_stock.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Stock chart in Excel::Writer::XLSX.
+    #
+    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    use Excel::Writer::XLSX;
+    
+    my $workbook    = Excel::Writer::XLSX->new( 'chart_stock.xlsx' );
+    my $worksheet   = $workbook->add_worksheet();
+    my $bold        = $workbook->add_format( bold => 1 );
+    my $date_format = $workbook->add_format( num_format => 'dd/mm/yyyy' );
+    my $chart       = $workbook->add_chart( type => 'stock', embedded => 1 );
+    
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Date', 'High', 'Low', 'Close' ];
+    my $data = [
+    
+        [ '2007-01-01T', '2007-01-02T', '2007-01-03T', '2007-01-04T', '2007-01-05T' ],
+        [ 27.2,  25.03, 19.05, 20.34, 18.5 ],
+        [ 23.49, 19.55, 15.12, 17.84, 16.34 ],
+        [ 25.45, 23.05, 17.32, 20.45, 17.34 ],
+    
+    ];
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    
+    for my $row ( 0 .. 4 ) {
+        $worksheet->write_date_time( $row+1, 0, $data->[0]->[$row], $date_format );
+        $worksheet->write( $row+1, 1, $data->[1]->[$row] );
+        $worksheet->write( $row+1, 2, $data->[2]->[$row] );
+        $worksheet->write( $row+1, 3, $data->[3]->[$row] );
+    
+    }
+    
+    $worksheet->set_column( 'A:D', 11 );
+    
+    # Add a series for each of the High-Low-Close columns.
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$B$2:$B$6',
+    );
+    
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$C$2:$C$6',
+    );
+    
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$D$2:$D$6',
+    );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title ( name => 'High-Low-Close', );
+    $chart->set_x_axis( name => 'Date', );
+    $chart->set_y_axis( name => 'Share price', );
+    
+    
+    $worksheet->insert_chart( 'E9', $chart );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/chart_stock.pl>
 
 =head2 Example: colors.pl
 
@@ -1745,7 +2311,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/colors.pl>
 
 =head2 Example: date_time.pl
 
@@ -1857,7 +2423,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/date_time.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/date_time.pl>
 
 =head2 Example: diag_border.pl
 
@@ -1917,7 +2483,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/diag_border.pl>
 
 =head2 Example: headers.pl
 
@@ -2083,7 +2649,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/headers.pl>
 
 =head2 Example: hide_sheet.pl
 
@@ -2134,7 +2700,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/hide_sheet.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/hide_sheet.pl>
 
 =head2 Example: hyperlink1.pl
 
@@ -2213,7 +2779,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/hyperlink1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/hyperlink1.pl>
 
 =head2 Example: hyperlink2.pl
 
@@ -2382,7 +2948,7 @@ See also hyperlink1.pl for web URL examples.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/hyperlink2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -2433,7 +2999,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/indent.pl>
 
 =head2 Example: merge1.pl
 
@@ -2495,7 +3061,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -2566,7 +3132,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
@@ -2631,7 +3197,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -2740,7 +3306,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -2837,7 +3403,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -2911,7 +3477,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -3036,7 +3602,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -3164,7 +3730,7 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/mod_perl2.pl>
 
 =head2 Example: panes.pl
 
@@ -3317,7 +3883,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/panes.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/panes.pl>
 
 =head2 Example: protection.pl
 
@@ -3381,7 +3947,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/protection.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/protection.pl>
 
 =head2 Example: rich_strings.pl
 
@@ -3445,7 +4011,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/rich_strings.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/rich_strings.pl>
 
 =head2 Example: right_to_left.pl
 
@@ -3492,7 +4058,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/right_to_left.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/right_to_left.pl>
 
 =head2 Example: sales.pl
 
@@ -3615,7 +4181,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/sales.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -3714,7 +4280,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -3813,7 +4379,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/stocks.pl>
 
 =head2 Example: tab_colors.pl
 
@@ -3858,7 +4424,7 @@ Source code for this example:
     $worksheet4->set_tab_color( 0x35 );    # Orange
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/tab_colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/tab_colors.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -3946,7 +4512,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -4043,7 +4609,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -4132,7 +4698,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -4261,7 +4827,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/write_handler4.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -4326,7 +4892,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -4391,7 +4957,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -4456,7 +5022,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -4521,7 +5087,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -4586,7 +5152,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -4651,7 +5217,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -4721,7 +5287,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -4786,7 +5352,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -4851,7 +5417,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -4916,7 +5482,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.16/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.17/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 
