@@ -5058,7 +5058,7 @@ L<http://search.cpan.org/~hmbrand/Text-CSV_XS/MANIFEST>.
 
 The following people contributed to the debugging and testing of Excel::Writer::XLSX:
 
-Rob Messer of Intellisurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. Intellisurvey also sponsored some of the optimisations for large files.
+Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey also sponsored some of the optimisations for large files and the charting feature.
 
 
 
