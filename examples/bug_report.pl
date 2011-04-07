@@ -42,8 +42,8 @@ print << 'HINTS_2';
 
     If you submit a bug report here are some pointers.
 
-    1.  Put "WriteExcelXML:" at the beginning of the subject line. This helps
-        to filter genuine messages from spam.
+    1.  Put "Excel::Writer::XLSX:" at the beginning of the subject line.
+        This helps to filter genuine messages from spam.
 
     2.  Describe the problems as clearly and as concisely as possible.
 
@@ -69,7 +69,7 @@ print << 'EMAIL';
 =======================================================================
 
 To:      John McNamara <jmcnamara@cpan.org>
-Subject: WriteExcelXML: Problem with something.
+Subject: Excel::Writer::XLSX: Problem with something.
 
 Hi John,
 

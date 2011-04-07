@@ -4645,7 +4645,6 @@ However, it doesn't currently support all of the features of Spreadsheet::WriteE
     Images
     Defined names.
     Cell comments.
-    Document properties.
     Data validation.
     Outlines.
 
@@ -4965,7 +4964,15 @@ The roadmap is as follows:
 
 =over 4
 
-=item * Hack, hack hack.
+=item * Full API compatibility with Spreadsheet::WriteExcel.
+
+=item * Conditional formatting.
+
+=item * Excel::Reader::XLSX and Excel::ReWriter::XLSX, hopefully.
+
+=item * Pivot tables, maybe.
+
+=item * Macros, why not.
 
 =back
 
@@ -5036,7 +5043,7 @@ L<http://search.cpan.org/~hmbrand/Text-CSV_XS/MANIFEST>.
 
 The following people contributed to the debugging and testing of Excel::Writer::XLSX:
 
-Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey also sponsored some of the optimisations for large files and the charting feature.
+Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey also sponsored large files optimisations and the charting feature.
 
 
 
