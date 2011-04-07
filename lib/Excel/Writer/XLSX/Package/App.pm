@@ -44,6 +44,7 @@ sub new {
     $self->{_writer}        = undef;
     $self->{_part_names}    = [];
     $self->{_heading_pairs} = [];
+    $self->{_properties}    = {};
 
     bless $self, $class;
 
@@ -70,6 +71,7 @@ sub _assemble_xml_file {
     $self->_write_scale_crop();
     $self->_write_heading_pairs();
     $self->_write_titles_of_parts();
+    $self->_write_manager();
     $self->_write_company();
     $self->_write_links_up_to_date();
     $self->_write_shared_doc();
@@ -119,6 +121,21 @@ sub _add_heading_pair {
     );
 
     push @{ $self->{_heading_pairs} }, @vector;
+}
+
+
+###############################################################################
+#
+# _set_properties()
+#
+# Set the document properties.
+#
+sub _set_properties {
+
+    my $self       = shift;
+    my $properties = shift;
+
+    $self->{_properties} = $properties;
 }
 
 
@@ -299,9 +316,26 @@ sub _write_vt_data {
 sub _write_company {
 
     my $self = shift;
-    my $data = '';
+    my $data = $self->{_properties}->{company} // '';
 
     $self->{_writer}->dataElement( 'Company', $data );
+}
+
+
+###############################################################################
+#
+# _write_manager()
+#
+# Write the <Manager> element.
+#
+sub _write_manager {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{manager};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'Manager', $data );
 }
 
 

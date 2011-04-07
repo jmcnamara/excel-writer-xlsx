@@ -297,9 +297,10 @@ sub _write_shared_strings_file {
 #
 sub _write_app_file {
 
-    my $self = shift;
-    my $dir  = $self->{_package_dir};
-    my $app  = Excel::Writer::XLSX::Package::App->new();
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $properties = $self->{_workbook}->{_doc_properties};
+    my $app        = Excel::Writer::XLSX::Package::App->new();
 
     mkdir $dir . '/docProps';
 
@@ -331,6 +332,7 @@ sub _write_app_file {
         $app->_add_part_name( $named_range );
     }
 
+    $app->_set_properties( $properties );
 
     $app->_set_xml_writer( $dir . '/docProps/app.xml' );
     $app->_assemble_xml_file();

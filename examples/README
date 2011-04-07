@@ -42,6 +42,7 @@ merge6.pl               An example of merging with Unicode strings.
 mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
 panes.pl                An examples of how to create panes.
+properties.pl           Add document properties to a workbook.
 protection.pl           Example of cell locking and formula hiding.
 rich_strings.pl         Example of strings with multiple formats.
 right_to_left.pl        Change default sheet direction to right to left.

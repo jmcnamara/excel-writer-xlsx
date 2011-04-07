@@ -365,11 +365,9 @@ The return value of C<close()> is the same as that returned by perl when it clos
 
 =head2 set_properties()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+The C<set_properties> method can be used to set the document properties of the Excel file created by C<Excel::Writer::XLSX>. These properties are visible when you use the C<< Office Button -> Prepare -> Properties >> option in Excel and are also available to external applications that read or index windows files.
 
-The C<set_properties> method can be used to set the document properties of the Excel file created by C<Excel::Writer::XLSX>. These properties are visible when you use the C<< File->Properties >> menu option in Excel and are also available to external applications that read or index windows files.
-
-The properties should be passed as a hash of values as follows:
+The properties should be passed in hash format as follows:
 
     $workbook->set_properties(
         title    => 'This is an example spreadsheet',
@@ -387,27 +385,7 @@ The properties that can be set are:
     category
     keywords
     comments
-
-User defined properties are not supported due to effort required.
-
-You can also pass UTF-8 strings as properties. See L<UNICODE IN EXCEL>.
-
-    my $smiley = chr 0x263A;
-
-    $workbook->set_properties(
-        subject => "Happy now? $smiley",
-    );
-
-
-In order to promote the usefulness of Perl and the Excel::Writer::XLSX module consider adding a comment such as the following when using document properties:
-
-    $workbook->set_properties(
-        ...,
-        comments => 'Created with Perl and Excel::Writer::XLSX',
-        ...,
-    );
-
-For convenience it is possible to pass either a hash or hash ref of arguments to this method.
+    status
 
 See also the C<properties.pl> program in the examples directory of the distro.
 
@@ -4615,6 +4593,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
     protection.pl           Example of cell locking and formula hiding.
+    protection.pl           Example of cell locking and formula hiding.
     rich_strings.pl         Example of strings with multiple formats.
     right_to_left.pl        Change default sheet direction to right to left.
     sales.pl                An example of a simple sales spreadsheet.
@@ -4679,7 +4658,7 @@ The following is a full list of the module methods and their support status:
     add_format()                Yes
     add_chart()                 Yes
     close()                     Yes
-    set_properties()            No
+    set_properties()            Yes
     define_name()               No
     set_tempdir()               No
     set_custom_color()          Yes
@@ -4800,7 +4779,6 @@ All non-deprecated methods will be supported in time unless no longer required. 
     define_name()
     insert_image()
 
-    set_properties()
     set_tempdir()
 
     write_comment()
