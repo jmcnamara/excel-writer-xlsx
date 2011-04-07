@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+
+0.18 April 7 2011
+
+    + Added set_properties() method to add document properties.
+      Added properties.pl and tests.
+
+
 0.17 April 4 2011
 
     + Added charting feature. See Chart.pm.

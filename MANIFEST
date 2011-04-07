@@ -35,6 +35,7 @@ examples/merge6.pl
 examples/mod_perl1.pl
 examples/mod_perl2.pl
 examples/panes.pl
+examples/properties.pl
 examples/protection.pl
 examples/regions.pl
 examples/rich_strings.pl
@@ -163,7 +164,8 @@ t/package/content_types/content_types.t
 t/package/content_types/sub_write_default.t
 t/package/content_types/sub_write_override.t
 t/package/content_types/sub_write_xml_declaration.t
-t/package/core/core.t
+t/package/core/core01.t
+t/package/core/core02.t
 t/package/core/sub_write_xml_declaration.t
 t/package/relationships/relationships.t
 t/package/relationships/sheet_rels.t
@@ -298,6 +300,7 @@ t/regression/print_options05.t
 t/regression/print_options06.t
 t/regression/print_scale01.t
 t/regression/print_scale02.t
+t/regression/properties01.t
 t/regression/repeat01.t
 t/regression/repeat02.t
 t/regression/repeat03.t
@@ -427,6 +430,7 @@ t/regression/xlsx_files/print_options05.xlsx
 t/regression/xlsx_files/print_options06.xlsx
 t/regression/xlsx_files/print_scale01.xlsx
 t/regression/xlsx_files/print_scale02.xlsx
+t/regression/xlsx_files/properties01.xlsx
 t/regression/xlsx_files/repeat01.xlsx
 t/regression/xlsx_files/repeat02.xlsx
 t/regression/xlsx_files/repeat03.xlsx

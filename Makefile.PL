@@ -52,3 +52,4 @@ sub MY::postamble {
       . q{"test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" }
       . q{$(TEST_FILES)} . "\n\n";
 }
+
