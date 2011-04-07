@@ -74,12 +74,16 @@ sub new {
     $self->{_defined_names}    = [];
     $self->{_named_ranges}     = [];
     $self->{_custom_colors}    = [];
+    $self->{_doc_properties}   = {};
+    $self->{_localtime}        = [ localtime() ];
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
     $self->{_str_unique} = 0;
     $self->{_str_table}  = {};
     $self->{_str_array}  = [];
+
+
 
 
     bless $self, $class;
@@ -620,6 +624,59 @@ sub set_tempdir {
 
     # TODO Update for SpreadsheetML format
 }
+
+
+
+
+###############################################################################
+#
+# set_properties()
+#
+# Set the document properties such as Title, Author etc. These are written to
+# property sets in the OLE container.
+#
+sub set_properties {
+
+    my $self  = shift;
+    my %param = @_;
+
+    # Ignore if no args were passed.
+    return -1 unless @_;
+
+    # List of valid input parameters.
+    my %valid = (
+        title       => 1,
+        subject     => 1,
+        author      => 1,
+        keywords    => 1,
+        comments    => 1,
+        last_author => 1,
+        created     => 1,
+        category    => 1,
+        manager     => 1,
+        company     => 1,
+        status      => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $parameter ( keys %param ) {
+        if ( not exists $valid{$parameter} ) {
+            carp "Unknown parameter '$parameter' in set_properties()";
+            return -1;
+        }
+    }
+
+    # Set the creation time unless specified by the user.
+    if ( !exists $param{created} ) {
+        $param{created} = $self->{_localtime};
+    }
+
+
+    $self->{_doc_properties} = \%param;
+}
+
+
+
 
 
 ###############################################################################

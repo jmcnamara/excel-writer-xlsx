@@ -42,10 +42,8 @@ sub new {
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_writer}            = undef;
-    $self->{_creator}           = '';
-    $self->{_modifier}          = '';
-    $self->{_creation_date}     = '2010-01-01T00:00:00Z';
-    $self->{_modification_date} = '2010-01-01T00:00:00Z';
+    $self->{_properties}        = {};
+    $self->{_localtime}         = [ localtime() ];
 
     bless $self, $class;
 
@@ -67,14 +65,20 @@ sub _assemble_xml_file {
 
     $self->_write_xml_declaration;
     $self->_write_cp_core_properties();
+    $self->_write_dc_title();
+    $self->_write_dc_subject();
     $self->_write_dc_creator();
+    $self->_write_cp_keywords();
+    $self->_write_dc_description();
     $self->_write_cp_last_modified_by();
     $self->_write_dcterms_created();
     $self->_write_dcterms_modified();
+    $self->_write_cp_category();
+    $self->_write_cp_content_status();
 
     $self->{_writer}->endTag( 'cp:coreProperties' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -82,57 +86,16 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_creator()
+# _set_properties()
 #
-# Set the document creator.
+# Set the document properties.
 #
-sub _set_creator {
-    my $self    = shift;
-    my $creator = shift;
+sub _set_properties {
 
-    $self->{_creator} = $creator;
-}
+    my $self       = shift;
+    my $properties = shift;
 
-
-###############################################################################
-#
-# _set_modifier()
-#
-# Set the document modifier.
-#
-sub _set_modifier {
-    my $self     = shift;
-    my $modifier = shift;
-
-    $self->{_modifier} = $modifier;
-}
-
-
-###############################################################################
-#
-# _set_creation_date()
-#
-# Set the document creation date.
-#
-sub _set_creation_date {
-    my $self          = shift;
-    my $creation_date = shift;
-
-    $self->{_creation_date} = $creation_date;
-}
-
-
-###############################################################################
-#
-# _set_modification_date()
-#
-# Set the document modification date.
-#
-sub _set_modification_date {
-    my $self              = shift;
-    my $modification_date = shift;
-
-    $self->{_modification_date} = $modification_date;
+    $self->{_properties} = $properties;
 }
 
 
@@ -141,6 +104,27 @@ sub _set_modification_date {
 # Internal methods.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _localtime_to_iso8601_date()
+#
+# Convert a localtime() date to a ISO 8601 style "2010-01-01T00:00:00Z" date.
+#
+sub _localtime_to_iso8601_date {
+
+    my $self = shift;
+    my $localtime = shift // $self->{_localtime};
+
+    my ( $seconds, $minutes, $hours, $day, $month, $year ) = @$localtime;
+
+    $month++;
+    $year += 1900;
+
+    my $date = sprintf "%4d-%02d-%02dT%02d:%02d:%02dZ", $year, $month, $day,
+      $hours, $minutes, $seconds;
+}
 
 
 ###############################################################################
@@ -187,7 +171,7 @@ sub _write_cp_core_properties {
 sub _write_dc_creator {
 
     my $self = shift;
-    my $data = $self->{_creator};
+    my $data = $self->{_properties}->{author} // '';
 
     $self->{_writer}->dataElement( 'dc:creator', $data );
 }
@@ -202,7 +186,7 @@ sub _write_dc_creator {
 sub _write_cp_last_modified_by {
 
     my $self = shift;
-    my $data = $self->{_modifier};
+    my $data = $self->{_properties}->{author} // '';
 
     $self->{_writer}->dataElement( 'cp:lastModifiedBy', $data );
 }
@@ -217,13 +201,14 @@ sub _write_cp_last_modified_by {
 sub _write_dcterms_created {
 
     my $self     = shift;
-    my $data     = $self->{_creation_date};
+    my $date     = $self->{_properties}->{created};
     my $xsi_type = 'dcterms:W3CDTF';
+
+    $date = $self->_localtime_to_iso8601_date( $date );
 
     my @attributes = ( 'xsi:type' => $xsi_type, );
 
-
-    $self->{_writer}->dataElement( 'dcterms:created', $data, @attributes );
+    $self->{_writer}->dataElement( 'dcterms:created', $date, @attributes );
 }
 
 
@@ -236,13 +221,116 @@ sub _write_dcterms_created {
 sub _write_dcterms_modified {
 
     my $self     = shift;
-    my $data     = $self->{_modification_date};
+    my $date     = $self->{_properties}->{created};
     my $xsi_type = 'dcterms:W3CDTF';
+
+    $date =  $self->_localtime_to_iso8601_date( $date );
 
     my @attributes = ( 'xsi:type' => $xsi_type, );
 
+    $self->{_writer}->dataElement( 'dcterms:modified', $date, @attributes );
+}
 
-    $self->{_writer}->dataElement( 'dcterms:modified', $data, @attributes );
+
+##############################################################################
+#
+# _write_dc_title()
+#
+# Write the <dc:title> element.
+#
+sub _write_dc_title {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{title};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'dc:title', $data );
+}
+
+
+##############################################################################
+#
+# _write_dc_subject()
+#
+# Write the <dc:subject> element.
+#
+sub _write_dc_subject {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{subject};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'dc:subject', $data );
+}
+
+
+##############################################################################
+#
+# _write_cp_keywords()
+#
+# Write the <cp:keywords> element.
+#
+sub _write_cp_keywords {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{keywords};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'cp:keywords', $data );
+}
+
+
+##############################################################################
+#
+# _write_dc_description()
+#
+# Write the <dc:description> element.
+#
+sub _write_dc_description {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{comments};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'dc:description', $data );
+}
+
+
+##############################################################################
+#
+# _write_cp_category()
+#
+# Write the <cp:category> element.
+#
+sub _write_cp_category {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{category};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'cp:category', $data );
+}
+
+
+##############################################################################
+#
+# _write_cp_content_status()
+#
+# Write the <cp:contentStatus> element.
+#
+sub _write_cp_content_status {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{status};
+
+    return unless $data;
+
+    $self->{_writer}->dataElement( 'cp:contentStatus', $data );
 }
 
 

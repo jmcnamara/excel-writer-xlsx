@@ -345,16 +345,14 @@ sub _write_app_file {
 #
 sub _write_core_file {
 
-    my $self = shift;
-    my $dir  = $self->{_package_dir};
-    my $core = Excel::Writer::XLSX::Package::Core->new();
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $properties = $self->{_workbook}->{_doc_properties};
+    my $core       = Excel::Writer::XLSX::Package::Core->new();
 
     mkdir $dir . '/docProps';
 
-    my $date = _localtime_to_iso8601_date();
-
-    $core->_set_creation_date( $date );
-    $core->_set_modification_date( $date );
+    $core->_set_properties( $properties );
     $core->_set_xml_writer( $dir . '/docProps/core.xml' );
     $core->_assemble_xml_file();
 }
@@ -656,27 +654,6 @@ sub _write_drawing_rels_files {
             $dir . '/xl/drawings/_rels/drawing' . $index . '.xml.rels' );
         $rels->_assemble_xml_file();
     }
-}
-
-
-###############################################################################
-#
-# _localtime_to_iso8601_date()
-#
-# Convert a localtime() date to a ISO 8601 style "2010-01-01T00:00:00Z" date.
-#
-sub _localtime_to_iso8601_date {
-
-    my $self = shift;
-    my $time = shift // time();
-
-    my ( $seconds, $minutes, $hours, $day, $month, $year ) = localtime( $time );
-
-    $month++;
-    $year += 1900;
-
-    my $date = sprintf "%4d-%02d-%02dT%02d:%02d:%02dZ", $year, $month, $day,
-      $hours, $minutes, $seconds;
 }
 
 
