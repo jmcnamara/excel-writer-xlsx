@@ -3102,8 +3102,13 @@ sub _store_externsheet {
 #
 #     $col_start, $row_start, $col_end, $row_end, $x1, $y1, $x2, $y2.
 #
-# The width and height of the cells are also variable and have to be taken into
-# account.
+# We also calculate the absolute x and y position of the top left vertex of
+# the object. This is required for images.
+#
+#    $x_abs, $y_abs
+#
+# The width and height of the cells that the object occupies can be variable
+# and have to be taken intoaccount.
 #
 # The values of $col_start and $row_start are passed in from the calling
 # function. The values of $col_end and $row_end are calculated by subtracting
@@ -3132,7 +3137,24 @@ sub _position_object {
     my $width;        # Width of object frame.
     my $height;       # Height of object frame.
 
+    my $x_abs = 0;    # Absolute distance to left side of object.
+    my $y_abs = 0;    # Absolute distance to top  side of object.
+
+
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+
+
+    # Calcuate the absolute x offset of the top-left vertex.
+    for my $col_id ( 1 .. $col_start ) {
+        $x_abs += $self->_size_col( $col_id );
+    }
+    $x_abs += $x1;
+
+    # Calcuate the absolute y offset of the top-left vertex.
+    for my $row_id ( 1 .. $row_start ) {
+        $y_abs += $self->_size_row( $row_id );
+    }
+    $y_abs += $y1;
 
 
     # Adjust start column for offsets that are greater than the col width.
@@ -3178,13 +3200,21 @@ sub _position_object {
     $x2 = $width;
     $y2 = $height;
 
-    # Convert the pixel values to EMUs. See above.
-    $x1 *= 9_525;
-    $y1 *= 9_525;
-    $x2 *= 9_525;
-    $y2 *= 9_525;
 
-    return ( $col_start, $row_start, $x1, $y1, $col_end, $row_end, $x2, $y2 );
+    # Convert the pixel values to EMUs. See above.
+    $x1    *= 9_525;
+    $y1    *= 9_525;
+    $x2    *= 9_525;
+    $y2    *= 9_525;
+    $x_abs *= 9_525;
+    $y_abs *= 9_525;
+
+    return (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+
+    );
 }
 
 
@@ -3447,7 +3477,7 @@ sub _prepare_chart {
     if ( !$self->{_drawing} ) {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_set_dimensions( @dimensions );
+        $drawing->_set_dimensions( 1, @dimensions );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -3457,7 +3487,7 @@ sub _prepare_chart {
     }
     else {
         my $drawing = $self->{_drawing};
-        $drawing->_set_dimensions( @dimensions );
+        $drawing->_set_dimensions( 1, @dimensions );
 
     }
 
