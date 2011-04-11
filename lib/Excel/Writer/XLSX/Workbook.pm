@@ -726,8 +726,8 @@ sub _store_workbook {
     # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
 
-    # Prepare the charts and drawings.
-    $self->_prepare_charts();
+    # Prepare the drawings, charts and images.
+    $self->_prepare_drawings();
 
     # Add cached data to charts.
     $self->_add_chart_data();
@@ -1038,26 +1038,37 @@ sub _prepare_defined_names {
 
 ###############################################################################
 #
-# _prepare_charts()
+# _prepare_drawings()
 #
-# Iterate through the worksheets and set up any chart/drawings.
+# Iterate through the worksheets and set up any chartor image drawings.
 #
-sub _prepare_charts {
+sub _prepare_drawings {
 
     my $self       = shift;
-    my $chart_id   = 0;
+    my $ref_id     = 0;
     my $drawing_id = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
         my $chart_count = scalar @{ $sheet->{_charts} };
-        next unless $chart_count;
+        my $image_count = scalar @{ $sheet->{_images} };
+        next unless ( $chart_count + $image_count );
 
         $drawing_id++;
 
         for my $index ( 0 .. $chart_count - 1 ) {
-            $chart_id++;
-            $sheet->_prepare_chart( $index, $chart_id, $drawing_id );
+            $ref_id++;
+            $sheet->_prepare_chart( $index, $ref_id, $drawing_id );
+        }
+
+        for my $index ( 0 .. $image_count - 1 ) {
+            my $filename = $sheet->{_images}->[$index]->[2];
+            my ( $image_id, $type, $width, $height ) =
+              $self->_process_image( $filename );
+
+            $ref_id++;
+            $sheet->_prepare_image( $index, $ref_id, $drawing_id, $width,
+                $height );
         }
 
         my $drawing = $sheet->{_drawing};
@@ -1244,6 +1255,217 @@ sub _quote_sheetname {
         return qq('$sheetname');
     }
 }
+
+
+###############################################################################
+#
+# _process_image()
+#
+# We need to process each image in each worksheet and extract information.
+# Some of this information is stored and used in the Workbook and some is
+# passed back into each Worksheet.
+#
+sub _process_image {
+
+    my $self     = shift;
+    my $filename = shift;
+
+    my %images_seen;
+    my @image_data;
+    my @previous_images;
+    my $image_id = 1;
+    my $type;
+    my $width;
+    my $height;
+    my $image_name;
+
+    if ( not exists $images_seen{$filename} ) {
+
+        # TODO should also match seen images based on checksum.
+
+        # Open the image file and import the data.
+        my $fh = FileHandle->new( $filename );
+        croak "Couldn't import $filename: $!" unless defined $fh;
+        binmode $fh;
+
+        # Slurp the file into a string and do some size calcs.
+        my $data = do { local $/; <$fh> };
+        my $size = length $data;
+
+        #my $checksum   = TODO.
+
+        if ( unpack( 'x A3', $data ) eq 'PNG' ) {
+
+            # Test for PNGs.
+            ( $type, $width, $height ) = $self->_process_png( $data );
+            $self->{_image_types}->{png} = 1;
+        }
+        elsif (
+            ( unpack( 'n', $data ) == 0xFFD8 )
+            && (   ( unpack( 'x6 A4', $data ) eq 'JFIF' )
+                || ( unpack( 'x6 A4', $data ) eq 'Exif' ) )
+          )
+        {
+
+            # Test for JFIF and Exif JPEGs.
+            ( $type, $width, $height ) =
+              $self->_process_jpg( $data, $filename );
+
+            $self->{_image_types}->{jpg} = 1;
+
+        }
+        elsif ( unpack( 'A2', $data ) eq 'BM' ) {
+
+            # Test for BMPs.
+            ( $type, $width, $height ) =
+              $self->_process_bmp( $data, $filename );
+
+            $self->{_image_types}->{bmp} = 1;
+        }
+        else {
+
+            # TODO. Add Image::Size to support other types.
+            croak "Unsupported image format for file: $filename\n";
+        }
+
+        push @{ $self->{_images} }, $filename;
+
+        # Also store new data for use in duplicate images.
+        push @previous_images, [ $image_id, $type, $width, $height ];
+        $images_seen{$filename} = $image_id++;
+
+        $fh->close;
+    }
+    else {
+
+        # We've processed this file already.
+        my $index = $images_seen{$filename} - 1;
+
+        # Increase image reference count.
+        $image_data[$index]->[0]++;
+
+    }
+
+    return ( $image_id, $type, $width, $height );
+}
+
+
+###############################################################################
+#
+# _process_png()
+#
+# Extract width and height information from a PNG file.
+#
+sub _process_png {
+
+    my $self = shift;
+
+    my $type   = 'png';
+    my $width  = unpack "N", substr $_[0], 16, 4;
+    my $height = unpack "N", substr $_[0], 20, 4;
+
+    return ( $type, $width, $height );
+}
+
+
+###############################################################################
+#
+# _process_bmp()
+#
+# Extract width and height information from a BMP file.
+#
+# Most of the checks came from old Spredsheet::WriteExcel code.
+#
+sub _process_bmp {
+
+    my $self     = shift;
+    my $data     = $_[0];
+    my $filename = $_[1];
+    my $type     = 'bmp';
+
+
+    # Check that the file is big enough to be a bitmap.
+    if ( length $data <= 0x36 ) {
+        croak "$filename doesn't contain enough data.";
+    }
+
+
+    # Read the bitmap width and height. Verify the sizes.
+    my ( $width, $height ) = unpack "x18 V2", $data;
+
+    if ( $width > 0xFFFF ) {
+        croak "$filename: largest image width $width supported is 65k.";
+    }
+
+    if ( $height > 0xFFFF ) {
+        croak "$filename: largest image height supported is 65k.";
+    }
+
+    # Read the bitmap planes and bpp data. Verify them.
+    my ( $planes, $bitcount ) = unpack "x26 v2", $data;
+
+    if ( $bitcount != 24 ) {
+        croak "$filename isn't a 24bit true color bitmap.";
+    }
+
+    if ( $planes != 1 ) {
+        croak "$filename: only 1 plane supported in bitmap image.";
+    }
+
+
+    # Read the bitmap compression. Verify compression.
+    my $compression = unpack "x30 V", $data;
+
+    if ( $compression != 0 ) {
+        croak "$filename: compression not supported in bitmap image.";
+    }
+
+    return ( $type, $width, $height );
+}
+
+
+###############################################################################
+#
+# _process_jpg()
+#
+# Extract width and height information from a JPEG file.
+#
+sub _process_jpg {
+
+    my $self     = shift;
+    my $data     = $_[0];
+    my $filename = $_[1];
+    my $type     = 'jpeg';
+    my $width;
+    my $height;
+
+    my $offset      = 2;
+    my $data_length = length $data;
+
+    # Search through the image data to find the 0xFFC0 marker. The height and
+    # width are contained in the data for that sub element.
+    while ( $offset < $data_length ) {
+
+        my $marker = unpack "n", substr $data, $offset, 2;
+        my $length = unpack "n", substr $data, $offset + 2, 2;
+
+        if ( $marker == 0xFFC0 || $marker == 0xFFC2 ) {
+            $height = unpack "n", substr $data, $offset + 5, 2;
+            $width  = unpack "n", substr $data, $offset + 7, 2;
+            last;
+        }
+
+        $offset = $offset + $length + 2;
+        last if $marker == 0xFFDA;
+    }
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in jpeg image.\n";
+    }
+
+    return ( $type, $width, $height );
+}
+
 
 
 ###############################################################################

@@ -96,11 +96,11 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_dimensions()
+# _add_drawing_object()
 #
-# Set the dimensions of the drawing.
+# Add a chart or image sub object to the drawing.
 #
-sub _set_dimensions {
+sub _add_drawing_object {
 
     my $self = shift;
 
