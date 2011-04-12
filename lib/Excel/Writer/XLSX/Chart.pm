@@ -278,6 +278,7 @@ sub set_legend {
 sub set_plotarea {
 
     # TODO. Need to refactor for XLSX format.
+    return;
 
     my $self = shift;
     my %arg  = @_;
@@ -337,6 +338,7 @@ sub set_plotarea {
 sub set_chartarea {
 
     # TODO. Need to refactor for XLSX format.
+    return;
 
     my $self = shift;
     my %arg  = @_;
