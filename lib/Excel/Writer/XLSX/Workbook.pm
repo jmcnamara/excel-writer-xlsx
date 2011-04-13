@@ -20,6 +20,7 @@ use warnings;
 use Carp;
 use IO::File;
 use File::Temp 'tempdir';
+use File::Basename 'fileparse';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Chartsheet;
@@ -1063,12 +1064,11 @@ sub _prepare_drawings {
 
         for my $index ( 0 .. $image_count - 1 ) {
             my $filename = $sheet->{_images}->[$index]->[2];
-            my ( $image_id, $type, $width, $height ) =
-              $self->_process_image( $filename );
-
+            my ( $image_id, $type, $width, $height, $name ) =
+              $self->_get_image_properties( $filename );
             $ref_id++;
             $sheet->_prepare_image( $index, $ref_id, $drawing_id, $width,
-                $height );
+                $height, $name );
         }
 
         my $drawing = $sheet->{_drawing};
@@ -1259,13 +1259,13 @@ sub _quote_sheetname {
 
 ###############################################################################
 #
-# _process_image()
+# _get_image_properties()
 #
-# We need to process each image in each worksheet and extract information.
-# Some of this information is stored and used in the Workbook and some is
-# passed back into each Worksheet.
+# Extract information from the image file such as dimension, type, filename,
+# and entension. Also keep track of previously seen images to optimise out
+# any duplicates.
 #
-sub _process_image {
+sub _get_image_properties {
 
     my $self     = shift;
     my $filename = shift;
@@ -1280,6 +1280,8 @@ sub _process_image {
     my $image_name;
 
     if ( not exists $images_seen{$filename} ) {
+
+        ( $image_name ) = fileparse( $filename );
 
         # TODO should also match seen images based on checksum.
 
@@ -1346,7 +1348,7 @@ sub _process_image {
 
     }
 
-    return ( $image_id, $type, $width, $height );
+    return ( $image_id, $type, $width, $height, $image_name );
 }
 
 

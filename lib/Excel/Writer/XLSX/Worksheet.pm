@@ -3606,6 +3606,7 @@ sub _prepare_image {
     my $drawing_id = shift;
     my $width      = shift;
     my $height     = shift;
+    my $name       = shift;
     my $type       = 2;
 
     my ( $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ) =
@@ -3626,7 +3627,7 @@ sub _prepare_image {
     if ( !$self->{_drawing} ) {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_add_drawing_object( $type, @dimensions, $width, $height, 'red.png' );
+        $drawing->_add_drawing_object( $type, @dimensions, $width, $height, $name );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
