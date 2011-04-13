@@ -18,6 +18,7 @@ use strict;
 use warnings;
 use Exporter;
 use Carp;
+use File::Copy;
 use Excel::Writer::XLSX::Package::App;
 use Excel::Writer::XLSX::Package::ContentTypes;
 use Excel::Writer::XLSX::Package::Core;
@@ -134,6 +135,7 @@ sub _create_package {
     $self->_write_worksheet_rels_files();
     $self->_write_chartsheet_rels_files();
     $self->_write_drawing_rels_files();
+    $self->_add_image_files();
 }
 
 
@@ -372,6 +374,8 @@ sub _write_content_types_file {
     my $dir     = $self->{_package_dir};
     my $content = Excel::Writer::XLSX::Package::ContentTypes->new();
 
+    $content->_add_image_types( %{ $self->{_workbook}->{_image_types} } );
+
     my $worksheet_index  = 1;
     my $chartsheet_index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
@@ -473,10 +477,10 @@ sub _write_root_rels_file {
 
     mkdir $dir . '/_rels';
 
-    $rels->_add_document_relationship( '/officeDocument', 'xl/workbook' );
+    $rels->_add_document_relationship( '/officeDocument', 'xl/workbook.xml' );
     $rels->_add_package_relationship( '/metadata/core-properties',
         'docProps/core' );
-    $rels->_add_document_relationship( '/extended-properties', 'docProps/app' );
+    $rels->_add_document_relationship( '/extended-properties', 'docProps/app.xml' );
 
     $rels->_set_xml_writer( $dir . '/_rels/.rels' );
     $rels->_assemble_xml_file();
@@ -504,20 +508,20 @@ sub _write_workbook_rels_file {
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
         if ( $worksheet->{_is_chartsheet} ) {
             $rels->_add_document_relationship( '/chartsheet',
-                'chartsheets/sheet' . $chartsheet_index++ );
+                'chartsheets/sheet' . $chartsheet_index++ . '.xml' );
         }
         else {
             $rels->_add_document_relationship( '/worksheet',
-                'worksheets/sheet' . $worksheet_index++ );
+                'worksheets/sheet' . $worksheet_index++. '.xml' );
         }
     }
 
-    $rels->_add_document_relationship( '/theme',  'theme/theme1' );
-    $rels->_add_document_relationship( '/styles', 'styles' );
+    $rels->_add_document_relationship( '/theme',  'theme/theme1.xml' );
+    $rels->_add_document_relationship( '/styles', 'styles.xml' );
 
     # Add the sharedString rel if there is string data in the workbook.
     if ( $self->{_workbook}->{_str_total} ) {
-        $rels->_add_document_relationship( '/sharedStrings', 'sharedStrings' );
+        $rels->_add_document_relationship( '/sharedStrings', 'sharedStrings.xml' );
     }
 
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
@@ -655,6 +659,31 @@ sub _write_drawing_rels_files {
         $rels->_set_xml_writer(
             $dir . '/xl/drawings/_rels/drawing' . $index . '.xml.rels' );
         $rels->_assemble_xml_file();
+    }
+}
+
+
+###############################################################################
+#
+# _add_image_files()
+#
+# Write the workbook.xml file.
+#
+sub _add_image_files {
+
+    my $self     = shift;
+    my $dir      = $self->{_package_dir};
+    my $workbook = $self->{_workbook};
+    my $index    = 1;
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/media';
+
+    for my $image ( @{ $workbook->{_images} } ) {
+        my $filename  = $image->[0];
+        my $extension = '.' . $image->[1];
+
+        copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
     }
 }
 

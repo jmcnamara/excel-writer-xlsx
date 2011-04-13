@@ -173,7 +173,7 @@ sub _prepare_chart {
       [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
 
     push @{ $self->{_drawing_links} },
-      [ '/chart', '../charts/chart' . $chart_id ];
+      [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
 }
 
 

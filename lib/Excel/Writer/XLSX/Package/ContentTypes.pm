@@ -237,6 +237,23 @@ sub _add_calc_chain {
 
 ###############################################################################
 #
+# _add_image_types()
+#
+# Add the image default types.
+#
+sub _add_image_types {
+
+    my $self  = shift;
+    my %types = @_;
+
+    for my $type ( keys %types ) {
+        $self->_add_default( $type, 'image/' . $type );
+    }
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################

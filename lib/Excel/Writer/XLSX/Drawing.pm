@@ -96,11 +96,11 @@ sub _assemble_xml_file {
 
 ###############################################################################
 #
-# _set_dimensions()
+# _add_drawing_object()
 #
-# Set the dimensions of the drawing.
+# Add a chart or image sub object to the drawing.
 #
-sub _set_dimensions {
+sub _add_drawing_object {
 
     my $self = shift;
 
@@ -154,6 +154,7 @@ sub _write_two_cell_anchor {
 
     my $self            = shift;
     my $index           = shift;
+    my $type            = shift;
     my $col_from        = shift;
     my $row_from        = shift;
     my $col_from_offset = shift;
@@ -162,8 +163,20 @@ sub _write_two_cell_anchor {
     my $row_to          = shift;
     my $col_to_offset   = shift;
     my $row_to_offset   = shift;
+    my $col_absolute    = shift;
+    my $row_absolute    = shift;
+    my $width           = shift;
+    my $height          = shift;
+    my $description     = shift;
+    my @attributes      = ();
 
-    $self->{_writer}->startTag( 'xdr:twoCellAnchor' );
+
+    # Add attribute for images.
+    if ( $type == 2 ) {
+        push @attributes, ( editAs => 'oneCell' );
+    }
+
+    $self->{_writer}->startTag( 'xdr:twoCellAnchor', @attributes );
 
     # Write the xdr:from element.
     $self->_write_from(
@@ -183,8 +196,17 @@ sub _write_two_cell_anchor {
 
     );
 
-    # Write the xdr:graphicFrame element.
-    $self->_write_graphic_frame( $index );
+    if ( $type == 1 ) {
+
+        # Write the xdr:graphicFrame element for charts.
+        $self->_write_graphic_frame( $index );
+    }
+    else {
+
+        # Write the xdr:pic element.
+        $self->_write_pic( $index, $col_absolute, $row_absolute, $width,
+            $height, $description );
+    }
 
     # Write the xdr:clientData element.
     $self->_write_client_data();
@@ -463,14 +485,20 @@ sub _write_nv_graphic_frame_pr {
 #
 sub _write_c_nv_pr {
 
-    my $self = shift;
-    my $id   = shift;
-    my $name = shift;
+    my $self  = shift;
+    my $id    = shift;
+    my $name  = shift;
+    my $descr = shift;
 
     my @attributes = (
         'id'   => $id,
         'name' => $name,
     );
+
+    # Add description attribute for images.
+    if ( defined $descr ) {
+        push @attributes, ( descr => $descr );
+    }
 
     $self->{_writer}->emptyTag( 'xdr:cNvPr', @attributes );
 }
@@ -661,6 +689,307 @@ sub _write_client_data {
 
     $self->{_writer}->emptyTag( 'xdr:clientData' );
 }
+
+
+##############################################################################
+#
+# _write_pic()
+#
+# Write the <xdr:pic> element.
+#
+sub _write_pic {
+
+    my $self         = shift;
+    my $index        = shift;
+    my $col_absolute = shift;
+    my $row_absolute = shift;
+    my $width        = shift;
+    my $height       = shift;
+    my $description  = shift;
+
+    $self->{_writer}->startTag( 'xdr:pic' );
+
+    # Write the xdr:nvPicPr element.
+    $self->_write_nv_pic_pr( $index, $description );
+
+    # Write the xdr:blipFill element.
+    $self->_write_blip_fill( $index );
+
+    # Write the xdr:spPr element.
+    $self->_write_sp_pr( $col_absolute, $row_absolute, $width, $height );
+
+    $self->{_writer}->endTag( 'xdr:pic' );
+}
+
+
+##############################################################################
+#
+# _write_nv_pic_pr()
+#
+# Write the <xdr:nvPicPr> element.
+#
+sub _write_nv_pic_pr {
+
+    my $self        = shift;
+    my $index       = shift;
+    my $description = shift;
+
+    $self->{_writer}->startTag( 'xdr:nvPicPr' );
+
+    # Write the xdr:cNvPr element.
+    $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index, $description );
+
+    # Write the xdr:cNvPicPr element.
+    $self->_write_c_nv_pic_pr();
+
+    $self->{_writer}->endTag( 'xdr:nvPicPr' );
+}
+
+
+##############################################################################
+#
+# _write_c_nv_pic_pr()
+#
+# Write the <xdr:cNvPicPr> element.
+#
+sub _write_c_nv_pic_pr {
+
+    my $self                 = shift;
+
+    $self->{_writer}->startTag( 'xdr:cNvPicPr' );
+
+    # Write the a:picLocks element.
+    $self->_write_a_pic_locks();
+
+    $self->{_writer}->endTag( 'xdr:cNvPicPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_pic_locks()
+#
+# Write the <a:picLocks> element.
+#
+sub _write_a_pic_locks {
+
+    my $self             = shift;
+    my $no_change_aspect = 1;
+
+    my @attributes = ( 'noChangeAspect' => $no_change_aspect );
+
+    $self->{_writer}->emptyTag( 'a:picLocks', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_blip_fill()
+#
+# Write the <xdr:blipFill> element.
+#
+sub _write_blip_fill {
+
+    my $self  = shift;
+    my $index = shift;
+
+    $self->{_writer}->startTag( 'xdr:blipFill' );
+
+    # Write the a:blip element.
+    $self->_write_a_blip( $index );
+
+    # Write the a:stretch element.
+    $self->_write_a_stretch();
+
+    $self->{_writer}->endTag( 'xdr:blipFill' );
+}
+
+
+##############################################################################
+#
+# _write_a_blip()
+#
+# Write the <a:blip> element.
+#
+sub _write_a_blip {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $schema  = 'http://schemas.openxmlformats.org/officeDocument/';
+    my $xmlns_r = $schema . '2006/relationships';
+    my $r_embed = 'rId' . $index;
+
+    my @attributes = (
+        'xmlns:r' => $xmlns_r,
+        'r:embed' => $r_embed,
+    );
+
+    $self->{_writer}->emptyTag( 'a:blip', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_stretch()
+#
+# Write the <a:stretch> element.
+#
+sub _write_a_stretch {
+
+    my $self = shift;
+
+    $self->{_writer}->startTag( 'a:stretch' );
+
+    # Write the a:fillRect element.
+    $self->_write_a_fill_rect();
+
+    $self->{_writer}->endTag( 'a:stretch' );
+}
+
+
+##############################################################################
+#
+# _write_a_fill_rect()
+#
+# Write the <a:fillRect> element.
+#
+sub _write_a_fill_rect {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:fillRect' );
+}
+
+
+##############################################################################
+#
+# _write_sp_pr()
+#
+# Write the <xdr:spPr> element.
+#
+sub _write_sp_pr {
+
+    my $self         = shift;
+    my $col_absolute = shift;
+    my $row_absolute = shift;
+    my $width        = shift;
+    my $height       = shift;
+
+    $self->{_writer}->startTag( 'xdr:spPr' );
+
+    # Write the a:xfrm element.
+    $self->_write_a_xfrm( $col_absolute, $row_absolute, $width, $height );
+
+    # Write the a:prstGeom element.
+    $self->_write_a_prst_geom();
+
+    $self->{_writer}->endTag( 'xdr:spPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_xfrm()
+#
+# Write the <a:xfrm> element.
+#
+sub _write_a_xfrm {
+
+    my $self         = shift;
+    my $col_absolute = shift;
+    my $row_absolute = shift;
+    my $width        = shift;
+    my $height       = shift;
+
+    $self->{_writer}->startTag( 'a:xfrm' );
+
+    # Write the a:off element.
+    $self->_write_a_off( $col_absolute, $row_absolute );
+
+    # Write the a:ext element.
+    $self->_write_a_ext( $width, $height );
+
+    $self->{_writer}->endTag( 'a:xfrm' );
+}
+
+
+##############################################################################
+#
+# _write_a_off()
+#
+# Write the <a:off> element.
+#
+sub _write_a_off {
+
+    my $self = shift;
+    my $x    = shift;
+    my $y    = shift;
+
+    my @attributes = (
+        'x' => $x,
+        'y' => $y,
+    );
+
+    $self->{_writer}->emptyTag( 'a:off', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_ext()
+#
+# Write the <a:ext> element.
+#
+sub _write_a_ext {
+
+    my $self = shift;
+    my $cx   = shift;
+    my $cy   = shift;
+
+    my @attributes = (
+        'cx' => $cx,
+        'cy' => $cy,
+    );
+
+    $self->{_writer}->emptyTag( 'a:ext', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_prst_geom()
+#
+# Write the <a:prstGeom> element.
+#
+sub _write_a_prst_geom {
+
+    my $self = shift;
+    my $prst = 'rect';
+
+    my @attributes = ( 'prst' => $prst );
+
+    $self->{_writer}->startTag( 'a:prstGeom', @attributes );
+
+    # Write the a:avLst element.
+    $self->_write_a_av_lst();
+
+    $self->{_writer}->endTag( 'a:prstGeom' );
+}
+
+
+##############################################################################
+#
+# _write_a_av_lst()
+#
+# Write the <a:avLst> element.
+#
+sub _write_a_av_lst {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'a:avLst' );
+}
+
 
 1;
 

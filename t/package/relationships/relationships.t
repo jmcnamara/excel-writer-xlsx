@@ -29,11 +29,11 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::Relationships' );
 #
 $caption = " \tRelationships: _assemble_xml_file()";
 
-$obj->_add_document_relationship( '/worksheet',     'worksheets/sheet1' );
-$obj->_add_document_relationship( '/theme',         'theme/theme1' );
-$obj->_add_document_relationship( '/styles',        'styles' );
-$obj->_add_document_relationship( '/sharedStrings', 'sharedStrings' );
-$obj->_add_document_relationship( '/calcChain',     'calcChain' );
+$obj->_add_document_relationship( '/worksheet',     'worksheets/sheet1.xml' );
+$obj->_add_document_relationship( '/theme',         'theme/theme1.xml' );
+$obj->_add_document_relationship( '/styles',        'styles.xml' );
+$obj->_add_document_relationship( '/sharedStrings', 'sharedStrings.xml' );
+$obj->_add_document_relationship( '/calcChain',     'calcChain.xml' );
 $obj->_assemble_xml_file();
 
 $expected = _expected_to_aref();

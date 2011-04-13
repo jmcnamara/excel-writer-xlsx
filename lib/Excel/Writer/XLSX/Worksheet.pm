@@ -163,6 +163,7 @@ sub new {
     $self->{_external_dlinks} = [];
     $self->{_drawing_links}   = [];
     $self->{_charts}          = [];
+    $self->{_images}          = [];
     $self->{_drawing}         = 0;
 
     $self->{_rstring} = '';
@@ -2625,23 +2626,6 @@ sub convert_date_time {
 
 ###############################################################################
 #
-# insert_bitmap($row, $col, $filename, $x, $y, $scale_x, $scale_y)
-#
-# Insert a 24bit bitmap image in a worksheet. The main record required is
-# IMDATA but it must be proceeded by a OBJ record to define its position.
-#
-sub insert_bitmap {
-
-    my $self = shift;
-
-
-    # TODO Update for SpreadsheetML format
-
-}
-
-
-###############################################################################
-#
 # set_row($row, $height, $XF, $hidden, $level, $collapsed)
 #
 # This method is used to set the height and XF format for a row.
@@ -3102,8 +3086,13 @@ sub _store_externsheet {
 #
 #     $col_start, $row_start, $col_end, $row_end, $x1, $y1, $x2, $y2.
 #
-# The width and height of the cells are also variable and have to be taken into
-# account.
+# We also calculate the absolute x and y position of the top left vertex of
+# the object. This is required for images.
+#
+#    $x_abs, $y_abs
+#
+# The width and height of the cells that the object occupies can be variable
+# and have to be taken intoaccount.
 #
 # The values of $col_start and $row_start are passed in from the calling
 # function. The values of $col_end and $row_end are calculated by subtracting
@@ -3132,7 +3121,24 @@ sub _position_object {
     my $width;        # Width of object frame.
     my $height;       # Height of object frame.
 
+    my $x_abs = 0;    # Absolute distance to left side of object.
+    my $y_abs = 0;    # Absolute distance to top  side of object.
+
+
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+
+
+    # Calcuate the absolute x offset of the top-left vertex.
+    for my $col_id ( 1 .. $col_start ) {
+        $x_abs += $self->_size_col( $col_id );
+    }
+    $x_abs += $x1;
+
+    # Calcuate the absolute y offset of the top-left vertex.
+    for my $row_id ( 1 .. $row_start ) {
+        $y_abs += $self->_size_row( $row_id );
+    }
+    $y_abs += $y1;
 
 
     # Adjust start column for offsets that are greater than the col width.
@@ -3178,13 +3184,21 @@ sub _position_object {
     $x2 = $width;
     $y2 = $height;
 
-    # Convert the pixel values to EMUs. See above.
-    $x1 *= 9_525;
-    $y1 *= 9_525;
-    $x2 *= 9_525;
-    $y2 *= 9_525;
 
-    return ( $col_start, $row_start, $x1, $y1, $col_end, $row_end, $x2, $y2 );
+    # Convert the pixel values to EMUs. See above.
+    $x1    *= 9_525;
+    $y1    *= 9_525;
+    $x2    *= 9_525;
+    $y2    *= 9_525;
+    $x_abs *= 9_525;
+    $y_abs *= 9_525;
+
+    return (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+
+    );
 }
 
 
@@ -3374,11 +3388,9 @@ sub _get_shared_string_index {
 }
 
 
-
-
 ###############################################################################
 #
-# insert_chart($row, $col, $chart, $x, $y, $scale_x, $scale_y)
+# insert_chart( $row, $col, $chart, $x, $y, $scale_x, $scale_y )
 #
 # Insert a chart into a worksheet. The $chart argument should be a Chart
 # object or else it is assumed to be a filename of an external binary file.
@@ -3388,7 +3400,7 @@ sub insert_chart {
 
     my $self = shift;
 
-    # Check for a cell reference in A1 notation and substitute row and column
+    # Check for a cell reference in A1 notation and substitute row and column.
     if ( $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
@@ -3428,10 +3440,11 @@ sub insert_chart {
 #
 sub _prepare_chart {
 
-    my $self       = shift;
-    my $index      = shift;
-    my $chart_id   = shift;
-    my $drawing_id = shift;
+    my $self         = shift;
+    my $index        = shift;
+    my $chart_id     = shift;
+    my $drawing_id   = shift;
+    my $drawing_type = 1;
 
     my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
       @{ $self->{_charts}->[$index] };
@@ -3443,11 +3456,11 @@ sub _prepare_chart {
       $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
         $height );
 
-
+    # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_set_dimensions( @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -3457,12 +3470,12 @@ sub _prepare_chart {
     }
     else {
         my $drawing = $self->{_drawing};
-        $drawing->_set_dimensions( @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions );
 
     }
 
     push @{ $self->{_drawing_links} },
-      [ '/chart', '../charts/chart' . $chart_id ];
+      [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
 }
 
 
@@ -3546,6 +3559,95 @@ sub _get_range_data {
 
     return @data;
 }
+
+
+###############################################################################
+#
+# insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
+#
+# Insert an image into the worksheet.
+#
+sub insert_image {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column.
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row      = $_[0];
+    my $col      = $_[1];
+    my $image    = $_[2];
+    my $x_offset = $_[3] || 0;
+    my $y_offset = $_[4] || 0;
+    my $scale_x  = $_[5] || 1;
+    my $scale_y  = $_[6] || 1;
+
+    croak "Insufficient arguments in insert_image()" unless @_ >= 3;
+    croak "Couldn't locate $image: $!" unless -e $image;
+
+    push @{ $self->{_images} },
+      [ $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ];
+}
+
+
+###############################################################################
+#
+# _prepare_image()
+#
+# Set up image/drawings.
+#
+sub _prepare_image {
+
+    my $self         = shift;
+    my $index        = shift;
+    my $image_id     = shift;
+    my $drawing_id   = shift;
+    my $width        = shift;
+    my $height       = shift;
+    my $name         = shift;
+    my $image_type   = shift;
+    my $drawing_type = 2;
+    my $drawing;
+
+    my ( $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ) =
+      @{ $self->{_images}->[$index] };
+
+    $width  *= $scale_x;
+    $height *= $scale_y;
+
+    my @dimensions =
+      $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
+        $height );
+
+    # Convert from pixels to emus.
+    $width  *= 9_525;
+    $height *= 9_525;
+
+    # Create a Drawing object to use with worksheet unless one already exists.
+    if ( !$self->{_drawing} ) {
+
+        $drawing = Excel::Writer::XLSX::Drawing->new();
+        $drawing->{_embedded} = 1;
+
+        $self->{_drawing} = $drawing;
+
+        push @{ $self->{_external_dlinks} },
+          [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+    }
+    else {
+        $drawing = $self->{_drawing};
+    }
+
+    $drawing->_add_drawing_object( $drawing_type, @dimensions, $width, $height,
+        $name );
+
+
+    push @{ $self->{_drawing_links} },
+      [ '/image', '../media/image' . ( $index + 1 ) . '.' . $image_type ];
+}
+
 
 
 ###############################################################################

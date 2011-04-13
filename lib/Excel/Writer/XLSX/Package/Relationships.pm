@@ -84,7 +84,7 @@ sub _add_document_relationship {
     my $target = shift;
 
     $type   = $document_schema . $type;
-    $target = $target . '.xml';
+    $target = $target;
 
     push @{ $self->{_rels} }, [ $type, $target ];
 }
