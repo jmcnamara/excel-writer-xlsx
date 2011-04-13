@@ -679,8 +679,11 @@ sub _add_image_files {
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/media';
 
-    for my $filename ( @{ $workbook->{_images} } ) {
-        copy( $filename, $dir . '/xl/media/image' . $index++ . '.png' );
+    for my $image ( @{ $workbook->{_images} } ) {
+        my $filename  = $image->[0];
+        my $extension = '.' . $image->[1];
+
+        copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
     }
 }
 

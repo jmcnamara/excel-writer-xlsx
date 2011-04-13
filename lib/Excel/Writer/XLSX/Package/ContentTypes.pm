@@ -243,10 +243,12 @@ sub _add_calc_chain {
 #
 sub _add_image_types {
 
-    my $self = shift;
+    my $self  = shift;
     my %types = @_;
 
-    $self->_add_default( 'png', 'image/png') if exists $types{png};
+    for my $type ( keys %types ) {
+        $self->_add_default( $type, 'image/' . $type );
+    }
 }
 
 

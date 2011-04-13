@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'image01.xlsx';
+my $filename     = 'image03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,7 +34,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->insert_image( 'E9', $dir . 'images/red.png' );
+$worksheet->insert_image( 'E9', $dir . 'images/red.jpg' );
 
 $workbook->close();
 

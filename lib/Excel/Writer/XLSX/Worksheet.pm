@@ -3440,11 +3440,11 @@ sub insert_chart {
 #
 sub _prepare_chart {
 
-    my $self       = shift;
-    my $index      = shift;
-    my $chart_id   = shift;
-    my $drawing_id = shift;
-    my $type       = 1;
+    my $self         = shift;
+    my $index        = shift;
+    my $chart_id     = shift;
+    my $drawing_id   = shift;
+    my $drawing_type = 1;
 
     my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
       @{ $self->{_charts}->[$index] };
@@ -3460,7 +3460,7 @@ sub _prepare_chart {
     if ( !$self->{_drawing} ) {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_add_drawing_object( $type, @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -3470,7 +3470,7 @@ sub _prepare_chart {
     }
     else {
         my $drawing = $self->{_drawing};
-        $drawing->_add_drawing_object( $type, @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions );
 
     }
 
@@ -3600,20 +3600,22 @@ sub insert_image {
 #
 sub _prepare_image {
 
-    my $self       = shift;
-    my $index      = shift;
-    my $image_id   = shift;
-    my $drawing_id = shift;
-    my $width      = shift;
-    my $height     = shift;
-    my $name       = shift;
-    my $type       = 2;
+    my $self         = shift;
+    my $index        = shift;
+    my $image_id     = shift;
+    my $drawing_id   = shift;
+    my $width        = shift;
+    my $height       = shift;
+    my $name         = shift;
+    my $image_type   = shift;
+    my $drawing_type = 2;
+    my $drawing;
 
     my ( $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ) =
       @{ $self->{_images}->[$index] };
 
-    #$width  *= $scale_x;
-    #$height *= $scale_y;
+    $width  *= $scale_x;
+    $height *= $scale_y;
 
     my @dimensions =
       $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
@@ -3626,8 +3628,7 @@ sub _prepare_image {
     # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {
 
-        my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_add_drawing_object( $type, @dimensions, $width, $height, $name );
+        $drawing = Excel::Writer::XLSX::Drawing->new();
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -3636,13 +3637,15 @@ sub _prepare_image {
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
-        my $drawing = $self->{_drawing};
-        $drawing->_add_drawing_object( $type, @dimensions, $width, $height );
-
+        $drawing = $self->{_drawing};
     }
 
+    $drawing->_add_drawing_object( $drawing_type, @dimensions, $width, $height,
+        $name );
+
+
     push @{ $self->{_drawing_links} },
-      [ '/image', '../media/image' . $image_id. '.png' ];
+      [ '/image', '../media/image' . ( $index + 1 ) . '.' . $image_type ];
 }
 
 

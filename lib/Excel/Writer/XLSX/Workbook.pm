@@ -1068,7 +1068,7 @@ sub _prepare_drawings {
               $self->_get_image_properties( $filename );
             $ref_id++;
             $sheet->_prepare_image( $index, $ref_id, $drawing_id, $width,
-                $height, $name );
+                $height, $name, $type );
         }
 
         my $drawing = $sheet->{_drawing};
@@ -1313,7 +1313,7 @@ sub _get_image_properties {
             ( $type, $width, $height ) =
               $self->_process_jpg( $data, $filename );
 
-            $self->{_image_types}->{jpg} = 1;
+            $self->{_image_types}->{jpeg} = 1;
 
         }
         elsif ( unpack( 'A2', $data ) eq 'BM' ) {
@@ -1330,7 +1330,7 @@ sub _get_image_properties {
             croak "Unsupported image format for file: $filename\n";
         }
 
-        push @{ $self->{_images} }, $filename;
+        push @{ $self->{_images} }, [ $filename, $type ];
 
         # Also store new data for use in duplicate images.
         push @previous_images, [ $image_id, $type, $width, $height ];
