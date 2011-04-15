@@ -2265,7 +2265,7 @@ sub write_array_formula {
     my $value   = $_[6];           # Optional formula value.
     my $type    = 'a';             # The data type
 
-    $xf = _XF( $self, $row1, $col1, $xf );    # The cell format
+    $xf = _XF( $self, $xf );       # The cell format
 
 
     # Swap last row/col with first row/col as necessary
