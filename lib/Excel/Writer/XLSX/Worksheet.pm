@@ -3531,12 +3531,12 @@ sub _get_range_data {
                 elsif ( $type eq 'f' ) {
 
                     # Store a formula.
-                    push @data, $cell->[3];
+                    push @data, $cell->[3] // 0;
                 }
                 elsif ( $type eq 'a' ) {
 
                     # Store an array formula.
-                    push @data, $cell->[4];
+                    push @data, $cell->[4] // 0;
                 }
                 elsif ( $type eq 'l' ) {
 
