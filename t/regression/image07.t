@@ -35,8 +35,8 @@ my $workbook   = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet1 = $workbook->add_worksheet();
 my $worksheet2 = $workbook->add_worksheet();
 
-$worksheet1->insert_chart( 'E9','images/red.png' );
-$worksheet2->insert_chart( 'E9','images/yellow.png' );
+$worksheet1->insert_image( 'E9', $dir . 'images/red.png' );
+$worksheet2->insert_image( 'E9', $dir . 'images/yellow.png' );
 
 $workbook->close();
 

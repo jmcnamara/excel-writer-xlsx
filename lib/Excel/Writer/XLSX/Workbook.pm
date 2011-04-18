@@ -1045,9 +1045,10 @@ sub _prepare_defined_names {
 #
 sub _prepare_drawings {
 
-    my $self       = shift;
-    my $ref_id     = 0;
-    my $drawing_id = 0;
+    my $self         = shift;
+    my $chart_ref_id = 0;
+    my $image_ref_id = 0;
+    my $drawing_id   = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1058,16 +1059,20 @@ sub _prepare_drawings {
         $drawing_id++;
 
         for my $index ( 0 .. $chart_count - 1 ) {
-            $ref_id++;
-            $sheet->_prepare_chart( $index, $ref_id, $drawing_id );
+            $chart_ref_id++;
+            $sheet->_prepare_chart( $index, $chart_ref_id, $drawing_id );
         }
 
         for my $index ( 0 .. $image_count - 1 ) {
+
             my $filename = $sheet->{_images}->[$index]->[2];
+
             my ( $image_id, $type, $width, $height, $name ) =
               $self->_get_image_properties( $filename );
-            $ref_id++;
-            $sheet->_prepare_image( $index, $ref_id, $drawing_id, $width,
+
+            $image_ref_id++;
+
+            $sheet->_prepare_image( $index, $image_ref_id, $drawing_id, $width,
                 $height, $name, $type );
         }
 

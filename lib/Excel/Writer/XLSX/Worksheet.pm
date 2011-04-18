@@ -3645,7 +3645,7 @@ sub _prepare_image {
 
 
     push @{ $self->{_drawing_links} },
-      [ '/image', '../media/image' . ( $index + 1 ) . '.' . $image_type ];
+      [ '/image', '../media/image' .  $image_id . '.' . $image_type ];
 }
 
 
