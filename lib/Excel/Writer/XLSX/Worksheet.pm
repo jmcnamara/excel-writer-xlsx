@@ -3449,8 +3449,8 @@ sub _prepare_chart {
     my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
       @{ $self->{_charts}->[$index] };
 
-    my $width  = 480 * $scale_x;
-    my $height = 288 * $scale_y;
+    my $width  = int( 0.5 + ( 480 * $scale_x ) );
+    my $height = int( 0.5 + ( 288 * $scale_y ) );
 
     my @dimensions =
       $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
@@ -3622,8 +3622,8 @@ sub _prepare_image {
         $height );
 
     # Convert from pixels to emus.
-    $width  *= 9_525;
-    $height *= 9_525;
+    $width  = int( 0.5 + ( $width * 9_525 ) );
+    $height = int( 0.5 + ( $height * 9_525 ) );
 
     # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {

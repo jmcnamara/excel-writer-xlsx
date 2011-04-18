@@ -11,6 +11,8 @@ Revision history for Perl module Excel::Writer::XLSX.
    ! Fixed missing formatting for array formulas.
      Reported by Cyrille Gourves.
 
+   ! Fixed issue with chart scaling that caused "unreadable content"
+     Excel error.
 
 
 0.18 April 7 2011
