@@ -35,7 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_default_marker} = 'none';
+    $self->{_default_marker} = { type => 'none' };
 
     bless $self, $class;
     return $self;

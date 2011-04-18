@@ -545,86 +545,49 @@ sub _get_data_id {
 
 ###############################################################################
 #
-# _get_color_indices()
+# _get_color()
 #
-# Convert the user specified colour index or string to an colour index and
-# RGB colour number.
+# Convert the user specified colour index or string to a rgb colour.
 #
-sub _get_color_indices {
+sub _get_color {
 
     my $self  = shift;
     my $color = shift;
-    my $index;
-    my $rgb;
 
-    return ( undef, undef ) if !defined $color;
+    my $index = &Excel::Writer::XLSX::Format::_get_color( $color );
 
-    my %colors = (
-        aqua    => 0x0F,
-        cyan    => 0x0F,
-        black   => 0x08,
-        blue    => 0x0C,
-        brown   => 0x10,
-        magenta => 0x0E,
-        fuchsia => 0x0E,
-        gray    => 0x17,
-        grey    => 0x17,
-        green   => 0x11,
-        lime    => 0x0B,
-        navy    => 0x12,
-        orange  => 0x35,
-        pink    => 0x21,
-        purple  => 0x14,
-        red     => 0x0A,
-        silver  => 0x16,
-        white   => 0x09,
-        yellow  => 0x0D,
-    );
-
-
-    # Check for the various supported colour index/name possibilities.
-    if ( exists $colors{$color} ) {
-
-        # Colour matches one of the supported colour names.
-        $index = $colors{$color};
-    }
-    elsif ( $color =~ m/\D/ ) {
-
-        # Return undef if $color is a string but not one of the supported ones.
-        return ( undef, undef );
-    }
-    elsif ( $color < 8 || $color > 63 ) {
-
-        # Return undef if index is out of range.
-        return ( undef, undef );
-    }
-    else {
-
-        # We should have a valid color index in a valid range.
-        $index = $color;
+    # Set undefined colors to black.
+    if ( !$index ) {
+        $index = 0x08;
+        warn "Unknown color '$color' used in chart formatting. "
+          . "Converting to black.\n";
     }
 
-    $rgb = $self->_get_color_rbg( $index );
-    return ( $index, $rgb );
+    return $self->_get_palette_color( $index );
 }
 
 
 ###############################################################################
 #
-# _get_color_rbg()
+# _get_palette_color()
 #
-# Get the RedGreenBlue number for the colour index from the Workbook palette.
+# Convert from an Excel internal colour index to a XML style #RRGGBB index
+# based on the default or user defined values in the Workbook palette.
+# Note: This version doesn't add an alpha channel.
 #
-sub _get_color_rbg {
+sub _get_palette_color {
 
-    my $self  = shift;
-    my $index = shift;
+    my $self    = shift;
+    my $index   = shift;
+    my $palette = $self->{_palette};
 
-    # Adjust colour index from 8-63 (user range) to 0-55 (Excel range).
+    # Adjust the colour index.
     $index -= 8;
 
-    my @red_green_blue = @{ $self->{_palette}->[$index] };
-    return unpack 'V', pack 'C*', @red_green_blue;
+    # Palette is passed in from the Workbook class.
+    my @rgb = @{ $palette->[$index] };
+
+    return sprintf "%02X%02X%02X", @rgb;
 }
 
 
@@ -1037,8 +1000,14 @@ sub _write_ser {
     # Write the series name.
     $self->_write_series_name( $series );
 
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $series );
+
     # Write the c:marker element.
-    $self->_write_marker();
+    $self->_write_marker( $series->{_marker} );
+
+    # Write the c:trendline element.
+    $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:cat element.
     $self->_write_cat( $series );
@@ -2304,18 +2273,23 @@ sub _write_tx_pr {
 #
 sub _write_marker {
 
-    my $self  = shift;
-    my $style = shift // $self->{_default_marker};
+    my $self = shift;
+    my $marker = shift // $self->{_default_marker};
 
-    return unless $style;
+    return unless $marker;
+    return if $marker->{automatic};
 
     $self->{_writer}->startTag( 'c:marker' );
 
     # Write the c:symbol element.
-    $self->_write_symbol( $style );
+    $self->_write_symbol( $marker->{type} );
 
     # Write the c:size element.
-    $self->_write_marker_size( 3 ) if $style eq 'dot';
+    my $size = $marker->{size};
+    $self->_write_marker_size( $size ) if $size;
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $marker );
 
     $self->{_writer}->endTag( 'c:marker' );
 }
@@ -2382,12 +2356,24 @@ sub _write_symbol {
 #
 sub _write_sp_pr {
 
-    my $self = shift;
+    my $self   = shift;
+    my $series = shift;
+
+    if ( !$series->{_line}->{_defined} and !$series->{_fill}->{_defined} ) {
+        return;
+    }
 
     $self->{_writer}->startTag( 'c:spPr' );
 
+    # Write the a:solidFill element for solid charts such as pie and bar.
+    if ( $series->{_fill}->{_defined} ) {
+        $self->_write_a_solid_fill( $series->{_fill} );
+    }
+
     # Write the a:ln element.
-    $self->_write_a_ln();
+    if ( $series->{_line}->{_defined} ) {
+        $self->_write_a_ln( $series->{_line} );
+    }
 
     $self->{_writer}->endTag( 'c:spPr' );
 }
@@ -2401,15 +2387,25 @@ sub _write_sp_pr {
 #
 sub _write_a_ln {
 
-    my $self = shift;
-    my $w    = 28575;
+    my $self       = shift;
+    my $line       = shift;
+    my @attributes = ();
 
-    my @attributes = ( 'w' => $w );
+    my $width = $line->{width};
+
+    @attributes = ( 'w' => $width ) if $width;
 
     $self->{_writer}->startTag( 'a:ln', @attributes );
 
-    # Write the a:noFill element.
-    $self->_write_a_no_fill();
+    if ( $line->{none} ) {
+
+        # Write the a:noFill element.
+        $self->_write_a_no_fill();
+    }
+    else {
+        # Write the a:solidFill element.
+        $self->_write_a_solid_fill( $line );
+    }
 
     $self->{_writer}->endTag( 'a:ln' );
 }
@@ -2426,6 +2422,88 @@ sub _write_a_no_fill {
     my $self = shift;
 
     $self->{_writer}->emptyTag( 'a:noFill' );
+}
+
+
+##############################################################################
+#
+# _write_a_solid_fill()
+#
+# Write the <a:solidFill> element.
+#
+sub _write_a_solid_fill {
+
+    my $self = shift;
+    my $line = shift;
+
+    $self->{_writer}->startTag( 'a:solidFill' );
+
+    if ( $line->{color} ) {
+
+        my $color = $self->_get_color( $line->{color} );
+
+        # Write the a:srgbClr element.
+        $self->_write_a_srgb_clr( $color );
+    }
+
+
+    $self->{_writer}->endTag( 'a:solidFill' );
+}
+
+
+##############################################################################
+#
+# _write_a_srgb_clr()
+#
+# Write the <a:srgbClr> element.
+#
+sub _write_a_srgb_clr {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_trendline()
+#
+# Write the <c:trendline> element.
+#
+sub _write_trendline {
+
+    my $self      = shift;
+    my $trendline = shift;
+
+    return unless $trendline;
+
+    $self->{_writer}->startTag( 'c:trendline' );
+
+    # Write the c:trendlineType element.
+    $self->_write_trendline_type( $trendline->{type} );
+
+    $self->{_writer}->endTag( 'c:trendline' );
+}
+
+
+##############################################################################
+#
+# _write_trendline_type()
+#
+# Write the <c:trendlineType> element.
+#
+sub _write_trendline_type {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:trendlineType', @attributes );
 }
 
 
