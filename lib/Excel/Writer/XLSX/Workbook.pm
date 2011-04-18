@@ -366,7 +366,8 @@ sub add_chart {
 
         # Set index to 0 so that the activate() and set_first_sheet() methods
         # point back to the first worksheet if used for embedded charts.
-        $chart->{_index} = 0;
+        $chart->{_index}   = 0;
+        $chart->{_palette} = $self->{_palette};
         $chart->_set_embedded_config_data();
         push @{ $self->{_charts} }, $chart;
 

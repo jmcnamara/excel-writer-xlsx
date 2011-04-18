@@ -35,7 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_default_marker} = 'none';
+    $self->{_default_marker} = { type => 'none' };
 
     bless $self, $class;
     return $self;
@@ -92,7 +92,7 @@ sub _write_series {
     my $index = 0;
     for my $series ( @{ $self->{_series} } ) {
         if ( $index == 2 ) {
-            $self->{_default_marker} = 'dot';
+            $self->{_default_marker} = { type => 'dot' };
         }
 
         $self->_write_ser( $index++, $series );
@@ -139,7 +139,7 @@ sub _write_ser {
     $self->_write_sp_pr();
 
     # Write the c:marker element.
-    $self->_write_marker( );
+    $self->_write_marker();
 
     # Write the c:cat element.
     $self->_write_cat( $series );
