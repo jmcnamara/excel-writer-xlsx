@@ -2391,12 +2391,15 @@ sub _write_a_ln {
     my $line       = shift;
     my @attributes = ();
 
-    my $width = $line->{width};
-
-    @attributes = ( 'w' => $width ) if $width;
+    # Add the line width as an attibute.
+    if ( my $width = $line->{width} ) {
+        $width = int( 0.5 + ( 12700 * $width ) );
+        @attributes = ( 'w' => $width );
+    }
 
     $self->{_writer}->startTag( 'a:ln', @attributes );
 
+    # Write the line fill.
     if ( $line->{none} ) {
 
         # Write the a:noFill element.
@@ -2405,6 +2408,13 @@ sub _write_a_ln {
     else {
         # Write the a:solidFill element.
         $self->_write_a_solid_fill( $line );
+    }
+
+    # Write the line/dash type.
+    if ( my $type = $line->{type} ) {
+
+        # Write the a:prstDash element.
+        $self->_write_a_prst_dash( $type );
     }
 
     $self->{_writer}->endTag( 'a:ln' );
@@ -2465,6 +2475,23 @@ sub _write_a_srgb_clr {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_prst_dash()
+#
+# Write the <a:prstDash> element.
+#
+sub _write_a_prst_dash {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
 }
 
 

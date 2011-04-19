@@ -33,7 +33,7 @@ $expected = '<c:marker><c:symbol val="none" /></c:marker>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
-$chart->{_default_marker} = 'none';
+$chart->{_default_marker} = { type => 'none' };
 
 $chart->_write_marker();
 
