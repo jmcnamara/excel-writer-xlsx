@@ -2510,8 +2510,30 @@ sub _write_trendline {
 
     $self->{_writer}->startTag( 'c:trendline' );
 
+    # Write the c:name element.
+    $self->_write_name( $trendline->{name} );
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $trendline );
+
     # Write the c:trendlineType element.
     $self->_write_trendline_type( $trendline->{type} );
+
+    # Write the c:order element for polynomial trendlines.
+    if ( $trendline->{type} eq 'poly' ) {
+        $self->_write_trendline_order( $trendline->{order} );
+    }
+
+    # Write the c:period element for moving average trendlines.
+    if ( $trendline->{type} eq 'movingAvg' ) {
+        $self->_write_period( $trendline->{period} );
+    }
+
+    # Write the c:forward element.
+    $self->_write_forward( $trendline->{forward} );
+
+    # Write the c:backward element.
+    $self->_write_backward( $trendline->{backward} );
 
     $self->{_writer}->endTag( 'c:trendline' );
 }
@@ -2532,6 +2554,95 @@ sub _write_trendline_type {
 
     $self->{_writer}->emptyTag( 'c:trendlineType', @attributes );
 }
+
+
+##############################################################################
+#
+# _write_name()
+#
+# Write the <c:name> element.
+#
+sub _write_name {
+
+    my $self = shift;
+    my $data = shift;
+
+    return unless defined $data;
+
+    $self->{_writer}->dataElement( 'c:name', $data );
+}
+
+
+##############################################################################
+#
+# _write_trendline_order()
+#
+# Write the <c:order> element.
+#
+sub _write_trendline_order {
+
+    my $self = shift;
+    my $val  = shift // 2;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:order', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_period()
+#
+# Write the <c:period> element.
+#
+sub _write_period {
+
+    my $self = shift;
+    my $val  = shift // 2;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:period', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_forward()
+#
+# Write the <c:forward> element.
+#
+sub _write_forward {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:forward', @attributes );
+}
+
+##############################################################################
+#
+# _write_backward()
+#
+# Write the <c:backward> element.
+#
+sub _write_backward {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:backward', @attributes );
+}
+
 
 
 ##############################################################################
