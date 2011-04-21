@@ -173,6 +173,23 @@ sub add_series {
     my $val_id  = $self->_get_data_id( $values,       $arg{values_data} );
     my $name_id = $self->_get_data_id( $name_formula, $arg{name_data} );
 
+    # Set the line properties for the series.
+    my $line = $self->_get_line_properties( $arg{line} );
+
+    # Allow 'border' as a synonym for 'line' in bar/column style charts.
+    if ( $arg{border} ) {
+        $line = $self->_get_line_properties( $arg{border} );
+    }
+
+    # Set the fill properties for the series.
+    my $fill = $self->_get_fill_properties( $arg{fill} );
+
+    # Set the marker properties for the series.
+    my $marker = $self->_get_marker_properties( $arg{marker} );
+
+    # Set the trendline properties for the series.
+    my $trendline = $self->_get_trendline_properties( $arg{trendline} );
+
     # Add the parsed data to the user supplied data. TODO. Refactor.
     %arg = (
         _values       => $values,
@@ -182,6 +199,10 @@ sub add_series {
         _name_id      => $name_id,
         _val_data_id  => $val_id,
         _cat_data_id  => $cat_id,
+        _line         => $line,
+        _fill         => $fill,
+        _marker       => $marker,
+        _trendline    => $trendline,
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -554,6 +575,12 @@ sub _get_color {
     my $self  = shift;
     my $color = shift;
 
+    # Convert a HTML style #RRGGBB color.
+    if ( defined $color and $color =~ /^#[0-9a-fA-F]{6}$/ ) {
+        $color =~ s/^#//;
+        return uc $color;
+    }
+
     my $index = &Excel::Writer::XLSX::Format::_get_color( $color );
 
     # Set undefined colors to black.
@@ -670,6 +697,184 @@ sub _get_line_weight {
     }
 
     return $weight;
+}
+
+
+###############################################################################
+#
+# _get_line_properties()
+#
+# Convert user defined line properties to the structure required internally.
+#
+sub _get_line_properties {
+
+    my $self = shift;
+    my $line = shift;
+
+    return { _defined => 0 } unless $line;
+
+    my %dash_types = (
+        solid               => 'solid',
+        round_dot           => 'sysDot',
+        square_dot          => 'sysDash',
+        dash                => 'dash',
+        dash_dot            => 'dashDot',
+        long_dash           => 'lgDash',
+        long_dash_dot       => 'lgDashDot',
+        long_dash_dot_dot   => 'lgDashDotDot',
+        dot                 => 'dot',
+        system_dash_dot     => 'sysDashDot',
+        system_dash_dot_dot => 'sysDashDotDot',
+    );
+
+    # Check the dash type.
+    my $dash_type = $line->{dash_type};
+
+    if ( defined $dash_type ) {
+        if ( exists $dash_types{$dash_type} ) {
+            $line->{dash_type} = $dash_types{$dash_type};
+        }
+        else {
+            warn "Unknown dash type '$dash_type'\n";
+            return;
+        }
+    }
+
+    $line->{_defined} = 1;
+
+    return $line;
+}
+
+
+###############################################################################
+#
+# _get_fill_properties()
+#
+# Convert user defined fill properties to the structure required internally.
+#
+sub _get_fill_properties {
+
+    my $self = shift;
+    my $fill = shift;
+
+    return { _defined => 0 } unless $fill;
+
+    $fill->{_defined} = 1;
+
+    return $fill;
+}
+
+
+###############################################################################
+#
+# _get_marker_properties()
+#
+# Convert user defined marker properties to the structure required internally.
+#
+sub _get_marker_properties {
+
+    my $self   = shift;
+    my $marker = shift;
+
+    return unless $marker;
+
+    my %types = (
+        automatic => 1,
+        circle    => 1,
+        dash      => 1,
+        diamond   => 1,
+        dot       => 1,
+        none      => 1,
+        picture   => 1,
+        plus      => 1,
+        square    => 1,
+        star      => 1,
+        triangle  => 1,
+        x         => 1,
+    );
+
+    # Check for valid types.
+    my $marker_type = $marker->{type};
+
+    if ( defined $marker_type ) {
+        if ( $marker_type eq 'automatic' ) {
+            $marker->{automatic} = 1;
+        }
+
+        if ( !exists $types{$marker_type} ) {
+            warn "Unknown marker type '$marker_type'\n";
+            return;
+        }
+    }
+
+    # Set the line properties for the marker..
+    my $line = $self->_get_line_properties( $marker->{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $marker->{border} ) {
+        $line = $self->_get_line_properties( $marker->{border} );
+    }
+
+    # Set the fill properties for the marker.
+    my $fill = $self->_get_fill_properties( $marker->{fill} );
+
+
+    $marker->{_line} = $line;
+    $marker->{_fill} = $fill;
+
+    return $marker;
+}
+
+
+###############################################################################
+#
+# _get_trendline_properties()
+#
+# Convert user defined trendline properties to the structure required internally.
+#
+sub _get_trendline_properties {
+
+    my $self      = shift;
+    my $trendline = shift;
+
+    return unless $trendline;
+
+    my %types = (
+        exp        => "exp",
+        linear     => "linear",
+        log        => "log",
+        moving     => "movingAvg",
+        polynomial => "poly",
+        power      => "power",
+    );
+
+    # Check the trendline type.
+    my $trend_type = $trendline->{type};
+
+    if ( exists $types{$trend_type} ) {
+        $trendline->{type} = $types{$trend_type};
+    }
+    else {
+        warn "Unknown trendline type '$trend_type'\n";
+        return;
+    }
+
+    # Set the line properties for the trendline..
+    my $line = $self->_get_line_properties( $trendline->{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $trendline->{border} ) {
+        $line = $self->_get_line_properties( $trendline->{border} );
+    }
+
+    # Set the fill properties for the trendline.
+    my $fill = $self->_get_fill_properties( $trendline->{fill} );
+
+
+    $trendline->{_line} = $line;
+    $trendline->{_fill} = $fill;
+
+    return $trendline;
 }
 
 
@@ -2391,7 +2596,7 @@ sub _write_a_ln {
     my $line       = shift;
     my @attributes = ();
 
-    # Add the line width as an attibute.
+    # Add the line width as an attribute.
     if ( my $width = $line->{width} ) {
         $width = int( 0.5 + ( 12700 * $width ) );
         @attributes = ( 'w' => $width );
@@ -2411,7 +2616,7 @@ sub _write_a_ln {
     }
 
     # Write the line/dash type.
-    if ( my $type = $line->{type} ) {
+    if ( my $type = $line->{dash_type} ) {
 
         # Write the a:prstDash element.
         $self->_write_a_prst_dash( $type );

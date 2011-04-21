@@ -51,21 +51,17 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
+    line       => {
+        color     => 'red',
+        width     => 1.25,
+        dash_type => 'square_dot',
+    },
 );
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
-
-$chart->{_series}->[0]->{_line} = {
-    color    => 'red',
-    width    => 1.25,
-    type     => 'sysDash',
-    _defined => 1
-};
-
-$chart->{_series}->[1]->{_line} = { _defined => 0 };
 
 
 $worksheet->insert_chart( 'E9', $chart );

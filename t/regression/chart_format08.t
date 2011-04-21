@@ -51,6 +51,7 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
+    trendline  => { type => 'linear' },
 );
 
 $chart->add_series(
@@ -58,7 +59,6 @@ $chart->add_series(
     values     => '=Sheet1!$C$1:$C$5',
 );
 
-$chart->{_series}->[0]->{_trendline} = { type => 'linear' };
 
 $worksheet->insert_chart( 'E9', $chart );
 

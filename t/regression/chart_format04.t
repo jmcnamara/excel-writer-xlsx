@@ -51,14 +51,13 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
+    fill       => { color => '#FF0000' },
 );
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
-
-$chart->{_series}->[0]->{_fill} = { color => 'red', _defined => 1 };
 
 
 $worksheet->insert_chart( 'E9', $chart );
