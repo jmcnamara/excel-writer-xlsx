@@ -37,6 +37,10 @@ $expected = {
     _name_id      => undef,
     _cat_data_id  => undef,
     _val_data_id  => 0,
+    _line         => { _defined => 0 },
+    _fill         => { _defined => 0 },
+    _marker       => undef,
+    _trendline    => undef,
 };
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
@@ -62,6 +66,10 @@ $expected = [
         _name_id      => undef,
         _cat_data_id  => 0,
         _val_data_id  => 1,
+        _line         => { _defined => 0 },
+        _fill         => { _defined => 0 },
+        _marker       => undef,
+        _trendline    => undef,
     }
 ];
 
@@ -92,6 +100,10 @@ $expected = [
         _name_id      => undef,
         _cat_data_id  => undef,
         _val_data_id  => 0,
+        _line         => { _defined => 0 },
+        _fill         => { _defined => 0 },
+        _marker       => undef,
+        _trendline    => undef,
     }
 ];
 
@@ -117,6 +129,10 @@ $expected = {
     _name_id      => undef,
     _cat_data_id  => 0,
     _val_data_id  => 1,
+    _line         => { _defined => 0 },
+    _fill         => { _defined => 0 },
+    _marker       => undef,
+    _trendline    => undef,
 };
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );

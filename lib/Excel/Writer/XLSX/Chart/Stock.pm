@@ -35,8 +35,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_default_marker} = { type => 'none' };
-
     bless $self, $class;
     return $self;
 }
@@ -67,6 +65,9 @@ sub _write_stock_chart {
 
     my $self = shift;
 
+    # Add default formatting to the series data.
+    $self->_modify_series_formatting();
+
     $self->{_writer}->startTag( 'c:stockChart' );
 
     # Write the series elements.
@@ -91,15 +92,14 @@ sub _write_series {
     # Write each series with subelements.
     my $index = 0;
     for my $series ( @{ $self->{_series} } ) {
-        if ( $index == 2 ) {
-            $self->{_default_marker} = { type => 'dot' };
-        }
-
         $self->_write_ser( $index++, $series );
     }
 
     # Write the c:hiLowLines element.
     $self->_write_hi_low_lines();
+
+    # Write the c:marker element.
+    $self->_write_marker_value();
 
     # Generate the axis ids.
     $self->_add_axis_id();
@@ -108,46 +108,6 @@ sub _write_series {
     # Write the c:axId element.
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
     $self->_write_axis_id( $self->{_axis_ids}->[1] );
-}
-
-
-
-##############################################################################
-#
-# _write_ser()
-#
-# Write the <c:ser> element.
-#
-sub _write_ser {
-
-    my $self       = shift;
-    my $index      = shift;
-    my $series     = shift;
-
-    $self->{_writer}->startTag( 'c:ser' );
-
-    # Write the c:idx element.
-    $self->_write_idx( $index );
-
-    # Write the c:order element.
-    $self->_write_order( $index );
-
-    # Write the series name.
-    $self->_write_series_name( $series );
-
-    # Write the c:spPr element.
-    $self->_write_sp_pr();
-
-    # Write the c:marker element.
-    $self->_write_marker();
-
-    # Write the c:cat element.
-    $self->_write_cat( $series );
-
-    # Write the c:val element.
-    $self->_write_val( $series );
-
-    $self->{_writer}->endTag( 'c:ser' );
 }
 
 
@@ -176,6 +136,42 @@ sub _write_plot_area {
     $self->_write_val_axis();
 
     $self->{_writer}->endTag( 'c:plotArea' );
+}
+
+
+##############################################################################
+#
+# _modify_series_formatting()
+#
+# Add default formatting to the series data.
+#
+sub _modify_series_formatting {
+
+    my $self = shift;
+
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        if ( $index % 4 != 3 ) {
+            if ( !$series->{_line}->{_defined} ) {
+                $series->{_line} = {
+                    width    => 2.25,
+                    none     => 1,
+                    _defined => 1,
+                };
+            }
+
+            if ( !$series->{_marker} ) {
+                if ( $index % 4 == 2 ) {
+                    $series->{_marker} = { type => 'dot', size => 3 };
+                }
+                else {
+                    $series->{_marker} = { type => 'none' };
+
+                }
+            }
+        }
+        $index++;
+    }
 }
 
 
