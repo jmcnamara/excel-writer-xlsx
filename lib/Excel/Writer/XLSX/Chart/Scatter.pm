@@ -68,6 +68,9 @@ sub _write_scatter_chart {
 
     my $self = shift;
 
+    # Add default formatting to the series data.
+    $self->_modify_series_formatting();
+
     $self->{_writer}->startTag( 'c:scatterChart' );
 
     # Write the c:scatterStyle element.
@@ -106,17 +109,19 @@ sub _write_ser {
     $self->_write_series_name( $series );
 
     # Write the c:spPr element.
-    $self->_write_sp_pr();
+    $self->_write_sp_pr( $series );
 
     # Write the c:marker element.
-    $self->_write_marker();
+    $self->_write_marker( $series->{_marker} );
+
+    # Write the c:trendline element.
+    $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:xVal element.
     $self->_write_x_val( $series );
 
     # Write the c:yVal element.
     $self->_write_y_val( $series );
-
 
     $self->{_writer}->endTag( 'c:ser' );
 }
@@ -238,6 +243,30 @@ sub _write_scatter_style {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:scatterStyle', @attributes );
+}
+
+
+##############################################################################
+#
+# _modify_series_formatting()
+#
+# Add default formatting to the series data.
+#
+sub _modify_series_formatting {
+
+    my $self = shift;
+
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        if ( !$series->{_line}->{_defined} ) {
+            $series->{_line} = {
+                width    => 2.25,
+                none     => 1,
+                _defined => 1,
+            };
+        }
+        $index++;
+    }
 }
 
 
