@@ -3146,6 +3146,28 @@ This sets the chart category labels. The category is more or less the same as th
 
 Set the name for the series. The name is displayed in the chart legend and in the formula bar. The name property is optional and if it isn't supplied will default to C<Series 1 .. n>.
 
+=item * C<line> 
+
+Set the properties of the series line type such as colour and width. See the L</CHART FORMATTING> section below.
+
+=item * C<border> 
+
+Set the border properties of the series such as colour and style. See the L</CHART FORMATTING> section below.
+
+=item * C<fill> 
+
+Set the fill properties of the series such as colour. See the L</CHART FORMATTING> section below.
+
+=item * C<marker> 
+
+Set the properties of the series marker such as style and color. See the L</CHART FORMATTING> section below.
+
+=item * C<trendline> 
+
+Set the properties of the series trendline such linear, polynomial and moving average types. See the L</CHART FORMATTING> section below.
+
+
+
 =back
 
 The C<categories> and C<values> can take either a range formula such as C<=Sheet1!$A$2:$A$7> or, more usefully when generating the range programmatically, an array ref with zero indexed row/column values:
@@ -3278,6 +3300,300 @@ The C<set_style()> method is used to set the style of the chart to one of the 42
 
 The default style is 2.
 
+=head1 CHART FORMATTING
+
+The following chart formatting properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart lines, column fill areas, plot area borders, markers and other chart elements documented above.
+
+    line
+    border
+    fill
+    marker
+    trendline
+
+Chart formatting properties are generally set using hash refs.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'blue' },
+    );
+
+In some cases the format properties can be nested. For example a C<marker> may contain C<border> and C<fill> sub-properties.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'blue' },
+        marker     => {
+            type    => 'square',
+            size    => 5,
+            border  => { color => 'red' },
+            fill    => { color => 'yellow' },
+        },
+    );
+
+=head2 Line
+
+The line format is used to specify properties of line objects that appear in a chart such as a plotted line on chart or a border.
+
+The following properties can be set for C<line> formats in a chart.
+
+    none
+    color
+    width
+    dash_type
+
+
+The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { none => 1 },
+    );
+
+
+The C<color> property sets the color of the C<line>.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'red' },
+    );
+
+The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a line with a Html style RGB color:
+
+    $chart->add_series(
+        line       => { color => '#FF0000' },
+    );
+
+
+The C<width> property sets the width of the C<line>. It should be specified in increments of 0.25 of a point as in Excel.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { width => 3.25 },
+    );
+
+The C<dash_type> property sets the dash style of the line.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { dash_type => 'dash_dot' },
+    );
+
+The following C<dash_type> values are available. By default the line style is C<solid>.
+
+    solid
+    round_dot
+    square_dot
+    dash
+    dash_dot
+    long_dash
+    long_dash_dot
+    long_dash_dot_dot
+
+More than one line property can be specified at time:
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => {
+            color     => 'red',
+            width     => 1.25,
+            dash_type => 'square_dot',
+        },
+    );
+
+=head2 Border
+
+The C<border> property is a synonym for C<line>. It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
+
+
+=head2 Fill
+
+The fill format is used to specify filled areas of chart objects such as the interior of a column or the background of the chart itself.
+
+The following properties can be set for C<fill> formats in a chart.
+
+    none
+    color
+
+The C<none> property is uses to turn the C<fill> property off (it is generally on by default).
+
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        fill       => { none => 1 },
+    );
+
+The C<color> property sets the color of the C<fill> area.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        fill       => { color => 'red' },
+    );
+
+The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a fill with a Html style RGB color:
+
+    $chart->add_series(
+        fill       => { color => '#FF0000' },
+    );
+
+The C<fill> format is generally used in conjunction with a C<border> format which has the same properties as a C<line> format.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        border     => { color => 'red' },
+        fill       => { color => 'yellow' },
+    );
+
+=head2 Marker
+
+The marker format is used to specify the properties of the markers that are used to distinguish series on a chart. In general only Line and Scatter chart types and trendlines use markers.
+
+The following properties can be set for C<marker> formats in a chart.
+
+    type
+    size
+    border
+    fill
+
+The C<type> property sets the type of marker that is used with a series.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        marker     => { type => 'diamond' },
+    );
+
+A special case is the C<automatic> type which turns on a marker using the default marker style for the particular series number.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        marker     => { type => 'automatic' },
+    );
+
+The following C<type> properties can be set for C<marker> formats in a chart. These are shown in the same order as in the Excel format dialog.
+
+    automatic
+    none
+    square
+    diamond
+    triangle
+    x
+    star
+    dot
+    dash
+    circle
+    plus
+
+The C<size> property sets the size of the marker and is generally used in conjunction with C<type>.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        marker     => { type => 'diamond', size => 7 },
+    );
+
+Nested C<border> and C<fill> properties can also be set for a marker and are the same as the one shown above with the same range of sub-properties.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        marker     => {
+            type    => 'square',
+            size    => 5,
+            border  => { color => 'red' },
+            fill    => { color => 'yellow' },
+        },
+    );
+
+=head2 Trendline
+
+A trendline can be added to a chart series to indicate trends in the data such as a moving average or polynomial fit.
+
+The following properties can be set for C<trendline> formats in a chart.
+
+    type
+    order       (for polynomial trends)
+    period      (for moving average)
+    forward     (for all except moving average)
+    backward    (for all except moving average)
+    name
+    line
+
+The C<type> property sets the type of trendline in the series.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        trendline  => { type => 'linear' },
+    );
+
+The available C<trendline> types are:
+
+    exp         (exponential)
+    linear
+    log
+    moving      (moving average)
+    polynomial
+    power
+
+A C<polynomial> trendline can also specify the C<order> of the polynomial. The default value is 2.
+
+    $chart->add_series(
+        values    => '=Sheet1!$B$1:$B$5',
+        trendline => {
+            type  => 'polynomial',
+            order => 3,
+        },
+    );
+
+A C<moving> trendline can also the C<period> of the moving average. The default value is 2.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        trendline  => {
+            type   => 'moving',
+            period => 3,
+        },
+    );
+
+The C<forward> and C<backward> properties set the forecast period of the trendline.
+
+    $chart->add_series(
+        values    => '=Sheet1!$B$1:$B$5',
+        trendline => {
+            type     => 'linear',
+            forward  => 0.5,
+            backward => 0.5,
+        },
+    );
+
+The C<name> property sets an optional name for the trendline that will appear in the chart legend. If it isn't specified the Excel default name will be displayed. This is usually a combination of the trendline type and the series name.
+
+    $chart->add_series(
+        values    => '=Sheet1!$B$1:$B$5',
+        trendline => {
+            type => 'linear',
+            name => 'Interpolated trend',
+        },
+    );
+
+Several of these properties can be set in one go:
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        trendline  => {
+            type     => 'linear',
+            name     => 'My trend name',
+            forward  => 0.5,
+            backward => 0.5,
+            line     => {
+                color     => 'red',
+                width     => 1,
+                dash_type => 'long_dash',
+            }
+        },
+    );
+
+Trendlines cannot be added to series in a stacked or pie chart or (when implemented) to 3-D, radar, surface, or doughnut charts.
+
+=head2 Other formatting options
+
+Other formatting options will be added in time. If there is a feature that you would like to see included drop me a line.
 
 =head1 WORKSHEET METHODS
 
@@ -3381,7 +3697,7 @@ Features that are on the TODO list and will be added are:
 
 =item * Chart sub-types such as stacked and percent stacked.
 
-=item * Colours and formatting options. For now try the C<set_style()> method.
+=item * Additional formatting options. For now try the C<set_style()> method.
 
 =item * Axis controls, range limits, gridlines.
 
