@@ -3702,10 +3702,10 @@ sub store_formula {
     my $self   = shift;
     my $string = shift;
 
-    return $string;
+    return [$string];
 }
 
-# No longer required. Only partially supported. Doesn't do token substitution.
+# No longer required. Only partially supported. Only does simple token substitution.
 sub repeat_formula {
 
     my $self = shift;
@@ -3713,9 +3713,42 @@ sub repeat_formula {
     # Convert A1 notation if present.
     @_ = $self->_substitute_cellref( @_ ) if $_[0] =~ /^\D/;
 
-    return $self->write_formula( $_[0], $_[1], $_[2], $_[3] );
-}
+    if ( @_ < 2 ) { return -1 }    # Check the number of args
 
+    my $row         = shift;       # Zero indexed row
+    my $col         = shift;       # Zero indexed column
+    my $formula_ref = shift;       # Array ref with formula tokens
+    my $format      = shift;       # XF format
+    my @pairs       = @_;          # Pattern/replacement pairs
+
+
+    # Enforce an even number of arguments in the pattern/replacement list.
+    croak "Odd number of elements in pattern/replacement list" if @pairs % 2;
+
+    # Check that $formula is an array ref.
+    croak "Not a valid formula" if ref $formula_ref ne 'ARRAY';
+
+    my $formula = $formula_ref->[0];
+
+    # Allow the user to specify the result of the formula by appending a
+    # result => $value pair to the end of the arguments.
+    my $value = undef;
+    if ( $pairs[-2] eq 'result' ) {
+        $value = pop @pairs;
+        pop @pairs;
+    }
+
+    # Make the substitutions. Note, thisi isn't backward compatible and will
+    # only work in the simplest cases.
+    while ( @pairs ) {
+        my $pattern = shift @pairs;
+        my $replace = shift @pairs;
+
+        $formula =~ s/$pattern/$replace/;
+    }
+
+    return $self->write_formula( $row, $col, $formula, $format, $value );
+}
 
 
 ###############################################################################
