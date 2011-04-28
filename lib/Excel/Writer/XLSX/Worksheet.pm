@@ -3696,16 +3696,18 @@ sub write_utf16le_string {
     return $self->write_string( $_[0], $_[1], $utf8_string, $_[3] );
 }
 
-# No longer required. Only partially supported.
+# No longer required. Was used to avoid slow formula parsing.
 sub store_formula {
 
     my $self   = shift;
     my $string = shift;
 
-    return [$string];
+    my @tokens = split /(\$?[A-I]?[A-Z]\$?\d+)/, $string;
+
+    return \@tokens;
 }
 
-# No longer required. Only partially supported. Only does simple token substitution.
+# No longer required. Was used to avoid slow formula parsing.
 sub repeat_formula {
 
     my $self = shift;
@@ -3728,24 +3730,27 @@ sub repeat_formula {
     # Check that $formula is an array ref.
     croak "Not a valid formula" if ref $formula_ref ne 'ARRAY';
 
-    my $formula = $formula_ref->[0];
+    my @tokens = @$formula_ref;
 
     # Allow the user to specify the result of the formula by appending a
     # result => $value pair to the end of the arguments.
     my $value = undef;
-    if ( $pairs[-2] eq 'result' ) {
+    if ( @pairs && $pairs[-2] eq 'result' ) {
         $value = pop @pairs;
         pop @pairs;
     }
 
-    # Make the substitutions. Note, thisi isn't backward compatible and will
-    # only work in the simplest cases.
+    # Make the substitutions.
     while ( @pairs ) {
         my $pattern = shift @pairs;
         my $replace = shift @pairs;
 
-        $formula =~ s/$pattern/$replace/;
+        foreach my $token ( @tokens ) {
+            last if $token =~ s/$pattern/$replace/;
+        }
     }
+
+    my $formula = join '', @tokens;
 
     return $self->write_formula( $row, $col, $formula, $format, $value );
 }
