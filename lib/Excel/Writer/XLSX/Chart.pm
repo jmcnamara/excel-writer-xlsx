@@ -779,18 +779,20 @@ sub _get_marker_properties {
     return unless $marker;
 
     my %types = (
-        automatic => 1,
-        circle    => 1,
-        dash      => 1,
-        diamond   => 1,
-        dot       => 1,
-        none      => 1,
-        picture   => 1,
-        plus      => 1,
-        square    => 1,
-        star      => 1,
-        triangle  => 1,
-        x         => 1,
+        automatic  => 'automatic',
+        none       => 'none',
+        square     => 'square',
+        diamond    => 'diamond',
+        triangle   => 'triangle',
+        x          => 'x',
+        star       => 'start',
+        dot        => 'dot',
+        short_dash => 'dot',
+        dash       => 'dash',
+        long_dash  => 'dash',
+        circle     => 'circle',
+        plus       => 'plus',
+        picture    => 'picture',
     );
 
     # Check for valid types.
@@ -801,7 +803,10 @@ sub _get_marker_properties {
             $marker->{automatic} = 1;
         }
 
-        if ( !exists $types{$marker_type} ) {
+        if ( exists $types{$marker_type} ) {
+            $marker->{type} = $types{$marker_type};
+        }
+        else {
             warn "Unknown marker type '$marker_type'\n";
             return;
         }
@@ -840,12 +845,12 @@ sub _get_trendline_properties {
     return unless $trendline;
 
     my %types = (
-        exp        => "exp",
-        linear     => "linear",
-        log        => "log",
-        moving     => "movingAvg",
-        polynomial => "poly",
-        power      => "power",
+        exponential    => 'exp',
+        linear         => 'linear',
+        log            => 'log',
+        moving_average => 'movingAvg',
+        polynomial     => 'poly',
+        power          => 'power',
     );
 
     # Check the trendline type.
@@ -2598,7 +2603,13 @@ sub _write_a_ln {
 
     # Add the line width as an attribute.
     if ( my $width = $line->{width} ) {
+
+        # Round width to nearest 0.25, like Excel.
+        $width = int( ( $width + 0.125 ) * 4 ) / 4;
+
+        # Convert to internal units.
         $width = int( 0.5 + ( 12700 * $width ) );
+
         @attributes = ( 'w' => $width );
     }
 
@@ -3071,7 +3082,7 @@ To create a simple Excel file with a chart using Excel::Writer::XLSX:
 
 The C<Chart> module is an abstract base class for modules that implement charts in L<Excel::Writer::XLSX>. The information below is applicable to all of the available subclasses.
 
-The C<Chart> module isn't used directly, a chart object is created via the Workbook C<add_chart()> method where the chart type is specified:
+The C<Chart> module isn't used directly. A chart object is created via the Workbook C<add_chart()> method where the chart type is specified:
 
     my $chart = $workbook->add_chart( type => 'column' );
 
@@ -3116,18 +3127,18 @@ More charts and sub-types will be supported in time. See the L</TODO> section.
 
 =head1 CHART METHODS
 
-Methods that are common to all chart types are documented below. See the documentation for each sub class for chart specific information.
+Methods that are common to all chart types are documented below. See the documentation for each of the above chart modules for chart specific information.
 
 =head2 add_series()
 
-In an Excel chart a "series" is a collection of information such as values, x-axis labels and the name that define which data is plotted.
+In an Excel chart a "series" is a collection of information such as values, x-axis labels and the formatting that define which data is plotted.
 
 With a Excel::Writer::XLSX chart object the C<add_series()> method is used to set the properties for a series:
 
     $chart->add_series(
-        categories => '=Sheet1!$A$2:$A$10', # Optional, depending on chart type.
-        values     => '=Sheet1!$B$2:$B$10', # Required for all chart types.
-        name       => 'Series name',        # Optional.
+        categories => '=Sheet1!$A$2:$A$10', # Optional.
+        values     => '=Sheet1!$B$2:$B$10', # Required.
+        line       => { color => 'blue' },
     );
 
 The properties that can be set are:
@@ -3144,29 +3155,27 @@ This sets the chart category labels. The category is more or less the same as th
 
 =item * C<name>
 
-Set the name for the series. The name is displayed in the chart legend and in the formula bar. The name property is optional and if it isn't supplied will default to C<Series 1 .. n>.
+Set the name for the series. The name is displayed in the chart legend and in the formula bar. The name property is optional and if it isn't supplied it will default to C<Series 1 .. n>.
 
-=item * C<line> 
+=item * C<line>
 
 Set the properties of the series line type such as colour and width. See the L</CHART FORMATTING> section below.
 
-=item * C<border> 
+=item * C<border>
 
 Set the border properties of the series such as colour and style. See the L</CHART FORMATTING> section below.
 
-=item * C<fill> 
+=item * C<fill>
 
 Set the fill properties of the series such as colour. See the L</CHART FORMATTING> section below.
 
-=item * C<marker> 
+=item * C<marker>
 
 Set the properties of the series marker such as style and color. See the L</CHART FORMATTING> section below.
 
-=item * C<trendline> 
+=item * C<trendline>
 
-Set the properties of the series trendline such linear, polynomial and moving average types. See the L</CHART FORMATTING> section below.
-
-
+Set the properties of the series trendline such as linear, polynomial and moving average types. See the L</CHART FORMATTING> section below.
 
 =back
 
@@ -3179,7 +3188,7 @@ The following are equivalent:
     $chart->add_series( categories => '=Sheet1!$A$2:$A$7'      ); # Same as ...
     $chart->add_series( categories => [ 'Sheet1', 1, 6, 0, 0 ] ); # Zero-indexed.
 
-You can add more than one series to a chart, in fact some chart types such as C<stock> require it. The series numbering and order in the final chart is the same as the order in which that are added.
+You can add more than one series to a chart. In fact, some chart types such as C<stock> require it. The series numbering and order in the Excel chart will be the same as the order in which that are added in Excel::Writer::XLSX.
 
     # Add the first series.
     $chart->add_series(
@@ -3188,7 +3197,7 @@ You can add more than one series to a chart, in fact some chart types such as C<
         name       => 'Test data series 1',
     );
 
-    # Add another series. Category is the same but values are different.
+    # Add another series. Same categories. Different range values.
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$7',
         values     => '=Sheet1!$C$2:$C$7',
@@ -3269,13 +3278,13 @@ Set the position of the chart legend.
 
 The default legend position is C<right>. The available positions are:
 
-    right
-    left
+    none
     top
     bottom
-    none
-    overlay_right
+    left
+    right
     overlay_left
+    overlay_right
 
 =back
 
@@ -3332,7 +3341,7 @@ In some cases the format properties can be nested. For example a C<marker> may c
 
 =head2 Line
 
-The line format is used to specify properties of line objects that appear in a chart such as a plotted line on chart or a border.
+The line format is used to specify properties of line objects that appear in a chart such as a plotted line on a chart or a border.
 
 The following properties can be set for C<line> formats in a chart.
 
@@ -3357,7 +3366,7 @@ The C<color> property sets the color of the C<line>.
         line       => { color => 'red' },
     );
 
-The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a line with a Html style RGB color:
+The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a line with a HTML style RGB color:
 
     $chart->add_series(
         line       => { color => '#FF0000' },
@@ -3378,7 +3387,7 @@ The C<dash_type> property sets the dash style of the line.
         line       => { dash_type => 'dash_dot' },
     );
 
-The following C<dash_type> values are available. By default the line style is C<solid>.
+The following C<dash_type> values are available. They are shown in the order that they appear in the Excel dialog.
 
     solid
     round_dot
@@ -3389,7 +3398,9 @@ The following C<dash_type> values are available. By default the line style is C<
     long_dash_dot
     long_dash_dot_dot
 
-More than one line property can be specified at time:
+The default line style is C<solid>.
+
+More than one C<line> property can be specified at time:
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -3402,7 +3413,9 @@ More than one line property can be specified at time:
 
 =head2 Border
 
-The C<border> property is a synonym for C<line>. It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
+The C<border> property is a synonym for C<line>.
+
+It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
 
 
 =head2 Fill
@@ -3429,7 +3442,7 @@ The C<color> property sets the color of the C<fill> area.
         fill       => { color => 'red' },
     );
 
-The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a fill with a Html style RGB color:
+The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a fill with a HTML style RGB color:
 
     $chart->add_series(
         fill       => { color => '#FF0000' },
@@ -3445,7 +3458,7 @@ The C<fill> format is generally used in conjunction with a C<border> format whic
 
 =head2 Marker
 
-The marker format is used to specify the properties of the markers that are used to distinguish series on a chart. In general only Line and Scatter chart types and trendlines use markers.
+The marker format specifies the properties of the markers used to distinguish series on a chart. In general only Line and Scatter chart types and trendlines use markers.
 
 The following properties can be set for C<marker> formats in a chart.
 
@@ -3461,13 +3474,6 @@ The C<type> property sets the type of marker that is used with a series.
         marker     => { type => 'diamond' },
     );
 
-A special case is the C<automatic> type which turns on a marker using the default marker style for the particular series number.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        marker     => { type => 'automatic' },
-    );
-
 The following C<type> properties can be set for C<marker> formats in a chart. These are shown in the same order as in the Excel format dialog.
 
     automatic
@@ -3477,10 +3483,19 @@ The following C<type> properties can be set for C<marker> formats in a chart. Th
     triangle
     x
     star
-    dot
-    dash
+    short_dash
+    long_dash
     circle
     plus
+
+The C<automatic> type is a special case which turns on a marker using the default marker style for the particular series number.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        marker     => { type => 'automatic' },
+    );
+
+If C<automatic> is on then other marker properties such as size, border or fill cannot be set.
 
 The C<size> property sets the size of the marker and is generally used in conjunction with C<type>.
 
@@ -3489,7 +3504,7 @@ The C<size> property sets the size of the marker and is generally used in conjun
         marker     => { type => 'diamond', size => 7 },
     );
 
-Nested C<border> and C<fill> properties can also be set for a marker and are the same as the one shown above with the same range of sub-properties.
+Nested C<border> and C<fill> properties can also be set for a marker. These have the same sub-properties as shown above.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -3503,7 +3518,7 @@ Nested C<border> and C<fill> properties can also be set for a marker and are the
 
 =head2 Trendline
 
-A trendline can be added to a chart series to indicate trends in the data such as a moving average or polynomial fit.
+A trendline can be added to a chart series to indicate trends in the data such as a moving average or a polynomial fit.
 
 The following properties can be set for C<trendline> formats in a chart.
 
@@ -3524,10 +3539,10 @@ The C<type> property sets the type of trendline in the series.
 
 The available C<trendline> types are:
 
-    exp         (exponential)
+    exponential
     linear
     log
-    moving      (moving average)
+    moving_average
     polynomial
     power
 
@@ -3541,12 +3556,12 @@ A C<polynomial> trendline can also specify the C<order> of the polynomial. The d
         },
     );
 
-A C<moving> trendline can also the C<period> of the moving average. The default value is 2.
+A C<moving_average> trendline can also the C<period> of the moving average. The default value is 2.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
         trendline  => {
-            type   => 'moving',
+            type   => 'moving_average',
             period => 3,
         },
     );
@@ -3585,11 +3600,11 @@ Several of these properties can be set in one go:
                 color     => 'red',
                 width     => 1,
                 dash_type => 'long_dash',
-            }
+            },
         },
     );
 
-Trendlines cannot be added to series in a stacked or pie chart or (when implemented) to 3-D, radar, surface, or doughnut charts.
+Trendlines cannot be added to series in a stacked chart or pie chart or (when implemented) to 3-D, radar, surface, or doughnut charts.
 
 =head2 Other formatting options
 
@@ -3689,7 +3704,7 @@ Here is a complete example that demonstrates some of the available features when
 
 =head1 TODO
 
-Charts in Excel::Writer::XLSX is under active development. More chart types and features will be added in time.
+The chart feature in Excel::Writer::XLSX is under active development. More chart types and features will be added in time.
 
 Features that are on the TODO list and will be added are:
 
