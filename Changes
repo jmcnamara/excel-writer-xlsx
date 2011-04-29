@@ -6,7 +6,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.19 April XX 2011
 
+   + Added new chart formatting options for line properties,
+     markers and trendlines. See Chart.pm.
+
    + Added insert_image() with support for png, jpeg and bmp.
+
+   + Improved backward compatibility for deprecated methods
+     store_formula() and repeat_formula().
 
    ! Fixed missing formatting for array formulas.
      Reported by Cyrille Gourves.

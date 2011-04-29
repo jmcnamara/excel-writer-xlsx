@@ -1233,7 +1233,7 @@ In Spreadsheet::WriteExcel it was computationally expensive to write formulas si
 
 In Excel::Writer::XLSX this is no longer necessary since it is just as quick to write a formula as it is to write a string or a number.
 
-The methods remain for backward compatibility but C<repeat_formula()> no longer does token replacement. If you convert a program from Spreadsheet::WriteExcel to Excel::Writer::XLSX you should convert the store/repeat method calls to simpler variable expansions.
+The methods remain for backward compatibility but new Excel::Writer::XLSX programs shouldn't use them.
 
 
 
