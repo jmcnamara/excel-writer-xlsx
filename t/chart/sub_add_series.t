@@ -41,6 +41,7 @@ $expected = {
     _fill         => { _defined => 0 },
     _marker       => undef,
     _trendline    => undef,
+    _labels       => undef,
 };
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
@@ -70,6 +71,7 @@ $expected = [
         _fill         => { _defined => 0 },
         _marker       => undef,
         _trendline    => undef,
+        _labels       => undef,
     }
 ];
 
@@ -104,6 +106,7 @@ $expected = [
         _fill         => { _defined => 0 },
         _marker       => undef,
         _trendline    => undef,
+        _labels       => undef,
     }
 ];
 
@@ -133,6 +136,7 @@ $expected = {
     _fill         => { _defined => 0 },
     _marker       => undef,
     _trendline    => undef,
+    _labels       => undef,
 };
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );

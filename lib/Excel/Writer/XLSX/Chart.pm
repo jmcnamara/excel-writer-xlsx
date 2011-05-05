@@ -190,7 +190,10 @@ sub add_series {
     # Set the trendline properties for the series.
     my $trendline = $self->_get_trendline_properties( $arg{trendline} );
 
-    # Add the parsed data to the user supplied data. TODO. Refactor.
+    # Set the labels properties for the series.
+    my $labels = $self->_get_labels_properties( $arg{data_labels} );
+
+    # Add the user supplied data to the internal structures.
     %arg = (
         _values       => $values,
         _categories   => $categories,
@@ -203,6 +206,7 @@ sub add_series {
         _fill         => $fill,
         _marker       => $marker,
         _trendline    => $trendline,
+        _labels       => $labels,
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -885,6 +889,23 @@ sub _get_trendline_properties {
 
 ###############################################################################
 #
+# _get_labels_properties()
+#
+# Convert user defined labels properties to the structure required internally.
+#
+sub _get_labels_properties {
+
+    my $self = shift;
+    my $labels = shift;
+
+    return undef unless $labels;
+
+    return $labels;
+}
+
+
+###############################################################################
+#
 # _add_axis_id()
 #
 # Add a unique id for an axis.
@@ -1215,6 +1236,9 @@ sub _write_ser {
 
     # Write the c:marker element.
     $self->_write_marker( $series->{_marker} );
+
+    # Write the c:dLbls element.
+    $self->_write_d_lbls( $series->{_labels} );
 
     # Write the c:trendline element.
     $self->_write_trendline( $series->{_trendline} );
@@ -3035,6 +3059,86 @@ sub _write_protection {
 }
 
 
+##############################################################################
+#
+# _write_d_lbls()
+#
+# Write the <c:dLbls> element.
+#
+sub _write_d_lbls {
+
+    my $self   = shift;
+    my $labels = shift;
+
+    return unless $labels;
+
+    $self->{_writer}->startTag( 'c:dLbls' );
+
+    # Write the c:showVal element.
+    $self->_write_show_val() if $labels->{value};
+
+    # Write the c:showCatName element.
+    $self->_write_show_cat_name() if $labels->{category};
+
+    # Write the c:showSerName element.
+    $self->_write_show_ser_name() if $labels->{series_name};
+
+    $self->{_writer}->endTag( 'c:dLbls' );
+}
+
+
+
+##############################################################################
+#
+# _write_show_val()
+#
+# Write the <c:showVal> element.
+#
+sub _write_show_val {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:showVal', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_cat_name()
+#
+# Write the <c:showCatName> element.
+#
+sub _write_show_cat_name {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:showCatName', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_ser_name()
+#
+# Write the <c:showSerName> element.
+#
+sub _write_show_ser_name {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:showSerName', @attributes );
+}
+
+
 1;
 
 __END__
@@ -3177,6 +3281,10 @@ Set the properties of the series marker such as style and color. See the L</CHAR
 
 Set the properties of the series trendline such as linear, polynomial and moving average types. See the L</CHART FORMATTING> section below.
 
+=item * C<data_labels>
+
+Set data labels for the series. See the L</CHART FORMATTING> section below.
+
 =back
 
 The C<categories> and C<values> can take either a range formula such as C<=Sheet1!$A$2:$A$7> or, more usefully when generating the range programmatically, an array ref with zero indexed row/column values:
@@ -3318,6 +3426,7 @@ The following chart formatting properties can be set for any chart object that t
     fill
     marker
     trendline
+    data_labels
 
 Chart formatting properties are generally set using hash refs.
 
@@ -3605,6 +3714,40 @@ Several of these properties can be set in one go:
     );
 
 Trendlines cannot be added to series in a stacked chart or pie chart or (when implemented) to 3-D, radar, surface, or doughnut charts.
+
+=head2 Data Labels
+
+Data labels can be added to a chart series to indicate the values of the plotted data points.
+
+The following properties can be set for C<data_labels> formats in a chart.
+
+    value
+    category
+    series_name
+
+
+The C<value> property turns on the I<Value> data label for a series.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { value => 1 },
+    );
+
+The C<category> property turns on the I<Category Name> data label for a series.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { category => 1 },
+    );
+
+
+The C<series_name> property turns on the I<Series Name> data label for a series.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { series_name => 1 },
+    );
+
 
 =head2 Other formatting options
 

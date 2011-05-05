@@ -114,6 +114,9 @@ sub _write_ser {
     # Write the c:marker element.
     $self->_write_marker( $series->{_marker} );
 
+    # Write the c:dLbls element.
+    $self->_write_d_lbls( $series->{_labels} );
+
     # Write the c:trendline element.
     $self->_write_trendline( $series->{_trendline} );
 
