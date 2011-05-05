@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.18 of Excel::Writer::XLSX, released April 7, 2011.
+This document refers to version 0.19 of Excel::Writer::XLSX, released May 5, 2011.
 
 
 
@@ -1476,7 +1476,7 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 =head2 insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+Partially supported. Currently only works for 96 dpi images. This will be fixed in the next release.
 
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
 
@@ -1488,18 +1488,6 @@ The parameters C<$x> and C<$y> can be used to specify an offset from the top lef
 
     $worksheet1->insert_image('A1', 'perl.bmp', 32, 10);
 
-The default width of a cell is 63 pixels. The default height of a cell is 17 pixels. The pixels offsets can be calculated using the following relationships:
-
-    Wp = int(12We)   if We <  1
-    Wp = int(7We +5) if We >= 1
-    Hp = int(4/3He)
-
-    where:
-    We is the cell width in Excels units
-    Wp is width in pixels
-    He is the cell height in Excels units
-    Hp is height in pixels
-
 The offsets can be greater than the width or height of the underlying cell. This can be occasionally useful if you wish to align two or more images relative to the same cell.
 
 The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted image horizontally and vertically:
@@ -1510,7 +1498,6 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted ima
 See also the C<images.pl> program in the C<examples> directory of the distro.
 
 Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
-
 
 BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid BMP images since they aren't compressed.
 
@@ -1533,7 +1520,7 @@ See C<add_chart()> for details on how to create the Chart object and L<Excel::Wr
 
 The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
 
-The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels. See the C<insert_image> method above for more information on sizes.
+The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
     $worksheet1->insert_chart( 'E2', $chart, 3, 3 );
 
@@ -4642,7 +4629,7 @@ The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::
 
 However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
 
-    Images
+    Images (partial support)
     Defined names.
     Cell comments.
     Data validation.
@@ -4685,7 +4672,7 @@ The following is a full list of the module methods and their support status:
     write_comment()             No
     show_comments()             No
     add_write_handler()         Yes
-    insert_image()              No
+    insert_image()              Yes/Partial, see docs.
     insert_chart()              Yes
     data_validation()           No
     get_name()                  Yes
@@ -4776,7 +4763,7 @@ The following is a full list of the module methods and their support status:
 All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
     define_name()
-    insert_image()
+    insert_image() (currently partially supported)
 
     set_tempdir()
 

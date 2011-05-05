@@ -4,12 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
-0.19 April XX 2011
+0.19 May 5 2011
 
    + Added new chart formatting options for line properties,
-     markers and trendlines. See Chart.pm.
+     markers, trendlines and data labels. See Chart.pm.
 
-   + Added insert_image() with support for png, jpeg and bmp.
+   + Added partial support for insert_image().
 
    + Improved backward compatibility for deprecated methods
      store_formula() and repeat_formula().
