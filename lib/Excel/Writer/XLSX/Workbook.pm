@@ -354,6 +354,8 @@ sub add_chart {
         my $drawing    = Excel::Writer::XLSX::Drawing->new();
         my $chartsheet = Excel::Writer::XLSX::Chartsheet->new( @init_data );
 
+        $chart->{_palette} = $self->{_palette};
+
         $chartsheet->{_chart}   = $chart;
         $chartsheet->{_drawing} = $drawing;
 
