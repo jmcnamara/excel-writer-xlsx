@@ -753,7 +753,14 @@ sub _store_workbook {
 
     my $wanted = sub { push @xlsx_files, $File::Find::name if -f };
 
-    File::Find::find( { wanted => $wanted, untaint => 1 }, $tempdir );
+    File::Find::find(
+        {
+            wanted          => $wanted,
+            untaint         => 1,
+            untaint_pattern => qr|^(.+)$|
+        },
+        $tempdir
+    );
 
     # Store the xlsx component files with the temp dir name removed.
     for my $filename ( @xlsx_files ) {
