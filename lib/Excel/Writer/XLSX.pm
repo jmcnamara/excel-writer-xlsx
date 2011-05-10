@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.19 of Excel::Writer::XLSX, released May 5, 2011.
+This document refers to version 0.20 of Excel::Writer::XLSX, released May 10, 2011.
 
 
 
@@ -411,37 +411,20 @@ Note: This currently a beta feature. More documentation and examples will be add
 
 =head2 set_tempdir()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+C<Excel::Writer::XLSX> stores worksheet data in temporary files prior to assembling the final workbook.
 
-For speed and efficiency C<Excel::Writer::XLSX> stores worksheet data in temporary files prior to assembling the final workbook.
+The C<File::Temp> module is used to create these temporary files. File::Temp uses C<File::Spec> to determine an appropriate location for these files such as C</tmp> or C<c:\windows\temp>. You can find out which directory is used on your system as follows:
 
-If Excel::Writer::XLSX is unable to create these temporary files it will store the required data in memory. This can be slow for large files.
+    perl -MFile::Spec -le "print File::Spec->tmpdir()"
 
-The problem occurs mainly with IIS on Windows although it could feasibly occur on Unix systems as well. The problem generally occurs because the default temp file directory is defined as C<C:/> or some other directory that IIS doesn't provide write access to.
-
-To check if this might be a problem on a particular system you can run a simple test program with C<-w> or C<use warnings>. This will generate a warning if the module cannot create the required temporary files:
-
-    #!/usr/bin/perl -w
-
-    use Excel::Writer::XLSX;
-
-    my $workbook  = Excel::Writer::XLSX->new( 'test.xlsx' );
-    my $worksheet = $workbook->add_worksheet();
-
-To avoid this problem the C<set_tempdir()> method can be used to specify a directory that is accessible for the creation of temporary files.
-
-The C<File::Temp> module is used to create the temporary files. File::Temp uses C<File::Spec> to determine an appropriate location for these files such as C</tmp> or C<c:\windows\temp>. You can find out which directory is used on your system as follows:
-
-    perl -MFile::Spec -le "print File::Spec->tmpdir"
-
-Even if the default temporary file directory is accessible you may wish to specify an alternative location for security or maintenance reasons:
+If the default temporary file directory isn't accessible to your application you can specify an alternative location using the C<set_tempdir()> method:
 
     $workbook->set_tempdir( '/tmp/writeexcel' );
     $workbook->set_tempdir( 'c:\windows\temp\writeexcel' );
 
 The directory for the temporary file must exist, C<set_tempdir()> will not create a new directory.
 
-One disadvantage of using the C<set_tempdir()> method is that on some Windows systems it will limit you to approximately 800 concurrent tempfiles. This means that a single program running on one of these systems will be limited to creating a total of 800 workbook and worksheet objects. You can run multiple, non-concurrent programs to work around this if necessary.
+A potential issue is that some Windows systems will are limited to approximately 800 concurrent tempfiles. This means that a single program running on one of these systems will be limited to creating a total of 800 workbook and worksheet objects. You can run multiple, non-concurrent programs to work around this if necessary.
 
 
 
@@ -4266,10 +4249,10 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 
     # Write some numbers
-    $worksheet->write( 2, 0, 3 );          # Writes 3
-    $worksheet->write( 3, 0, 3.00000 );    # Writes 3
-    $worksheet->write( 4, 0, 3.00001 );    # Writes 3.00001
-    $worksheet->write( 5, 0, 3.14159 );    # TeX revision no.?
+    $worksheet->write( 2, 0, 1 );
+    $worksheet->write( 3, 0, 1.00000 );
+    $worksheet->write( 4, 0, 2.00001 );
+    $worksheet->write( 5, 0, 3.14159 );
 
 
     # Write some formulas
@@ -4646,7 +4629,7 @@ The following is a full list of the module methods and their support status:
     close()                     Yes
     set_properties()            Yes
     define_name()               No
-    set_tempdir()               No
+    set_tempdir()               Yes
     set_custom_color()          Yes
     sheets()                    Yes
     set_1904()                  Yes
@@ -4764,8 +4747,6 @@ All non-deprecated methods will be supported in time unless no longer required. 
 
     define_name()
     insert_image() (currently partially supported)
-
-    set_tempdir()
 
     write_comment()
     data_validation()

@@ -4,6 +4,16 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+
+0.20 May 10 2011
+
+   ! Fix for programs running under taint mode.
+
+   + Added set_tempdir().
+
+   ! Fix for color formatting in chartsheets.
+
+
 0.19 May 5 2011
 
    + Added new chart formatting options for line properties,

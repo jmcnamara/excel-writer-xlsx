@@ -270,6 +270,7 @@ t/regression/chartsheet05.t
 t/regression/chartsheet06.t
 t/regression/chartsheet07.t
 t/regression/chartsheet08.t
+t/regression/chartsheet09.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -432,6 +433,7 @@ t/regression/xlsx_files/chartsheet05.xlsx
 t/regression/xlsx_files/chartsheet06.xlsx
 t/regression/xlsx_files/chartsheet07.xlsx
 t/regression/xlsx_files/chartsheet08.xlsx
+t/regression/xlsx_files/chartsheet09.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
