@@ -20,7 +20,7 @@ use warnings;
 use Carp;
 use IO::File;
 use File::Find;
-use File::Temp 'tempdir';
+use File::Temp qw(tempfile tempdir);
 use File::Basename 'fileparse';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
@@ -61,6 +61,8 @@ sub new {
     $self->{_selected}         = 0;
     $self->{_xf_index}         = 0;
     $self->{_fileclosed}       = 0;
+    $self->{_filehandle}       = undef;
+    $self->{_internal_fh}      = 0;
     $self->{_biffsize}         = 0;
     $self->{_sheet_name}       = 'Sheet';
     $self->{_chart_name}       = 'Chart';
@@ -104,17 +106,17 @@ sub new {
 
     # If filename is a reference we assume that it is a valid filehandle.
     if ( ref $self->{_filename} ) {
-        $self->{_filehandle} = $self->{_filename};
+
+        $self->{_filehandle}  = $self->{_filename};
+        $self->{_internal_fh} = 0;
     }
     else {
         my $fh = IO::File->new( $self->{_filename}, 'w' );
 
         return undef unless defined $fh;
 
-        # TODO check if the FH needs to be binmoded for Archive::Zip.
-        #eval q(binmode $fh);
-
-        $self->{_filehandle} = $fh;
+        $self->{_filehandle}  = $fh;
+        $self->{_internal_fh} = 1;
     }
 
 
@@ -186,12 +188,12 @@ sub close {
     return if $self->{_fileclosed};
 
     # Test filehandle in case new() failed and the user didn't check.
-    return unless defined $self->{_filehandle};
+    return undef if !defined $self->{_filehandle};
 
     $self->{_fileclosed} = 1;
     $self->_store_workbook();
 
-    return close $self->{_filehandle};
+    return CORE::close( $self->{_filehandle} ) if $self->{_internal_fh};
 }
 
 
@@ -771,8 +773,32 @@ sub _store_workbook {
         $zip->addFile( $filename, $short_name );
     }
 
-    if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
-        carp 'Error writing zip container for xlsx file.';
+
+    if ( $self->{_internal_fh} ) {
+
+        if ( $zip->writeToFileHandle( $self->{_filehandle} ) != 0 ) {
+            carp 'Error writing zip container for xlsx file.';
+        }
+    }
+    else {
+
+        # Archive::Zip needs to rewind a filehandle to write the zip headers.
+        # This won't work for arbitrary user defined filehandles so we use
+        # a temp file based filehandle to create the zip archive and then
+        # stream that to the filehandle.
+        my $tmp_fh = tempfile( DIR => $self->{_tempdir} );
+        my $is_seekable = 1;
+
+        if ( $zip->writeToFileHandle( $tmp_fh, $is_seekable ) != 0 ) {
+            carp 'Error writing zip container for xlsx file.';
+        }
+
+        my $buffer;
+        seek $tmp_fh, 0, 0;
+
+        while ( read( $tmp_fh, $buffer, 4_096 ) ) {
+            print {$self->{_filehandle}} $buffer;
+        }
     }
 }
 
