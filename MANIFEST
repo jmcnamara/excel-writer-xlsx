@@ -19,6 +19,7 @@ examples/colors.pl
 examples/date_time.pl
 examples/demo.pl
 examples/diag_border.pl
+examples/filehandle.pl
 examples/formats.pl
 examples/gen_examples_pod.pl
 examples/headers.pl
@@ -68,6 +69,7 @@ examples/write_handler1.pl
 examples/write_handler2.pl
 examples/write_handler3.pl
 examples/write_handler4.pl
+examples/write_to_scalar.pl
 lib/Excel/Writer/XLSX.pm
 lib/Excel/Writer/XLSX/Chart.pm
 lib/Excel/Writer/XLSX/Chart/Area.pm
@@ -274,6 +276,7 @@ t/regression/chartsheet09.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
+t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
@@ -437,6 +440,7 @@ t/regression/xlsx_files/chartsheet09.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
+t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx

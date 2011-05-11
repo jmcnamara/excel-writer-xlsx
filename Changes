@@ -5,6 +5,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.21 May 11 2011
+
+   ! Fixed support for filehandles.
+
+   + Added write_to_scalar.pl and filehandle.pl example programs.
+
+
 0.20 May 10 2011
 
    ! Fix for programs running under taint mode.

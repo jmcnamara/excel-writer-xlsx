@@ -22,7 +22,7 @@ use IO::File;
 use Excel::Writer::XLSX::Package::XMLwriterSimple;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 
 ###############################################################################
