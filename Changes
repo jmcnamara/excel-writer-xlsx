@@ -5,37 +5,43 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.22 May XX 2011
+
+    + Added 'reverse' option to set_x_axis() and set_y_axis() in
+      charts.
+
+
 0.21 May 11 2011
 
-   ! Fixed support for filehandles.
+    ! Fixed support for filehandles.
 
-   + Added write_to_scalar.pl and filehandle.pl example programs.
+    + Added write_to_scalar.pl and filehandle.pl example programs.
 
 
 0.20 May 10 2011
 
-   ! Fix for programs running under taint mode.
+    ! Fix for programs running under taint mode.
 
-   + Added set_tempdir().
+    + Added set_tempdir().
 
-   ! Fix for color formatting in chartsheets.
+    ! Fix for color formatting in chartsheets.
 
 
 0.19 May 5 2011
 
-   + Added new chart formatting options for line properties,
-     markers, trendlines and data labels. See Chart.pm.
+    + Added new chart formatting options for line properties,
+      markers, trendlines and data labels. See Chart.pm.
 
-   + Added partial support for insert_image().
+    + Added partial support for insert_image().
 
-   + Improved backward compatibility for deprecated methods
-     store_formula() and repeat_formula().
+    + Improved backward compatibility for deprecated methods
+      store_formula() and repeat_formula().
 
-   ! Fixed missing formatting for array formulas.
-     Reported by Cyrille Gourves.
+    ! Fixed missing formatting for array formulas.
+      Reported by Cyrille Gourves.
 
-   ! Fixed issue with chart scaling that caused "unreadable content"
-     Excel error.
+    ! Fixed issue with chart scaling that caused "unreadable content"
+      Excel error.
 
 
 0.18 April 7 2011

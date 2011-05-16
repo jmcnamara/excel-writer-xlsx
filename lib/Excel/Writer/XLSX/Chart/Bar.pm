@@ -61,14 +61,17 @@ sub _write_chart_type {
     my $name         = $self->{_y_axis_name};
     my $name_formula = $self->{_y_axis_formula};
     my $data_id      = $self->{_y_axis_data_id};
+    my $reverse      = $self->{_y_axis_reverse};
 
     $self->{_y_axis_name}    = $self->{_x_axis_name};
     $self->{_y_axis_formula} = $self->{_x_axis_formula};
     $self->{_y_axis_data_id} = $self->{_x_axis_data_id};
+    $self->{_y_axis_reverse} = $self->{_x_axis_reverse};
 
     $self->{_x_axis_name}    = $name;
     $self->{_x_axis_formula} = $name_formula;
     $self->{_x_axis_data_id} = $data_id;
+    $self->{_x_axis_reverse} = $reverse;
 
     # Write the c:barChart element.
     $self->_write_bar_chart();
