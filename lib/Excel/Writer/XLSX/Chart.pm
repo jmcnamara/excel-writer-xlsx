@@ -14,7 +14,7 @@ package Excel::Writer::XLSX::Chart;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Carp;
@@ -292,7 +292,7 @@ sub set_legend {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_legend_position} = $arg{position} // 'right';
+    $self->{_legend_position} = $arg{position} || 'right';
     $self->{_legend_delete_series} = $arg{delete_series};
 }
 
@@ -434,7 +434,7 @@ sub set_chartarea {
 sub set_style {
 
     my $self = shift;
-    my $style_id = shift // 2;
+    my $style_id = defined $_[0] ? $_[0] : 2;
 
     if ( $style_id < 0 || $style_id > 42 ) {
         $style_id = 2;
@@ -1503,7 +1503,7 @@ sub _write_axis_id {
 sub _write_cat_axis {
 
     my $self      = shift;
-    my $position  = shift // $self->{_cat_axis_position};
+    my $position  = shift || $self->{_cat_axis_position};
     my $horiz     = $self->{_horiz_cat_axis};
     my $x_reverse = $self->{_x_axis_reverse};
     my $y_reverse = $self->{_y_axis_reverse};
@@ -1563,7 +1563,7 @@ sub _write_cat_axis {
 sub _write_val_axis {
 
     my $self                 = shift;
-    my $position             = shift // $self->{_val_axis_position};
+    my $position             = shift || $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
     my $horiz                = $self->{_horiz_val_axis};
     my $x_reverse            = $self->{_x_axis_reverse};
@@ -1620,7 +1620,7 @@ sub _write_val_axis {
 sub _write_cat_val_axis {
 
     my $self                 = shift;
-    my $position             = shift // $self->{_val_axis_position};
+    my $position             = shift || $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
     my $horiz                = $self->{_horiz_val_axis};
     my $x_reverse            = $self->{_x_axis_reverse};
@@ -1676,7 +1676,7 @@ sub _write_cat_val_axis {
 sub _write_date_axis {
 
     my $self     = shift;
-    my $position = shift // $self->{_cat_axis_position};
+    my $position = shift || $self->{_cat_axis_position};
     my $x_reverse = $self->{_x_axis_reverse};
     my $y_reverse = $self->{_y_axis_reverse};
 
@@ -1793,7 +1793,7 @@ sub _write_axis_pos {
 sub _write_num_fmt {
 
     my $self          = shift;
-    my $format_code   = shift // 'General';
+    my $format_code   = shift || 'General';
     my $source_linked = 1;
 
     # These elements are only required for charts with categories.
@@ -1955,7 +1955,7 @@ sub _write_number_format {
 sub _write_cross_between {
 
     my $self = shift;
-    my $val  = $self->{_cross_between} // 'between';
+    my $val  = $self->{_cross_between} || 'between';
 
     my @attributes = ( 'val' => $val );
 
@@ -2567,7 +2567,7 @@ sub _write_tx_pr {
 sub _write_marker {
 
     my $self = shift;
-    my $marker = shift // $self->{_default_marker};
+    my $marker = shift || $self->{_default_marker};
 
     return unless $marker;
     return if $marker->{automatic};
@@ -2881,7 +2881,7 @@ sub _write_name {
 sub _write_trendline_order {
 
     my $self = shift;
-    my $val  = shift // 2;
+    my $val  = shift || 2;
 
     my @attributes = ( 'val' => $val );
 
@@ -2898,7 +2898,7 @@ sub _write_trendline_order {
 sub _write_period {
 
     my $self = shift;
-    my $val  = shift // 2;
+    my $val  = shift || 2;
 
     my @attributes = ( 'val' => $val );
 

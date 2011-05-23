@@ -13,7 +13,7 @@ package Excel::Writer::XLSX::Chartsheet;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Exporter;
@@ -114,8 +114,8 @@ sub _assemble_xml_file {
 sub protect {
 
     my $self     = shift;
-    my $password = shift // '';
-    my $options  = shift // {};
+    my $password = shift || '';
+    my $options  = shift || {};
 
     $self->{_chart}->{_protection} = 1;
 

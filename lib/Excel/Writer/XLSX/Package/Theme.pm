@@ -21,7 +21,7 @@ package Excel::Writer::XLSX::Package::Theme;
 #       facilitate easier comparisons during testing. The theme1.xml file
 #       isn't actually required.
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Exporter;
