@@ -13,7 +13,7 @@ package Excel::Writer::XLSX::Package::Core;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Carp;
@@ -115,7 +115,7 @@ sub _set_properties {
 sub _localtime_to_iso8601_date {
 
     my $self = shift;
-    my $localtime = shift // $self->{_localtime};
+    my $localtime = shift || $self->{_localtime};
 
     my ( $seconds, $minutes, $hours, $day, $month, $year ) = @$localtime;
 
@@ -171,7 +171,7 @@ sub _write_cp_core_properties {
 sub _write_dc_creator {
 
     my $self = shift;
-    my $data = $self->{_properties}->{author} // '';
+    my $data = $self->{_properties}->{author} || '';
 
     $self->{_writer}->dataElement( 'dc:creator', $data );
 }
@@ -186,7 +186,7 @@ sub _write_dc_creator {
 sub _write_cp_last_modified_by {
 
     my $self = shift;
-    my $data = $self->{_properties}->{author} // '';
+    my $data = $self->{_properties}->{author} || '';
 
     $self->{_writer}->dataElement( 'cp:lastModifiedBy', $data );
 }

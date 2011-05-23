@@ -14,7 +14,7 @@ package Excel::Writer::XLSX::Workbook;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Carp;
@@ -320,7 +320,7 @@ sub add_chart {
     }
 
     # Ensure that the chart defaults to non embedded.
-    my $embedded = $arg{embedded} // 0;
+    my $embedded = $arg{embedded} || 0;
 
     # Check the worksheet name for non-embedded charts.
     if ( !$embedded ) {
@@ -393,8 +393,8 @@ sub add_chart {
 sub _check_sheetname {
 
     my $self         = shift;
-    my $name         = shift // "";
-    my $chart        = shift // 0;
+    my $name         = shift || "";
+    my $chart        = shift || 0;
     my $invalid_char = qr([\[\]:*?/\\]);
 
     # Increment the Sheet/Chart number used for default sheet names below.

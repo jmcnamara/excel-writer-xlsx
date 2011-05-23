@@ -13,7 +13,7 @@ package Excel::Writer::XLSX::Package::XMLwriterSimple;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Exporter;
@@ -217,7 +217,7 @@ sub getOutput {
 #
 sub _escape_xml_chars {
 
-    my $str = shift // '';
+    my $str = defined $_[0] ? $_[0] : '';
 
     return $str if $str !~ m/[&<>"]/;
 

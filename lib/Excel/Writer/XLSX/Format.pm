@@ -12,7 +12,7 @@ package Excel::Writer::XLSX::Format;
 # Documentation after __END__
 #
 
-use 5.010000;
+use 5.008002;
 use Exporter;
 use strict;
 use warnings;
@@ -485,7 +485,7 @@ sub set_merge {
 sub set_bold {
 
     my $self = shift;
-    my $bold = shift // 1;
+    my $bold = defined $_[0] ? $_[0] : 1;
 
     $self->{_bold} = $bold ? 1 : 0;
 }

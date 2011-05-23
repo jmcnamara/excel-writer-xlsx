@@ -14,7 +14,7 @@ package Excel::Writer::XLSX::Utility;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use Exporter;
 use warnings;

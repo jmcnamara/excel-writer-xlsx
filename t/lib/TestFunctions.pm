@@ -7,7 +7,7 @@ package TestFunctions;
 # reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
-use 5.010000;
+use 5.008002;
 use Exporter;
 use strict;
 use warnings;

@@ -14,7 +14,7 @@ package Excel::Writer::XLSX::Worksheet;
 
 # perltidy with the following options: -mbl=2 -pt=0 -nola
 
-use 5.010000;
+use 5.008002;
 use strict;
 use warnings;
 use Carp;
@@ -374,8 +374,8 @@ sub set_first_sheet {
 sub protect {
 
     my $self     = shift;
-    my $password = shift // '';
-    my $options  = shift // {};
+    my $password = shift || '';
+    my $options  = shift || {};
 
     if ( $password ne '' ) {
         $password = $self->_encode_password( $password );
@@ -610,10 +610,10 @@ sub freeze_panes {
     }
 
     my $row      = shift;
-    my $col      = shift // 0;
-    my $top_row  = shift // $row;
-    my $left_col = shift // $col;
-    my $type     = shift // 0;
+    my $col      = shift || 0;
+    my $top_row  = shift || $row;
+    my $left_col = shift || $col;
+    my $type     = shift || 0;
 
     $self->{_panes} = [ $row, $col, $top_row, $left_col, $type ];
 }
@@ -1416,7 +1416,7 @@ sub _convert_name_area {
 sub hide_gridlines {
 
     my $self = shift;
-    my $option = $_[0] // 1;    # Default to hiding printed gridlines
+    my $option = defined $_[0] ? $_[0] : 1;    # Default to hiding printed gridlines
 
     if ( $option == 0 ) {
         $self->{_print_gridlines}       = 1;    # 1 = display, 0 = hide
@@ -1444,7 +1444,7 @@ sub hide_gridlines {
 sub print_row_col_headers {
 
     my $self = shift;
-    my $headers = shift // 1;
+    my $headers = defined $_[0] ? $_[0] : 1;
 
     if ( $headers ) {
         $self->{_print_headers}         = 1;
@@ -1605,7 +1605,7 @@ sub hide_zero {
 sub print_across {
 
     my $self = shift;
-    my $page_order = shift // 1;
+    my $page_order = defined $_[0] ? $_[0] : 1;
 
     if ( $page_order ) {
         $self->{_page_order}         = 1;
@@ -2639,17 +2639,18 @@ sub set_row {
 
     my $self      = shift;
     my $row       = shift;          # Row Number.
-    my $height    = shift // 15;    # Row height.
+    my $height    = shift;          # Row height.
     my $xf        = shift;          # Format object.
-    my $hidden    = shift // 0;     # Hidden flag.
-    my $level     = shift // 0;     # Outline level.
-    my $collapsed = shift // 0;     # Collapsed row.
+    my $hidden    = shift || 0;     # Hidden flag.
+    my $level     = shift || 0;     # Outline level.
+    my $collapsed = shift || 0;     # Collapsed row.
 
     return unless defined $row;     # Ensure at least $row is specified.
 
     # Check that row and col are valid and store max and min values.
     return -2 if $self->_check_dimensions( $row, 0 );
 
+    $height = 15 if !defined $height;
 
     # If the height is 0 the row is hidden and the height is the default.
     if ( $height == 0 ) {
@@ -3785,12 +3786,12 @@ sub _get_range_data {
                 elsif ( $type eq 'f' ) {
 
                     # Store a formula.
-                    push @data, $cell->[3] // 0;
+                    push @data, $cell->[3] || 0;
                 }
                 elsif ( $type eq 'a' ) {
 
                     # Store an array formula.
-                    push @data, $cell->[4] // 0;
+                    push @data, $cell->[4] || 0;
                 }
                 elsif ( $type eq 'l' ) {
 
@@ -4339,13 +4340,13 @@ sub _write_cols {
 sub _write_col_info {
 
     my $self         = shift;
-    my $min          = $_[0] // 0;    # First formatted column.
-    my $max          = $_[1] // 0;    # Last formatted column.
+    my $min          = $_[0] || 0;    # First formatted column.
+    my $max          = $_[1] || 0;    # Last formatted column.
     my $width        = $_[2];         # Col width in user units.
     my $format       = $_[3];         # Format index.
-    my $hidden       = $_[4] // 0;    # Hidden flag.
-    my $level        = $_[5] // 0;    # Outline level.
-    my $collapsed    = $_[6] // 0;    # Outline level.
+    my $hidden       = $_[4] || 0;    # Hidden flag.
+    my $level        = $_[5] || 0;    # Outline level.
+    my $collapsed    = $_[6] || 0;    # Outline level.
     my $custom_width = 1;
 
     # Set the Excel default col width.
@@ -4533,12 +4534,14 @@ sub _write_row {
     my $self      = shift;
     my $r         = shift;
     my $spans     = shift;
-    my $height    = shift // 15;
+    my $height    = shift;
     my $format    = shift;
-    my $hidden    = shift // 0;
-    my $level     = shift // 0;
-    my $collapsed = shift // 0;
-    my $empty_row = shift // 0;
+    my $hidden    = shift || 0;
+    my $level     = shift || 0;
+    my $collapsed = shift || 0;
+    my $empty_row = shift || 0;
+
+    $height = 15 if !defined $height;
 
     my @attributes = ( 'r' => $r + 1 );
 
@@ -4699,7 +4702,7 @@ sub _write_cell {
 sub _write_cell_value {
 
     my $self = shift;
-    my $value = shift // '';
+    my $value = defined $_[0] ? $_[0] : '';
 
     $self->{_writer}->dataElement( 'v', $value );
 }
@@ -4714,7 +4717,7 @@ sub _write_cell_value {
 sub _write_cell_formula {
 
     my $self = shift;
-    my $formula = shift // '';
+    my $formula = defined $_[0] ? $_[0] : '';
 
     $self->{_writer}->dataElement( 'f', $formula );
 }
