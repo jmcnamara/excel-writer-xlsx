@@ -3485,8 +3485,9 @@ sub _prepare_chart {
 # _get_range_data
 #
 # Returns a range of data from the worksheet _table to be used in chart
-# cached data. If any error is encountered it returns an empty array.
-# Strings are returns as SST ids and decode in the workbook.
+# cached data. Strings are returned as SST ids and decoded in the workbook.
+# Return undefs for data that doesn't exist since Excel can chart series
+# with data missing.
 #
 sub _get_range_data {
 
@@ -3494,21 +3495,16 @@ sub _get_range_data {
     my @data;
     my ( $row_start, $col_start, $row_end, $col_end ) = @_;
 
-    # Ignore data outside the table range.
-    return undef if $row_start < $self->{_dim_rowmin};
-    return undef if $row_end < $self->{_dim_rowmin};
-    return undef if $row_start > $self->{_dim_rowmax};
-    return undef if $row_end > $self->{_dim_rowmax};
-    return undef if $col_start < $self->{_dim_colmin};
-    return undef if $col_end < $self->{_dim_colmin};
-    return undef if $col_start > $self->{_dim_colmax};
-    return undef if $col_end > $self->{_dim_colmax};
+    # TODO. Check for worksheet limits.
 
     # Iterate through the table data.
     for my $row_num ( $row_start .. $row_end ) {
 
-        # Return undef if row doesn't exist.
-        return undef if !$self->{_table}->[$row_num];
+        # Store undef if row doesn't exist.
+        if ( !$self->{_table}->[$row_num] ) {
+            push @data, undef;
+            next;
+        }
 
         for my $col_num ( $col_start .. $col_end ) {
 
@@ -3551,8 +3547,8 @@ sub _get_range_data {
             }
             else {
 
-                # Return undef if col doesn't exist.
-                return undef;
+                # Store undef if col doesn't exist.
+                push @data, undef;
             }
         }
     }
@@ -3841,7 +3837,7 @@ sub _write_page_set_up_pr {
 # _write_dimension()
 #
 # Write the <dimension> element. This specifies the range of cells in the
-# worksheet. Ss a special case, empty spreadsheets use 'A1' as a range.
+# worksheet. As a special case, empty spreadsheets use 'A1' as a range.
 #
 sub _write_dimension {
 
