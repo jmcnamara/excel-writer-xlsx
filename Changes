@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.23 May 26 2011
+
+    ! Fix for charts ranges containing empty values.
+
+
 0.22 May 22 2011
 
     + Added 'reverse' option to set_x_axis() and set_y_axis() in

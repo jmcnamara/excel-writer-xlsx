@@ -266,6 +266,7 @@ t/regression/chart_format14.t
 t/regression/chart_line01.t
 t/regression/chart_pie01.t
 t/regression/chart_scatter01.t
+t/regression/chart_sparse01.t
 t/regression/chart_stock01.t
 t/regression/chartsheet01.t
 t/regression/chartsheet02.t
@@ -433,6 +434,7 @@ t/regression/xlsx_files/chart_format14.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_scatter01.xlsx
+t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
 t/regression/xlsx_files/chartsheet01.xlsx
 t/regression/xlsx_files/chartsheet02.xlsx
