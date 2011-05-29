@@ -81,6 +81,7 @@ sub new {
     $self->{_custom_colors}    = [];
     $self->{_doc_properties}   = {};
     $self->{_localtime}        = [ localtime() ];
+    $self->{_optimization}     = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -289,6 +290,7 @@ sub add_worksheet {
 
         $self->{_1904},
         $self->{_palette},
+        $self->{_optimization},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
@@ -341,6 +343,7 @@ sub add_chart {
 
         $self->{_1904},
         $self->{_palette},
+        $self->{_optimization},
     );
 
 
@@ -1195,13 +1198,16 @@ sub _add_chart_data {
 
             # Convert shared string indexes to strings.
             for my $token ( @data ) {
+
+                next unless defined $token;
+
                 if ( ref $token ) {
                     $token = $self->{_str_array}->[ $token->{sst_id} ];
+                }
 
-                    # Ignore rich strings for now. Deparse later if necessary.
-                    if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
-                        $token = '';
-                    }
+                # Ignore rich strings for now. Deparse later if necessary.
+                if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+                    $token = '';
                 }
             }
 
@@ -1526,6 +1532,23 @@ sub _process_jpg {
     return ( $type, $width, $height );
 }
 
+
+###############################################################################
+#
+# set_optimization()
+#
+# Set the speed/memory optimisation level.
+#
+sub set_optimization {
+
+    my $self = shift;
+    my $level = shift // 1;
+
+   croak "set_optimization() must be called before add_worksheet()"
+          if $self->sheets();
+
+   $self->{_optimization} = $level;
+}
 
 
 ###############################################################################

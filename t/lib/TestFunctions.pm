@@ -329,7 +329,11 @@ sub _new_worksheet {
 
     my $got_ref = shift;
 
-    return _new_object( $got_ref, 'Excel::Writer::XLSX::Worksheet' );
+    my $worksheet = _new_object( $got_ref, 'Excel::Writer::XLSX::Worksheet' );
+
+    $worksheet->{_optimization} = 0;
+
+    return $worksheet;
 }
 
 

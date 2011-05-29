@@ -49,15 +49,16 @@ sub new {
     my $colmax = 16_384;
     my $strmax = 32767;
 
-    $self->{_name}        = $_[0];
-    $self->{_index}       = $_[1];
-    $self->{_activesheet} = $_[2];
-    $self->{_firstsheet}  = $_[3];
-    $self->{_str_total}   = $_[4];
-    $self->{_str_unique}  = $_[5];
-    $self->{_str_table}   = $_[6];
-    $self->{_1904}        = $_[7];
-    $self->{_palette}     = $_[8];
+    $self->{_name}         = $_[0];
+    $self->{_index}        = $_[1];
+    $self->{_activesheet}  = $_[2];
+    $self->{_firstsheet}   = $_[3];
+    $self->{_str_total}    = $_[4];
+    $self->{_str_unique}   = $_[5];
+    $self->{_str_table}    = $_[6];
+    $self->{_1904}         = $_[7];
+    $self->{_palette}      = $_[8];
+    $self->{_optimization} = $_[9];
 
     $self->{_ext_sheets} = [];
     $self->{_fileclosed} = 0;
@@ -1982,18 +1983,26 @@ sub write_string {
     my $str  = $_[2];
     my $xf   = _XF( $self, $_[3] );    # The cell format
     my $type = 's';                    # The data type
+    my $index;
+    my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
     # Check that the string is < 32767 chars
-    my $str_error = 0;
     if ( length $str > $self->{_xls_strmax} ) {
         $str = substr( $str, 0, $self->{_xls_strmax} );
         $str_error = -3;
     }
 
-    my $index = $self->_get_shared_string_index( $str );
+    # Write a shared string or an inline string based on optimisation level.
+    if ( $self->{_optimization} == 0 ) {
+        $index = $self->_get_shared_string_index( $str );
+    }
+    else {
+        $index = $str;
+    }
+
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2032,6 +2041,8 @@ sub write_rich_string {
     my $xf     = undef;
     my $type   = 's';              # The data type.
     my $length = 0;                # String length.
+    my $index;
+    my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2128,8 +2139,15 @@ sub write_rich_string {
         return -3;
     }
 
-    # Add the XML string to the shared string table.
-    my $index = $self->_get_shared_string_index( $str );
+
+    # Write a shared string or an inline string based on optimisation level.
+    if ( $self->{_optimization} == 0 ) {
+        $index = $self->_get_shared_string_index( $str );
+    }
+    else {
+        $index = $str;
+    }
+
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -3522,7 +3540,12 @@ sub _get_range_data {
                 elsif ( $type eq 's' ) {
 
                     # Store a string.
-                    push @data, { 'sst_id' => $token};
+                    if ( $self->{_optimization} == 0 ) {
+                        push @data, { 'sst_id' => $token };
+                    }
+                    else {
+                        push @data, $token;
+                    }
                 }
                 elsif ( $type eq 'f' ) {
 
@@ -4372,11 +4395,30 @@ sub _write_cell {
     elsif ( $type eq 's' ) {
 
         # Write a string.
-        push @attributes, ( 't' => 's' );
 
-        $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $token );
-        $self->{_writer}->endTag( 'c' );
+        if ( $self->{_optimization} == 0 ) {
+            push @attributes, ( 't' => 's' );
+            $self->{_writer}->startTag( 'c', @attributes );
+            $self->_write_cell_value( $token );
+            $self->{_writer}->endTag( 'c' );
+        }
+        else {
+            push @attributes, ( 't' => 'inlineStr' );
+            $self->{_writer}->startTag( 'c', @attributes );
+            $self->{_writer}->startTag( 'is' );
+
+            # Write any rich strings without further tags.
+            if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+                my $fh = $self->{_writer}->getOutput();
+                print $fh $token;
+            }
+            else {
+                $self->{_writer}->dataElement( 't', $token);
+            }
+
+            $self->{_writer}->endTag( 'is' );
+            $self->{_writer}->endTag( 'c' );
+        }
     }
     elsif ( $type eq 'f' ) {
 
