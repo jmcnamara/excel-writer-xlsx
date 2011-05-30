@@ -18,6 +18,7 @@ use 5.010000;
 use strict;
 use warnings;
 use Carp;
+use File::Temp 'tempfile';
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
@@ -167,11 +168,35 @@ sub new {
     $self->{_images}          = [];
     $self->{_drawing}         = 0;
 
-    $self->{_rstring} = '';
+    $self->{_rstring}      = '';
+    $self->{_previous_row} = 0;
+
+    if ( $self->{_optimization} == 1 ) {
+        my $fh     = tempfile();
+        my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $fh );
+
+        $self->{_cell_data_fh} = $fh;
+        $self->{_writer} = $writer;
+    }
 
 
     bless $self, $class;
     return $self;
+}
+
+#
+# TODO
+#
+sub _set_xml_writer {
+
+    my $self     = shift;
+    my $filename = shift;
+
+    if ( $self->{_optimization} == 1 ) {
+        $self->_write_single_row();
+    }
+
+    $self->SUPER::_set_xml_writer( $filename );
 }
 
 
@@ -208,7 +233,13 @@ sub _assemble_xml_file {
     $self->_write_cols();
 
     # Write the worksheet data such as rows columns and cells.
-    $self->_write_sheet_data();
+    if ( $self->{_optimization} == 0 ) {
+        $self->_write_sheet_data();
+    }
+    else {
+        $self->_write_optimized_sheet_data();
+    }
+
 
     # Write the sheetProtection element.
     $self->_write_sheet_protection();
@@ -1950,6 +1981,14 @@ sub write_number {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
+
     $self->{_table}->[$row]->[$col] = [ $type, $num, $xf ];
 
     return 0;
@@ -2003,6 +2042,13 @@ sub write_string {
         $index = $str;
     }
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2148,6 +2194,13 @@ sub write_rich_string {
         $index = $str;
     }
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2193,6 +2246,14 @@ sub write_blank {
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, undef, $xf ];
 
@@ -2244,6 +2305,13 @@ sub write_formula {
     # Remove the = sign if it exist.
     $formula =~ s/^=//;
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
 
@@ -2311,6 +2379,15 @@ sub write_array_formula {
     # Remove array formula braces and the leading =.
     $formula =~ s/^{(.*)}$/$1/;
     $formula =~ s/^=//;
+
+    # Write the previous row if in optimization mode.
+    my $row = $row1;
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row1]->[$col1] =
       [ $type, $formula, $xf, $range, $value ];
@@ -2446,6 +2523,14 @@ sub write_url {
         $link_type = 1;
     }
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
+
     $self->{_table}->[$row]->[$col] =
 
       # 0      1       2    3           4     5     6
@@ -2494,6 +2579,14 @@ sub write_date_time {
     # If the date isn't valid then write it as a string.
     if ( !defined $date_time ) {
         return $self->write_string( @_ );
+    }
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
@@ -3510,6 +3603,9 @@ sub _prepare_chart {
 sub _get_range_data {
 
     my $self = shift;
+
+    return () if $self->{_optimization};
+
     my @data;
     my ( $row_start, $col_start, $row_end, $col_end ) = @_;
 
@@ -4177,7 +4273,41 @@ sub _write_sheet_data {
         $self->{_writer}->endTag( 'sheetData' );
 
     }
+}
 
+
+###############################################################################
+#
+# _write_optimized_sheet_data()
+#
+# Write the <sheetData> element for TODO.
+#
+sub _write_optimized_sheet_data {
+
+    my $self = shift;
+
+    if ( not defined $self->{_dim_rowmin} ) {
+
+        # If the dimensions aren't defined then there is no data to write.
+        $self->{_writer}->emptyTag( 'sheetData' );
+    }
+    else {
+        $self->{_writer}->startTag( 'sheetData' );
+
+        # TODO
+        my $xlsx_fh = $self->{_writer}->getOutput();
+        my $cell_fh = $self->{_cell_data_fh};
+
+        my $buffer;
+        seek $cell_fh, 0, 0;
+
+        while ( read( $cell_fh, $buffer, 4_096 ) ) {
+            print $xlsx_fh $buffer;
+        }
+
+        $self->{_writer}->endTag( 'sheetData' );
+
+    }
 }
 
 
@@ -4229,6 +4359,54 @@ sub _write_rows {
                 @{ $self->{_set_rows}->{$row_num} } );
         }
     }
+}
+
+
+###############################################################################
+#
+# _write_single_row()
+#
+# Write out the worksheet data as a series of rows and cells. TODO
+#
+sub _write_single_row {
+
+    my $self    = shift;
+    my $row_num = $self->{_previous_row};
+
+    # Skip row if it doesn't contain row formatting or cell data.
+    if ( !$self->{_set_rows}->{$row_num} && !$self->{_table}->[$row_num] ) {
+        return;
+    }
+
+    # Write the cells if the row contains data.
+    if ( my $row_ref = $self->{_table}->[$row_num] ) {
+
+        if ( !$self->{_set_rows}->{$row_num} ) {
+            $self->_write_row( $row_num );
+        }
+        else {
+            $self->_write_row( $row_num, undef,
+                @{ $self->{_set_rows}->{$row_num} } );
+        }
+
+        for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+            if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                $self->_write_cell( $row_num, $col_num, $col_ref );
+            }
+        }
+
+        $self->{_writer}->endTag( 'row' );
+    }
+    else {
+
+        # Row attributes only.
+        $self->_write_empty_row( $row_num, undef,
+            @{ $self->{_set_rows}->{$row_num} } );
+    }
+
+    # Reset table.
+    $self->{_table} = [];
+
 }
 
 
