@@ -293,6 +293,7 @@ sub set_legend {
     my %arg  = @_;
 
     $self->{_legend_position} = $arg{position} // 'right';
+    $self->{_legend_delete_series} = $arg{delete_series};
 }
 
 
@@ -1970,11 +1971,18 @@ sub _write_cross_between {
 #
 sub _write_legend {
 
-    my $self = shift;
-    my $position = $self->{_legend_position};
-    my $overlay = 0;
+    my $self          = shift;
+    my $position      = $self->{_legend_position};
+    my @delete_series = ();
+    my $overlay       = 0;
 
-    if ($position =~ s/^overlay_//) {
+    if ( defined $self->{_legend_delete_series}
+        && ref $self->{_legend_delete_series} eq 'ARRAY' )
+    {
+        @delete_series = @{ $self->{_legend_delete_series} };
+    }
+
+    if ( $position =~ s/^overlay_// ) {
         $overlay = 1;
     }
 
@@ -1994,6 +2002,13 @@ sub _write_legend {
 
     # Write the c:legendPos element.
     $self->_write_legend_pos( $position );
+
+    # Remove series labels from the legend.
+    for my $index ( @delete_series ) {
+
+        # Write the c:legendEntry element.
+        $self->_write_legend_entry( $index );
+    }
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -2019,6 +2034,29 @@ sub _write_legend_pos {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_legend_entry()
+#
+# Write the <c:legendEntry> element.
+#
+sub _write_legend_entry {
+
+    my $self  = shift;
+    my $index = shift;
+
+    $self->{_writer}->startTag( 'c:legendEntry' );
+
+    # Write the c:idx element.
+    $self->_write_idx( $index );
+
+    # Write the c:delete element.
+    $self->_write_delete( 1 );
+
+    $self->{_writer}->endTag( 'c:legendEntry' );
 }
 
 
@@ -3162,6 +3200,23 @@ sub _write_show_ser_name {
 }
 
 
+##############################################################################
+#
+# _write_delete()
+#
+# Write the <c:delete> element.
+#
+sub _write_delete {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:delete', @attributes );
+}
+
+
 1;
 
 __END__
@@ -3428,6 +3483,13 @@ The default legend position is C<right>. The available positions are:
     right
     overlay_left
     overlay_right
+
+=item * delete_series
+
+This allows you to remove 1 or more series from the the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
+
+    # Delete/hide series index 0 and 2 from the legend.
+    $chart->set_legend( delete_series => [0, 2] );
 
 =back
 
