@@ -168,6 +168,8 @@ sub new {
 
     $self->{_rstring} = '';
 
+    $self->{_validations} = [];
+
 
     bless $self, $class;
     return $self;
@@ -2724,6 +2726,259 @@ sub merge_range {
             $self->write_blank( $row, $col, $format );
         }
     }
+}
+
+
+###############################################################################
+#
+# data_validation($row, $col, {...})
+#
+# This method handles the interface to Excel data validation.
+# Somewhat ironically the this requires a lot of validation code since the
+# interface is flexible and covers a several types of data validation.
+#
+# We allow data validation to be called on one cell or a range of cells. The
+# hashref contains the validation parameters and must be the last param:
+#    data_validation($row, $col, {...})
+#    data_validation($first_row, $first_col, $last_row, $last_col, {...})
+#
+# Returns  0 : normal termination
+#         -1 : insufficient number of arguments
+#         -2 : row or column out of range
+#         -3 : incorrect parameter.
+#
+sub data_validation {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    # Check for a valid number of args.
+    if ( @_ != 5 && @_ != 3 ) { return -1 }
+
+    # The final hashref contains the validation parameters.
+    my $param = pop;
+
+    # Make the last row/col the same as the first if not defined.
+    my ( $row1, $col1, $row2, $col2 ) = @_;
+    if ( !defined $row2 ) {
+        $row2 = $row1;
+        $col2 = $col1;
+    }
+
+    # Check that row and col are valid without storing the values.
+    return -2 if $self->_check_dimensions( $row1, $col1, 1, 1 );
+    return -2 if $self->_check_dimensions( $row2, $col2, 1, 1 );
+
+
+    # Check that the last parameter is a hash list.
+    if ( ref $param ne 'HASH' ) {
+        carp "Last parameter '$param' in data_validation() must be a hash ref";
+        return -3;
+    }
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        validate      => 1,
+        criteria      => 1,
+        value         => 1,
+        source        => 1,
+        minimum       => 1,
+        maximum       => 1,
+        ignore_blank  => 1,
+        dropdown      => 1,
+        show_input    => 1,
+        input_title   => 1,
+        input_message => 1,
+        show_error    => 1,
+        error_title   => 1,
+        error_message => 1,
+        error_type    => 1,
+        other_cells   => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $param_key ( keys %$param ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in data_validation()";
+            return -3;
+        }
+    }
+
+    # Map alternative parameter names 'source' or 'minimum' to 'value'.
+    $param->{value} = $param->{source}  if defined $param->{source};
+    $param->{value} = $param->{minimum} if defined $param->{minimum};
+
+    # 'validate' is a required parameter.
+    if ( not exists $param->{validate} ) {
+        carp "Parameter 'validate' is required in data_validation()";
+        return -3;
+    }
+
+
+    # List of  valid validation types.
+    my %valid_type = (
+        'any'          => 'none',
+        'any value'    => 'none',
+        'whole number' => 'whole',
+        'whole'        => 'whole',
+        'integer'      => 'whole',
+        'decimal'      => 'decimal',
+        'list'         => 'list',
+        'date'         => 'date',
+        'time'         => 'time',
+        'text length'  => 'textLength',
+        'length'       => 'textLength',
+        'custom'       => 'custom',
+    );
+
+
+    # Check for valid validation types.
+    if ( not exists $valid_type{ lc( $param->{validate} ) } ) {
+        carp "Unknown validation type '$param->{validate}' for parameter "
+          . "'validate' in data_validation()";
+        return -3;
+    }
+    else {
+        $param->{validate} = $valid_type{ lc( $param->{validate} ) };
+    }
+
+
+    # No action is required for validation type 'any'.
+    # TODO: we should perhaps store 'any' for message only validations.
+    return 0 if $param->{validate} eq 'none';
+
+
+    # The list and custom validations don't have a criteria so we use a default
+    # of 'between'.
+    if ( $param->{validate} eq 'list' || $param->{validate} eq 'custom' ) {
+        $param->{criteria} = 'between';
+        $param->{maximum}  = undef;
+    }
+
+    # 'criteria' is a required parameter.
+    if ( not exists $param->{criteria} ) {
+        carp "Parameter 'criteria' is required in data_validation()";
+        return -3;
+    }
+
+
+    # List of valid criteria types.
+    my %criteria_type = (
+        'between'                  => 'between',
+        'not between'              => 'notBetween',
+        'equal to'                 => 'equal',
+        '='                        => 'equal',
+        '=='                       => 'equal',
+        'not equal to'             => 'notEqual',
+        '!='                       => 'notEqual',
+        '<>'                       => 'notEqual',
+        'greater than'             => 'greaterThan',
+        '>'                        => 'greaterThan',
+        'less than'                => 'lessThan',
+        '<'                        => 'lessThan',
+        'greater than or equal to' => 'greaterThanOrEqual',
+        '>='                       => 'greaterThanOrEqual',
+        'less than or equal to'    => 'lessThanOrEqual',
+        '<='                       => 'lessThanOrEqual',
+    );
+
+    # Check for valid criteria types.
+    if ( not exists $criteria_type{ lc( $param->{criteria} ) } ) {
+        carp "Unknown criteria type '$param->{criteria}' for parameter "
+          . "'criteria' in data_validation()";
+        return -3;
+    }
+    else {
+        $param->{criteria} = $criteria_type{ lc( $param->{criteria} ) };
+    }
+
+
+    # 'Between' and 'Not between' criteria require 2 values.
+    if ( $param->{criteria} eq 'between' || $param->{criteria} eq 'notBetween' )
+    {
+        if ( not exists $param->{maximum} ) {
+            carp "Parameter 'maximum' is required in data_validation() "
+              . "when using 'between' or 'not between' criteria";
+            return -3;
+        }
+    }
+    else {
+        $param->{maximum} = undef;
+    }
+
+
+    # List of valid error dialog types.
+    my %error_type = (
+        'stop'        => 0,
+        'warning'     => 1,
+        'information' => 2,
+    );
+
+    # Check for valid error dialog types.
+    if ( not exists $param->{error_type} ) {
+        $param->{error_type} = 0;
+    }
+    elsif ( not exists $error_type{ lc( $param->{error_type} ) } ) {
+        carp "Unknown criteria type '$param->{error_type}' for parameter "
+          . "'error_type' in data_validation()";
+        return -3;
+    }
+    else {
+        $param->{error_type} = $error_type{ lc( $param->{error_type} ) };
+    }
+
+
+    # Convert date/times value if required.
+    if ( $param->{validate} eq 'date' || $param->{validate} eq 'time' ) {
+        if ( $param->{value} =~ /T/ ) {
+            my $date_time = $self->convert_date_time( $param->{value} );
+
+            if ( !defined $date_time ) {
+                carp "Invalid date/time value '$param->{value}' "
+                  . "in data_validation()";
+                return -3;
+            }
+            else {
+                $param->{value} = $date_time;
+            }
+        }
+        if ( defined $param->{maximum} && $param->{maximum} =~ /T/ ) {
+            my $date_time = $self->convert_date_time( $param->{maximum} );
+
+            if ( !defined $date_time ) {
+                carp "Invalid date/time value '$param->{maximum}' "
+                  . "in data_validation()";
+                return -3;
+            }
+            else {
+                $param->{maximum} = $date_time;
+            }
+        }
+    }
+
+
+    # Set some defaults if they haven't been defined by the user.
+    $param->{ignore_blank} = 1 if !defined $param->{ignore_blank};
+    $param->{dropdown}     = 1 if !defined $param->{dropdown};
+    $param->{show_input}   = 1 if !defined $param->{show_input};
+    $param->{show_error}   = 1 if !defined $param->{show_error};
+
+
+    # These are the cells to which the validation is applied.
+    $param->{cells} = [ [ $row1, $col1, $row2, $col2 ] ];
+
+    # A (for now) undocumented parameter to pass additional cell ranges.
+    if ( exists $param->{other_cells} ) {
+
+        push @{ $param->{cells} }, @{ $param->{other_cells} };
+    }
+
+    # Store the validation information until we close the worksheet.
+    push @{ $self->{_validations} }, $param;
 }
 
 
@@ -5641,6 +5896,132 @@ sub _write_color {
 #
 # End font duplication code.
 #
+
+
+##############################################################################
+#
+# _write_data_validations()
+#
+# Write the <dataValidations> element.
+#
+sub _write_data_validations {
+
+    my $self        = shift;
+    my @validations = @{ $self->{_validations} };
+    my $count       = @validations;
+
+    return unless $count;
+
+    my @attributes = ( 'count' => $count );
+
+    $self->{_writer}->startTag( 'dataValidations', @attributes );
+
+    for my $validation ( @validations ) {
+
+        # Write the dataValidation element.
+        $self->_write_data_validation( $validation );
+    }
+
+    $self->{_writer}->endTag( 'dataValidations' );
+}
+
+
+##############################################################################
+#
+# _write_data_validation()
+#
+# Write the <dataValidation> element.
+#
+sub _write_data_validation {
+
+    my $self       = shift;
+    my $param      = shift;
+    my $sqref      = '';
+    my @attributes = ();
+
+
+    # Set the cell range(s) for the data validation.
+    # Just deal with the first cell range for now.
+    for my $cells ( $param->{cells}->[0] ) {
+        my ( $row_first, $col_first, $row_last, $col_last ) = @$cells;
+
+        # Swap last row/col for first row/col as necessary
+        if ( $row_first > $row_last ) {
+            ( $row_first, $row_last ) = ( $row_last, $row_first );
+        }
+
+        if ( $col_first > $col_last ) {
+            ( $col_first, $col_last ) = ( $col_last, $col_first );
+        }
+
+        # If the first and last cell are the same write a single cell.
+        if ( ( $row_first == $row_last ) && ( $col_first == $col_last ) ) {
+            $sqref = xl_rowcol_to_cell( $row_first, $col_first );
+        }
+        else {
+            $sqref = xl_range( $row_first, $col_first, $row_last, $col_last );
+        }
+    }
+
+    #use Data::Dumper::Perltidy;
+    #print Dumper $param;
+
+    push @attributes, ( 'type' => $param->{validate} );
+
+    if ( $param->{criteria} ne 'between' ) {
+        push @attributes, ( 'operator' => $param->{criteria} );
+    }
+
+    push @attributes, ( 'allowBlank'       => 1 ) if $param->{ignore_blank};
+    push @attributes, ( 'showInputMessage' => 1 ) if $param->{show_input};
+    push @attributes, ( 'showErrorMessage' => 1 ) if $param->{show_error};
+    push @attributes, ( 'sqref' => $sqref );
+
+    $self->{_writer}->startTag( 'dataValidation', @attributes );
+
+    # Write the formula1 element.
+    $self->_write_formula_1( $param->{value} );
+
+    # Write the formula2 element.
+    $self->_write_formula_2( $param->{maximum} ) if defined $param->{maximum};
+
+    $self->{_writer}->endTag( 'dataValidation' );
+}
+
+
+##############################################################################
+#
+# _write_formula_1()
+#
+# Write the <formula1> element.
+#
+sub _write_formula_1 {
+
+    my $self = shift;
+    my $data = shift;
+
+    $data =~ s/^=//;    # Remove formula symbol.
+
+    $self->{_writer}->dataElement( 'formula1', $data );
+}
+
+
+##############################################################################
+#
+# _write_formula_2()
+#
+# Write the <formula2> element.
+#
+sub _write_formula_2 {
+
+    my $self = shift;
+    my $data = shift;
+
+    $data =~ s/^=//;    # Remove formula symbol.
+
+    $self->{_writer}->dataElement( 'formula2', $data );
+}
+
 
 
 1;
