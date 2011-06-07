@@ -5975,6 +5975,13 @@ sub _write_data_validation {
     push @attributes, ( 'allowBlank'       => 1 ) if $param->{ignore_blank};
     push @attributes, ( 'showInputMessage' => 1 ) if $param->{show_input};
     push @attributes, ( 'showErrorMessage' => 1 ) if $param->{show_error};
+
+    push @attributes, ( 'promptTitle' => $param->{input_title} )
+      if $param->{input_title};
+
+    push @attributes, ( 'prompt' => $param->{input_message} )
+      if $param->{input_message};
+
     push @attributes, ( 'sqref' => $sqref );
 
     $self->{_writer}->startTag( 'dataValidation', @attributes );
@@ -5997,12 +6004,18 @@ sub _write_data_validation {
 #
 sub _write_formula_1 {
 
-    my $self = shift;
-    my $data = shift;
+    my $self    = shift;
+    my $formula = shift;
 
-    $data =~ s/^=//;    # Remove formula symbol.
+    # Convert a list array ref into a comma separated string.
+    if (ref $formula eq 'ARRAY') {
+        $formula   = join ',', @$formula;
+        $formula   = qq("$formula");
+    }
 
-    $self->{_writer}->dataElement( 'formula1', $data );
+    $formula =~ s/^=//;    # Remove formula symbol.
+
+    $self->{_writer}->dataElement( 'formula1', $formula );
 }
 
 
@@ -6014,12 +6027,12 @@ sub _write_formula_1 {
 #
 sub _write_formula_2 {
 
-    my $self = shift;
-    my $data = shift;
+    my $self    = shift;
+    my $formula = shift;
 
-    $data =~ s/^=//;    # Remove formula symbol.
+    $formula =~ s/^=//;    # Remove formula symbol.
 
-    $self->{_writer}->dataElement( 'formula2', $data );
+    $self->{_writer}->dataElement( 'formula2', $formula );
 }
 
 

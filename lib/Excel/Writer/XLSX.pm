@@ -3918,7 +3918,7 @@ The C<value> parameter is used to set the limiting value to which the C<criteria
 
     # Use 'source'
     validate => 'list',
-    source   => 'B1:B3',
+    source   => '$B$1:$B$3',
 
 
 =head2 maximum
@@ -4086,7 +4086,7 @@ Example 5. Limiting input to a value in a dropdown list where the list is specif
     $worksheet->data_validation('A5',
         {
             validate        => 'list',
-            source          => '=E4:G4',
+            source          => '=$E$4:$G$4',
         });
 
 Example 6. Limiting input to a date in a fixed range.
