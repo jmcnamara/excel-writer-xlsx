@@ -5941,8 +5941,11 @@ sub _write_data_validation {
 
 
     # Set the cell range(s) for the data validation.
-    # Just deal with the first cell range for now.
-    for my $cells ( $param->{cells}->[0] ) {
+    for my $cells ( @{ $param->{cells} } ) {
+
+        # Add a space between multiple cell ranges.
+        $sqref .= ' ' if $sqref ne '';
+
         my ( $row_first, $col_first, $row_last, $col_last ) = @$cells;
 
         # Swap last row/col for first row/col as necessary
@@ -5956,10 +5959,10 @@ sub _write_data_validation {
 
         # If the first and last cell are the same write a single cell.
         if ( ( $row_first == $row_last ) && ( $col_first == $col_last ) ) {
-            $sqref = xl_rowcol_to_cell( $row_first, $col_first );
+            $sqref .= xl_rowcol_to_cell( $row_first, $col_first );
         }
         else {
-            $sqref = xl_range( $row_first, $col_first, $row_last, $col_last );
+            $sqref .= xl_range( $row_first, $row_last, $col_first, $col_last );
         }
     }
 
@@ -5972,9 +5975,24 @@ sub _write_data_validation {
         push @attributes, ( 'operator' => $param->{criteria} );
     }
 
+    if ( $param->{error_type} ) {
+        push @attributes, ( 'errorStyle' => 'warning' )
+          if $param->{error_type} == 1;
+        push @attributes, ( 'errorStyle' => 'information' )
+          if $param->{error_type} == 2;
+    }
+
+
     push @attributes, ( 'allowBlank'       => 1 ) if $param->{ignore_blank};
+    push @attributes, ( 'showDropDown'     => 1 ) if !$param->{dropdown};
     push @attributes, ( 'showInputMessage' => 1 ) if $param->{show_input};
     push @attributes, ( 'showErrorMessage' => 1 ) if $param->{show_error};
+
+    push @attributes, ( 'errorTitle' => $param->{error_title} )
+      if $param->{error_title};
+
+    push @attributes, ( 'error' => $param->{error_message} )
+      if $param->{error_message};
 
     push @attributes, ( 'promptTitle' => $param->{input_title} )
       if $param->{input_title};
