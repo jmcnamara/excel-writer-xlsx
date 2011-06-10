@@ -5,6 +5,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.24 June 11 2011
+
+    + Added data validation and data_validate.pl example.
+
+    + Added the option to turn off data series in chart legends.
+
+
 0.23 May 26 2011
 
     ! Fix for charts ranges containing empty values.

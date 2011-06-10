@@ -16,6 +16,7 @@ examples/chart_pie.pl
 examples/chart_scatter.pl
 examples/chart_stock.pl
 examples/colors.pl
+examples/data_validate.pl
 examples/date_time.pl
 examples/demo.pl
 examples/diag_border.pl
@@ -263,6 +264,7 @@ t/regression/chart_format11.t
 t/regression/chart_format12.t
 t/regression/chart_format13.t
 t/regression/chart_format14.t
+t/regression/chart_format15.t
 t/regression/chart_line01.t
 t/regression/chart_pie01.t
 t/regression/chart_scatter01.t
@@ -431,6 +433,7 @@ t/regression/xlsx_files/chart_format11.xlsx
 t/regression/xlsx_files/chart_format12.xlsx
 t/regression/xlsx_files/chart_format13.xlsx
 t/regression/xlsx_files/chart_format14.xlsx
+t/regression/xlsx_files/chart_format15.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_scatter01.xlsx
@@ -571,6 +574,8 @@ t/worksheet/sub_write_col_breaks.t
 t/worksheet/sub_write_col_info.t
 t/worksheet/sub_write_custom_filter.t
 t/worksheet/sub_write_custom_filters.t
+t/worksheet/sub_write_data_validations_01.t
+t/worksheet/sub_write_data_validations_02.t
 t/worksheet/sub_write_dimension.t
 t/worksheet/sub_write_ext.t
 t/worksheet/sub_write_ext_lst.t
