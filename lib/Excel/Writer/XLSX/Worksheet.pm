@@ -226,6 +226,9 @@ sub _assemble_xml_file {
     # Write the mergeCells element.
     $self->_write_merge_cells();
 
+    # Write the dataValidations element.
+    $self->_write_data_validations();
+
     # Write the hyperlink element.
     $self->_write_hyperlinks();
 

@@ -10,7 +10,7 @@ use TestFunctions qw(_got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
 
-use Test::More tests => 43;
+use Test::More tests => 44;
 
 
 ###############################################################################
@@ -990,6 +990,41 @@ $worksheet->_write_data_validations();
 
 $caption  = " \tData validation api: range options";
 $expected = '<dataValidations count="1"><dataValidation type="whole" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5:B9 D4"><formula1>1</formula1><formula2>10</formula2></dataValidation></dataValidations>';
+
+$expected = _got_to_aref( $expected );
+$got      = _got_to_aref( $got );
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test 44 Multiple validations.
+#
+
+$worksheet = _new_worksheet( \$got );
+
+$worksheet->data_validation(
+    'B5',
+    {
+        validate => 'integer',
+        criteria => '>',
+        value    => 10,
+    }
+);
+
+$worksheet->data_validation(
+    'C10',
+    {
+        validate => 'integer',
+        criteria => '<',
+        value    => 10,
+    }
+);
+
+$worksheet->_write_data_validations();
+
+$caption  = " \tData validation api: multiple validations";
+$expected = '<dataValidations count="2"><dataValidation type="whole" operator="greaterThan" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>10</formula1></dataValidation><dataValidation type="whole" operator="lessThan" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="C10"><formula1>10</formula1></dataValidation></dataValidations>';
 
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
