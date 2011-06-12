@@ -1092,9 +1092,65 @@ sub _prepare_defined_names {
 
 ###############################################################################
 #
+# _sort_defined_names()
+#
+# Sort internal and user defined names in the same order as used by Excel.
+# This may not be strictly necessary but unsorted elements caused a lot of
+# issues in the the Spreadsheet::WriteExcel binary version. Also makes
+# comparison testing easier.
+#
+sub _sort_defined_names {
+
+    my @names = @{ $_[0] };
+
+    #<<< Perltidy ignore this.
+
+    @names = sort {
+        # Primary sort based on the defined name.
+        _normalise_defined_name( $a->[0] )
+        cmp
+        _normalise_defined_name( $b->[0] )
+
+        ||
+        # Secondary sort based on the sheet name.
+        _normalise_sheet_name( $a->[2] )
+        cmp
+        _normalise_sheet_name( $b->[2] )
+
+    } @names;
+    #>>>
+
+    return \@names;
+}
+
+# Used in the above sort routine to normalise the defined names. Removes any
+# leading '_xmln.' from internal names and lowercases the strings.
+sub _normalise_defined_name {
+    my $name = shift;
+
+    $name =~ s/^_xlnm.//;
+    $name = lc $name;
+
+    return $name;
+}
+
+# Used in the above sort routine to normalise the worksheet names for the
+# secondary sort. Removes leading quote and lowercases the strings.
+sub _normalise_sheet_name {
+    my $name = shift;
+
+    $name =~ s/^'//;
+    $name = lc $name;
+
+    return $name;
+}
+
+
+###############################################################################
+#
 # _prepare_drawings()
 #
-# Iterate through the worksheets and set up any chartor image drawings.
+# Iterate through the worksheets and set up any chart or image drawings.
 #
 sub _prepare_drawings {
 
@@ -1184,7 +1240,7 @@ sub _add_chart_data {
             # Skip if we couldn't parse the formula.
             next RANGE if !defined $sheetname;
 
-            # Skip if the name is unknow. Probably should throw exception.
+            # Skip if the name is unknown. Probably should throw exception.
             next RANGE if !exists $worksheets{$sheetname};
 
             # Find the worksheet object based on the sheet name.
@@ -1320,7 +1376,7 @@ sub _quote_sheetname {
 # _get_image_properties()
 #
 # Extract information from the image file such as dimension, type, filename,
-# and entension. Also keep track of previously seen images to optimise out
+# and extension. Also keep track of previously seen images to optimise out
 # any duplicates.
 #
 sub _get_image_properties {
