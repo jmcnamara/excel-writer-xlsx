@@ -1148,6 +1148,49 @@ sub _normalise_sheet_name {
 
 ###############################################################################
 #
+# _extract_named_ranges()
+#
+# Extract the named ranges from the sorted list of defined names. These are
+# used in the App.xml file.
+#
+sub _extract_named_ranges {
+
+    my $defined_names = shift;
+    my @named_ranges;
+
+    NAME:
+    for my $defined_name ( @$defined_names ) {
+
+        my $name  = $defined_name->[0];
+        my $index = $defined_name->[1];
+        my $range = $defined_name->[2];
+
+        # Skip autoFilter ranges.
+        next NAME if $name eq '_xlnm._FilterDatabase';
+
+        # We are only interested in defined names with ranges.
+        if ( $range =~ /(^.*?)![\$A-Z0-9:]+$/ ) {
+            my $sheet_name = $1;
+
+            # Match Print_Area and Print_Titles xlnm types.
+            if ( $name =~ /^_xlnm\.(.*)$/ ) {
+                my $xlnm_type = $1;
+                $name = $sheet_name . '!' . $xlnm_type;
+            }
+            elsif ( $index != -1 ) {
+                $name = $sheet_name . '!' . $name;
+            }
+
+            push @named_ranges, $name;
+        }
+    }
+
+    return \@named_ranges;
+}
+
+
+###############################################################################
+#
 # _prepare_drawings()
 #
 # Iterate through the worksheets and set up any chart or image drawings.
