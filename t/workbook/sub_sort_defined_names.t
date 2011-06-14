@@ -53,7 +53,7 @@ my $sorted = [
 ];
 
 
-my $got = Excel::Writer::XLSX::Workbook::_sort_defined_names($unsorted);
+my $got = Excel::Writer::XLSX::Workbook::_sort_defined_names(@$unsorted);
 
 _is_deep_diff( $got, $sorted );
 
@@ -77,7 +77,7 @@ my $named_ranges = [
 ];
 
 
-$got = Excel::Writer::XLSX::Workbook::_extract_named_ranges($sorted);
+$got = Excel::Writer::XLSX::Workbook::_extract_named_ranges(@$sorted);
 
 _is_deep_diff( $got, $named_ranges );
 

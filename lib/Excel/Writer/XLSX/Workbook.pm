@@ -1033,8 +1033,9 @@ sub _prepare_defined_names {
 
     my $self = shift;
 
-    for my $sheet ( @{ $self->{_worksheets} } ) {
+    my @defined_names;
 
+    for my $sheet ( @{ $self->{_worksheets} } ) {
 
         # Check for Print Area settings.
         if ( $sheet->{_autofilter} ) {
@@ -1043,7 +1044,7 @@ sub _prepare_defined_names {
             my $hidden = 1;
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm._FilterDatabase', $sheet->{_index}, $range, $hidden ];
 
         }
@@ -1054,14 +1055,8 @@ sub _prepare_defined_names {
             my $range = $sheet->{_print_area};
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm.Print_Area', $sheet->{_index}, $range ];
-
-            # Store the named ranges.
-            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
-            my $print_title = $sheetname . '!Print_Area';
-
-            push @{ $self->{_named_ranges} }, $print_title;
         }
 
         # Check for repeat rows/cols. aka, Print Titles.
@@ -1076,17 +1071,14 @@ sub _prepare_defined_names {
             }
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm.Print_Titles', $sheet->{_index}, $range ];
-
-            # Store the named ranges.
-            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
-            my $print_title = $sheetname . '!Print_Titles';
-
-            push @{ $self->{_named_ranges} }, $print_title;
         }
 
     }
+
+    $self->{_defined_names} = _sort_defined_names( @defined_names );
+    $self->{_named_ranges}  = _extract_named_ranges( @defined_names );
 }
 
 
@@ -1101,7 +1093,7 @@ sub _prepare_defined_names {
 #
 sub _sort_defined_names {
 
-    my @names = @{ $_[0] };
+    my @names = @_;
 
     #<<< Perltidy ignore this.
 
@@ -1155,11 +1147,11 @@ sub _normalise_sheet_name {
 #
 sub _extract_named_ranges {
 
-    my $defined_names = shift;
+    my @defined_names = @_;
     my @named_ranges;
 
     NAME:
-    for my $defined_name ( @$defined_names ) {
+    for my $defined_name ( @defined_names ) {
 
         my $name  = $defined_name->[0];
         my $index = $defined_name->[1];
@@ -1169,7 +1161,7 @@ sub _extract_named_ranges {
         next NAME if $name eq '_xlnm._FilterDatabase';
 
         # We are only interested in defined names with ranges.
-        if ( $range =~ /(^.*?)![\$A-Z0-9:]+$/ ) {
+        if ( $range =~ /^([^!]+)!/ ) {
             my $sheet_name = $1;
 
             # Match Print_Area and Print_Titles xlnm types.
