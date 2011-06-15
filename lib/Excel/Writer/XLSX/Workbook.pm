@@ -640,6 +640,63 @@ sub set_tempdir {
 
 ###############################################################################
 #
+# define_name()
+#
+# TODO.
+#
+sub define_name {
+
+    my $self        = shift;
+    my $name        = shift;
+    my $formula     = shift;
+    my $sheet_index = undef;
+    my $sheetname   = '';
+    my $full_name   = $name;
+
+
+    $formula =~ s/^=//;
+
+    if ( $name =~ /^(.*)!(.*)$/ ) {
+        $sheetname   = $1;
+        $name        = $2;
+        $sheet_index = $self->_get_sheet_index($sheetname);
+    }
+    else {
+        $sheet_index =-1;
+    }
+
+    $sheet_index = 99 unless defined $sheet_index;
+
+    push @{ $self->{_defined_names} }, [ $name, $sheet_index, $formula ];
+}
+
+
+###############################################################################
+#
+# TODO
+#
+sub _get_sheet_index {
+
+    my $self        = shift;
+    my $sheetname   = shift;
+    my $sheet_count = @{ $self->{_sheetnames} };
+    my $sheet_index = undef;
+
+    $sheetname =~ s/^'//;
+    $sheetname =~ s/'$//;
+
+    for my $i ( 0 .. $sheet_count - 1 ) {
+        if ( $sheetname eq $self->{_sheetnames}->[$i] ) {
+            $sheet_index = $i;
+        }
+    }
+
+    return $sheet_index;
+}
+
+
+###############################################################################
+#
 # set_properties()
 #
 # Set the document properties such as Title, Author etc. These are written to
@@ -1033,7 +1090,7 @@ sub _prepare_defined_names {
 
     my $self = shift;
 
-    my @defined_names;
+    my @defined_names =  @{ $self->{_defined_names} };
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1909,17 +1966,15 @@ sub _write_defined_name {
     my $self = shift;
     my $data = shift;
 
-    my $name           = $data->[0];
-    my $local_sheet_id = $data->[1];
-    my $range          = $data->[2];
-    my $hidden         = $data->[3];
+    my $name   = $data->[0];
+    my $id     = $data->[1];
+    my $range  = $data->[2];
+    my $hidden = $data->[3];
 
-    my @attributes = (
-        'name'         => $name,
-        'localSheetId' => $local_sheet_id,
-    );
+    my @attributes = ( 'name' => $name );
 
-    push @attributes, ( 'hidden' => 1) if $hidden;
+    push @attributes, ( 'localSheetId' => $id ) if $id != -1;
+    push @attributes, ( 'hidden'       => 1 )   if $hidden;
 
     $self->{_writer}->dataElement( 'definedName', $range, @attributes );
 }
