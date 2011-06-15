@@ -642,7 +642,8 @@ sub set_tempdir {
 #
 # define_name()
 #
-# TODO.
+# Create a defined name in Excel. We handle global/workbook level names and
+# local/worksheet names.
 #
 sub define_name {
 
@@ -653,45 +654,38 @@ sub define_name {
     my $sheetname   = '';
     my $full_name   = $name;
 
-
+    # Remove the = sign from the formula if it exists.
     $formula =~ s/^=//;
 
+    # Local defined names are formatted like "Sheet1!name".
     if ( $name =~ /^(.*)!(.*)$/ ) {
         $sheetname   = $1;
         $name        = $2;
         $sheet_index = $self->_get_sheet_index($sheetname);
     }
     else {
-        $sheet_index =-1;
+        $sheet_index =-1; # Use -1 to indicate global names.
     }
 
-    $sheet_index = 99 unless defined $sheet_index;
+    # Warn if the sheet index wasn't found.
+    if (!defined $sheet_index) {
+       carp "Unknown sheet name $sheetname in defined_name()\n";
+       return -1;
+    }
+
+    # Warn if the sheet name contains invalid chars as defined by Excel help.
+    if ($name !~ m/^[a-zA-Z_\\][a-zA-Z_.]+/) {
+       carp "Invalid characters in name '$name' used in defined_name()\n";
+       return -1;
+    }
+
+    # Warn if the sheet name looks like a cell name.
+    if ($name =~ m/^[a-zA-Z][a-zA-Z]?[a-dA-D]?[0-9]+$/) {
+       carp "Invalid name '$name' looks like a cell name in defined_name()\n";
+       return -1;
+    }
 
     push @{ $self->{_defined_names} }, [ $name, $sheet_index, $formula ];
-}
-
-
-###############################################################################
-#
-# TODO
-#
-sub _get_sheet_index {
-
-    my $self        = shift;
-    my $sheetname   = shift;
-    my $sheet_count = @{ $self->{_sheetnames} };
-    my $sheet_index = undef;
-
-    $sheetname =~ s/^'//;
-    $sheetname =~ s/'$//;
-
-    for my $i ( 0 .. $sheet_count - 1 ) {
-        if ( $sheetname eq $self->{_sheetnames}->[$i] ) {
-            $sheet_index = $i;
-        }
-    }
-
-    return $sheet_index;
 }
 
 
@@ -741,9 +735,6 @@ sub set_properties {
 
     $self->{_doc_properties} = \%param;
 }
-
-
-
 
 
 ###############################################################################
@@ -1083,8 +1074,9 @@ sub _prepare_fills {
 #
 # _prepare_defined_names()
 #
-# Iterate through the worksheets and store any defined names. Stores the
-# defined name for the Workbook.xml and the named ranges for App.xml.
+# Iterate through the worksheets and store any defined names in addition to
+# any user defined names. Stores the defined names for the Workbook.xml and
+# the named ranges for App.xml.
 #
 sub _prepare_defined_names {
 
@@ -1134,7 +1126,8 @@ sub _prepare_defined_names {
 
     }
 
-    $self->{_defined_names} = _sort_defined_names( @defined_names );
+    @defined_names          = _sort_defined_names( @defined_names );
+    $self->{_defined_names} = \@defined_names;
     $self->{_named_ranges}  = _extract_named_ranges( @defined_names );
 }
 
@@ -1169,7 +1162,7 @@ sub _sort_defined_names {
     } @names;
     #>>>
 
-    return \@names;
+    return @names;
 }
 
 # Used in the above sort routine to normalise the defined names. Removes any
@@ -1674,6 +1667,31 @@ sub _process_jpg {
     return ( $type, $width, $height );
 }
 
+
+###############################################################################
+#
+# _get_sheet_index()
+#
+# Convert a sheet name to its index. Return undef otherwise.
+#
+sub _get_sheet_index {
+
+    my $self        = shift;
+    my $sheetname   = shift;
+    my $sheet_count = @{ $self->{_sheetnames} };
+    my $sheet_index = undef;
+
+    $sheetname =~ s/^'//;
+    $sheetname =~ s/'$//;
+
+    for my $i ( 0 .. $sheet_count - 1 ) {
+        if ( $sheetname eq $self->{_sheetnames}->[$i] ) {
+            $sheet_index = $i;
+        }
+    }
+
+    return $sheet_index;
+}
 
 
 ###############################################################################

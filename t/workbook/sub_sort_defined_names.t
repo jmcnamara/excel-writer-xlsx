@@ -34,7 +34,7 @@ my $unsorted = [
 ];
 
 
-my $sorted = [
+my $expected = [
     [ "_Egg",                  -1, q(Sheet1!$A$1)       ],
     [ "_xlnm._FilterDatabase",  0, q(Sheet1!$G$1)       ],
     [ "_Fog",                  -1, q(Sheet1!$A$1)       ],
@@ -52,10 +52,10 @@ my $sorted = [
     [ "Print_Titlet",          -1, q(Sheet1!$A$1)       ],
 ];
 
+my @sorted  = Excel::Writer::XLSX::Workbook::_sort_defined_names(@$unsorted);
+my $got     = \@sorted;
 
-my $got = Excel::Writer::XLSX::Workbook::_sort_defined_names(@$unsorted);
-
-_is_deep_diff( $got, $sorted );
+_is_deep_diff( $got, $expected );
 
 #
 # Also test the named ranges required by App generated from the sorted list.
@@ -77,10 +77,22 @@ my $named_ranges = [
 ];
 
 
-$got = Excel::Writer::XLSX::Workbook::_extract_named_ranges(@$sorted);
+$got = Excel::Writer::XLSX::Workbook::_extract_named_ranges(@sorted);
 
 _is_deep_diff( $got, $named_ranges );
 
 
 
 __END__
+<vt:lpstr>_Egg</vt:lpstr>
+<vt:lpstr>_Fog</vt:lpstr>
+<vt:lpstr>Sheet2!aaa</vt:lpstr>
+<vt:lpstr>Abc</vt:lpstr>
+<vt:lpstr>'Sheet 3'!Bar</vt:lpstr>
+<vt:lpstr>Sheet1!Bar</vt:lpstr>
+<vt:lpstr>Sheet2!Bar</vt:lpstr>
+<vt:lpstr>Foo</vt:lpstr>
+<vt:lpstr>Sheet1!Print_Area</vt:lpstr>
+<vt:lpstr>Print_Titler</vt:lpstr>
+<vt:lpstr>Sheet1!Print_Titles</vt:lpstr>
+<vt:lpstr>Print_Titlet</vt:lpstr>

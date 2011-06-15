@@ -394,17 +394,24 @@ See also the C<properties.pl> program in the examples directory of the distro.
 
 =head2 define_name()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is used to defined a name that can be used to represent a value, a single cell or a range of cells in a workbook.
 
+For example to set a global/workbook name:
+
+    # Global/workbook names.
     $workbook->define_name( 'Exchange_rate', '=0.96' );
     $workbook->define_name( 'Sales',         '=Sheet1!$G$1:$H$10' );
+
+It is also possible to define a local/worksheet name by prefixing the name with the sheet name using the syntax C<sheetname!definedname>:
+
+    # Local/worksheet name.
     $workbook->define_name( 'Sheet2!Sales',  '=Sheet2!$G$1:$G$10' );
 
-See the defined_name.pl program in the examples dir of the distro.
+If the sheet name contains spaces or special characters you must enclose it in single quotes like in Excel:
 
-Note: This currently a beta feature. More documentation and examples will be added.
+    $workbook->define_name( "'New Data'!Sales",  '=Sheet2!$G$1:$G$10' );
+
+See the defined_name.pl program in the examples dir of the distro.
 
 
 
@@ -4544,6 +4551,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     colors.pl               A demo of the colour palette and named colours.
     data_validate.pl        An example of data validation and dropdown lists.
     date_time.pl            Write dates and times with write_date_time().
+    defined_name.pl         Example of how to create defined names.
     diag_border.pl          A simple example of diagonal cell borders.
     filehandle.pl           Examples of working with filehandles.
     headers.pl              Examples of worksheet headers and footers.
@@ -4612,7 +4620,6 @@ The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::
 However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
 
     Images (partial support)
-    Defined names.
     Cell comments.
     Outlines.
 
@@ -4628,7 +4635,7 @@ The following is a full list of the module methods and their support status:
     add_chart()                 Yes
     close()                     Yes
     set_properties()            Yes
-    define_name()               No
+    define_name()               Yes
     set_tempdir()               Yes
     set_custom_color()          Yes
     sheets()                    Yes
@@ -4745,10 +4752,8 @@ The following is a full list of the module methods and their support status:
 
 All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
-    define_name()
-    insert_image() (currently partially supported)
-
     write_comment()
+    insert_image() (currently partially supported)
     outline_settings()
 
 If you would care to you can sponsor a feature to move it up the list. See L<DONATIONS and SPONSORSHIP>
