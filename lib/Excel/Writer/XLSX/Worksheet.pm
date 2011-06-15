@@ -1468,8 +1468,8 @@ sub fit_to_pages {
     my $self = shift;
 
     $self->{_fit_page}           = 1;
-    $self->{_fit_width}          = $_[0] || 1;
-    $self->{_fit_height}         = $_[1] || 1;
+    $self->{_fit_width}          = $_[0] // 1;
+    $self->{_fit_height}         = $_[1] // 1;
     $self->{_page_setup_changed} = 1;
 }
 
@@ -2228,7 +2228,7 @@ sub write_formula {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    # Remove the = sign if it exist.
+    # Remove the = sign if it exists.
     $formula =~ s/^=//;
 
 
@@ -4838,13 +4838,12 @@ sub _write_page_setup {
         push @attributes, ( 'scale' => $self->{_print_scale} );
     }
 
-    # Set the "Fit to page" properties. These properties are only set
-    # for values greater than 1 sheet.
-    if ( $self->{_fit_width} > 1 ) {
+    # Set the "Fit to page" properties.
+    if ( $self->{_fit_page} && $self->{_fit_width} != 1 ) {
         push @attributes, ( 'fitToWidth' => $self->{_fit_width} );
     }
 
-    if ( $self->{_fit_height} > 1 ) {
+    if ( $self->{_fit_page} && $self->{_fit_height} != 1 ) {
         push @attributes, ( 'fitToHeight' => $self->{_fit_height} );
     }
 

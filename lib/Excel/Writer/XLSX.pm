@@ -2485,8 +2485,6 @@ The print area can be defined using the C<print_area()> method as described abov
 A common requirement is to fit the printed output to I<n> pages wide but have the height be as long as necessary. To achieve this set the C<$height> to zero or leave it blank:
 
     $worksheet1->fit_to_pages( 1, 0 );    # 1 page wide and as long as necessary
-    $worksheet2->fit_to_pages( 1 );       # The same
-
 
 Note that although it is valid to use both C<fit_to_pages()> and C<set_print_scale()> on the same worksheet only one of these options can be active at a time. The last method call made will set the active option.
 
