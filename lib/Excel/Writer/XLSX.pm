@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.24 of Excel::Writer::XLSX, released June 11, 2011.
+This document refers to version 0.25 of Excel::Writer::XLSX, released June 16, 2011.
 
 
 
@@ -4764,8 +4764,6 @@ If you would care to you can sponsor a feature to move it up the list. See L<DON
 L<http://search.cpan.org/search?dist=Archive-Zip/>.
 
 Perl 5.10.0.
-
-Perl 5.10.0 came out the same year as Excel 2007. Supporting older versions of perl is a drain on the authors time. However, if you don't have the option of using a more recent perl there is a perl 5.8.2 tracking branch of Excel::Writer::XLSX on GitHub: L<http://github.com/jmcnamara/excel-writer-xlsx/tree/perl5.8.2>.
 
 
 

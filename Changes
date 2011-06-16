@@ -5,6 +5,15 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.25 June 16 2011
+
+     + Added option to add defined names to workbooks and worksheets.
+       Added defined_name.pl example program.
+
+     ! Fix for fit_to_pages() with zero values.
+       Reported by Aki Huttunen.
+
+
 0.24 June 11 2011
 
     + Added data validation and data_validate.pl example.
@@ -101,7 +110,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added date_time.pl example program.
 
-    ! Fixed issue where leading and trailing whitespace in cell strings 
+    ! Fixed issue where leading and trailing whitespace in cell strings
       wasn't preserved.
 
 

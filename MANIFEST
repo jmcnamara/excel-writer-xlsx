@@ -18,6 +18,7 @@ examples/chart_stock.pl
 examples/colors.pl
 examples/data_validate.pl
 examples/date_time.pl
+examples/defined_name.pl
 examples/demo.pl
 examples/diag_border.pl
 examples/filehandle.pl
@@ -282,11 +283,13 @@ t/regression/chartsheet09.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
+t/regression/defined_name01.t
 t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
 t/regression/fit_to_page04.t
+t/regression/fit_to_page05.t
 t/regression/gridlines01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
@@ -451,11 +454,13 @@ t/regression/xlsx_files/chartsheet09.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
+t/regression/xlsx_files/defined_name01.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx
 t/regression/xlsx_files/fit_to_pages04.xlsx
+t/regression/xlsx_files/fit_to_pages05.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
@@ -541,6 +546,7 @@ t/utility/xl_col_to_name.t
 t/utility/xl_range.t
 t/utility/xl_rowcol_to_cell.t
 t/workbook/sub_get_chart_range.t
+t/workbook/sub_sort_defined_names.t
 t/workbook/sub_write_book_views.t
 t/workbook/sub_write_calc_pr.t
 t/workbook/sub_write_defined_name.t
