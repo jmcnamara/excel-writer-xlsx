@@ -2482,7 +2482,7 @@ The C<fit_to_pages()> method is used to fit the printed area to a specific numbe
 
 The print area can be defined using the C<print_area()> method as described above.
 
-A common requirement is to fit the printed output to I<n> pages wide but have the height be as long as necessary. To achieve this set the C<$height> to zero or leave it blank:
+A common requirement is to fit the printed output to I<n> pages wide but have the height be as long as necessary. To achieve this set the C<$height> to zero:
 
     $worksheet1->fit_to_pages( 1, 0 );    # 1 page wide and as long as necessary
 
