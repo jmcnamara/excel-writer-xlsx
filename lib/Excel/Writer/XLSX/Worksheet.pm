@@ -2693,15 +2693,16 @@ sub merge_range {
     if ( $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
-    croak "Incorrect number of arguments" if @_ != 6;
-    croak "Final argument must be a format object" unless ref $_[5];
+    croak "Incorrect number of arguments" if @_ < 6;
+    croak "Fifth parameter must be a format object" unless ref $_[5];
 
-    my $rwFirst  = $_[0];
-    my $colFirst = $_[1];
-    my $rwLast   = $_[2];
-    my $colLast  = $_[3];
-    my $string   = $_[4];
-    my $format   = $_[5];
+    my $rwFirst    = shift;
+    my $colFirst   = shift;
+    my $rwLast     = shift;
+    my $colLast    = shift;
+    my $string     = shift;
+    my $format     = shift;
+    my @extra_args = @_; # For write_url().
 
 
     # Excel doesn't allow a single cell to be merged
@@ -2720,7 +2721,7 @@ sub merge_range {
     push @{ $self->{_merge} }, [ $rwFirst, $colFirst, $rwLast, $colLast ];
 
     # Write the first cell
-    $self->write( $rwFirst, $colFirst, $string, $format );
+    $self->write( $rwFirst, $colFirst, $string, $format, @extra_args );
 
     # Pad out the rest of the area with formatted blank cells.
     for my $row ( $rwFirst .. $rwLast ) {
@@ -2731,6 +2732,9 @@ sub merge_range {
     }
 }
 
+#
+# TODO Abstract merge_range() into merge_range_type();
+#
 
 ###############################################################################
 #
