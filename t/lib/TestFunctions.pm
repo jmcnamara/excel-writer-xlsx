@@ -20,6 +20,7 @@ our @EXPORT      = ();
 our %EXPORT_TAGS = ();
 our @EXPORT_OK   = qw(
   _expected_to_aref
+  _expected_vml_to_aref
   _got_to_aref
   _is_deep_diff
   _new_object
@@ -57,6 +58,45 @@ sub _expected_to_aref {
     }
 
     return \@data;
+}
+
+
+###############################################################################
+#
+# Turn the embedded VML in the __DATA__ section of the calling test program
+# into an array ref for comparison testing.
+#
+# The VML data in the testcases is taken from Excel 2007 files. The data has
+# to be massaged significantly to make it suitable for comparison.
+#
+sub _expected_vml_to_aref {
+
+    my $vml_data = '';
+
+    # Ignore warning for files that don't have a 'main::DATA'.
+    no warnings 'once';
+
+    while ( <main::DATA> ) {
+
+        chomp;
+        next unless /\S/;    # Skip blank lines.
+
+        s/^\s+//;            # Remove leading whitespace.
+        s/\s+$//;            # Remove trailing whitespace.
+        s/\'/"/g;            # Convert VMLs attribute quotes.
+        s{/>$}{ />}g;        # Add space before element end like XML::Writer.
+
+        $_ .= " "  if /"$/;  # Add space between attributes.
+        $_ .= "\n" if />$/;  # Add newline after element end.
+
+        s/></>\n</g;         # Split multiple elements.
+
+        chomp if $_ eq "<x:Anchor>\n";    # Put all of Anchor on one line.
+
+        $vml_data .= $_;
+    }
+
+    return [ split "\n", $vml_data ];
 }
 
 
