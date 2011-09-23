@@ -20,12 +20,14 @@ use Exporter;
 use Carp;
 use File::Copy;
 use Excel::Writer::XLSX::Package::App;
+use Excel::Writer::XLSX::Package::Comments;
 use Excel::Writer::XLSX::Package::ContentTypes;
 use Excel::Writer::XLSX::Package::Core;
 use Excel::Writer::XLSX::Package::Relationships;
 use Excel::Writer::XLSX::Package::SharedStrings;
 use Excel::Writer::XLSX::Package::Styles;
 use Excel::Writer::XLSX::Package::Theme;
+use Excel::Writer::XLSX::Package::VML;
 
 our @ISA     = qw(Exporter);
 our $VERSION = '0.25';
@@ -124,6 +126,8 @@ sub _create_package {
     $self->_write_chartsheet_files();
     $self->_write_chart_files();
     $self->_write_drawing_files();
+    $self->_write_vml_files();
+    $self->_write_comment_files();
     $self->_write_shared_strings_file();
     $self->_write_app_file();
     $self->_write_core_file();
@@ -264,6 +268,61 @@ sub _write_drawing_files {
 
 ###############################################################################
 #
+# _write_vml_files()
+#
+# Write the comment VML files.
+#
+sub _write_vml_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/drawings';
+
+    my $index = 1;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next unless $worksheet->{_external_comment_links};
+
+        my $vml = Excel::Writer::XLSX::Package::VML->new();
+
+
+        $vml->_set_xml_writer(
+            $dir . '/xl/drawings/vmlDrawing' . $index++ . '.vml' );
+        $vml->_assemble_xml_file();
+    }
+}
+
+
+###############################################################################
+#
+# _write_comment_files()
+#
+# Write the comment files.
+#
+sub _write_comment_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+    mkdir $dir . '/xl';
+    mkdir $dir . '/xl/drawings';
+
+    my $index = 1;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next unless $worksheet->{_external_comment_links};
+
+        my $comment = Excel::Writer::XLSX::Package::Comments->new();
+
+        $comment->_set_xml_writer(
+            $dir . '/xl/comments' . $index++ . '.xml' );
+        $comment->_assemble_xml_file();
+    }
+}
+
+
+###############################################################################
+#
 # _write_shared_strings_file()
 #
 # Write the sharedStrings.xml file.
@@ -393,6 +452,15 @@ sub _write_content_types_file {
 
     for my $i ( 1 .. $self->{_drawing_count} ) {
         $content->_add_drawing_name( 'drawing' . $i );
+    }
+
+    # TODO. Make _comment_count a Packager variable.
+    if ( $self->{_workbook}->{_comment_count} ) {
+        $content->_add_vml_name();
+    }
+
+    for my $i ( 1 .. $self->{_workbook}->{_comment_count} ) {
+        $content->_add_comment_name( 'comments' . $i );
     }
 
     # Add the sharedString rel if there is string data in the workbook.
@@ -550,8 +618,11 @@ sub _write_worksheet_rels_files {
 
         $index++;
 
-        my @external_links = (@{ $worksheet->{_external_hlinks} },
-          @{ $worksheet->{_external_dlinks} });
+        my @external_links = (
+            @{ $worksheet->{_external_hyper_links} },
+            @{ $worksheet->{_external_drawing_links} },
+            @{ $worksheet->{_external_comment_links} },
+        );
 
         next unless @external_links;
 
@@ -597,7 +668,7 @@ sub _write_chartsheet_rels_files {
 
         $index++;
 
-        my @external_links = @{ $worksheet->{_external_dlinks} };
+        my @external_links = @{ $worksheet->{_external_drawing_links} };
 
         next unless @external_links;
 

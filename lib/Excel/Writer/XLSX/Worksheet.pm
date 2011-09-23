@@ -144,9 +144,14 @@ sub new {
 
     $self->{prev_col} = -1;
 
-    $self->{_table}   = [];
-    $self->{_merge}   = [];
-    $self->{_comment} = {};
+    $self->{_table} = [];
+    $self->{_merge} = [];
+
+    $self->{_comments}            = {};
+    $self->{_comments_array}      = [];
+    $self->{_comments_author}     = '';
+    $self->{_comments_author_enc} = 0;
+    $self->{_comments_visible}    = 0;
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -157,14 +162,15 @@ sub new {
     $self->{_row_sizes}   = {};
     $self->{_col_formats} = {};
 
-    $self->{_hlink_count}     = 0;
-    $self->{_hlink_refs}      = [];
-    $self->{_external_hlinks} = [];
-    $self->{_external_dlinks} = [];
-    $self->{_drawing_links}   = [];
-    $self->{_charts}          = [];
-    $self->{_images}          = [];
-    $self->{_drawing}         = 0;
+    $self->{_hlink_count}            = 0;
+    $self->{_hlink_refs}             = [];
+    $self->{_external_hyper_links}   = [];
+    $self->{_external_drawing_links} = [];
+    $self->{_external_comment_links} = [];
+    $self->{_drawing_links}          = [];
+    $self->{_charts}                 = [];
+    $self->{_images}                 = [];
+    $self->{_drawing}                = 0;
 
     $self->{_rstring} = '';
 
@@ -1570,6 +1576,35 @@ sub keep_leading_zeros {
 
 ###############################################################################
 #
+# show_comments()
+#
+# Make any comments in the worksheet visible.
+#
+sub show_comments {
+
+    my $self = shift;
+
+    $self->{_comments_visible} = defined $_[0] ? $_[0] : 1;
+}
+
+
+###############################################################################
+#
+# set_comments_author()
+#
+# Set the default author of the cell comments.
+#
+sub set_comments_author {
+
+    my $self = shift;
+
+    $self->{_comments_author}     = defined $_[0] ? $_[0] : '';
+    $self->{_comments_author_enc} =         $_[1] ? 1     : 0;
+}
+
+
+###############################################################################
+#
 # right_to_left()
 #
 # Display the worksheet right to left for some eastern versions of Excel.
@@ -1647,8 +1682,8 @@ sub set_first_row_column {
     my $row = $_[0] || 0;
     my $col = $_[1] || 0;
 
-    $row = 65535 if $row > 65535;
-    $col = 255   if $col > 255;
+    $row = $self->{_xls_rowmax} if $row > $self->{_xls_rowmax};
+    $col = $self->{_xls_colmax} if $col > $self->{_xls_colmax};
 
     $self->{_first_row} = $row;
     $self->{_first_col} = $col;
@@ -1862,62 +1897,36 @@ sub write_col {
 #
 # write_comment($row, $col, $comment)
 #
-# Write a comment to the specified row and column (zero indexed). The maximum
-# comment size is 30831 chars. Excel5 probably accepts 32k-1 chars. However, it
-# can only display 30831 chars. Excel 7 and 2000 will crash above 32k-1.
+# Write a comment to the specified row and column (zero indexed).
 #
-# In Excel 5 a comment is referred to as a NOTE.
+# TODO. Check the max size in Excel 2007.
 #
 # Returns  0 : normal termination
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
-#         -3 : long comment truncated to 30831 chars
 #
 sub write_comment {
 
     my $self = shift;
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ( $_[0] =~ /^\D/ ) {
-        @_ = $self->_substitute_cellref( @_ );
+    if ($_[0] =~ /^\D/) {
+        @_ = $self->_substitute_cellref(@_);
     }
 
+    if (@_ < 3) { return -1 } # Check the number of args
 
-    if ( @_ < 3 ) { return -1 }    # Check the number of args
+    my $row = $_[0];
+    my $col = $_[1];
 
-    my $row     = $_[0];
-    my $col     = $_[1];
-    my $comment = $_[2];
-    my $length  = length( $_[2] );
-    my $error   = 0;
-    my $max_len = 30831;             # Maintain same max as binary file.
-    my $type    = 99;
+    # Check for pairs of optional arguments, i.e. an odd number of args.
+    croak "Uneven number of additional arguments" unless @_ % 2;
 
     # Check that row and col are valid and store max and min values
-    return -2 if $self->_check_dimensions( $row, $col );
+    return -2 if $self->_check_dimensions($row, $col);
 
-    # String must be <= 30831 chars
-    if ( $length > $max_len ) {
-        $comment = substr( $comment, 0, $max_len );
-        $error = -3;
-    }
-
-
-    # Check that row and col are valid and store max and min values
-    return -2 if $self->_check_dimensions( $row, $col );
-
-
-    # Add a datatype to the cell if it doesn't already contain one.
-    # This prevents an empty cell with a comment from being ignored.
-    #
-    if ( not $self->{_table}->[$row]->[$col] ) {
-        $self->{_table}->[$row]->[$col] = [$type];
-    }
-
-    # Store the comment.
-    $self->{_comment}->{$row}->{$col} = $comment;
-
-    return $error;
+    # Process the properties of the cell comment.
+    $self->{_comments}->{$row}->{$col} = [ $self->_comment_params(@_) ];
 }
 
 
@@ -3539,25 +3548,6 @@ sub _size_row {
 
 ###############################################################################
 #
-# _store_comment
-#
-# Store the Excel 5 NOTE record. This format is not compatible with the Excel 7
-# record.
-#
-sub _store_comment {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-    if ( @_ < 3 ) { return -1 }
-
-    # TODO Update for SpreadsheetML format
-
-}
-
-
-###############################################################################
-#
 # _options_changed()
 #
 # Check to see if any of the worksheet options have changed.
@@ -3727,7 +3717,7 @@ sub _prepare_chart {
 
         $self->{_drawing} = $drawing;
 
-        push @{ $self->{_external_dlinks} },
+        push @{ $self->{_external_drawing_links} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
@@ -3891,7 +3881,7 @@ sub _prepare_image {
 
         $self->{_drawing} = $drawing;
 
-        push @{ $self->{_external_dlinks} },
+        push @{ $self->{_external_drawing_links} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
@@ -3906,6 +3896,180 @@ sub _prepare_image {
       [ '/image', '../media/image' .  $image_id . '.' . $image_type ];
 }
 
+
+###############################################################################
+#
+# _prepare_comments()
+#
+# Turn the HoH that stores the comments into an array for easier handling.
+#
+sub _prepare_comments {
+
+    my $self = shift;
+
+    my $count = 0;
+    my @comments;
+
+    # We sort the comments by row and column but that isn't strictly required.
+    my @rows = sort { $a <=> $b } keys %{ $self->{_comments} };
+
+    for my $row ( @rows ) {
+        my @cols = sort { $a <=> $b } keys %{ $self->{_comments}->{$row} };
+
+        for my $col ( @cols ) {
+            push @comments, $self->{_comments}->{$row}->{$col};
+            $count++;
+        }
+    }
+
+    $self->{_comments}       = {};
+    $self->{_comments_array} = \@comments;
+
+    return $count;
+}
+
+
+###############################################################################
+#
+# _comment_params()
+#
+# This method handles the additional optional parameters to write_comment() as
+# well as calculating the comment object position and vertices.
+#
+sub _comment_params {
+
+    my $self = shift;
+
+    my $row    = shift;
+    my $col    = shift;
+    my $string = shift;
+
+    my $default_width  = 128;
+    my $default_height = 74;
+
+    my %params = (
+        author          => '',
+        author_encoding => 0,
+        encoding        => 0,
+        color           => 81,
+        start_cell      => undef,
+        start_col       => undef,
+        start_row       => undef,
+        visible         => undef,
+        width           => $default_width,
+        height          => $default_height,
+        x_offset        => undef,
+        x_scale         => 1,
+        y_offset        => undef,
+        y_scale         => 1,
+    );
+
+
+    # Overwrite the defaults with any user supplied values. Incorrect or
+    # misspelled parameters are silently ignored.
+    %params = ( %params, @_ );
+
+
+    # Ensure that a width and height have been set.
+    $params{width}  = $default_width  if not $params{width};
+    $params{height} = $default_height if not $params{height};
+
+
+    # Limit the string to the max number of chars.
+    my $max_len = 32767;
+
+    if ( length( $string ) > $max_len ) {
+        $string = substr( $string, 0, $max_len );
+    }
+
+
+    # Set the comment background colour.
+    my $color = $params{color};
+
+    # TODO. Update for XLSX.
+    # $color       = _get_color($color);
+    # $color       = 0x50 if $color == 0x7FFF; # Default color.
+    $params{color} = $color;
+
+
+    # Convert a cell reference to a row and column.
+    if ( defined $params{start_cell} ) {
+        my ( $row, $col ) = $self->_substitute_cellref( $params{start_cell} );
+        $params{start_row} = $row;
+        $params{start_col} = $col;
+    }
+
+
+    # Set the default start cell and offsets for the comment. These are
+    # generally fixed in relation to the parent cell. However there are
+    # some edge cases for cells at the, er, edges.
+    #
+    my $row_max = $self->{_xls_rowmax};
+    my $col_max = $self->{_xls_colmax};
+
+    if ( not defined $params{start_row} ) {
+
+        if    ( $row == 0 )            { $params{start_row} = 0 }
+        elsif ( $row == $row_max - 3 ) { $params{start_row} = $row_max - 7 }
+        elsif ( $row == $row_max - 2 ) { $params{start_row} = $row_max - 6 }
+        elsif ( $row == $row_max - 1 ) { $params{start_row} = $row_max - 5 }
+        else                           { $params{start_row} = $row - 1 }
+    }
+
+    if ( not defined $params{y_offset} ) {
+
+        if    ( $row == 0 )            { $params{y_offset} = 2 }
+        elsif ( $row == $row_max - 3 ) { $params{y_offset} = 4 }
+        elsif ( $row == $row_max - 2 ) { $params{y_offset} = 4 }
+        elsif ( $row == $row_max - 1 ) { $params{y_offset} = 2 }
+        else                           { $params{y_offset} = 7 }
+    }
+
+    if ( not defined $params{start_col} ) {
+
+        if    ( $col == $col_max - 3 ) { $params{start_col} = $col_max - 6 }
+        elsif ( $col == $col_max - 2 ) { $params{start_col} = $col_max - 5 }
+        elsif ( $col == $col_max - 1 ) { $params{start_col} = $col_max - 4 }
+        else                           { $params{start_col} = $col + 1 }
+    }
+
+    if ( not defined $params{x_offset} ) {
+
+        if    ( $col == $col_max - 3 ) { $params{x_offset} = 49 }
+        elsif ( $col == $col_max - 2 ) { $params{x_offset} = 49 }
+        elsif ( $col == $col_max - 1 ) { $params{x_offset} = 49 }
+        else                           { $params{x_offset} = 15 }
+    }
+
+
+    # Scale the size of the comment box if required.
+    if ( $params{x_scale} ) {
+        $params{width} = $params{width} * $params{x_scale};
+    }
+
+    if ( $params{y_scale} ) {
+        $params{height} = $params{height} * $params{y_scale};
+    }
+
+
+    # Calculate the positions of comment object.
+    my @vertices = $self->_position_object(
+        $params{start_col}, $params{start_row}, $params{x_offset},
+        $params{y_offset},  $params{width},     $params{height}
+    );
+
+    return (
+        $row,
+        $col,
+        $string,
+
+        $params{author},
+        $params{visible},
+        $params{color},
+
+        [@vertices]
+    );
+}
 
 
 ###############################################################################
@@ -4675,7 +4839,7 @@ sub _write_cell {
                 ++$self->{_hlink_count}, $cell->[5], $cell->[6]
               ];
 
-            push @{ $self->{_external_hlinks} },
+            push @{ $self->{_external_hyper_links} },
               [ '/hyperlink', $cell->[4], 'External' ];
         }
         elsif ( $link_type ) {

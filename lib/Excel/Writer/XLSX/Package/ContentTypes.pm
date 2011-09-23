@@ -141,7 +141,7 @@ sub _add_override {
 #
 sub _add_worksheet_name {
 
-    my $self       = shift;
+    my $self           = shift;
     my $worksheet_name = shift;
 
     $worksheet_name = "/xl/worksheets/$worksheet_name.xml";
@@ -159,7 +159,7 @@ sub _add_worksheet_name {
 #
 sub _add_chartsheet_name {
 
-    my $self       = shift;
+    my $self            = shift;
     my $chartsheet_name = shift;
 
     $chartsheet_name = "/xl/chartsheets/$chartsheet_name.xml";
@@ -182,8 +182,7 @@ sub _add_chart_name {
 
     $chart_name = "/xl/charts/$chart_name.xml";
 
-    $self->_add_override( $chart_name,
-        $app_document . 'drawingml.chart+xml' );
+    $self->_add_override( $chart_name, $app_document . 'drawingml.chart+xml' );
 }
 
 
@@ -195,15 +194,45 @@ sub _add_chart_name {
 #
 sub _add_drawing_name {
 
-    my $self       = shift;
+    my $self         = shift;
     my $drawing_name = shift;
 
     $drawing_name = "/xl/drawings/$drawing_name.xml";
 
-    $self->_add_override( $drawing_name,
-        $app_document . 'drawing+xml' );
+    $self->_add_override( $drawing_name, $app_document . 'drawing+xml' );
 }
 
+
+###############################################################################
+#
+# _add_vml_name()
+#
+# Add the name of a VML drawing to the ContentTypes defaults.
+#
+sub _add_vml_name {
+
+    my $self = shift;
+
+    $self->_add_default( 'vml', $app_document . 'vmlDrawing' );
+}
+
+
+###############################################################################
+#
+# _add_comment_name()
+#
+# Add the name of a comment to the ContentTypes overrides.
+#
+sub _add_comment_name {
+
+    my $self         = shift;
+    my $comment_name = shift;
+
+    $comment_name = "/xl/$comment_name.xml";
+
+    $self->_add_override( $comment_name,
+        $app_document . 'spreadsheetml.comments+xml' );
+}
 
 ###############################################################################
 #
