@@ -129,7 +129,7 @@ $expected = '<row r="13" ht="24" hidden="1" customHeight="1" />';
 
 $worksheet = _new_worksheet( \$got );
 
-$worksheet->_write_empty_row( 12, undef, 24, undef, 1, undef, undef, 1 );
+$worksheet->_write_empty_row( 12, undef, 24, undef, 1 );
 
 is( $got, $expected, $caption );
 

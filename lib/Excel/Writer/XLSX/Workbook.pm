@@ -81,6 +81,7 @@ sub new {
     $self->{_custom_colors}    = [];
     $self->{_doc_properties}   = {};
     $self->{_localtime}        = [ localtime() ];
+    $self->{_comment_count}    = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -787,6 +788,9 @@ sub _store_workbook {
     # Prepare the drawings, charts and images.
     $self->_prepare_drawings();
 
+    # Prepare the worksheet cell comments.
+    $self->_prepare_comments();
+
     # Add cached data to charts.
     $self->_add_chart_data();
 
@@ -1275,6 +1279,28 @@ sub _prepare_drawings {
     }
 
     $self->{_drawing_count} = $drawing_id;
+}
+
+
+###############################################################################
+#
+# _prepare_comments()
+#
+# Iterate through the worksheets and set up the comment data.
+#
+sub _prepare_comments {
+
+    my $self       = shift;
+    my $comment_id = 0;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        next unless $sheet->{_has_comments};
+
+        $sheet->_prepare_comments( ++$comment_id );
+    }
+
+    $self->{_comment_count} = $comment_id;
 }
 
 

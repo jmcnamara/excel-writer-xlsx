@@ -245,8 +245,8 @@ sub _write_shape {
 
     my $style =
         'position:absolute;'
-      . 'margin-left:155.25pt;'
-      . 'margin-top:22.5pt;'
+      . 'margin-left:107.25pt;'
+      . 'margin-top:7.5pt;'
       . 'width:96pt;'
       . 'height:55.5pt;'
       . 'z-index:1;'
@@ -392,10 +392,10 @@ sub _write_client_data {
     $self->_write_auto_fill();
 
     # Write the x:Row element.
-    $self->_write_row( 2 );
+    $self->_write_row( 1 );
 
     # Write the x:Column element.
-    $self->_write_column( 2 );
+    $self->_write_column( 1 );
 
     $self->{_writer}->endTag( 'x:ClientData' );
 }
@@ -438,7 +438,7 @@ sub _write_size_with_cells {
 sub _write_anchor {
 
     my $self = shift;
-    my $data = '3, 15, 1, 10, 5, 15, 5, 4';
+    my $data = '2, 15, 0, 10, 4, 15, 4, 4';
 
     $self->{_writer}->dataElement( 'x:Anchor', $data );
 }

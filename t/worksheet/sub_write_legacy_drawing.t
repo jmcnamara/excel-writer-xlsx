@@ -1,15 +1,14 @@
 ###############################################################################
 #
-# Tests for Excel::Writer::XLSX::Package::VML methods.
+# Tests for Excel::Writer::XLSX::Worksheet methods.
 #
 # reverse('(c)'), September 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
-use TestFunctions '_new_object';
+use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
-use Excel::Writer::XLSX::Package::VML;
 
 use Test::More tests => 1;
 
@@ -21,19 +20,21 @@ use Test::More tests => 1;
 my $expected;
 my $got;
 my $caption;
-my $vml;
+my $worksheet;
 
 
 ###############################################################################
 #
-# Test the _write_anchor() method.
+# Test the _write_legacy_drawing() method.
 #
-$caption  = " \tVML: _write_anchor()";
-$expected = '<x:Anchor>2, 15, 0, 10, 4, 15, 4, 4</x:Anchor>';
+$caption  = " \tWorksheet: _write_legacy_drawing()";
+$expected = '<legacyDrawing r:id="rId1" />';
 
-$vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
+$worksheet = _new_worksheet(\$got);
 
-$vml->_write_anchor();
+$worksheet->{_has_comments} = 1;
+
+$worksheet->_write_legacy_drawing();
 
 is( $got, $expected, $caption );
 

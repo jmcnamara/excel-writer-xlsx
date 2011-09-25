@@ -66,37 +66,16 @@ sub _expected_to_aref {
 # Turn the embedded VML in the __DATA__ section of the calling test program
 # into an array ref for comparison testing.
 #
-# The VML data in the testcases is taken from Excel 2007 files. The data has
-# to be massaged significantly to make it suitable for comparison.
-#
 sub _expected_vml_to_aref {
-
-    my $vml_data = '';
 
     # Ignore warning for files that don't have a 'main::DATA'.
     no warnings 'once';
 
-    while ( <main::DATA> ) {
+    my $vml_str = do { local $/; <main::DATA> };
 
-        chomp;
-        next unless /\S/;    # Skip blank lines.
+    my @vml = _vml_str_to_array( $vml_str );
 
-        s/^\s+//;            # Remove leading whitespace.
-        s/\s+$//;            # Remove trailing whitespace.
-        s/\'/"/g;            # Convert VMLs attribute quotes.
-        s{/>$}{ />}g;        # Add space before element end like XML::Writer.
-
-        $_ .= " "  if /"$/;  # Add space between attributes.
-        $_ .= "\n" if />$/;  # Add newline after element end.
-
-        s/></>\n</g;         # Split multiple elements.
-
-        chomp if $_ eq "<x:Anchor>\n";    # Put all of Anchor on one line.
-
-        $vml_data .= $_;
-    }
-
-    return [ split "\n", $vml_data ];
+    return \@vml;
 }
 
 
@@ -134,6 +113,47 @@ sub _xml_str_to_array {
     return @xml;
 }
 
+###############################################################################
+#
+# _vml_str_to_array()
+#
+# Convert an Excel generated VML string into an array for comparison testing.
+#
+# The VML data in the testcases is taken from Excel 2007 files. The data has
+# to be massaged significantly to make it suitable for comparison.
+#
+# Excel::Writer::XLSX produced VML can be parsed as ordinary XML.
+#
+sub _vml_str_to_array {
+
+    my $vml_str = shift;
+    my @vml     = split /[\r\n]+/, $vml_str;
+
+    $vml_str = '';
+
+    for ( @vml ) {
+
+        chomp;
+        next unless /\S/;    # Skip blank lines.
+
+        s/^\s+//;            # Remove leading whitespace.
+        s/\s+$//;            # Remove trailing whitespace.
+        s/\'/"/g;            # Convert VMLs attribute quotes.
+        s{/>$}{ />}g;        # Add space before element end like XML::Writer.
+
+        $_ .= " "  if /"$/;  # Add space between attributes.
+        $_ .= "\n" if />$/;  # Add newline after element end.
+
+        s/></>\n</g;         # Split multiple elements.
+
+        chomp if $_ eq "<x:Anchor>\n";    # Put all of Anchor on one line.
+
+        $vml_str .= $_;
+    }
+
+    return (split "\n", $vml_str );
+}
+
 
 ###############################################################################
 #
@@ -160,6 +180,8 @@ sub _compare_xlsx_files {
     my $ignore_elements = shift;
     my $got_zip         = Archive::Zip->new();
     my $exp_zip         = Archive::Zip->new();
+    my @got_xml;
+    my @exp_xml;
 
     # Suppress Archive::Zip error reporting. We will handle errors.
     Archive::Zip::setErrorHandler( sub { } );
@@ -213,8 +235,14 @@ sub _compare_xlsx_files {
             $exp_xml_str =~ s/(<pageSetup.* )r:id="rId1"/$1/;
         }
 
-        my @got_xml = _xml_str_to_array( $got_xml_str );
-        my @exp_xml = _xml_str_to_array( $exp_xml_str );
+        if ( $filename =~ /.vml$/ ) {
+            @got_xml = _xml_str_to_array( $got_xml_str );
+            @exp_xml = _vml_str_to_array( $exp_xml_str );
+        }
+        else {
+            @got_xml = _xml_str_to_array( $got_xml_str );
+            @exp_xml = _xml_str_to_array( $exp_xml_str );
+        }
 
         # Ignore test specific XML elements for defined filenames.
         if ( defined $ignore_elements && exists $ignore_elements->{$filename} )

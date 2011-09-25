@@ -147,10 +147,10 @@ sub new {
     $self->{_table} = [];
     $self->{_merge} = [];
 
+    $self->{_has_comments}        = 0;
     $self->{_comments}            = {};
     $self->{_comments_array}      = [];
     $self->{_comments_author}     = '';
-    $self->{_comments_author_enc} = 0;
     $self->{_comments_visible}    = 0;
 
     $self->{_autofilter}   = '';
@@ -258,6 +258,9 @@ sub _assemble_xml_file {
 
     # Write the drawing element.
     $self->_write_drawings();
+
+    # Write the legacyDrawing element.
+    $self->_write_legacy_drawing();
 
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
@@ -1599,7 +1602,6 @@ sub set_comments_author {
     my $self = shift;
 
     $self->{_comments_author}     = defined $_[0] ? $_[0] : '';
-    $self->{_comments_author_enc} =         $_[1] ? 1     : 0;
 }
 
 
@@ -1899,8 +1901,6 @@ sub write_col {
 #
 # Write a comment to the specified row and column (zero indexed).
 #
-# TODO. Check the max size in Excel 2007.
-#
 # Returns  0 : normal termination
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
@@ -1924,6 +1924,8 @@ sub write_comment {
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions($row, $col);
+
+    $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
     $self->{_comments}->{$row}->{$col} = [ $self->_comment_params(@_) ];
@@ -3901,13 +3903,13 @@ sub _prepare_image {
 #
 # _prepare_comments()
 #
-# Turn the HoH that stores the comments into an array for easier handling.
+# Turn the HoH that stores the comments into an array for easier handling
+# and set the external links.
 #
 sub _prepare_comments {
 
-    my $self = shift;
-
-    my $count = 0;
+    my $self       = shift;
+    my $comment_id = shift;
     my @comments;
 
     # We sort the comments by row and column but that isn't strictly required.
@@ -3918,14 +3920,14 @@ sub _prepare_comments {
 
         for my $col ( @cols ) {
             push @comments, $self->{_comments}->{$row}->{$col};
-            $count++;
         }
     }
 
-    $self->{_comments}       = {};
     $self->{_comments_array} = \@comments;
 
-    return $count;
+    push @{ $self->{_external_comment_links} },
+      [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ],
+      [ '/comments',   '../comments' . $comment_id . '.xml' ],
 }
 
 
@@ -4598,15 +4600,19 @@ sub _write_rows {
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
-        # Skip row if it doesn't contain row formatting or cell data.
-        if ( !$self->{_set_rows}->{$row_num} && !$self->{_table}->[$row_num] ) {
+        # Skip row if it doesn't contain row formatting, cell data or a comment.
+        if (   !$self->{_set_rows}->{$row_num}
+            && !$self->{_table}->[$row_num]
+            && !$self->{_comments}->{$row_num} )
+        {
             next;
         }
 
+        my $span_index = int( $row_num / 16 );
+        my $span       = $self->{_row_spans}->[$span_index];
+
         # Write the cells if the row contains data.
         if ( my $row_ref = $self->{_table}->[$row_num] ) {
-            my $span_index = int( $row_num / 16 );
-            my $span       = $self->{_row_spans}->[$span_index];
 
             if ( !$self->{_set_rows}->{$row_num} ) {
                 $self->_write_row( $row_num, $span );
@@ -4624,6 +4630,11 @@ sub _write_rows {
             }
 
             $self->{_writer}->endTag( 'row' );
+        }
+        elsif ( $self->{_comments}->{$row_num} ) {
+
+            $self->_write_empty_row( $row_num, $span,
+                @{ $self->{_set_rows}->{$row_num} } );
         }
         else {
 
@@ -4655,10 +4666,29 @@ sub _calculate_spans {
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
+        # Calucalte spans for cell data.
         if ( my $row_ref = $self->{_table}->[$row_num] ) {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
                 if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+
+                    if ( !defined $span_min ) {
+                        $span_min = $col_num;
+                        $span_max = $col_num;
+                    }
+                    else {
+                        $span_min = $col_num if $col_num < $span_min;
+                        $span_max = $col_num if $col_num > $span_max;
+                    }
+                }
+            }
+        }
+
+        # Calucalte spans for comments.
+        if ( defined $self->{_comments}->{$row_num} ) {
+
+            for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+                if ( defined $self->{_comments}->{$row_num}->{$col_num} ) {
 
                     if ( !defined $span_min ) {
                         $span_min = $col_num;
@@ -4736,7 +4766,11 @@ sub _write_row {
 sub _write_empty_row {
 
     my $self = shift;
-    $self->_write_row( @_, 1 );
+
+    # Set the $empty_row parameter.
+    $_[7] = 1;
+
+    $self->_write_row( @_);
 }
 
 
@@ -5937,6 +5971,30 @@ sub _write_drawing {
     my @attributes = ( 'r:id' => $r_id );
 
     $self->{_writer}->emptyTag( 'drawing', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_legacy_drawing()
+#
+# Write the <legacyDrawing> element.
+#
+sub _write_legacy_drawing {
+
+    my $self = shift;
+    my $id;
+
+    return unless $self->{_has_comments};
+
+    # Increment the relationship id for any drawings or comments.
+    $id = $self->{_hlink_count} + 1;
+    $id++ if $self->{_drawing};
+
+
+    my @attributes = ( 'r:id' => 'rId' . $id );
+
+    $self->{_writer}->emptyTag( 'legacyDrawing', @attributes );
 }
 
 

@@ -47,7 +47,7 @@ __DATA__
   <v:stroke joinstyle="miter"/>
   <v:path gradientshapeok="t" o:connecttype="rect"/>
  </v:shapetype><v:shape id="_x0000_s1025" type="#_x0000_t202" style='position:absolute;
-  margin-left:155.25pt;margin-top:22.5pt;width:96pt;height:55.5pt;z-index:1;
+  margin-left:107.25pt;margin-top:7.5pt;width:96pt;height:55.5pt;z-index:1;
   visibility:hidden' fillcolor="#ffffe1" o:insetmode="auto">
   <v:fill color2="#ffffe1"/>
   <v:shadow on="t" color="black" obscured="t"/>
@@ -59,9 +59,9 @@ __DATA__
    <x:MoveWithCells/>
    <x:SizeWithCells/>
    <x:Anchor>
-    3, 15, 1, 10, 5, 15, 5, 4</x:Anchor>
+    2, 15, 0, 10, 4, 15, 4, 4</x:Anchor>
    <x:AutoFill>False</x:AutoFill>
-   <x:Row>2</x:Row>
-   <x:Column>2</x:Column>
+   <x:Row>1</x:Row>
+   <x:Column>1</x:Column>
   </x:ClientData>
  </v:shape></xml>

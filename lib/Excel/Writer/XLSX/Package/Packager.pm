@@ -98,6 +98,7 @@ sub _add_workbook {
     $self->{_sheet_names}   = \@sheet_names;
     $self->{_chart_count}   = scalar @{ $workbook->{_charts} };
     $self->{_drawing_count} = scalar @{ $workbook->{_drawings} };
+    $self->{_comment_count} = $workbook->{_comment_count};
     $self->{_named_ranges}  = $workbook->{_named_ranges};
 
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
@@ -282,10 +283,9 @@ sub _write_vml_files {
 
     my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next unless $worksheet->{_external_comment_links};
+        next unless $worksheet->{_has_comments} ;
 
         my $vml = Excel::Writer::XLSX::Package::VML->new();
-
 
         $vml->_set_xml_writer(
             $dir . '/xl/drawings/vmlDrawing' . $index++ . '.vml' );
@@ -310,7 +310,7 @@ sub _write_comment_files {
 
     my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next unless $worksheet->{_external_comment_links};
+        next unless $worksheet->{_has_comments} ;
 
         my $comment = Excel::Writer::XLSX::Package::Comments->new();
 
@@ -454,12 +454,11 @@ sub _write_content_types_file {
         $content->_add_drawing_name( 'drawing' . $i );
     }
 
-    # TODO. Make _comment_count a Packager variable.
-    if ( $self->{_workbook}->{_comment_count} ) {
+    if ( $self->{_comment_count} ) {
         $content->_add_vml_name();
     }
 
-    for my $i ( 1 .. $self->{_workbook}->{_comment_count} ) {
+    for my $i ( 1 .. $self->{_comment_count} ) {
         $content->_add_comment_name( 'comments' . $i );
     }
 
