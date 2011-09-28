@@ -112,6 +112,7 @@ sub _assemble_xml_file {
     $self->{_writer}->getOutput()->close();
 }
 
+
 ###############################################################################
 #
 # _set_style_properties()
@@ -291,6 +292,9 @@ sub _write_font {
 
     if ( my $theme = $format->{_theme} ) {
         $self->_write_color( 'theme' => $theme );
+    }
+    elsif ( my $index = $format->{_color_indexed} ) {
+        $self->_write_color( 'indexed' => $index );
     }
     elsif ( my $color = $format->{_color} ) {
         $color = $self->_get_palette_color( $color );
@@ -673,8 +677,16 @@ sub _write_cell_xfs {
 
     my $self    = shift;
     my @formats = @{ $self->{_formats} };
-    my $count   = scalar @formats;
 
+    # Workaround for when the last format is used for the comment font
+    # and shouldn't be used for cellXfs.
+    my $last_format = $formats[-1];
+
+    if ( $last_format->{_font_only} ) {
+        pop @formats;
+    }
+
+    my $count = scalar @formats;
     my @attributes = ( 'count' => $count );
 
     $self->{_writer}->startTag( 'cellXfs', @attributes );

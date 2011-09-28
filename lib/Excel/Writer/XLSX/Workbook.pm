@@ -81,15 +81,13 @@ sub new {
     $self->{_custom_colors}    = [];
     $self->{_doc_properties}   = {};
     $self->{_localtime}        = [ localtime() ];
-    $self->{_comment_count}    = 0;
+    $self->{_num_comment_files}= 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
     $self->{_str_unique} = 0;
     $self->{_str_table}  = {};
     $self->{_str_array}  = [];
-
-
 
 
     bless $self, $class;
@@ -444,8 +442,7 @@ sub _check_sheetname {
 #
 # add_format(%properties)
 #
-# Add a new format to the Excel workbook. This adds an XF record and
-# a FONT record. Also, pass any properties to the Format::new().
+# Add a new format to the Excel workbook.
 #
 sub add_format {
 
@@ -770,6 +767,9 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
+    # Prepare the worksheet cell comments.
+    $self->_prepare_comments();
+
     # Set the font index for the format objects.
     $self->_prepare_fonts();
 
@@ -787,9 +787,6 @@ sub _store_workbook {
 
     # Prepare the drawings, charts and images.
     $self->_prepare_drawings();
-
-    # Prepare the worksheet cell comments.
-    $self->_prepare_comments();
 
     # Add cached data to charts.
     $self->_add_chart_data();
@@ -1300,7 +1297,20 @@ sub _prepare_comments {
         $sheet->_prepare_comments( ++$comment_id );
     }
 
-    $self->{_comment_count} = $comment_id;
+    $self->{_num_comment_files} = $comment_id;
+
+    # Add a font format for cell comments.
+    if ( $comment_id > 0 ) {
+        my $format = Excel::Writer::XLSX::Format->new(
+            0,
+            font          => 'Tahoma',
+            size          => 8,
+            color_indexed => 81,
+            font_only     => 1,
+        );
+
+        push @{ $self->{_formats} }, $format;
+    }
 }
 
 

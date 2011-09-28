@@ -33,7 +33,7 @@ $expected = '<x:Anchor>2, 15, 0, 10, 4, 15, 4, 4</x:Anchor>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_anchor();
+$vml->_write_anchor( [ 2, 0, 4, 4, 143, 10, 128, 74 ] );
 
 is( $got, $expected, $caption );
 

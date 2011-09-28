@@ -61,7 +61,8 @@ sub new {
 #
 sub _assemble_xml_file {
 
-    my $self = shift;
+    my $self          = shift;
+    my $comments_data = shift;
 
     return unless $self->{_writer};
 
@@ -74,8 +75,7 @@ sub _assemble_xml_file {
     $self->_write_authors( ['John'] );
 
     # Write the commentList element.
-    $self->_write_comment_list( [ [ 1, 1, 'Some text' ] ] );
-
+    $self->_write_comment_list( $comments_data );
 
     $self->{_writer}->endTag( 'comments' );
 

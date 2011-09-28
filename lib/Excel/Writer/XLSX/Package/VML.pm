@@ -56,7 +56,9 @@ sub new {
 #
 sub _assemble_xml_file {
 
-    my $self = shift;
+    my $self          = shift;
+    my $comments_data = shift;
+    my $shape_id      = 1025;
 
     return unless $self->{_writer};
 
@@ -68,8 +70,12 @@ sub _assemble_xml_file {
     # Write the v:shapetype element.
     $self->_write_shapetype();
 
-    # Write the v:shape element.
-    $self->_write_shape();
+    my $z_index = 1;
+    for my $comment ( @$comments_data ) {
+
+        # Write the v:shape element.
+        $self->_write_shape( $shape_id++, $z_index++, $comment );
+    }
 
     $self->{_writer}->endTag( 'xml' );
 
@@ -84,6 +90,29 @@ sub _assemble_xml_file {
 # Internal methods.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _pixels_to_points()
+#
+# Convert comment vertices from pixels to points.
+#
+sub _pixels_to_points {
+
+    my $self     = shift;
+    my $vertices = shift;
+
+    my ( $col_start, $row_start, $col_end, $row_end, $left, $top, $width,
+        $height )
+      = @$vertices;
+
+    for my $pixels ( $left, $top, $width, $height ) {
+        $pixels *= 0.75;
+    }
+
+    return ( $left, $top, $width, $height );
+}
 
 
 ###############################################################################
@@ -238,18 +267,39 @@ sub _write_path {
 sub _write_shape {
 
     my $self      = shift;
-    my $id        = '_x0000_s1025';
+    my $id        = shift;
+    my $z_index   = shift;
+    my $comment   = shift;
     my $type      = '#_x0000_t202';
     my $fillcolor = '#ffffe1';
     my $insetmode = 'auto';
 
+    # Set the shape index.
+    $id = '_x0000_s' . $id;
+
+    # Get the comment parameters
+    my $row      = $comment->[0];
+    my $col      = $comment->[1];
+    my $string   = $comment->[2];
+    my $author   = $comment->[3];
+    my $visible  = $comment->[4];
+    my $color    = $comment->[5];
+    my $vertices = $comment->[6];
+
+    my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
+
     my $style =
         'position:absolute;'
-      . 'margin-left:107.25pt;'
-      . 'margin-top:7.5pt;'
-      . 'width:96pt;'
-      . 'height:55.5pt;'
-      . 'z-index:1;'
+      . 'margin-left:'
+      . $left . 'pt;'
+      . 'margin-top:'
+      . $top . 'pt;'
+      . 'width:'
+      . $width . 'pt;'
+      . 'height:'
+      . $height . 'pt;'
+      . 'z-index:'
+      . $z_index . ';'
       . 'visibility:hidden';
 
 
@@ -276,7 +326,7 @@ sub _write_shape {
     $self->_write_textbox();
 
     # Write the x:ClientData element.
-    $self->_write_client_data();
+    $self->_write_client_data( $row, $col, $vertices );
 
     $self->{_writer}->endTag( 'v:shape' );
 }
@@ -373,6 +423,9 @@ sub _write_div {
 sub _write_client_data {
 
     my $self        = shift;
+    my $row         = shift;
+    my $col         = shift;
+    my $vertices    = shift;
     my $object_type = 'Note';
 
     my @attributes = ( 'ObjectType' => $object_type );
@@ -386,16 +439,16 @@ sub _write_client_data {
     $self->_write_size_with_cells();
 
     # Write the x:Anchor element.
-    $self->_write_anchor();
+    $self->_write_anchor( $vertices );
 
     # Write the x:AutoFill element.
     $self->_write_auto_fill();
 
     # Write the x:Row element.
-    $self->_write_row( 1 );
+    $self->_write_row( $row );
 
     # Write the x:Column element.
-    $self->_write_column( 1 );
+    $self->_write_column( $col );
 
     $self->{_writer}->endTag( 'x:ClientData' );
 }
@@ -437,8 +490,13 @@ sub _write_size_with_cells {
 #
 sub _write_anchor {
 
-    my $self = shift;
-    my $data = '2, 15, 0, 10, 4, 15, 4, 4';
+    my $self     = shift;
+    my $vertices = shift;
+
+    my ( $col_start, $row_start, $col_end, $row_end ) =  @$vertices;
+
+    my $data = join ", ",
+      ( $col_start, 15, $row_start, 10, $col_end, 15, $row_end, 4 );
 
     $self->{_writer}->dataElement( 'x:Anchor', $data );
 }

@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'comment01.xlsx';
+my $filename     = 'comment02.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -35,7 +35,8 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 $worksheet->write( 'A1', 'Foo' );
-$worksheet->write_comment( 'B2', 'Some text' );
+$worksheet->write_comment( 'B2',  'Some text' );
+$worksheet->write_comment( 'D17', 'More text' );
 
 $workbook->close();
 

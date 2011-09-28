@@ -3334,10 +3334,10 @@ sub _store_externsheet {
 
 ###############################################################################
 #
-#  _position_object()
+#  _position_object_pixels()
 #
 # Calculate the vertices that define the position of a graphical object within
-# the worksheet.
+# the worksheet in pixels.
 #
 #         +------------+------------+
 #         |     A      |      B     |
@@ -3372,10 +3372,7 @@ sub _store_externsheet {
 # the width and height of the object from the width and height of the
 # underlying cells.
 #
-# The vertices are expressed as English Metric Units (EMUs). There are 12,700
-# EMUs per point. Therefore, 12,700 * 3 /4 = 9,525 EMUs per pixel.
-#
-sub _position_object {
+sub _position_object_pixels {
 
     my $self = shift;
 
@@ -3457,6 +3454,35 @@ sub _position_object {
     $x2 = $width;
     $y2 = $height;
 
+    return (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+
+    );
+}
+
+
+###############################################################################
+#
+#  _position_object_emus()
+#
+# Calculate the vertices that define the position of a graphical object within
+# the worksheet in EMUs.
+#
+# The vertices are expressed as English Metric Units (EMUs). There are 12,700
+# EMUs per point. Therefore, 12,700 * 3 /4 = 9,525 EMUs per pixel.
+#
+sub _position_object_emus {
+
+    my $self = shift;
+
+    my (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+
+    ) = $self->_position_object_pixels( @_ );
 
     # Convert the pixel values to EMUs. See above.
     $x1    *= 9_525;
@@ -3707,7 +3733,7 @@ sub _prepare_chart {
     my $height = int( 0.5 + ( 288 * $scale_y ) );
 
     my @dimensions =
-      $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
+      $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
         $height );
 
     # Create a Drawing object to use with worksheet unless one already exists.
@@ -3868,7 +3894,7 @@ sub _prepare_image {
     $height *= $scale_y;
 
     my @dimensions =
-      $self->_position_object( $col, $row, $x_offset, $y_offset, $width,
+      $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
         $height );
 
     # Convert from pixels to emus.
@@ -3927,7 +3953,10 @@ sub _prepare_comments {
 
     push @{ $self->{_external_comment_links} },
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ],
-      [ '/comments',   '../comments' . $comment_id . '.xml' ],
+      [ '/comments',   '../comments' . $comment_id . '.xml' ];
+
+    # Return the comment count.
+    return scalar @comments;
 }
 
 
@@ -4024,7 +4053,7 @@ sub _comment_params {
         elsif ( $row == $row_max - 3 ) { $params{y_offset} = 4 }
         elsif ( $row == $row_max - 2 ) { $params{y_offset} = 4 }
         elsif ( $row == $row_max - 1 ) { $params{y_offset} = 2 }
-        else                           { $params{y_offset} = 7 }
+        else                           { $params{y_offset} = 10 }
     }
 
     if ( not defined $params{start_col} ) {
@@ -4055,9 +4084,19 @@ sub _comment_params {
 
 
     # Calculate the positions of comment object.
-    my @vertices = $self->_position_object(
+    my (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+
+      ) = $self->_position_object_pixels(
         $params{start_col}, $params{start_row}, $params{x_offset},
         $params{y_offset},  $params{width},     $params{height}
+      );
+
+    my @vertices = (
+        $col_start, $row_start, $col_end, $row_end, $x_abs, $y_abs,
+        $params{width}, $params{height}
     );
 
     return (
@@ -6194,8 +6233,6 @@ sub _write_data_validation {
         }
     }
 
-    #use Data::Dumper::Perltidy;
-    #print Dumper $param;
 
     push @attributes, ( 'type' => $param->{validate} );
 
@@ -6209,7 +6246,6 @@ sub _write_data_validation {
         push @attributes, ( 'errorStyle' => 'information' )
           if $param->{error_type} == 2;
     }
-
 
     push @attributes, ( 'allowBlank'       => 1 ) if $param->{ignore_blank};
     push @attributes, ( 'showDropDown'     => 1 ) if !$param->{dropdown};

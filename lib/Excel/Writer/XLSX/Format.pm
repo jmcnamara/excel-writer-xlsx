@@ -94,6 +94,8 @@ sub new {
         _merge_range   => 0,
         _reading_order => 0,
         _just_distrib  => 0,
+        _color_indexed => 0,
+        _font_only     => 0,
 
     };
 
