@@ -57,15 +57,16 @@ sub new {
 sub _assemble_xml_file {
 
     my $self          = shift;
+    my $data_id       = shift;
+    my $vml_shape_id  = shift;
     my $comments_data = shift;
-    my $shape_id      = 1025;
 
     return unless $self->{_writer};
 
     $self->_write_xml_namespace;
 
     # Write the o:shapelayout element.
-    $self->_write_shapelayout();
+    $self->_write_shapelayout( $data_id );
 
     # Write the v:shapetype element.
     $self->_write_shapetype();
@@ -74,7 +75,7 @@ sub _assemble_xml_file {
     for my $comment ( @$comments_data ) {
 
         # Write the v:shape element.
-        $self->_write_shape( $shape_id++, $z_index++, $comment );
+        $self->_write_shape( ++$vml_shape_id, $z_index++, $comment );
     }
 
     $self->{_writer}->endTag( 'xml' );
@@ -103,9 +104,11 @@ sub _pixels_to_points {
     my $self     = shift;
     my $vertices = shift;
 
-    my ( $col_start, $row_start, $col_end, $row_end, $left, $top, $width,
-        $height )
-      = @$vertices;
+    my (
+        $col_start, $row_start, $x1,    $y1,
+        $col_end,   $row_end,   $x2,    $y2,
+        $left,      $top,       $width, $height
+    ) = @$vertices;
 
     for my $pixels ( $left, $top, $width, $height ) {
         $pixels *= 0.75;
@@ -153,15 +156,16 @@ sub _write_xml_namespace {
 #
 sub _write_shapelayout {
 
-    my $self = shift;
-    my $ext  = 'edit';
+    my $self    = shift;
+    my $data_id = shift;
+    my $ext     = 'edit';
 
     my @attributes = ( 'v:ext' => $ext );
 
     $self->{_writer}->startTag( 'o:shapelayout', @attributes );
 
     # Write the o:idmap element.
-    $self->_write_idmap();
+    $self->_write_idmap( $data_id );
 
     $self->{_writer}->endTag( 'o:shapelayout' );
 }
@@ -175,13 +179,13 @@ sub _write_shapelayout {
 #
 sub _write_idmap {
 
-    my $self = shift;
-    my $ext  = 'edit';
-    my $data = 1;
+    my $self    = shift;
+    my $ext     = 'edit';
+    my $data_id = shift;
 
     my @attributes = (
         'v:ext' => $ext,
-        'data'  => $data,
+        'data'  => $data_id,
     );
 
     $self->{_writer}->emptyTag( 'o:idmap', @attributes );
@@ -493,10 +497,11 @@ sub _write_anchor {
     my $self     = shift;
     my $vertices = shift;
 
-    my ( $col_start, $row_start, $col_end, $row_end ) =  @$vertices;
+    my ( $col_start, $row_start, $x1, $y1, $col_end, $row_end, $x2, $y2 ) =
+      @$vertices;
 
     my $data = join ", ",
-      ( $col_start, 15, $row_start, 10, $col_end, 15, $row_end, 4 );
+      ( $col_start, $x1, $row_start, $y1, $col_end, $x2, $row_end, $y2 );
 
     $self->{_writer}->dataElement( 'x:Anchor', $data );
 }

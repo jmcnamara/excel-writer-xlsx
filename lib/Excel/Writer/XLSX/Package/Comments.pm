@@ -273,7 +273,13 @@ sub _write_text_t {
     my $self = shift;
     my $text = shift;
 
-    $self->{_writer}->dataElement( 't', $text );
+    my @attributes = ();
+
+    if ( $text =~ /^\s/ || $text =~ /\s$/ ) {
+        push @attributes, ( 'xml:space' => 'preserve' );
+    }
+
+    $self->{_writer}->dataElement( 't', $text, @attributes );
 }
 
 

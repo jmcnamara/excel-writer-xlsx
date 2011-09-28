@@ -147,11 +147,12 @@ sub new {
     $self->{_table} = [];
     $self->{_merge} = [];
 
-    $self->{_has_comments}        = 0;
-    $self->{_comments}            = {};
-    $self->{_comments_array}      = [];
-    $self->{_comments_author}     = '';
-    $self->{_comments_visible}    = 0;
+    $self->{_has_comments}     = 0;
+    $self->{_comments}         = {};
+    $self->{_comments_array}   = [];
+    $self->{_comments_author}  = '';
+    $self->{_comments_visible} = 0;
+    $self->{_vml_shape_id}     = 1024;
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -3398,6 +3399,10 @@ sub _position_object_pixels {
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
 
 
+    # Note. The 1 .. $x_start calls below can be very inefficient when the
+    # object being positioned is in the last cols/rows. Probably not worth
+    # fixing for now though.
+
     # Calcuate the absolute x offset of the top-left vertex.
     for my $col_id ( 1 .. $col_start ) {
         $x_abs += $self->_size_col( $col_id );
@@ -3934,9 +3939,12 @@ sub _prepare_image {
 #
 sub _prepare_comments {
 
-    my $self       = shift;
-    my $comment_id = shift;
+    my $self         = shift;
+    my $vml_shape_id = shift;
+    my $comment_id   = shift;
     my @comments;
+
+    $self->{_vml_shape_id} = $vml_shape_id;
 
     # We sort the comments by row and column but that isn't strictly required.
     my @rows = sort { $a <=> $b } keys %{ $self->{_comments} };
@@ -4050,9 +4058,9 @@ sub _comment_params {
     if ( not defined $params{y_offset} ) {
 
         if    ( $row == 0 )            { $params{y_offset} = 2 }
-        elsif ( $row == $row_max - 3 ) { $params{y_offset} = 4 }
-        elsif ( $row == $row_max - 2 ) { $params{y_offset} = 4 }
-        elsif ( $row == $row_max - 1 ) { $params{y_offset} = 2 }
+        elsif ( $row == $row_max - 3 ) { $params{y_offset} = 16 }
+        elsif ( $row == $row_max - 2 ) { $params{y_offset} = 16 }
+        elsif ( $row == $row_max - 1 ) { $params{y_offset} = 14 }
         else                           { $params{y_offset} = 10 }
     }
 
@@ -4084,20 +4092,13 @@ sub _comment_params {
 
 
     # Calculate the positions of comment object.
-    my (
-        $col_start, $row_start, $x1, $y1,
-        $col_end,   $row_end,   $x2, $y2,
-        $x_abs,     $y_abs
-
-      ) = $self->_position_object_pixels(
+    my @vertices = $self->_position_object_pixels(
         $params{start_col}, $params{start_row}, $params{x_offset},
         $params{y_offset},  $params{width},     $params{height}
       );
 
-    my @vertices = (
-        $col_start, $row_start, $col_end, $row_end, $x_abs, $y_abs,
-        $params{width}, $params{height}
-    );
+    # Add the width and height for VML.
+    push @vertices, ( $params{width}, $params{height} );
 
     return (
         $row,

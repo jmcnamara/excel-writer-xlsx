@@ -280,7 +280,8 @@ sub _write_vml_files {
     mkdir $dir . '/xl';
     mkdir $dir . '/xl/drawings';
 
-    my $index = 1;
+    my $index   = 1;
+    my $data_id = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
         next unless $worksheet->{_has_comments};
 
@@ -288,7 +289,11 @@ sub _write_vml_files {
 
         $vml->_set_xml_writer(
             $dir . '/xl/drawings/vmlDrawing' . $index++ . '.vml' );
-        $vml->_assemble_xml_file( $worksheet->{_comments_array} );
+        $vml->_assemble_xml_file(
+            $data_id++,
+            $worksheet->{_vml_shape_id},
+            $worksheet->{_comments_array}
+        );
     }
 }
 

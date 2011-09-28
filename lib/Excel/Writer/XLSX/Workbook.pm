@@ -1287,14 +1287,18 @@ sub _prepare_drawings {
 #
 sub _prepare_comments {
 
-    my $self       = shift;
-    my $comment_id = 0;
+    my $self         = shift;
+    my $comment_id   = 0;
+    my $vml_shape_id = 1024;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
         next unless $sheet->{_has_comments};
 
-        $sheet->_prepare_comments( ++$comment_id );
+        my $count = $sheet->_prepare_comments( $vml_shape_id, ++$comment_id );
+
+        # Each VML file should start with a shape id incremented by 1024.
+        $vml_shape_id += 1024 * int( ( 1024 + $count ) / 1024 );
     }
 
     $self->{_num_comment_files} = $comment_id;
