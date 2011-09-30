@@ -275,7 +275,6 @@ sub _write_shape {
     my $z_index    = shift;
     my $comment    = shift;
     my $type       = '#_x0000_t202';
-    my $fillcolor  = '#ffffe1';
     my $insetmode  = 'auto';
     my $visibility = 'hidden';
 
@@ -283,13 +282,13 @@ sub _write_shape {
     $id = '_x0000_s' . $id;
 
     # Get the comment parameters
-    my $row      = $comment->[0];
-    my $col      = $comment->[1];
-    my $string   = $comment->[2];
-    my $author   = $comment->[3];
-    my $visible  = $comment->[4];
-    my $color    = $comment->[5];
-    my $vertices = $comment->[6];
+    my $row       = $comment->[0];
+    my $col       = $comment->[1];
+    my $string    = $comment->[2];
+    my $author    = $comment->[3];
+    my $visible   = $comment->[4];
+    my $fillcolor = $comment->[5];
+    my $vertices  = $comment->[6];
 
     my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
 
@@ -308,7 +307,8 @@ sub _write_shape {
       . $height . 'pt;'
       . 'z-index:'
       . $z_index . ';'
-      . 'visibility:' . $visibility;
+      . 'visibility:'
+      . $visibility;
 
 
     my @attributes = (

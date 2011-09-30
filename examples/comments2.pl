@@ -35,7 +35,7 @@ my $comment   = '';
 
 ###############################################################################
 #
-# Example 1. Demonstrates a simple cell comment without formatting and Unicode
+# Example 1. Demonstrates a simple cell comments without formatting.
 #            comments.
 #
 
@@ -53,8 +53,6 @@ $comment = 'This is a comment.';
 $worksheet1->write( 'C3', $cell_text, $text_wrap );
 $worksheet1->write_comment( 'C3', $comment );
 
-
-$worksheet1->set_row( 8, 50 );
 $cell_text = 'This is a UTF-8 string.';
 $comment   = chr 0x263a;
 
@@ -274,7 +272,6 @@ $worksheet7->set_column( 'C:C', 30 );
 $worksheet7->set_row( 2,  50 );
 $worksheet7->set_row( 5,  50 );
 $worksheet7->set_row( 8,  50 );
-$worksheet7->set_row( 11, 50 );
 
 my $author = '';
 my $cell   = 'C3';
@@ -300,7 +297,7 @@ $worksheet7->write_comment( $cell, $comment, author => $author );
 
 
 $author    = chr 0x20AC;
-$cell      = 'C12';
+$cell      = 'C9';
 $cell_text = "Move the mouse over this cell and you will see 'Cell commented "
   . "by $author' in the status bar at the bottom";
 $comment = 'Hello.';
@@ -326,7 +323,7 @@ $worksheet8->show_comments();
 $cell_text =
     'The height of this row has been adjusted explicitly using '
   . 'set_row(). The size of the comment box is adjusted '
-  . 'accordingly by WriteExcel.';
+  . 'accordingly by Excel::Writer::XLSX.';
 
 $comment = 'Hello.';
 
@@ -337,8 +334,8 @@ $worksheet8->write_comment( 'C3', $comment );
 $cell_text =
     'The height of this row has been adjusted by Excel due to the '
   . 'text wrap property being set. Unfortunately this means that '
-  . 'the height of the row is unknown to WriteExcel at run time '
-  . "and thus the comment box is stretched as well.\n\n"
+  . 'the height of the row is unknown to Excel::Writer::XLSX at '
+  . "run time and thus the comment box is stretched as well.\n\n"
   . 'Use set_row() to specify the row height explicitly to avoid '
   . 'this problem.';
 

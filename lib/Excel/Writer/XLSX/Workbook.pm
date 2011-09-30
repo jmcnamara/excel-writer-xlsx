@@ -63,7 +63,6 @@ sub new {
     $self->{_fileclosed}       = 0;
     $self->{_filehandle}       = undef;
     $self->{_internal_fh}      = 0;
-    $self->{_biffsize}         = 0;
     $self->{_sheet_name}       = 'Sheet';
     $self->{_chart_name}       = 'Chart';
     $self->{_sheetname_count}  = 0;
@@ -739,8 +738,7 @@ sub set_properties {
 #
 # _store_workbook()
 #
-# Assemble worksheets into a workbook and send the BIFF data to an OLE
-# storage.
+# Assemble worksheets into a workbook.
 #
 sub _store_workbook {
 

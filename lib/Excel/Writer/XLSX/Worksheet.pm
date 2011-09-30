@@ -3401,8 +3401,9 @@ sub _position_object_pixels {
     my $x_abs = 0;    # Absolute distance to left side of object.
     my $y_abs = 0;    # Absolute distance to top  side of object.
 
+    my $is_drawing = 0;
 
-    ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+    ( $col_start, $row_start, $x1, $y1, $width, $height, $is_drawing) = @_;
 
     # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
@@ -3466,10 +3467,12 @@ sub _position_object_pixels {
         $row_end++;
     }
 
-
-    $col_end-- if $width == 0;
-    $row_end-- if $height == 0;
-
+    # The following is only required for positioning drawing/chart objects
+    # and not comments. It is probably the result of a bug.
+    if ( $is_drawing ) {
+        $col_end-- if $width == 0;
+        $row_end-- if $height == 0;
+    }
 
     # The end vertices are whatever is left from the width and height.
     $x2 = $width;
@@ -3496,14 +3499,15 @@ sub _position_object_pixels {
 #
 sub _position_object_emus {
 
-    my $self = shift;
+    my $self       = shift;
+    my $is_drawing = 1;
 
     my (
         $col_start, $row_start, $x1, $y1,
         $col_end,   $row_end,   $x2, $y2,
         $x_abs,     $y_abs
 
-    ) = $self->_position_object_pixels( @_ );
+    ) = $self->_position_object_pixels( @_, $is_drawing );
 
     # Convert the pixel values to EMUs. See above.
     $x1    *= 9_525;
@@ -4061,12 +4065,25 @@ sub _comment_params {
 
 
     # Set the comment background colour.
-    my $color = $params{color};
+    my $color    = $params{color};
+    my $color_id = &Excel::Writer::XLSX::Format::_get_color( $color );
 
-    # TODO. Update for XLSX.
-    # $color       = _get_color($color);
-    # $color       = 0x50 if $color == 0x7FFF; # Default color.
-    $params{color} = $color;
+    if ( $color_id == 0 ) {
+        $params{color} = '#ffffe1';
+    }
+    else {
+        my $palette = $self->{_palette};
+
+        # Get the RGB color from the palette.
+        my @rgb = @{ $palette->[ $color_id - 8 ] };
+        my $rgb_color = sprintf "%02x%02x%02x", @rgb;
+
+        # Minor modification to allow comparison testing. Change RGB colors
+        # from long format, ffcc00 to short format fc0 used by VML.
+        $rgb_color =~ s/^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3$/$1$2$3/;
+
+        $params{color} = sprintf "#%s [%d]\n", $rgb_color, $color_id;
+    }
 
 
     # Convert a cell reference to a row and column.
@@ -4128,6 +4145,9 @@ sub _comment_params {
         $params{height} = $params{height} * $params{y_scale};
     }
 
+    # Round the dimensions to the nearest pixel.
+    $params{width}  = int( 0.5 + $params{width} );
+    $params{height} = int( 0.5 + $params{height} );
 
     # Calculate the positions of comment object.
     my @vertices = $self->_position_object_pixels(
