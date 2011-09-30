@@ -270,13 +270,14 @@ sub _write_path {
 #
 sub _write_shape {
 
-    my $self      = shift;
-    my $id        = shift;
-    my $z_index   = shift;
-    my $comment   = shift;
-    my $type      = '#_x0000_t202';
-    my $fillcolor = '#ffffe1';
-    my $insetmode = 'auto';
+    my $self       = shift;
+    my $id         = shift;
+    my $z_index    = shift;
+    my $comment    = shift;
+    my $type       = '#_x0000_t202';
+    my $fillcolor  = '#ffffe1';
+    my $insetmode  = 'auto';
+    my $visibility = 'hidden';
 
     # Set the shape index.
     $id = '_x0000_s' . $id;
@@ -292,6 +293,9 @@ sub _write_shape {
 
     my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
 
+    # Set the visibility.
+    $visibility = 'visible' if $visible;
+
     my $style =
         'position:absolute;'
       . 'margin-left:'
@@ -304,7 +308,7 @@ sub _write_shape {
       . $height . 'pt;'
       . 'z-index:'
       . $z_index . ';'
-      . 'visibility:hidden';
+      . 'visibility:' . $visibility;
 
 
     my @attributes = (
@@ -330,7 +334,7 @@ sub _write_shape {
     $self->_write_textbox();
 
     # Write the x:ClientData element.
-    $self->_write_client_data( $row, $col, $vertices );
+    $self->_write_client_data( $row, $col, $visible, $vertices );
 
     $self->{_writer}->endTag( 'v:shape' );
 }
@@ -429,6 +433,7 @@ sub _write_client_data {
     my $self        = shift;
     my $row         = shift;
     my $col         = shift;
+    my $visible     = shift;
     my $vertices    = shift;
     my $object_type = 'Note';
 
@@ -453,6 +458,9 @@ sub _write_client_data {
 
     # Write the x:Column element.
     $self->_write_column( $col );
+
+    # Write the x:Visible element.
+    $self->_write_visible() if $visible;
 
     $self->{_writer}->endTag( 'x:ClientData' );
 }
@@ -483,6 +491,20 @@ sub _write_size_with_cells {
     my $self = shift;
 
     $self->{_writer}->emptyTag( 'x:SizeWithCells' );
+}
+
+
+##############################################################################
+#
+# _write_visible()
+#
+# Write the <x:Visible> element.
+#
+sub _write_visible {
+
+    my $self = shift;
+
+    $self->{_writer}->emptyTag( 'x:Visible' );
 }
 
 

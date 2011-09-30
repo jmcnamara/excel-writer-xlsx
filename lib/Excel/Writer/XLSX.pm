@@ -1376,12 +1376,15 @@ Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 This method is used to make all cell comments visible when a worksheet is opened.
 
+    $worksheet->show_comments();
+
 Individual comments can be made visible using the C<visible> parameter of the C<write_comment> method (see above):
 
     $worksheet->write_comment( 'C3', 'Hello', visible => 1 );
 
 If all of the cell comments have been made visible you can hide individual comments as follows:
 
+    $worksheet->show_comments();
     $worksheet->write_comment( 'C3', 'Hello', visible => 0 );
 
 

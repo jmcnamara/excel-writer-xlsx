@@ -2035,7 +2035,7 @@ sub write_string {
 #         -1 : insufficient number of arguments.
 #         -2 : row or column out of range.
 #         -3 : long string truncated to 32767 chars.
-#         -4 : 2 consequtive formats used.
+#         -4 : 2 consecutive formats used.
 #
 sub write_rich_string {
 
@@ -3372,7 +3372,7 @@ sub _store_externsheet {
 #    $x_abs, $y_abs
 #
 # The width and height of the cells that the object occupies can be variable
-# and have to be taken intoaccount.
+# and have to be taken into account.
 #
 # The values of $col_start and $row_start are passed in from the calling
 # function. The values of $col_end and $row_end are calculated by subtracting
@@ -3404,7 +3404,7 @@ sub _position_object_pixels {
 
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
 
-    # Calcuate the absolute x offset of the top-left vertex.
+    # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
         for my $col_id ( 1 .. $col_start ) {
             $x_abs += $self->_size_col( $col_id );
@@ -3417,7 +3417,7 @@ sub _position_object_pixels {
 
     $x_abs += $x1;
 
-    # Calcuate the absolute y offset of the top-left vertex.
+    # Calculate the absolute y offset of the top-left vertex.
     # Store the column change to allow optimisations.
     if ( $self->{_row_size_changed} ) {
         for my $row_id ( 1 .. $row_start ) {
@@ -3968,6 +3968,14 @@ sub _prepare_comments {
         my @cols = sort { $a <=> $b } keys %{ $self->{_comments}->{$row} };
 
         for my $col ( @cols ) {
+
+            # Set comment visibility is required and not user defined.
+            if ( $self->{_comments_visible} ) {
+                if ( !defined $self->{_comments}->{$row}->{$col}->[4] ) {
+                    $self->{_comments}->{$row}->{$col}->[4] = 1;
+                }
+            }
+
             push @comments, $self->{_comments}->{$row}->{$col};
         }
     }
@@ -4732,7 +4740,7 @@ sub _calculate_spans {
 
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
-        # Calucalte spans for cell data.
+        # Calculate spans for cell data.
         if ( my $row_ref = $self->{_table}->[$row_num] ) {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
@@ -4750,7 +4758,7 @@ sub _calculate_spans {
             }
         }
 
-        # Calucalte spans for comments.
+        # Calculate spans for comments.
         if ( defined $self->{_comments}->{$row_num} ) {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {

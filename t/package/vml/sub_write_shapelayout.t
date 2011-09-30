@@ -33,7 +33,7 @@ $expected = '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1" /></o:sh
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_shapelayout();
+$vml->_write_shapelayout( 1 );
 
 is( $got, $expected, $caption );
 

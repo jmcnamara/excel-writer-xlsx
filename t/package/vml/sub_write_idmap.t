@@ -33,7 +33,7 @@ $expected = '<o:idmap v:ext="edit" data="1" />';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_idmap();
+$vml->_write_idmap( 1 );
 
 is( $got, $expected, $caption );
 

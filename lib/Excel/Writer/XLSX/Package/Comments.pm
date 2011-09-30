@@ -79,7 +79,7 @@ sub _assemble_xml_file {
 
     $self->{_writer}->endTag( 'comments' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -266,7 +266,7 @@ sub _write_text_r {
 #
 # _write_text_t()
 #
-# Write the <textT> element.
+# Write the text <t> element.
 #
 sub _write_text_t {
 
