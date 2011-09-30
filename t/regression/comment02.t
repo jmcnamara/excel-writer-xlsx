@@ -38,6 +38,9 @@ $worksheet->write( 'A1', 'Foo' );
 $worksheet->write_comment( 'B2',  'Some text' );
 $worksheet->write_comment( 'D17', 'More text' );
 
+# Set the author to match the target XLSX file.
+$worksheet->set_comments_author( 'John' );
+
 $workbook->close();
 
 

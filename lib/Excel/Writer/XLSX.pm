@@ -555,6 +555,7 @@ The following methods are available through a new worksheet:
     write_formula()
     write_comment()
     show_comments()
+    set_comments_author()
     add_write_handler()
     insert_image()
     insert_chart()
@@ -1278,6 +1279,10 @@ This option is used to indicate who the author of the comment is. Excel displays
 
     $worksheet->write_comment( 'C3', 'Atonement', author => 'Ian McEwan' );
 
+The default author for all cell comments can be set using the C<set_comments_author()> method (see below).
+
+    $worksheet->set_comments_author( 'Perl' );
+
 
 =item Option: visible
 
@@ -1386,6 +1391,16 @@ If all of the cell comments have been made visible you can hide individual comme
 
     $worksheet->show_comments();
     $worksheet->write_comment( 'C3', 'Hello', visible => 0 );
+
+
+
+=head2 set_comments_author()
+
+This method is used to set the default author of cell comments.
+
+    $worksheet->set_comments_author( 'Perl' );
+
+Individual comment authors can be set using the C<author> parameter of the C<write_comment> method (see above).
 
 
 
@@ -4662,6 +4677,7 @@ The following is a full list of the module methods and their support status:
     keep_leading_zeros()        Yes
     write_comment()             No
     show_comments()             No
+    set_comments_author()       Yes
     add_write_handler()         Yes
     insert_image()              Yes/Partial, see docs.
     insert_chart()              Yes

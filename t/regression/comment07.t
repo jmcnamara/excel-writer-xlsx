@@ -42,6 +42,9 @@ $worksheet->write_comment( 'A5',  'Some text' );
 
 $worksheet->show_comments();
 
+# Set the author to match the target XLSX file.
+$worksheet->set_comments_author( 'John' );
+
 $workbook->close();
 
 

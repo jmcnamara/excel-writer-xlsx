@@ -29,7 +29,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::Comments' );
 #
 $caption = " \tComments: _assemble_xml_file()";
 
-$obj->_assemble_xml_file([ [ 1, 1, 'Some text', '', undef, 81, [ 2, 0, 4, 4, 143, 10, 128, 74 ] ] ] );
+$obj->_assemble_xml_file([ [ 1, 1, 'Some text', 'John', undef, 81, [ 2, 0, 4, 4, 143, 10, 128, 74 ] ] ] );
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );

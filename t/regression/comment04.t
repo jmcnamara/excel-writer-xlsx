@@ -42,6 +42,10 @@ $worksheet1->write_comment( 'B2', 'Some text' );
 $worksheet3->write( 'A1', 'Bar' );
 $worksheet3->write_comment( 'C7', 'More text' );
 
+# Set the author to match the target XLSX file.
+$worksheet1->set_comments_author( 'John' );
+$worksheet3->set_comments_author( 'John' );
+
 $workbook->close();
 
 

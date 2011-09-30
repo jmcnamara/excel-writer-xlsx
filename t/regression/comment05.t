@@ -45,6 +45,10 @@ for my $row ( 0 .. 127 ) {
 
 $worksheet3->write_comment( 'A1', 'More text' );
 
+# Set the author to match the target XLSX file.
+$worksheet1->set_comments_author( 'John' );
+$worksheet3->set_comments_author( 'John' );
+
 $workbook->close();
 
 

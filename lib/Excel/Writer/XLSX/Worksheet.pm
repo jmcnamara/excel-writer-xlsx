@@ -150,7 +150,7 @@ sub new {
     $self->{_has_comments}     = 0;
     $self->{_comments}         = {};
     $self->{_comments_array}   = [];
-    $self->{_comments_author}  = '';
+    $self->{_comments_author}  = undef;
     $self->{_comments_visible} = 0;
     $self->{_vml_shape_id}     = 1024;
 
@@ -1607,7 +1607,7 @@ sub set_comments_author {
 
     my $self = shift;
 
-    $self->{_comments_author}     = defined $_[0] ? $_[0] : '';
+    $self->{_comments_author} = $_[0] if defined $_[0];
 }
 
 
@@ -3969,10 +3969,18 @@ sub _prepare_comments {
 
         for my $col ( @cols ) {
 
-            # Set comment visibility is required and not user defined.
+            # Set comment visibility if required and not already user defined.
             if ( $self->{_comments_visible} ) {
                 if ( !defined $self->{_comments}->{$row}->{$col}->[4] ) {
                     $self->{_comments}->{$row}->{$col}->[4] = 1;
+                }
+            }
+
+            # Set comment author if required and not already user defined.
+            if ( defined $self->{_comments_author} ) {
+                if ( !defined $self->{_comments}->{$row}->{$col}->[3] ) {
+                    $self->{_comments}->{$row}->{$col}->[3] =
+                      $self->{_comments_author};
                 }
             }
 
@@ -4021,9 +4029,7 @@ sub _comment_params {
     my $default_height = 74;
 
     my %params = (
-        author          => '',
-        author_encoding => 0,
-        encoding        => 0,
+        author          => undef,
         color           => 81,
         start_cell      => undef,
         start_col       => undef,

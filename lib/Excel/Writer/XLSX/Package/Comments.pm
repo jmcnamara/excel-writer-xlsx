@@ -72,7 +72,7 @@ sub _assemble_xml_file {
     $self->_write_comments();
 
     # Write the authors element.
-    $self->_write_authors( ['John'] );
+    $self->_write_authors( $comments_data );
 
     # Write the commentList element.
     $self->_write_comment_list( $comments_data );
@@ -125,19 +125,22 @@ sub _write_comments {
 sub _write_authors {
 
     my $self         = shift;
-    my $authors      = shift;
+    my $comment_data = shift;
     my $author_count = 0;
-
 
     $self->{_writer}->startTag( 'authors' );
 
-    for my $author ( @$authors ) {
+    for my $comment ( @$comment_data ) {
+        my $author = $comment->[3];
 
-        # Store the author ids.
-        $self->{_author_ids}->{$author} = $author_count++;
+        if ( defined $author && !exists $self->{_author_ids}->{$author} ) {
 
-        # Write the author element.
-        $self->_write_author( $author );
+            # Store the author id.
+            $self->{_author_ids}->{$author} = $author_count++;
+
+            # Write the author element.
+            $self->_write_author( $author );
+        }
     }
 
     $self->{_writer}->endTag( 'authors' );
@@ -178,8 +181,9 @@ sub _write_comment_list {
         my $text   = $comment->[2];
         my $author = $comment->[3];
 
-        # TODO look up author id
-        my $author_id = 0;
+        # Look up the author id.
+        my $author_id = undef;
+        $author_id = $self->{_author_ids}->{$author} if defined $author;
 
         # Write the comment element.
         $self->_write_comment( $row, $col, $text, $author_id );
