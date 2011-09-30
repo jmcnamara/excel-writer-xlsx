@@ -159,9 +159,11 @@ sub new {
     $self->{_filter_range} = [];
     $self->{_filter_cols}  = {};
 
-    $self->{_col_sizes}   = {};
-    $self->{_row_sizes}   = {};
-    $self->{_col_formats} = {};
+    $self->{_col_sizes}        = {};
+    $self->{_row_sizes}        = {};
+    $self->{_col_formats}      = {};
+    $self->{_col_size_changed} = 0;
+    $self->{_row_size_changed} = 0;
 
     $self->{_hlink_count}            = 0;
     $self->{_hlink_refs}             = [];
@@ -520,6 +522,9 @@ sub set_column {
 
     # Store the column data.
     push @{ $self->{_colinfo} }, [@data];
+
+    # Store the column change to allow optimisations.
+    $self->{_col_size_changed} = 1;
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
@@ -2680,10 +2685,11 @@ sub set_row {
         $self->{_outline_row_level} = $level;
     }
 
-
     # Store the row properties.
     $self->{_set_rows}->{$row} = [ $height, $xf, $hidden, $level, $collapsed ];
 
+    # Store the row change to allow optimisations.
+    $self->{_row_size_changed} = 1;
 
     # Store the row sizes for use when calculating image vertices.
     $self->{_row_sizes}->{$row} = $height;
@@ -3398,21 +3404,31 @@ sub _position_object_pixels {
 
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
 
-
-    # Note. The 1 .. $x_start calls below can be very inefficient when the
-    # object being positioned is in the last cols/rows. Probably not worth
-    # fixing for now though.
-
     # Calcuate the absolute x offset of the top-left vertex.
-    for my $col_id ( 1 .. $col_start ) {
-        $x_abs += $self->_size_col( $col_id );
+    if ( $self->{_col_size_changed} ) {
+        for my $col_id ( 1 .. $col_start ) {
+            $x_abs += $self->_size_col( $col_id );
+        }
     }
+    else {
+        # Optimisation for when the column widths haven't changed.
+        $x_abs += 64 * $col_start;
+    }
+
     $x_abs += $x1;
 
     # Calcuate the absolute y offset of the top-left vertex.
-    for my $row_id ( 1 .. $row_start ) {
-        $y_abs += $self->_size_row( $row_id );
+    # Store the column change to allow optimisations.
+    if ( $self->{_row_size_changed} ) {
+        for my $row_id ( 1 .. $row_start ) {
+            $y_abs += $self->_size_row( $row_id );
+        }
     }
+    else {
+        # Optimisation for when the row heights haven't changed.
+        $y_abs += 20 * $row_start;
+    }
+
     $y_abs += $y1;
 
 
@@ -3940,11 +3956,10 @@ sub _prepare_image {
 sub _prepare_comments {
 
     my $self         = shift;
+    my $vml_data_id  = shift;
     my $vml_shape_id = shift;
     my $comment_id   = shift;
     my @comments;
-
-    $self->{_vml_shape_id} = $vml_shape_id;
 
     # We sort the comments by row and column but that isn't strictly required.
     my @rows = sort { $a <=> $b } keys %{ $self->{_comments} };
@@ -3963,8 +3978,19 @@ sub _prepare_comments {
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ],
       [ '/comments',   '../comments' . $comment_id . '.xml' ];
 
-    # Return the comment count.
-    return scalar @comments;
+    my $count = scalar @comments;
+    my $start_data_id  = $vml_data_id;
+
+    # The VML o:idmap data id contains a comma separated range when there is
+    # more than one 1024 block of comments, like this: data="1,2".
+    for my $i ( 1 .. int( $count / 1024 ) ) {
+        $vml_data_id = "$vml_data_id," . ( $start_data_id + $i );
+    }
+
+    $self->{_vml_data_id}  = $vml_data_id;
+    $self->{_vml_shape_id} = $vml_shape_id;
+
+    return $count;
 }
 
 
