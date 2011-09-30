@@ -1402,7 +1402,7 @@ This method is used to set the default author of cell comments.
 
 Individual comment authors can be set using the C<author> parameter of the C<write_comment> method (see above).
 
-
+The default comment author is an empty string, C<''>, if no author is specified.
 
 
 =head2 add_write_handler( $re, $code_ref )
@@ -4565,6 +4565,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_scatter.pl        A demo of scatter style charts.
     chart_stock.pl          A demo of stock style charts.
     colors.pl               A demo of the colour palette and named colours.
+    comments1.pl            Add comments to worksheet cells.
+    comments2.pl            Add comments with advanced options.
     data_validate.pl        An example of data validation and dropdown lists.
     date_time.pl            Write dates and times with write_date_time().
     defined_name.pl         Example of how to create defined names.

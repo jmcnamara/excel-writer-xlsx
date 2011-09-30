@@ -150,7 +150,7 @@ sub new {
     $self->{_has_comments}     = 0;
     $self->{_comments}         = {};
     $self->{_comments_array}   = [];
-    $self->{_comments_author}  = undef;
+    $self->{_comments_author}  = '';
     $self->{_comments_visible} = 0;
     $self->{_vml_shape_id}     = 1024;
 
@@ -3976,12 +3976,10 @@ sub _prepare_comments {
                 }
             }
 
-            # Set comment author if required and not already user defined.
-            if ( defined $self->{_comments_author} ) {
-                if ( !defined $self->{_comments}->{$row}->{$col}->[3] ) {
-                    $self->{_comments}->{$row}->{$col}->[3] =
-                      $self->{_comments_author};
-                }
+            # Set comment author if not already user defined.
+            if ( !defined $self->{_comments}->{$row}->{$col}->[3] ) {
+                $self->{_comments}->{$row}->{$col}->[3] =
+                  $self->{_comments_author};
             }
 
             push @comments, $self->{_comments}->{$row}->{$col};
@@ -3994,8 +3992,8 @@ sub _prepare_comments {
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ],
       [ '/comments',   '../comments' . $comment_id . '.xml' ];
 
-    my $count = scalar @comments;
-    my $start_data_id  = $vml_data_id;
+    my $count         = scalar @comments;
+    my $start_data_id = $vml_data_id;
 
     # The VML o:idmap data id contains a comma separated range when there is
     # more than one 1024 block of comments, like this: data="1,2".
