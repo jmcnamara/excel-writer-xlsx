@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.25 of Excel::Writer::XLSX, released June 16, 2011.
+This document refers to version 0.25 of Excel::Writer::XLSX, released October 1, 2011.
 
 
 
@@ -104,7 +104,7 @@ This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-While Excel::Writer::XLSX doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
+Excel::Writer::XLSX supports almost all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet.
 
@@ -658,12 +658,12 @@ The general rule is that if the data looks like a I<something> then a I<somethin
     $worksheet->write( 'A15', [\@array]              ); # write_col()
 
     # And if the keep_leading_zeros property is set:
-    $worksheet->write( 'A16,  2                      ); # write_number()
-    $worksheet->write( 'A17,  02                     ); # write_string()
-    $worksheet->write( 'A18,  00002                  ); # write_string()
+    $worksheet->write( 'A16', 2                      ); # write_number()
+    $worksheet->write( 'A17', 02                     ); # write_string()
+    $worksheet->write( 'A18', 00002                  ); # write_string()
 
     # Write an array formula. Not available in Spreadsheet::WriteExcel.
-    $worksheet->write( 'A19,  '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
+    $worksheet->write( 'A19', '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
 
 
 The "looks like" rule is defined by regular expressions:
@@ -726,6 +726,7 @@ See the note about L<Cell notation>. The C<$format> parameter is optional.
 
 In general it is sufficient to use the C<write()> method.
 
+B<Note>: some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. Applying all available Service Packs to Excel should fix this.
 
 
 
@@ -1232,8 +1233,6 @@ The methods remain for backward compatibility but new Excel::Writer::XLSX progra
 
 =head2 write_comment( $row, $column, $string, ... )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<write_comment()> method is used to add a comment to a cell. A cell comment is indicated in Excel by a small red triangle in the upper right-hand corner of the cell. Moving the cursor over the red triangle will reveal the comment.
 
 The following example shows how to add a comment to a cell:
@@ -1275,7 +1274,7 @@ Most of these options are quite specific and in general the default comment beha
 
 =item Option: author
 
-This option is used to indicate who the author of the comment is. Excel displays the author of the comment in the status bar at the bottom of the worksheet. This is usually of interest in corporate environments where several people might review and provide comments to a workbook.
+This option is used to indicate who is the author of the cell comment. Excel displays the author of the comment in the status bar at the bottom of the worksheet. This is usually of interest in corporate environments where several people might review and provide comments to a workbook.
 
     $worksheet->write_comment( 'C3', 'Atonement', author => 'Ian McEwan' );
 
@@ -1372,12 +1371,14 @@ This option is used to change the y offset, in pixels, of a comment within a cel
 
 You can apply as many of these options as you require.
 
+B<Note about using options that adjust the position of the cell comment such as start_cell, start_row, start_col, x_offset and y_offset>: Excel only displays offset cell comments when they are displayed as "visible". Excel does B<not> display hidden cells as moved when you mouse over them.
+
 B<Note about row height and comments>. If you specify the height of a row that contains a comment then Excel::Writer::XLSX will adjust the height of the comment to maintain the default or user specified dimensions. However, the height of a row can also be adjusted automatically by Excel if the text wrap property is set or large fonts are used in the cell. This means that the height of the row is unknown to the module at run time and thus the comment box is stretched with the row. Use the C<set_row()> method to specify the row height explicitly and avoid this problem.
 
 
-=head2 show_comments()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
+
+=head2 show_comments()
 
 This method is used to make all cell comments visible when a worksheet is opened.
 
@@ -1396,13 +1397,15 @@ If all of the cell comments have been made visible you can hide individual comme
 
 =head2 set_comments_author()
 
-This method is used to set the default author of cell comments.
+This method is used to set the default author of all cell comments.
 
     $worksheet->set_comments_author( 'Perl' );
 
 Individual comment authors can be set using the C<author> parameter of the C<write_comment> method (see above).
 
 The default comment author is an empty string, C<''>, if no author is specified.
+
+
 
 
 =head2 add_write_handler( $re, $code_ref )
@@ -4638,7 +4641,6 @@ The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::
 However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
 
     Images (partial support)
-    Cell comments.
     Outlines.
 
 Excel::Writer::XLSX requires perl 5.10.0 while Spreadsheet::WriteExcel requires perl 5.005. See the L<REQUIREMENTS> section below for more details.
@@ -4677,8 +4679,8 @@ The following is a full list of the module methods and their support status:
     write_formula()             Yes
     write_array_formula()       Yes. Not in Spreadsheet::WriteExcel.
     keep_leading_zeros()        Yes
-    write_comment()             No
-    show_comments()             No
+    write_comment()             Yes
+    show_comments()             Yes
     set_comments_author()       Yes
     add_write_handler()         Yes
     insert_image()              Yes/Partial, see docs.
@@ -4771,7 +4773,6 @@ The following is a full list of the module methods and their support status:
 
 All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
 
-    write_comment()
     insert_image() (currently partially supported)
     outline_settings()
 
@@ -4786,6 +4787,16 @@ L<http://search.cpan.org/search?dist=Archive-Zip/>.
 
 Perl 5.10.0.
 
+
+
+
+=head1 SPEED AND MEMORY USAGE
+
+C<Spreadsheet::WriteExcel> was written to optimise speed and reduce memory usage. However, these design goals meant that it wasn't easy to implement features that many users requested such as writing formatting and data separately.
+
+As a result C<Excel::Writer::XLSX> take a different design approach and holds a lot more data in memory so that it is functionally more flexible. The effect of this is that Excel::Writer::XLSX is about 50% slower than Spreadsheet::WriteExcel and can use significantly more memory. When you add to this the extended row and column ranges it is possible to run out of memory creating very large files. This was almost never an issue with Spreadsheet::WriteExcel.
+
+There is a memory optimised version of Excel::Writer::XLSX on GitHub that will be integrated into the CPAN version as soon as the feature compatibility with Spreadsheet::WriteExcel is complete. See L<https://github.com/jmcnamara/excel-writer-xlsx/tree/optimise2>.
 
 
 
@@ -4820,6 +4831,11 @@ A filename must be given in the constructor.
 =item Can't open filename. It may be in use or protected.
 
 The file cannot be opened for writing. The directory that you are writing to may be protected or the file may be in use by another program.
+
+
+=item Can't call method "XXX" on an undefined value at someprogram.pl.
+
+On Windows this is usually caused by the file that you are trying to create clashing with a version that is already open and locked by Excel.
 
 =item The file you are trying to open 'file.xls' is in a different format than specified by the file extension.
 
@@ -4948,6 +4964,8 @@ If you wish to view Excel files on a Windows platform which doesn't have Excel i
 
 =head1 BUGS
 
+Some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. Applying all available Service Packs to Excel should fix this.
+
 Formulas are formulae.
 
 If you wish to submit a bug report run the C<bug_report.pl> program in the C<examples> directory of the distro.
@@ -4963,7 +4981,7 @@ The roadmap is as follows:
 
 =item * Conditional formatting.
 
-=item * Excel::Reader::XLSX and Excel::ReWriter::XLSX, hopefully.
+=item * Excel::Reader::XLSX and Excel::Rewriter::XLSX. Hopefully.
 
 =item * Pivot tables, maybe.
 
@@ -5063,25 +5081,26 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
+    -- The mockery of it, he said gaily. Your absurd name, an ancient Greek.
 
-    I walked bang into him, said Mr Dedalus for the fourth time,
-    just at the corner of the square.
+    He pointed his finger in friendly jest and went over to the parapet,
+    laughing to himself. Stephen Dedalus stepped up, followed him wearily
+    half way and sat down on the edge of the gunrest, watching him still
+    as he propped his mirror on the parapet, dipped the brush in the bowl
+    and lathered cheeks and neck.
 
-    Then I suppose, said Mrs Dedalus, he will be able to arrange
-    it. I mean about Belvedere.
+    Buck Mulligan's gay voice went on.
 
-    Of course he will, said Mr Dedalus. Don't I tell you he's
-    provincial of the order now?
+    -- My name is absurd too: Malachi Mulligan, two dactyls. But it has a
+    Hellenic ring, hasn't it? Tripping and sunny like the buck himself.
+    We must go to Athens. Will you come if I can get the aunt to fork out
+    twenty quid?
 
-    I never liked the idea of sending him to the christian brothers
-    myself, said Mrs Dedalus.
+    He laid the brush aside and, laughing with delight, cried:
 
-    Christian brothers be damned! said Mr Dedalus. Is it with Paddy
-    Stink and Micky Mud? No, let him stick to the jesuits in God's
-    name since he began with them. They'll be of service to him in
-    after years. Those are the fellows that can get you a position.
+    -- Will he come? The jejune jesuit.
 
-      -- James Joyce. A Portrait Of The Artist As A Young Man.
+        James Joyce. Ulysses.
 
 
 

@@ -2,7 +2,7 @@
 
 #######################################################################
 #
-# Example of using the WriteExcel module to create worksheet panes.
+# Example of using the Excel::Writer::XLSX module to create worksheet panes.
 #
 # reverse('©'), May 2001, John McNamara, jmcnamara@cpan.org
 #

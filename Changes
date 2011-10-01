@@ -5,6 +5,14 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.26 October 1 2011
+
+     + Added cell comment methods and options.
+       Thanks to Barry Downes for providing the interim functionality
+
+     + Added comments1.pl and comments2.pl example programs.
+
+
 0.25 June 16 2011
 
      + Added option to add defined names to workbooks and worksheets.

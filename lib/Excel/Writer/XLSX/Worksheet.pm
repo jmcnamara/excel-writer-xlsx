@@ -25,7 +25,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
 
 ###############################################################################
@@ -289,7 +289,6 @@ sub _close {
     my $self       = shift;
     my $sheetnames = shift;
     my $num_sheets = scalar @$sheetnames;
-
 }
 
 
@@ -3251,91 +3250,6 @@ sub _check_dimensions {
     }
 
     return 0;
-}
-
-
-###############################################################################
-#
-# _store_defcol()
-#
-# Write BIFF record DEFCOLWIDTH if COLINFO records are in use.
-#
-sub _store_defcol {
-
-    my $self   = shift;
-    my $record = 0x0055;    # Record identifier
-    my $length = 0x0002;    # Number of bytes to follow
-
-    my $colwidth = 0x0008;  # Default column width
-
-    # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
-# _store_externcount($count)
-#
-# Write BIFF record EXTERNCOUNT to indicate the number of external sheet
-# references in a worksheet.
-#
-# Excel only stores references to external sheets that are used in formulas.
-# For simplicity we store references to all the sheets in the workbook
-# regardless of whether they are used or not. This reduces the overall
-# complexity and eliminates the need for a two way dialogue between the formula
-# parser the worksheet objects.
-#
-sub _store_externcount {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self   = shift;
-    my $record = 0x0016;    # Record identifier
-    my $length = 0x0002;    # Number of bytes to follow
-
-    my $cxals = $_[0];      # Number of external references
-
-    # TODO Update for SpreadsheetML format
-}
-
-
-###############################################################################
-#
-# _store_externsheet($sheetname)
-#
-#
-# Writes the Excel BIFF EXTERNSHEET record. These references are used by
-# formulas. A formula references a sheet name via an index. Since we store a
-# reference to all of the external worksheets the EXTERNSHEET index is the same
-# as the worksheet index.
-#
-sub _store_externsheet {
-
-    # TODO. Unused. Remove after refactoring.
-
-    my $self = shift;
-
-    my $record = 0x0017;    # Record identifier
-    my $length;             # Number of bytes to follow
-
-    my $sheetname = $_[0];  # Worksheet name
-    my $cch;                # Length of sheet name
-    my $rgch;               # Filename encoding
-
-    # References to the current sheet are encoded differently to references to
-    # external sheets.
-    #
-    if ( $self->{_name} eq $sheetname ) {
-        $sheetname = '';
-        $length    = 0x02;    # The following 2 bytes
-        $cch       = 1;       # The following byte
-        $rgch      = 0x02;    # Self reference
-    }
-    else {
-        $length = 0x02 + length( $_[0] );
-        $cch    = length( $sheetname );
-        $rgch = 0x03;         # Reference to a sheet in the current workbook
-    }
 }
 
 

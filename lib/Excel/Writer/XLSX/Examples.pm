@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 59 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 61 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -76,6 +76,10 @@ The following is a list of the 59 example programs that are included in the Exce
 =item * L<Example: chart_stock.pl> A demo of stock style charts.
 
 =item * L<Example: colors.pl> A demo of the colour palette and named colours.
+
+=item * L<Example: comments1.pl> Add comments to worksheet cells.
+
+=item * L<Example: comments2.pl> Add comments with advanced options.
 
 =item * L<Example: data_validate.pl> An example of data validation and dropdown lists.
 
@@ -228,7 +232,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -378,7 +382,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -520,7 +524,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -1058,7 +1062,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1125,7 +1129,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1216,7 +1220,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stats.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1516,7 +1520,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1563,7 +1567,7 @@ array formulas.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1637,7 +1641,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/cgi.pl>
 
 =head2 Example: chart_area.pl
 
@@ -1716,7 +1720,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_area.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_area.pl>
 
 =head2 Example: chart_bar.pl
 
@@ -1795,7 +1799,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_bar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_bar.pl>
 
 =head2 Example: chart_column.pl
 
@@ -1874,7 +1878,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_column.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_column.pl>
 
 =head2 Example: chart_line.pl
 
@@ -1953,7 +1957,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_line.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_line.pl>
 
 =head2 Example: chart_pie.pl
 
@@ -2021,7 +2025,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_pie.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_pie.pl>
 
 =head2 Example: chart_scatter.pl
 
@@ -2100,7 +2104,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_scatter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_scatter.pl>
 
 =head2 Example: chart_stock.pl
 
@@ -2189,7 +2193,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/chart_stock.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_stock.pl>
 
 =head2 Example: colors.pl
 
@@ -2321,7 +2325,430 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/colors.pl>
+
+=head2 Example: comments1.pl
+
+
+
+This example demonstrates writing cell comments.
+
+A cell comment is indicated in Excel by a small red triangle in the upper
+right-hand corner of the cell.
+
+For more advanced comment options see comments2.pl.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/comments1.jpg" width="640" height="420" alt="Output from comments1.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # This example demonstrates writing cell comments.
+    #
+    # A cell comment is indicated in Excel by a small red triangle in the upper
+    # right-hand corner of the cell.
+    #
+    # For more advanced comment options see comments2.pl.
+    #
+    # reverse('©'), November 2005, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'comments1.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    
+    $worksheet->write( 'A1', 'Hello' );
+    $worksheet->write_comment( 'A1', 'This is a comment' );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/comments1.pl>
+
+=head2 Example: comments2.pl
+
+
+
+This example demonstrates writing cell comments.
+
+A cell comment is indicated in Excel by a small red triangle in the upper
+right-hand corner of the cell.
+
+Each of the worksheets demonstrates different features of cell comments.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/comments2.jpg" width="640" height="420" alt="Output from comments2.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # This example demonstrates writing cell comments.
+    #
+    # A cell comment is indicated in Excel by a small red triangle in the upper
+    # right-hand corner of the cell.
+    #
+    # Each of the worksheets demonstrates different features of cell comments.
+    #
+    # reverse('©'), November 2005, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook   = Excel::Writer::XLSX->new( 'comments2.xlsx' );
+    my $text_wrap  = $workbook->add_format( text_wrap => 1, valign => 'top' );
+    my $worksheet1 = $workbook->add_worksheet();
+    my $worksheet2 = $workbook->add_worksheet();
+    my $worksheet3 = $workbook->add_worksheet();
+    my $worksheet4 = $workbook->add_worksheet();
+    my $worksheet5 = $workbook->add_worksheet();
+    my $worksheet6 = $workbook->add_worksheet();
+    my $worksheet7 = $workbook->add_worksheet();
+    my $worksheet8 = $workbook->add_worksheet();
+    
+    
+    # Variables that we will use in each example.
+    my $cell_text = '';
+    my $comment   = '';
+    
+    
+    ###############################################################################
+    #
+    # Example 1. Demonstrates a simple cell comments without formatting.
+    #            comments.
+    #
+    
+    # Set up some formatting.
+    $worksheet1->set_column( 'C:C', 25 );
+    $worksheet1->set_row( 2, 50 );
+    $worksheet1->set_row( 5, 50 );
+    
+    
+    # Simple ascii string.
+    $cell_text = 'Hold the mouse over this cell to see the comment.';
+    
+    $comment = 'This is a comment.';
+    
+    $worksheet1->write( 'C3', $cell_text, $text_wrap );
+    $worksheet1->write_comment( 'C3', $comment );
+    
+    $cell_text = 'This is a UTF-8 string.';
+    $comment   = chr 0x263a;
+    
+    $worksheet1->write( 'C6', $cell_text, $text_wrap );
+    $worksheet1->write_comment( 'C6', $comment );
+    
+    
+    
+    ###############################################################################
+    #
+    # Example 2. Demonstrates visible and hidden comments.
+    #
+    
+    # Set up some formatting.
+    $worksheet2->set_column( 'C:C', 25 );
+    $worksheet2->set_row( 2, 50 );
+    $worksheet2->set_row( 5, 50 );
+    
+    
+    $cell_text = 'This cell comment is visible.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet2->write( 'C3', $cell_text, $text_wrap );
+    $worksheet2->write_comment( 'C3', $comment, visible => 1 );
+    
+    
+    $cell_text = "This cell comment isn't visible (the default).";
+    
+    $comment = 'Hello.';
+    
+    $worksheet2->write( 'C6', $cell_text, $text_wrap );
+    $worksheet2->write_comment( 'C6', $comment );
+    
+    
+    ###############################################################################
+    #
+    # Example 3. Demonstrates visible and hidden comments set at the worksheet
+    #            level.
+    #
+    
+    # Set up some formatting.
+    $worksheet3->set_column( 'C:C', 25 );
+    $worksheet3->set_row( 2, 50 );
+    $worksheet3->set_row( 5, 50 );
+    $worksheet3->set_row( 8, 50 );
+    
+    # Make all comments on the worksheet visible.
+    $worksheet3->show_comments();
+    
+    $cell_text = 'This cell comment is visible, explicitly.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet3->write( 'C3', $cell_text, $text_wrap );
+    $worksheet3->write_comment( 'C3', $comment, visible => 1 );
+    
+    
+    $cell_text =
+      'This cell comment is also visible because ' . 'we used show_comments().';
+    
+    $comment = 'Hello.';
+    
+    $worksheet3->write( 'C6', $cell_text, $text_wrap );
+    $worksheet3->write_comment( 'C6', $comment );
+    
+    
+    $cell_text = 'However, we can still override it locally.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet3->write( 'C9', $cell_text, $text_wrap );
+    $worksheet3->write_comment( 'C9', $comment, visible => 0 );
+    
+    
+    ###############################################################################
+    #
+    # Example 4. Demonstrates changes to the comment box dimensions.
+    #
+    
+    # Set up some formatting.
+    $worksheet4->set_column( 'C:C', 25 );
+    $worksheet4->set_row( 2,  50 );
+    $worksheet4->set_row( 5,  50 );
+    $worksheet4->set_row( 8,  50 );
+    $worksheet4->set_row( 15, 50 );
+    
+    $worksheet4->show_comments();
+    
+    $cell_text = 'This cell comment is default size.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet4->write( 'C3', $cell_text, $text_wrap );
+    $worksheet4->write_comment( 'C3', $comment );
+    
+    
+    $cell_text = 'This cell comment is twice as wide.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet4->write( 'C6', $cell_text, $text_wrap );
+    $worksheet4->write_comment( 'C6', $comment, x_scale => 2 );
+    
+    
+    $cell_text = 'This cell comment is twice as high.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet4->write( 'C9', $cell_text, $text_wrap );
+    $worksheet4->write_comment( 'C9', $comment, y_scale => 2 );
+    
+    
+    $cell_text = 'This cell comment is scaled in both directions.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet4->write( 'C16', $cell_text, $text_wrap );
+    $worksheet4->write_comment( 'C16', $comment, x_scale => 1.2, y_scale => 0.8 );
+    
+    
+    $cell_text = 'This cell comment has width and height specified in pixels.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet4->write( 'C19', $cell_text, $text_wrap );
+    $worksheet4->write_comment( 'C19', $comment, width => 200, height => 20 );
+    
+    
+    ###############################################################################
+    #
+    # Example 5. Demonstrates changes to the cell comment position.
+    #
+    
+    $worksheet5->set_column( 'C:C', 25 );
+    $worksheet5->set_row( 2,  50 );
+    $worksheet5->set_row( 5,  50 );
+    $worksheet5->set_row( 8,  50 );
+    $worksheet5->set_row( 11, 50 );
+    
+    $worksheet5->show_comments();
+    
+    $cell_text = 'This cell comment is in the default position.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet5->write( 'C3', $cell_text, $text_wrap );
+    $worksheet5->write_comment( 'C3', $comment );
+    
+    
+    $cell_text = 'This cell comment has been moved to another cell.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet5->write( 'C6', $cell_text, $text_wrap );
+    $worksheet5->write_comment( 'C6', $comment, start_cell => 'E4' );
+    
+    
+    $cell_text = 'This cell comment has been moved to another cell.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet5->write( 'C9', $cell_text, $text_wrap );
+    $worksheet5->write_comment( 'C9', $comment, start_row => 8, start_col => 4 );
+    
+    
+    $cell_text = 'This cell comment has been shifted within its default cell.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet5->write( 'C12', $cell_text, $text_wrap );
+    $worksheet5->write_comment( 'C12', $comment, x_offset => 30, y_offset => 12 );
+    
+    
+    ###############################################################################
+    #
+    # Example 6. Demonstrates changes to the comment background colour.
+    #
+    
+    $worksheet6->set_column( 'C:C', 25 );
+    $worksheet6->set_row( 2, 50 );
+    $worksheet6->set_row( 5, 50 );
+    $worksheet6->set_row( 8, 50 );
+    
+    $worksheet6->show_comments();
+    
+    $cell_text = 'This cell comment has a different colour.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet6->write( 'C3', $cell_text, $text_wrap );
+    $worksheet6->write_comment( 'C3', $comment, color => 'green' );
+    
+    
+    $cell_text = 'This cell comment has the default colour.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet6->write( 'C6', $cell_text, $text_wrap );
+    $worksheet6->write_comment( 'C6', $comment );
+    
+    
+    $cell_text = 'This cell comment has a different colour.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet6->write( 'C9', $cell_text, $text_wrap );
+    $worksheet6->write_comment( 'C9', $comment, color => 0x35 );
+    
+    
+    ###############################################################################
+    #
+    # Example 7. Demonstrates how to set the cell comment author.
+    #
+    
+    $worksheet7->set_column( 'C:C', 30 );
+    $worksheet7->set_row( 2,  50 );
+    $worksheet7->set_row( 5,  50 );
+    $worksheet7->set_row( 8,  50 );
+    
+    my $author = '';
+    my $cell   = 'C3';
+    
+    $cell_text = "Move the mouse over this cell and you will see 'Cell commented "
+      . "by $author' (blank) in the status bar at the bottom";
+    
+    $comment = 'Hello.';
+    
+    $worksheet7->write( $cell, $cell_text, $text_wrap );
+    $worksheet7->write_comment( $cell, $comment );
+    
+    
+    $author    = 'Perl';
+    $cell      = 'C6';
+    $cell_text = "Move the mouse over this cell and you will see 'Cell commented "
+      . "by $author' in the status bar at the bottom";
+    
+    $comment = 'Hello.';
+    
+    $worksheet7->write( $cell, $cell_text, $text_wrap );
+    $worksheet7->write_comment( $cell, $comment, author => $author );
+    
+    
+    $author    = chr 0x20AC;
+    $cell      = 'C9';
+    $cell_text = "Move the mouse over this cell and you will see 'Cell commented "
+      . "by $author' in the status bar at the bottom";
+    $comment = 'Hello.';
+    
+    $worksheet7->write( $cell, $cell_text, $text_wrap );
+    $worksheet7->write_comment( $cell, $comment, author => $author );
+    
+    
+    
+    
+    ###############################################################################
+    #
+    # Example 8. Demonstrates the need to explicitly set the row height.
+    #
+    
+    # Set up some formatting.
+    $worksheet8->set_column( 'C:C', 25 );
+    $worksheet8->set_row( 2, 80 );
+    
+    $worksheet8->show_comments();
+    
+    
+    $cell_text =
+        'The height of this row has been adjusted explicitly using '
+      . 'set_row(). The size of the comment box is adjusted '
+      . 'accordingly by Excel::Writer::XLSX.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet8->write( 'C3', $cell_text, $text_wrap );
+    $worksheet8->write_comment( 'C3', $comment );
+    
+    
+    $cell_text =
+        'The height of this row has been adjusted by Excel due to the '
+      . 'text wrap property being set. Unfortunately this means that '
+      . 'the height of the row is unknown to Excel::Writer::XLSX at '
+      . "run time and thus the comment box is stretched as well.\n\n"
+      . 'Use set_row() to specify the row height explicitly to avoid '
+      . 'this problem.';
+    
+    $comment = 'Hello.';
+    
+    $worksheet8->write( 'C6', $cell_text, $text_wrap );
+    $worksheet8->write_comment( 'C6', $comment );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/comments2.pl>
 
 =head2 Example: data_validate.pl
 
@@ -2658,7 +3085,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/data_validate.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/data_validate.pl>
 
 =head2 Example: date_time.pl
 
@@ -2770,7 +3197,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/date_time.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/date_time.pl>
 
 =head2 Example: defined_name.pl
 
@@ -2831,7 +3258,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/defined_name.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/defined_name.pl>
 
 =head2 Example: diag_border.pl
 
@@ -2891,7 +3318,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/diag_border.pl>
 
 =head2 Example: filehandle.pl
 
@@ -3015,7 +3442,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/filehandle.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/filehandle.pl>
 
 =head2 Example: headers.pl
 
@@ -3181,7 +3608,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/headers.pl>
 
 =head2 Example: hide_sheet.pl
 
@@ -3232,7 +3659,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/hide_sheet.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hide_sheet.pl>
 
 =head2 Example: hyperlink1.pl
 
@@ -3311,7 +3738,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/hyperlink1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hyperlink1.pl>
 
 =head2 Example: hyperlink2.pl
 
@@ -3480,7 +3907,7 @@ See also hyperlink1.pl for web URL examples.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/hyperlink2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -3531,7 +3958,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/indent.pl>
 
 =head2 Example: merge1.pl
 
@@ -3593,7 +4020,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -3664,7 +4091,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
@@ -3729,7 +4156,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -3838,7 +4265,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -3935,7 +4362,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -4009,7 +4436,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -4026,7 +4453,7 @@ This script is a modification of the Excel::Writer::XLSX cgi.pl example.
 
 Change the name of this file to Cgi.pm.
 Change the package location to where ever you locate this package.
-In the example below it is located in the WriteExcel directory.
+In the example below it is located in the Excel::Writer::XLSX directory.
 
 Your httpd.conf entry for this module, should you choose to use it
 as a stand alone app, should look similar to the following:
@@ -4052,7 +4479,7 @@ The PerlHandler name above and the package name below *have* to match.
     #
     # Change the name of this file to Cgi.pm.
     # Change the package location to where ever you locate this package.
-    # In the example below it is located in the WriteExcel directory.
+    # In the example below it is located in the Excel::Writer::XLSX directory.
     #
     # Your httpd.conf entry for this module, should you choose to use it
     # as a stand alone app, should look similar to the following:
@@ -4134,7 +4561,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -4151,7 +4578,7 @@ This script is a modification of the Excel::Writer::XLSX cgi.pl example.
 
 Change the name of this file to MP2Test.pm.
 Change the package location to where ever you locate this package.
-In the example below it is located in the WriteExcel directory.
+In the example below it is located in the Excel::Writer::XLSX directory.
 
 Your httpd.conf entry for this module, should you choose to use it
 as a stand alone app, should look similar to the following:
@@ -4180,7 +4607,7 @@ The PerlResponseHandler must match the package name below.
     #
     # Change the name of this file to MP2Test.pm.
     # Change the package location to where ever you locate this package.
-    # In the example below it is located in the WriteExcel directory.
+    # In the example below it is located in the Excel::Writer::XLSX directory.
     #
     # Your httpd.conf entry for this module, should you choose to use it
     # as a stand alone app, should look similar to the following:
@@ -4262,13 +4689,13 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/mod_perl2.pl>
 
 =head2 Example: panes.pl
 
 
 
-Example of using the WriteExcel module to create worksheet panes.
+Example of using the Excel::Writer::XLSX module to create worksheet panes.
 
 
 
@@ -4284,7 +4711,7 @@ Source code for this example:
     
     #######################################################################
     #
-    # Example of using the WriteExcel module to create worksheet panes.
+    # Example of using the Excel::Writer::XLSX module to create worksheet panes.
     #
     # reverse('©'), May 2001, John McNamara, jmcnamara@cpan.org
     #
@@ -4415,7 +4842,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/panes.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/panes.pl>
 
 =head2 Example: properties.pl
 
@@ -4470,7 +4897,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/properties.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/properties.pl>
 
 =head2 Example: protection.pl
 
@@ -4534,7 +4961,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/protection.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/protection.pl>
 
 =head2 Example: rich_strings.pl
 
@@ -4598,7 +5025,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/rich_strings.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/rich_strings.pl>
 
 =head2 Example: right_to_left.pl
 
@@ -4645,7 +5072,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/right_to_left.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/right_to_left.pl>
 
 =head2 Example: sales.pl
 
@@ -4768,7 +5195,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/sales.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -4867,7 +5294,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -4966,7 +5393,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stocks.pl>
 
 =head2 Example: tab_colors.pl
 
@@ -5011,7 +5438,7 @@ Source code for this example:
     $worksheet4->set_tab_color( 0x35 );    # Orange
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/tab_colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/tab_colors.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -5099,7 +5526,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -5196,7 +5623,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -5285,7 +5712,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -5414,7 +5841,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler4.pl>
 
 =head2 Example: write_to_scalar.pl
 
@@ -5463,7 +5890,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/write_to_scalar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_to_scalar.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -5528,7 +5955,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -5593,7 +6020,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -5658,7 +6085,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -5723,7 +6150,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -5788,7 +6215,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -5853,7 +6280,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -5923,7 +6350,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -5988,7 +6415,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -6053,7 +6480,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -6118,7 +6545,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.25/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 
