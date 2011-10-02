@@ -138,6 +138,7 @@ sub new {
     $self->{_outline_below}     = 1;
     $self->{_outline_right}     = 1;
     $self->{_outline_on}        = 1;
+    $self->{_outline_changed}   = 0;
 
     $self->{_names} = {};
 
@@ -2348,8 +2349,7 @@ sub outline_settings {
     $self->{_outline_right} = defined $_[2] ? $_[2] : 1;
     $self->{_outline_style} = $_[3] || 0;
 
-    # Ensure this is a boolean vale for Window2
-    $self->{_outline_on} = 1 if $self->{_outline_on};
+    $self->{_outline_changed} = 1;
 }
 
 
@@ -4246,15 +4246,23 @@ sub _write_sheet_pr {
     my $self       = shift;
     my @attributes = ();
 
-    if ( !$self->{_fit_page} && !$self->{_filter_on} && !$self->{_tab_color} ) {
+    if (   !$self->{_fit_page}
+        && !$self->{_filter_on}
+        && !$self->{_tab_color}
+        && !$self->{_outline_changed} )
+    {
         return;
     }
 
     push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
 
-    if ( $self->{_fit_page} || $self->{_tab_color} ) {
+    if (   $self->{_fit_page}
+        || $self->{_tab_color}
+        || $self->{_outline_changed} )
+    {
         $self->{_writer}->startTag( 'sheetPr', @attributes );
         $self->_write_tab_color();
+        $self->_write_outline_pr();
         $self->_write_page_set_up_pr();
         $self->{_writer}->endTag( 'sheetPr' );
     }
@@ -4414,6 +4422,12 @@ sub _write_sheet_view {
     # Show that the sheet tab is selected.
     if ( $tab_selected ) {
         push @attributes, ( 'tabSelected' => 1 );
+    }
+
+
+    # Turn outlines off. Also required in the outlinePr element.
+    if ( !$self->{_outline_on} ) {
+        push @attributes, ( "showOutlineSymbols" => 0 );
     }
 
     # Set the page view/layout mode if required.
@@ -5923,6 +5937,28 @@ sub _write_tab_color {
     my @attributes = ( 'rgb' => $rgb );
 
     $self->{_writer}->emptyTag( 'tabColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_outline_pr()
+#
+# Write the <outlinePr> element.
+#
+sub _write_outline_pr {
+
+    my $self        = shift;
+    my @attributes = ();
+
+    return unless $self->{_outline_changed};
+
+    push @attributes, ( "applyStyles"  => 1 ) if $self->{_outline_style};
+    push @attributes, ( "summaryBelow" => 0 ) if !$self->{_outline_below};
+    push @attributes, ( "summaryRight" => 0 ) if !$self->{_outline_right};
+    push @attributes, ( "showOutlineSymbols" => 0 ) if !$self->{_outline_on};
+
+    $self->{_writer}->emptyTag( 'outlinePr', @attributes );
 }
 
 
