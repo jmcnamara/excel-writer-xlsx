@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.25 of Excel::Writer::XLSX, released October 1, 2011.
+This document refers to version 0.27 of Excel::Writer::XLSX, released October 2, 2011.
 
 
 
@@ -104,7 +104,7 @@ This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-Excel::Writer::XLSX supports almost all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
+Excel::Writer::XLSX supports all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet.
 
@@ -1713,8 +1713,6 @@ The default cell selections is (0, 0), 'A1'.
 
 =head2 set_row( $row, $height, $format, $hidden, $level, $collapsed )
 
-Partial L<Compatibility with Spreadsheet::WriteExcel>, C<$level> and C<collapsed> aren't implemented yet.
-
 This method can be used to change the default properties of a row. All parameters apart from C<$row> are optional.
 
 The most common use for this method is to change the height of a row:
@@ -1762,8 +1760,6 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 =head2 set_column( $first_col, $last_col, $width, $format, $hidden, $level, $collapsed )
-
-Partial L<Compatibility with Spreadsheet::WriteExcel>, C<$level> and C<collapsed> aren't implemented yet.
 
 This method can be used to change the default properties of a single column or a range of columns. All parameters apart from C<$first_col> and C<$last_col> are optional.
 
@@ -1826,8 +1822,6 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 =head2 outline_settings( $visible, $symbols_below, $symbols_right, $auto_style )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<outline_settings()> method is used to control the appearance of outlines in Excel. Outlines are described in L<OUTLINES AND GROUPING IN EXCEL>.
 
@@ -4589,6 +4583,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
+    outline.pl              An example of outlines and grouping.
+    outline_collapsed.pl    An example of collapsed outlines.
     protection.pl           Example of cell locking and formula hiding.
     protection.pl           Example of cell locking and formula hiding.
     rich_strings.pl         Example of strings with multiple formats.
@@ -4636,16 +4632,9 @@ The following limits are imposed by Excel 2007+:
 
 =head1 Compatibility with Spreadsheet::WriteExcel
 
-The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
+The C<Excel::Writer::XLSX> module is a drop-in replacement for C<Spreadsheet::WriteExcel>.
 
-However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
-
-    Images (partial support)
-    Outlines.
-
-Excel::Writer::XLSX requires perl 5.10.0 while Spreadsheet::WriteExcel requires perl 5.005. See the L<REQUIREMENTS> section below for more details.
-
-The following is a full list of the module methods and their support status:
+It support all of the features of Spreadsheet::WriteExcel with some minor differences noted below.
 
     Workbook Methods            Support
     ================            ======
@@ -4693,9 +4682,9 @@ The following is a full list of the module methods and their support status:
     set_first_sheet()           Yes
     protect()                   Yes
     set_selection()             Yes
-    set_row()                   Yes/Partial, see docs.
-    set_column()                Yes/Partial, see docs.
-    outline_settings()          No
+    set_row()                   Yes.
+    set_column()                Yes.
+    outline_settings()          Yes
     freeze_panes()              Yes
     split_panes()               Yes
     merge_range()               Yes
@@ -4770,13 +4759,6 @@ The following is a full list of the module methods and their support status:
     set_top_color()             Yes
     set_left_color()            Yes
     set_right_color()           Yes
-
-All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
-
-    insert_image() (currently partially supported)
-    outline_settings()
-
-If you would care to you can sponsor a feature to move it up the list. See L<DONATIONS and SPONSORSHIP>
 
 
 

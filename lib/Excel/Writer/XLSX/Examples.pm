@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 61 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 63 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -116,6 +116,10 @@ The following is a list of the 61 example programs that are included in the Exce
 =item * L<Example: mod_perl1.pl> A simple mod_perl 1 program.
 
 =item * L<Example: mod_perl2.pl> A simple mod_perl 2 program.
+
+=item * L<Example: outline.pl> An example of outlines and grouping.
+
+=item * L<Example: outline_collapsed.pl> An example of collapsed outlines.
 
 =item * L<Example: panes.pl> An examples of how to create panes.
 
@@ -232,7 +236,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -382,7 +386,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -524,7 +528,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -1062,7 +1066,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1129,7 +1133,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1220,7 +1224,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/stats.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1520,7 +1524,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1567,7 +1571,7 @@ array formulas.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1641,7 +1645,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/cgi.pl>
 
 =head2 Example: chart_area.pl
 
@@ -1720,7 +1724,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_area.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_area.pl>
 
 =head2 Example: chart_bar.pl
 
@@ -1799,7 +1803,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_bar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_bar.pl>
 
 =head2 Example: chart_column.pl
 
@@ -1878,7 +1882,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_column.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_column.pl>
 
 =head2 Example: chart_line.pl
 
@@ -1957,7 +1961,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_line.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_line.pl>
 
 =head2 Example: chart_pie.pl
 
@@ -2025,7 +2029,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_pie.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_pie.pl>
 
 =head2 Example: chart_scatter.pl
 
@@ -2104,7 +2108,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_scatter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_scatter.pl>
 
 =head2 Example: chart_stock.pl
 
@@ -2193,7 +2197,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/chart_stock.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/chart_stock.pl>
 
 =head2 Example: colors.pl
 
@@ -2325,7 +2329,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/colors.pl>
 
 =head2 Example: comments1.pl
 
@@ -2376,7 +2380,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/comments1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/comments1.pl>
 
 =head2 Example: comments2.pl
 
@@ -2748,7 +2752,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/comments2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/comments2.pl>
 
 =head2 Example: data_validate.pl
 
@@ -3085,7 +3089,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/data_validate.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/data_validate.pl>
 
 =head2 Example: date_time.pl
 
@@ -3197,7 +3201,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/date_time.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/date_time.pl>
 
 =head2 Example: defined_name.pl
 
@@ -3258,7 +3262,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/defined_name.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/defined_name.pl>
 
 =head2 Example: diag_border.pl
 
@@ -3318,7 +3322,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/diag_border.pl>
 
 =head2 Example: filehandle.pl
 
@@ -3442,7 +3446,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/filehandle.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/filehandle.pl>
 
 =head2 Example: headers.pl
 
@@ -3608,7 +3612,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/headers.pl>
 
 =head2 Example: hide_sheet.pl
 
@@ -3659,7 +3663,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hide_sheet.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/hide_sheet.pl>
 
 =head2 Example: hyperlink1.pl
 
@@ -3738,7 +3742,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hyperlink1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/hyperlink1.pl>
 
 =head2 Example: hyperlink2.pl
 
@@ -3907,7 +3911,7 @@ See also hyperlink1.pl for web URL examples.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/hyperlink2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -3958,7 +3962,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/indent.pl>
 
 =head2 Example: merge1.pl
 
@@ -4020,7 +4024,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -4091,7 +4095,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
@@ -4156,7 +4160,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -4265,7 +4269,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -4362,7 +4366,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -4436,7 +4440,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -4561,7 +4565,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -4689,7 +4693,571 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/mod_perl2.pl>
+
+=head2 Example: outline.pl
+
+
+
+Example of how use Excel::Writer::XLSX to generate Excel outlines and
+grouping.
+
+
+Excel allows you to group rows or columns so that they can be hidden or
+displayed with a single mouse click. This feature is referred to as outlines.
+
+Outlines can reduce complex data down to a few salient sub-totals or
+summaries.
+
+This feature is best viewed in Excel but the following is an ASCII
+representation of what a worksheet with three outlines might look like.
+Rows 3-4 and rows 7-8 are grouped at level 2. Rows 2-9 are grouped at
+level 1. The lines at the left hand side are called outline level bars.
+
+
+            ------------------------------------------
+     1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+            ------------------------------------------
+      _    | 1 |   A   |       |       |       |  ...
+     |  _  | 2 |   B   |       |       |       |  ...
+     | |   | 3 |  (C)  |       |       |       |  ...
+     | |   | 4 |  (D)  |       |       |       |  ...
+     | -   | 5 |   E   |       |       |       |  ...
+     |  _  | 6 |   F   |       |       |       |  ...
+     | |   | 7 |  (G)  |       |       |       |  ...
+     | |   | 8 |  (H)  |       |       |       |  ...
+     | -   | 9 |   I   |       |       |       |  ...
+     -     | . |  ...  |  ...  |  ...  |  ...  |  ...
+
+
+Clicking the minus sign on each of the level 2 outlines will collapse and
+hide the data as shown in the next figure. The minus sign changes to a plus
+sign to indicate that the data in the outline is hidden.
+
+            ------------------------------------------
+     1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+            ------------------------------------------
+      _    | 1 |   A   |       |       |       |  ...
+     |     | 2 |   B   |       |       |       |  ...
+     | +   | 5 |   E   |       |       |       |  ...
+     |     | 6 |   F   |       |       |       |  ...
+     | +   | 9 |   I   |       |       |       |  ...
+     -     | . |  ...  |  ...  |  ...  |  ...  |  ...
+
+
+Clicking on the minus sign on the level 1 outline will collapse the remaining
+rows as follows:
+
+            ------------------------------------------
+     1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+            ------------------------------------------
+           | 1 |   A   |       |       |       |  ...
+     +     | . |  ...  |  ...  |  ...  |  ...  |  ...
+
+See the main Excel::Writer::XLSX documentation for more information.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/outline.jpg" width="640" height="420" alt="Output from outline.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how use Excel::Writer::XLSX to generate Excel outlines and
+    # grouping.
+    #
+    #
+    # Excel allows you to group rows or columns so that they can be hidden or
+    # displayed with a single mouse click. This feature is referred to as outlines.
+    #
+    # Outlines can reduce complex data down to a few salient sub-totals or
+    # summaries.
+    #
+    # This feature is best viewed in Excel but the following is an ASCII
+    # representation of what a worksheet with three outlines might look like.
+    # Rows 3-4 and rows 7-8 are grouped at level 2. Rows 2-9 are grouped at
+    # level 1. The lines at the left hand side are called outline level bars.
+    #
+    #
+    #             ------------------------------------------
+    #      1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+    #             ------------------------------------------
+    #       _    | 1 |   A   |       |       |       |  ...
+    #      |  _  | 2 |   B   |       |       |       |  ...
+    #      | |   | 3 |  (C)  |       |       |       |  ...
+    #      | |   | 4 |  (D)  |       |       |       |  ...
+    #      | -   | 5 |   E   |       |       |       |  ...
+    #      |  _  | 6 |   F   |       |       |       |  ...
+    #      | |   | 7 |  (G)  |       |       |       |  ...
+    #      | |   | 8 |  (H)  |       |       |       |  ...
+    #      | -   | 9 |   I   |       |       |       |  ...
+    #      -     | . |  ...  |  ...  |  ...  |  ...  |  ...
+    #
+    #
+    # Clicking the minus sign on each of the level 2 outlines will collapse and
+    # hide the data as shown in the next figure. The minus sign changes to a plus
+    # sign to indicate that the data in the outline is hidden.
+    #
+    #             ------------------------------------------
+    #      1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+    #             ------------------------------------------
+    #       _    | 1 |   A   |       |       |       |  ...
+    #      |     | 2 |   B   |       |       |       |  ...
+    #      | +   | 5 |   E   |       |       |       |  ...
+    #      |     | 6 |   F   |       |       |       |  ...
+    #      | +   | 9 |   I   |       |       |       |  ...
+    #      -     | . |  ...  |  ...  |  ...  |  ...  |  ...
+    #
+    #
+    # Clicking on the minus sign on the level 1 outline will collapse the remaining
+    # rows as follows:
+    #
+    #             ------------------------------------------
+    #      1 2 3 |   |   A   |   B   |   C   |   D   |  ...
+    #             ------------------------------------------
+    #            | 1 |   A   |       |       |       |  ...
+    #      +     | . |  ...  |  ...  |  ...  |  ...  |  ...
+    #
+    # See the main Excel::Writer::XLSX documentation for more information.
+    #
+    # reverse('©'), April 2003, John McNamara, jmcnamara@cpan.org
+    #
+    
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add some worksheets
+    my $workbook   = Excel::Writer::XLSX->new( 'outline.xlsx' );
+    my $worksheet1 = $workbook->add_worksheet( 'Outlined Rows' );
+    my $worksheet2 = $workbook->add_worksheet( 'Collapsed Rows' );
+    my $worksheet3 = $workbook->add_worksheet( 'Outline Columns' );
+    my $worksheet4 = $workbook->add_worksheet( 'Outline levels' );
+    
+    # Add a general format
+    my $bold = $workbook->add_format( bold => 1 );
+    
+    
+    ###############################################################################
+    #
+    # Example 1: Create a worksheet with outlined rows. It also includes SUBTOTAL()
+    # functions so that it looks like the type of automatic outlines that are
+    # generated when you use the Excel Data->SubTotals menu item.
+    #
+    
+    
+    # For outlines the important parameters are $hidden and $level. Rows with the
+    # same $level are grouped together. The group will be collapsed if $hidden is
+    # non-zero. $height and $XF are assigned default values if they are undef.
+    #
+    # The syntax is: set_row($row, $height, $XF, $hidden, $level, $collapsed)
+    #
+    $worksheet1->set_row( 1, undef, undef, 0, 2 );
+    $worksheet1->set_row( 2, undef, undef, 0, 2 );
+    $worksheet1->set_row( 3, undef, undef, 0, 2 );
+    $worksheet1->set_row( 4, undef, undef, 0, 2 );
+    $worksheet1->set_row( 5, undef, undef, 0, 1 );
+    
+    $worksheet1->set_row( 6,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 7,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 8,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 9,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 10, undef, undef, 0, 1 );
+    
+    
+    # Add a column format for clarity
+    $worksheet1->set_column( 'A:A', 20 );
+    
+    # Add the data, labels and formulas
+    $worksheet1->write( 'A1', 'Region', $bold );
+    $worksheet1->write( 'A2', 'North' );
+    $worksheet1->write( 'A3', 'North' );
+    $worksheet1->write( 'A4', 'North' );
+    $worksheet1->write( 'A5', 'North' );
+    $worksheet1->write( 'A6', 'North Total', $bold );
+    
+    $worksheet1->write( 'B1', 'Sales', $bold );
+    $worksheet1->write( 'B2', 1000 );
+    $worksheet1->write( 'B3', 1200 );
+    $worksheet1->write( 'B4', 900 );
+    $worksheet1->write( 'B5', 1200 );
+    $worksheet1->write( 'B6', '=SUBTOTAL(9,B2:B5)', $bold );
+    
+    $worksheet1->write( 'A7',  'South' );
+    $worksheet1->write( 'A8',  'South' );
+    $worksheet1->write( 'A9',  'South' );
+    $worksheet1->write( 'A10', 'South' );
+    $worksheet1->write( 'A11', 'South Total', $bold );
+    
+    $worksheet1->write( 'B7',  400 );
+    $worksheet1->write( 'B8',  600 );
+    $worksheet1->write( 'B9',  500 );
+    $worksheet1->write( 'B10', 600 );
+    $worksheet1->write( 'B11', '=SUBTOTAL(9,B7:B10)', $bold );
+    
+    $worksheet1->write( 'A12', 'Grand Total',         $bold );
+    $worksheet1->write( 'B12', '=SUBTOTAL(9,B2:B10)', $bold );
+    
+    
+    ###############################################################################
+    #
+    # Example 2: Create a worksheet with outlined rows. This is the same as the
+    # previous example except that the rows are collapsed.
+    # Note: We need to indicate the row that contains the collapsed symbol '+'
+    # with the optional parameter, $collapsed.
+    
+    # The group will be collapsed if $hidden is non-zero.
+    # The syntax is: set_row($row, $height, $XF, $hidden, $level, $collapsed)
+    #
+    $worksheet2->set_row( 1, undef, undef, 1, 2 );
+    $worksheet2->set_row( 2, undef, undef, 1, 2 );
+    $worksheet2->set_row( 3, undef, undef, 1, 2 );
+    $worksheet2->set_row( 4, undef, undef, 1, 2 );
+    $worksheet2->set_row( 5, undef, undef, 1, 1 );
+    
+    $worksheet2->set_row( 6,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 7,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 8,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 9,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 10, undef, undef, 1, 1 );
+    $worksheet2->set_row( 11, undef, undef, 0, 0, 1 );
+    
+    
+    # Add a column format for clarity
+    $worksheet2->set_column( 'A:A', 20 );
+    
+    # Add the data, labels and formulas
+    $worksheet2->write( 'A1', 'Region', $bold );
+    $worksheet2->write( 'A2', 'North' );
+    $worksheet2->write( 'A3', 'North' );
+    $worksheet2->write( 'A4', 'North' );
+    $worksheet2->write( 'A5', 'North' );
+    $worksheet2->write( 'A6', 'North Total', $bold );
+    
+    $worksheet2->write( 'B1', 'Sales', $bold );
+    $worksheet2->write( 'B2', 1000 );
+    $worksheet2->write( 'B3', 1200 );
+    $worksheet2->write( 'B4', 900 );
+    $worksheet2->write( 'B5', 1200 );
+    $worksheet2->write( 'B6', '=SUBTOTAL(9,B2:B5)', $bold );
+    
+    $worksheet2->write( 'A7',  'South' );
+    $worksheet2->write( 'A8',  'South' );
+    $worksheet2->write( 'A9',  'South' );
+    $worksheet2->write( 'A10', 'South' );
+    $worksheet2->write( 'A11', 'South Total', $bold );
+    
+    $worksheet2->write( 'B7',  400 );
+    $worksheet2->write( 'B8',  600 );
+    $worksheet2->write( 'B9',  500 );
+    $worksheet2->write( 'B10', 600 );
+    $worksheet2->write( 'B11', '=SUBTOTAL(9,B7:B10)', $bold );
+    
+    $worksheet2->write( 'A12', 'Grand Total',         $bold );
+    $worksheet2->write( 'B12', '=SUBTOTAL(9,B2:B10)', $bold );
+    
+    
+    ###############################################################################
+    #
+    # Example 3: Create a worksheet with outlined columns.
+    #
+    my $data = [
+        [ 'Month', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', ' Total' ],
+        [ 'North', 50,    20,    15,    25,    65,    80,    '=SUM(B2:G2)' ],
+        [ 'South', 10,    20,    30,    50,    50,    50,    '=SUM(B3:G3)' ],
+        [ 'East',  45,    75,    50,    15,    75,    100,   '=SUM(B4:G4)' ],
+        [ 'West',  15,    15,    55,    35,    20,    50,    '=SUM(B5:G5)' ],
+    ];
+    
+    # Add bold format to the first row
+    $worksheet3->set_row( 0, undef, $bold );
+    
+    # Syntax: set_column($col1, $col2, $width, $XF, $hidden, $level, $collapsed)
+    $worksheet3->set_column( 'A:A', 10, $bold );
+    $worksheet3->set_column( 'B:G', 5, undef, 0, 1 );
+    $worksheet3->set_column( 'H:H', 10 );
+    
+    # Write the data and a formula
+    $worksheet3->write_col( 'A1', $data );
+    $worksheet3->write( 'H6', '=SUM(H2:H5)', $bold );
+    
+    
+    ###############################################################################
+    #
+    # Example 4: Show all possible outline levels.
+    #
+    my $levels = [
+        "Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6",
+        "Level 7", "Level 6", "Level 5", "Level 4", "Level 3", "Level 2",
+        "Level 1"
+    ];
+    
+    
+    $worksheet4->write_col( 'A1', $levels );
+    
+    $worksheet4->set_row( 0,  undef, undef, undef, 1 );
+    $worksheet4->set_row( 1,  undef, undef, undef, 2 );
+    $worksheet4->set_row( 2,  undef, undef, undef, 3 );
+    $worksheet4->set_row( 3,  undef, undef, undef, 4 );
+    $worksheet4->set_row( 4,  undef, undef, undef, 5 );
+    $worksheet4->set_row( 5,  undef, undef, undef, 6 );
+    $worksheet4->set_row( 6,  undef, undef, undef, 7 );
+    $worksheet4->set_row( 7,  undef, undef, undef, 6 );
+    $worksheet4->set_row( 8,  undef, undef, undef, 5 );
+    $worksheet4->set_row( 9,  undef, undef, undef, 4 );
+    $worksheet4->set_row( 10, undef, undef, undef, 3 );
+    $worksheet4->set_row( 11, undef, undef, undef, 2 );
+    $worksheet4->set_row( 12, undef, undef, undef, 1 );
+    
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/outline.pl>
+
+=head2 Example: outline_collapsed.pl
+
+
+
+Example of how use Excel::Writer::XLSX to generate Excel outlines and
+grouping.
+
+These example focus mainly on collapsed outlines. See also the
+outlines.pl example program for more general examples.
+
+
+
+=begin html
+
+<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/outline_collapsed.jpg" width="640" height="420" alt="Output from outline_collapsed.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how use Excel::Writer::XLSX to generate Excel outlines and
+    # grouping.
+    #
+    # These example focus mainly on collapsed outlines. See also the
+    # outlines.pl example program for more general examples.
+    #
+    # reverse('©'), March 2008, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    # Create a new workbook and add some worksheets
+    my $workbook   = Excel::Writer::XLSX->new( 'outline_collapsed.xlsx' );
+    my $worksheet1 = $workbook->add_worksheet( 'Outlined Rows' );
+    my $worksheet2 = $workbook->add_worksheet( 'Collapsed Rows 1' );
+    my $worksheet3 = $workbook->add_worksheet( 'Collapsed Rows 2' );
+    my $worksheet4 = $workbook->add_worksheet( 'Collapsed Rows 3' );
+    my $worksheet5 = $workbook->add_worksheet( 'Outline Columns' );
+    my $worksheet6 = $workbook->add_worksheet( 'Collapsed Columns' );
+    
+    
+    # Add a general format
+    my $bold = $workbook->add_format( bold => 1 );
+    
+    
+    #
+    # This function will generate the same data and sub-totals on each worksheet.
+    #
+    sub create_sub_totals {
+    
+        my $worksheet = $_[0];
+    
+        # Add a column format for clarity
+        $worksheet->set_column( 'A:A', 20 );
+    
+        # Add the data, labels and formulas
+        $worksheet->write( 'A1', 'Region', $bold );
+        $worksheet->write( 'A2', 'North' );
+        $worksheet->write( 'A3', 'North' );
+        $worksheet->write( 'A4', 'North' );
+        $worksheet->write( 'A5', 'North' );
+        $worksheet->write( 'A6', 'North Total', $bold );
+    
+        $worksheet->write( 'B1', 'Sales', $bold );
+        $worksheet->write( 'B2', 1000 );
+        $worksheet->write( 'B3', 1200 );
+        $worksheet->write( 'B4', 900 );
+        $worksheet->write( 'B5', 1200 );
+        $worksheet->write( 'B6', '=SUBTOTAL(9,B2:B5)', $bold );
+    
+        $worksheet->write( 'A7',  'South' );
+        $worksheet->write( 'A8',  'South' );
+        $worksheet->write( 'A9',  'South' );
+        $worksheet->write( 'A10', 'South' );
+        $worksheet->write( 'A11', 'South Total', $bold );
+    
+        $worksheet->write( 'B7',  400 );
+        $worksheet->write( 'B8',  600 );
+        $worksheet->write( 'B9',  500 );
+        $worksheet->write( 'B10', 600 );
+        $worksheet->write( 'B11', '=SUBTOTAL(9,B7:B10)', $bold );
+    
+        $worksheet->write( 'A12', 'Grand Total',         $bold );
+        $worksheet->write( 'B12', '=SUBTOTAL(9,B2:B10)', $bold );
+    
+    }
+    
+    
+    ###############################################################################
+    #
+    # Example 1: Create a worksheet with outlined rows. It also includes SUBTOTAL()
+    # functions so that it looks like the type of automatic outlines that are
+    # generated when you use the Excel Data->SubTotals menu item.
+    #
+    
+    # The syntax is: set_row($row, $height, $XF, $hidden, $level, $collapsed)
+    $worksheet1->set_row( 1, undef, undef, 0, 2 );
+    $worksheet1->set_row( 2, undef, undef, 0, 2 );
+    $worksheet1->set_row( 3, undef, undef, 0, 2 );
+    $worksheet1->set_row( 4, undef, undef, 0, 2 );
+    $worksheet1->set_row( 5, undef, undef, 0, 1 );
+    
+    $worksheet1->set_row( 6,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 7,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 8,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 9,  undef, undef, 0, 2 );
+    $worksheet1->set_row( 10, undef, undef, 0, 1 );
+    
+    # Write the sub-total data that is common to the row examples.
+    create_sub_totals( $worksheet1 );
+    
+    
+    ###############################################################################
+    #
+    # Example 2: Create a worksheet with collapsed outlined rows.
+    # This is the same as the example 1  except that the all rows are collapsed.
+    # Note: We need to indicate the row that contains the collapsed symbol '+' with
+    # the optional parameter, $collapsed.
+    
+    $worksheet2->set_row( 1, undef, undef, 1, 2 );
+    $worksheet2->set_row( 2, undef, undef, 1, 2 );
+    $worksheet2->set_row( 3, undef, undef, 1, 2 );
+    $worksheet2->set_row( 4, undef, undef, 1, 2 );
+    $worksheet2->set_row( 5, undef, undef, 1, 1 );
+    
+    $worksheet2->set_row( 6,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 7,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 8,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 9,  undef, undef, 1, 2 );
+    $worksheet2->set_row( 10, undef, undef, 1, 1 );
+    
+    $worksheet2->set_row( 11, undef, undef, 0, 0, 1 );
+    
+    # Write the sub-total data that is common to the row examples.
+    create_sub_totals( $worksheet2 );
+    
+    
+    ###############################################################################
+    #
+    # Example 3: Create a worksheet with collapsed outlined rows.
+    # Same as the example 1  except that the two sub-totals are collapsed.
+    
+    $worksheet3->set_row( 1, undef, undef, 1, 2 );
+    $worksheet3->set_row( 2, undef, undef, 1, 2 );
+    $worksheet3->set_row( 3, undef, undef, 1, 2 );
+    $worksheet3->set_row( 4, undef, undef, 1, 2 );
+    $worksheet3->set_row( 5, undef, undef, 0, 1, 1 );
+    
+    $worksheet3->set_row( 6,  undef, undef, 1, 2 );
+    $worksheet3->set_row( 7,  undef, undef, 1, 2 );
+    $worksheet3->set_row( 8,  undef, undef, 1, 2 );
+    $worksheet3->set_row( 9,  undef, undef, 1, 2 );
+    $worksheet3->set_row( 10, undef, undef, 0, 1, 1 );
+    
+    
+    # Write the sub-total data that is common to the row examples.
+    create_sub_totals( $worksheet3 );
+    
+    
+    ###############################################################################
+    #
+    # Example 4: Create a worksheet with outlined rows.
+    # Same as the example 1  except that the two sub-totals are collapsed.
+    
+    $worksheet4->set_row( 1, undef, undef, 1, 2 );
+    $worksheet4->set_row( 2, undef, undef, 1, 2 );
+    $worksheet4->set_row( 3, undef, undef, 1, 2 );
+    $worksheet4->set_row( 4, undef, undef, 1, 2 );
+    $worksheet4->set_row( 5, undef, undef, 1, 1, 1 );
+    
+    $worksheet4->set_row( 6,  undef, undef, 1, 2 );
+    $worksheet4->set_row( 7,  undef, undef, 1, 2 );
+    $worksheet4->set_row( 8,  undef, undef, 1, 2 );
+    $worksheet4->set_row( 9,  undef, undef, 1, 2 );
+    $worksheet4->set_row( 10, undef, undef, 1, 1, 1 );
+    
+    $worksheet4->set_row( 11, undef, undef, 0, 0, 1 );
+    
+    # Write the sub-total data that is common to the row examples.
+    create_sub_totals( $worksheet4 );
+    
+    
+    ###############################################################################
+    #
+    # Example 5: Create a worksheet with outlined columns.
+    #
+    my $data = [
+        [ 'Month', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Total' ],
+        [ 'North', 50,    20,    15,    25,    65,    80,,   '=SUM(B2:G2)' ],
+        [ 'South', 10,    20,    30,    50,    50,    50,,   '=SUM(B3:G3)' ],
+        [ 'East',  45,    75,    50,    15,    75,    100,,  '=SUM(B4:G4)' ],
+        [ 'West',  15,    15,    55,    35,    20,    50,,   '=SUM(B5:G6)' ],
+    ];
+    
+    # Add bold format to the first row
+    $worksheet5->set_row( 0, undef, $bold );
+    
+    # Syntax: set_column($col1, $col2, $width, $XF, $hidden, $level, $collapsed)
+    $worksheet5->set_column( 'A:A', 10, $bold );
+    $worksheet5->set_column( 'B:G', 5, undef, 0, 1 );
+    $worksheet5->set_column( 'H:H', 10 );
+    
+    # Write the data and a formula
+    $worksheet5->write_col( 'A1', $data );
+    $worksheet5->write( 'H6', '=SUM(H2:H5)', $bold );
+    
+    
+    ###############################################################################
+    #
+    # Example 6: Create a worksheet with collapsed outlined columns.
+    # This is the same as the previous example except collapsed columns.
+    
+    # Add bold format to the first row
+    $worksheet6->set_row( 0, undef, $bold );
+    
+    # Syntax: set_column($col1, $col2, $width, $XF, $hidden, $level, $collapsed)
+    $worksheet6->set_column( 'A:A', 10, $bold );
+    $worksheet6->set_column( 'B:G', 5,  undef, 1, 1 );
+    $worksheet6->set_column( 'H:H', 10, undef, 0, 0, 1 );
+    
+    # Write the data and a formula
+    $worksheet6->write_col( 'A1', $data );
+    $worksheet6->write( 'H6', '=SUM(H2:H5)', $bold );
+    
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/outline_collapsed.pl>
 
 =head2 Example: panes.pl
 
@@ -4842,7 +5410,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/panes.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/panes.pl>
 
 =head2 Example: properties.pl
 
@@ -4897,7 +5465,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/properties.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/properties.pl>
 
 =head2 Example: protection.pl
 
@@ -4961,7 +5529,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/protection.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/protection.pl>
 
 =head2 Example: rich_strings.pl
 
@@ -5025,7 +5593,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/rich_strings.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/rich_strings.pl>
 
 =head2 Example: right_to_left.pl
 
@@ -5072,7 +5640,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/right_to_left.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/right_to_left.pl>
 
 =head2 Example: sales.pl
 
@@ -5195,7 +5763,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/sales.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -5294,7 +5862,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -5393,7 +5961,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/stocks.pl>
 
 =head2 Example: tab_colors.pl
 
@@ -5438,7 +6006,7 @@ Source code for this example:
     $worksheet4->set_tab_color( 0x35 );    # Orange
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/tab_colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/tab_colors.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -5526,7 +6094,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -5623,7 +6191,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -5712,7 +6280,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -5841,7 +6409,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/write_handler4.pl>
 
 =head2 Example: write_to_scalar.pl
 
@@ -5890,7 +6458,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/write_to_scalar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/write_to_scalar.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -5955,7 +6523,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -6020,7 +6588,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -6085,7 +6653,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -6150,7 +6718,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -6215,7 +6783,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -6280,7 +6848,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -6350,7 +6918,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -6415,7 +6983,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -6480,7 +7048,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -6545,7 +7113,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.26/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.27/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 

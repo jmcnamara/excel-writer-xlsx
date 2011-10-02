@@ -4,6 +4,15 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.27 October 2 2011
+
+    + Excel::Writer::XLSX is now 100% functionally and API compatible
+      with Spreadsheet::WriteExcel. 
+
+    + Added outlines and grouping functionality.
+
+    + Added outline.pl and outline_collapsed.pl example programs.
+
 
 0.26 October 1 2011
 

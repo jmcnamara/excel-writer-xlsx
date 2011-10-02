@@ -39,6 +39,8 @@ examples/merge5.pl
 examples/merge6.pl
 examples/mod_perl1.pl
 examples/mod_perl2.pl
+examples/outline.pl
+examples/outline_collapsed.pl
 examples/panes.pl
 examples/properties.pl
 examples/protection.pl
@@ -354,6 +356,12 @@ t/regression/images/red.jpg
 t/regression/images/red.png
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
+t/regression/outline01.t
+t/regression/outline02.t
+t/regression/outline03.t
+t/regression/outline04.t
+t/regression/outline05.t
+t/regression/outline06.t
 t/regression/page_breaks01.t
 t/regression/page_breaks02.t
 t/regression/page_breaks03.t
@@ -527,6 +535,12 @@ t/regression/xlsx_files/image04.xlsx
 t/regression/xlsx_files/image05.xlsx
 t/regression/xlsx_files/image06.xlsx
 t/regression/xlsx_files/image07.xlsx
+t/regression/xlsx_files/outline01.xlsx
+t/regression/xlsx_files/outline02.xlsx
+t/regression/xlsx_files/outline03.xlsx
+t/regression/xlsx_files/outline04.xlsx
+t/regression/xlsx_files/outline05.xlsx
+t/regression/xlsx_files/outline06.xlsx
 t/regression/xlsx_files/page_breaks01.xlsx
 t/regression/xlsx_files/page_breaks02.xlsx
 t/regression/xlsx_files/page_breaks03.xlsx
