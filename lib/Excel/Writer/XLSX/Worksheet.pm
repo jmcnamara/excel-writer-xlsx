@@ -133,6 +133,7 @@ sub new {
     $self->{_leading_zeros}     = 0;
 
     $self->{_outline_row_level} = 0;
+    $self->{_outline_col_level} = 0;
     $self->{_outline_style}     = 0;
     $self->{_outline_below}     = 1;
     $self->{_outline_right}     = 1;
@@ -518,6 +519,15 @@ sub set_column {
 
     # Convert the format object.
     $data[3] = _XF( $self, $data[3] );
+
+    # Set the limits for the outline levels (0 <= x <= 7).
+    $data[5] = 0 unless defined $data[5];
+    $data[5] = 0 if $data[5] < 0;
+    $data[5] = 7 if $data[5] > 7;
+
+    if ( $data[5] > $self->{_outline_col_level} ) {
+        $self->{_outline_col_level} = $data[5];
+    }
 
     # Store the column data.
     push @{ $self->{_colinfo} }, [@data];
@@ -4482,8 +4492,12 @@ sub _write_sheet_format_pr {
     my $self               = shift;
     my $base_col_width     = 10;
     my $default_row_height = 15;
+    my $row_level      = $self->{_outline_row_level};
+    my $col_level      = $self->{_outline_col_level};
 
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
+    push @attributes, ( 'outlineLevelRow' => $row_level ) if $row_level;
+    push @attributes, ( 'outlineLevelCol' => $col_level ) if $col_level;
 
     $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
 }
@@ -4564,9 +4578,11 @@ sub _write_col_info {
         'width' => $width,
     );
 
-    push @attributes, ( style       => $format ) if $format;
-    push @attributes, ( hidden      => 1 )       if $hidden;
-    push @attributes, ( customWidth => 1 )       if $custom_width;
+    push @attributes, ( style          => $format ) if $format;
+    push @attributes, ( hidden         => 1 )       if $hidden;
+    push @attributes, ( customWidth    => 1 )       if $custom_width;
+    push @attributes, ( 'outlineLevel' => $level )  if $level;
+    push @attributes, ( 'collapsed'    => 1 )       if $collapsed;
 
 
     $self->{_writer}->emptyTag( 'col', @attributes );
@@ -4758,6 +4774,8 @@ sub _write_row {
     push @attributes, ( 'ht'           => $height ) if $height != 15;
     push @attributes, ( 'hidden'       => 1 )       if $hidden;
     push @attributes, ( 'customHeight' => 1 )       if $height != 15;
+    push @attributes, ( 'outlineLevel' => $level )  if $level;
+    push @attributes, ( 'collapsed'    => 1 )       if $collapsed;
 
 
     if ( $empty_row ) {
