@@ -46,6 +46,8 @@ merge5.pl               An advanced example of merging with formatting.
 merge6.pl               An example of merging with Unicode strings.
 mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
+outline.pl              An example of outlines and grouping.
+outline_collapsed.pl    An example of collapsed outlines.
 panes.pl                An examples of how to create panes.
 properties.pl           Add document properties to a workbook.
 protection.pl           Example of cell locking and formula hiding.
