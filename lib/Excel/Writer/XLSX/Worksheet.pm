@@ -4887,7 +4887,7 @@ sub _write_cell {
         # Write a formula.
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_formula( $token );
-        $self->_write_cell_value( $cell->[3] );
+        $self->_write_cell_value( $cell->[3] // 0 );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 'a' ) {
