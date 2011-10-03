@@ -168,7 +168,7 @@ $worksheet->data_validation(
     $row, 1,
     {
         validate => 'list',
-        source   => '=E4:G4',
+        source   => '=$E$4:$G$4',
     }
 );
 
