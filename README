@@ -7,15 +7,26 @@ DESCRIPTION
     The Excel::Writer::XLSX module can be used to create a new Excel file
     in the 2007+ XLSX format. 
 
+    The module supports the following Excel features:
 
-    Multiple worksheets can be added to a workbook and formatting
-    can be applied to cells. Text, numbers, and formulas can be
-    written to the cells.
+        * Multiple worksheets
+        * Strings and numbers
+        * Unicode text
+        * Rich string formats
+        * Formulas (including array formulas)
+        * Cell formatting
+        * Embedded images
+        * Charts
+        * Autofilters
+        * Data validation
+        * Hyperlinks
+        * Defined names
+        * Grouping/Outlines
+        * Cell comments
+        * Panes
+        * Page set-up and printing options
 
-    Excel::Writer::XLSX uses the same interface as Spreadsheet::WriteExcel
-    but not all of its features are currently implemented. See the 
-    "Compatibility with Spreadsheet::WriteExcel" section of the main
-    documentation for details.
+    Excel::Writer::XLSX uses the same interface as Spreadsheet::WriteExcel.
 
 
 SYNOPSIS
@@ -26,7 +37,7 @@ SYNOPSIS
         use Excel::Writer::XLSX;
 
         # Create a new Excel workbook
-        my $workbook = Excel::Writer::XLSX->new("perl.xls");
+        my $workbook = Excel::Writer::XLSX->new('perl.xlsx');
 
         # Add a worksheet
         $worksheet = $workbook->add_worksheet();
