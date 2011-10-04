@@ -258,7 +258,7 @@ sub print_image_html {
 
     return unless exists $images{$image};
 
-    my $url    = 'http://homepage.eircom.net/~jmcnamara/perl/images';
+    my $url    = 'http://jmcnamara.github.com/excel-writer-xlsx/images/examples';
     my $width  = 640;
     my $height = 420;
 
@@ -279,6 +279,7 @@ sub print_image_html {
 __END__
 # Image files used in the documentation.
 a_simple.jpg
+array_formula.jpg
 autofilter.jpg
 autofit.jpg
 bigfile.jpg

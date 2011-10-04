@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.28 October 4 2011
+
+    + Added default write_formula() value for compatibility with Google docs.
+
+    + Updated Example.pm docs with Excel 2007 images.
+
+
 0.27 October 2 2011
 
     + Excel::Writer::XLSX is now 100% functionally and API compatible
