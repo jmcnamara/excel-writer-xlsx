@@ -688,3 +688,4 @@ t/worksheet/worksheet_04.t
 t/worksheet/worksheet_array_formula_01.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
+t/worksheet/worksheet_merge_cells_03.t
