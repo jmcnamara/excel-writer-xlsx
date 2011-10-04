@@ -2723,45 +2723,139 @@ sub merge_range {
     croak "Incorrect number of arguments" if @_ < 6;
     croak "Fifth parameter must be a format object" unless ref $_[5];
 
-    my $rwFirst    = shift;
-    my $colFirst   = shift;
-    my $rwLast     = shift;
-    my $colLast    = shift;
+    my $row_first  = shift;
+    my $col_first  = shift;
+    my $row_last   = shift;
+    my $col_last   = shift;
     my $string     = shift;
     my $format     = shift;
-    my @extra_args = @_; # For write_url().
-
+    my @extra_args = @_;      # For write_url().
 
     # Excel doesn't allow a single cell to be merged
-    if ( $rwFirst == $rwLast and $colFirst == $colLast ) {
+    if ( $row_first == $row_last and $col_first == $col_last ) {
         croak "Can't merge single cell";
     }
 
     # Swap last row/col with first row/col as necessary
-    ( $rwFirst,  $rwLast )  = ( $rwLast,  $rwFirst )  if $rwFirst > $rwLast;
-    ( $colFirst, $colLast ) = ( $colLast, $colFirst ) if $colFirst > $colLast;
+    ( $row_first, $row_last ) = ( $row_last, $row_first )
+      if $row_first > $row_last;
+    ( $col_first, $col_last ) = ( $col_last, $col_first )
+      if $col_first > $col_last;
 
     # Check that column number is valid and store the max value
-    return if $self->_check_dimensions( $rwLast, $colLast );
+    return if $self->_check_dimensions( $row_last, $col_last );
 
     # Store the merge range.
-    push @{ $self->{_merge} }, [ $rwFirst, $colFirst, $rwLast, $colLast ];
+    push @{ $self->{_merge} }, [ $row_first, $col_first, $row_last, $col_last ];
 
     # Write the first cell
-    $self->write( $rwFirst, $colFirst, $string, $format, @extra_args );
+    $self->write( $row_first, $col_first, $string, $format, @extra_args );
 
     # Pad out the rest of the area with formatted blank cells.
-    for my $row ( $rwFirst .. $rwLast ) {
-        for my $col ( $colFirst .. $colLast ) {
-            next if $row == $rwFirst and $col == $colFirst;
+    for my $row ( $row_first .. $row_last ) {
+        for my $col ( $col_first .. $col_last ) {
+            next if $row == $row_first and $col == $col_first;
             $self->write_blank( $row, $col, $format );
         }
     }
 }
 
+
+###############################################################################
 #
-# TODO Abstract merge_range() into merge_range_type();
+# merge_range_type()
 #
+# Same as merge_range() above except the type of write() is specified.
+#
+sub merge_range_type {
+
+    my $self = shift;
+    my $type = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row_first = shift;
+    my $col_first = shift;
+    my $row_last  = shift;
+    my $col_last  = shift;
+    my $format;
+
+    # Get the format. It can be in different positions for the different types.
+    if (   $type eq 'array_formula'
+        || $type eq 'blank'
+        || $type eq 'rich_string' )
+    {
+
+        # The format is the last element.
+        $format = $_[-1];
+    }
+    else {
+
+        # Or else it is after the token.
+        $format = $_[1];
+    }
+
+    # Check that there is a format object.
+    croak "Format object missing or in an incorrect position" unless ref $format;
+
+    # Excel doesn't allow a single cell to be merged
+    if ( $row_first == $row_last and $col_first == $col_last ) {
+        croak "Can't merge single cell";
+    }
+
+    # Swap last row/col with first row/col as necessary
+    ( $row_first, $row_last ) = ( $row_last, $row_first )
+      if $row_first > $row_last;
+    ( $col_first, $col_last ) = ( $col_last, $col_first )
+      if $col_first > $col_last;
+
+    # Check that column number is valid and store the max value
+    return if $self->_check_dimensions( $row_last, $col_last );
+
+    # Store the merge range.
+    push @{ $self->{_merge} }, [ $row_first, $col_first, $row_last, $col_last ];
+
+    # Write the first cell
+    if ( $type eq 'string' ) {
+        $self->write_string( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'number' ) {
+        $self->write_number( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'blank' ) {
+        $self->write_blank( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'date_time' ) {
+        $self->write_date_time( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'rich_string' ) {
+        $self->write_rich_string( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'url' ) {
+        $self->write_url( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'formula' ) {
+        $self->write_formula( $row_first, $col_first, @_ );
+    }
+    elsif ( $type eq 'array_formula' ) {
+        $self->write_formula_array( $row_first, $col_first, @_ );
+    }
+    else {
+        croak "Unknown type '$type'";
+    }
+
+    # Pad out the rest of the area with formatted blank cells.
+    for my $row ( $row_first .. $row_last ) {
+        for my $col ( $col_first .. $col_last ) {
+            next if $row == $row_first and $col == $col_first;
+            $self->write_blank( $row, $col, $format );
+        }
+    }
+}
+
 
 ###############################################################################
 #

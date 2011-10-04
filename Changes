@@ -4,6 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.29 October 5 2011
+
+    + Added the merge_range_type() method for finer control over the types
+      writen using merge_range().
+
+
 0.28 October 4 2011
 
     + Added default write_formula() value for compatibility with Google docs.

@@ -573,6 +573,7 @@ The following methods are available through a new worksheet:
     freeze_panes()
     split_panes()
     merge_range()
+    merge_range_type()
     set_zoom()
     right_to_left()
     hide_zero()
@@ -1137,15 +1138,6 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
     $worksheet->write_url( 'A15', 'external://NETWORK/share/foo.xlsx' );
 
 See also, the note about L<Cell notation>.
-
-
-
-
-=head2 write_url_range()
-
-This method was mainly only required for Excel 5. It is deprecated in Excel::Writer::XLSX.
-
-Use C<merge_range()> instead.
 
 
 
@@ -1906,9 +1898,38 @@ The C<merge_range()> method allows you merge cells that contain other types of a
 
     $worksheet->merge_range( 'B3:D4', 'Vertical and horizontal', $format );
 
-C<merge_range()> writes its C<$token> argument using the worksheet C<write()> method. Therefore it will handle numbers, strings, formulas or urls as required.
+C<merge_range()> writes its C<$token> argument using the worksheet C<write()> method. Therefore it will handle numbers, strings, formulas or urls as required. If you need to specify the required C<write_*()> method use the C<merge_range_type()> method, see below.
 
 The full possibilities of this method are shown in the C<merge3.pl> to C<merge6.pl> programs in the C<examples> directory of the distribution.
+
+
+
+
+=head2 merge_range_type( $type, $first_row, $first_col, $last_row, $last_col, ... )
+
+The C<merge_range()> method, see above, uses C<write()> to insert the required data into to a merged range. However, there may be times where this isn't what you require so as an alternative the C<merge_range_type ()> method allows you to specify the type of data you wish to write. For example:
+
+    $worksheet->merge_range_type( 'number',  'B2:C2', 123,    $format1 );
+    $worksheet->merge_range_type( 'string',  'B4:C4', 'foo',  $format2 );
+    $worksheet->merge_range_type( 'formula', 'B6:C6', '=1+2', $format3 );
+
+The C<$type> must be one of the following, which corresponds to a C<write_*()> method:
+
+    'number'
+    'string'
+    'formula'
+    'array_formula'
+    'blank'
+    'rich_string'
+    'date_time'
+    'url'
+
+Any arguments after the range should be whatever the appropriate method accepts:
+
+    $worksheet->merge_range_type( 'rich_string', 'B8:C8',
+                                  'This is ', $bold, 'bold', $format4 );
+
+Note, you must always pass a C<$format> object as an argument, even if it is a default format.
 
 
 
@@ -4688,6 +4709,7 @@ It support all of the features of Spreadsheet::WriteExcel with some minor differ
     freeze_panes()              Yes
     split_panes()               Yes
     merge_range()               Yes
+    merge_range_type()          Yes. Not in Spreadsheet::WriteExcel.
     set_zoom()                  Yes
     right_to_left()             Yes
     hide_zero()                 Yes
