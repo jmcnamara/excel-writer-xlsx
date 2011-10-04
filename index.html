@@ -1,1 +1,224 @@
-My GitHub Page
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<title>Excel::Writer::XLSX</title>
+
+<head>
+
+<style type="text/css">
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+#main_image
+{
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    z-index: 1;
+}
+
+#inline_image
+{
+    margin-left: 40px;
+}
+
+h1 {
+    color: white;
+    background-color: #A7C942;
+    text-align: left;
+    text-indent: 120px;
+    vertical-align: top;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+    padding: 42px;
+    margin-top: 36px;
+
+   }
+
+h2 {
+    color: white;
+    background-color: #A7C942;
+    text-align: left;
+    text-indent: 10px;
+    vertical-align: top;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+
+   }
+
+pre {
+    background: black;
+    color: green;
+    padding: 10px;
+    margin: 40px;
+    width: 620px;
+    font-size: 15px;
+}
+
+</style>
+
+</head>
+<body>
+
+<img id="main_image" src="./images/swe.png" width="128" height="128" alt="Excel::Writer::XLSX logo"/>
+
+<h1>Excel::Writer::XLSX</h1>
+
+
+<p>
+The <b>Excel::Writer::XLSX</b> Perl module can be used to create an Excel 2007+ xlsx file on any platform that perl runs on. It supports a large range of Excel's features:
+</p>
+<ul>
+  <li> 
+    Multiple worksheets
+  </li>
+  <li> 
+    Strings and numbers
+  </li>
+  <li> 
+    Unicode text
+  </li>
+  <li> 
+    Rich string formats
+  </li>
+  <li> 
+    Formulas (including array formulas)
+  </li>
+  <li> 
+    Cell formatting
+  </li>
+  <li> 
+    Embedded images
+  </li>
+  <li> 
+    Charts
+  </li>
+  <li> 
+    Autofilters
+  </li>
+  <li> 
+    Data validation
+  </li>
+  <li> 
+    Hyperlinks
+  </li>
+  <li> 
+    Defined names
+  </li>
+  <li> 
+    Grouping/Outlines
+  </li>
+  <li> 
+    Cell comments
+  </li>
+  <li> 
+    Panes
+  </li>
+  <li> 
+    Page set-up and printing options
+  </li>
+</ul>
+
+
+
+
+
+<p>
+This module will work on Windows, Linux, UNIX and Mac platforms. Generated files are also compatible with the Linux/UNIX spreadsheet applications Gnumeric and OpenOffice.org.
+</p>
+
+
+
+<h2>An example</h2>
+
+
+<p>The following example shows some of the basic features of Excel::Writer::XLSX.</p>
+
+<pre>
+
+use strict;
+use warnings;
+use Excel::Writer::XLSX;
+
+# Create a new workbook called simple.xls and add a worksheet
+my $workbook  = Excel::Writer::XLSX->new( 'a_simple.xlsx' );
+my $worksheet = $workbook->add_worksheet();
+
+# The general syntax is write($row, $column, $token). Note that row and
+# column are zero indexed
+#
+
+# Write some text
+$worksheet->write( 0, 0, "Hi Excel!" );
+
+
+# Write some numbers
+$worksheet->write( 2, 0, 3 );          # Writes 3
+$worksheet->write( 3, 0, 3.00000 );    # Writes 3
+$worksheet->write( 4, 0, 3.00001 );    # Writes 3.00001
+$worksheet->write( 5, 0, 3.14159 );    # TeX revision no.?
+
+
+# Write some formulas
+$worksheet->write( 7, 0, '=A3 + A6' );
+$worksheet->write( 8, 0, '=IF(A5>3,"Yes", "No")' );
+
+
+# Write a hyperlink
+my $hyperlink_format = $workbook->add_format(
+    color     => 'blue',
+    underline => 1,
+);
+
+$worksheet->write( 10, 0, 'http://www.perl.com/', $hyperlink_format );
+
+__END__
+</pre>
+<p>
+This will generate an output file that looks like this:
+</p>
+
+<p id="inline_image">
+<img src="./images/examples/a_simple.jpg" width="640" height="420" alt="Output from example" />
+</p>
+
+
+<h2>Documentation</h2>
+
+<p>There is a lot of documentation for Excel::Writer::XLSX:<p>
+
+<ul>
+  <li>The <a href="http://search.cpan.org/dist/Excel-Writer-XLSX/lib/Excel/Writer/XLSX.pm">Excel::Writer::XLSX</a> documentation on CPAN.</li>
+  <li>The <a href="http://search.cpan.org/dist/Excel-Writer-XLSX/lib/Excel/Writer/XLSX/Examples.pm">Example programs</a> (with screenshots).</li>
+  <li>The <a href="http://search.cpan.org/dist/Excel-Writer-XLSX/lib/Excel/Writer/XLSX/Chart.pm">Chart</a> documentation.</li>
+</ul>
+
+
+<h2>Other Resources</h2>
+
+<ul>
+  <li><b>Downloads</b>: The <a href="http://search.cpan.org/~jmcnamara/Excel-Writer-XLSX/">latest stable release</a> is always available for download from CPAN.</li>
+  <li><b>Forum</b>: The Excel::Writer::XLSX <a href="http://groups.google.com/group/spreadsheet-writeexcel">Google Group</a> is available for asking questions and searching for previous answers.</li>
+  <li><b>Source code</b>: Clone or download from the Excel::Writer::XLSX <a href="http://github.com/jmcnamara/excel-writer-xlsx">GitHub repository</a>.</li>
+  <li><b>Contact</b>: Email the author <a href="mailto:jmcnamara@cpan.org">John McNamara</a> (but <a href="http://search.cpan.org/dist/Excel-Writer-XLSX/lib/Excel/Writer/XLSX/Examples.pm#Example:_bug_report.pl">see this first</a> for bug reports).</li>
+</ul>
+
+
+<h2>Donations</h2>
+
+<p>
+If you found Excel::Writer::XLSX useful and would like to donate to the project, you can do so via PayPal.
+</p>
+
+<p style="text-align:center;clear:both"><a style="border:0pt none;background-color:transparent;margin-left:1em;margin-right:1em" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=jmcnamara%40cpan%2eorg&amp;item_name=Spreadsheet%3a%3aWriteExcel&amp;no_shipping=1&amp;cn=Optional%20note%20with%20donation&amp;tax=0&amp;currency_code=USD&amp;charset=UTF%2d8&amp;charset=UTF%2d8"><img src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" style="border:0pt none" width="62" height="31"></a></p>
+<img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" border="0" height="1">
+
+<h2>__END__</h2>
+
+
+</body>
+</html>
+
