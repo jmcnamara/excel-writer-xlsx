@@ -3950,7 +3950,7 @@ Features that are on the TODO list and will be added are:
 
 =over
 
-=item * Chart sub-types such as stacked and percent stacked.
+=item * Add more chart sub-types.
 
 =item * Additional formatting options. For now try the C<set_style()> method.
 

@@ -284,6 +284,7 @@ This method is use to create a new chart either as a standalone worksheet (the d
 The properties that can be set are:
 
     type     (required)
+    subtype  (optional)
     name     (optional)
     embedded (optional)
 
@@ -304,6 +305,14 @@ The available types are:
     pie
     scatter
     stock
+
+=item * C<subtype>
+
+Used to define a chart subtype where available.
+
+    my $chart = $workbook->add_chart( type => 'bar', subtype => 'stacked' );
+
+Currently only Bar and Column charts support subtypes (stacked and percent_stacked). See the documentation for those chart types.
 
 =item * C<name>
 
