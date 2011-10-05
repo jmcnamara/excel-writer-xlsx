@@ -4,6 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.30 October 6 2011
+
+    + Added stacked and percent_stacked chart subtypes to Bar and Column
+      chart types.
+
+
 0.29 October 5 2011
 
     + Added the merge_range_type() method for finer control over the types
