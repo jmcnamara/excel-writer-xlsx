@@ -51,6 +51,7 @@ $style->_set_style_properties(
     $workbook->{_border_count},
     $workbook->{_fill_count},
     $workbook->{_custom_colors},
+    $workbook->{_dxf_formats},
 );
 $style->_assemble_xml_file();
 

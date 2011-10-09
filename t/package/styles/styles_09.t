@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# reverse('(c)'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('(c)'), October 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -31,32 +31,31 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 
 ###############################################################################
 #
-# Test the _assemble_xml_file() method.
+# Test the _assemble_xml_file() method. With Conditional formats.
 #
-# Test for simple fills in the styles.xml file.
+# Test for simple font styles.
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-my $format1 = $workbook->add_format( pattern => 1,  bg_color => 'red' );
-my $format2 = $workbook->add_format( pattern => 11, bg_color => 'red' );
-my $format3 = $workbook->add_format(
-    pattern  => 11,
-    bg_color => 'red',
-    fg_color => 'yellow'
-);
-my $format4 = $workbook->add_format(
-    pattern  => 1,
-    bg_color => 'red',
-    fg_color => 'red'
+my $format1 = $workbook->add_format(
+    color         => '#9C0006',
+    bg_color      => '#FFC7CE',
+    font_condense => 1,
+    font_extend   => 1,
+    has_fill      => 1,
+    has_font      => 1,
 );
 
+# TODO. Change this when API available.
+$workbook->{_dxf_formats} = [$format1];
+pop @{ $workbook->{_formats} };
 
 $workbook->_prepare_fonts();
 $workbook->_prepare_num_formats();
 $workbook->_prepare_borders();
 $workbook->_prepare_fills();
 
-$style = _new_style( \$got );
+$style = _new_style(\$got);
 $style->_set_style_properties(
     $workbook->{_formats},
     $workbook->{_palette},
@@ -86,35 +85,12 @@ __DATA__
       <scheme val="minor"/>
     </font>
   </fonts>
-  <fills count="6">
+  <fills count="2">
     <fill>
       <patternFill patternType="none"/>
     </fill>
     <fill>
       <patternFill patternType="gray125"/>
-    </fill>
-    <fill>
-      <patternFill patternType="solid">
-        <fgColor rgb="FFFF0000"/>
-        <bgColor indexed="64"/>
-      </patternFill>
-    </fill>
-    <fill>
-      <patternFill patternType="lightHorizontal">
-        <bgColor rgb="FFFF0000"/>
-      </patternFill>
-    </fill>
-    <fill>
-      <patternFill patternType="lightHorizontal">
-        <fgColor rgb="FFFFFF00"/>
-        <bgColor rgb="FFFF0000"/>
-      </patternFill>
-    </fill>
-    <fill>
-      <patternFill patternType="solid">
-        <fgColor rgb="FFFF0000"/>
-        <bgColor rgb="FFFF0000"/>
-      </patternFill>
     </fill>
   </fills>
   <borders count="1">
@@ -129,16 +105,25 @@ __DATA__
   <cellStyleXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
   </cellStyleXfs>
-  <cellXfs count="5">
+  <cellXfs count="1">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="0" fontId="0" fillId="2" borderId="0" xfId="0" applyFill="1"/>
-    <xf numFmtId="0" fontId="0" fillId="3" borderId="0" xfId="0" applyFill="1"/>
-    <xf numFmtId="0" fontId="0" fillId="4" borderId="0" xfId="0" applyFill="1"/>
-    <xf numFmtId="0" fontId="0" fillId="5" borderId="0" xfId="0" applyFill="1"/>
   </cellXfs>
   <cellStyles count="1">
     <cellStyle name="Normal" xfId="0" builtinId="0"/>
   </cellStyles>
-  <dxfs count="0"/>
+  <dxfs count="1">
+    <dxf>
+      <font>
+        <condense val="0"/>
+        <extend val="0"/>
+        <color rgb="FF9C0006"/>
+      </font>
+      <fill>
+        <patternFill>
+          <bgColor rgb="FFFFC7CE"/>
+        </patternFill>
+      </fill>
+    </dxf>
+  </dxfs>
   <tableStyles count="0" defaultTableStyle="TableStyleMedium9" defaultPivotStyle="PivotStyleLight16"/>
 </styleSheet>

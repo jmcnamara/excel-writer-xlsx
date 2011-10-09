@@ -72,6 +72,7 @@ sub new {
     $self->{_drawings}         = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
+    $self->{_dxf_formats}      = [];
     $self->{_palette}          = [];
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;

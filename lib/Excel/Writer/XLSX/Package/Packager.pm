@@ -491,6 +491,7 @@ sub _write_styles_file {
     my $border_count     = $self->{_workbook}->{_border_count};
     my $fill_count       = $self->{_workbook}->{_fill_count};
     my $custom_colors    = $self->{_workbook}->{_custom_colors};
+    my $dxf_formats      = $self->{_workbook}->{_dxf_formats};
 
     my $rels = Excel::Writer::XLSX::Package::Styles->new();
 
@@ -504,6 +505,7 @@ sub _write_styles_file {
         $border_count,
         $fill_count,
         $custom_colors,
+        $dxf_formats,
 
     );
 

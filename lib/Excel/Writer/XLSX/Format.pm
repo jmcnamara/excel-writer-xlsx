@@ -54,6 +54,8 @@ sub new {
         _font_family      => 2,
         _font_charset     => 0,
         _font_scheme      => 'minor',
+        _font_condense    => 0,
+        _font_extend      => 0,
         _theme            => 0,
         _hyperlink        => 0,
 
@@ -352,6 +354,11 @@ sub _get_color {
         white   => 0x09,
         yellow  => 0x0D,
     );
+
+    # Return RGB sytle colors for processing later.
+    if ( $_[0] =~ m/^#[0-9A-F]{6}$/i ) {
+        return $_[0];
+    }
 
     # Return the default color if undef,
     return 0x00 unless defined $_[0];
