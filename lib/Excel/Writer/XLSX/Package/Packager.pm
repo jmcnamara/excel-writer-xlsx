@@ -122,9 +122,9 @@ sub _create_package {
 
     my $self = shift;
 
-    $self->_write_workbook_file();
     $self->_write_worksheet_files();
     $self->_write_chartsheet_files();
+    $self->_write_workbook_file();
     $self->_write_chart_files();
     $self->_write_drawing_files();
     $self->_write_vml_files();
@@ -484,7 +484,7 @@ sub _write_styles_file {
 
     my $self             = shift;
     my $dir              = $self->{_package_dir};
-    my $formats          = $self->{_workbook}->{_formats};
+    my $xf_formats       = $self->{_workbook}->{_xf_formats};
     my $palette          = $self->{_workbook}->{_palette};
     my $font_count       = $self->{_workbook}->{_font_count};
     my $num_format_count = $self->{_workbook}->{_num_format_count};
@@ -498,7 +498,7 @@ sub _write_styles_file {
     mkdir $dir . '/xl';
 
     $rels->_set_style_properties(
-        $formats,
+        $xf_formats,
         $palette,
         $font_count,
         $num_format_count,

@@ -72,7 +72,9 @@ sub new {
     $self->{_drawings}         = [];
     $self->{_sheetnames}       = [];
     $self->{_formats}          = [];
+    $self->{_xf_formats}       = [];
     $self->{_dxf_formats}      = [];
+    $self->{_format_indices}   = {};
     $self->{_palette}          = [];
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
@@ -93,7 +95,7 @@ sub new {
     bless $self, $class;
 
     # Add the default cell format.
-    $self->add_format();
+    $self->add_format( xf_index => 0 );
 
 
     # Check for a filename unless it is an existing filehandle
@@ -137,6 +139,9 @@ sub _assemble_xml_file {
     my $self = shift;
 
     return unless $self->{_writer};
+
+    # TODO
+    $self->_prepare_format_properties();
 
     $self->_write_xml_declaration;
 
@@ -448,7 +453,7 @@ sub add_format {
 
     my $self = shift;
 
-    my @init_data = ( $self->{_xf_index}, @_, );
+    my @init_data = ( undef, \$self->{_format_indices}, @_, );
 
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
@@ -769,18 +774,6 @@ sub _store_workbook {
     # Prepare the worksheet cell comments.
     $self->_prepare_comments();
 
-    # Set the font index for the format objects.
-    $self->_prepare_fonts();
-
-    # Set the number format index for the format objects.
-    $self->_prepare_num_formats();
-
-    # Set the border index for the format objects.
-    $self->_prepare_borders();
-
-    # Set the fill index for the format objects.
-    $self->_prepare_fills();
-
     # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
 
@@ -875,6 +868,72 @@ sub _prepare_sst_string_data {
 }
 
 
+
+###############################################################################
+#
+# _prepare_format_properties()
+#
+# Iterate through the XF Format objects and TODO
+#
+sub _prepare_format_properties {
+
+    my $self = shift;
+
+    # TODO
+    $self->_prepare_formats();
+
+    # Set the font index for the format objects.
+    $self->_prepare_fonts();
+
+    # Set the number format index for the format objects.
+    $self->_prepare_num_formats();
+
+    # Set the border index for the format objects.
+    $self->_prepare_borders();
+
+    # Set the fill index for the format objects.
+    $self->_prepare_fills();
+
+
+}
+
+
+###############################################################################
+#
+# _prepare_formats()
+#
+# Iterate through the XF Format objects and TODO
+#
+sub _prepare_formats {
+
+    my $self = shift;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        my $index = $format->{_xf_index};
+
+        if ( defined $index) {
+            $self->{_xf_formats}->[$index] = $format;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# _set_default_xf_indices()
+#
+# Set the default index for each format. This is mainly used for testing.
+#
+sub _set_default_xf_indices {
+
+    my $self = shift;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        $format->get_xf_index();
+    }
+}
+
+
 ###############################################################################
 #
 # _prepare_fonts()
@@ -889,7 +948,7 @@ sub _prepare_fonts {
     my %fonts;
     my $index = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         my $key = $format->get_font_key();
 
         if ( exists $fonts{$key} ) {
@@ -929,7 +988,7 @@ sub _prepare_num_formats {
     my $index            = 164;
     my $num_format_count = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         my $num_format = $format->{_num_format};
 
         # Check if $num_format is an index to a built-in number format.
@@ -977,7 +1036,7 @@ sub _prepare_borders {
     my %borders;
     my $index = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         my $key = $format->get_border_key();
 
         if ( exists $borders{$key} ) {
@@ -1021,7 +1080,7 @@ sub _prepare_fills {
     $fills{'0:0:0'}  = 0;
     $fills{'17:0:0'} = 1;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
 
         # The following logical statements jointly take care of special cases
         # in relation to cell colours and patterns:
@@ -1308,12 +1367,15 @@ sub _prepare_comments {
     # Add a font format for cell comments.
     if ( $comment_id > 0 ) {
         my $format = Excel::Writer::XLSX::Format->new(
-            0,
+            undef,
+            \$self->{_format_indices},
             font          => 'Tahoma',
             size          => 8,
             color_indexed => 81,
             font_only     => 1,
         );
+
+        $format->get_xf_index();
 
         push @{ $self->{_formats} }, $format;
     }

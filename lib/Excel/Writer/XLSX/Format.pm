@@ -35,7 +35,8 @@ sub new {
     my $class = shift;
 
     my $self = {
-        _xf_index => shift || 0,
+        _xf_index       => shift,
+        _format_indices => shift,
 
         _num_format       => 0,
         _num_format_index => 0,
@@ -232,6 +233,25 @@ sub get_protection_properties {
 
 ###############################################################################
 #
+# get_format_key()
+#
+# Returns a unique hash key for the Format object.
+#
+sub get_format_key {
+
+    my $self = shift;
+
+    my $key = join ':',
+      (
+        $self->get_font_key(), $self->get_border_key,
+        $self->get_fill_key(), $self->{_num_format}
+      );
+
+    return $key;
+}
+
+###############################################################################
+#
 # get_font_key()
 #
 # Returns a unique hash key for a font. Used by Workbook.
@@ -319,7 +339,23 @@ sub get_fill_key {
 sub get_xf_index {
     my $self = shift;
 
-    return $self->{_xf_index};
+    if ( defined $self->{_xf_index} ) {
+        return $self->{_xf_index};
+    }
+    else {
+        my $key  = $self->get_format_key();
+        my $indices_href = ${ $self->{_format_indices} };
+
+        if ( exists $indices_href->{$key} ) {
+            return $indices_href->{$key};
+        }
+        else {
+            my $index = 1 + scalar keys %$indices_href;
+            $indices_href->{$key} = $index;
+            $self->{_xf_index} = $index;
+            return $index;
+        }
+    }
 }
 
 

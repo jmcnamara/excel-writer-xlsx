@@ -20,7 +20,7 @@ my $expected;
 my $got;
 my $caption;
 my $worksheet;
-
+my $format = Excel::Writer::XLSX::Format->new( 1 );
 
 ###############################################################################
 #
@@ -87,7 +87,7 @@ $expected = '<row r="7" s="1" customFormat="1">';
 
 $worksheet = _new_worksheet( \$got );
 
-$worksheet->_write_row( 6, undef, undef, 1 );
+$worksheet->_write_row( 6, undef, undef, $format );
 
 is( $got, $expected, $caption );
 

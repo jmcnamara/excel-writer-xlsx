@@ -30,7 +30,7 @@ my $style;
 $caption  = " \tStyles: _write_borders()";
 $expected = '<borders count="1"><border><left /><right /><top /><bottom /><diagonal /></border></borders>';
 
-my @formats = ( Excel::Writer::XLSX::Format->new( 0, has_border => 1 ) );
+my @formats = ( Excel::Writer::XLSX::Format->new( 0, {}, has_border => 1 ) );
 
 $style = _new_style(\$got);
 $style->_set_style_properties( \@formats, undef, undef, undef, 1 );

@@ -38,7 +38,7 @@ my $palette  = $workbook->{_palette};
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0 );
+$format = Excel::Writer::XLSX::Format->new( 0, {} );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -53,7 +53,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><b /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -68,7 +68,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><i /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -83,7 +83,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><u /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -98,7 +98,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><strike /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -113,7 +113,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><vertAlign val="superscript" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -128,7 +128,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><vertAlign val="subscript" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -143,7 +143,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><sz val="11" /><color theme="1" /><name val="Arial" /><family val="2" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -158,7 +158,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><sz val="12" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -173,7 +173,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><outline /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -188,7 +188,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><shadow /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -203,7 +203,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><sz val="11" /><color rgb="FFFF0000" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style = _new_style( \$got );
 $style->_set_style_properties( undef, $palette, undef, undef );
 $style->_write_font( $format );
@@ -230,7 +230,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><b /><i /><strike /><outline /><shadow /><u /><vertAlign val="superscript" /><sz val="12" /><color rgb="FFFF0000" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style = _new_style( \$got );
 $style->_set_style_properties( undef, $palette, undef, undef );
 $style->_write_font( $format );
@@ -246,7 +246,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><u val="double" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -261,7 +261,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><u val="singleAccounting" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -276,7 +276,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><u val="doubleAccounting" /><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 
@@ -291,7 +291,7 @@ is( $got, $expected, $caption );
 $caption    = " \tStyles: _write_font()";
 $expected   = '<font><u /><sz val="11" /><color theme="10" /><name val="Calibri" /><family val="2" /></font>';
 
-$format = Excel::Writer::XLSX::Format->new( 0, %properties );
+$format = Excel::Writer::XLSX::Format->new( 0, {}, %properties );
 $style  = _new_style( \$got );
 $style->_write_font( $format );
 

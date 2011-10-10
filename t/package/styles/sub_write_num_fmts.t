@@ -51,6 +51,7 @@ $expected         =  '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##
 @formats = (
     Excel::Writer::XLSX::Format->new(
         0,
+        {},
         num_format_index => 164,
         num_format       => '#,##0.0'
     )

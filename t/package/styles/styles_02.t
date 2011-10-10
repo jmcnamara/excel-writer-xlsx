@@ -41,14 +41,12 @@ my $format1 = $workbook->add_format( bold   => 1 );
 my $format2 = $workbook->add_format( italic => 1 );
 my $format3 = $workbook->add_format( bold   => 1, italic => 1 );
 
-$workbook->_prepare_fonts();
-$workbook->_prepare_num_formats();
-$workbook->_prepare_borders();
-$workbook->_prepare_fills();
+$workbook->_set_default_xf_indices();
+$workbook->_prepare_format_properties();
 
 $style = _new_style(\$got);
 $style->_set_style_properties(
-    $workbook->{_formats},
+    $workbook->{_xf_formats},
     $workbook->{_palette},
     $workbook->{_font_count},
     $workbook->{_num_format_count},

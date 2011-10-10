@@ -35,7 +35,7 @@ my $index = 0;
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -52,7 +52,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -69,7 +69,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -86,7 +86,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="2" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -103,7 +103,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="2" fontId="1" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -120,7 +120,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -137,7 +137,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="center" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -154,7 +154,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1" />';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -171,7 +171,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="justify" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -188,7 +188,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="distributed" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -205,7 +205,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="left" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -222,7 +222,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="center" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -239,7 +239,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="right" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -256,7 +256,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="left" indent="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -273,7 +273,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="right" indent="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -290,7 +290,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="fill" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -307,7 +307,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="justify" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -324,7 +324,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="centerContinuous" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -341,7 +341,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="distributed" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -358,7 +358,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="distributed" indent="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -375,7 +375,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="distributed" justifyLastLine="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -393,7 +393,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="left" indent="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -412,7 +412,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment horizontal="distributed" indent="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -429,7 +429,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -446,7 +446,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment shrinkToFit="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -463,7 +463,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment readingOrder="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -480,7 +480,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment readingOrder="2" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -497,7 +497,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="45" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -514,7 +514,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="135" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -531,7 +531,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="255" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -548,7 +548,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="90" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -565,7 +565,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment textRotation="180" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -582,7 +582,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection locked="0" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -599,7 +599,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection hidden="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -616,7 +616,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyProtection="1"><protection locked="0" hidden="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );
@@ -633,7 +633,7 @@ is( $got, $expected, $caption );
 $caption  = " \tStyles: _write_xf()";
 $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1" applyProtection="1"><alignment horizontal="right" /><protection locked="0" hidden="1" /></xf>';
 
-$format = Excel::Writer::XLSX::Format->new( $index, %properties );
+$format = Excel::Writer::XLSX::Format->new( $index, {}, %properties );
 
 $style = _new_style(\$got);
 $style->_write_xf( $format );

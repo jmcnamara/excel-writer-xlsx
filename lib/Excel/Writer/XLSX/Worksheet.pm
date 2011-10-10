@@ -2394,9 +2394,9 @@ sub write_url {
     my $col       = $args[1];                  # Zero indexed column
     my $url       = $args[2];                  # URL string
     my $str       = $args[3];                  # Alternative label
-    my $xf        = _XF( $self, $args[4] );    # Tool tip
-    my $tip       = $args[5];                  # XML data type
-    my $type      = 'l';
+    my $xf        = _XF( $self, $args[4] );    # Cell format
+    my $tip       = $args[5];                  # Tool tip
+    my $type      = 'l';                       # XML data type
     my $link_type = 1;
 
 
@@ -3154,12 +3154,8 @@ sub _XF {
     my $self   = $_[0];
     my $format = $_[1];
 
-    if ( ref( $format ) ) {
-        return $format->get_xf_index();
-    }
-    else {
-        return 0;
-    }
+    # TODO. Remove after refactoring.
+    return $format;
 }
 
 
@@ -4651,6 +4647,12 @@ sub _write_col_info {
     my $level        = $_[5] // 0;    # Outline level.
     my $collapsed    = $_[6] // 0;    # Outline level.
     my $custom_width = 1;
+    my $xf_index     = 0;
+
+    # Get the format index.
+    if ( ref( $format ) ) {
+        $xf_index =  $format->get_xf_index();
+    }
 
     # Set the Excel default col width.
     if ( !defined $width ) {
@@ -4686,11 +4688,11 @@ sub _write_col_info {
         'width' => $width,
     );
 
-    push @attributes, ( style          => $format ) if $format;
-    push @attributes, ( hidden         => 1 )       if $hidden;
-    push @attributes, ( customWidth    => 1 )       if $custom_width;
-    push @attributes, ( 'outlineLevel' => $level )  if $level;
-    push @attributes, ( 'collapsed'    => 1 )       if $collapsed;
+    push @attributes, ( 'style'        => $xf_index ) if $xf_index;
+    push @attributes, ( 'hidden'       => 1 )         if $hidden;
+    push @attributes, ( 'customWidth'  => 1 )         if $custom_width;
+    push @attributes, ( 'outlineLevel' => $level )    if $level;
+    push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
 
 
     $self->{_writer}->emptyTag( 'col', @attributes );
@@ -4873,17 +4875,23 @@ sub _write_row {
     my $level     = shift // 0;
     my $collapsed = shift // 0;
     my $empty_row = shift // 0;
+    my $xf_index  = 0;
 
     my @attributes = ( 'r' => $r + 1 );
 
-    push @attributes, ( 'spans'        => $spans )  if defined $spans;
-    push @attributes, ( 's'            => $format ) if $format;
-    push @attributes, ( 'customFormat' => 1 )       if $format;
-    push @attributes, ( 'ht'           => $height ) if $height != 15;
-    push @attributes, ( 'hidden'       => 1 )       if $hidden;
-    push @attributes, ( 'customHeight' => 1 )       if $height != 15;
-    push @attributes, ( 'outlineLevel' => $level )  if $level;
-    push @attributes, ( 'collapsed'    => 1 )       if $collapsed;
+    # Get the format index.
+    if ( ref( $format ) ) {
+        $xf_index =  $format->get_xf_index();
+    }
+
+    push @attributes, ( 'spans'        => $spans )    if defined $spans;
+    push @attributes, ( 's'            => $xf_index ) if $xf_index;
+    push @attributes, ( 'customFormat' => 1 )         if $format;
+    push @attributes, ( 'ht'           => $height )   if $height != 15;
+    push @attributes, ( 'hidden'       => 1 )         if $hidden;
+    push @attributes, ( 'customHeight' => 1 )         if $height != 15;
+    push @attributes, ( 'outlineLevel' => $level )    if $level;
+    push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
 
 
     if ( $empty_row ) {
@@ -4928,7 +4936,7 @@ sub _write_empty_row {
 #
 # Where $type:  represents the cell type, such as string, number, formula, etc.
 #       $token: is the actual data for the string, number, formula, etc.
-#       $xf:    is the XF format object index.
+#       $xf:    is the XF format object.
 #       @args:  additional args relevant to the specific data type.
 #
 sub _write_cell {
@@ -4940,22 +4948,27 @@ sub _write_cell {
     my $type  = $cell->[0];
     my $token = $cell->[1];
     my $xf    = $cell->[2];
+    my $xf_index = 0;
 
+    # Get the format index.
+    if ( ref( $xf ) ) {
+         $xf_index = $xf->get_xf_index();
+    }
 
     my $range = xl_rowcol_to_cell( $row, $col );
     my @attributes = ( 'r' => $range );
 
     # Add the cell format index.
-    if ( $xf ) {
-        push @attributes, ( 's' => $xf );
+    if ( $xf_index ) {
+        push @attributes, ( 's' => $xf_index );
     }
     elsif ( $self->{_set_rows}->{$row} && $self->{_set_rows}->{$row}->[1] ) {
         my $row_xf = $self->{_set_rows}->{$row}->[1];
-        push @attributes, ( 's' => $row_xf );
+        push @attributes, ( 's' => $row_xf->get_xf_index() );
     }
     elsif ( $self->{_col_formats}->{$col} ) {
         my $col_xf = $self->{_col_formats}->{$col};
-        push @attributes, ( 's' => $col_xf );
+        push @attributes, ( 's' => $col_xf->get_xf_index() );
     }
 
 

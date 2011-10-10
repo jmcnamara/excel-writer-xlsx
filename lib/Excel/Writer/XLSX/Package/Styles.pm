@@ -43,7 +43,7 @@ sub new {
     my $self = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_writer}           = undef;
-    $self->{_formats}          = undef;
+    $self->{_xf_formats}       = undef;
     $self->{_palette}          = [];
     $self->{_font_count}       = 0;
     $self->{_num_format_count} = 0;
@@ -124,7 +124,7 @@ sub _set_style_properties {
 
     my $self = shift;
 
-    $self->{_formats}          = shift;
+    $self->{_xf_formats}       = shift;
     $self->{_palette}          = shift;
     $self->{_font_count}       = shift;
     $self->{_num_format_count} = shift;
@@ -212,7 +212,7 @@ sub _write_num_fmts {
     $self->{_writer}->startTag( 'numFmts', @attributes );
 
     # Write the numFmts elements.
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
 
         # Ignore built-in number formats, i.e., < 164.
         next unless $format->{_num_format_index} >= 164;
@@ -261,7 +261,7 @@ sub _write_fonts {
     $self->{_writer}->startTag( 'fonts', @attributes );
 
     # Write the font elements for format objects that have them.
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         $self->_write_font( $format ) if $format->{_has_font};
     }
 
@@ -421,7 +421,7 @@ sub _write_fills {
     $self->_write_default_fill( 'gray125' );
 
     # Write the fill elements for format objects that have them.
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         $self->_write_fill( $format ) if $format->{_has_fill};
     }
 
@@ -490,7 +490,7 @@ sub _write_fill {
 
     $self->{_writer}->startTag( 'fill' );
 
-    # The none pattern is handled differently for dxf formats.
+    # The "none" pattern is handled differently for dxf formats.
     if ( $dxf_format && $format->{_pattern} == 0 ) {
         $self->{_writer}->startTag( 'patternFill' );
     }
@@ -537,7 +537,7 @@ sub _write_borders {
     $self->{_writer}->startTag( 'borders', @attributes );
 
     # Write the border elements for format objects that have them.
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         $self->_write_border( $format ) if $format->{_has_border};
     }
 
@@ -703,7 +703,7 @@ sub _write_cell_style_xfs {
 sub _write_cell_xfs {
 
     my $self    = shift;
-    my @formats = @{ $self->{_formats} };
+    my @formats = @{ $self->{_xf_formats} };
 
     # Workaround for when the last format is used for the comment font
     # and shouldn't be used for cellXfs.

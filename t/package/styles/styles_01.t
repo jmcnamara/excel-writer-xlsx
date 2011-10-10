@@ -37,14 +37,11 @@ $workbook = Excel::Writer::XLSX->new( $tmp_fh );
 #
 $caption = " \tStyles: _assemble_xml_file()";
 
-$workbook->_prepare_fonts();
-$workbook->_prepare_num_formats();
-$workbook->_prepare_borders();
-$workbook->_prepare_fills();
+$workbook->_prepare_format_properties();
 
 $style = _new_style( \$got );
 $style->_set_style_properties(
-    $workbook->{_formats},
+    $workbook->{_xf_formats},
     $workbook->{_palette},
     $workbook->{_font_count},
     $workbook->{_num_format_count},
