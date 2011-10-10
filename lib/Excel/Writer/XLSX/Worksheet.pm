@@ -518,9 +518,6 @@ sub set_column {
     return -2
       if $self->_check_dimensions( 0, $data[1], $ignore_row, $ignore_col );
 
-    # Convert the format object.
-    $data[3] = _XF( $self, $data[3] );
-
     # Set the limits for the outline levels (0 <= x <= 7).
     $data[5] = 0 unless defined $data[5];
     $data[5] = 0 if $data[5] < 0;
@@ -1975,7 +1972,7 @@ sub write_number {
     my $row  = $_[0];                  # Zero indexed row
     my $col  = $_[1];                  # Zero indexed column
     my $num  = $_[2] + 0;
-    my $xf   = _XF( $self, $_[3] );    # The cell format
+    my $xf   = $_[3];                  # The cell format
     my $type = 'n';                    # The data type
 
     # Check that row and col are valid and store max and min values
@@ -2012,7 +2009,7 @@ sub write_string {
     my $row  = $_[0];                  # Zero indexed row
     my $col  = $_[1];                  # Zero indexed column
     my $str  = $_[2];
-    my $xf   = _XF( $self, $_[3] );    # The cell format
+    my $xf   = $_[3];                  # The cell format
     my $type = 's';                    # The data type
 
     # Check that row and col are valid and store max and min values
@@ -2072,7 +2069,6 @@ sub write_rich_string {
     # If the last arg is a format we use it as the cell format.
     if ( ref $_[-1] ) {
         $xf = pop @_;
-        $xf = _XF( $self, $xf );
     }
 
 
@@ -2202,7 +2198,7 @@ sub write_blank {
 
     my $row  = $_[0];                  # Zero indexed row
     my $col  = $_[1];                  # Zero indexed column
-    my $xf   = _XF( $self, $_[2] );    # The cell format
+    my $xf   = $_[2];                  # The cell format
     my $type = 'b';                    # The data type
 
     # Check that row and col are valid and store max and min values
@@ -2250,8 +2246,6 @@ sub write_formula {
             $xf, $value );
     }
 
-    $xf = _XF( $self, $xf );       # The cell format
-
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
@@ -2296,9 +2290,6 @@ sub write_array_formula {
     my $xf      = $_[5];           # The format object.
     my $value   = $_[6];           # Optional formula value.
     my $type    = 'a';             # The data type
-
-    $xf = _XF( $self, $xf );       # The cell format
-
 
     # Swap last row/col with first row/col as necessary
     ( $row1, $row2 ) = ( $row2, $row1 ) if $row1 > $row2;
@@ -2394,7 +2385,7 @@ sub write_url {
     my $col       = $args[1];                  # Zero indexed column
     my $url       = $args[2];                  # URL string
     my $str       = $args[3];                  # Alternative label
-    my $xf        = _XF( $self, $args[4] );    # Cell format
+    my $xf        = $args[4];                  # Cell format
     my $tip       = $args[5];                  # Tool tip
     my $type      = 'l';                       # XML data type
     my $link_type = 1;
@@ -2494,7 +2485,7 @@ sub write_date_time {
     my $row  = $_[0];                  # Zero indexed row
     my $col  = $_[1];                  # Zero indexed column
     my $str  = $_[2];
-    my $xf   = _XF( $self, $_[3] );    # The cell format
+    my $xf   = $_[3];                  # The cell format
     my $type = 'n';                    # The data type
 
 
@@ -2682,9 +2673,6 @@ sub set_row {
         $hidden = 1;
         $height = 15;
     }
-
-    # Convert the format object.
-    $xf = _XF( $self, $xf );
 
     # Set the limits for the outline levels (0 <= x <= 7).
     $level = 0 if $level < 0;
@@ -3136,26 +3124,7 @@ sub _get_palette_color {
     # Palette is passed in from the Workbook class.
     my @rgb = @{ $palette->[$index] };
 
-    # TODO Add the alpha part to the RGB.
     return sprintf "FF%02X%02X%02X", @rgb;
-}
-
-
-###############################################################################
-#
-# _XF()
-#
-# Returns an index to the XF record in the workbook.
-#
-# Note: this is a function, not a method.
-#
-sub _XF {
-
-    my $self   = $_[0];
-    my $format = $_[1];
-
-    # TODO. Remove after refactoring.
-    return $format;
 }
 
 

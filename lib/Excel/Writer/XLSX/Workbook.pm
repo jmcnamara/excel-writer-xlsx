@@ -140,7 +140,7 @@ sub _assemble_xml_file {
 
     return unless $self->{_writer};
 
-    # TODO
+    # Prepare format object for passing to Style.pm.
     $self->_prepare_format_properties();
 
     $self->_write_xml_declaration;
@@ -873,13 +873,13 @@ sub _prepare_sst_string_data {
 #
 # _prepare_format_properties()
 #
-# Iterate through the XF Format objects and TODO
+# Prepare all of the format properties prior to passing them to Styles.pm.
 #
 sub _prepare_format_properties {
 
     my $self = shift;
 
-    # TODO
+    # Separate format objects into XF and DXF formats.
     $self->_prepare_formats();
 
     # Set the font index for the format objects.
@@ -902,7 +902,8 @@ sub _prepare_format_properties {
 #
 # _prepare_formats()
 #
-# Iterate through the XF Format objects and TODO
+# Iterate through the XF Format objects and separate them into XF and DXF
+# formats.
 #
 sub _prepare_formats {
 
