@@ -35,8 +35,10 @@ sub new {
     my $class = shift;
 
     my $self = {
-        _xf_index       => shift,
-        _format_indices => shift,
+        _xf_format_indices  => shift,
+        _dxf_format_indices => shift,
+        _xf_index           => undef,
+        _dxf_index          => undef,
 
         _num_format       => 0,
         _num_format_index => 0,
@@ -344,7 +346,7 @@ sub get_xf_index {
     }
     else {
         my $key  = $self->get_format_key();
-        my $indices_href = ${ $self->{_format_indices} };
+        my $indices_href = ${ $self->{_xf_format_indices} };
 
         if ( exists $indices_href->{$key} ) {
             return $indices_href->{$key};
@@ -353,6 +355,35 @@ sub get_xf_index {
             my $index = 1 + scalar keys %$indices_href;
             $indices_href->{$key} = $index;
             $self->{_xf_index} = $index;
+            return $index;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# get_dxf_index()
+#
+# Returns the index used by Worksheet->_XF()
+#
+sub get_dxf_index {
+    my $self = shift;
+
+    if ( defined $self->{_dxf_index} ) {
+        return $self->{_dxf_index};
+    }
+    else {
+        my $key  = $self->get_format_key();
+        my $indices_href = ${ $self->{_dxf_format_indices} };
+
+        if ( exists $indices_href->{$key} ) {
+            return $indices_href->{$key};
+        }
+        else {
+            my $index = 1 + scalar keys %$indices_href;
+            $indices_href->{$key} = $index;
+            $self->{_dxf_index} = $index;
             return $index;
         }
     }

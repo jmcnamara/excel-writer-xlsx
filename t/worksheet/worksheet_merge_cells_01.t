@@ -30,7 +30,7 @@ my $worksheet;
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
 
-my $format = Excel::Writer::XLSX::Format->new( 1 );
+my $format = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 1 );
 $worksheet = _new_worksheet(\$got);
 
 $worksheet->select();

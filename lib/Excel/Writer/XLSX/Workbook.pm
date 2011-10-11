@@ -53,37 +53,37 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_filename}         = $_[0] || '';
-    $self->{_tempdir}          = undef;
-    $self->{_1904}             = 0;
-    $self->{_activesheet}      = 0;
-    $self->{_firstsheet}       = 0;
-    $self->{_selected}         = 0;
-    $self->{_xf_index}         = 0;
-    $self->{_fileclosed}       = 0;
-    $self->{_filehandle}       = undef;
-    $self->{_internal_fh}      = 0;
-    $self->{_sheet_name}       = 'Sheet';
-    $self->{_chart_name}       = 'Chart';
-    $self->{_sheetname_count}  = 0;
-    $self->{_chartname_count}  = 0;
-    $self->{_worksheets}       = [];
-    $self->{_charts}           = [];
-    $self->{_drawings}         = [];
-    $self->{_sheetnames}       = [];
-    $self->{_formats}          = [];
-    $self->{_xf_formats}       = [];
-    $self->{_dxf_formats}      = [];
-    $self->{_format_indices}   = {};
-    $self->{_palette}          = [];
-    $self->{_font_count}       = 0;
-    $self->{_num_format_count} = 0;
-    $self->{_defined_names}    = [];
-    $self->{_named_ranges}     = [];
-    $self->{_custom_colors}    = [];
-    $self->{_doc_properties}   = {};
-    $self->{_localtime}        = [ localtime() ];
-    $self->{_num_comment_files}= 0;
+    $self->{_filename}           = $_[0] || '';
+    $self->{_tempdir}            = undef;
+    $self->{_1904}               = 0;
+    $self->{_activesheet}        = 0;
+    $self->{_firstsheet}         = 0;
+    $self->{_selected}           = 0;
+    $self->{_fileclosed}         = 0;
+    $self->{_filehandle}         = undef;
+    $self->{_internal_fh}        = 0;
+    $self->{_sheet_name}         = 'Sheet';
+    $self->{_chart_name}         = 'Chart';
+    $self->{_sheetname_count}    = 0;
+    $self->{_chartname_count}    = 0;
+    $self->{_worksheets}         = [];
+    $self->{_charts}             = [];
+    $self->{_drawings}           = [];
+    $self->{_sheetnames}         = [];
+    $self->{_formats}            = [];
+    $self->{_xf_formats}         = [];
+    $self->{_xf_format_indices}  = {};
+    $self->{_dxf_formats}        = [];
+    $self->{_dxf_format_indices} = {};
+    $self->{_palette}            = [];
+    $self->{_font_count}         = 0;
+    $self->{_num_format_count}   = 0;
+    $self->{_defined_names}      = [];
+    $self->{_named_ranges}       = [];
+    $self->{_custom_colors}      = [];
+    $self->{_doc_properties}     = {};
+    $self->{_localtime}          = [ localtime() ];
+    $self->{_num_comment_files}  = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -453,12 +453,14 @@ sub add_format {
 
     my $self = shift;
 
-    my @init_data = ( undef, \$self->{_format_indices}, @_, );
-
+    my @init_data = (
+        \$self->{_xf_format_indices},
+        \$self->{_dxf_format_indices},
+        @_
+    );
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
 
-    $self->{_xf_index} += 1;
     push @{ $self->{_formats} }, $format;    # Store format reference
 
     return $format;
@@ -910,10 +912,15 @@ sub _prepare_formats {
     my $self = shift;
 
     for my $format ( @{ $self->{_formats} } ) {
-        my $index = $format->{_xf_index};
+        my $xf_index  = $format->{_xf_index};
+        my $dxf_index = $format->{_dxf_index};
 
-        if ( defined $index) {
-            $self->{_xf_formats}->[$index] = $format;
+        if ( defined $xf_index ) {
+            $self->{_xf_formats}->[$xf_index] = $format;
+        }
+
+        if ( defined $dxf_index ) {
+            $self->{_dxf_formats}->[$dxf_index] = $format;
         }
     }
 }
@@ -1368,8 +1375,8 @@ sub _prepare_comments {
     # Add a font format for cell comments.
     if ( $comment_id > 0 ) {
         my $format = Excel::Writer::XLSX::Format->new(
-            undef,
-            \$self->{_format_indices},
+            \$self->{_xf_format_indices},
+            \$self->{_dxf_format_indices},
             font          => 'Tahoma',
             size          => 8,
             color_indexed => 81,

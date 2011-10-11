@@ -2071,7 +2071,7 @@ Also, note that a filter condition can only be applied to a column in a range sp
 
 See the C<autofilter.pl> program in the examples directory of the distro for a more detailed example.
 
-B<Note> L<Spreadsheet::WriteExcel> supports Top 10 style filters. These aren't currently support by Excel::Writer::XLSX but may be added later.
+B<Note> L<Spreadsheet::WriteExcel> supports Top 10 style filters. These aren't currently supported by Excel::Writer::XLSX but may be added later.
 
 
 =head2 filter_column_list( $column, @matches )

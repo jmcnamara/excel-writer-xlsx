@@ -20,7 +20,7 @@ my $expected;
 my $got;
 my $caption;
 my $worksheet;
-my $format = Excel::Writer::XLSX::Format->new( 1 );
+my $format = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 1 );
 
 ###############################################################################
 #

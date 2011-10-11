@@ -30,9 +30,9 @@ my $worksheet;
 #
 $caption = " \tWorksheet: _assemble_xml_file()";
 
-my $format1 = Excel::Writer::XLSX::Format->new( 1 );
-my $format2 = Excel::Writer::XLSX::Format->new( 2 );
-my $format3 = Excel::Writer::XLSX::Format->new( 3 );
+my $format1 = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 1 );
+my $format2 = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 2 );
+my $format3 = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 3 );
 $worksheet = _new_worksheet(\$got);
 
 $worksheet->set_column('B:C', 12);
