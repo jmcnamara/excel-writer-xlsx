@@ -39,7 +39,7 @@ my $worksheet3 = $workbook->add_worksheet();
 my $unused1 = $workbook->add_format( bold   => 1 );
 my $bold    = $workbook->add_format( bold   => 1 );
 my $unused2 = $workbook->add_format( bold   => 1 );
-my $unused3 = $workbook->add_format( italic => 1 );
+my $unued3 = $workbook->add_format( italic => 1 );
 
 $worksheet1->write( 'A1', 'Foo' );
 $worksheet1->write( 'A2', 123 );
