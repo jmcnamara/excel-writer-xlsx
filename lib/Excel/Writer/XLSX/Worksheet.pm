@@ -6422,6 +6422,75 @@ sub _write_formula_2 {
 
 
 
+##############################################################################
+#
+# _write_conditional_formatting()
+#
+# Write the <conditionalFormatting> element.
+#
+sub _write_conditional_formatting {
+
+    my $self     = shift;
+    my $priority = shift;
+    my $param    = shift;
+
+    my @attributes = ( 'sqref' => $param->{range} );
+
+    $self->{_writer}->startTag( 'conditionalFormatting', @attributes );
+
+    # Write the cfRule element.
+    $self->_write_cf_rule( $priority, $param );
+
+    $self->{_writer}->endTag( 'conditionalFormatting' );
+}
+
+##############################################################################
+#
+# _write_cf_rule()
+#
+# Write the <cfRule> element.
+#
+sub _write_cf_rule {
+
+    my $self     = shift;
+    my $priority = shift;
+    my $param    = shift;
+
+    my @attributes = ( 'type' => $param->{type} );
+
+    push @attributes, ( 'dxfId' => $param->{dxf_index} )
+      if defined $param->{dxf_index};
+
+    push @attributes, ( 'priority' => $priority );
+    push @attributes, ( 'operator' => $param->{operator} );
+
+    $self->{_writer}->startTag( 'cfRule', @attributes );
+
+    # Write the formula element.
+    $self->_write_formula( $param->{formula} );
+
+    $self->{_writer}->endTag( 'cfRule' );
+}
+
+
+##############################################################################
+#
+# _write_formula()
+#
+# Write the <formula> element.
+#
+sub _write_formula {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->{_writer}->dataElement( 'formula', $data );
+}
+
+
+
+
+
 1;
 
 
