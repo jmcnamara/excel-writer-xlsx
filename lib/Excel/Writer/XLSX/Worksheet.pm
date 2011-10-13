@@ -2850,7 +2850,7 @@ sub merge_range_type {
 # data_validation($row, $col, {...})
 #
 # This method handles the interface to Excel data validation.
-# Somewhat ironically the this requires a lot of validation code since the
+# Somewhat ironically this requires a lot of validation code since the
 # interface is flexible and covers a several types of data validation.
 #
 # We allow data validation to be called on one cell or a range of cells. The
@@ -3095,6 +3095,206 @@ sub data_validation {
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_validations} }, $param;
+}
+
+
+###############################################################################
+#
+# conditional_formatting($row, $col, {...})
+#
+# This method handles the interface to Excel conditional formatting.
+#
+# We allow the format to be called on one cell or a range of cells. The
+# hashref contains the formatting parameters and must be the last param:
+#    conditional_formatting($row, $col, {...})
+#    conditional_formatting($first_row, $first_col, $last_row, $last_col, {...})
+#
+# Returns  0 : normal termination
+#         -1 : insufficient number of arguments
+#         -2 : row or column out of range
+#         -3 : incorrect parameter.
+#
+sub conditional_formatting {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    # Check for a valid number of args.
+    if ( @_ != 5 && @_ != 3 ) { return -1 }
+
+    # The final hashref contains the validation parameters.
+    my $param = pop;
+
+    # Make the last row/col the same as the first if not defined.
+    my ( $row1, $col1, $row2, $col2 ) = @_;
+    if ( !defined $row2 ) {
+        $row2 = $row1;
+        $col2 = $col1;
+    }
+
+    # Check that row and col are valid without storing the values.
+    return -2 if $self->_check_dimensions( $row1, $col1, 1, 1 );
+    return -2 if $self->_check_dimensions( $row2, $col2, 1, 1 );
+
+
+    # Check that the last parameter is a hash list.
+    if ( ref $param ne 'HASH' ) {
+        carp "Last parameter '$param' in conditional_formatting() "
+          . "must be a hash ref";
+        return -3;
+    }
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        type          => 1,
+        format        => 1,
+        operator      => 1,
+        formula       => 1,
+        minimum       => 1,
+        maximum       => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $param_key ( keys %$param ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in conditional_formatting()";
+            return -3;
+        }
+    }
+
+    # 'type' is a required parameter.
+    if ( not exists $param->{type} ) {
+        carp "Parameter 'type' is required in conditional_formatting()";
+        return -3;
+    }
+
+
+    # List of  valid validation types.
+    my %valid_type = (
+        'cell'          => 'cellIs',
+    );
+
+
+    # Check for valid validation types.
+    if ( not exists $valid_type{ lc( $param->{type} ) } ) {
+        carp "Unknown validation type '$param->{type}' for parameter "
+          . "'type' in conditional_formatting()";
+        return -3;
+    }
+    else {
+        $param->{type} = $valid_type{ lc( $param->{type} ) };
+    }
+
+    # 'operator' is a required parameter.
+    if ( not exists $param->{operator} ) {
+        carp "Parameter 'operator' is required in conditional_formatting()";
+        return -3;
+    }
+
+
+    # List of valid operator types.
+    my %operator_type = (
+        'between'                  => 'between',
+        'not between'              => 'notBetween',
+        'equal to'                 => 'equal',
+        '='                        => 'equal',
+        '=='                       => 'equal',
+        'not equal to'             => 'notEqual',
+        '!='                       => 'notEqual',
+        '<>'                       => 'notEqual',
+        'greater than'             => 'greaterThan',
+        '>'                        => 'greaterThan',
+        'less than'                => 'lessThan',
+        '<'                        => 'lessThan',
+        'greater than or equal to' => 'greaterThanOrEqual',
+        '>='                       => 'greaterThanOrEqual',
+        'less than or equal to'    => 'lessThanOrEqual',
+        '<='                       => 'lessThanOrEqual',
+    );
+
+    # Check for valid operator types.
+    if ( not exists $operator_type{ lc( $param->{operator} ) } ) {
+        carp "Unknown operator type '$param->{operator}' for parameter "
+          . "'operator' in conditional_formatting()";
+        return -3;
+    }
+    else {
+        $param->{operator} = $operator_type{ lc( $param->{operator} ) };
+    }
+
+
+    # 'Between' and 'Not between' operator require 2 values.
+    if ( $param->{operator} eq 'between' || $param->{operator} eq 'notBetween' )
+    {
+        if ( not exists $param->{maximum} ) {
+            carp "Parameter 'maximum' is required in conditional_formatting() "
+              . "when using 'between' or 'not between' operator";
+            return -3;
+        }
+    }
+    else {
+        $param->{maximum} = undef;
+    }
+
+    # Convert date/times value if required.
+    if ( $param->{type} eq 'date' || $param->{type} eq 'time' ) {
+        if ( $param->{value} =~ /T/ ) {
+            my $date_time = $self->convert_date_time( $param->{value} );
+
+            if ( !defined $date_time ) {
+                carp "Invalid date/time value '$param->{value}' "
+                  . "in conditional_formatting()";
+                return -3;
+            }
+            else {
+                $param->{value} = $date_time;
+            }
+        }
+        if ( defined $param->{maximum} && $param->{maximum} =~ /T/ ) {
+            my $date_time = $self->convert_date_time( $param->{maximum} );
+
+            if ( !defined $date_time ) {
+                carp "Invalid date/time value '$param->{maximum}' "
+                  . "in conditional_formatting()";
+                return -3;
+            }
+            else {
+                $param->{maximum} = $date_time;
+            }
+        }
+    }
+
+
+    # Set the formatting range.
+
+    # Swap last row/col for first row/col as necessary
+    if ( $row1 > $row2 ) {
+        ( $row1, $row2 ) = ( $row2, $row1 );
+    }
+
+    if ( $col1 > $col2 ) {
+        ( $col1, $col2 ) = ( $col2, $col1 );
+    }
+
+    # If the first and last cell are the same write a single cell.
+    if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
+        $param->{range} = xl_rowcol_to_cell( $row1, $col1 );
+    }
+    else {
+        $param->{range} = xl_range( $row1, $row2, $col1, $col2 );
+    }
+
+
+    # TODO format.
+    $param->{format} = 1 if defined $param->{format};
+
+
+    # Store the validation information until we close the worksheet.
+    push @{ $self->{_cond_formats} }, $param;
 }
 
 
@@ -6421,6 +6621,25 @@ sub _write_formula_2 {
 }
 
 
+##############################################################################
+#
+# _write_conditional_formats()
+#
+# Write the Worksheet conditional formats.
+#
+sub _write_conditional_formats {
+
+    my $self         = shift;
+    my $priority     = 1;
+    my @cond_formats = @{ $self->{_cond_formats} };
+
+    return unless scalar @cond_formats;
+
+    for my $param ( @cond_formats ) {
+        $self->_write_conditional_formatting( $priority++, $param );
+    }
+}
+
 
 ##############################################################################
 #
@@ -6458,8 +6677,8 @@ sub _write_cf_rule {
 
     my @attributes = ( 'type' => $param->{type} );
 
-    push @attributes, ( 'dxfId' => $param->{dxf_index} )
-      if defined $param->{dxf_index};
+    push @attributes, ( 'dxfId' => $param->{format} )
+      if defined $param->{format};
 
     push @attributes, ( 'priority' => $priority );
     push @attributes, ( 'operator' => $param->{operator} );

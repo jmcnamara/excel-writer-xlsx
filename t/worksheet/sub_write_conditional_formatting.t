@@ -21,8 +21,6 @@ my $expected;
 my $got;
 my $caption;
 my $worksheet;
-my $priority;
-my $param;
 
 
 ###############################################################################
@@ -30,20 +28,20 @@ my $param;
 # Test the _write_conditional_formatting() method.
 #
 $caption  = " \tWorksheet: _write_conditional_formatting()";
-$expected = '<conditionalFormatting sqref="A1"><cfRule type="cellIs" dxfId="1" priority="2" operator="greaterThan"><formula>5</formula></cfRule></conditionalFormatting>';
-
-$priority = 2;
-$param = {
-    range     => 'A1',
-    type      => 'cellIs',
-    dxf_index => 1,
-    operator  => 'greaterThan',
-    formula   => 5
-};
+$expected = '<conditionalFormatting sqref="A1"><cfRule type="cellIs" dxfId="1" priority="1" operator="greaterThan"><formula>5</formula></cfRule></conditionalFormatting>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_conditional_formatting( $priority, $param );
+$worksheet->conditional_formatting( 'A1',
+    {
+        type     => 'cell',
+        format   => 1,
+        operator => 'greater than',
+        formula  => 5
+    }
+);
+
+$worksheet->_write_conditional_formats();
 
 is( $got, $expected, $caption );
 
@@ -53,20 +51,20 @@ is( $got, $expected, $caption );
 # Test the _write_conditional_formatting() method.
 #
 $caption  = " \tWorksheet: _write_conditional_formatting()";
-$expected = '<conditionalFormatting sqref="A2"><cfRule type="cellIs" dxfId="0" priority="1" operator="lessThan"><formula>30</formula></cfRule></conditionalFormatting>';
-
-$priority = 1;
-$param = {
-    range     => 'A2',
-    type      => 'cellIs',
-    dxf_index => 0,
-    operator  => 'lessThan',
-    formula   => 30
-};
+$expected = '<conditionalFormatting sqref="A2"><cfRule type="cellIs" dxfId="1" priority="1" operator="lessThan"><formula>30</formula></cfRule></conditionalFormatting>';
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_conditional_formatting( $priority, $param );
+$worksheet->conditional_formatting( 'A2',
+    {
+        type     => 'cell',
+        format   => 1,
+        operator => 'less than',
+        formula  => 30
+    }
+);
+
+$worksheet->_write_conditional_formats();
 
 is( $got, $expected, $caption );
 
@@ -78,18 +76,17 @@ is( $got, $expected, $caption );
 $caption  = " \tWorksheet: _write_conditional_formatting()";
 $expected = '<conditionalFormatting sqref="A3"><cfRule type="cellIs" priority="1" operator="greaterThanOrEqual"><formula>50</formula></cfRule></conditionalFormatting>';
 
-$priority = 1;
-$param = {
-    range     => 'A3',
-    type      => 'cellIs',
-    dxf_index => undef,
-    operator  => 'greaterThanOrEqual',
-    formula   => 50
-};
-
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_conditional_formatting( $priority, $param );
+$worksheet->conditional_formatting( 'A3',
+    {
+        type     => 'cell',
+        operator => '>=',
+        formula  => 50
+    }
+);
+
+$worksheet->_write_conditional_formats();
 
 is( $got, $expected, $caption );
 
