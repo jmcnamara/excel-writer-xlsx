@@ -381,7 +381,7 @@ sub get_dxf_index {
             return $indices_href->{$key};
         }
         else {
-            my $index = 1 + scalar keys %$indices_href;
+            my $index = scalar keys %$indices_href;
             $indices_href->{$key} = $index;
             $self->{_dxf_index} = $index;
             return $index;

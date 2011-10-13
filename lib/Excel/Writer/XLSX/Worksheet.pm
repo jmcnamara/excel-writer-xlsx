@@ -179,8 +179,8 @@ sub new {
 
     $self->{_rstring} = '';
 
-    $self->{_validations} = [];
-
+    $self->{_validations}  = [];
+    $self->{_cond_formats} = [];
 
     bless $self, $class;
     return $self;
@@ -236,6 +236,9 @@ sub _assemble_xml_file {
 
     # Write the mergeCells element.
     $self->_write_merge_cells();
+
+    # Write the conditional formats.
+    $self->_write_conditional_formats();
 
     # Write the dataValidations element.
     $self->_write_data_validations();
@@ -3230,6 +3233,11 @@ sub conditional_formatting {
     # 'Between' and 'Not between' operator require 2 values.
     if ( $param->{operator} eq 'between' || $param->{operator} eq 'notBetween' )
     {
+        if ( not exists $param->{minimum} ) {
+            carp "Parameter 'minimum' is required in conditional_formatting() "
+              . "when using 'between' or 'not between' operator";
+            return -3;
+        }
         if ( not exists $param->{maximum} ) {
             carp "Parameter 'maximum' is required in conditional_formatting() "
               . "when using 'between' or 'not between' operator";
@@ -3237,6 +3245,7 @@ sub conditional_formatting {
         }
     }
     else {
+        $param->{minimum} = undef;
         $param->{maximum} = undef;
     }
 
@@ -3288,10 +3297,10 @@ sub conditional_formatting {
         $param->{range} = xl_range( $row1, $row2, $col1, $col2 );
     }
 
-
-    # TODO format.
-    $param->{format} = 1 if defined $param->{format};
-
+    # Get the dxf format index.
+    if ( defined $param->{format} && ref $param->{format} ) {
+        $param->{format} = $param->{format}->get_dxf_index();
+    }
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats} }, $param;
@@ -6685,8 +6694,15 @@ sub _write_cf_rule {
 
     $self->{_writer}->startTag( 'cfRule', @attributes );
 
-    # Write the formula element.
-    $self->_write_formula( $param->{formula} );
+    if ( $param->{type} eq 'cellIs' ) {
+        if ( defined $param->{minimum} && defined $param->{maximum} ) {
+            $self->_write_formula( $param->{minimum} );
+            $self->_write_formula( $param->{maximum} );
+        }
+        else {
+            $self->_write_formula( $param->{formula} );
+        }
+    }
 
     $self->{_writer}->endTag( 'cfRule' );
 }
