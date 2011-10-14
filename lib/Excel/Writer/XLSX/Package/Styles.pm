@@ -491,7 +491,7 @@ sub _write_fill {
     $self->{_writer}->startTag( 'fill' );
 
     # The "none" pattern is handled differently for dxf formats.
-    if ( $dxf_format && $format->{_pattern} == 0 ) {
+    if ( $dxf_format && $format->{_pattern} <= 1 ) {
         $self->{_writer}->startTag( 'patternFill' );
     }
     else {
@@ -513,7 +513,9 @@ sub _write_fill {
         $self->{_writer}->emptyTag( 'bgColor', 'rgb' => $bg_color );
     }
     else {
-        $self->{_writer}->emptyTag( 'bgColor', 'indexed' => 64 );
+        if ( !$dxf_format ) {
+            $self->{_writer}->emptyTag( 'bgColor', 'indexed' => 64 );
+        }
     }
 
     $self->{_writer}->endTag( 'patternFill' );
@@ -896,8 +898,8 @@ sub _write_dxfs {
         # Write the font elements for format objects that have them.
         for my $format ( @{ $self->{_dxf_formats} } ) {
             $self->{_writer}->startTag( 'dxf' );
-            $self->_write_font( $format, 1 ) if $format->{_has_font};
-            $self->_write_fill( $format, 1 ) if $format->{_has_fill};
+            $self->_write_font( $format, 1 ) if $format->{_has_dxf_font};
+            $self->_write_fill( $format, 1 ) if $format->{_has_dxf_fill};
             $self->{_writer}->endTag( 'dxf' );
         }
 

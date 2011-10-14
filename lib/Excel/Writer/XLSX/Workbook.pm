@@ -976,6 +976,20 @@ sub _prepare_fonts {
     }
 
     $self->{_font_count} = $index;
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+
+        # The only font properties that can change for a DXF format are: color,
+        # bold, italic and strikethrough.
+        if (   $format->{_color}
+            || $format->{_bold}
+            || $format->{_italic}
+            || $format->{_font_strikeout} )
+        {
+            $format->{_has_dxf_font} = 1;
+        }
+    }
 }
 
 
@@ -1134,6 +1148,18 @@ sub _prepare_fills {
     }
 
     $self->{_fill_count} = $index;
+
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+
+        if (   $format->{_pattern}
+            || $format->{_bg_color}
+            || $format->{_fg_color} )
+        {
+            $format->{_has_dxf_fill} = 1;
+        }
+    }
 }
 
 
