@@ -80,9 +80,10 @@ sub new {
         _fill_index   => 0,
         _fill_count   => 0,
 
-        _border_index => 0,
-        _has_border   => 0,
-        _border_count => 0,
+        _border_index   => 0,
+        _has_border     => 0,
+        _has_dxf_border => 0,
+        _border_count   => 0,
 
         _bottom       => 0,
         _bottom_color => 0x0,

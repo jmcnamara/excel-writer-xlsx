@@ -606,6 +606,7 @@ sub _write_border {
 
     my $self       = shift;
     my $format     = shift;
+    my $dxf_format = shift;
     my @attributes = ();
 
 
@@ -658,12 +659,22 @@ sub _write_border {
 
     );
 
-    $self->_write_sub_border(
-        'diagonal',
-        $format->{_diag_border},
-        $format->{_diag_color}
+    # Condition DXF formats don't allow diagonal borders
+    if ( !$dxf_format ) {
+        $self->_write_sub_border(
+            'diagonal',
+            $format->{_diag_border},
+            $format->{_diag_color}
 
-    );
+        );
+    }
+
+    if ( $dxf_format ) {
+        $self->_write_sub_border( 'vertical' );
+        $self->_write_sub_border( 'horizontal' );
+    }
+
+
 
     $self->{_writer}->endTag( 'border' );
 }
@@ -955,6 +966,7 @@ sub _write_dxfs {
             }
 
             $self->_write_fill( $format, 1 )    if $format->{_has_dxf_fill};
+            $self->_write_border( $format, 1 )  if $format->{_has_dxf_border};
             $self->{_writer}->endTag( 'dxf' );
         }
 

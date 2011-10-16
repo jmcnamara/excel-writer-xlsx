@@ -1083,6 +1083,16 @@ sub _prepare_borders {
     }
 
     $self->{_border_count} = $index;
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+        my $key = $format->get_border_key();
+
+        if ($key =~ m/[^0:]/) {
+             $format->{_has_dxf_border} = 1;
+        }
+    }
+
 }
 
 
