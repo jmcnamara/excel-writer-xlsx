@@ -108,7 +108,7 @@ sub _assemble_xml_file {
     # Close the style sheet tag.
     $self->{_writer}->endTag( 'styleSheet' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -673,8 +673,6 @@ sub _write_border {
         $self->_write_sub_border( 'vertical' );
         $self->_write_sub_border( 'horizontal' );
     }
-
-
 
     $self->{_writer}->endTag( 'border' );
 }

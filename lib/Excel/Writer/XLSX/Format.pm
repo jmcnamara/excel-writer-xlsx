@@ -425,7 +425,7 @@ sub _get_color {
         yellow  => 0x0D,
     );
 
-    # Return RGB sytle colors for processing later.
+    # Return RGB style colors for processing later.
     if ( $_[0] =~ m/^#[0-9A-F]{6}$/i ) {
         return $_[0];
     }

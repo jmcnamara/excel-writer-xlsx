@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'cond_format05.xlsx';
+my $filename     = 'cond_format06.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -35,7 +35,11 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-my $format1 = $workbook->add_format( border => 1 );
+my $format1 = $workbook->add_format(
+    pattern  => 15,
+    fg_color => '#FF0000',
+    bg_color => '#FFFF00'
+);
 
 $worksheet->write( 'A1', 10 );
 $worksheet->write( 'A2', 20 );
@@ -46,7 +50,7 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format1,
-        operator => '==',
+        operator => '>',
         formula  => 7,
     }
 );
