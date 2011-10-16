@@ -981,10 +981,11 @@ sub _prepare_fonts {
     for my $format ( @{ $self->{_dxf_formats} } ) {
 
         # The only font properties that can change for a DXF format are: color,
-        # bold, italic and strikethrough.
+        # bold, italic, underline and strikethrough.
         if (   $format->{_color}
             || $format->{_bold}
             || $format->{_italic}
+            || $format->{_underline}
             || $format->{_font_strikeout} )
         {
             $format->{_has_dxf_font} = 1;
@@ -1010,7 +1011,7 @@ sub _prepare_num_formats {
     my $index            = 164;
     my $num_format_count = 0;
 
-    for my $format ( @{ $self->{_xf_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} }, @{ $self->{_dxf_formats} } ) {
         my $num_format = $format->{_num_format};
 
         # Check if $num_format is an index to a built-in number format.
@@ -1036,7 +1037,11 @@ sub _prepare_num_formats {
             $num_formats{$num_format} = $index;
             $format->{_num_format_index} = $index;
             $index++;
-            $num_format_count++;
+
+            # Only increase font count for XF formats (not for DXF formats).
+            if ($format->{_xf_index}) {
+                $num_format_count++;
+            }
         }
     }
 

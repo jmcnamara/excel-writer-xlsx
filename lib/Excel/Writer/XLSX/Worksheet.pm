@@ -180,7 +180,8 @@ sub new {
     $self->{_rstring} = '';
 
     $self->{_validations}  = [];
-    $self->{_cond_formats} = [];
+    $self->{_cond_formats} = {};
+    $self->{_dxf_priority} = 1;
 
     bless $self, $class;
     return $self;
@@ -3277,8 +3278,8 @@ sub conditional_formatting {
         }
     }
 
-
     # Set the formatting range.
+    my $range = '';
 
     # Swap last row/col for first row/col as necessary
     if ( $row1 > $row2 ) {
@@ -3291,10 +3292,10 @@ sub conditional_formatting {
 
     # If the first and last cell are the same write a single cell.
     if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
-        $param->{range} = xl_rowcol_to_cell( $row1, $col1 );
+        $range = xl_rowcol_to_cell( $row1, $col1 );
     }
     else {
-        $param->{range} = xl_range( $row1, $row2, $col1, $col2 );
+        $range = xl_range( $row1, $row2, $col1, $col2 );
     }
 
     # Get the dxf format index.
@@ -3302,8 +3303,11 @@ sub conditional_formatting {
         $param->{format} = $param->{format}->get_dxf_index();
     }
 
+    # Set the priority based on the order of adding.
+    $param->{priority} = $self->{_dxf_priority}++;
+
     # Store the validation information until we close the worksheet.
-    push @{ $self->{_cond_formats} }, $param;
+    push @{ $self->{_cond_formats}->{$range} }, $param;
 }
 
 
@@ -6638,14 +6642,14 @@ sub _write_formula_2 {
 #
 sub _write_conditional_formats {
 
-    my $self         = shift;
-    my $priority     = 1;
-    my @cond_formats = @{ $self->{_cond_formats} };
+    my $self     = shift;
+    my @ranges   = sort keys %{ $self->{_cond_formats} };
 
-    return unless scalar @cond_formats;
+    return unless scalar @ranges;
 
-    for my $param ( @cond_formats ) {
-        $self->_write_conditional_formatting( $priority++, $param );
+    for my $range ( @ranges ) {
+        $self->_write_conditional_formatting( $range,
+            $self->{_cond_formats}->{$range} );
     }
 }
 
@@ -6658,16 +6662,19 @@ sub _write_conditional_formats {
 #
 sub _write_conditional_formatting {
 
-    my $self     = shift;
-    my $priority = shift;
-    my $param    = shift;
+    my $self   = shift;
+    my $range  = shift;
+    my $params = shift;
 
-    my @attributes = ( 'sqref' => $param->{range} );
+    my @attributes = ( 'sqref' => $range );
 
     $self->{_writer}->startTag( 'conditionalFormatting', @attributes );
 
-    # Write the cfRule element.
-    $self->_write_cf_rule( $priority, $param );
+    for my $param ( @$params ) {
+
+        # Write the cfRule element.
+        $self->_write_cf_rule( $param );
+    }
 
     $self->{_writer}->endTag( 'conditionalFormatting' );
 }
@@ -6681,7 +6688,6 @@ sub _write_conditional_formatting {
 sub _write_cf_rule {
 
     my $self     = shift;
-    my $priority = shift;
     my $param    = shift;
 
     my @attributes = ( 'type' => $param->{type} );
@@ -6689,7 +6695,7 @@ sub _write_cf_rule {
     push @attributes, ( 'dxfId' => $param->{format} )
       if defined $param->{format};
 
-    push @attributes, ( 'priority' => $priority );
+    push @attributes, ( 'priority' => $param->{priority} );
     push @attributes, ( 'operator' => $param->{operator} );
 
     $self->{_writer}->startTag( 'cfRule', @attributes );
