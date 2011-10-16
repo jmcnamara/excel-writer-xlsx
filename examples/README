@@ -28,6 +28,7 @@ chart_stock.pl          A demo of stock style charts.
 colors.pl               A demo of the colour palette and named colours.
 comments1.pl            Add comments to worksheet cells.
 comments2.pl            Add comments with advanced options.
+conditional_format.pl   Add conditional formats to a range of cells.
 data_validate.pl        An example of data validation and dropdown lists.
 date_time.pl            Write dates and times with write_date_time().
 defined_name.pl         Example of how to create defined names.
