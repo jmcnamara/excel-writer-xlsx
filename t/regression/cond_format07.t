@@ -59,8 +59,8 @@ $worksheet->conditional_formatting( 'A1:J10',
     {
         type     => 'cell',
         format   => $format1,
-        operator => '>=',
-        formula  => 50,
+        criteria => '>=',
+        value  => 50,
     }
 );
 
@@ -68,8 +68,8 @@ $worksheet->conditional_formatting( 'A1:J10',
     {
         type     => 'cell',
         format   => $format2,
-        operator => '<',
-        formula  => 50,
+        criteria => '<',
+        value  => 50,
     }
 );
 

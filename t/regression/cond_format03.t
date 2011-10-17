@@ -48,7 +48,7 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format1,
-        operator => 'between',
+        criteria => 'between',
         minimum  => 2,
         maximum  => 6,
     }
@@ -58,8 +58,8 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format2,
-        operator => 'greater than',
-        formula  => 1,
+        criteria => 'greater than',
+        value  => 1,
     }
 );
 

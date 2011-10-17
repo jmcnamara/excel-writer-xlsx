@@ -52,8 +52,8 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format,
-        operator => 'greater than',
-        formula  => 5
+        criteria => 'greater than',
+        value  => 5
     }
 );
 

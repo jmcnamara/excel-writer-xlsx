@@ -845,7 +845,7 @@ See the C<rich_strings.pl> example in the distro for more examples.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
 
 =end html
 
@@ -1579,8 +1579,8 @@ The C<conditional_format()> method is used to add formatting to a cell or range 
         {
             type     => 'cell',
             format   => $format1,
-            operator => '>=',
-            formula  => 50,
+            criteria => '>=',
+            value    => 50,
         }
     );
 
@@ -3795,12 +3795,11 @@ A typical use case might be to restrict data in a cell to integer values in a ce
             error_message   => 'Sorry, try again.',
         });
 
-The above example would look like this in Excel: L<http://homepage.eircom.net/~jmcnamara/perl/data_validation.jpg>.
 
 =begin html
 
 <center>
-<img src="http://homepage.eircom.net/~jmcnamara/perl/data_validation.jpg" alt="The output from the above example"/>
+<img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/validation_example.jpg" alt="The output from the above example"/>
 </center>
 
 =end html
@@ -3947,7 +3946,7 @@ The C<criteria> parameter is used to set the criteria by which the data in the c
     'greater than or equal to'  |  '>='
     'less than or equal to'     |  '<='
 
-You can either use Excel's textual description strings, in the first column above, or the more common operator alternatives. The following are equivalent:
+You can either use Excel's textual description strings, in the first column above, or the more common symbolic alternatives. The following are equivalent:
 
     validate => 'integer',
     criteria => 'greater than',
@@ -4187,21 +4186,31 @@ See also the C<data_validate.pl> program in the examples directory of the distro
 
 Conditional formatting is a feature of Excel which allows you to apply a format to a cell or a range of cells based on a certain criteria.
 
-A typical example might be to highlight cell with negative numbers in red:
+For example the following criteria is used to highlight cells >= 50 in red in the C<conditional_format.pl> example from the distro:
 
-    $worksheet->conditional_formatting( 'A1:J10',
+    # Write a conditional format over a range.
+    $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
             format   => $format1,
-            operator => '>=',
-            formula  => 50,
+            criteria => '>=',
+            value    => 50,
         }
     );
+
+=begin html
+
+<center>
+<img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_example.jpg" alt="The output from the above example"/>
+</center>
+
+=end html
+
 
 
 =head2 conditional_format( $row, $col, { parameter => 'value', ... } )
 
-The C<conditional_format()> method is used to apply conditional formatting in an Excel::Writer::XLSX file.
+The C<conditional_format()> method is used to apply formatting  based on used defined criteria to an Excel::Writer::XLSX file.
 
 It can be applied to a single cell or a range of cells. You can pass 3 parameters such as C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
 
@@ -4220,8 +4229,8 @@ The last parameter in C<conditional_format()> must be a hash ref containing the 
 
     type
     format
-    operator
-    formula
+    criteria
+    value
     minimum
     maximum
 
@@ -4239,7 +4248,7 @@ Note, other types such as dates, strings, duplicates, top/bottom rules, data bar
 
 This parameter is passed in a hash ref to C<conditional_format()>.
 
-The C<format> parameter is used to specify the format that will be applied to the cell when the conditional formatting criteria is met. The format is created using the C<add_format())> Worksheet method in the same way as cell formats:
+The C<format> parameter is used to specify the format that will be applied to the cell when the conditional formatting criteria is met. The format is created using the C<add_format()> method in the same way as cell formats:
 
     $format = $workbook->add_format( bold => 1, italic => 1 );
 
@@ -4247,12 +4256,12 @@ The C<format> parameter is used to specify the format that will be applied to th
         {
             type     => 'cell',
             format   => $format,
-            operator => 'greater than',
-            formula  => 5
+            criteria => '>',
+            value    => 5
         }
     );
 
-The conditional format follows the same rules as in Excel: it is superimposed over the existing cell format and not all font properties or border properties can be modified. The font properties that can't be modified in a conditional format are font name, font size, superscript and subscript. The diagonal border properties can't be modified either.
+The conditional format follows the same rules as in Excel: it is superimposed over the existing cell format and not all font and border properties can be modified. Font properties that can't be modified are font name, font size, superscript and subscript. The border property that cannot be modified is diagonal borders.
 
 Excel specifies some default formats to be used with conditional formatting. You can replicate them using the following Excel::Writer::XLSX formats:
 
@@ -4260,30 +4269,26 @@ Excel specifies some default formats to be used with conditional formatting. You
     my $format1 = $workbook->add_format(
         bg_color => '#FFC7CE',
         color    => '#9C0006',
-
     );
 
     # Light yellow fill with dark yellow text.
     my $format2 = $workbook->add_format(
         bg_color => '#FFEB9C',
         color    => '#9C6500',
-
-
     );
 
     # Green fill with dark green text.
     my $format3 = $workbook->add_format(
         bg_color => '#C6EFCE',
         color    => '#006100',
-
     );
 
 
-=head2 operator
+=head2 criteria
 
 This parameter is passed in a hash ref to C<conditional_format()>.
 
-The C<operator> parameter is used to set the criteria by which the cell data will be evaluated. It has no default value. Allowable values are:
+The C<criteria> parameter is used to set the criteria by which the cell data will be evaluated. It has no default value. Allowable values are:
 
     'between'
     'not between'
@@ -4294,14 +4299,41 @@ The C<operator> parameter is used to set the criteria by which the cell data wil
     'greater than or equal to'  |  '>='
     'less than or equal to'     |  '<='
 
-You can either use Excel's textual description strings, in the first column above, or the more common operator alternatives.
+You can either use Excel's textual description strings, in the first column above, or the more common symbolic alternatives.
 
 
-=head2 formula
+=head2 value
 
 This parameter is passed in a hash ref to C<conditional_format()>.
 
-The C<formula> is used with the C<operator> parameter to set the rule by which the cell data  will be evaluated.
+The C<value> is used along with the C<criteria> parameter to set the rule by which the cell data  will be evaluated.
+
+    type     => 'cell',
+    format   => $format,
+    criteria => '>',
+    value    => 5
+
+The C<value> property can also be a cell reference.
+
+
+=head2 minimum
+
+This parameter is passed in a hash ref to C<conditional_format()>.
+
+The C<minimum> parameter is used to set the lower limiting value when the C<criteria> is either C<'between'> or C<'not between'>:
+
+    validate => 'integer',
+    criteria => 'between',
+    minimum  => 1,
+    maximum  => 100,
+
+
+=head2 maximum
+
+This parameter is passed in a hash ref to C<conditional_format()>.
+
+The C<maximum> parameter is used to set the upper limiting value when the C<criteria> is either C<'between'> or C<'not between'>. See the previous example.
+
 
 
 
@@ -4456,7 +4488,7 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
 
 =end html
 
@@ -4509,7 +4541,7 @@ The following is a general example which demonstrates some features of working w
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
 
 =end html
 
@@ -4528,6 +4560,10 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
 
     my $workbook  = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
     my $worksheet = $workbook->add_worksheet();
+
+
+    # This example below highlights cells that have a value greater than or
+    # equal to 50 in red and cells below that value in green.
 
     # Light red fill with dark red text.
     my $format1 = $workbook->add_format(
@@ -4557,34 +4593,38 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
         [ 60, 80,  30, 30,  10,  50,  80, 60,  50,  30 ],
     ];
 
+    my $caption = 'Cells with values >= 50 are in light red. '
+      . 'Values < 50 are in light green';
+
     # Write the data.
-    $worksheet->write_col( 'A1', $data );
+    $worksheet->write( 'A1', $caption );
+    $worksheet->write_col( 'B3', $data );
 
     # Write a conditional format over a range.
-    $worksheet->conditional_formatting( 'A1:J10',
+    $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
             format   => $format1,
-            operator => '>=',
-            formula  => 50,
+            criteria => '>=',
+            value    => 50,
         }
     );
 
     # Write another conditional format over the same range.
-    $worksheet->conditional_formatting( 'A1:J10',
+    $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
             format   => $format2,
-            operator => '<',
-            formula  => 50,
+            criteria => '<',
+            value    => 50,
         }
     );
 
 
-    __END__
-
-
 =begin html
+
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_format.jpg" width="640" height="420" alt="Output from conditional_format.pl" /></center></p>
 
 
 =end html
@@ -4660,7 +4700,7 @@ The following is a simple example of using functions.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
 
 =end html
 

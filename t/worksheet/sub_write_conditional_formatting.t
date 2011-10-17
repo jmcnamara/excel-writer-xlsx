@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 4;
 
 
 ###############################################################################
@@ -37,8 +37,8 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format,
-        operator => 'greater than',
-        formula  => 5
+        criteria => 'greater than',
+        value    => 5
     }
 );
 
@@ -60,8 +60,8 @@ $worksheet->conditional_formatting( 'A2',
     {
         type     => 'cell',
         format   => $format,
-        operator => 'less than',
-        formula  => 30
+        criteria => 'less than',
+        value    => 30
     }
 );
 
@@ -83,8 +83,8 @@ $worksheet->conditional_formatting( 'A3',
     {
         type     => 'cell',
         format   => undef,
-        operator => '>=',
-        formula  => 50
+        criteria => '>=',
+        value    => 50
     }
 );
 
@@ -106,7 +106,7 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format,
-        operator => 'between',
+        criteria => 'between',
         minimum  => 10,
         maximum  => 20,
     }
@@ -115,12 +115,6 @@ $worksheet->conditional_formatting( 'A1',
 $worksheet->_write_conditional_formats();
 
 is( $got, $expected, $caption );
-
-
-
-
-
-done_testing();
 
 __END__
 

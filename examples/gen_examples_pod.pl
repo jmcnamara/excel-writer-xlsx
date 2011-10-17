@@ -295,6 +295,7 @@ colors.jpg
 comments1.jpg
 comments2.jpg
 copyformat.jpg
+conditional_format.jpg
 data_validate.jpg
 date_time.jpg
 defined_name.jpg

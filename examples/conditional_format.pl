@@ -5,9 +5,7 @@
 # Example of how to add conditional formatting to an Excel::Writer::XLSX file.
 #
 # Conditional formatting allows you to apply a format to a cell or a range of
-# cells based on a certain criteria. The example below highlights cells that
-# have a value greater than or equal to 50 in red and cells below that value
-# in green.
+# cells based on a certain criteria.
 #
 # reverse('©'), October 2011, John McNamara, jmcnamara@cpan.org
 #
@@ -17,7 +15,9 @@ use warnings;
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
-my $worksheet = $workbook->add_worksheet();
+my $worksheet1 = $workbook->add_worksheet();
+
+
 
 # Light red fill with dark red text.
 my $format1 = $workbook->add_format(
@@ -47,26 +47,35 @@ my $data = [
     [ 60, 80,  30, 30,  10,  50,  80, 60,  50,  30 ],
 ];
 
+
+# This example below highlights cells that have a value greater than or
+# equal to 50 in red and cells below that value in green.
+
+
+my $caption = 'Cells with values >= 50 are in light red. '
+  . 'Values < 50 are in light green';
+
 # Write the data.
-$worksheet->write_col( 'A1', $data );
+$worksheet1->write( 'A1', $caption );
+$worksheet1->write_col( 'B3', $data );
 
 # Write a conditional format over a range.
-$worksheet->conditional_formatting( 'A1:J10',
+$worksheet1->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
         format   => $format1,
-        operator => '>=',
-        formula  => 50,
+        criteria => '>=',
+        value    => 50,
     }
 );
 
 # Write another conditional format over the same range.
-$worksheet->conditional_formatting( 'A1:J10',
+$worksheet1->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
         format   => $format2,
-        operator => '<',
-        formula  => 50,
+        criteria => '<',
+        value    => 50,
     }
 );
 

@@ -46,9 +46,8 @@ my $format1 = $workbook->add_format(
     has_font      => 1,
 );
 
-# TODO. Change this when API available.
-$workbook->{_dxf_formats} = [$format1];
-pop @{ $workbook->{_xf_formats} };
+# Get (and set) the DXF format index.
+$format1->get_dxf_index();
 
 $workbook->_prepare_format_properties();
 

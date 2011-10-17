@@ -3156,8 +3156,8 @@ sub conditional_formatting {
     my %valid_parameter = (
         type          => 1,
         format        => 1,
-        operator      => 1,
-        formula       => 1,
+        criteria      => 1,
+        value         => 1,
         minimum       => 1,
         maximum       => 1,
     );
@@ -3193,15 +3193,15 @@ sub conditional_formatting {
         $param->{type} = $valid_type{ lc( $param->{type} ) };
     }
 
-    # 'operator' is a required parameter.
-    if ( not exists $param->{operator} ) {
-        carp "Parameter 'operator' is required in conditional_formatting()";
+    # 'criteria' is a required parameter.
+    if ( not exists $param->{criteria} ) {
+        carp "Parameter 'criteria' is required in conditional_formatting()";
         return -3;
     }
 
 
-    # List of valid operator types.
-    my %operator_type = (
+    # List of valid criteria types.
+    my %criteria_type = (
         'between'                  => 'between',
         'not between'              => 'notBetween',
         'equal to'                 => 'equal',
@@ -3220,28 +3220,28 @@ sub conditional_formatting {
         '<='                       => 'lessThanOrEqual',
     );
 
-    # Check for valid operator types.
-    if ( not exists $operator_type{ lc( $param->{operator} ) } ) {
-        carp "Unknown operator type '$param->{operator}' for parameter "
-          . "'operator' in conditional_formatting()";
+    # Check for valid criteria types.
+    if ( not exists $criteria_type{ lc( $param->{criteria} ) } ) {
+        carp "Unknown criteria type '$param->{criteria}' for parameter "
+          . "'criteria' in conditional_formatting()";
         return -3;
     }
     else {
-        $param->{operator} = $operator_type{ lc( $param->{operator} ) };
+        $param->{criteria} = $criteria_type{ lc( $param->{criteria} ) };
     }
 
 
-    # 'Between' and 'Not between' operator require 2 values.
-    if ( $param->{operator} eq 'between' || $param->{operator} eq 'notBetween' )
+    # 'Between' and 'Not between' criteria require 2 values.
+    if ( $param->{criteria} eq 'between' || $param->{criteria} eq 'notBetween' )
     {
         if ( not exists $param->{minimum} ) {
             carp "Parameter 'minimum' is required in conditional_formatting() "
-              . "when using 'between' or 'not between' operator";
+              . "when using 'between' or 'not between' criteria";
             return -3;
         }
         if ( not exists $param->{maximum} ) {
             carp "Parameter 'maximum' is required in conditional_formatting() "
-              . "when using 'between' or 'not between' operator";
+              . "when using 'between' or 'not between' criteria";
             return -3;
         }
     }
@@ -6696,7 +6696,7 @@ sub _write_cf_rule {
       if defined $param->{format};
 
     push @attributes, ( 'priority' => $param->{priority} );
-    push @attributes, ( 'operator' => $param->{operator} );
+    push @attributes, ( 'operator' => $param->{criteria} );
 
     $self->{_writer}->startTag( 'cfRule', @attributes );
 
@@ -6706,7 +6706,7 @@ sub _write_cf_rule {
             $self->_write_formula( $param->{maximum} );
         }
         else {
-            $self->_write_formula( $param->{formula} );
+            $self->_write_formula( $param->{value} );
         }
     }
 

@@ -46,8 +46,8 @@ $worksheet->conditional_formatting( 'A1',
     {
         type     => 'cell',
         format   => $format1,
-        operator => '==',
-        formula  => 7,
+        criteria => '==',
+        value  => 7,
     }
 );
 
