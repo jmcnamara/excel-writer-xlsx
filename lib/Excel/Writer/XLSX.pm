@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.30';
+our $VERSION = '0.31';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.30 of Excel::Writer::XLSX, released October 6, 2011.
+This document refers to version 0.31 of Excel::Writer::XLSX, released October 18, 2011.
 
 
 
@@ -5181,7 +5181,9 @@ The roadmap is as follows:
 
 =over 4
 
-=item * Full API compatibility with Spreadsheet::WriteExcel.
+=item * New separated data/formatting API to allow cells to be formatted after data is added.
+
+=item * More charting features.
 
 =item * Excel::Reader::XLSX and Excel::Rewriter::XLSX. Hopefully.
 
@@ -5283,26 +5285,25 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    -- The mockery of it, he said gaily. Your absurd name, an ancient Greek.
+    An ancient business
+    A modern piece of glass work
+    Down on the corner that you walk each day in passing
+    The elderly sales clerk won't eye us with suspicion
+    The whole, immortal corporation's given its permission
 
-    He pointed his finger in friendly jest and went over to the parapet,
-    laughing to himself. Stephen Dedalus stepped up, followed him wearily
-    half way and sat down on the edge of the gunrest, watching him still
-    as he propped his mirror on the parapet, dipped the brush in the bowl
-    and lathered cheeks and neck.
+    A little stairway
+    A little bit of carpet
+    A pair of mirrors that
+    Are facing one another
+    Out in both directions
+    A thousand little Julias
+    That come together
+    In the middle of Manhattan
 
-    Buck Mulligan's gay voice went on.
+    You waited since lunch
+    It all comes at once
 
-    -- My name is absurd too: Malachi Mulligan, two dactyls. But it has a
-    Hellenic ring, hasn't it? Tripping and sunny like the buck himself.
-    We must go to Athens. Will you come if I can get the aunt to fork out
-    twenty quid?
-
-    He laid the brush aside and, laughing with delight, cried:
-
-    -- Will he come? The jejune jesuit.
-
-        James Joyce. Ulysses.
+      -- Vampire Weekend
 
 
 

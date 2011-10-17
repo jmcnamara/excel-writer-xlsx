@@ -4,6 +4,14 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.31 October 18 2011
+
+    + Added basic conditional formatting via the conditional_format()
+      Worksheet method. More conditional formatting types will follow.
+
+    + Added conditional_format.pl example program.
+
+
 0.30 October 6 2011
 
     + Added stacked and percent_stacked chart subtypes to Bar and Column

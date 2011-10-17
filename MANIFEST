@@ -18,6 +18,7 @@ examples/chart_stock.pl
 examples/colors.pl
 examples/comments1.pl
 examples/comments2.pl
+examples/conditional_format.pl
 examples/data_validate.pl
 examples/date_time.pl
 examples/defined_name.pl
@@ -197,6 +198,7 @@ t/package/styles/styles_05.t
 t/package/styles/styles_06.t
 t/package/styles/styles_07.t
 t/package/styles/styles_08.t
+t/package/styles/styles_09.t
 t/package/styles/sub_write_border.t
 t/package/styles/sub_write_borders.t
 t/package/styles/sub_write_cell_style.t
@@ -317,6 +319,15 @@ t/regression/comment07.t
 t/regression/comment08.t
 t/regression/comment09.t
 t/regression/comment10.t
+t/regression/cond_format01.t
+t/regression/cond_format02.t
+t/regression/cond_format03.t
+t/regression/cond_format04.t
+t/regression/cond_format05.t
+t/regression/cond_format06.t
+t/regression/cond_format07.t
+t/regression/cond_format08.t
+t/regression/cond_format09.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -327,6 +338,7 @@ t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
 t/regression/fit_to_page04.t
 t/regression/fit_to_page05.t
+t/regression/format01.t
 t/regression/gridlines01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
@@ -507,6 +519,14 @@ t/regression/xlsx_files/comment07.xlsx
 t/regression/xlsx_files/comment08.xlsx
 t/regression/xlsx_files/comment09.xlsx
 t/regression/xlsx_files/comment10.xlsx
+t/regression/xlsx_files/cond_format01.xlsx
+t/regression/xlsx_files/cond_format02.xlsx
+t/regression/xlsx_files/cond_format03.xlsx
+t/regression/xlsx_files/cond_format04.xlsx
+t/regression/xlsx_files/cond_format05.xlsx
+t/regression/xlsx_files/cond_format06.xlsx
+t/regression/xlsx_files/cond_format07.xlsx
+t/regression/xlsx_files/cond_format08.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
@@ -517,6 +537,7 @@ t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx
 t/regression/xlsx_files/fit_to_pages04.xlsx
 t/regression/xlsx_files/fit_to_pages05.xlsx
+t/regression/xlsx_files/format01.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
@@ -641,6 +662,7 @@ t/worksheet/sub_write_cell.t
 t/worksheet/sub_write_cell_value.t
 t/worksheet/sub_write_col_breaks.t
 t/worksheet/sub_write_col_info.t
+t/worksheet/sub_write_conditional_formatting.t
 t/worksheet/sub_write_custom_filter.t
 t/worksheet/sub_write_custom_filters.t
 t/worksheet/sub_write_data_validations_01.t
