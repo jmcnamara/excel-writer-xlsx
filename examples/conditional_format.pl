@@ -14,8 +14,10 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
+my $workbook   = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
 my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
+my $worksheet3 = $workbook->add_worksheet();
 
 
 
@@ -48,12 +50,12 @@ my $data = [
 ];
 
 
-# This example below highlights cells that have a value greater than or
-# equal to 50 in red and cells below that value in green.
-
-
+###############################################################################
+#
+# Example 1.
+#
 my $caption = 'Cells with values >= 50 are in light red. '
-  . 'Values < 50 are in light green';
+  . 'Values < 50 are in light green.';
 
 # Write the data.
 $worksheet1->write( 'A1', $caption );
@@ -76,6 +78,67 @@ $worksheet1->conditional_formatting( 'B3:K12',
         format   => $format2,
         criteria => '<',
         value    => 50,
+    }
+);
+
+
+###############################################################################
+#
+# Example 2.
+#
+$caption = 'Values between 30 and 70 are in light red. '
+  . 'Values outside that range are in light green.';
+
+$worksheet2->write( 'A1', $caption );
+$worksheet2->write_col( 'B3', $data );
+
+$worksheet2->conditional_formatting( 'B3:K12',
+    {
+        type     => 'cell',
+        format   => $format1,
+        criteria => 'between',
+        minimum  => 30,
+        maximum  => 70,
+    }
+);
+
+$worksheet2->conditional_formatting( 'B3:K12',
+    {
+        type     => 'cell',
+        format   => $format2,
+        criteria => 'not between',
+        minimum  => 30,
+        maximum  => 70,
+    }
+);
+
+
+###############################################################################
+#
+# Example 3.
+#
+$caption = 'Duplicate values are in light red. '
+  . 'Unique values are in light green.';
+
+$worksheet3->write( 'A1', $caption );
+$worksheet3->write_col( 'B3', $data );
+
+# Change a few values to make them unique in the data set.
+$worksheet3->write( 'C4', 41 );
+$worksheet3->write( 'D8', 51 );
+$worksheet3->write( 'I7', 61 );
+
+$worksheet3->conditional_formatting( 'B3:K12',
+    {
+        type     => 'duplicate',
+        format   => $format1,
+    }
+);
+
+$worksheet3->conditional_formatting( 'B3:K12',
+    {
+        type     => 'unique',
+        format   => $format2,
     }
 );
 

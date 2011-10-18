@@ -3180,6 +3180,8 @@ sub conditional_formatting {
     # List of  valid validation types.
     my %valid_type = (
         'cell'          => 'cellIs',
+        'duplicate'     => 'duplicateValues',
+        'unique'        => 'uniqueValues',
     );
 
 
@@ -3192,13 +3194,6 @@ sub conditional_formatting {
     else {
         $param->{type} = $valid_type{ lc( $param->{type} ) };
     }
-
-    # 'criteria' is a required parameter.
-    if ( not exists $param->{criteria} ) {
-        carp "Parameter 'criteria' is required in conditional_formatting()";
-        return -3;
-    }
-
 
     # List of valid criteria types.
     my %criteria_type = (
@@ -3221,33 +3216,8 @@ sub conditional_formatting {
     );
 
     # Check for valid criteria types.
-    if ( not exists $criteria_type{ lc( $param->{criteria} ) } ) {
-        carp "Unknown criteria type '$param->{criteria}' for parameter "
-          . "'criteria' in conditional_formatting()";
-        return -3;
-    }
-    else {
+    if ( exists $criteria_type{ lc( $param->{criteria} ) } ) {
         $param->{criteria} = $criteria_type{ lc( $param->{criteria} ) };
-    }
-
-
-    # 'Between' and 'Not between' criteria require 2 values.
-    if ( $param->{criteria} eq 'between' || $param->{criteria} eq 'notBetween' )
-    {
-        if ( not exists $param->{minimum} ) {
-            carp "Parameter 'minimum' is required in conditional_formatting() "
-              . "when using 'between' or 'not between' criteria";
-            return -3;
-        }
-        if ( not exists $param->{maximum} ) {
-            carp "Parameter 'maximum' is required in conditional_formatting() "
-              . "when using 'between' or 'not between' criteria";
-            return -3;
-        }
-    }
-    else {
-        $param->{minimum} = undef;
-        $param->{maximum} = undef;
     }
 
     # Convert date/times value if required.
@@ -6687,8 +6657,8 @@ sub _write_conditional_formatting {
 #
 sub _write_cf_rule {
 
-    my $self     = shift;
-    my $param    = shift;
+    my $self  = shift;
+    my $param = shift;
 
     my @attributes = ( 'type' => $param->{type} );
 
@@ -6696,11 +6666,12 @@ sub _write_cf_rule {
       if defined $param->{format};
 
     push @attributes, ( 'priority' => $param->{priority} );
-    push @attributes, ( 'operator' => $param->{criteria} );
-
-    $self->{_writer}->startTag( 'cfRule', @attributes );
 
     if ( $param->{type} eq 'cellIs' ) {
+        push @attributes, ( 'operator' => $param->{criteria} );
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+
         if ( defined $param->{minimum} && defined $param->{maximum} ) {
             $self->_write_formula( $param->{minimum} );
             $self->_write_formula( $param->{maximum} );
@@ -6708,9 +6679,16 @@ sub _write_cf_rule {
         else {
             $self->_write_formula( $param->{value} );
         }
+
+        $self->{_writer}->endTag( 'cfRule' );
+    }
+    elsif ($param->{type} eq 'duplicateValues'
+        || $param->{type} eq 'uniqueValues' )
+    {
+        $self->{_writer}->emptyTag( 'cfRule', @attributes );
     }
 
-    $self->{_writer}->endTag( 'cfRule' );
+
 }
 
 
