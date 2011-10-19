@@ -18,7 +18,7 @@ my $workbook   = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
 my $worksheet1 = $workbook->add_worksheet();
 my $worksheet2 = $workbook->add_worksheet();
 my $worksheet3 = $workbook->add_worksheet();
-
+my $worksheet4 = $workbook->add_worksheet();
 
 
 # Light red fill with dark red text.
@@ -37,16 +37,16 @@ my $format2 = $workbook->add_format(
 
 # Some sample data to run the conditional formatting against.
 my $data = [
-    [ 90, 80,  50, 10,  20,  90,  40, 90,  30,  40 ],
-    [ 20, 10,  90, 100, 30,  60,  70, 60,  50,  90 ],
-    [ 10, 50,  60, 50,  20,  50,  80, 30,  40,  60 ],
-    [ 10, 90,  20, 40,  10,  40,  50, 70,  90,  50 ],
-    [ 70, 100, 10, 90,  10,  10,  20, 100, 100, 40 ],
-    [ 20, 60,  10, 100, 30,  10,  20, 60,  100, 10 ],
-    [ 10, 60,  10, 80,  100, 80,  30, 30,  70,  40 ],
-    [ 30, 90,  60, 10,  10,  100, 40, 40,  30,  40 ],
-    [ 80, 90,  10, 20,  20,  50,  80, 20,  60,  90 ],
-    [ 60, 80,  30, 30,  10,  50,  80, 60,  50,  30 ],
+    [ 34, 72,  38, 30, 75, 48, 75, 66, 84, 86 ],
+    [ 6,  24,  1,  84, 54, 62, 60, 3,  26, 59 ],
+    [ 28, 79,  97, 13, 85, 93, 93, 22, 5,  14 ],
+    [ 27, 71,  40, 17, 18, 79, 90, 93, 29, 47 ],
+    [ 88, 25,  33, 23, 67, 1,  59, 79, 47, 36 ],
+    [ 24, 100, 20, 88, 29, 33, 38, 54, 54, 88 ],
+    [ 6,  57,  88, 28, 10, 26, 37, 7,  41, 48 ],
+    [ 52, 78,  1,  96, 26, 45, 47, 33, 96, 36 ],
+    [ 60, 54,  81, 66, 81, 90, 80, 93, 12, 55 ],
+    [ 70, 5,   46, 14, 71, 19, 66, 36, 41, 21 ],
 ];
 
 
@@ -65,9 +65,9 @@ $worksheet1->write_col( 'B3', $data );
 $worksheet1->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
-        format   => $format1,
         criteria => '>=',
         value    => 50,
+        format   => $format1,
     }
 );
 
@@ -75,9 +75,9 @@ $worksheet1->conditional_formatting( 'B3:K12',
 $worksheet1->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
-        format   => $format2,
         criteria => '<',
         value    => 50,
+        format   => $format2,
     }
 );
 
@@ -95,20 +95,20 @@ $worksheet2->write_col( 'B3', $data );
 $worksheet2->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
-        format   => $format1,
         criteria => 'between',
         minimum  => 30,
         maximum  => 70,
+        format   => $format1,
     }
 );
 
 $worksheet2->conditional_formatting( 'B3:K12',
     {
         type     => 'cell',
-        format   => $format2,
         criteria => 'not between',
         minimum  => 30,
         maximum  => 70,
+        format   => $format2,
     }
 );
 
@@ -138,6 +138,38 @@ $worksheet3->conditional_formatting( 'B3:K12',
 $worksheet3->conditional_formatting( 'B3:K12',
     {
         type     => 'unique',
+        format   => $format2,
+    }
+);
+
+
+###############################################################################
+#
+# Example 4.
+#
+$caption = 'Above average values are in light red. '
+  . 'Below average values are in light green.';
+
+$worksheet4->write( 'A1', $caption );
+$worksheet4->write_col( 'B3', $data );
+
+# Change a few values to make them unique in the data set.
+$worksheet4->write( 'C4', 41 );
+$worksheet4->write( 'D8', 51 );
+$worksheet4->write( 'I7', 61 );
+
+$worksheet4->conditional_formatting( 'B3:K12',
+    {
+        type     => 'average',
+        criteria => 'above',
+        format   => $format1,
+    }
+);
+
+$worksheet4->conditional_formatting( 'B3:K12',
+    {
+        type     => 'average',
+        criteria => 'below',
         format   => $format2,
     }
 );

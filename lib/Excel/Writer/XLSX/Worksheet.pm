@@ -3180,6 +3180,7 @@ sub conditional_formatting {
     # List of  valid validation types.
     my %valid_type = (
         'cell'          => 'cellIs',
+        'average'       => 'aboveAverage',
         'duplicate'     => 'duplicateValues',
         'unique'        => 'uniqueValues',
     );
@@ -6681,6 +6682,21 @@ sub _write_cf_rule {
         }
 
         $self->{_writer}->endTag( 'cfRule' );
+    }
+    elsif ( $param->{type} eq 'aboveAverage' ) {
+        if ( $param->{criteria} =~ /below/ ) {
+            push @attributes, ( 'aboveAverage' => 0 );
+        }
+
+        if ( $param->{criteria} =~ /equal/ ) {
+            push @attributes, ( 'equalAverage' => 1 );
+        }
+
+        if ( $param->{criteria} =~ /([123]) std dev/ ) {
+            push @attributes, ( 'stdDev' => $1 );
+        }
+
+        $self->{_writer}->emptyTag( 'cfRule', @attributes );
     }
     elsif ($param->{type} eq 'duplicateValues'
         || $param->{type} eq 'uniqueValues' )

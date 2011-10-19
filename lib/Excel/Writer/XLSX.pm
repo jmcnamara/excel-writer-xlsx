@@ -1578,9 +1578,9 @@ The C<conditional_format()> method is used to add formatting to a cell or range 
     $worksheet->conditional_formatting( 'A1:J10',
         {
             type     => 'cell',
-            format   => $format1,
             criteria => '>=',
             value    => 50,
+            format   => $format1,
         }
     );
 
@@ -4190,9 +4190,9 @@ For example the following criteria is used to highlight cells >= 50 in red in th
     $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
-            format   => $format1,
             criteria => '>=',
             value    => 50,
+            format   => $format1,
         }
     );
 
@@ -4236,11 +4236,61 @@ This parameter is passed in a hash ref to C<conditional_format()>.
 
 The C<type> parameter is used to set the type of conditional formatting that you wish to apply. It is always required and it has no default value. Allowable values are:
 
-    cell
-    duplicate
-    unique
+    type            sub-properties
+
+    cell            criteria
+                    value
+                    minimum
+                    maximum
+
+    duplicate       (none)
+
+    unique          (none)
+
+    average         criteria
+
 
 Note, other types such as dates, strings, top/bottom rules, data bars, color scales and icon sets will be added in time.
+
+
+
+=head2 type => 'cell'
+
+TODO
+
+
+=head2 type => 'duplicate'
+
+TODO
+
+
+=head2 type => 'unique'
+
+TODO
+
+
+
+=head2 type => 'average'
+
+TODO
+
+    above
+    below
+    equal or above
+    equal or below
+    1 std dev above
+    1 std dev below
+    2 std dev above
+    2 std dev below
+    3 std dev above
+    3 std dev below
+
+
+
+=head2 type => 'todo'
+
+TODO
+
 
 =head2 format
 
@@ -4307,9 +4357,9 @@ This parameter is passed in a hash ref to C<conditional_format()>.
 The C<value> is used along with the C<criteria> parameter to set the rule by which the cell data  will be evaluated.
 
     type     => 'cell',
-    format   => $format,
     criteria => '>',
     value    => 5
+    format   => $format,
 
 The C<value> property can also be a cell reference.
 
@@ -4340,9 +4390,9 @@ Example 1. Highlight cells greater than or equal to an integer value.
     $worksheet->conditional_formatting( 'A1',
         {
             type     => 'cell',
-            format   => $format,
             criteria => 'greater than',
             value    => 5,
+            format   => $format,
         }
     );
 
@@ -4351,9 +4401,9 @@ Example 2. Highlight cells greater than or equal to a value in a reference cell.
     $worksheet->conditional_formatting( 'A1',
         {
             type     => 'cell',
-            format   => $format,
             criteria => 'greater than',
             value    => '$B$1',
+            format   => $format,
         }
     );
 
@@ -4374,6 +4424,16 @@ Example 4. Highlight unique cells in a range.
             format   => $format,
         }
     );
+
+Example 5. Highlight above average cells.
+
+$worksheet->conditional_formatting( 'A1:A4',
+    {
+        type     => 'average',
+        criteria => 'above',
+        format   => $format,
+    }
+);
 
 
 
