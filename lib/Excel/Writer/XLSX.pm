@@ -4253,6 +4253,45 @@ The C<type> parameter is used to set the type of conditional formatting that you
 Note, other types such as dates, strings, top/bottom rules, data bars, color scales and icon sets will be added in time.
 
 
+=head2 type => 'cell'
+
+TODO
+
+
+=head2 type => 'duplicate'
+
+TODO
+
+
+=head2 type => 'unique'
+
+TODO
+
+
+
+=head2 type => 'average'
+
+TODO
+
+    above
+    below
+    equal or above
+    equal or below
+    1 std dev above
+    1 std dev below
+    2 std dev above
+    2 std dev below
+    3 std dev above
+    3 std dev below
+
+
+
+=head2 type => 'todo'
+
+TODO
+
+
+
 =head2 format
 
 This parameter is passed in a hash ref to C<conditional_format()>.
