@@ -157,7 +157,6 @@ sub get_align_properties {
           || $self->{_text_v_align} != 0
           || $self->{_indent} != 0
           || $self->{_rotation} != 0
-          || $self->{_rotation} != 0
           || $self->{_text_wrap} != 0
           || $self->{_shrink} != 0
           || $self->{_reading_order} != 0 ) ? 1 : 0;
@@ -249,7 +248,8 @@ sub get_format_key {
     my $key = join ':',
       (
         $self->get_font_key(), $self->get_border_key,
-        $self->get_fill_key(), $self->{_num_format}
+        $self->get_fill_key(), $self->{_num_format},
+        $self->get_alignment_key(),
       );
 
     return $key;
@@ -328,6 +328,31 @@ sub get_fill_key {
         $self->{_pattern},
         $self->{_bg_color},
         $self->{_fg_color},
+
+    );
+
+    return $key;
+}
+
+
+###############################################################################
+#
+# get_alignment_key()
+#
+# Returns a unique hash key for alignment formats.
+#
+sub get_alignment_key {
+
+    my $self = shift;
+
+    my $key = join ':', (
+        $self->{_text_h_align},
+        $self->{_text_v_align},
+        $self->{_indent},
+        $self->{_rotation},
+        $self->{_text_wrap},
+        $self->{_shrink},
+        $self->{_reading_order},
 
     );
 
