@@ -339,6 +339,7 @@ t/regression/fit_to_page03.t
 t/regression/fit_to_page04.t
 t/regression/fit_to_page05.t
 t/regression/format01.t
+t/regression/format02.t
 t/regression/gridlines01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
@@ -538,6 +539,7 @@ t/regression/xlsx_files/fit_to_pages03.xlsx
 t/regression/xlsx_files/fit_to_pages04.xlsx
 t/regression/xlsx_files/fit_to_pages05.xlsx
 t/regression/xlsx_files/format01.xlsx
+t/regression/xlsx_files/format02.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
@@ -712,6 +714,11 @@ t/worksheet/worksheet_02.t
 t/worksheet/worksheet_03.t
 t/worksheet/worksheet_04.t
 t/worksheet/worksheet_array_formula_01.t
+t/worksheet/worksheet_cond_format_01.t
+t/worksheet/worksheet_cond_format_02.t
+t/worksheet/worksheet_cond_format_03.t
+t/worksheet/worksheet_cond_format_04.t
+t/worksheet/worksheet_cond_format_05.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t

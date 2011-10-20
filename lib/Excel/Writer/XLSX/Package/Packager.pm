@@ -30,7 +30,7 @@ use Excel::Writer::XLSX::Package::Theme;
 use Excel::Writer::XLSX::Package::VML;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 
 ###############################################################################

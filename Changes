@@ -4,6 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.32 October 20 2011
+
+    ! Fix for format alignment bug. 
+      Reported by Roderich Schupp.
+
+
 0.31 October 18 2011
 
     + Added basic conditional formatting via the conditional_format()
