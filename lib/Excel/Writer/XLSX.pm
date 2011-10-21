@@ -4293,6 +4293,15 @@ TODO
     criteria %
     value
 
+=head2 type => 'text'
+
+TODO
+
+    criteria
+    value
+
+
+
 =head2 format
 
 This parameter is passed in a hash ref to C<conditional_format()>.
@@ -4442,6 +4451,18 @@ Example 6. Highlight the top 10 cells.
         {
             type     => 'top',
             value    => 10,
+            format   => $format,
+        }
+    );
+
+
+Example 6. Highlight cells containing the string 'foo'.
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'text',
+            criteria => 'containing',
+            value    => 'foo',
             format   => $format,
         }
     );

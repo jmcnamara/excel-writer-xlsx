@@ -3154,12 +3154,12 @@ sub conditional_formatting {
 
     # List of valid input parameters.
     my %valid_parameter = (
-        type          => 1,
-        format        => 1,
-        criteria      => 1,
-        value         => 1,
-        minimum       => 1,
-        maximum       => 1,
+        type     => 1,
+        format   => 1,
+        criteria => 1,
+        value    => 1,
+        minimum  => 1,
+        maximum  => 1,
     );
 
     # Check for valid input parameters.
@@ -3179,12 +3179,13 @@ sub conditional_formatting {
 
     # List of  valid validation types.
     my %valid_type = (
-        'cell'          => 'cellIs',
-        'average'       => 'aboveAverage',
-        'duplicate'     => 'duplicateValues',
-        'unique'        => 'uniqueValues',
-        'top'           => 'top10',
-        'bottom'        => 'top10',
+        'cell'      => 'cellIs',
+        'average'   => 'aboveAverage',
+        'duplicate' => 'duplicateValues',
+        'unique'    => 'uniqueValues',
+        'top'       => 'top10',
+        'bottom'    => 'top10',
+        'text'      => 'text',
 
     );
 
@@ -3255,7 +3256,8 @@ sub conditional_formatting {
     }
 
     # Set the formatting range.
-    my $range = '';
+    my $range      = '';
+    my $start_cell = '';    # Use for formulas.
 
     # Swap last row/col for first row/col as necessary
     if ( $row1 > $row2 ) {
@@ -3269,9 +3271,11 @@ sub conditional_formatting {
     # If the first and last cell are the same write a single cell.
     if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
         $range = xl_rowcol_to_cell( $row1, $col1 );
+        $start_cell = $range;
     }
     else {
         $range = xl_range( $row1, $row2, $col1, $col2 );
+        $start_cell = xl_rowcol_to_cell( $row1, $col1 );
     }
 
     # Get the dxf format index.
@@ -3281,6 +3285,44 @@ sub conditional_formatting {
 
     # Set the priority based on the order of adding.
     $param->{priority} = $self->{_dxf_priority}++;
+
+    # Set the start cell used for formulas.
+    $param->{start_cell} = $start_cell;
+
+
+    # Special handling of text criteria.
+    if ( $param->{type} eq 'text' ) {
+
+        if ( $param->{criteria} eq 'containing' ) {
+            $param->{type}     = 'containsText';
+            $param->{criteria} = 'containsText';
+            $param->{formula}  = sprintf 'NOT(ISERROR(SEARCH("%s",%s)))',
+              $param->{value}, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'not containing' ) {
+            $param->{type}     = 'notContainsText';
+            $param->{criteria} = 'notContains';
+            $param->{formula}  = sprintf 'ISERROR(SEARCH("%s",%s))',
+              $param->{value}, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'begins with' ) {
+            $param->{type}     = 'beginsWith';
+            $param->{criteria} = 'beginsWith';
+            $param->{formula}  = sprintf 'LEFT(%s,1)="%s"',
+              $start_cell, $param->{value};
+        }
+        elsif ( $param->{criteria} eq 'ends with' ) {
+            $param->{type}     = 'endsWith';
+            $param->{criteria} = 'endsWith';
+            $param->{formula}  = sprintf 'RIGHT(%s,1)="%s"',
+              $start_cell, $param->{value};
+        }
+        else {
+            carp "Invalid text criteria '$param->{criteria}' "
+              . "in conditional_formatting()";
+        }
+    }
+
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
@@ -6722,6 +6764,18 @@ sub _write_cf_rule {
     }
     elsif ( $param->{type} eq 'uniqueValues' ) {
         $self->{_writer}->emptyTag( 'cfRule', @attributes );
+    }
+    elsif ($param->{type} eq 'containsText'
+        || $param->{type} eq 'notContainsText'
+        || $param->{type} eq 'beginsWith'
+        || $param->{type} eq 'endsWith' )
+    {
+        push @attributes, ( 'operator' => $param->{criteria} );
+        push @attributes, ( 'text'     => $param->{value} );
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_formula( $param->{formula} );
+        $self->{_writer}->endTag( 'cfRule' );
     }
 }
 
