@@ -19,6 +19,7 @@ my $worksheet1 = $workbook->add_worksheet();
 my $worksheet2 = $workbook->add_worksheet();
 my $worksheet3 = $workbook->add_worksheet();
 my $worksheet4 = $workbook->add_worksheet();
+my $worksheet5 = $workbook->add_worksheet();
 
 
 # Light red fill with dark red text.
@@ -170,6 +171,38 @@ $worksheet4->conditional_formatting( 'B3:K12',
     {
         type     => 'average',
         criteria => 'below',
+        format   => $format2,
+    }
+);
+
+
+###############################################################################
+#
+# Example 5.
+#
+$caption = 'Top 10 values are in light red. '
+  . 'Bottom 10 values are in light green.';
+
+$worksheet5->write( 'A1', $caption );
+$worksheet5->write_col( 'B3', $data );
+
+# Change a few values to make them unique in the data set.
+$worksheet5->write( 'C4', 41 );
+$worksheet5->write( 'D8', 51 );
+$worksheet5->write( 'I7', 61 );
+
+$worksheet5->conditional_formatting( 'B3:K12',
+    {
+        type     => 'top',
+        value    => '10',
+        format   => $format1,
+    }
+);
+
+$worksheet5->conditional_formatting( 'B3:K12',
+    {
+        type     => 'bottom',
+        value    => '10',
         format   => $format2,
     }
 );

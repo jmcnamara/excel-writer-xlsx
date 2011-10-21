@@ -3183,6 +3183,9 @@ sub conditional_formatting {
         'average'       => 'aboveAverage',
         'duplicate'     => 'duplicateValues',
         'unique'        => 'uniqueValues',
+        'top'           => 'top10',
+        'bottom'        => 'top10',
+
     );
 
 
@@ -3193,8 +3196,10 @@ sub conditional_formatting {
         return -3;
     }
     else {
+        $param->{direction} = 'bottom' if $param->{type} eq 'bottom';
         $param->{type} = $valid_type{ lc( $param->{type} ) };
     }
+
 
     # List of valid criteria types.
     my %criteria_type = (
@@ -6698,13 +6703,26 @@ sub _write_cf_rule {
 
         $self->{_writer}->emptyTag( 'cfRule', @attributes );
     }
-    elsif ($param->{type} eq 'duplicateValues'
-        || $param->{type} eq 'uniqueValues' )
-    {
+    elsif ( $param->{type} eq 'top10' ) {
+        if ( defined $param->{criteria} && $param->{criteria} eq '%' ) {
+            push @attributes, ( 'percent' => 1 );
+        }
+
+        if ( $param->{direction} ) {
+            push @attributes, ( 'bottom' => 1 );
+        }
+
+        my $rank = $param->{value} || 10;
+        push @attributes, ( 'rank' => $rank );
+
         $self->{_writer}->emptyTag( 'cfRule', @attributes );
     }
-
-
+    elsif ( $param->{type} eq 'duplicateValues' ) {
+        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+    }
+    elsif ( $param->{type} eq 'uniqueValues' ) {
+        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+    }
 }
 
 

@@ -4286,11 +4286,12 @@ TODO
 
 
 
-=head2 type => 'todo'
+=head2 type => 'top'
 
 TODO
 
-
+    criteria %
+    value
 
 =head2 format
 
@@ -4427,14 +4428,23 @@ Example 4. Highlight unique cells in a range.
 
 Example 5. Highlight above average cells.
 
-$worksheet->conditional_formatting( 'A1:A4',
-    {
-        type     => 'average',
-        criteria => 'above',
-        format   => $format,
-    }
-);
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'average',
+            criteria => 'above',
+            format   => $format,
+        }
+    );
 
+Example 6. Highlight the top 10 cells.
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'top',
+            value    => 10,
+            format   => $format,
+        }
+    );
 
 
 
