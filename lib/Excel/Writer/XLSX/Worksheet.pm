@@ -3180,6 +3180,8 @@ sub conditional_formatting {
     # List of  valid validation types.
     my %valid_type = (
         'cell'        => 'cellIs',
+        'date'        => 'date',
+        'time'        => 'time',
         'average'     => 'aboveAverage',
         'duplicate'   => 'duplicateValues',
         'unique'      => 'uniqueValues',
@@ -3246,7 +3248,9 @@ sub conditional_formatting {
 
     # Convert date/times value if required.
     if ( $param->{type} eq 'date' || $param->{type} eq 'time' ) {
-        if ( $param->{value} =~ /T/ ) {
+        $param->{type} = 'cellIs';
+
+        if ( defined $param->{value} && $param->{value} =~ /T/ ) {
             my $date_time = $self->convert_date_time( $param->{value} );
 
             if ( !defined $date_time ) {
@@ -3258,6 +3262,20 @@ sub conditional_formatting {
                 $param->{value} = $date_time;
             }
         }
+
+        if ( defined $param->{minimum} && $param->{minimum} =~ /T/ ) {
+            my $date_time = $self->convert_date_time( $param->{minimum} );
+
+            if ( !defined $date_time ) {
+                carp "Invalid date/time value '$param->{minimum}' "
+                  . "in conditional_formatting()";
+                return -3;
+            }
+            else {
+                $param->{minimum} = $date_time;
+            }
+        }
+
         if ( defined $param->{maximum} && $param->{maximum} =~ /T/ ) {
             my $date_time = $self->convert_date_time( $param->{maximum} );
 
