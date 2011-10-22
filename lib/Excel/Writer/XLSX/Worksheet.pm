@@ -3187,7 +3187,10 @@ sub conditional_formatting {
         'bottom'      => 'top10',
         'text'        => 'text',
         'time_period' => 'timePeriod',
-
+        'blanks'      => 'containsBlanks',
+        'no_blanks'   => 'notContainsBlanks',
+        'errors'      => 'containsErrors',
+        'no_errors'   => 'notContainsErrors',
     );
 
 
@@ -3301,7 +3304,7 @@ sub conditional_formatting {
     $param->{priority} = $self->{_dxf_priority}++;
 
     # Set the start cell used for formulas.
-    $param->{start_cell} = $start_cell;
+    $param->{start_cell} = $start_cell; # TODO. Maybe not needed.
 
 
     # Special handling of text criteria.
@@ -3391,6 +3394,24 @@ sub conditional_formatting {
             carp "Invalid time_period criteria '$param->{criteria}' "
               . "in conditional_formatting()";
         }
+    }
+
+
+    # Special handling of blanks/error types.
+    if ( $param->{type} eq 'containsBlanks' ) {
+        $param->{formula} = sprintf 'LEN(TRIM(%s))=0', $start_cell;
+    }
+
+    if ( $param->{type} eq 'notContainsBlanks' ) {
+        $param->{formula} = sprintf 'LEN(TRIM(%s))>0', $start_cell;
+    }
+
+    if ( $param->{type} eq 'containsErrors' ) {
+        $param->{formula} = sprintf 'ISERROR(%s)', $start_cell;
+    }
+
+    if ( $param->{type} eq 'notContainsErrors' ) {
+        $param->{formula} = sprintf 'NOT(ISERROR(%s))', $start_cell;
     }
 
 
@@ -6850,6 +6871,15 @@ sub _write_cf_rule {
     elsif ( $param->{type} eq 'timePeriod' ) {
         push @attributes, ( 'timePeriod' => $param->{criteria} );
 
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_formula( $param->{formula} );
+        $self->{_writer}->endTag( 'cfRule' );
+    }
+    elsif ($param->{type} eq 'containsBlanks'
+        || $param->{type} eq 'notContainsBlanks'
+        || $param->{type} eq 'containsErrors'
+        || $param->{type} eq 'notContainsErrors' )
+    {
         $self->{_writer}->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{formula} );
         $self->{_writer}->endTag( 'cfRule' );

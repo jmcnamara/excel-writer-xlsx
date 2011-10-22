@@ -4480,6 +4480,15 @@ Example 7. Highlight cells with dates that occured yesterday:
         }
     );
 
+Example 8. Highlight blank cells.
+
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'blanks',
+            format   => $format,
+        }
+    );
 
 
 
