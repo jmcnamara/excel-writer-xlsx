@@ -4300,7 +4300,9 @@ TODO
     criteria
     value
 
+=head2 type => 'time_period'
 
+TODO
 
 =head2 format
 
@@ -4466,6 +4468,18 @@ Example 6. Highlight cells containing the string 'foo'.
             format   => $format,
         }
     );
+
+
+Example 7. Highlight cells with dates that occured yesterday:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'time_period',
+            criteria => 'yesterday',
+            format   => $format,
+        }
+    );
+
 
 
 

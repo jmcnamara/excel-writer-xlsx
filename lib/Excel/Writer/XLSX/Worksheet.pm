@@ -3179,13 +3179,14 @@ sub conditional_formatting {
 
     # List of  valid validation types.
     my %valid_type = (
-        'cell'      => 'cellIs',
-        'average'   => 'aboveAverage',
-        'duplicate' => 'duplicateValues',
-        'unique'    => 'uniqueValues',
-        'top'       => 'top10',
-        'bottom'    => 'top10',
-        'text'      => 'text',
+        'cell'        => 'cellIs',
+        'average'     => 'aboveAverage',
+        'duplicate'   => 'duplicateValues',
+        'unique'      => 'uniqueValues',
+        'top'         => 'top10',
+        'bottom'      => 'top10',
+        'text'        => 'text',
+        'time_period' => 'timePeriod',
 
     );
 
@@ -3220,6 +3221,19 @@ sub conditional_formatting {
         '>='                       => 'greaterThanOrEqual',
         'less than or equal to'    => 'lessThanOrEqual',
         '<='                       => 'lessThanOrEqual',
+        'containing'               => 'containsText',
+        'not containing'           => 'notContains',
+        'begins with'              => 'beginsWith',
+        'ends with'                => 'endsWith',
+        'yesterday'                => 'yesterday',
+        'today'                    => 'today',
+        'last 7 days'              => 'last7Days',
+        'last week'                => 'lastWeek',
+        'this week'                => 'thisWeek',
+        'next week'                => 'nextWeek',
+        'last month'               => 'lastMonth',
+        'this month'               => 'thisMonth',
+        'next month'               => 'nextMonth',
     );
 
     # Check for valid criteria types.
@@ -3293,32 +3307,88 @@ sub conditional_formatting {
     # Special handling of text criteria.
     if ( $param->{type} eq 'text' ) {
 
-        if ( $param->{criteria} eq 'containing' ) {
+        if ( $param->{criteria} eq 'containsText' ) {
             $param->{type}     = 'containsText';
-            $param->{criteria} = 'containsText';
             $param->{formula}  = sprintf 'NOT(ISERROR(SEARCH("%s",%s)))',
               $param->{value}, $start_cell;
         }
-        elsif ( $param->{criteria} eq 'not containing' ) {
+        elsif ( $param->{criteria} eq 'notContains' ) {
             $param->{type}     = 'notContainsText';
-            $param->{criteria} = 'notContains';
             $param->{formula}  = sprintf 'ISERROR(SEARCH("%s",%s))',
               $param->{value}, $start_cell;
         }
-        elsif ( $param->{criteria} eq 'begins with' ) {
+        elsif ( $param->{criteria} eq 'beginsWith' ) {
             $param->{type}     = 'beginsWith';
-            $param->{criteria} = 'beginsWith';
             $param->{formula}  = sprintf 'LEFT(%s,1)="%s"',
               $start_cell, $param->{value};
         }
-        elsif ( $param->{criteria} eq 'ends with' ) {
+        elsif ( $param->{criteria} eq 'endsWith' ) {
             $param->{type}     = 'endsWith';
-            $param->{criteria} = 'endsWith';
             $param->{formula}  = sprintf 'RIGHT(%s,1)="%s"',
               $start_cell, $param->{value};
         }
         else {
             carp "Invalid text criteria '$param->{criteria}' "
+              . "in conditional_formatting()";
+        }
+    }
+
+    # Special handling of time time_period criteria.
+    if ( $param->{type} eq 'timePeriod' ) {
+
+        if ( $param->{criteria} eq 'yesterday' ) {
+            $param->{formula} = sprintf 'FLOOR(%s,1)=TODAY()-1', $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'today' ) {
+            $param->{formula} = sprintf 'FLOOR(%s,1)=TODAY()', $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'tomorrow' ) {
+            $param->{formula} = sprintf 'FLOOR(%s,1)=TODAY()+1', $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'last7Days' ) {
+            $param->{formula} =
+              sprintf 'AND(TODAY()-FLOOR(%s,1)<=6,FLOOR(%s,1)<=TODAY())',
+              $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'lastWeek' ) {
+            $param->{formula} =
+              sprintf 'AND(TODAY()-ROUNDDOWN(%s,0)>=(WEEKDAY(TODAY())),'
+              . 'TODAY()-ROUNDDOWN(%s,0)<(WEEKDAY(TODAY())+7))',
+              $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'thisWeek' ) {
+            $param->{formula} =
+              sprintf 'AND(TODAY()-ROUNDDOWN(%s,0)<=WEEKDAY(TODAY())-1,'
+              . 'ROUNDDOWN(%s,0)-TODAY()<=7-WEEKDAY(TODAY()))',
+              $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'nextWeek' ) {
+            $param->{formula} =
+              sprintf 'AND(ROUNDDOWN(%s,0)-TODAY()>(7-WEEKDAY(TODAY())),'
+              . 'ROUNDDOWN(%s,0)-TODAY()<(15-WEEKDAY(TODAY())))',
+              $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'lastMonth' ) {
+            $param->{formula} =
+              sprintf
+              'AND(MONTH(%s)=MONTH(TODAY())-1,OR(YEAR(%s)=YEAR(TODAY()),'
+              . 'AND(MONTH(%s)=1,YEAR(A1)=YEAR(TODAY())-1)))',
+              $start_cell, $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'thisMonth' ) {
+            $param->{formula} =
+              sprintf 'AND(MONTH(%s)=MONTH(TODAY()),YEAR(%s)=YEAR(TODAY()))',
+              $start_cell, $start_cell, $start_cell;
+        }
+        elsif ( $param->{criteria} eq 'nextMonth' ) {
+            $param->{formula} =
+              sprintf
+              'AND(MONTH(%s)=MONTH(TODAY())+1,OR(YEAR(%s)=YEAR(TODAY()),'
+              . 'AND(MONTH(%s)=12,YEAR(%s)=YEAR(TODAY())+1)))',
+              $start_cell, $start_cell, $start_cell, $start_cell;
+        }
+        else {
+            carp "Invalid time_period criteria '$param->{criteria}' "
               . "in conditional_formatting()";
         }
     }
@@ -6772,6 +6842,13 @@ sub _write_cf_rule {
     {
         push @attributes, ( 'operator' => $param->{criteria} );
         push @attributes, ( 'text'     => $param->{value} );
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_formula( $param->{formula} );
+        $self->{_writer}->endTag( 'cfRule' );
+    }
+    elsif ( $param->{type} eq 'timePeriod' ) {
+        push @attributes, ( 'timePeriod' => $param->{criteria} );
 
         $self->{_writer}->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{formula} );
