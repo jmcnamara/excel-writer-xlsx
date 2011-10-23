@@ -3195,6 +3195,7 @@ sub conditional_formatting {
         'no_errors'     => 'notContainsErrors',
         '2_color_scale' => '2_color_scale',
         '3_color_scale' => '3_color_scale',
+        'data_bar'      => 'dataBar',
     );
 
 
@@ -3480,6 +3481,21 @@ sub conditional_formatting {
         $param->{min_color} = $self->_get_palette_color( $param->{min_color} );
     }
 
+
+    # Special handling for data bar.
+    if ( $param->{type} eq 'dataBar' ) {
+
+        # Color scales don't use any additional formatting.
+        $param->{format} = undef;
+
+        $param->{min_type}  //= 'min';
+        $param->{max_type}  //= 'max';
+        $param->{min_value} //= 0;
+        $param->{max_value} //= 0;
+        $param->{bar_color} //= '#638EC6';
+
+        $param->{bar_color} = $self->_get_palette_color( $param->{bar_color} );
+    }
 
 
     # Store the validation information until we close the worksheet.
@@ -6962,6 +6978,12 @@ sub _write_cf_rule {
         $self->_write_color_scale( $param );
         $self->{_writer}->endTag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'dataBar' ) {
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_data_bar( $param );
+        $self->{_writer}->endTag( 'cfRule' );
+    }
 }
 
 
@@ -6988,28 +7010,50 @@ sub _write_formula {
 #
 sub _write_color_scale {
 
-    my $self                 = shift;
+    my $self  = shift;
     my $param = shift;
 
     $self->{_writer}->startTag( 'colorScale' );
 
-    $self->_write_cfvo( $param->{min_type}, $param->{min_value});
+    $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
 
-    if (defined $param->{mid_type}) {
-        $self->_write_cfvo( $param->{mid_type}, $param->{mid_value});
+    if ( defined $param->{mid_type} ) {
+        $self->_write_cfvo( $param->{mid_type}, $param->{mid_value} );
     }
 
-    $self->_write_cfvo( $param->{max_type}, $param->{max_value});
+    $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
 
     $self->_write_color( 'rgb' => $param->{min_color} );
 
-    if (defined $param->{mid_color}) {
+    if ( defined $param->{mid_color} ) {
         $self->_write_color( 'rgb' => $param->{mid_color} );
     }
 
     $self->_write_color( 'rgb' => $param->{max_color} );
 
     $self->{_writer}->endTag( 'colorScale' );
+}
+
+
+##############################################################################
+#
+# _write_data_bar()
+#
+# Write the <dataBar> element.
+#
+sub _write_data_bar {
+
+    my $self  = shift;
+    my $param = shift;
+
+    $self->{_writer}->startTag( 'dataBar' );
+
+    $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
+    $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
+
+    $self->_write_color( 'rgb' => $param->{bar_color} );
+
+    $self->{_writer}->endTag( 'dataBar' );
 }
 
 
@@ -7051,7 +7095,6 @@ sub _write_color {
 
     $self->{_writer}->emptyTag( 'color', @attributes );
 }
-
 
 
 1;
