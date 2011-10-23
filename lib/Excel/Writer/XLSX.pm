@@ -4491,7 +4491,6 @@ Example 8. Highlight blank cells.
     );
 
 
-
 =head1 FORMULAS AND FUNCTIONS IN EXCEL
 
 

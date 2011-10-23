@@ -3179,20 +3179,22 @@ sub conditional_formatting {
 
     # List of  valid validation types.
     my %valid_type = (
-        'cell'        => 'cellIs',
-        'date'        => 'date',
-        'time'        => 'time',
-        'average'     => 'aboveAverage',
-        'duplicate'   => 'duplicateValues',
-        'unique'      => 'uniqueValues',
-        'top'         => 'top10',
-        'bottom'      => 'top10',
-        'text'        => 'text',
-        'time_period' => 'timePeriod',
-        'blanks'      => 'containsBlanks',
-        'no_blanks'   => 'notContainsBlanks',
-        'errors'      => 'containsErrors',
-        'no_errors'   => 'notContainsErrors',
+        'cell'          => 'cellIs',
+        'date'          => 'date',
+        'time'          => 'time',
+        'average'       => 'aboveAverage',
+        'duplicate'     => 'duplicateValues',
+        'unique'        => 'uniqueValues',
+        'top'           => 'top10',
+        'bottom'        => 'top10',
+        'text'          => 'text',
+        'time_period'   => 'timePeriod',
+        'blanks'        => 'containsBlanks',
+        'no_blanks'     => 'notContainsBlanks',
+        'errors'        => 'containsErrors',
+        'no_errors'     => 'notContainsErrors',
+        '2_color_scale' => '2_color_scale',
+        '3_color_scale' => '3_color_scale',
     );
 
 
@@ -3433,6 +3435,53 @@ sub conditional_formatting {
     }
 
 
+    # Special handling for 2 color scale.
+    if ( $param->{type} eq '2_color_scale' ) {
+        $param->{type} = 'colorScale';
+
+        # Color scales don't use any additional formatting.
+        $param->{format} = undef;
+
+        # Turn off 3 color parameters.
+        $param->{mid_type}  = undef;
+        $param->{mid_color} = undef;
+
+        $param->{min_type}  //= 'min';
+        $param->{max_type}  //= 'max';
+        $param->{min_value} //= 0;
+        $param->{max_value} //= 0;
+        $param->{min_color} //= '#FF7128';
+        $param->{max_color} //= '#FFEF9C';
+
+        $param->{max_color} = $self->_get_palette_color( $param->{max_color} );
+        $param->{min_color} = $self->_get_palette_color( $param->{min_color} );
+    }
+
+
+    # Special handling for 3 color scale.
+    if ( $param->{type} eq '3_color_scale' ) {
+        $param->{type} = 'colorScale';
+
+        # Color scales don't use any additional formatting.
+        $param->{format} = undef;
+
+        $param->{min_type}  //= 'min';
+        $param->{mid_type}  //= 'percentile';
+        $param->{max_type}  //= 'max';
+        $param->{min_value} //= 0;
+        $param->{mid_value} //= 50;
+        $param->{max_value} //= 0;
+        $param->{min_color} //= '#F8696B';
+        $param->{mid_color} //= '#FFEB84';
+        $param->{max_color} //= '#63BE7B';
+
+        $param->{max_color} = $self->_get_palette_color( $param->{max_color} );
+        $param->{mid_color} = $self->_get_palette_color( $param->{mid_color} );
+        $param->{min_color} = $self->_get_palette_color( $param->{min_color} );
+    }
+
+
+
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
 }
@@ -3457,6 +3506,11 @@ sub _get_palette_color {
     my $self    = shift;
     my $index   = shift;
     my $palette = $self->{_palette};
+
+    # Handle colours in #XXXXXX RGB format.
+    if ( $index =~ m/^#([0-9A-F]{6})$/i ) {
+        return "FF" . uc( $1 );
+    }
 
     # Adjust the colour index.
     $index -= 8;
@@ -6515,15 +6569,15 @@ sub _write_font {
     $self->{_rstring}->emptyTag( 'sz', 'val', $format->{_size} );
 
     if ( my $theme = $format->{_theme} ) {
-        $self->_write_color( 'theme' => $theme );
+        $self->_write_rstring_color( 'theme' => $theme );
     }
     elsif ( my $color = $format->{_color} ) {
         $color = $self->_get_palette_color( $color );
 
-        $self->_write_color( 'rgb' => $color );
+        $self->_write_rstring_color( 'rgb' => $color );
     }
     else {
-        $self->_write_color( 'theme' => 1 );
+        $self->_write_rstring_color( 'theme' => 1 );
     }
 
     $self->{_rstring}->emptyTag( 'rFont',  'val', $format->{_font} );
@@ -6587,11 +6641,11 @@ sub _write_vert_align {
 
 ##############################################################################
 #
-# _write_color()
+# _write_rstring_color()
 #
 # Write the <color> element.
 #
-sub _write_color {
+sub _write_rstring_color {
 
     my $self  = shift;
     my $name  = shift;
@@ -6902,6 +6956,12 @@ sub _write_cf_rule {
         $self->_write_formula( $param->{formula} );
         $self->{_writer}->endTag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'colorScale' ) {
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_color_scale( $param );
+        $self->{_writer}->endTag( 'cfRule' );
+    }
 }
 
 
@@ -6920,6 +6980,77 @@ sub _write_formula {
 }
 
 
+##############################################################################
+#
+# _write_color_scale()
+#
+# Write the <colorScale> element.
+#
+sub _write_color_scale {
+
+    my $self                 = shift;
+    my $param = shift;
+
+    $self->{_writer}->startTag( 'colorScale' );
+
+    $self->_write_cfvo( $param->{min_type}, $param->{min_value});
+
+    if (defined $param->{mid_type}) {
+        $self->_write_cfvo( $param->{mid_type}, $param->{mid_value});
+    }
+
+    $self->_write_cfvo( $param->{max_type}, $param->{max_value});
+
+    $self->_write_color( 'rgb' => $param->{min_color} );
+
+    if (defined $param->{mid_color}) {
+        $self->_write_color( 'rgb' => $param->{mid_color} );
+    }
+
+    $self->_write_color( 'rgb' => $param->{max_color} );
+
+    $self->{_writer}->endTag( 'colorScale' );
+}
+
+
+##############################################################################
+#
+# _write_cfvo()
+#
+# Write the <cfvo> element.
+#
+sub _write_cfvo {
+
+    my $self = shift;
+    my $type = shift;
+    my $val  = shift;
+
+    my @attributes = (
+        'type' => $type,
+        'val'  => $val
+    );
+
+    $self->{_writer}->emptyTag( 'cfvo', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_color()
+#
+# Write the <color> element.
+#
+sub _write_color {
+
+    my $self  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    my @attributes = ( $name => $value );
+
+    $self->{_writer}->emptyTag( 'color', @attributes );
+}
 
 
 
