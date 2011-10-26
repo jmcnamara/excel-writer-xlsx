@@ -3324,10 +3324,6 @@ sub conditional_formatting {
     # Set the priority based on the order of adding.
     $param->{priority} = $self->{_dxf_priority}++;
 
-    # Set the start cell used for formulas.
-    $param->{start_cell} = $start_cell; # TODO. Maybe not needed.
-
-
     # Special handling of text criteria.
     if ( $param->{type} eq 'text' ) {
 

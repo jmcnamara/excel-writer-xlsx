@@ -20,6 +20,7 @@ my $worksheet2 = $workbook->add_worksheet();
 my $worksheet3 = $workbook->add_worksheet();
 my $worksheet4 = $workbook->add_worksheet();
 my $worksheet5 = $workbook->add_worksheet();
+my $worksheet6 = $workbook->add_worksheet();
 
 
 # Light red fill with dark red text.
@@ -124,11 +125,6 @@ $caption = 'Duplicate values are in light red. '
 $worksheet3->write( 'A1', $caption );
 $worksheet3->write_col( 'B3', $data );
 
-# Change a few values to make them unique in the data set.
-$worksheet3->write( 'C4', 41 );
-$worksheet3->write( 'D8', 51 );
-$worksheet3->write( 'I7', 61 );
-
 $worksheet3->conditional_formatting( 'B3:K12',
     {
         type     => 'duplicate',
@@ -153,11 +149,6 @@ $caption = 'Above average values are in light red. '
 
 $worksheet4->write( 'A1', $caption );
 $worksheet4->write_col( 'B3', $data );
-
-# Change a few values to make them unique in the data set.
-$worksheet4->write( 'C4', 41 );
-$worksheet4->write( 'D8', 51 );
-$worksheet4->write( 'I7', 61 );
 
 $worksheet4->conditional_formatting( 'B3:K12',
     {
@@ -186,11 +177,6 @@ $caption = 'Top 10 values are in light red. '
 $worksheet5->write( 'A1', $caption );
 $worksheet5->write_col( 'B3', $data );
 
-# Change a few values to make them unique in the data set.
-$worksheet5->write( 'C4', 41 );
-$worksheet5->write( 'D8', 51 );
-$worksheet5->write( 'I7', 61 );
-
 $worksheet5->conditional_formatting( 'B3:K12',
     {
         type     => 'top',
@@ -206,6 +192,47 @@ $worksheet5->conditional_formatting( 'B3:K12',
         format   => $format2,
     }
 );
+
+
+
+###############################################################################
+#
+# Example 6.
+#
+$caption = 'Examples of color scales and data bars.';
+
+$data = [ 1 .. 12 ];
+
+$worksheet6->write( 'A1', $caption );
+
+$worksheet6->write    ( 'B2', "2 Color Scale" );
+$worksheet6->write_col( 'B3', $data );
+
+$worksheet6->write    ( 'D2', "3 Color Scale" );
+$worksheet6->write_col( 'D3', $data );
+
+$worksheet6->write    ( 'F2', "Data Bars" );
+$worksheet6->write_col( 'F3', $data );
+
+
+$worksheet6->conditional_formatting( 'B3:B14',
+    {
+        type => '2_color_scale',
+    }
+);
+
+$worksheet6->conditional_formatting( 'D3:D14',
+    {
+        type => '3_color_scale',
+    }
+);
+
+$worksheet6->conditional_formatting( 'F3:F14',
+    {
+        type => 'data_bar',
+    }
+);
+
 
 
 __END__
