@@ -719,6 +719,16 @@ t/worksheet/worksheet_cond_format_02.t
 t/worksheet/worksheet_cond_format_03.t
 t/worksheet/worksheet_cond_format_04.t
 t/worksheet/worksheet_cond_format_05.t
+t/worksheet/worksheet_cond_format_06.t
+t/worksheet/worksheet_cond_format_07.t
+t/worksheet/worksheet_cond_format_08.t
+t/worksheet/worksheet_cond_format_09.t
+t/worksheet/worksheet_cond_format_10.t
+t/worksheet/worksheet_cond_format_11.t
+t/worksheet/worksheet_cond_format_12.t
+t/worksheet/worksheet_cond_format_13.t
+t/worksheet/worksheet_cond_format_14.t
+t/worksheet/worksheet_cond_format_15.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t

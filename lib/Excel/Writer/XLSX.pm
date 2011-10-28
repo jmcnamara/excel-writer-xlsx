@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.32';
+our $VERSION = '0.33';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.32 of Excel::Writer::XLSX, released October 20, 2011.
+This document refers to version 0.33 of Excel::Writer::XLSX, released October 28, 2011.
 
 
 
@@ -4279,9 +4279,9 @@ The C<type> parameter is used to set the type of conditional formatting that you
 
     3_color_scale   (none)
 
-    data_bar       (none)
+    data_bar        (none)
 
-    formula        criteria
+    formula         criteria
 
 
 All conditional formatting types have a C<format> paramter, see below. Other types and parameters such as icon sets will be added in time.

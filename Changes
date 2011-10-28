@@ -4,6 +4,14 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+
+0.33 October 28 2011
+
+    + Added addition conditional formatting types: cell, date, time_period,
+      text, average, duplicate, unique, top, bottom, blanks, no_blanks,
+      errors, no_errors, 2_color_scale, 3_color_scale, data_bar  and formula.
+
+
 0.32 October 20 2011
 
     ! Fix for format alignment bug. 
