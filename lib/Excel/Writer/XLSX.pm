@@ -4281,6 +4281,9 @@ The C<type> parameter is used to set the type of conditional formatting that you
 
     data_bar       (none)
 
+    formula        criteria
+
+
 All conditional formatting types have a C<format> paramter, see below. Other types and parameters such as icon sets will be added in time.
 
 =head2 type => 'cell'
@@ -4628,6 +4631,21 @@ The C<data_bar> type is used to specify Excel's "Data Bar" style conditional for
     );
 
 At the moment only the default colors and properties can be used. These will be extended in time.
+
+
+=head2 type => 'formula'
+
+The C<formula> type is used to specify a conditional format based on a user defined formula:
+
+$worksheet->conditional_formatting( 'A1:A4',
+    {
+        type     => 'formula',
+        criteria => '=$A$1 > 5',
+        format   => $format,
+    }
+);
+
+The formula is specified in the C<criteria>.
 
 
 =head2 Conditional Formatting Examples
@@ -4980,16 +4998,16 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
 
     # Some sample data to run the conditional formatting against.
     my $data = [
-        [ 90, 80,  50, 10,  20,  90,  40, 90,  30,  40 ],
-        [ 20, 10,  90, 100, 30,  60,  70, 60,  50,  90 ],
-        [ 10, 50,  60, 50,  20,  50,  80, 30,  40,  60 ],
-        [ 10, 90,  20, 40,  10,  40,  50, 70,  90,  50 ],
-        [ 70, 100, 10, 90,  10,  10,  20, 100, 100, 40 ],
-        [ 20, 60,  10, 100, 30,  10,  20, 60,  100, 10 ],
-        [ 10, 60,  10, 80,  100, 80,  30, 30,  70,  40 ],
-        [ 30, 90,  60, 10,  10,  100, 40, 40,  30,  40 ],
-        [ 80, 90,  10, 20,  20,  50,  80, 20,  60,  90 ],
-        [ 60, 80,  30, 30,  10,  50,  80, 60,  50,  30 ],
+        [ 34, 72,  38, 30, 75, 48, 75, 66, 84, 86 ],
+        [ 6,  24,  1,  84, 54, 62, 60, 3,  26, 59 ],
+        [ 28, 79,  97, 13, 85, 93, 93, 22, 5,  14 ],
+        [ 27, 71,  40, 17, 18, 79, 90, 93, 29, 47 ],
+        [ 88, 25,  33, 23, 67, 1,  59, 79, 47, 36 ],
+        [ 24, 100, 20, 88, 29, 33, 38, 54, 54, 88 ],
+        [ 6,  57,  88, 28, 10, 26, 37, 7,  41, 48 ],
+        [ 52, 78,  1,  96, 26, 45, 47, 33, 96, 36 ],
+        [ 60, 54,  81, 66, 81, 90, 80, 93, 12, 55 ],
+        [ 70, 5,   46, 14, 71, 19, 66, 36, 41, 21 ],
     ];
 
     my $caption = 'Cells with values >= 50 are in light red. '
@@ -5003,9 +5021,9 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
     $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
-            format   => $format1,
             criteria => '>=',
             value    => 50,
+            format   => $format1,
         }
     );
 
@@ -5013,9 +5031,9 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
     $worksheet->conditional_formatting( 'B3:K12',
         {
             type     => 'cell',
-            format   => $format2,
             criteria => '<',
             value    => 50,
+            format   => $format2,
         }
     );
 

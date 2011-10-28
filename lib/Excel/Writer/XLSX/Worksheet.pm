@@ -3196,6 +3196,7 @@ sub conditional_formatting {
         '2_color_scale' => '2_color_scale',
         '3_color_scale' => '3_color_scale',
         'data_bar'      => 'dataBar',
+        'formula'       => 'expression',
     );
 
 
@@ -6980,6 +6981,12 @@ sub _write_cf_rule {
         $self->_write_data_bar( $param );
         $self->{_writer}->endTag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'expression' ) {
+
+        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->_write_formula( $param->{criteria} );
+        $self->{_writer}->endTag( 'cfRule' );
+    }
 }
 
 
@@ -6993,6 +7000,9 @@ sub _write_formula {
 
     my $self = shift;
     my $data = shift;
+
+    # Remove equality from formula.
+    $data =~ s/^=//;
 
     $self->{_writer}->dataElement( 'formula', $data );
 }
