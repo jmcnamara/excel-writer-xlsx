@@ -35,7 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_subtype}           = $self->{_subtype} // 'clustered';
+    $self->{_subtype}           = $self->{_subtype} || 'clustered';
     $self->{_horiz_val_axis} = 0;
 
     bless $self, $class;
@@ -150,7 +150,7 @@ sub _write_series {
 sub _write_number_format {
 
     my $self          = shift;
-    my $format_code   = shift // 'General';
+    my $format_code   = shift || 'General';
     my $source_linked = 1;
 
     if ($self->{_subtype} eq 'percent_stacked') {

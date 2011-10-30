@@ -1494,8 +1494,8 @@ sub fit_to_pages {
     my $self = shift;
 
     $self->{_fit_page}           = 1;
-    $self->{_fit_width}          = $_[0] // 1;
-    $self->{_fit_height}         = $_[1] // 1;
+    $self->{_fit_width}          = defined $_[0] ? $_[0] : 1;
+    $self->{_fit_height}         = defined $_[1] ? $_[1] : 1;
     $self->{_page_setup_changed} = 1;
 }
 
@@ -3445,12 +3445,12 @@ sub conditional_formatting {
         $param->{mid_type}  = undef;
         $param->{mid_color} = undef;
 
-        $param->{min_type}  //= 'min';
-        $param->{max_type}  //= 'max';
-        $param->{min_value} //= 0;
-        $param->{max_value} //= 0;
-        $param->{min_color} //= '#FF7128';
-        $param->{max_color} //= '#FFEF9C';
+        $param->{min_type}  ||= 'min';
+        $param->{max_type}  ||= 'max';
+        $param->{min_value} ||= 0;
+        $param->{max_value} ||= 0;
+        $param->{min_color} ||= '#FF7128';
+        $param->{max_color} ||= '#FFEF9C';
 
         $param->{max_color} = $self->_get_palette_color( $param->{max_color} );
         $param->{min_color} = $self->_get_palette_color( $param->{min_color} );
@@ -3464,15 +3464,15 @@ sub conditional_formatting {
         # Color scales don't use any additional formatting.
         $param->{format} = undef;
 
-        $param->{min_type}  //= 'min';
-        $param->{mid_type}  //= 'percentile';
-        $param->{max_type}  //= 'max';
-        $param->{min_value} //= 0;
-        $param->{mid_value} //= 50;
-        $param->{max_value} //= 0;
-        $param->{min_color} //= '#F8696B';
-        $param->{mid_color} //= '#FFEB84';
-        $param->{max_color} //= '#63BE7B';
+        $param->{min_type}  ||= 'min';
+        $param->{mid_type}  ||= 'percentile';
+        $param->{max_type}  ||= 'max';
+        $param->{min_value} ||= 0;
+        $param->{mid_value} = 50 unless defined $param->{mid_value};
+        $param->{max_value} ||= 0;
+        $param->{min_color} ||= '#F8696B';
+        $param->{mid_color} ||= '#FFEB84';
+        $param->{max_color} ||= '#63BE7B';
 
         $param->{max_color} = $self->_get_palette_color( $param->{max_color} );
         $param->{mid_color} = $self->_get_palette_color( $param->{mid_color} );
@@ -3486,11 +3486,11 @@ sub conditional_formatting {
         # Color scales don't use any additional formatting.
         $param->{format} = undef;
 
-        $param->{min_type}  //= 'min';
-        $param->{max_type}  //= 'max';
-        $param->{min_value} //= 0;
-        $param->{max_value} //= 0;
-        $param->{bar_color} //= '#638EC6';
+        $param->{min_type}  ||= 'min';
+        $param->{max_type}  ||= 'max';
+        $param->{min_value} ||= 0;
+        $param->{max_value} ||= 0;
+        $param->{bar_color} ||= '#638EC6';
 
         $param->{bar_color} = $self->_get_palette_color( $param->{bar_color} );
     }
@@ -5373,7 +5373,7 @@ sub _write_cell {
         # Write a formula.
         $self->{_writer}->startTag( 'c', @attributes );
         $self->_write_cell_formula( $token );
-        $self->_write_cell_value( $cell->[3] // 0 );
+        $self->_write_cell_value( $cell->[3] || 0 );
         $self->{_writer}->endTag( 'c' );
     }
     elsif ( $type eq 'a' ) {
