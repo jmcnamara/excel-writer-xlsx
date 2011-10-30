@@ -26,8 +26,12 @@ chart_pie.pl            A demo of pie style charts.
 chart_scatter.pl        A demo of scatter style charts.
 chart_stock.pl          A demo of stock style charts.
 colors.pl               A demo of the colour palette and named colours.
+comments1.pl            Add comments to worksheet cells.
+comments2.pl            Add comments with advanced options.
+conditional_format.pl   Add conditional formats to a range of cells.
 data_validate.pl        An example of data validation and dropdown lists.
 date_time.pl            Write dates and times with write_date_time().
+defined_name.pl         Example of how to create defined names.
 diag_border.pl          A simple example of diagonal cell borders.
 filehandle.pl           Examples of working with filehandles.
 headers.pl              Examples of worksheet headers and footers.
@@ -43,6 +47,8 @@ merge5.pl               An advanced example of merging with formatting.
 merge6.pl               An example of merging with Unicode strings.
 mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
+outline.pl              An example of outlines and grouping.
+outline_collapsed.pl    An example of collapsed outlines.
 panes.pl                An examples of how to create panes.
 properties.pl           Add document properties to a workbook.
 protection.pl           Example of cell locking and formula hiding.

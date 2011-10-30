@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart);
-our $VERSION = '0.24';
+our $VERSION = '0.33';
 
 
 ###############################################################################
@@ -35,9 +35,11 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_subtype}           = $self->{_subtype} // 'clustered';
     $self->{_horiz_val_axis} = 0;
 
     bless $self, $class;
+
     return $self;
 }
 
@@ -66,6 +68,9 @@ sub _write_chart_type {
 sub _write_bar_chart {
 
     my $self = shift;
+    my $subtype = $self->{_subtype};
+
+    $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
 
     $self->{_writer}->startTag( 'c:barChart' );
 
@@ -73,11 +78,10 @@ sub _write_bar_chart {
     $self->_write_bar_dir();
 
     # Write the c:grouping element.
-    $self->_write_grouping( 'clustered' );
+    $self->_write_grouping( $subtype );
 
     # Write the series elements.
     $self->_write_series();
-
 
     $self->{_writer}->endTag( 'c:barChart' );
 }
@@ -97,6 +101,68 @@ sub _write_bar_dir {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:barDir', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_series()
+#
+# Over-ridden to add c:overlap.
+#
+# Write the series elements.
+#
+sub _write_series {
+
+    my $self = shift;
+
+    # Write each series with subelements.
+    my $index = 0;
+    for my $series ( @{ $self->{_series} } ) {
+        $self->_write_ser( $index++, $series );
+    }
+
+    # Write the c:marker element.
+    $self->_write_marker_value();
+
+    # Write the c:overlap element.
+    $self->_write_overlap() if $self->{_subtype} =~ /stacked/;
+
+    # Generate the axis ids.
+    $self->_add_axis_id();
+    $self->_add_axis_id();
+
+    # Write the c:axId element.
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+}
+
+
+##############################################################################
+#
+# _write_num_fmt()
+#
+# Over-ridden to add % format. TODO. This will be refactored back up to the
+# SUPER class later.
+#
+# Write the <c:numFmt> element.
+#
+sub _write_number_format {
+
+    my $self          = shift;
+    my $format_code   = shift // 'General';
+    my $source_linked = 1;
+
+    if ($self->{_subtype} eq 'percent_stacked') {
+        $format_code = '0%';
+    }
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
 }
 
 
@@ -158,7 +224,14 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 =head1 Column Chart Methods
 
-There aren't currently any column chart specific methods. See the TODO section of L<Excel::Writer::XLSX::Chart>.
+The C<Column> chart module also supports the following sub-types:
+
+    stacked
+    percent_stacked
+
+These can be specified at creation time via the C<add_chart()> Worksheet method:
+
+    my $chart = $workbook->add_chart( type => 'column', subtype => 'stacked' );
 
 =head1 EXAMPLE
 

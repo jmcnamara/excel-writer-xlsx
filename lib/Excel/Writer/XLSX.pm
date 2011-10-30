@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.24';
+our $VERSION = '0.33';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.24 of Excel::Writer::XLSX, released June 11, 2011.
+This document refers to version 0.33 of Excel::Writer::XLSX, released October 28, 2011.
 
 
 
@@ -104,7 +104,7 @@ This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-While Excel::Writer::XLSX doesn't currently support all of the features of Spreadsheet::WriteExcel the intention is that it eventually will. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
+Excel::Writer::XLSX supports all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet.
 
@@ -284,6 +284,7 @@ This method is use to create a new chart either as a standalone worksheet (the d
 The properties that can be set are:
 
     type     (required)
+    subtype  (optional)
     name     (optional)
     embedded (optional)
 
@@ -304,6 +305,14 @@ The available types are:
     pie
     scatter
     stock
+
+=item * C<subtype>
+
+Used to define a chart subtype where available.
+
+    my $chart = $workbook->add_chart( type => 'bar', subtype => 'stacked' );
+
+Currently only Bar and Column charts support subtypes (stacked and percent_stacked). See the documentation for those chart types.
 
 =item * C<name>
 
@@ -394,17 +403,24 @@ See also the C<properties.pl> program in the examples directory of the distro.
 
 =head2 define_name()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is used to defined a name that can be used to represent a value, a single cell or a range of cells in a workbook.
 
+For example to set a global/workbook name:
+
+    # Global/workbook names.
     $workbook->define_name( 'Exchange_rate', '=0.96' );
     $workbook->define_name( 'Sales',         '=Sheet1!$G$1:$H$10' );
+
+It is also possible to define a local/worksheet name by prefixing the name with the sheet name using the syntax C<sheetname!definedname>:
+
+    # Local/worksheet name.
     $workbook->define_name( 'Sheet2!Sales',  '=Sheet2!$G$1:$G$10' );
 
-See the defined_name.pl program in the examples dir of the distro.
+If the sheet name contains spaces or special characters you must enclose it in single quotes like in Excel:
 
-Note: This currently a beta feature. More documentation and examples will be added.
+    $workbook->define_name( "'New Data'!Sales",  '=Sheet2!$G$1:$G$10' );
+
+See the defined_name.pl program in the examples dir of the distro.
 
 
 
@@ -548,10 +564,12 @@ The following methods are available through a new worksheet:
     write_formula()
     write_comment()
     show_comments()
+    set_comments_author()
     add_write_handler()
     insert_image()
     insert_chart()
     data_validation()
+    conditional_format()
     get_name()
     activate()
     select()
@@ -565,6 +583,7 @@ The following methods are available through a new worksheet:
     freeze_panes()
     split_panes()
     merge_range()
+    merge_range_type()
     set_zoom()
     right_to_left()
     hide_zero()
@@ -650,12 +669,12 @@ The general rule is that if the data looks like a I<something> then a I<somethin
     $worksheet->write( 'A15', [\@array]              ); # write_col()
 
     # And if the keep_leading_zeros property is set:
-    $worksheet->write( 'A16,  2                      ); # write_number()
-    $worksheet->write( 'A17,  02                     ); # write_string()
-    $worksheet->write( 'A18,  00002                  ); # write_string()
+    $worksheet->write( 'A16', 2                      ); # write_number()
+    $worksheet->write( 'A17', 02                     ); # write_string()
+    $worksheet->write( 'A18', 00002                  ); # write_string()
 
     # Write an array formula. Not available in Spreadsheet::WriteExcel.
-    $worksheet->write( 'A19,  '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
+    $worksheet->write( 'A19', '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
 
 
 The "looks like" rule is defined by regular expressions:
@@ -718,6 +737,7 @@ See the note about L<Cell notation>. The C<$format> parameter is optional.
 
 In general it is sufficient to use the C<write()> method.
 
+B<Note>: some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. Applying all available Service Packs to Excel should fix this.
 
 
 
@@ -825,7 +845,7 @@ See the C<rich_strings.pl> example in the distro for more examples.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
 
 =end html
 
@@ -1132,15 +1152,6 @@ See also, the note about L<Cell notation>.
 
 
 
-=head2 write_url_range()
-
-This method was mainly only required for Excel 5. It is deprecated in Excel::Writer::XLSX.
-
-Use C<merge_range()> instead.
-
-
-
-
 =head2 write_formula( $row, $column, $formula, $format, $value )
 
 Write a formula or function to the cell specified by C<$row> and C<$column>:
@@ -1224,8 +1235,6 @@ The methods remain for backward compatibility but new Excel::Writer::XLSX progra
 
 =head2 write_comment( $row, $column, $string, ... )
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 The C<write_comment()> method is used to add a comment to a cell. A cell comment is indicated in Excel by a small red triangle in the upper right-hand corner of the cell. Moving the cursor over the red triangle will reveal the comment.
 
 The following example shows how to add a comment to a cell:
@@ -1267,9 +1276,13 @@ Most of these options are quite specific and in general the default comment beha
 
 =item Option: author
 
-This option is used to indicate who the author of the comment is. Excel displays the author of the comment in the status bar at the bottom of the worksheet. This is usually of interest in corporate environments where several people might review and provide comments to a workbook.
+This option is used to indicate who is the author of the cell comment. Excel displays the author of the comment in the status bar at the bottom of the worksheet. This is usually of interest in corporate environments where several people might review and provide comments to a workbook.
 
     $worksheet->write_comment( 'C3', 'Atonement', author => 'Ian McEwan' );
+
+The default author for all cell comments can be set using the C<set_comments_author()> method (see below).
+
+    $worksheet->set_comments_author( 'Perl' );
 
 
 =item Option: visible
@@ -1360,14 +1373,18 @@ This option is used to change the y offset, in pixels, of a comment within a cel
 
 You can apply as many of these options as you require.
 
+B<Note about using options that adjust the position of the cell comment such as start_cell, start_row, start_col, x_offset and y_offset>: Excel only displays offset cell comments when they are displayed as "visible". Excel does B<not> display hidden cells as moved when you mouse over them.
+
 B<Note about row height and comments>. If you specify the height of a row that contains a comment then Excel::Writer::XLSX will adjust the height of the comment to maintain the default or user specified dimensions. However, the height of a row can also be adjusted automatically by Excel if the text wrap property is set or large fonts are used in the cell. This means that the height of the row is unknown to the module at run time and thus the comment box is stretched with the row. Use the C<set_row()> method to specify the row height explicitly and avoid this problem.
+
+
 
 
 =head2 show_comments()
 
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
-
 This method is used to make all cell comments visible when a worksheet is opened.
+
+    $worksheet->show_comments();
 
 Individual comments can be made visible using the C<visible> parameter of the C<write_comment> method (see above):
 
@@ -1375,7 +1392,20 @@ Individual comments can be made visible using the C<visible> parameter of the C<
 
 If all of the cell comments have been made visible you can hide individual comments as follows:
 
+    $worksheet->show_comments();
     $worksheet->write_comment( 'C3', 'Hello', visible => 0 );
+
+
+
+=head2 set_comments_author()
+
+This method is used to set the default author of all cell comments.
+
+    $worksheet->set_comments_author( 'Perl' );
+
+Individual comment authors can be set using the C<author> parameter of the C<write_comment> method (see above).
+
+The default comment author is an empty string, C<''>, if no author is specified.
 
 
 
@@ -1541,6 +1571,26 @@ See also the C<data_validate.pl> program in the examples directory of the distro
 
 
 
+=head2 conditional_format()
+
+The C<conditional_format()> method is used to add formatting to a cell or range of cells based on user defined criteria.
+
+    $worksheet->conditional_formatting( 'A1:J10',
+        {
+            type     => 'cell',
+            criteria => '>=',
+            value    => 50,
+            format   => $format1,
+        }
+    );
+
+This method contains a lot of parameters and is described in detail in a separate section L<CONDITIONAL FORMATTING IN EXCEL>.
+
+See also the C<conditional_format.pl> program in the examples directory of the distro
+
+
+
+
 =head2 get_name()
 
 The C<get_name()> method is used to retrieve the name of a worksheet. For example:
@@ -1685,8 +1735,6 @@ The default cell selections is (0, 0), 'A1'.
 
 =head2 set_row( $row, $height, $format, $hidden, $level, $collapsed )
 
-Partial L<Compatibility with Spreadsheet::WriteExcel>, C<$level> and C<collapsed> aren't implemented yet.
-
 This method can be used to change the default properties of a row. All parameters apart from C<$row> are optional.
 
 The most common use for this method is to change the height of a row:
@@ -1734,8 +1782,6 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 =head2 set_column( $first_col, $last_col, $width, $format, $hidden, $level, $collapsed )
-
-Partial L<Compatibility with Spreadsheet::WriteExcel>, C<$level> and C<collapsed> aren't implemented yet.
 
 This method can be used to change the default properties of a single column or a range of columns. All parameters apart from C<$first_col> and C<$last_col> are optional.
 
@@ -1798,8 +1844,6 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 =head2 outline_settings( $visible, $symbols_below, $symbols_right, $auto_style )
-
-Not implemented yet, see L<Compatibility with Spreadsheet::WriteExcel>.
 
 The C<outline_settings()> method is used to control the appearance of outlines in Excel. Outlines are described in L<OUTLINES AND GROUPING IN EXCEL>.
 
@@ -1884,9 +1928,38 @@ The C<merge_range()> method allows you merge cells that contain other types of a
 
     $worksheet->merge_range( 'B3:D4', 'Vertical and horizontal', $format );
 
-C<merge_range()> writes its C<$token> argument using the worksheet C<write()> method. Therefore it will handle numbers, strings, formulas or urls as required.
+C<merge_range()> writes its C<$token> argument using the worksheet C<write()> method. Therefore it will handle numbers, strings, formulas or urls as required. If you need to specify the required C<write_*()> method use the C<merge_range_type()> method, see below.
 
 The full possibilities of this method are shown in the C<merge3.pl> to C<merge6.pl> programs in the C<examples> directory of the distribution.
+
+
+
+
+=head2 merge_range_type( $type, $first_row, $first_col, $last_row, $last_col, ... )
+
+The C<merge_range()> method, see above, uses C<write()> to insert the required data into to a merged range. However, there may be times where this isn't what you require so as an alternative the C<merge_range_type ()> method allows you to specify the type of data you wish to write. For example:
+
+    $worksheet->merge_range_type( 'number',  'B2:C2', 123,    $format1 );
+    $worksheet->merge_range_type( 'string',  'B4:C4', 'foo',  $format2 );
+    $worksheet->merge_range_type( 'formula', 'B6:C6', '=1+2', $format3 );
+
+The C<$type> must be one of the following, which corresponds to a C<write_*()> method:
+
+    'number'
+    'string'
+    'formula'
+    'array_formula'
+    'blank'
+    'rich_string'
+    'date_time'
+    'url'
+
+Any arguments after the range should be whatever the appropriate method accepts:
+
+    $worksheet->merge_range_type( 'rich_string', 'B8:C8',
+                                  'This is ', $bold, 'bold', $format4 );
+
+Note, you must always pass a C<$format> object as an argument, even if it is a default format.
 
 
 
@@ -2019,7 +2092,7 @@ Also, note that a filter condition can only be applied to a column in a range sp
 
 See the C<autofilter.pl> program in the examples directory of the distro for a more detailed example.
 
-B<Note> L<Spreadsheet::WriteExcel> supports Top 10 style filters. These aren't currently support by Excel::Writer::XLSX but may be added later.
+B<Note> L<Spreadsheet::WriteExcel> supports Top 10 style filters. These aren't currently supported by Excel::Writer::XLSX but may be added later.
 
 
 =head2 filter_column_list( $column, @matches )
@@ -2475,11 +2548,9 @@ The C<fit_to_pages()> method is used to fit the printed area to a specific numbe
 
 The print area can be defined using the C<print_area()> method as described above.
 
-A common requirement is to fit the printed output to I<n> pages wide but have the height be as long as necessary. To achieve this set the C<$height> to zero or leave it blank:
+A common requirement is to fit the printed output to I<n> pages wide but have the height be as long as necessary. To achieve this set the C<$height> to zero:
 
     $worksheet1->fit_to_pages( 1, 0 );    # 1 page wide and as long as necessary
-    $worksheet2->fit_to_pages( 1 );       # The same
-
 
 Note that although it is valid to use both C<fit_to_pages()> and C<set_print_scale()> on the same worksheet only one of these options can be active at a time. The last method call made will set the active option.
 
@@ -2960,7 +3031,7 @@ Using format strings you can define very sophisticated formatting of numbers.
     $format11->set_num_format( '0 "dollar and" .00 "cents"' );
     $worksheet->write( 10, 0, 1.87, $format11 );        # 1 dollar and .87 cents
 
-    # Conditional formatting
+    # Conditional numerical formatting.
     $format12->set_num_format( '[Green]General;[Red]-General;General' );
     $worksheet->write( 11, 0, 123, $format12 );         # > 0 Green
     $worksheet->write( 12, 0, -45, $format12 );         # < 0 Red
@@ -3724,13 +3795,10 @@ A typical use case might be to restrict data in a cell to integer values in a ce
             error_message   => 'Sorry, try again.',
         });
 
-The above example would look like this in Excel: L<http://homepage.eircom.net/~jmcnamara/perl/data_validation.jpg>.
 
 =begin html
 
-<center>
-<img src="http://homepage.eircom.net/~jmcnamara/perl/data_validation.jpg" alt="The output from the above example"/>
-</center>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/validation_example.jpg" alt="The output from the above example"/></center></p>
 
 =end html
 
@@ -3876,7 +3944,7 @@ The C<criteria> parameter is used to set the criteria by which the data in the c
     'greater than or equal to'  |  '>='
     'less than or equal to'     |  '<='
 
-You can either use Excel's textual description strings, in the first column above, or the more common operator alternatives. The following are equivalent:
+You can either use Excel's textual description strings, in the first column above, or the more common symbolic alternatives. The following are equivalent:
 
     validate => 'integer',
     criteria => 'greater than',
@@ -4112,6 +4180,581 @@ See also the C<data_validate.pl> program in the examples directory of the distro
 
 
 
+=head1 CONDITIONAL FORMATTING IN EXCEL
+
+Conditional formatting is a feature of Excel which allows you to apply a format to a cell or a range of cells based on a certain criteria.
+
+For example the following criteria is used to highlight cells >= 50 in red in the C<conditional_format.pl> example from the distro:
+
+    # Write a conditional format over a range.
+    $worksheet->conditional_formatting( 'B3:K12',
+        {
+            type     => 'cell',
+            criteria => '>=',
+            value    => 50,
+            format   => $format1,
+        }
+    );
+
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_example.jpg" alt="The output from the above example"/></center></p>
+
+=end html
+
+
+
+=head2 conditional_format( $row, $col, { parameter => 'value', ... } )
+
+The C<conditional_format()> method is used to apply formatting  based on used defined criteria to an Excel::Writer::XLSX file.
+
+It can be applied to a single cell or a range of cells. You can pass 3 parameters such as C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
+
+    $worksheet->conditional_format( 0, 0,       {...} );
+    $worksheet->conditional_format( 0, 0, 4, 1, {...} );
+
+    # Which are the same as:
+
+    $worksheet->conditional_format( 'A1',       {...} );
+    $worksheet->conditional_format( 'A1:B5',    {...} );
+
+See also the note about L<Cell notation> for more information.
+
+
+The last parameter in C<conditional_format()> must be a hash ref containing the parameters that describe the type and style of the data validation. The main parameters are:
+
+    type
+    format
+    criteria
+    value
+    minimum
+    maximum
+
+Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
+
+=head2 type
+
+This parameter is passed in a hash ref to C<conditional_format()>.
+
+The C<type> parameter is used to set the type of conditional formatting that you wish to apply. It is always required and it has no default value. Allowable C<type> values and their associated parameters are:
+
+    Type            Parameters
+    ====            ==========
+    cell            criteria
+                    value
+                    minimum
+                    maximum
+
+    date            criteria
+                    value
+                    minimum
+                    maximum
+
+    time_period     criteria
+
+    text            criteria
+                    value
+
+    average         criteria
+
+    duplicate       (none)
+
+    unique          (none)
+
+    top             criteria
+                    value
+
+    bottom          criteria
+                    value
+
+    blanks          (none)
+
+    no_blanks       (none)
+
+    errors          (none)
+
+    no_errors       (none)
+
+    2_color_scale   (none)
+
+    3_color_scale   (none)
+
+    data_bar        (none)
+
+    formula         criteria
+
+
+All conditional formatting types have a C<format> paramter, see below. Other types and parameters such as icon sets will be added in time.
+
+=head2 type => 'cell'
+
+This is the most common conditional formatting type. It is used when a format is applied to a cell based on a simple criteria. For example:
+
+    $worksheet->conditional_formatting( 'A1',
+        {
+            type     => 'cell',
+            criteria => 'greater than',
+            value    => 5,
+            format   => $red_format,
+        }
+    );
+
+Or, using the C<between> criteria:
+
+    $worksheet->conditional_formatting( 'C1:C4',
+        {
+            type     => 'cell',
+            criteria => 'between',
+            minimum  => 20,
+            maximum  => 30,
+            format   => $green_format,
+        }
+    );
+
+
+=head2 criteria
+
+The C<criteria> parameter is used to set the criteria by which the cell data will be evaluated. It has no default value. The most common criteria as applied to C<< { type => 'cell' } >> are:
+
+    'between'
+    'not between'
+    'equal to'                  |  '=='  |  '='
+    'not equal to'              |  '!='  |  '<>'
+    'greater than'              |  '>'
+    'less than'                 |  '<'
+    'greater than or equal to'  |  '>='
+    'less than or equal to'     |  '<='
+
+You can either use Excel's textual description strings, in the first column above, or the more common symbolic alternatives.
+
+Additional criteria which are specific to other conditional format types are shown in the relevant sections below.
+
+
+=head2 value
+
+The C<value> is generally used along with the C<criteria> parameter to set the rule by which the cell data  will be evaluated.
+
+    type     => 'cell',
+    criteria => '>',
+    value    => 5
+    format   => $format,
+
+The C<value> property can also be an cell reference.
+
+    type     => 'cell',
+    criteria => '>',
+    value    => '$C$1',
+    format   => $format,
+
+
+=head2 format
+
+The C<format> parameter is used to specify the format that will be applied to the cell when the conditional formatting criteria is met. The format is created using the C<add_format()> method in the same way as cell formats:
+
+    $format = $workbook->add_format( bold => 1, italic => 1 );
+
+    $worksheet->conditional_formatting( 'A1',
+        {
+            type     => 'cell',
+            criteria => '>',
+            value    => 5
+            format   => $format,
+        }
+    );
+
+The conditional format follows the same rules as in Excel: it is superimposed over the existing cell format and not all font and border properties can be modified. Font properties that can't be modified are font name, font size, superscript and subscript. The border property that cannot be modified is diagonal borders.
+
+Excel specifies some default formats to be used with conditional formatting. You can replicate them using the following Excel::Writer::XLSX formats:
+
+    # Light red fill with dark red text.
+
+    my $format1 = $workbook->add_format(
+        bg_color => '#FFC7CE',
+        color    => '#9C0006',
+    );
+
+    # Light yellow fill with dark yellow text.
+
+    my $format2 = $workbook->add_format(
+        bg_color => '#FFEB9C',
+        color    => '#9C6500',
+    );
+
+    # Green fill with dark green text.
+
+    my $format3 = $workbook->add_format(
+        bg_color => '#C6EFCE',
+        color    => '#006100',
+    );
+
+
+=head2 minimum
+
+The C<minimum> parameter is used to set the lower limiting value when the C<criteria> is either C<'between'> or C<'not between'>:
+
+    validate => 'integer',
+    criteria => 'between',
+    minimum  => 1,
+    maximum  => 100,
+
+
+=head2 maximum
+
+The C<maximum> parameter is used to set the upper limiting value when the C<criteria> is either C<'between'> or C<'not between'>. See the previous example.
+
+
+=head2 type => 'date'
+
+The C<date> type is the same as C<cell> type and uses the same criteria and values. However it allows the C<value>, C<minimum> and C<maximum> properties to be specified in the ISO8601 C<yyyy-mm-ddThh:mm:ss.sss> date format which is detailed in the C<write_date_time()> method.
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'date',
+            criteria => 'greater than',
+            value    => '2011-01-01T',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'time_period'
+
+The C<time_period> type is used to specify Excel's "Dates Occurring" style conditional format.
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'time_period',
+            criteria => 'yesterday',
+            format   => $format,
+        }
+    );
+
+The period is set in the C<criteria> and can have one of the following values:
+
+        criteria => 'yesterday',
+        criteria => 'today',
+        criteria => 'last 7 days',
+        criteria => 'last week',
+        criteria => 'this week',
+        criteria => 'next week',
+        criteria => 'last month',
+        criteria => 'this month',
+        criteria => 'next month'
+
+
+=head2 type => 'text'
+
+The C<text> type is used to specify Excel's "Specific Text" style conditional format. It is used to do simple string matching using the C<criteria> and C<value> parameters:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'text',
+            criteria => 'containing',
+            value    => 'foo',
+            format   => $format,
+        }
+    );
+
+The C<criteria> can have one of the following values:
+
+    criteria => 'containing',
+    criteria => 'not containing',
+    criteria => 'begins with',
+    criteria => 'ends with',
+
+The C<value> parameter should be a string or single character.
+
+
+=head2 type => 'average'
+
+The C<average> type is used to specify Excel's "Average" style conditional format.
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'average',
+            criteria => 'above',
+            format   => $format,
+        }
+    );
+
+The type of average for the conditional format range is specified by the C<criteria>:
+
+    criteria => 'above',
+    criteria => 'below',
+    criteria => 'equal or above',
+    criteria => 'equal or below',
+    criteria => '1 std dev above',
+    criteria => '1 std dev below',
+    criteria => '2 std dev above',
+    criteria => '2 std dev below',
+    criteria => '3 std dev above',
+    criteria => '3 std dev below',
+
+
+
+=head2 type => 'duplicate'
+
+The C<duplicate> type is used to highlight duplicate cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'duplicate',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'unique'
+
+The C<unique> type is used to highlight unique cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'unique',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'top'
+
+The C<top> type is used to specify the top C<n> values by number or percentage in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'top',
+            value    => 10,
+            format   => $format,
+        }
+    );
+
+The C<criteria> can be used to indicate that a percentage condition is required:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'top',
+            value    => 10,
+            criteria => '%',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'bottom'
+
+The C<bottom> type is used to specify the bottom C<n> values by number or percentage in a range.
+
+It takes the same parameters as C<top>, see above.
+
+
+=head2 type => 'blanks'
+
+The C<blanks> type is used to highlight blank cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'blanks',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'no_blanks'
+
+The C<no_blanks> type is used to highlight non blank cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'no_blanks',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'errors'
+
+The C<errors> type is used to highlight error cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'errors',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => 'no_errors'
+
+The C<no_errors> type is used to highlight non error cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'no_errors',
+            format   => $format,
+        }
+    );
+
+
+=head2 type => '2_color_scale'
+
+The C<2_color_scale> type is used to specify Excel's "2 Color Scale" style conditional format.
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type  => '2_color_scale',
+        }
+    );
+
+At the moment only the default colors and properties can be used. These will be extended in time.
+
+
+=head2 type => '3_color_scale'
+
+The C<3_color_scale> type is used to specify Excel's "3 Color Scale" style conditional format.
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type  => '3_color_scale',
+        }
+    );
+
+At the moment only the default colors and properties can be used. These will be extended in time.
+
+=head2 type => 'data_bar'
+
+The C<data_bar> type is used to specify Excel's "Data Bar" style conditional format.
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type  => 'data_bar',
+        }
+    );
+
+At the moment only the default colors and properties can be used. These will be extended in time.
+
+
+=head2 type => 'formula'
+
+The C<formula> type is used to specify a conditional format based on a user defined formula:
+
+$worksheet->conditional_formatting( 'A1:A4',
+    {
+        type     => 'formula',
+        criteria => '=$A$1 > 5',
+        format   => $format,
+    }
+);
+
+The formula is specified in the C<criteria>.
+
+
+=head2 Conditional Formatting Examples
+
+Example 1. Highlight cells greater than or equal to an integer value.
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'cell',
+            criteria => 'greater than',
+            value    => 5,
+            format   => $format,
+        }
+    );
+
+Example 2. Highlight cells greater than or equal to a value in a reference cell.
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'cell',
+            criteria => 'greater than',
+            value    => '$H$1',
+            format   => $format,
+        }
+    );
+
+Example 3. Highlight cells greater than a certain date:
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'date',
+            criteria => 'greater than',
+            value    => '2011-01-01T',
+            format   => $format,
+        }
+    );
+
+Example 4. Highlight cells with a date in the last seven days:
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'time_period',
+            criteria => 'last 7 days',
+            format   => $format,
+        }
+    );
+
+Example 5. Highlight cells with strings starting with the letter C<b>:
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'text',
+            criteria => 'begins with',
+            value    => 'b',
+            format   => $format,
+        }
+    );
+
+Example 6. Highlight cells that are 1 std deviation above the average for the range:
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'average',
+            format   => $format,
+        }
+    );
+
+Example 7. Highlight duplicate cells in a range:
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'duplicate',
+            format   => $format,
+        }
+    );
+
+Example 8. Highlight unique cells in a range.
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'unique',
+            format   => $format,
+        }
+    );
+
+Example 9. Highlight the top 10 cells.
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'top',
+            value    => 10,
+            format   => $format,
+        }
+    );
+
+
+Example 10. Highlight blank cells.
+
+    $worksheet->conditional_formatting( 'A1:F10',
+        {
+            type     => 'blanks',
+            format   => $format,
+        }
+    );
+
+
+See also the C<conditional_format.pl> example program in C<EXAMPLES>.
+
+
 =head1 FORMULAS AND FUNCTIONS IN EXCEL
 
 
@@ -4262,7 +4905,7 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
 
 =end html
 
@@ -4315,7 +4958,7 @@ The following is a general example which demonstrates some features of working w
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
 
 =end html
 
@@ -4324,75 +4967,82 @@ The following is a general example which demonstrates some features of working w
 
 =head2 Example 3
 
-This example shows how to use a conditional numerical format with colours to indicate if a share price has gone up or down.
+Example of how to add conditional formatting to an Excel::Writer::XLSX file. The example below highlights cells that have a value greater than or equal to 50 in red and cells below that value in green.
+
+    #!/usr/bin/perl
 
     use strict;
+    use warnings;
     use Excel::Writer::XLSX;
 
-    # Create a new workbook and add a worksheet
-    my $workbook  = Excel::Writer::XLSX->new( 'stocks.xlsx' );
+    my $workbook  = Excel::Writer::XLSX->new( 'conditional_format.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
-    # Set the column width for columns 1, 2, 3 and 4
-    $worksheet->set_column( 0, 3, 15 );
 
+    # This example below highlights cells that have a value greater than or
+    # equal to 50 in red and cells below that value in green.
 
-    # Create a format for the column headings
-    my $header = $workbook->add_format();
-    $header->set_bold();
-    $header->set_size( 12 );
-    $header->set_color( 'blue' );
+    # Light red fill with dark red text.
+    my $format1 = $workbook->add_format(
+        bg_color => '#FFC7CE',
+        color    => '#9C0006',
 
+    );
 
-    # Create a format for the stock price
-    my $f_price = $workbook->add_format();
-    $f_price->set_align( 'left' );
-    $f_price->set_num_format( '$0.00' );
+    # Green fill with dark green text.
+    my $format2 = $workbook->add_format(
+        bg_color => '#C6EFCE',
+        color    => '#006100',
 
+    );
 
-    # Create a format for the stock volume
-    my $f_volume = $workbook->add_format();
-    $f_volume->set_align( 'left' );
-    $f_volume->set_num_format( '#,##0' );
+    # Some sample data to run the conditional formatting against.
+    my $data = [
+        [ 34, 72,  38, 30, 75, 48, 75, 66, 84, 86 ],
+        [ 6,  24,  1,  84, 54, 62, 60, 3,  26, 59 ],
+        [ 28, 79,  97, 13, 85, 93, 93, 22, 5,  14 ],
+        [ 27, 71,  40, 17, 18, 79, 90, 93, 29, 47 ],
+        [ 88, 25,  33, 23, 67, 1,  59, 79, 47, 36 ],
+        [ 24, 100, 20, 88, 29, 33, 38, 54, 54, 88 ],
+        [ 6,  57,  88, 28, 10, 26, 37, 7,  41, 48 ],
+        [ 52, 78,  1,  96, 26, 45, 47, 33, 96, 36 ],
+        [ 60, 54,  81, 66, 81, 90, 80, 93, 12, 55 ],
+        [ 70, 5,   46, 14, 71, 19, 66, 36, 41, 21 ],
+    ];
 
+    my $caption = 'Cells with values >= 50 are in light red. '
+      . 'Values < 50 are in light green';
 
-    # Create a format for the price change. This is an example of a
-    # conditional format. The number is formatted as a percentage. If it is
-    # positive it is formatted in green, if it is negative it is formatted
-    # in red and if it is zero it is formatted as the default font colour
-    # (in this case black). Note: the [Green] format produces an unappealing
-    # lime green. Try [Color 10] instead for a dark green.
-    #
-    my $f_change = $workbook->add_format();
-    $f_change->set_align( 'left' );
-    $f_change->set_num_format( '[Green]0.0%;[Red]-0.0%;0.0%' );
+    # Write the data.
+    $worksheet->write( 'A1', $caption );
+    $worksheet->write_col( 'B3', $data );
 
+    # Write a conditional format over a range.
+    $worksheet->conditional_formatting( 'B3:K12',
+        {
+            type     => 'cell',
+            criteria => '>=',
+            value    => 50,
+            format   => $format1,
+        }
+    );
 
-    # Write out the data
-    $worksheet->write( 0, 0, 'Company', $header );
-    $worksheet->write( 0, 1, 'Price',   $header );
-    $worksheet->write( 0, 2, 'Volume',  $header );
-    $worksheet->write( 0, 3, 'Change',  $header );
-
-    $worksheet->write( 1, 0, 'Damage Inc.' );
-    $worksheet->write( 1, 1, 30.25, $f_price );       # $30.25
-    $worksheet->write( 1, 2, 1234567, $f_volume );    # 1,234,567
-    $worksheet->write( 1, 3, 0.085, $f_change );      # 8.5% in green
-
-    $worksheet->write( 2, 0, 'Dump Corp.' );
-    $worksheet->write( 2, 1, 1.56, $f_price );        # $1.56
-    $worksheet->write( 2, 2, 7564, $f_volume );       # 7,564
-    $worksheet->write( 2, 3, -0.015, $f_change );     # -1.5% in red
-
-    $worksheet->write( 3, 0, 'Rev Ltd.' );
-    $worksheet->write( 3, 1, 0.13, $f_price );    # $0.13
-    $worksheet->write( 3, 2, 321, $f_volume );    # 321
-    $worksheet->write( 3, 3, 0, $f_change );      # 0 in the font color (black)
+    # Write another conditional format over the same range.
+    $worksheet->conditional_formatting( 'B3:K12',
+        {
+            type     => 'cell',
+            criteria => '<',
+            value    => 50,
+            format   => $format2,
+        }
+    );
 
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/stocks.jpg" width="640" height="420" alt="Output from stocks.pl" /></center></p>
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_format.jpg" width="640" height="420" alt="Output from conditional_format.pl" /></center></p>
+
 
 =end html
 
@@ -4467,7 +5117,7 @@ The following is a simple example of using functions.
 
 =begin html
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
 
 =end html
 
@@ -4542,8 +5192,12 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_scatter.pl        A demo of scatter style charts.
     chart_stock.pl          A demo of stock style charts.
     colors.pl               A demo of the colour palette and named colours.
+    comments1.pl            Add comments to worksheet cells.
+    comments2.pl            Add comments with advanced options.
+    conditional_format.pl   Add conditional formats to a range of cells.
     data_validate.pl        An example of data validation and dropdown lists.
     date_time.pl            Write dates and times with write_date_time().
+    defined_name.pl         Example of how to create defined names.
     diag_border.pl          A simple example of diagonal cell borders.
     filehandle.pl           Examples of working with filehandles.
     headers.pl              Examples of worksheet headers and footers.
@@ -4560,6 +5214,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
     panes.pl                An examples of how to create panes.
+    outline.pl              An example of outlines and grouping.
+    outline_collapsed.pl    An example of collapsed outlines.
     protection.pl           Example of cell locking and formula hiding.
     protection.pl           Example of cell locking and formula hiding.
     rich_strings.pl         Example of strings with multiple formats.
@@ -4607,18 +5263,9 @@ The following limits are imposed by Excel 2007+:
 
 =head1 Compatibility with Spreadsheet::WriteExcel
 
-The C<Excel::Writer::XLSX> module uses the same interface as the C<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
+The C<Excel::Writer::XLSX> module is a drop-in replacement for C<Spreadsheet::WriteExcel>.
 
-However, it doesn't currently support all of the features of Spreadsheet::WriteExcel. The main features that aren't yet supported are:
-
-    Images (partial support)
-    Defined names.
-    Cell comments.
-    Outlines.
-
-Excel::Writer::XLSX requires perl 5.10.0 while Spreadsheet::WriteExcel requires perl 5.005. See the L<REQUIREMENTS> section below for more details.
-
-The following is a full list of the module methods and their support status:
+It support all of the features of Spreadsheet::WriteExcel with some minor differences noted below.
 
     Workbook Methods            Support
     ================            ======
@@ -4628,7 +5275,7 @@ The following is a full list of the module methods and their support status:
     add_chart()                 Yes
     close()                     Yes
     set_properties()            Yes
-    define_name()               No
+    define_name()               Yes
     set_tempdir()               Yes
     set_custom_color()          Yes
     sheets()                    Yes
@@ -4652,12 +5299,14 @@ The following is a full list of the module methods and their support status:
     write_formula()             Yes
     write_array_formula()       Yes. Not in Spreadsheet::WriteExcel.
     keep_leading_zeros()        Yes
-    write_comment()             No
-    show_comments()             No
+    write_comment()             Yes
+    show_comments()             Yes
+    set_comments_author()       Yes
     add_write_handler()         Yes
     insert_image()              Yes/Partial, see docs.
     insert_chart()              Yes
     data_validation()           Yes
+    conditional_format()        Yes. Not in Spreadsheet::WriteExcel.
     get_name()                  Yes
     activate()                  Yes
     select()                    Yes
@@ -4665,12 +5314,13 @@ The following is a full list of the module methods and their support status:
     set_first_sheet()           Yes
     protect()                   Yes
     set_selection()             Yes
-    set_row()                   Yes/Partial, see docs.
-    set_column()                Yes/Partial, see docs.
-    outline_settings()          No
+    set_row()                   Yes.
+    set_column()                Yes.
+    outline_settings()          Yes
     freeze_panes()              Yes
     split_panes()               Yes
     merge_range()               Yes
+    merge_range_type()          Yes. Not in Spreadsheet::WriteExcel.
     set_zoom()                  Yes
     right_to_left()             Yes
     hide_zero()                 Yes
@@ -4743,16 +5393,6 @@ The following is a full list of the module methods and their support status:
     set_left_color()            Yes
     set_right_color()           Yes
 
-All non-deprecated methods will be supported in time unless no longer required. The missing features will be added in approximately the following order which is based on work effort and desirability:
-
-    define_name()
-    insert_image() (currently partially supported)
-
-    write_comment()
-    outline_settings()
-
-If you would care to you can sponsor a feature to move it up the list. See L<DONATIONS and SPONSORSHIP>
-
 
 
 
@@ -4762,8 +5402,16 @@ L<http://search.cpan.org/search?dist=Archive-Zip/>.
 
 Perl 5.10.0.
 
-Perl 5.10.0 came out the same year as Excel 2007. Supporting older versions of perl is a drain on the authors time. However, if you don't have the option of using a more recent perl there is a perl 5.8.2 tracking branch of Excel::Writer::XLSX on GitHub: L<http://github.com/jmcnamara/excel-writer-xlsx/tree/perl5.8.2>.
 
+
+
+=head1 SPEED AND MEMORY USAGE
+
+C<Spreadsheet::WriteExcel> was written to optimise speed and reduce memory usage. However, these design goals meant that it wasn't easy to implement features that many users requested such as writing formatting and data separately.
+
+As a result C<Excel::Writer::XLSX> take a different design approach and holds a lot more data in memory so that it is functionally more flexible. The effect of this is that Excel::Writer::XLSX is about 50% slower than Spreadsheet::WriteExcel and can use significantly more memory. When you add to this the extended row and column ranges it is possible to run out of memory creating very large files. This was almost never an issue with Spreadsheet::WriteExcel.
+
+There is a memory optimised version of Excel::Writer::XLSX on GitHub that will be integrated into the CPAN version as soon as the feature compatibility with Spreadsheet::WriteExcel is complete. See L<https://github.com/jmcnamara/excel-writer-xlsx/tree/optimise2>.
 
 
 
@@ -4798,6 +5446,11 @@ A filename must be given in the constructor.
 =item Can't open filename. It may be in use or protected.
 
 The file cannot be opened for writing. The directory that you are writing to may be protected or the file may be in use by another program.
+
+
+=item Can't call method "XXX" on an undefined value at someprogram.pl.
+
+On Windows this is usually caused by the file that you are trying to create clashing with a version that is already open and locked by Excel.
 
 =item The file you are trying to open 'file.xls' is in a different format than specified by the file extension.
 
@@ -4926,6 +5579,15 @@ If you wish to view Excel files on a Windows platform which doesn't have Excel i
 
 =head1 BUGS
 
+Some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. Applying all available Service Packs to Excel should fix this.
+
+When using Excel::Writer::XLSX charts with Perl packagers such as PAR or Cava you should explicitly include the chart that you are trying to create in your C<use> statements. This isn't a bug as such but it might help someone from banging their head off a wall:
+
+    ...
+    use Excel::Writer::XLSX;
+    use Excel::Writer::XLSX::Chart::Column;
+    ...
+
 Formulas are formulae.
 
 If you wish to submit a bug report run the C<bug_report.pl> program in the C<examples> directory of the distro.
@@ -4937,11 +5599,11 @@ The roadmap is as follows:
 
 =over 4
 
-=item * Full API compatibility with Spreadsheet::WriteExcel.
+=item * New separated data/formatting API to allow cells to be formatted after data is added.
 
-=item * Conditional formatting.
+=item * More charting features.
 
-=item * Excel::Reader::XLSX and Excel::ReWriter::XLSX, hopefully.
+=item * Excel::Reader::XLSX and Excel::Rewriter::XLSX. Hopefully.
 
 =item * Pivot tables, maybe.
 
@@ -5041,25 +5703,25 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
+    An ancient business
+    A modern piece of glass work
+    Down on the corner that you walk each day in passing
+    The elderly sales clerk won't eye us with suspicion
+    The whole, immortal corporation's given its permission
 
-    I walked bang into him, said Mr Dedalus for the fourth time,
-    just at the corner of the square.
+    A little stairway
+    A little bit of carpet
+    A pair of mirrors that
+    Are facing one another
+    Out in both directions
+    A thousand little Julias
+    That come together
+    In the middle of Manhattan
 
-    Then I suppose, said Mrs Dedalus, he will be able to arrange
-    it. I mean about Belvedere.
+    You waited since lunch
+    It all comes at once
 
-    Of course he will, said Mr Dedalus. Don't I tell you he's
-    provincial of the order now?
-
-    I never liked the idea of sending him to the christian brothers
-    myself, said Mrs Dedalus.
-
-    Christian brothers be damned! said Mr Dedalus. Is it with Paddy
-    Stink and Micky Mud? No, let him stick to the jesuits in God's
-    name since he began with them. They'll be of service to him in
-    after years. Those are the fellows that can get you a position.
-
-      -- James Joyce. A Portrait Of The Artist As A Young Man.
+      -- Vampire Weekend
 
 
 

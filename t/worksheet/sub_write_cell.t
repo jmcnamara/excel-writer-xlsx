@@ -69,7 +69,7 @@ is( $got, $expected, $caption );
 # Test the _write_cell() method for formulas without an optional value.
 #
 $caption  = " \tWorksheet: _write_cell()";
-$expected = '<c r="C2"><f>A3+A5</f><v></v></c>';
+$expected = '<c r="C2"><f>A3+A5</f><v>0</v></c>';
 
 $worksheet = _new_worksheet(\$got);
 

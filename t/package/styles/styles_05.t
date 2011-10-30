@@ -45,21 +45,19 @@ my $format5 = $workbook->add_format( diag_type => 1, diag_border => 1 );
 my $format6 = $workbook->add_format( diag_type => 2, diag_border => 1 );
 my $format7 = $workbook->add_format( diag_type => 3 );  # Test default border.
 
-
-$workbook->_prepare_fonts();
-$workbook->_prepare_num_formats();
-$workbook->_prepare_borders();
-$workbook->_prepare_fills();
+$workbook->_set_default_xf_indices();
+$workbook->_prepare_format_properties();
 
 $style = _new_style( \$got );
 $style->_set_style_properties(
-    $workbook->{_formats},
+    $workbook->{_xf_formats},
     $workbook->{_palette},
     $workbook->{_font_count},
     $workbook->{_num_format_count},
     $workbook->{_border_count},
     $workbook->{_fill_count},
     $workbook->{_custom_colors},
+    $workbook->{_dxf_formats},
 );
 $style->_assemble_xml_file();
 

@@ -5,6 +5,73 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.33 October 28 2011
+
+    + Added addition conditional formatting types: cell, date, time_period,
+      text, average, duplicate, unique, top, bottom, blanks, no_blanks,
+      errors, no_errors, 2_color_scale, 3_color_scale, data_bar  and formula.
+
+
+0.32 October 20 2011
+
+    ! Fix for format alignment bug. 
+      Reported by Roderich Schupp.
+
+
+0.31 October 18 2011
+
+    + Added basic conditional formatting via the conditional_format()
+      Worksheet method. More conditional formatting types will follow.
+
+    + Added conditional_format.pl example program.
+
+
+0.30 October 6 2011
+
+    + Added stacked and percent_stacked chart subtypes to Bar and Column
+      chart types.
+
+
+0.29 October 5 2011
+
+    + Added the merge_range_type() method for finer control over the types
+      writen using merge_range().
+
+
+0.28 October 4 2011
+
+    + Added default write_formula() value for compatibility with Google docs.
+
+    + Updated Example.pm docs with Excel 2007 images.
+
+
+0.27 October 2 2011
+
+    + Excel::Writer::XLSX is now 100% functionally and API compatible
+      with Spreadsheet::WriteExcel. 
+
+    + Added outlines and grouping functionality.
+
+    + Added outline.pl and outline_collapsed.pl example programs.
+
+
+0.26 October 1 2011
+
+     + Added cell comment methods and options.
+       Thanks to Barry Downes for providing the interim functionality
+
+     + Added comments1.pl and comments2.pl example programs.
+
+
+0.25 June 16 2011
+
+     + Added option to add defined names to workbooks and worksheets.
+       Added defined_name.pl example program.
+
+     ! Fix for fit_to_pages() with zero values.
+       Reported by Aki Huttunen.
+
+
 0.24 June 11 2011
 
     + Added data validation and data_validate.pl example.
@@ -101,7 +168,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added date_time.pl example program.
 
-    ! Fixed issue where leading and trailing whitespace in cell strings 
+    ! Fixed issue where leading and trailing whitespace in cell strings
       wasn't preserved.
 
 

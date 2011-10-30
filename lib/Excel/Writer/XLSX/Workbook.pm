@@ -32,7 +32,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.24';
+our $VERSION = '0.33';
 
 
 ###############################################################################
@@ -53,34 +53,37 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_filename}         = $_[0] || '';
-    $self->{_tempdir}          = undef;
-    $self->{_1904}             = 0;
-    $self->{_activesheet}      = 0;
-    $self->{_firstsheet}       = 0;
-    $self->{_selected}         = 0;
-    $self->{_xf_index}         = 0;
-    $self->{_fileclosed}       = 0;
-    $self->{_filehandle}       = undef;
-    $self->{_internal_fh}      = 0;
-    $self->{_biffsize}         = 0;
-    $self->{_sheet_name}       = 'Sheet';
-    $self->{_chart_name}       = 'Chart';
-    $self->{_sheetname_count}  = 0;
-    $self->{_chartname_count}  = 0;
-    $self->{_worksheets}       = [];
-    $self->{_charts}           = [];
-    $self->{_drawings}         = [];
-    $self->{_sheetnames}       = [];
-    $self->{_formats}          = [];
-    $self->{_palette}          = [];
-    $self->{_font_count}       = 0;
-    $self->{_num_format_count} = 0;
-    $self->{_defined_names}    = [];
-    $self->{_named_ranges}     = [];
-    $self->{_custom_colors}    = [];
-    $self->{_doc_properties}   = {};
-    $self->{_localtime}        = [ localtime() ];
+    $self->{_filename}           = $_[0] || '';
+    $self->{_tempdir}            = undef;
+    $self->{_1904}               = 0;
+    $self->{_activesheet}        = 0;
+    $self->{_firstsheet}         = 0;
+    $self->{_selected}           = 0;
+    $self->{_fileclosed}         = 0;
+    $self->{_filehandle}         = undef;
+    $self->{_internal_fh}        = 0;
+    $self->{_sheet_name}         = 'Sheet';
+    $self->{_chart_name}         = 'Chart';
+    $self->{_sheetname_count}    = 0;
+    $self->{_chartname_count}    = 0;
+    $self->{_worksheets}         = [];
+    $self->{_charts}             = [];
+    $self->{_drawings}           = [];
+    $self->{_sheetnames}         = [];
+    $self->{_formats}            = [];
+    $self->{_xf_formats}         = [];
+    $self->{_xf_format_indices}  = {};
+    $self->{_dxf_formats}        = [];
+    $self->{_dxf_format_indices} = {};
+    $self->{_palette}            = [];
+    $self->{_font_count}         = 0;
+    $self->{_num_format_count}   = 0;
+    $self->{_defined_names}      = [];
+    $self->{_named_ranges}       = [];
+    $self->{_custom_colors}      = [];
+    $self->{_doc_properties}     = {};
+    $self->{_localtime}          = [ localtime() ];
+    $self->{_num_comment_files}  = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -89,12 +92,10 @@ sub new {
     $self->{_str_array}  = [];
 
 
-
-
     bless $self, $class;
 
     # Add the default cell format.
-    $self->add_format();
+    $self->add_format( xf_index => 0 );
 
 
     # Check for a filename unless it is an existing filehandle
@@ -138,6 +139,9 @@ sub _assemble_xml_file {
     my $self = shift;
 
     return unless $self->{_writer};
+
+    # Prepare format object for passing to Style.pm.
+    $self->_prepare_format_properties();
 
     $self->_write_xml_declaration;
 
@@ -443,19 +447,20 @@ sub _check_sheetname {
 #
 # add_format(%properties)
 #
-# Add a new format to the Excel workbook. This adds an XF record and
-# a FONT record. Also, pass any properties to the Format::new().
+# Add a new format to the Excel workbook.
 #
 sub add_format {
 
     my $self = shift;
 
-    my @init_data = ( $self->{_xf_index}, @_, );
-
+    my @init_data = (
+        \$self->{_xf_format_indices},
+        \$self->{_dxf_format_indices},
+        @_
+    );
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
 
-    $self->{_xf_index} += 1;
     push @{ $self->{_formats} }, $format;    # Store format reference
 
     return $format;
@@ -640,6 +645,57 @@ sub set_tempdir {
 
 ###############################################################################
 #
+# define_name()
+#
+# Create a defined name in Excel. We handle global/workbook level names and
+# local/worksheet names.
+#
+sub define_name {
+
+    my $self        = shift;
+    my $name        = shift;
+    my $formula     = shift;
+    my $sheet_index = undef;
+    my $sheetname   = '';
+    my $full_name   = $name;
+
+    # Remove the = sign from the formula if it exists.
+    $formula =~ s/^=//;
+
+    # Local defined names are formatted like "Sheet1!name".
+    if ( $name =~ /^(.*)!(.*)$/ ) {
+        $sheetname   = $1;
+        $name        = $2;
+        $sheet_index = $self->_get_sheet_index($sheetname);
+    }
+    else {
+        $sheet_index =-1; # Use -1 to indicate global names.
+    }
+
+    # Warn if the sheet index wasn't found.
+    if (!defined $sheet_index) {
+       carp "Unknown sheet name $sheetname in defined_name()\n";
+       return -1;
+    }
+
+    # Warn if the sheet name contains invalid chars as defined by Excel help.
+    if ($name !~ m/^[a-zA-Z_\\][a-zA-Z_.]+/) {
+       carp "Invalid characters in name '$name' used in defined_name()\n";
+       return -1;
+    }
+
+    # Warn if the sheet name looks like a cell name.
+    if ($name =~ m/^[a-zA-Z][a-zA-Z]?[a-dA-D]?[0-9]+$/) {
+       carp "Invalid name '$name' looks like a cell name in defined_name()\n";
+       return -1;
+    }
+
+    push @{ $self->{_defined_names} }, [ $name, $sheet_index, $formula ];
+}
+
+
+###############################################################################
+#
 # set_properties()
 #
 # Set the document properties such as Title, Author etc. These are written to
@@ -686,15 +742,11 @@ sub set_properties {
 }
 
 
-
-
-
 ###############################################################################
 #
 # _store_workbook()
 #
-# Assemble worksheets into a workbook and send the BIFF data to an OLE
-# storage.
+# Assemble worksheets into a workbook.
 #
 sub _store_workbook {
 
@@ -721,17 +773,8 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
-    # Set the font index for the format objects.
-    $self->_prepare_fonts();
-
-    # Set the number format index for the format objects.
-    $self->_prepare_num_formats();
-
-    # Set the border index for the format objects.
-    $self->_prepare_borders();
-
-    # Set the fill index for the format objects.
-    $self->_prepare_fills();
+    # Prepare the worksheet cell comments.
+    $self->_prepare_comments();
 
     # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
@@ -827,6 +870,78 @@ sub _prepare_sst_string_data {
 }
 
 
+
+###############################################################################
+#
+# _prepare_format_properties()
+#
+# Prepare all of the format properties prior to passing them to Styles.pm.
+#
+sub _prepare_format_properties {
+
+    my $self = shift;
+
+    # Separate format objects into XF and DXF formats.
+    $self->_prepare_formats();
+
+    # Set the font index for the format objects.
+    $self->_prepare_fonts();
+
+    # Set the number format index for the format objects.
+    $self->_prepare_num_formats();
+
+    # Set the border index for the format objects.
+    $self->_prepare_borders();
+
+    # Set the fill index for the format objects.
+    $self->_prepare_fills();
+
+
+}
+
+
+###############################################################################
+#
+# _prepare_formats()
+#
+# Iterate through the XF Format objects and separate them into XF and DXF
+# formats.
+#
+sub _prepare_formats {
+
+    my $self = shift;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        my $xf_index  = $format->{_xf_index};
+        my $dxf_index = $format->{_dxf_index};
+
+        if ( defined $xf_index ) {
+            $self->{_xf_formats}->[$xf_index] = $format;
+        }
+
+        if ( defined $dxf_index ) {
+            $self->{_dxf_formats}->[$dxf_index] = $format;
+        }
+    }
+}
+
+
+###############################################################################
+#
+# _set_default_xf_indices()
+#
+# Set the default index for each format. This is mainly used for testing.
+#
+sub _set_default_xf_indices {
+
+    my $self = shift;
+
+    for my $format ( @{ $self->{_formats} } ) {
+        $format->get_xf_index();
+    }
+}
+
+
 ###############################################################################
 #
 # _prepare_fonts()
@@ -841,7 +956,7 @@ sub _prepare_fonts {
     my %fonts;
     my $index = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         my $key = $format->get_font_key();
 
         if ( exists $fonts{$key} ) {
@@ -861,6 +976,21 @@ sub _prepare_fonts {
     }
 
     $self->{_font_count} = $index;
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+
+        # The only font properties that can change for a DXF format are: color,
+        # bold, italic, underline and strikethrough.
+        if (   $format->{_color}
+            || $format->{_bold}
+            || $format->{_italic}
+            || $format->{_underline}
+            || $format->{_font_strikeout} )
+        {
+            $format->{_has_dxf_font} = 1;
+        }
+    }
 }
 
 
@@ -881,7 +1011,7 @@ sub _prepare_num_formats {
     my $index            = 164;
     my $num_format_count = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} }, @{ $self->{_dxf_formats} } ) {
         my $num_format = $format->{_num_format};
 
         # Check if $num_format is an index to a built-in number format.
@@ -907,7 +1037,11 @@ sub _prepare_num_formats {
             $num_formats{$num_format} = $index;
             $format->{_num_format_index} = $index;
             $index++;
-            $num_format_count++;
+
+            # Only increase font count for XF formats (not for DXF formats).
+            if ($format->{_xf_index}) {
+                $num_format_count++;
+            }
         }
     }
 
@@ -929,7 +1063,7 @@ sub _prepare_borders {
     my %borders;
     my $index = 0;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
         my $key = $format->get_border_key();
 
         if ( exists $borders{$key} ) {
@@ -949,6 +1083,16 @@ sub _prepare_borders {
     }
 
     $self->{_border_count} = $index;
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+        my $key = $format->get_border_key();
+
+        if ($key =~ m/[^0:]/) {
+             $format->{_has_dxf_border} = 1;
+        }
+    }
+
 }
 
 
@@ -973,7 +1117,7 @@ sub _prepare_fills {
     $fills{'0:0:0'}  = 0;
     $fills{'17:0:0'} = 1;
 
-    for my $format ( @{ $self->{_formats} } ) {
+    for my $format ( @{ $self->{_xf_formats} } ) {
 
         # The following logical statements jointly take care of special cases
         # in relation to cell colours and patterns:
@@ -1019,6 +1163,18 @@ sub _prepare_fills {
     }
 
     $self->{_fill_count} = $index;
+
+
+    # For the DXF formats we only need to check if the properties have changed.
+    for my $format ( @{ $self->{_dxf_formats} } ) {
+
+        if (   $format->{_pattern}
+            || $format->{_bg_color}
+            || $format->{_fg_color} )
+        {
+            $format->{_has_dxf_fill} = 1;
+        }
+    }
 }
 
 
@@ -1026,15 +1182,17 @@ sub _prepare_fills {
 #
 # _prepare_defined_names()
 #
-# Iterate through the worksheets and store any defined names. Stores the
-# defined name for the Workbook.xml and the named ranges for App.xml.
+# Iterate through the worksheets and store any defined names in addition to
+# any user defined names. Stores the defined names for the Workbook.xml and
+# the named ranges for App.xml.
 #
 sub _prepare_defined_names {
 
     my $self = shift;
 
-    for my $sheet ( @{ $self->{_worksheets} } ) {
+    my @defined_names =  @{ $self->{_defined_names} };
 
+    for my $sheet ( @{ $self->{_worksheets} } ) {
 
         # Check for Print Area settings.
         if ( $sheet->{_autofilter} ) {
@@ -1043,7 +1201,7 @@ sub _prepare_defined_names {
             my $hidden = 1;
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm._FilterDatabase', $sheet->{_index}, $range, $hidden ];
 
         }
@@ -1054,14 +1212,8 @@ sub _prepare_defined_names {
             my $range = $sheet->{_print_area};
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm.Print_Area', $sheet->{_index}, $range ];
-
-            # Store the named ranges.
-            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
-            my $print_title = $sheetname . '!Print_Area';
-
-            push @{ $self->{_named_ranges} }, $print_title;
         }
 
         # Check for repeat rows/cols. aka, Print Titles.
@@ -1076,17 +1228,114 @@ sub _prepare_defined_names {
             }
 
             # Store the defined names.
-            push @{ $self->{_defined_names} },
+            push @defined_names,
               [ '_xlnm.Print_Titles', $sheet->{_index}, $range ];
-
-            # Store the named ranges.
-            my $sheetname   = $self->_quote_sheetname( $sheet->{_name} );
-            my $print_title = $sheetname . '!Print_Titles';
-
-            push @{ $self->{_named_ranges} }, $print_title;
         }
 
     }
+
+    @defined_names          = _sort_defined_names( @defined_names );
+    $self->{_defined_names} = \@defined_names;
+    $self->{_named_ranges}  = _extract_named_ranges( @defined_names );
+}
+
+
+###############################################################################
+#
+# _sort_defined_names()
+#
+# Sort internal and user defined names in the same order as used by Excel.
+# This may not be strictly necessary but unsorted elements caused a lot of
+# issues in the the Spreadsheet::WriteExcel binary version. Also makes
+# comparison testing easier.
+#
+sub _sort_defined_names {
+
+    my @names = @_;
+
+    #<<< Perltidy ignore this.
+
+    @names = sort {
+        # Primary sort based on the defined name.
+        _normalise_defined_name( $a->[0] )
+        cmp
+        _normalise_defined_name( $b->[0] )
+
+        ||
+        # Secondary sort based on the sheet name.
+        _normalise_sheet_name( $a->[2] )
+        cmp
+        _normalise_sheet_name( $b->[2] )
+
+    } @names;
+    #>>>
+
+    return @names;
+}
+
+# Used in the above sort routine to normalise the defined names. Removes any
+# leading '_xmln.' from internal names and lowercases the strings.
+sub _normalise_defined_name {
+    my $name = shift;
+
+    $name =~ s/^_xlnm.//;
+    $name = lc $name;
+
+    return $name;
+}
+
+# Used in the above sort routine to normalise the worksheet names for the
+# secondary sort. Removes leading quote and lowercases the strings.
+sub _normalise_sheet_name {
+    my $name = shift;
+
+    $name =~ s/^'//;
+    $name = lc $name;
+
+    return $name;
+}
+
+
+###############################################################################
+#
+# _extract_named_ranges()
+#
+# Extract the named ranges from the sorted list of defined names. These are
+# used in the App.xml file.
+#
+sub _extract_named_ranges {
+
+    my @defined_names = @_;
+    my @named_ranges;
+
+    NAME:
+    for my $defined_name ( @defined_names ) {
+
+        my $name  = $defined_name->[0];
+        my $index = $defined_name->[1];
+        my $range = $defined_name->[2];
+
+        # Skip autoFilter ranges.
+        next NAME if $name eq '_xlnm._FilterDatabase';
+
+        # We are only interested in defined names with ranges.
+        if ( $range =~ /^([^!]+)!/ ) {
+            my $sheet_name = $1;
+
+            # Match Print_Area and Print_Titles xlnm types.
+            if ( $name =~ /^_xlnm\.(.*)$/ ) {
+                my $xlnm_type = $1;
+                $name = $sheet_name . '!' . $xlnm_type;
+            }
+            elsif ( $index != -1 ) {
+                $name = $sheet_name . '!' . $name;
+            }
+
+            push @named_ranges, $name;
+        }
+    }
+
+    return \@named_ranges;
 }
 
 
@@ -1094,7 +1343,7 @@ sub _prepare_defined_names {
 #
 # _prepare_drawings()
 #
-# Iterate through the worksheets and set up any chartor image drawings.
+# Iterate through the worksheets and set up any chart or image drawings.
 #
 sub _prepare_drawings {
 
@@ -1134,6 +1383,51 @@ sub _prepare_drawings {
     }
 
     $self->{_drawing_count} = $drawing_id;
+}
+
+
+###############################################################################
+#
+# _prepare_comments()
+#
+# Iterate through the worksheets and set up the comment data.
+#
+sub _prepare_comments {
+
+    my $self         = shift;
+    my $comment_id   = 0;
+    my $vml_data_id  = 1;
+    my $vml_shape_id = 1024;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        next unless $sheet->{_has_comments};
+
+        my $count = $sheet->_prepare_comments( $vml_data_id, $vml_shape_id,
+            ++$comment_id );
+
+        # Each VML file should start with a shape id incremented by 1024.
+        $vml_data_id  += 1 * int(    ( 1024 + $count ) / 1024 );
+        $vml_shape_id += 1024 * int( ( 1024 + $count ) / 1024 );
+    }
+
+    $self->{_num_comment_files} = $comment_id;
+
+    # Add a font format for cell comments.
+    if ( $comment_id > 0 ) {
+        my $format = Excel::Writer::XLSX::Format->new(
+            \$self->{_xf_format_indices},
+            \$self->{_dxf_format_indices},
+            font          => 'Tahoma',
+            size          => 8,
+            color_indexed => 81,
+            font_only     => 1,
+        );
+
+        $format->get_xf_index();
+
+        push @{ $self->{_formats} }, $format;
+    }
 }
 
 
@@ -1184,7 +1478,7 @@ sub _add_chart_data {
             # Skip if we couldn't parse the formula.
             next RANGE if !defined $sheetname;
 
-            # Skip if the name is unknow. Probably should throw exception.
+            # Skip if the name is unknown. Probably should throw exception.
             next RANGE if !exists $worksheets{$sheetname};
 
             # Find the worksheet object based on the sheet name.
@@ -1320,7 +1614,7 @@ sub _quote_sheetname {
 # _get_image_properties()
 #
 # Extract information from the image file such as dimension, type, filename,
-# and entension. Also keep track of previously seen images to optimise out
+# and extension. Also keep track of previously seen images to optimise out
 # any duplicates.
 #
 sub _get_image_properties {
@@ -1526,6 +1820,31 @@ sub _process_jpg {
     return ( $type, $width, $height );
 }
 
+
+###############################################################################
+#
+# _get_sheet_index()
+#
+# Convert a sheet name to its index. Return undef otherwise.
+#
+sub _get_sheet_index {
+
+    my $self        = shift;
+    my $sheetname   = shift;
+    my $sheet_count = @{ $self->{_sheetnames} };
+    my $sheet_index = undef;
+
+    $sheetname =~ s/^'//;
+    $sheetname =~ s/'$//;
+
+    for my $i ( 0 .. $sheet_count - 1 ) {
+        if ( $sheetname eq $self->{_sheetnames}->[$i] ) {
+            $sheet_index = $i;
+        }
+    }
+
+    return $sheet_index;
+}
 
 
 ###############################################################################
@@ -1818,17 +2137,15 @@ sub _write_defined_name {
     my $self = shift;
     my $data = shift;
 
-    my $name           = $data->[0];
-    my $local_sheet_id = $data->[1];
-    my $range          = $data->[2];
-    my $hidden         = $data->[3];
+    my $name   = $data->[0];
+    my $id     = $data->[1];
+    my $range  = $data->[2];
+    my $hidden = $data->[3];
 
-    my @attributes = (
-        'name'         => $name,
-        'localSheetId' => $local_sheet_id,
-    );
+    my @attributes = ( 'name' => $name );
 
-    push @attributes, ( 'hidden' => 1) if $hidden;
+    push @attributes, ( 'localSheetId' => $id ) if $id != -1;
+    push @attributes, ( 'hidden'       => 1 )   if $hidden;
 
     $self->{_writer}->dataElement( 'definedName', $range, @attributes );
 }

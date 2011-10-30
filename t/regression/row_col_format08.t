@@ -37,6 +37,7 @@ my $bold      = $workbook->add_format( bold => 1 );
 my $mixed     = $workbook->add_format( bold => 1 , italic => 1 );
 my $italic    = $workbook->add_format( italic => 1 );
 
+$workbook->_set_default_xf_indices();
 
 $worksheet->set_row( 0, undef, $bold );
 $worksheet->set_column( 'A:A', undef, $italic );

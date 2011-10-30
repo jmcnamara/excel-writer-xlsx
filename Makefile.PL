@@ -12,6 +12,8 @@ my %deps = (
 );
 
 my %resources = (
+
+    homepage    => 'http://jmcnamara.github.com/excel-writer-xlsx/',
     repository  => 'http://github.com/jmcnamara/excel-writer-xlsx',
     MailingList => 'http://groups.google.com/group/spreadsheet-writeexcel',
 );
