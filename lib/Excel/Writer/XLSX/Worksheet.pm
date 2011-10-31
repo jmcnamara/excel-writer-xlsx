@@ -18,6 +18,7 @@ use 5.010000;
 use strict;
 use warnings;
 use Carp;
+use File::Temp 'tempfile';
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
@@ -49,15 +50,16 @@ sub new {
     my $colmax = 16_384;
     my $strmax = 32767;
 
-    $self->{_name}        = $_[0];
-    $self->{_index}       = $_[1];
-    $self->{_activesheet} = $_[2];
-    $self->{_firstsheet}  = $_[3];
-    $self->{_str_total}   = $_[4];
-    $self->{_str_unique}  = $_[5];
-    $self->{_str_table}   = $_[6];
-    $self->{_1904}        = $_[7];
-    $self->{_palette}     = $_[8];
+    $self->{_name}         = $_[0];
+    $self->{_index}        = $_[1];
+    $self->{_activesheet}  = $_[2];
+    $self->{_firstsheet}   = $_[3];
+    $self->{_str_total}    = $_[4];
+    $self->{_str_unique}   = $_[5];
+    $self->{_str_table}    = $_[6];
+    $self->{_1904}         = $_[7];
+    $self->{_palette}      = $_[8];
+    $self->{_optimization} = $_[9] || 0;
 
     $self->{_ext_sheets} = [];
     $self->{_fileclosed} = 0;
@@ -177,7 +179,18 @@ sub new {
     $self->{_images}                 = [];
     $self->{_drawing}                = 0;
 
-    $self->{_rstring} = '';
+    $self->{_rstring}      = '';
+    $self->{_previous_row} = 0;
+
+    if ( $self->{_optimization} == 1 ) {
+        my $fh  = tempfile();
+        binmode $fh, ':utf8';
+
+        my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $fh );
+
+        $self->{_cell_data_fh} = $fh;
+        $self->{_writer} = $writer;
+    }
 
     $self->{_validations}  = [];
     $self->{_cond_formats} = {};
@@ -185,6 +198,25 @@ sub new {
 
     bless $self, $class;
     return $self;
+}
+
+###############################################################################
+#
+# _set_xml_writer()
+#
+# Over-ridden to ensure that write_single_row() is called for the final row
+# when optimisation mode is on.
+#
+sub _set_xml_writer {
+
+    my $self     = shift;
+    my $filename = shift;
+
+    if ( $self->{_optimization} == 1 ) {
+        $self->_write_single_row();
+    }
+
+    $self->SUPER::_set_xml_writer( $filename );
 }
 
 
@@ -221,7 +253,13 @@ sub _assemble_xml_file {
     $self->_write_cols();
 
     # Write the worksheet data such as rows columns and cells.
-    $self->_write_sheet_data();
+    if ( $self->{_optimization} == 0 ) {
+        $self->_write_sheet_data();
+    }
+    else {
+        $self->_write_optimized_sheet_data();
+    }
+
 
     # Write the sheetProtection element.
     $self->_write_sheet_protection();
@@ -1982,6 +2020,14 @@ sub write_number {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
+
     $self->{_table}->[$row]->[$col] = [ $type, $num, $xf ];
 
     return 0;
@@ -2015,18 +2061,33 @@ sub write_string {
     my $str  = $_[2];
     my $xf   = $_[3];                  # The cell format
     my $type = 's';                    # The data type
+    my $index;
+    my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
     # Check that the string is < 32767 chars
-    my $str_error = 0;
     if ( length $str > $self->{_xls_strmax} ) {
         $str = substr( $str, 0, $self->{_xls_strmax} );
         $str_error = -3;
     }
 
-    my $index = $self->_get_shared_string_index( $str );
+    # Write a shared string or an inline string based on optimisation level.
+    if ( $self->{_optimization} == 0 ) {
+        $index = $self->_get_shared_string_index( $str );
+    }
+    else {
+        $index = $str;
+    }
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2065,6 +2126,8 @@ sub write_rich_string {
     my $xf     = undef;
     my $type   = 's';              # The data type.
     my $length = 0;                # String length.
+    my $index;
+    my $str_error = 0;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2160,8 +2223,22 @@ sub write_rich_string {
         return -3;
     }
 
-    # Add the XML string to the shared string table.
-    my $index = $self->_get_shared_string_index( $str );
+
+    # Write a shared string or an inline string based on optimisation level.
+    if ( $self->{_optimization} == 0 ) {
+        $index = $self->_get_shared_string_index( $str );
+    }
+    else {
+        $index = $str;
+    }
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
 
@@ -2207,6 +2284,14 @@ sub write_blank {
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, undef, $xf ];
 
@@ -2256,6 +2341,13 @@ sub write_formula {
     # Remove the = sign if it exists.
     $formula =~ s/^=//;
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
 
@@ -2320,6 +2412,15 @@ sub write_array_formula {
     # Remove array formula braces and the leading =.
     $formula =~ s/^{(.*)}$/$1/;
     $formula =~ s/^=//;
+
+    # Write the previous row if in optimization mode.
+    my $row = $row1;
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
 
     $self->{_table}->[$row1]->[$col1] =
       [ $type, $formula, $xf, $range, $value ];
@@ -2454,6 +2555,14 @@ sub write_url {
         $link_type = 1;
     }
 
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
+    }
+
     $self->{_table}->[$row]->[$col] =
 
       # 0      1       2    3           4     5     6
@@ -2502,6 +2611,14 @@ sub write_date_time {
     # If the date isn't valid then write it as a string.
     if ( !defined $date_time ) {
         return $self->write_string( @_ );
+    }
+
+    # Write the previous row if in optimization mode.
+    if ( $self->{_optimization} == 1 ) {
+        if ($row > $self->{_previous_row}) {
+            $self->_write_single_row();
+            $self->{_previous_row} = $row;
+        }
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
@@ -4187,6 +4304,9 @@ sub _prepare_chart {
 sub _get_range_data {
 
     my $self = shift;
+
+    return () if $self->{_optimization};
+
     my @data;
     my ( $row_start, $col_start, $row_end, $col_end ) = @_;
 
@@ -4217,7 +4337,12 @@ sub _get_range_data {
                 elsif ( $type eq 's' ) {
 
                     # Store a string.
-                    push @data, { 'sst_id' => $token};
+                    if ( $self->{_optimization} == 0 ) {
+                        push @data, { 'sst_id' => $token};
+                    }
+                    else {
+                        push @data, $token;
+                    }
                 }
                 elsif ( $type eq 'f' ) {
 
@@ -5102,6 +5227,42 @@ sub _write_sheet_data {
 
 ###############################################################################
 #
+# _write_optimized_sheet_data()
+#
+# Write the <sheetData> element when the memory optimisation is on. In which
+# case we read the data stored in the temp file and rewrite it to the XML
+# sheet file.
+#
+sub _write_optimized_sheet_data {
+
+    my $self = shift;
+
+    if ( not defined $self->{_dim_rowmin} ) {
+
+        # If the dimensions aren't defined then there is no data to write.
+        $self->{_writer}->emptyTag( 'sheetData' );
+    }
+    else {
+        $self->{_writer}->startTag( 'sheetData' );
+
+        my $xlsx_fh = $self->{_writer}->getOutput();
+        my $cell_fh = $self->{_cell_data_fh};
+
+        my $buffer;
+        # Rewind the temp file.
+        seek $cell_fh, 0, 0;
+
+        while ( read( $cell_fh, $buffer, 4_096 ) ) {
+            print $xlsx_fh $buffer;
+        }
+
+        $self->{_writer}->endTag( 'sheetData' );
+    }
+}
+
+
+###############################################################################
+#
 # _write_rows()
 #
 # Write out the worksheet data as a series of rows and cells.
@@ -5157,6 +5318,60 @@ sub _write_rows {
                 @{ $self->{_set_rows}->{$row_num} } );
         }
     }
+}
+
+
+###############################################################################
+#
+# _write_single_row()
+#
+# Write out the worksheet data as a single row with cells. This method is
+# used when memory optimisation is on. A single row is written and the data
+# table is reset. That way only one row of data is kept in memory at any one
+# time. We don't write span data in the optimised case since it is optional.
+#
+sub _write_single_row {
+
+    my $self    = shift;
+    my $row_num = $self->{_previous_row};
+
+    # Skip row if it doesn't contain row formatting, cell data or a comment.
+    if (   !$self->{_set_rows}->{$row_num}
+        && !$self->{_table}->[$row_num]
+        && !$self->{_comments}->{$row_num} )
+    {
+        return;
+    }
+
+    # Write the cells if the row contains data.
+    if ( my $row_ref = $self->{_table}->[$row_num] ) {
+
+        if ( !$self->{_set_rows}->{$row_num} ) {
+            $self->_write_row( $row_num );
+        }
+        else {
+            $self->_write_row( $row_num, undef,
+                @{ $self->{_set_rows}->{$row_num} } );
+        }
+
+        for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+            if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                $self->_write_cell( $row_num, $col_num, $col_ref );
+            }
+        }
+
+        $self->{_writer}->endTag( 'row' );
+    }
+    else {
+
+        # Row attributes or comments only.
+        $self->_write_empty_row( $row_num, undef,
+            @{ $self->{_set_rows}->{$row_num} } );
+    }
+
+    # Reset table.
+    $self->{_table} = [];
+
 }
 
 
@@ -5359,11 +5574,29 @@ sub _write_cell {
     elsif ( $type eq 's' ) {
 
         # Write a string.
-        push @attributes, ( 't' => 's' );
+        if ( $self->{_optimization} == 0 ) {
+            push @attributes, ( 't' => 's' );
+            $self->{_writer}->startTag( 'c', @attributes );
+            $self->_write_cell_value( $token );
+            $self->{_writer}->endTag( 'c' );
+        }
+        else {
+            push @attributes, ( 't' => 'inlineStr' );
+            $self->{_writer}->startTag( 'c', @attributes );
+            $self->{_writer}->startTag( 'is' );
 
-        $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $token );
-        $self->{_writer}->endTag( 'c' );
+            # Write any rich strings without further tags.
+            if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+                my $fh = $self->{_writer}->getOutput();
+                print $fh $token;
+            }
+            else {
+                $self->{_writer}->dataElement( 't', $token);
+            }
+
+            $self->{_writer}->endTag( 'is' );
+            $self->{_writer}->endTag( 'c' );
+        }
     }
     elsif ( $type eq 'f' ) {
 
@@ -7127,7 +7360,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXI, John McNamara.
+ï¿½ MM-MMXI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
