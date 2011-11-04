@@ -2020,12 +2020,9 @@ sub write_number {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $num, $xf ];
@@ -2073,7 +2070,7 @@ sub write_string {
         $str_error = -3;
     }
 
-    # Write a shared string or an inline string based on optimisation level.
+    # Write a shared string or an in-line string based on optimisation level.
     if ( $self->{_optimization} == 0 ) {
         $index = $self->_get_shared_string_index( $str );
     }
@@ -2081,12 +2078,9 @@ sub write_string {
         $index = $str;
     }
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
@@ -2224,7 +2218,7 @@ sub write_rich_string {
     }
 
 
-    # Write a shared string or an inline string based on optimisation level.
+    # Write a shared string or an in-line string based on optimisation level.
     if ( $self->{_optimization} == 0 ) {
         $index = $self->_get_shared_string_index( $str );
     }
@@ -2232,12 +2226,9 @@ sub write_rich_string {
         $index = $str;
     }
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
@@ -2285,12 +2276,9 @@ sub write_blank {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, undef, $xf ];
@@ -2341,12 +2329,9 @@ sub write_formula {
     # Remove the = sign if it exists.
     $formula =~ s/^=//;
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
@@ -2413,13 +2398,10 @@ sub write_array_formula {
     $formula =~ s/^{(.*)}$/$1/;
     $formula =~ s/^=//;
 
-    # Write the previous row if in optimization mode.
+    # Write previous row if in in-line string optimization mode.
     my $row = $row1;
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row1]->[$col1] =
@@ -2555,12 +2537,9 @@ sub write_url {
         $link_type = 1;
     }
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] =
@@ -2613,12 +2592,9 @@ sub write_date_time {
         return $self->write_string( @_ );
     }
 
-    # Write the previous row if in optimization mode.
-    if ( $self->{_optimization} == 1 ) {
-        if ($row > $self->{_previous_row}) {
-            $self->_write_single_row();
-            $self->{_previous_row} = $row;
-        }
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+        $self->_write_single_row( $row );
     }
 
     $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
@@ -5337,8 +5313,9 @@ sub _write_rows {
 #
 sub _write_single_row {
 
-    my $self    = shift;
-    my $row_num = $self->{_previous_row};
+    my $self        = shift;
+    my $current_row = shift || 0;
+    my $row_num     = $self->{_previous_row};
 
     # Skip row if it doesn't contain row formatting, cell data or a comment.
     if (   !$self->{_set_rows}->{$row_num}
@@ -5377,6 +5354,8 @@ sub _write_single_row {
     # Reset table.
     $self->{_table} = [];
 
+    # Set the new previous row as the current row.
+    $self->{_previous_row} = $current_row;
 }
 
 
