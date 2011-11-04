@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'optimize01.xlsx';
+my $filename     = 'optimize02.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -39,6 +39,9 @@ my $worksheet = $workbook->add_worksheet();
 
 $worksheet->write( 'A1', 'Hello' );
 $worksheet->write( 'A2', 123 );
+
+# This should be ignored since later row has already been written.
+$worksheet->write( 'G1', 'Foo' );
 
 $workbook->close();
 

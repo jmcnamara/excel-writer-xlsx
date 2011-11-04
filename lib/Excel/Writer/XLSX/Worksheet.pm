@@ -3819,8 +3819,13 @@ sub _check_dimensions {
     return -2 if not defined $col;
     return -2 if $col >= $self->{_xls_colmax};
 
+    # In optimization mode we don't change dimensions for rows that are
+    # already written.
+    if ( !$ignore_row && !$ignore_col && $self->{_optimization} == 1 ) {
+        return -2 if $row < $self->{_previous_row};
+    }
 
-    if ( not $ignore_row ) {
+    if ( !$ignore_row ) {
 
         if ( not defined $self->{_dim_rowmin} or $row < $self->{_dim_rowmin} ) {
             $self->{_dim_rowmin} = $row;
@@ -3831,7 +3836,7 @@ sub _check_dimensions {
         }
     }
 
-    if ( not $ignore_col ) {
+    if ( !$ignore_col ) {
 
         if ( not defined $self->{_dim_colmin} or $col < $self->{_dim_colmin} ) {
             $self->{_dim_colmin} = $col;
