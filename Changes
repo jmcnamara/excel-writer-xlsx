@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.34 November 4 2011
+
+   + Added set_optimization() method to reduce memory usage for very large
+     data sets.
+
 
 0.33 October 28 2011
 

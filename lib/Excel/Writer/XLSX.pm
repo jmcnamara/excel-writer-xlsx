@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.33 of Excel::Writer::XLSX, released October 28, 2011.
+This document refers to version 0.34 of Excel::Writer::XLSX, released November 4, 2011.
 
 
 
@@ -5295,6 +5295,7 @@ It support all of the features of Spreadsheet::WriteExcel with some minor differ
     set_custom_color()          Yes
     sheets()                    Yes
     set_1904()                  Yes
+    set_optimization()          Yes. Not required in Spreadsheet::WriteExcel.
     add_chart_ext()             Not supported. Not required in Excel::Writer::XLSX.
     compatibility_mode()        Deprecated.    Not required in Excel::Writer::XLSX.
     set_codepage()              Deprecated.    Not required in Excel::Writer::XLSX.

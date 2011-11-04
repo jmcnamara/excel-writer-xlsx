@@ -371,6 +371,9 @@ t/regression/images/red.jpg
 t/regression/images/red.png
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
+t/regression/optimize01.t
+t/regression/optimize02.t
+t/regression/optimize03.t
 t/regression/outline01.t
 t/regression/outline02.t
 t/regression/outline03.t
@@ -562,6 +565,9 @@ t/regression/xlsx_files/image04.xlsx
 t/regression/xlsx_files/image05.xlsx
 t/regression/xlsx_files/image06.xlsx
 t/regression/xlsx_files/image07.xlsx
+t/regression/xlsx_files/optimize01.xlsx
+t/regression/xlsx_files/optimize02.xlsx
+t/regression/xlsx_files/optimize03.xlsx
 t/regression/xlsx_files/outline01.xlsx
 t/regression/xlsx_files/outline02.xlsx
 t/regression/xlsx_files/outline03.xlsx

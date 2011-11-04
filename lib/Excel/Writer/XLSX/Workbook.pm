@@ -32,7 +32,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 
 ###############################################################################
@@ -85,6 +85,7 @@ sub new {
     $self->{_localtime}          = [ localtime() ];
     $self->{_num_comment_files}  = 0;
     $self->{_optimization}       = 0;
+
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
     $self->{_str_unique} = 0;
