@@ -35,10 +35,10 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_subtype}           = $self->{_subtype} // 'clustered';
+    $self->{_subtype} = $self->{_subtype} // 'clustered';
     $self->{_horiz_val_axis} = 0;
 
-    bless $self, $class;
+    Bless $self, $class;
 
     return $self;
 }

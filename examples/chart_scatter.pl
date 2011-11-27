@@ -2,7 +2,10 @@
 
 #######################################################################
 #
-# A demo of a Scatter chart in Excel::Writer::XLSX.
+# A demo of a Scatter chart in Excel::Writer::XLSX. Other subtypes are
+# also supported such as markers_only (the default), straight_with_markers,
+# straight, smooth_with_markers and smooth. See the main documentation for
+# more details.
 #
 # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
 #
