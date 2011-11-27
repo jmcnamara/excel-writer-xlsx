@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.35 November 27 2011
+
+   + Added Scatter chart subtypes: markers_only (the default), 
+     straight_with_markers, straight, smooth_with_markers and smooth.
+
+
 0.34 November 4 2011
 
    + Added set_optimization() method to reduce memory usage for very large

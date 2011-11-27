@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart);
-our $VERSION = '0.34';
+our $VERSION = '0.35';
 
 
 ###############################################################################
@@ -38,7 +38,7 @@ sub new {
     $self->{_subtype} = $self->{_subtype} // 'clustered';
     $self->{_horiz_val_axis} = 0;
 
-    Bless $self, $class;
+    bless $self, $class;
 
     return $self;
 }
