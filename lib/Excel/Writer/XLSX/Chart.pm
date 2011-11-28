@@ -82,6 +82,8 @@ sub new {
     $self->{_horiz_cat_axis}    = 0;
     $self->{_horiz_val_axis}    = 1;
     $self->{_protection}        = 0;
+    $self->{_x_axis}            = {};
+    $self->{_y_axis}            = {};
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -120,7 +122,7 @@ sub _assemble_xml_file {
     $self->_write_chart();
 
     # Write the c:printSettings element.
-    $self->_write_print_settings() if $self->{_embedded};;
+    $self->_write_print_settings() if $self->{_embedded};
 
     # Close the worksheet tag.
     $self->{_writer}->endTag( 'c:chartSpace' );
@@ -160,8 +162,8 @@ sub add_series {
 
 
     # Convert aref params into a formula string.
-    my $values       = $self->_aref_to_formula( $arg{values} );
-    my $categories   = $self->_aref_to_formula( $arg{categories} );
+    my $values     = $self->_aref_to_formula( $arg{values} );
+    my $categories = $self->_aref_to_formula( $arg{categories} );
 
 
     # Switch name and name_formula parameters if required.
@@ -222,19 +224,9 @@ sub add_series {
 sub set_x_axis {
 
     my $self = shift;
-    my %arg  = @_;
+    my $axis = $self->_convert_axis_args( @_ );
 
-    my ( $name, $name_formula ) =
-      $self->_process_names( $arg{name}, $arg{name_formula} );
-
-    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
-
-    $self->{_x_axis_name}    = $name;
-    $self->{_x_axis_formula} = $name_formula;
-    $self->{_x_axis_data_id} = $data_id;
-    $self->{_x_axis_reverse} = $arg{reverse};
-    $self->{_x_axis_min}     = $arg{min};
-    $self->{_x_axis_max}     = $arg{max};
+    $self->{_x_axis} = $axis;
 }
 
 
@@ -247,19 +239,9 @@ sub set_x_axis {
 sub set_y_axis {
 
     my $self = shift;
-    my %arg  = @_;
+    my $axis = $self->_convert_axis_args( @_ );
 
-    my ( $name, $name_formula ) =
-      $self->_process_names( $arg{name}, $arg{name_formula} );
-
-    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
-
-    $self->{_y_axis_name}    = $name;
-    $self->{_y_axis_formula} = $name_formula;
-    $self->{_y_axis_data_id} = $data_id;
-    $self->{_y_axis_reverse} = $arg{reverse};
-    $self->{_y_axis_min}     = $arg{min};
-    $self->{_y_axis_max}     = $arg{max};
+    $self->{_y_axis} = $axis;
 }
 
 
@@ -454,6 +436,36 @@ sub set_style {
 # structuring of the Chart object and file format.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _convert_axis_args()
+#
+# Convert user defined axis values into private hash values.
+#
+sub _convert_axis_args {
+
+    my $self = shift;
+    my %arg  = @_;
+    my $axis;
+
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
+
+    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
+
+    $axis = {
+        _name    => $name,
+        _formula => $name_formula,
+        _data_id => $data_id,
+        _reverse => $arg{reverse},
+        _min     => $arg{min},
+        _max     => $arg{max},
+    };
+
+    return $axis;
+}
 
 
 ###############################################################################
@@ -903,7 +915,7 @@ sub _get_trendline_properties {
 #
 sub _get_labels_properties {
 
-    my $self = shift;
+    my $self   = shift;
     my $labels = shift;
 
     return undef unless $labels;
@@ -1224,9 +1236,9 @@ sub _write_series {
 #
 sub _write_ser {
 
-    my $self       = shift;
-    my $index      = shift;
-    my $series     = shift;
+    my $self   = shift;
+    my $index  = shift;
+    my $series = shift;
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -1429,7 +1441,6 @@ sub _write_num_ref {
 }
 
 
-
 ##############################################################################
 #
 # _write_str_ref()
@@ -1506,28 +1517,28 @@ sub _write_axis_id {
 #
 sub _write_cat_axis {
 
-    my $self      = shift;
-    my $position  = shift // $self->{_cat_axis_position};
-    my $horiz     = $self->{_horiz_cat_axis};
-    my $x_reverse = $self->{_x_axis_reverse};
-    my $y_reverse = $self->{_y_axis_reverse};
+    my $self     = shift;
+    my $position = shift // $self->{_cat_axis_position};
+    my $horiz    = $self->{_horiz_cat_axis};
+    my $x_axis   = $self->{_x_axis};
+    my $y_axis   = $self->{_y_axis};
 
     $self->{_writer}->startTag( 'c:catAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_reverse );
+    $self->_write_scaling( $x_axis->{_reverse} );
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $position, $y_reverse );
+    $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_x_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_x_axis_data_id}, $horiz );
+    if ( $title = $x_axis->{_formula} ) {
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz );
     }
-    elsif ( $title = $self->{_x_axis_name} ) {
+    elsif ( $title = $x_axis->{_name} ) {
         $self->_write_title_rich( $title, $horiz );
     }
 
@@ -1570,30 +1581,29 @@ sub _write_val_axis {
     my $position             = shift // $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
     my $horiz                = $self->{_horiz_val_axis};
-    my $x_reverse            = $self->{_x_axis_reverse};
-    my $y_reverse            = $self->{_y_axis_reverse};
-    my $min                  = $self->{_y_axis_min};
-    my $max                  = $self->{_y_axis_max};
+    my $x_axis               = $self->{_x_axis};
+    my $y_axis               = $self->{_y_axis};
 
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[1] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $y_reverse, $min, $max );
+    $self->_write_scaling( $y_axis->{_reverse}, $y_axis->{_min},
+        $y_axis->{_max} );
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $position, $x_reverse );
+    $self->_write_axis_pos( $position, $x_axis->{_reverse} );
 
     # Write the c:majorGridlines element.
     $self->_write_major_gridlines() if not $hide_major_gridlines;
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_y_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, $horiz );
+    if ( $title = $y_axis->{_formula} ) {
+        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz );
     }
-    elsif ( $title = $self->{_y_axis_name} ) {
+    elsif ( $title = $y_axis->{_name} ) {
         $self->_write_title_rich( $title, $horiz );
     }
 
@@ -1629,30 +1639,29 @@ sub _write_cat_val_axis {
     my $position             = shift // $self->{_val_axis_position};
     my $hide_major_gridlines = shift;
     my $horiz                = $self->{_horiz_val_axis};
-    my $x_reverse            = $self->{_x_axis_reverse};
-    my $y_reverse            = $self->{_y_axis_reverse};
-    my $min                  = $self->{_x_axis_min};
-    my $max                  = $self->{_x_axis_max};
+    my $x_axis               = $self->{_x_axis};
+    my $y_axis               = $self->{_y_axis};
 
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_reverse, $min, $max );
+    $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
+        $x_axis->{_max} );
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $position, $y_reverse );
+    $self->_write_axis_pos( $position, $y_axis->{reverse} );
 
     # Write the c:majorGridlines element.
     $self->_write_major_gridlines() if not $hide_major_gridlines;
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_x_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_y_axis_data_id}, $horiz );
+    if ( $title = $x_axis->{_formula} ) {
+        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz );
     }
-    elsif ( $title = $self->{_x_axis_name} ) {
+    elsif ( $title = $x_axis->{_name} ) {
         $self->_write_title_rich( $title, $horiz );
     }
 
@@ -1683,29 +1692,28 @@ sub _write_cat_val_axis {
 #
 sub _write_date_axis {
 
-    my $self      = shift;
-    my $position  = shift // $self->{_cat_axis_position};
-    my $x_reverse = $self->{_x_axis_reverse};
-    my $y_reverse = $self->{_y_axis_reverse};
-    my $min       = $self->{_x_axis_min};
-    my $max       = $self->{_x_axis_max};
+    my $self     = shift;
+    my $position = shift // $self->{_cat_axis_position};
+    my $x_axis   = $self->{_x_axis};
+    my $y_axis   = $self->{_y_axis};
 
     $self->{_writer}->startTag( 'c:dateAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_reverse, $min, $max );
+    $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
+        $x_axis->{_max} );
 
     # Write the c:axPos element.
-    $self->_write_axis_pos( $position, $y_reverse );
+    $self->_write_axis_pos( $position, $y_axis->{reverse} );
 
     # Write the axis title elements.
     my $title;
-    if ( $title = $self->{_x_axis_formula} ) {
-        $self->_write_title_formula( $title, $self->{_x_axis_data_id} );
+    if ( $title = $x_axis->{_formula} ) {
+        $self->_write_title_formula( $title, $x_axis->{_data_id} );
     }
-    elsif ( $title = $self->{_x_axis_name} ) {
+    elsif ( $title = $x_axis->{_name} ) {
         $self->_write_title_rich( $title );
     }
 
@@ -1771,7 +1779,7 @@ sub _write_orientation {
     my $reverse = shift;
     my $val     = 'minMax';
 
-    $val  = 'maxMin' if $reverse;
+    $val = 'maxMin' if $reverse;
 
     my @attributes = ( 'val' => $val );
 
@@ -1817,7 +1825,6 @@ sub _write_c_min {
 }
 
 
-
 ##############################################################################
 #
 # _write_axis_pos()
@@ -1830,10 +1837,10 @@ sub _write_axis_pos {
     my $val     = shift;
     my $reverse = shift;
 
-     if ($reverse) {
-          $val = 'r' if $val eq 'l';
-          $val = 't' if $val eq 'b';
-     }
+    if ( $reverse ) {
+        $val = 'r' if $val eq 'l';
+        $val = 't' if $val eq 'b';
+    }
 
     my @attributes = ( 'val' => $val );
 
@@ -2012,7 +2019,7 @@ sub _write_number_format {
 sub _write_cross_between {
 
     my $self = shift;
-    my $val  = $self->{_cross_between} // 'between';
+    my $val = $self->{_cross_between} // 'between';
 
     my @attributes = ( 'val' => $val );
 
@@ -2304,7 +2311,6 @@ sub _write_tx_rich {
 
     $self->{_writer}->endTag( 'c:tx' );
 }
-
 
 
 ##############################################################################
@@ -2762,6 +2768,7 @@ sub _write_a_ln {
         $self->_write_a_no_fill();
     }
     else {
+
         # Write the a:solidFill element.
         $self->_write_a_solid_fill( $line );
     }
@@ -2938,7 +2945,7 @@ sub _write_name {
 sub _write_trendline_order {
 
     my $self = shift;
-    my $val  = shift // 2;
+    my $val = shift // 2;
 
     my @attributes = ( 'val' => $val );
 
@@ -2955,7 +2962,7 @@ sub _write_trendline_order {
 sub _write_period {
 
     my $self = shift;
-    my $val  = shift // 2;
+    my $val = shift // 2;
 
     my @attributes = ( 'val' => $val );
 
@@ -2998,7 +3005,6 @@ sub _write_backward {
 
     $self->{_writer}->emptyTag( 'c:backward', @attributes );
 }
-
 
 
 ##############################################################################
@@ -3203,7 +3209,6 @@ sub _write_d_lbls {
 
     $self->{_writer}->endTag( 'c:dLbls' );
 }
-
 
 
 ##############################################################################

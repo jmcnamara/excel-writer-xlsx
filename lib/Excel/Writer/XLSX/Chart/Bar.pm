@@ -57,27 +57,10 @@ sub _write_chart_type {
 
     my $self = shift;
 
-    # Reverse meaning of X and Y axis for Bar charts.
-    my $name         = $self->{_y_axis_name};
-    my $name_formula = $self->{_y_axis_formula};
-    my $data_id      = $self->{_y_axis_data_id};
-    my $reverse      = $self->{_y_axis_reverse};
-    my $min          = $self->{_y_axis_min};
-    my $max          = $self->{_y_axis_max};
-
-    $self->{_y_axis_name}    = $self->{_x_axis_name};
-    $self->{_y_axis_formula} = $self->{_x_axis_formula};
-    $self->{_y_axis_data_id} = $self->{_x_axis_data_id};
-    $self->{_y_axis_reverse} = $self->{_x_axis_reverse};
-    $self->{_y_axis_min}     = $self->{_x_axis_min};
-    $self->{_y_axis_max}     = $self->{_x_axis_max};
-
-    $self->{_x_axis_name}    = $name;
-    $self->{_x_axis_formula} = $name_formula;
-    $self->{_x_axis_data_id} = $data_id;
-    $self->{_x_axis_reverse} = $reverse;
-    $self->{_x_axis_min}     = $min;
-    $self->{_x_axis_max}     = $max;
+    # Reverse X and Y axes for Bar charts.
+    my $tmp = $self->{_y_axis};
+    $self->{_y_axis} = $self->{_x_axis};
+    $self->{_x_axis} = $tmp;
 
     # Write the c:barChart element.
     $self->_write_bar_chart();
