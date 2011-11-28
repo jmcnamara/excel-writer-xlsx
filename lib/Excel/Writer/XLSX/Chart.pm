@@ -1631,13 +1631,15 @@ sub _write_cat_val_axis {
     my $horiz                = $self->{_horiz_val_axis};
     my $x_reverse            = $self->{_x_axis_reverse};
     my $y_reverse            = $self->{_y_axis_reverse};
+    my $min                  = $self->{_x_axis_min};
+    my $max                  = $self->{_x_axis_max};
 
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_reverse );
+    $self->_write_scaling( $x_reverse, $min, $max );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_reverse );
@@ -1681,17 +1683,19 @@ sub _write_cat_val_axis {
 #
 sub _write_date_axis {
 
-    my $self     = shift;
-    my $position = shift // $self->{_cat_axis_position};
+    my $self      = shift;
+    my $position  = shift // $self->{_cat_axis_position};
     my $x_reverse = $self->{_x_axis_reverse};
     my $y_reverse = $self->{_y_axis_reverse};
+    my $min       = $self->{_x_axis_min};
+    my $max       = $self->{_x_axis_max};
 
     $self->{_writer}->startTag( 'c:dateAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_reverse );
+    $self->_write_scaling( $x_reverse, $min, $max );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_reverse );
