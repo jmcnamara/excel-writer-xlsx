@@ -233,6 +233,8 @@ sub set_x_axis {
     $self->{_x_axis_formula} = $name_formula;
     $self->{_x_axis_data_id} = $data_id;
     $self->{_x_axis_reverse} = $arg{reverse};
+    $self->{_x_axis_min}     = $arg{min};
+    $self->{_x_axis_max}     = $arg{max};
 }
 
 
@@ -256,6 +258,8 @@ sub set_y_axis {
     $self->{_y_axis_formula} = $name_formula;
     $self->{_y_axis_data_id} = $data_id;
     $self->{_y_axis_reverse} = $arg{reverse};
+    $self->{_y_axis_min}     = $arg{min};
+    $self->{_y_axis_max}     = $arg{max};
 }
 
 
@@ -1568,13 +1572,15 @@ sub _write_val_axis {
     my $horiz                = $self->{_horiz_val_axis};
     my $x_reverse            = $self->{_x_axis_reverse};
     my $y_reverse            = $self->{_y_axis_reverse};
+    my $min                  = $self->{_y_axis_min};
+    my $max                  = $self->{_y_axis_max};
 
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[1] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $y_reverse );
+    $self->_write_scaling( $y_reverse, $min, $max );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_reverse );
@@ -1731,11 +1737,19 @@ sub _write_scaling {
 
     my $self    = shift;
     my $reverse = shift;
+    my $min     = shift;
+    my $max     = shift;
 
     $self->{_writer}->startTag( 'c:scaling' );
 
     # Write the c:orientation element.
     $self->_write_orientation( $reverse );
+
+    # Write the c:max element.
+    $self->_write_c_max( $max );
+
+    # Write the c:min element.
+    $self->_write_c_min( $min );
 
     $self->{_writer}->endTag( 'c:scaling' );
 }
@@ -1759,6 +1773,45 @@ sub _write_orientation {
 
     $self->{_writer}->emptyTag( 'c:orientation', @attributes );
 }
+
+
+##############################################################################
+#
+# _write_c_max()
+#
+# Write the <c:max> element.
+#
+sub _write_c_max {
+
+    my $self = shift;
+    my $max  = shift;
+
+    return unless defined $max;
+
+    my @attributes = ( 'val' => $max );
+
+    $self->{_writer}->emptyTag( 'c:max', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_min()
+#
+# Write the <c:min> element.
+#
+sub _write_c_min {
+
+    my $self = shift;
+    my $min  = shift;
+
+    return unless defined $min;
+
+    my @attributes = ( 'val' => $min );
+
+    $self->{_writer}->emptyTag( 'c:min', @attributes );
+}
+
 
 
 ##############################################################################
