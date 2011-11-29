@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.33';
+our $VERSION = '0.36';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.33 of Excel::Writer::XLSX, released October 28, 2011.
+This document refers to version 0.36 of Excel::Writer::XLSX, released November 29, 2011.
 
 
 
@@ -151,6 +151,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     set_custom_color()
     sheets()
     set_1904()
+    set_optimization()
 
 If you are unfamiliar with object oriented interfaces or the way that they are implemented in Perl have a look at C<perlobj> and C<perltoot> in the main Perl documentation.
 
@@ -539,6 +540,20 @@ See also L<DATES AND TIME IN EXCEL> for more information about working with Exce
 In general you probably won't need to use C<set_1904()>.
 
 
+
+
+=head2 set_optimization()
+
+The C<set_optimization()> method is used to turn on optimizations in the Excel::Writer::XLSX module. Currently there is only one optimization available and that is to reduce memory usage.
+
+    $workbook->set_optimization();
+
+
+See L<SPEED AND MEMORY USAGE> for more background information.
+
+Note, that with this optimization turned on a row of data is written and then discarded when a cell in a new row is added via one of the Worksheet C<write_*()> methods. As such data should be written in sequential row order once the optimization is turned on.
+
+This method must be called before any calls to C<add_worksheet()>.
 
 
 =head1 WORKSHEET METHODS
@@ -5280,6 +5295,7 @@ It support all of the features of Spreadsheet::WriteExcel with some minor differ
     set_custom_color()          Yes
     sheets()                    Yes
     set_1904()                  Yes
+    set_optimization()          Yes. Not required in Spreadsheet::WriteExcel.
     add_chart_ext()             Not supported. Not required in Excel::Writer::XLSX.
     compatibility_mode()        Deprecated.    Not required in Excel::Writer::XLSX.
     set_codepage()              Deprecated.    Not required in Excel::Writer::XLSX.
@@ -5411,8 +5427,11 @@ C<Spreadsheet::WriteExcel> was written to optimise speed and reduce memory usage
 
 As a result C<Excel::Writer::XLSX> take a different design approach and holds a lot more data in memory so that it is functionally more flexible. The effect of this is that Excel::Writer::XLSX is about 50% slower than Spreadsheet::WriteExcel and can use significantly more memory. When you add to this the extended row and column ranges it is possible to run out of memory creating very large files. This was almost never an issue with Spreadsheet::WriteExcel.
 
-There is a memory optimised version of Excel::Writer::XLSX on GitHub that will be integrated into the CPAN version as soon as the feature compatibility with Spreadsheet::WriteExcel is complete. See L<https://github.com/jmcnamara/excel-writer-xlsx/tree/optimise2>.
+This memory usage can be reduced almost completely by using the Workbook C<set_optimization()> method:
 
+    $workbook->set_optimization();
+
+The trade-off is that you won't be able to take advantage of any new features that manipulate cell data, after it is written, with this optimization turned on.
 
 
 =head1 DOWNLOADING

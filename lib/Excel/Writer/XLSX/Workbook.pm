@@ -32,7 +32,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.33';
+our $VERSION = '0.36';
 
 
 ###############################################################################
@@ -84,6 +84,7 @@ sub new {
     $self->{_doc_properties}     = {};
     $self->{_localtime}          = [ localtime() ];
     $self->{_num_comment_files}  = 0;
+    $self->{_optimization}       = 0;
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -293,6 +294,7 @@ sub add_worksheet {
 
         $self->{_1904},
         $self->{_palette},
+        $self->{_optimization},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
@@ -345,6 +347,7 @@ sub add_chart {
 
         $self->{_1904},
         $self->{_palette},
+        $self->{_optimization},
     );
 
 
@@ -1844,6 +1847,24 @@ sub _get_sheet_index {
     }
 
     return $sheet_index;
+}
+
+
+###############################################################################
+#
+# set_optimization()
+#
+# Set the speed/memory optimisation level.
+#
+sub set_optimization {
+
+    my $self = shift;
+    my $level = shift // 1;
+
+   croak "set_optimization() must be called before add_worksheet()"
+          if $self->sheets();
+
+   $self->{_optimization} = $level;
 }
 
 
