@@ -456,12 +456,16 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
-        _name    => $name,
-        _formula => $name_formula,
-        _data_id => $data_id,
-        _reverse => $arg{reverse},
-        _min     => $arg{min},
-        _max     => $arg{max},
+        _name            => $name,
+        _formula         => $name_formula,
+        _data_id         => $data_id,
+        _reverse         => $arg{reverse},
+        _min             => $arg{min},
+        _max             => $arg{max},
+        _minor_unit      => $arg{minor_unit},
+        _major_unit      => $arg{major_unit},
+        _minor_unit_type => $arg{minor_unit_type},
+        _major_unit_type => $arg{major_unit_type},
     };
 
     return $axis;
@@ -1622,6 +1626,12 @@ sub _write_val_axis {
     # Write the c:crossBetween element.
     $self->_write_cross_between();
 
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $y_axis->{_major_unit} );
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
+
     $self->{_writer}->endTag( 'c:valAx' );
 }
 
@@ -1680,6 +1690,12 @@ sub _write_cat_val_axis {
     # Write the c:crossBetween element.
     $self->_write_cross_between();
 
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $y_axis->{_major_unit} );
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
+
     $self->{_writer}->endTag( 'c:valAx' );
 }
 
@@ -1734,6 +1750,22 @@ sub _write_date_axis {
 
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
+
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $x_axis->{_major_unit} );
+
+    # Write the c:majorTimeUnit element.
+    if ( defined $x_axis->{_major_unit} ) {
+        $self->_write_c_major_time_unit( $x_axis->{_major_unit_type} );
+    }
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $x_axis->{_minor_unit} );
+
+    # Write the c:minorTimeUnit element.
+    if ( defined $x_axis->{_minor_unit} ) {
+        $self->_write_c_minor_time_unit( $x_axis->{_minor_unit_type} );
+    }
 
     $self->{_writer}->endTag( 'c:dateAx' );
 }
@@ -2024,6 +2056,78 @@ sub _write_cross_between {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_major_unit()
+#
+# Write the <c:majorUnit> element.
+#
+sub _write_c_major_unit {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:majorUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_minor_unit()
+#
+# Write the <c:minorUnit> element.
+#
+sub _write_c_minor_unit {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:minorUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_major_time_unit()
+#
+# Write the <c:majorTimeUnit> element.
+#
+sub _write_c_major_time_unit {
+
+    my $self = shift;
+    my $val = shift // 'days';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:majorTimeUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_minor_time_unit()
+#
+# Write the <c:minorTimeUnit> element.
+#
+sub _write_c_minor_time_unit {
+
+    my $self = shift;
+    my $val = shift // 'days';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:minorTimeUnit', @attributes );
 }
 
 
@@ -3475,15 +3579,28 @@ The name can also be a formula such as C<=Sheet1!$A$1>.
 
 =item * C<min>
 
-Set the minimum value for the X axis range. (For value axes).
+Set the minimum value for the axis range. (For value axes).
 
     $chart->set_x_axis( min => 20 );
 
 =item * C<max>
 
-Set the maximum value for the X axis range. (For value axes).
+Set the maximum value for the axis range. (For value axes).
 
     $chart->set_x_axis( max => 80 );
+
+=item * C<minor_unit>
+
+Set the increment of the minor units in the axis range. (For value axes).
+
+    $chart->set_x_axis( minor_unit => 0.4 );
+
+=item * C<major_unit>
+
+Set the increment of the major units in the axis range. (For value axes).
+
+    $chart->set_x_axis( major_unit => 2 );
+
 
 =item * C<reverse>
 
