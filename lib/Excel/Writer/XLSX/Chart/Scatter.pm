@@ -35,7 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_subtype} = $self->{_subtype} // 'marker_only';
+    $self->{_subtype} = $self->{_subtype} || 'marker_only';
     $self->{_cross_between} = 'midCat';
     $self->{_horiz_val_axis}    = 0;
 

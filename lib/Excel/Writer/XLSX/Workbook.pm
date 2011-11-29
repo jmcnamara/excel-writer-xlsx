@@ -1859,7 +1859,7 @@ sub _get_sheet_index {
 sub set_optimization {
 
     my $self = shift;
-    my $level = shift // 1;
+    my $level = shift || 1;
 
    croak "set_optimization() must be called before add_worksheet()"
           if $self->sheets();
