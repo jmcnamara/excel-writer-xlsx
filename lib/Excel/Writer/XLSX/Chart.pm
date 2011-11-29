@@ -3466,42 +3466,48 @@ The properties that can be set are:
 
 =item * C<name>
 
-Set the name (title or caption) for the axis. The name is displayed below the X axis. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no axis name.
+
+Set the name (title or caption) for the axis. The name is displayed below the X axis. The name property is optional. The default is to have no axis name. (For category and value axes).
+
+    $chart->set_x_axis( name => 'Sample length (m)' );
+
+The name can also be a formula such as C<=Sheet1!$A$1>.
+
+=item * C<min>
+
+Set the minimum value for the X axis range. (For value axes).
+
+    $chart->set_x_axis( min => 20 );
+
+=item * C<max>
+
+Set the maximum value for the X axis range. (For value axes).
+
+    $chart->set_x_axis( max => 80 );
 
 =item * C<reverse>
 
-Reverse the order of the X axis categories or values.
+Reverse the order of the X axis categories or values. (For category and value axes).
 
     $chart->set_x_axis( reverse => 1 );
 
 =back
 
-Additional axis properties such as range, divisions and ticks will be made available in later releases.
+Note, some properties are only available for value or category axes as indicated above. See L<Value and Category Axes>.
+
+More than one property can be set in a call to C<set_x_axis>:
+
+    $chart->set_x_axis(
+        name => 'Sample length (m)',
+        min  => 10,
+        max  => 80,
+    );
 
 
 =head2 set_y_axis()
 
-The C<set_y_axis()> method is used to set properties of the Y axis.
+The C<set_y_axis()> method is used to set properties of the Y axis. The properties that can be set are the same as for C<set_x_axis>, see above.
 
-    $chart->set_y_axis( name => 'Sample weight (kg)' );
-
-The properties that can be set are:
-
-=over
-
-=item * C<name>
-
-Set the name (title or caption) for the axis. The name is displayed to the left of the Y axis. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no axis name.
-
-=item * C<reverse>
-
-Reverse the order of the Y axis categories or values.
-
-    $chart->set_y_axis( reverse => 1 );
-
-=back
-
-Additional axis properties such as range, divisions and ticks will be made available in later releases.
 
 =head2 set_title()
 
@@ -4004,6 +4010,21 @@ Here is a complete example that demonstrates some of the available features when
 =end html
 
 
+=head1 Value and Category Axes
+
+Excel differentiates between a chart axis that is used for series B<categories> and an axis that is used for series B<values>.
+
+In the example above the x-axis is the category axis and each of the values is evenly spaced. The y-axis (in this case) is the value axis and points are displayed according to their value.
+
+Since Excel treats the axes differently it also handles their formatting differently and exposed different properties for each.
+
+As such some of C<Excel::Writer::XLSX> axis properties can be set for a value axis, some can be set for a category axis and some properties can be set for both.
+
+For example the C<min> and C<max> properties can only be set for value axes and C<reverse> can be set for both. The type of axis that a property applies to is shown in the C<set_x_axis()> section of the documentation above.
+
+Some charts such as C<Scatter> and C<Stock> have two value axes.
+
+
 =head1 TODO
 
 The chart feature in Excel::Writer::XLSX is under active development. More chart types and features will be added in time.
@@ -4016,7 +4037,7 @@ Features that are on the TODO list and will be added are:
 
 =item * Additional formatting options. For now try the C<set_style()> method.
 
-=item * Axis controls, range limits, gridlines.
+=item * More axis controls and gridlines.
 
 =item * 3D charts.
 
