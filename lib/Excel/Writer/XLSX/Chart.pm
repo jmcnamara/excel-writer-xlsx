@@ -466,6 +466,7 @@ sub _convert_axis_args {
         _major_unit      => $arg{major_unit},
         _minor_unit_type => $arg{minor_unit_type},
         _major_unit_type => $arg{major_unit_type},
+        _log_base        => $arg{log_base},
     };
 
     return $axis;
@@ -1594,7 +1595,7 @@ sub _write_val_axis {
 
     # Write the c:scaling element.
     $self->_write_scaling( $y_axis->{_reverse}, $y_axis->{_min},
-        $y_axis->{_max} );
+        $y_axis->{_max}, $y_axis->{_log_base}  );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -1658,7 +1659,7 @@ sub _write_cat_val_axis {
 
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
-        $x_axis->{_max} );
+        $x_axis->{_max}, $x_axis->{_log_base} );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{reverse} );
@@ -1719,7 +1720,7 @@ sub _write_date_axis {
 
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
-        $x_axis->{_max} );
+        $x_axis->{_max}, $x_axis->{_log_base} );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{reverse} );
@@ -1779,12 +1780,16 @@ sub _write_date_axis {
 #
 sub _write_scaling {
 
-    my $self    = shift;
-    my $reverse = shift;
-    my $min     = shift;
-    my $max     = shift;
+    my $self     = shift;
+    my $reverse  = shift;
+    my $min      = shift;
+    my $max      = shift;
+    my $log_base = shift;
 
     $self->{_writer}->startTag( 'c:scaling' );
+
+    # Write the c:logBase element.
+    $self->_write_c_log_base( $log_base );
 
     # Write the c:orientation element.
     $self->_write_orientation( $reverse );
@@ -1796,6 +1801,25 @@ sub _write_scaling {
     $self->_write_c_min( $min );
 
     $self->{_writer}->endTag( 'c:scaling' );
+}
+
+
+##############################################################################
+#
+# _write_c_log_base()
+#
+# Write the <c:logBase> element.
+#
+sub _write_c_log_base {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:logBase', @attributes );
 }
 
 
@@ -3604,9 +3628,15 @@ Set the increment of the major units in the axis range. (For value axes).
 
 =item * C<reverse>
 
-Reverse the order of the X axis categories or values. (For category and value axes).
+Reverse the order of the axis categories or values. (For category and value axes).
 
     $chart->set_x_axis( reverse => 1 );
+
+=item * C<log_base>
+
+Set the log base of the axis range. (For value axes).
+
+    $chart->set_x_axis( log_base => 10 );
 
 =back
 
