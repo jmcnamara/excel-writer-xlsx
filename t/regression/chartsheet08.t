@@ -36,6 +36,7 @@ my $ignore_elements = {
     'xl/chartsheets/sheet1.xml' => [
         '<pageSetup',
         '<drawing',    # Id is wrong due to missing printerbin.
+        '<pageMargins' # Precision is wrong
       ],
 };
 

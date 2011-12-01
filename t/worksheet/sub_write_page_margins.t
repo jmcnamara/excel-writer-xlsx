@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 
 ###############################################################################
@@ -170,6 +170,25 @@ $worksheet->set_footer('', 0.5);
 $worksheet->_write_page_margins();
 
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_page_margins() method.
+#
+$caption  = " \tWorksheet: _write_page_margins()";
+$expected = '<pageMargins left="0.5" right="0.5" top="0.5" bottom="0.5" header="0.3" footer="0.3" />';
+
+$worksheet = _new_worksheet(\$got);
+
+# Test numeric value with whitespace.
+$worksheet->set_margins( " 0.5\n");
+
+$worksheet->_write_page_margins();
+
+is( $got, $expected, $caption );
+
+
 
 __END__
 
