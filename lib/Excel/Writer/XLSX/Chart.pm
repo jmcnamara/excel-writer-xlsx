@@ -467,6 +467,7 @@ sub _convert_axis_args {
         _minor_unit_type => $arg{minor_unit_type},
         _major_unit_type => $arg{major_unit_type},
         _log_base        => $arg{log_base},
+        _crossing        => $arg{crossing},
     };
 
     return $axis;
@@ -1556,8 +1557,17 @@ sub _write_cat_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:auto element.
     $self->_write_auto( 1 );
@@ -1621,8 +1631,17 @@ sub _write_val_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[0] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $x_axis->{_crossing} || $x_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $x_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $x_axis->{_crossing} );
+    }
 
     # Write the c:crossBetween element.
     $self->_write_cross_between();
@@ -1685,8 +1704,17 @@ sub _write_cat_val_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:crossBetween element.
     $self->_write_cross_between();
@@ -1743,8 +1771,17 @@ sub _write_date_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:auto element.
     $self->_write_auto( 1 );
@@ -1971,11 +2008,28 @@ sub _write_cross_axis {
 sub _write_crosses {
 
     my $self = shift;
-    my $val  = shift;
+    my $val  = shift || 'autoZero';
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crosses', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_crosses_at()
+#
+# Write the <c:crossesAt> element.
+#
+sub _write_c_crosses_at {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:crossesAt', @attributes );
 }
 
 
