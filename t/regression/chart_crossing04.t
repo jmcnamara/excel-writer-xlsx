@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_crossing01.xlsx';
+my $filename     = 'chart_crossing04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,10 +34,10 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'scatter', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 43812352, 43814272 ];
+$chart->{_axis_ids} = [ 54519296, 54517760 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -48,14 +48,18 @@ my $data = [
 
 $worksheet->write( 'A1', $data );
 
-$chart->add_series( values => '=Sheet1!$A$1:$A$5' );
-$chart->add_series( values => '=Sheet1!$B$1:$B$5' );
-$chart->add_series( values => '=Sheet1!$C$1:$C$5' );
+$chart->add_series(
+    categories => '=Sheet1!$A$1:$A$5',
+    values     => '=Sheet1!$B$1:$B$5',
+);
 
-$chart->set_y_axis( crossing => 'max');
+$chart->add_series(
+    categories => '=Sheet1!$A$1:$A$5',
+    values     => '=Sheet1!$C$1:$C$5',
+);
 
-# Not stictly required. Just to match reference file.
-$chart->set_x_axis( position => 't' );
+$chart->set_x_axis( crossing => 3 );
+$chart->set_y_axis( crossing => 8 );
 
 $worksheet->insert_chart( 'E9', $chart );
 

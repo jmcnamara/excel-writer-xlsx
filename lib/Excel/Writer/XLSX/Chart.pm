@@ -468,7 +468,13 @@ sub _convert_axis_args {
         _major_unit_type => $arg{major_unit_type},
         _log_base        => $arg{log_base},
         _crossing        => $arg{crossing},
+        _position        => $arg{position},
     };
+
+    # Only use the first letter of bottom, top, left or right.
+    if ( defined $axis->{_position} ) {
+        $axis->{_position} = substr lc $axis->{_position}, 0, 1;
+    }
 
     return $axis;
 }
@@ -1519,15 +1525,18 @@ sub _write_axis_id {
 #
 # _write_cat_axis()
 #
-# Write the <c:catAx> element.
+# Write the <c:catAx> element. Usually the X axis.
 #
 sub _write_cat_axis {
 
     my $self     = shift;
-    my $position = shift // $self->{_cat_axis_position};
+    my $position = $self->{_cat_axis_position};
     my $horiz    = $self->{_horiz_cat_axis};
     my $x_axis   = $self->{_x_axis};
     my $y_axis   = $self->{_y_axis};
+
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:catAx' );
 
@@ -1586,7 +1595,7 @@ sub _write_cat_axis {
 #
 # _write_val_axis()
 #
-# Write the <c:valAx> element.
+# Write the <c:valAx> element. Usually the Y axis.
 #
 # TODO. Maybe should have a _write_cat_val_axis() method as well for scatter.
 #
@@ -1598,6 +1607,9 @@ sub _write_val_axis {
     my $horiz                = $self->{_horiz_val_axis};
     my $x_axis               = $self->{_x_axis};
     my $y_axis               = $self->{_y_axis};
+
+    # Overwrite the default axis position with a user supplied value.
+    $position = $y_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
@@ -1661,7 +1673,7 @@ sub _write_val_axis {
 # _write_cat_val_axis()
 #
 # Write the <c:valAx> element. This is for the second valAx in scatter plots.
-#
+# Usually the X axis.
 #
 sub _write_cat_val_axis {
 
@@ -1671,6 +1683,9 @@ sub _write_cat_val_axis {
     my $horiz                = $self->{_horiz_val_axis};
     my $x_axis               = $self->{_x_axis};
     my $y_axis               = $self->{_y_axis};
+
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
@@ -1733,14 +1748,17 @@ sub _write_cat_val_axis {
 #
 # _write_date_axis()
 #
-# Write the <c:dateAx> element.
+# Write the <c:dateAx> element. Usually the X axis.
 #
 sub _write_date_axis {
 
     my $self     = shift;
-    my $position = shift // $self->{_cat_axis_position};
+    my $position = $self->{_cat_axis_position};
     my $x_axis   = $self->{_x_axis};
     my $y_axis   = $self->{_y_axis};
+
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:dateAx' );
 
@@ -3640,66 +3658,88 @@ You can add more than one series to a chart. In fact, some chart types such as C
 
 The C<set_x_axis()> method is used to set properties of the X axis.
 
-    $chart->set_x_axis( name => 'Sample length (m)' );
+    $chart->set_x_axis( name => 'Quarterly results' );
 
 The properties that can be set are:
+
+    name
+    min
+    max
+    minor_unit
+    major_unit
+    crossing
+    reverse
+    log_base
+
+These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
 =over
 
 =item * C<name>
 
 
-Set the name (title or caption) for the axis. The name is displayed below the X axis. The name property is optional. The default is to have no axis name. (For category and value axes).
+Set the name (title or caption) for the axis. The name is displayed below the X axis. The C<name> property is optional. The default is to have no axis name. (Applicable to category and value axes).
 
-    $chart->set_x_axis( name => 'Sample length (m)' );
+    $chart->set_x_axis( name => 'Quarterly results' );
 
 The name can also be a formula such as C<=Sheet1!$A$1>.
 
 =item * C<min>
 
-Set the minimum value for the axis range. (For value axes).
+Set the minimum value for the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( min => 20 );
 
 =item * C<max>
 
-Set the maximum value for the axis range. (For value axes).
+Set the maximum value for the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( max => 80 );
 
 =item * C<minor_unit>
 
-Set the increment of the minor units in the axis range. (For value axes).
+Set the increment of the minor units in the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( minor_unit => 0.4 );
 
 =item * C<major_unit>
 
-Set the increment of the major units in the axis range. (For value axes).
+Set the increment of the major units in the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( major_unit => 2 );
 
+=item * C<crossing>
+
+Set the position where the y axis will cross the x axis. (Applicable to category and value axes).
+
+The C<crossing> value can either be the string C<'max'> to set the crossing at the maximum axis value or a numeric value.
+
+    $chart->set_x_axis( crossing => 3 );
+    # or
+    $chart->set_x_axis( crossing => 'max' );
+
+B<For category axes the numeric value must be an integer> to represent the category number that the axis crosses at. For value axes it can have any value associated with the axis.
+
+If crossing is omitted (the default) the crossing will be set automatically by Excel based on the chart data.
 
 =item * C<reverse>
 
-Reverse the order of the axis categories or values. (For category and value axes).
+Reverse the order of the axis categories or values. (Applicable to category and value axes).
 
     $chart->set_x_axis( reverse => 1 );
 
 =item * C<log_base>
 
-Set the log base of the axis range. (For value axes).
+Set the log base of the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( log_base => 10 );
 
 =back
 
-Note, some properties are only available for value or category axes as indicated above. See L<Value and Category Axes>.
-
 More than one property can be set in a call to C<set_x_axis>:
 
     $chart->set_x_axis(
-        name => 'Sample length (m)',
+        name => 'Quarterly results',
         min  => 10,
         max  => 80,
     );
