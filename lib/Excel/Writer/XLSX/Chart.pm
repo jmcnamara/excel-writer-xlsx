@@ -2203,7 +2203,7 @@ sub _write_c_minor_unit {
 sub _write_c_major_time_unit {
 
     my $self = shift;
-    my $val = shift // 'days';
+    my $val = shift || 'days';
 
     my @attributes = ( 'val' => $val );
 
@@ -2220,7 +2220,7 @@ sub _write_c_major_time_unit {
 sub _write_c_minor_time_unit {
 
     my $self = shift;
-    my $val = shift // 'days';
+    my $val = shift || 'days';
 
     my @attributes = ( 'val' => $val );
 
