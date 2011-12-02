@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.36';
+our $VERSION = '0.37';
 
 
 ###############################################################################
@@ -915,9 +915,15 @@ sub set_margins_TB {
 #
 sub set_margin_left {
 
-    my $self = shift;
+    my $self    = shift;
+    my $margin  = shift;
+    my $default = 0.7;
 
-    $self->{_margin_left} = defined $_[0] ? $_[0] : 0.7;
+    # Add 0 to ensure the argument is numeric.
+    if   ( defined $margin ) { $margin = 0 + $margin }
+    else                     { $margin = $default }
+
+    $self->{_margin_left} = $margin;
 }
 
 
@@ -929,9 +935,15 @@ sub set_margin_left {
 #
 sub set_margin_right {
 
-    my $self = shift;
+    my $self    = shift;
+    my $margin  = shift;
+    my $default = 0.7;
 
-    $self->{_margin_right} = defined $_[0] ? $_[0] : 0.7;
+    # Add 0 to ensure the argument is numeric.
+    if   ( defined $margin ) { $margin = 0 + $margin }
+    else                     { $margin = $default }
+
+    $self->{_margin_right} = $margin;
 }
 
 
@@ -943,9 +955,15 @@ sub set_margin_right {
 #
 sub set_margin_top {
 
-    my $self = shift;
+    my $self    = shift;
+    my $margin  = shift;
+    my $default = 0.75;
 
-    $self->{_margin_top} = defined $_[0] ? $_[0] : 0.75;
+    # Add 0 to ensure the argument is numeric.
+    if   ( defined $margin ) { $margin = 0 + $margin }
+    else                     { $margin = $default }
+
+    $self->{_margin_top} = $margin;
 }
 
 
@@ -957,9 +975,16 @@ sub set_margin_top {
 #
 sub set_margin_bottom {
 
-    my $self = shift;
 
-    $self->{_margin_bottom} = defined $_[0] ? $_[0] : 0.75;
+    my $self    = shift;
+    my $margin  = shift;
+    my $default = 0.75;
+
+    # Add 0 to ensure the argument is numeric.
+    if   ( defined $margin ) { $margin = 0 + $margin }
+    else                     { $margin = $default }
+
+    $self->{_margin_bottom} = $margin;
 }
 
 

@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.36';
+our $VERSION = '0.37';
 
 
 ###############################################################################
@@ -456,13 +456,25 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
-        _name    => $name,
-        _formula => $name_formula,
-        _data_id => $data_id,
-        _reverse => $arg{reverse},
-        _min     => $arg{min},
-        _max     => $arg{max},
+        _name            => $name,
+        _formula         => $name_formula,
+        _data_id         => $data_id,
+        _reverse         => $arg{reverse},
+        _min             => $arg{min},
+        _max             => $arg{max},
+        _minor_unit      => $arg{minor_unit},
+        _major_unit      => $arg{major_unit},
+        _minor_unit_type => $arg{minor_unit_type},
+        _major_unit_type => $arg{major_unit_type},
+        _log_base        => $arg{log_base},
+        _crossing        => $arg{crossing},
+        _position        => $arg{position},
     };
+
+    # Only use the first letter of bottom, top, left or right.
+    if ( defined $axis->{_position} ) {
+        $axis->{_position} = substr lc $axis->{_position}, 0, 1;
+    }
 
     return $axis;
 }
@@ -1513,16 +1525,18 @@ sub _write_axis_id {
 #
 # _write_cat_axis()
 #
-# Write the <c:catAx> element.
+# Write the <c:catAx> element. Usually the X axis.
 #
 sub _write_cat_axis {
 
-    my $self      = shift;
-    my $position  = shift || $self->{_cat_axis_position};
-    my $horiz     = $self->{_horiz_cat_axis};
+    my $self     = shift;
+    my $position = $self->{_cat_axis_position};
+    my $horiz    = $self->{_horiz_cat_axis};
     my $x_axis   = $self->{_x_axis};
     my $y_axis   = $self->{_y_axis};
 
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:catAx' );
 
@@ -1552,8 +1566,17 @@ sub _write_cat_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:auto element.
     $self->_write_auto( 1 );
@@ -1572,7 +1595,7 @@ sub _write_cat_axis {
 #
 # _write_val_axis()
 #
-# Write the <c:valAx> element.
+# Write the <c:valAx> element. Usually the Y axis.
 #
 # TODO. Maybe should have a _write_cat_val_axis() method as well for scatter.
 #
@@ -1585,13 +1608,16 @@ sub _write_val_axis {
     my $x_axis               = $self->{_x_axis};
     my $y_axis               = $self->{_y_axis};
 
+    # Overwrite the default axis position with a user supplied value.
+    $position = $y_axis->{_position} || $position;
+
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[1] );
 
     # Write the c:scaling element.
     $self->_write_scaling( $y_axis->{_reverse}, $y_axis->{_min},
-        $y_axis->{_max} );
+        $y_axis->{_max}, $y_axis->{_log_base}  );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -1617,11 +1643,26 @@ sub _write_val_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[0] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $x_axis->{_crossing} || $x_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $x_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $x_axis->{_crossing} );
+    }
 
     # Write the c:crossBetween element.
     $self->_write_cross_between();
+
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $y_axis->{_major_unit} );
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
 
     $self->{_writer}->endTag( 'c:valAx' );
 }
@@ -1632,7 +1673,7 @@ sub _write_val_axis {
 # _write_cat_val_axis()
 #
 # Write the <c:valAx> element. This is for the second valAx in scatter plots.
-#
+# Usually the X axis.
 #
 sub _write_cat_val_axis {
 
@@ -1643,13 +1684,16 @@ sub _write_cat_val_axis {
     my $x_axis               = $self->{_x_axis};
     my $y_axis               = $self->{_y_axis};
 
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
+
     $self->{_writer}->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
-        $x_axis->{_max} );
+        $x_axis->{_max}, $x_axis->{_log_base} );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{reverse} );
@@ -1675,11 +1719,26 @@ sub _write_cat_val_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:crossBetween element.
     $self->_write_cross_between();
+
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $y_axis->{_major_unit} );
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
 
     $self->{_writer}->endTag( 'c:valAx' );
 }
@@ -1689,16 +1748,17 @@ sub _write_cat_val_axis {
 #
 # _write_date_axis()
 #
-# Write the <c:dateAx> element.
+# Write the <c:dateAx> element. Usually the X axis.
 #
 sub _write_date_axis {
 
     my $self     = shift;
-
-    my $position = shift || $self->{_cat_axis_position};
+    my $position = $self->{_cat_axis_position};
     my $x_axis   = $self->{_x_axis};
     my $y_axis   = $self->{_y_axis};
 
+    # Overwrite the default axis position with a user supplied value.
+    $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:dateAx' );
 
@@ -1706,7 +1766,7 @@ sub _write_date_axis {
 
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{reverse}, $x_axis->{_min},
-        $x_axis->{_max} );
+        $x_axis->{_max}, $x_axis->{_log_base} );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{reverse} );
@@ -1729,14 +1789,39 @@ sub _write_date_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Write the c:crosses element.
-    $self->_write_crosses( 'autoZero' );
+    # Note, the category crossing comes from the value axis.
+    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+
+        # Write the c:crosses element.
+        $self->_write_crosses( $y_axis->{_crossing} );
+    }
+    else {
+
+        # Write the c:crossesAt element.
+        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+    }
 
     # Write the c:auto element.
     $self->_write_auto( 1 );
 
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
+
+    # Write the c:majorUnit element.
+    $self->_write_c_major_unit( $x_axis->{_major_unit} );
+
+    # Write the c:majorTimeUnit element.
+    if ( defined $x_axis->{_major_unit} ) {
+        $self->_write_c_major_time_unit( $x_axis->{_major_unit_type} );
+    }
+
+    # Write the c:minorUnit element.
+    $self->_write_c_minor_unit( $x_axis->{_minor_unit} );
+
+    # Write the c:minorTimeUnit element.
+    if ( defined $x_axis->{_minor_unit} ) {
+        $self->_write_c_minor_time_unit( $x_axis->{_minor_unit_type} );
+    }
 
     $self->{_writer}->endTag( 'c:dateAx' );
 }
@@ -1750,12 +1835,16 @@ sub _write_date_axis {
 #
 sub _write_scaling {
 
-    my $self    = shift;
-    my $reverse = shift;
-    my $min     = shift;
-    my $max     = shift;
+    my $self     = shift;
+    my $reverse  = shift;
+    my $min      = shift;
+    my $max      = shift;
+    my $log_base = shift;
 
     $self->{_writer}->startTag( 'c:scaling' );
+
+    # Write the c:logBase element.
+    $self->_write_c_log_base( $log_base );
 
     # Write the c:orientation element.
     $self->_write_orientation( $reverse );
@@ -1767,6 +1856,25 @@ sub _write_scaling {
     $self->_write_c_min( $min );
 
     $self->{_writer}->endTag( 'c:scaling' );
+}
+
+
+##############################################################################
+#
+# _write_c_log_base()
+#
+# Write the <c:logBase> element.
+#
+sub _write_c_log_base {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:logBase', @attributes );
 }
 
 
@@ -1918,11 +2026,28 @@ sub _write_cross_axis {
 sub _write_crosses {
 
     my $self = shift;
-    my $val  = shift;
+    my $val  = shift || 'autoZero';
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crosses', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_crosses_at()
+#
+# Write the <c:crossesAt> element.
+#
+sub _write_c_crosses_at {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:crossesAt', @attributes );
 }
 
 
@@ -2028,6 +2153,78 @@ sub _write_cross_between {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_major_unit()
+#
+# Write the <c:majorUnit> element.
+#
+sub _write_c_major_unit {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:majorUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_minor_unit()
+#
+# Write the <c:minorUnit> element.
+#
+sub _write_c_minor_unit {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:minorUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_major_time_unit()
+#
+# Write the <c:majorTimeUnit> element.
+#
+sub _write_c_major_time_unit {
+
+    my $self = shift;
+    my $val = shift // 'days';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:majorTimeUnit', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_c_minor_time_unit()
+#
+# Write the <c:minorTimeUnit> element.
+#
+sub _write_c_minor_time_unit {
+
+    my $self = shift;
+    my $val = shift // 'days';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:minorTimeUnit', @attributes );
 }
 
 
@@ -3462,47 +3659,88 @@ You can add more than one series to a chart. In fact, some chart types such as C
 
 The C<set_x_axis()> method is used to set properties of the X axis.
 
-    $chart->set_x_axis( name => 'Sample length (m)' );
+    $chart->set_x_axis( name => 'Quarterly results' );
 
 The properties that can be set are:
+
+    name
+    min
+    max
+    minor_unit
+    major_unit
+    crossing
+    reverse
+    log_base
+
+These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
 =over
 
 =item * C<name>
 
 
-Set the name (title or caption) for the axis. The name is displayed below the X axis. The name property is optional. The default is to have no axis name. (For category and value axes).
+Set the name (title or caption) for the axis. The name is displayed below the X axis. The C<name> property is optional. The default is to have no axis name. (Applicable to category and value axes).
 
-    $chart->set_x_axis( name => 'Sample length (m)' );
+    $chart->set_x_axis( name => 'Quarterly results' );
 
 The name can also be a formula such as C<=Sheet1!$A$1>.
 
 =item * C<min>
 
-Set the minimum value for the X axis range. (For value axes).
+Set the minimum value for the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( min => 20 );
 
 =item * C<max>
 
-Set the maximum value for the X axis range. (For value axes).
+Set the maximum value for the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( max => 80 );
 
+=item * C<minor_unit>
+
+Set the increment of the minor units in the axis range. (Applicable to value axes only).
+
+    $chart->set_x_axis( minor_unit => 0.4 );
+
+=item * C<major_unit>
+
+Set the increment of the major units in the axis range. (Applicable to value axes only).
+
+    $chart->set_x_axis( major_unit => 2 );
+
+=item * C<crossing>
+
+Set the position where the y axis will cross the x axis. (Applicable to category and value axes).
+
+The C<crossing> value can either be the string C<'max'> to set the crossing at the maximum axis value or a numeric value.
+
+    $chart->set_x_axis( crossing => 3 );
+    # or
+    $chart->set_x_axis( crossing => 'max' );
+
+B<For category axes the numeric value must be an integer> to represent the category number that the axis crosses at. For value axes it can have any value associated with the axis.
+
+If crossing is omitted (the default) the crossing will be set automatically by Excel based on the chart data.
+
 =item * C<reverse>
 
-Reverse the order of the X axis categories or values. (For category and value axes).
+Reverse the order of the axis categories or values. (Applicable to category and value axes).
 
     $chart->set_x_axis( reverse => 1 );
 
-=back
+=item * C<log_base>
 
-Note, some properties are only available for value or category axes as indicated above. See L<Value and Category Axes>.
+Set the log base of the axis range. (Applicable to value axes only).
+
+    $chart->set_x_axis( log_base => 10 );
+
+=back
 
 More than one property can be set in a call to C<set_x_axis>:
 
     $chart->set_x_axis(
-        name => 'Sample length (m)',
+        name => 'Quarterly results',
         min  => 10,
         max  => 80,
     );
