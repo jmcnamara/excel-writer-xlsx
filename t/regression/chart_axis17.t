@@ -2,7 +2,7 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse('©'), January 2011, John McNamara, jmcnamara@cpan.org
+# reverse('©'), November 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -16,43 +16,28 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chartsheet08.xlsx';
+my $filename     = 'chart_axis17.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members = [
-    qw(
-      xl/printerSettings/printerSettings1.bin
-      xl/chartsheets/_rels/sheet1.xml.rels
-      )
-];
+my $ignore_members  = [];
 
-
-my $ignore_elements = {
-    '[Content_Types].xml'       => ['<Default Extension="bin"'],
-#    'xl/workbook.xml'           => ['<workbookView'],
-
-    'xl/chartsheets/sheet1.xml' => [
-        '<pageSetup',
-        '<drawing',    # Id is wrong due to missing printerbin.
-        '<pageMargins' # Precision is wrong
-      ],
-};
+my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:pageMargins'] };
 
 
 ###############################################################################
 #
-# Test the worksheet properties of an Excel::Writer::XLSX chartsheet file.
+# Test the creation of a simple Excel::Writer::XLSX file.
 #
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'bar' );
+my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_chart}->{_axis_ids} = [ 46320256, 46335872 ];
+$chart->{_axis_ids} = [ 43812736, 45705088 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -67,14 +52,9 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-# Chartsheet test.
-$chart->set_margin_left  ( '0.70866141732283472' );
-$chart->set_margin_right ( '0.70866141732283472' );
-$chart->set_margin_top   ( '0.74803149606299213' );
-$chart->set_margin_bottom( '0.74803149606299213' );
-$chart->set_header( 'Page &P', '0.51181102362204722' );
-$chart->set_footer( '&A'     , '0.51181102362204722' );
+$chart->set_y_axis( log_base => 10 );
 
+$worksheet->insert_chart( 'E9', $chart );
 
 $workbook->close();
 
