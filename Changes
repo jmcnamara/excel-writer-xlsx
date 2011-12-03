@@ -5,7 +5,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
-0.37 December 1 2011
+0.38 December 3 2011
+
+    + Backported from perl 5.10.0 to perl 5.8.2.
+      You are killing me guys. Killing me.
+
+
+0.37 December 2 2011
 
      + Added additional axis options: minor and major units, log base
        and axis crossing.
