@@ -5,6 +5,17 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+
+0.39 December 3 2011
+
+    ! Fix for spurious Mac ._Makefile.PL in the distro which prevented
+      automated testing and installation. Github issue #5.
+      Reported by Tobias Oetiker.
+
+    ! Fix for failing test sub_convert_date_time.t due to extra precision
+      on longdouble perls. RT #71762
+
+
 0.38 December 3 2011
 
     + Backported from perl 5.10.0 to perl 5.8.2.
