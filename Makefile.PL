@@ -34,6 +34,11 @@ if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {
     $params{META_MERGE} = { resources => \%resources };
 }
 
+if ( $ExtUtils::MakeMaker::VERSION ge '6.30_01' ) {
+    $params{LICENSE} = 'perl';
+}
+
+
 WriteMakefile(%params);
 
 ###############################################################################

@@ -3146,7 +3146,7 @@ sub _write_name {
 sub _write_trendline_order {
 
     my $self = shift;
-    my $val  = shift || 2;
+    my $val  = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
@@ -3163,7 +3163,7 @@ sub _write_trendline_order {
 sub _write_period {
 
     my $self = shift;
-    my $val  = shift || 2;
+    my $val  = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
