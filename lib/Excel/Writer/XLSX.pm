@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.39';
+our $VERSION = '0.40';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.39 of Excel::Writer::XLSX, released December 3, 2011.
+This document refers to version 0.40 of Excel::Writer::XLSX, released December 7, 2011.
 
 
 
@@ -4822,8 +4822,8 @@ The following table lists the operators that are available in Excel's formulas. 
        *      Multiplication            2*3
        /      Division                  1/4
        ^      Exponentiation            2^3      # Equivalent to **
-       -      Unary minus               -(1+2)   # Not yet supported
-       %      Percent (Not modulus)     13%      # Not supported, [1]
+       -      Unary minus               -(1+2)
+       %      Percent (Not modulus)     13%
 
 
     Comparison operators:
@@ -4840,23 +4840,22 @@ The following table lists the operators that are available in Excel's formulas. 
     String operator:
     ================
     Operator  Meaning                   Example
-        &     Concatenation             "Hello " & "World!" # [2]
+        &     Concatenation             "Hello " & "World!" # [1]
 
 
     Reference operators:
     ====================
     Operator  Meaning                   Example
-        :     Range operator            A1:A4               # [3]
-        ,     Union operator            SUM(1, 2+2, B3)     # [4]
+        :     Range operator            A1:A4               # [2]
+        ,     Union operator            SUM(1, 2+2, B3)     # [3]
 
 
     Notes:
-    [1]: You can get a percentage with formatting and modulus with MOD().
-    [2]: Equivalent to ("Hello " . "World!") in Perl.
-    [3]: This range is equivalent to cells A1, A2, A3 and A4.
-    [4]: The comma behaves like the list separator in Perl.
+    [1]: Equivalent to "Hello " . "World!" in Perl.
+    [2]: This range is equivalent to cells A1, A2, A3 and A4.
+    [3]: The comma behaves like the list separator in Perl.
 
-The range and comma operators can have different symbols in non-English versions of Excel. These will be supported in a later version of Excel::Writer::XLSX. European users of Excel take note:
+The range and comma operators can have different symbols in non-English versions of Excel. These may be supported in a later version of Excel::Writer::XLSX. In the meantime European users of Excel take note:
 
     $worksheet->write('A1', '=SUM(1; 2; 3)'); # Wrong!!
     $worksheet->write('A1', '=SUM(1, 2, 3)'); # Okay
@@ -4865,13 +4864,13 @@ For a general introduction to Excel's formulas and an explanation of the syntax 
 
 If your formula doesn't work in Excel::Writer::XLSX try the following:
 
-    1. Verify that the formula works in Excel (or Gnumeric or OpenOffice.org).
+    1. Verify that the formula works in Excel.
     2. Ensure that cell references and formula names are in uppercase.
     3. Ensure that you are using ':' as the range operator, A1:A4.
     4. Ensure that you are using ',' as the union operator, SUM(1,2,3).
-    5. Ensure that the function is in the above table.
-
-If you go through steps 1-5 and you still have a problem, mail me.
+    5. If you verify that the formula works in Gnumeric, OpenOffice.org
+       or LibreOffice, make sure to note items 2-4 above, since these
+       applications are more flexible than Excel with formula syntax.
 
 
 

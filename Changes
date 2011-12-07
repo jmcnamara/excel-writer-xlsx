@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.40 December 7 2011
+
+    ! Fix for unreadable xlsx files when generator program has -l on the 
+      commandline or had redefined $/. Github issue #7.
+      Reported by John Riksten.
+
 
 0.39 December 3 2011
 
@@ -14,6 +20,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     ! Fix for failing test sub_convert_date_time.t due to extra precision
       on longdouble perls. RT #71762
+      Reported by Douglas Wilson.
 
 
 0.38 December 3 2011
