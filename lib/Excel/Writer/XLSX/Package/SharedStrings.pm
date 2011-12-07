@@ -198,6 +198,8 @@ sub _write_si {
     # Write any rich strings without further tags.
     if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
         my $fh = $self->{_writer}->getOutput();
+
+        local $\ = undef; # Protect print from -l on commandline.
         print $fh $string;
     }
     else {

@@ -843,6 +843,7 @@ sub _store_workbook {
         seek $tmp_fh, 0, 0;
 
         while ( read( $tmp_fh, $buffer, 4_096 ) ) {
+            local $\ = undef;    # Protect print from -l on commandline.
             print {$self->{_filehandle}} $buffer;
         }
     }

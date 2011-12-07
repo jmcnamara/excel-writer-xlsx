@@ -56,6 +56,7 @@ sub new {
 sub xmlDecl {
 
     my $self = shift;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} }
       qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
@@ -74,6 +75,7 @@ sub startTag {
     my $self       = shift;
     my $tag        = shift;
     my @attributes = @_;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} } "<$tag";
 
@@ -99,6 +101,7 @@ sub endTag {
 
     my $self = shift;
     my $tag  = shift;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} } "</$tag>";
 }
@@ -115,6 +118,7 @@ sub emptyTag {
     my $self       = shift;
     my $tag        = shift;
     my @attributes = @_;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} } "<$tag";
 
@@ -145,6 +149,7 @@ sub dataElement {
     my $tag        = shift;
     my $data       = shift;
     my @attributes = @_;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} } "<$tag";
 
@@ -174,6 +179,7 @@ sub characters {
 
     my $self = shift;
     my $data = shift;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     $data = _escape_xml_chars( $data );
 
@@ -190,6 +196,7 @@ sub characters {
 sub end {
 
     my $self = shift;
+    local $\ = undef;    # Protect print from -l on commandline.
 
     print { $self->{_fh} } "\n";
 }
