@@ -8,7 +8,7 @@ require 5.008002;
 
 my %deps = (
     'Archive::Zip' => 1.30,
-    'IO::File'     => 0,
+    'IO::File'     => 1.14,
 );
 
 my %resources = (

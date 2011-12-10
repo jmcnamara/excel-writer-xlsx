@@ -5,9 +5,15 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.41 December 10 2011
+
+    ! Increased IO::File requirement to 1.14 to prevent taint issues on some
+      5.8.8/5.8.6 platforms.
+
+
 0.40 December 7 2011
 
-    ! Fix for unreadable xlsx files when generator program has -l on the 
+    ! Fix for unreadable xlsx files when generator program has -l on the
       commandline or had redefined $/. Github issue #7.
       Reported by John Riksten.
 
@@ -43,7 +49,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.35 November 27 2011
 
-    + Added Scatter chart subtypes: markers_only (the default), 
+    + Added Scatter chart subtypes: markers_only (the default),
      straight_with_markers, straight, smooth_with_markers and smooth.
 
 
@@ -62,7 +68,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.32 October 20 2011
 
-    ! Fix for format alignment bug. 
+    ! Fix for format alignment bug.
       Reported by Roderich Schupp.
 
 
@@ -96,7 +102,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 0.27 October 2 2011
 
     + Excel::Writer::XLSX is now 100% functionally and API compatible
-      with Spreadsheet::WriteExcel. 
+      with Spreadsheet::WriteExcel.
 
     + Added outlines and grouping functionality.
 
