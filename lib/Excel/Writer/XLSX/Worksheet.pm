@@ -5606,7 +5606,13 @@ sub _write_cell {
                 print $fh $token;
             }
             else {
-                $self->{_writer}->dataElement( 't', $token);
+                my @t_attributes;
+
+                # Add attribute to preserve leading or trailing whitespace.
+                if ( $token =~ /^\s/ || $token =~ /\s$/ ) {
+                    push @t_attributes, ( 'xml:space' => 'preserve' );
+                }
+                $self->{_writer}->dataElement( 't', $token, @t_attributes );
             }
 
             $self->{_writer}->endTag( 'is' );
