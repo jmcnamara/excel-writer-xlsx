@@ -5344,6 +5344,9 @@ sub _write_single_row {
     my $current_row = shift || 0;
     my $row_num     = $self->{_previous_row};
 
+    # Set the new previous row as the current row.
+    $self->{_previous_row} = $current_row;
+
     # Skip row if it doesn't contain row formatting, cell data or a comment.
     if (   !$self->{_set_rows}->{$row_num}
         && !$self->{_table}->[$row_num]
@@ -5381,8 +5384,6 @@ sub _write_single_row {
     # Reset table.
     $self->{_table} = [];
 
-    # Set the new previous row as the current row.
-    $self->{_previous_row} = $current_row;
 }
 
 
