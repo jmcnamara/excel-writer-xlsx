@@ -1,5 +1,6 @@
 Changes
 MANIFEST
+META.yml                                 Module meta-data (added by MakeMaker)
 Makefile.PL
 README
 examples/README
@@ -434,6 +435,7 @@ t/regression/rich_string06.t
 t/regression/rich_string07.t
 t/regression/rich_string08.t
 t/regression/rich_string09.t
+t/regression/rich_string10.t
 t/regression/row_col_format01.t
 t/regression/row_col_format02.t
 t/regression/row_col_format03.t
@@ -643,6 +645,7 @@ t/regression/xlsx_files/rich_string06.xlsx
 t/regression/xlsx_files/rich_string07.xlsx
 t/regression/xlsx_files/rich_string08.xlsx
 t/regression/xlsx_files/rich_string09.xlsx
+t/regression/xlsx_files/rich_string10.xlsx
 t/regression/xlsx_files/row_col_format01.xlsx
 t/regression/xlsx_files/row_col_format02.xlsx
 t/regression/xlsx_files/row_col_format03.xlsx
@@ -768,4 +771,3 @@ t/worksheet/worksheet_cond_format_15.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t
-META.yml                                 Module meta-data (added by MakeMaker)

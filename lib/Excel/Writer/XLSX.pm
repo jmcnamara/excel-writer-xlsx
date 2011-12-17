@@ -20,7 +20,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.41';
+our $VERSION = '0.42';
 
 
 ###############################################################################
@@ -52,7 +52,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.41 of Excel::Writer::XLSX, released December 10, 2011.
+This document refers to version 0.42 of Excel::Writer::XLSX, released December 17, 2011.
 
 
 
@@ -1504,7 +1504,7 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 =head2 insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
 
-Partially supported. Currently only works for 96 dpi images. This will be fixed in the next release.
+Partially supported. Currently only works for 96 dpi images. This will be fixed in an upcoming release.
 
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
 

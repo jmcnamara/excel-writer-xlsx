@@ -20,7 +20,7 @@ use Carp;
 use Excel::Writer::XLSX::Package::XMLwriter;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.41';
+our $VERSION = '0.42';
 
 
 ###############################################################################
@@ -189,6 +189,7 @@ sub _write_si {
     my $string     = shift;
     my @attributes = ();
 
+    # Add attribute to preserve leading or trailing whitespace.
     if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
         push @attributes, ( 'xml:space' => 'preserve' );
     }

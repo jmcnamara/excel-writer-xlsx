@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.42 December 17 2011
+
+    ! Fix for set_optimization() where first row isn't 0.
+      Reported by Giulio Orsero.
+
+    ! Fix to preserve whitespace in inline strings.
+      Reported by Giulio Orsero.
 
 0.41 December 10 2011
 
