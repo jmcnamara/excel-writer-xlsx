@@ -195,21 +195,26 @@ sub add_series {
     # Set the labels properties for the series.
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
 
+    # Set the "invert if negative" fill property.
+    my $invert_if_neg = $arg{invert_if_negative};
+
     # Add the user supplied data to the internal structures.
     %arg = (
-        _values       => $values,
-        _categories   => $categories,
-        _name         => $name,
-        _name_formula => $name_formula,
-        _name_id      => $name_id,
-        _val_data_id  => $val_id,
-        _cat_data_id  => $cat_id,
-        _line         => $line,
-        _fill         => $fill,
-        _marker       => $marker,
-        _trendline    => $trendline,
-        _labels       => $labels,
+        _values        => $values,
+        _categories    => $categories,
+        _name          => $name,
+        _name_formula  => $name_formula,
+        _name_id       => $name_id,
+        _val_data_id   => $val_id,
+        _cat_data_id   => $cat_id,
+        _line          => $line,
+        _fill          => $fill,
+        _marker        => $marker,
+        _trendline     => $trendline,
+        _labels        => $labels,
+        _invert_if_neg => $invert_if_neg,
     );
+
 
     push @{ $self->{_series} }, \%arg;
 }
@@ -1268,6 +1273,9 @@ sub _write_ser {
 
     # Write the c:marker element.
     $self->_write_marker( $series->{_marker} );
+
+    # Write the c:invertIfNegative element.
+    $self->_write_c_invert_if_negative( $series->{_invert_if_neg} );
 
     # Write the c:dLbls element.
     $self->_write_d_lbls( $series->{_labels} );
@@ -3480,6 +3488,26 @@ sub _write_delete {
 }
 
 
+##############################################################################
+#
+# _write_c_invert_if_negative()
+#
+# Write the <c:invertIfNegative> element.
+#
+sub _write_c_invert_if_negative {
+
+    my $self   = shift;
+    my $invert = shift;
+    my $val    = 1;
+
+    return unless $invert;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:invertIfNegative', @attributes );
+}
+
+
 1;
 
 __END__
@@ -3625,6 +3653,10 @@ Set the properties of the series trendline such as linear, polynomial and moving
 =item * C<data_labels>
 
 Set data labels for the series. See the L</CHART FORMATTING> section below.
+
+=item * C<invert_if_negative>
+
+Invert the fill colour for negative values. Usually only applicable to column and bar charts.
 
 =back
 
