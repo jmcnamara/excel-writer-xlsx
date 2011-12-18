@@ -474,6 +474,7 @@ sub _convert_axis_args {
         _log_base        => $arg{log_base},
         _crossing        => $arg{crossing},
         _position        => $arg{position},
+        _label_position  => $arg{label_position},
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -1569,7 +1570,7 @@ sub _write_cat_axis {
     $self->_write_num_fmt();
 
     # Write the c:tickLblPos element.
-    $self->_write_tick_label_pos( 'nextTo' );
+    $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
@@ -1646,7 +1647,7 @@ sub _write_val_axis {
     $self->_write_number_format();
 
     # Write the c:tickLblPos element.
-    $self->_write_tick_label_pos( 'nextTo' );
+    $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[0] );
@@ -1722,7 +1723,7 @@ sub _write_cat_val_axis {
     $self->_write_number_format();
 
     # Write the c:tickLblPos element.
-    $self->_write_tick_label_pos( 'nextTo' );
+    $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
@@ -1792,7 +1793,7 @@ sub _write_date_axis {
     $self->_write_num_fmt( 'dd/mm/yyyy' );
 
     # Write the c:tickLblPos element.
-    $self->_write_tick_label_pos( 'nextTo' );
+    $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
@@ -2000,7 +2001,11 @@ sub _write_num_fmt {
 sub _write_tick_label_pos {
 
     my $self = shift;
-    my $val  = shift;
+    my $val  = shift || 'nextTo';
+
+    if ($val eq 'next_to') {
+        $val =  'nextTo';
+    }
 
     my @attributes = ( 'val' => $val );
 
@@ -3703,6 +3708,7 @@ The properties that can be set are:
     crossing
     reverse
     log_base
+    label_position
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -3766,6 +3772,15 @@ Reverse the order of the axis categories or values. (Applicable to category and 
 Set the log base of the axis range. (Applicable to value axes only).
 
     $chart->set_x_axis( log_base => 10 );
+
+=item * C<label_position>
+
+Set the "Axis labels" position for the axis. The following positions are available:
+
+    next_to (the default)
+    high
+    low
+    none
 
 =back
 
