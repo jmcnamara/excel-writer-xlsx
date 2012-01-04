@@ -58,7 +58,7 @@ sub handler {
     ## Send the content type headers the mod_perl 2 way
     ####################################################
     $r->headers_out->{'Content-Disposition'} = "attachment;filename=$filename";
-    $r->content_type( 'application/vnd.ms-excel' );
+    $r->content_type( 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
 
     ####################################################
     # Tie a filehandle to Apache's STDOUT.

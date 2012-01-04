@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 ###############################################################################
 #
@@ -17,22 +17,23 @@
 #
 
 use strict;
+use warnings;
 use Excel::Writer::XLSX;
 
 # Set the filename and send the content type
 my $filename = "cgitest.xlsx";
 
-print "Content-type: application/vnd.ms-excel\n";
+print "Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n";
 
 # The Content-Disposition will generate a prompt to save the file. If you want
 # to stream the file to the browser, comment out the following line.
 print "Content-Disposition: attachment; filename=$filename\n";
 print "\n";
 
-# Create a new workbook and add a worksheet. The special Perl filehandle - will
-# redirect the output to STDOUT
-#
-my $workbook  = Excel::Writer::XLSX->new( "-" );
+# Redirect the output to STDOUT. Binmode the filehandle in case it is needed.
+binmode STDOUT;
+
+my $workbook  = Excel::Writer::XLSX->new( \*STDOUT );
 my $worksheet = $workbook->add_worksheet();
 
 

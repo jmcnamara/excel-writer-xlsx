@@ -59,7 +59,7 @@ sub handler {
     ## Send the content type headers
     ####################################################
     print "Content-disposition: attachment;filename=$filename\n";
-    print "Content-type: application/vnd.ms-excel\n\n";
+    print "Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n\n";
 
     ####################################################
     # Tie a filehandle to Apache's STDOUT.
