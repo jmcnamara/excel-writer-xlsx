@@ -205,7 +205,14 @@ sub close {
     $self->{_fileclosed} = 1;
     $self->_store_workbook();
 
-    return CORE::close( $self->{_filehandle} ) if $self->{_internal_fh};
+    # Return the file close value.
+    if ( $self->{_internal_fh} ) {
+        return $self->{_filehandle}->close();
+    }
+    else {
+        # Return true and let users deal with their own filehandles.
+        return 1;
+    }
 }
 
 
