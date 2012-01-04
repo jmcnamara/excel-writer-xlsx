@@ -112,6 +112,13 @@ sub new {
         $self->{_filehandle}  = $self->{_filename};
         $self->{_internal_fh} = 0;
     }
+    elsif ( $self->{_filename} eq '-' ) {
+
+        # Support special filename/filehandle '-' for backward compatibility.
+        binmode STDOUT;
+        $self->{_filehandle}  = \*STDOUT;
+        $self->{_internal_fh} = 0;
+    }
     else {
         my $fh = IO::File->new( $self->{_filename}, 'w' );
 
