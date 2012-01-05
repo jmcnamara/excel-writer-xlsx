@@ -2,11 +2,9 @@ package Excel::Writer::XLSX;
 
 ###############################################################################
 #
-# WriteExcelXML.
+# Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 #
-# Excel::Writer::XLSX - Create an Excel file in XML format.
-#
-# Copyright 2000-2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2012, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -20,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.43';
+our $VERSION = '0.44';
 
 
 ###############################################################################
@@ -52,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.43 of Excel::Writer::XLSX, released December 18, 2011.
+This document refers to version 0.44 of Excel::Writer::XLSX, released January 4, 2012.
 
 
 
@@ -191,13 +189,9 @@ You can also pass a valid filehandle to the C<new()> constructor. For example in
 
 The requirement for C<binmode()> is explained below.
 
-For CGI programs you can also use the special Perl filename C<'-'> which will redirect the output to STDOUT:
-
-    my $workbook = Excel::Writer::XLSX->new( '-' );
-
 See also, the C<cgi.pl> program in the C<examples> directory of the distro.
 
-However, this special case will not work in C<mod_perl> programs where you will have to do something like the following:
+In C<mod_perl> programs where you will have to do something like the following:
 
     # mod_perl 1
     ...
@@ -5746,6 +5740,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXI, John McNamara.
+Copyright MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

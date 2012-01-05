@@ -4,6 +4,17 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.44 January 5 2012
+
+    ! Fix for missing return value from Workbook::close() with filehandles.
+      RT 73724. Reported and patched by Charles Bailey.
+
+    ! Fixed support special filename/filehandle '-'.
+      RT 73424. Reported by YuvalL and Charles Bailey.
+
+    ! Fix for non-working reverse x_axis with Scatter charts.
+      Reported by Viqar Abbasi.
+
 
 0.43 December 18 2011
 

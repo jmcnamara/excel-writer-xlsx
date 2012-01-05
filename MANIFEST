@@ -1,6 +1,5 @@
 Changes
 MANIFEST
-META.yml                                 Module meta-data (added by MakeMaker)
 Makefile.PL
 README
 examples/README
@@ -265,6 +264,7 @@ t/regression/chart_axis17.t
 t/regression/chart_axis18.t
 t/regression/chart_axis19.t
 t/regression/chart_axis20.t
+t/regression/chart_axis21.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -488,6 +488,7 @@ t/regression/xlsx_files/chart_axis17.xlsx
 t/regression/xlsx_files/chart_axis18.xlsx
 t/regression/xlsx_files/chart_axis19.xlsx
 t/regression/xlsx_files/chart_axis20.xlsx
+t/regression/xlsx_files/chart_axis21.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -676,6 +677,7 @@ t/regression/xlsx_files/utf8_02.xlsx
 t/utility/xl_col_to_name.t
 t/utility/xl_range.t
 t/utility/xl_rowcol_to_cell.t
+t/workbook/sub_close.t
 t/workbook/sub_get_chart_range.t
 t/workbook/sub_sort_defined_names.t
 t/workbook/sub_write_book_views.t

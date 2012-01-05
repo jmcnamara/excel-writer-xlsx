@@ -7,7 +7,7 @@ package Excel::Writer::XLSX::Utility;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2012, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -21,7 +21,7 @@ use warnings;
 use autouse 'Date::Calc'  => qw(Delta_DHMS Decode_Date_EU Decode_Date_US);
 use autouse 'Date::Manip' => qw(ParseDate Date_Init);
 
-our $VERSION = '0.43';
+our $VERSION = '0.44';
 
 # Row and column functions
 my @rowcol = qw(
@@ -899,7 +899,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXI, John McNamara.
+© MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
