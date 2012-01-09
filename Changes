@@ -4,6 +4,16 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.45 January 9 2012
+
+    ! Changed from File::Temp tempdir() to newdir() to cleanup the temp dir at
+      object destruction  rather than the program exit. Also improved error
+      reporting when mkdir() fails.
+      Reported by Kevin Ruscoe.
+
+    ! Fix to escape control characters in strings.
+      Reported by Kevin Ruscoe.
+
 0.44 January 5 2012
 
     ! Fix for missing return value from Workbook::close() with filehandles.

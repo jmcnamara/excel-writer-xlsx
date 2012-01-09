@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.44';
+our $VERSION = '0.45';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.44 of Excel::Writer::XLSX, released January 4, 2012.
+This document refers to version 0.45 of Excel::Writer::XLSX, released January 9, 2012.
 
 
 
@@ -104,7 +104,7 @@ C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel>
 
 Excel::Writer::XLSX supports all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
 
-The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet.
+The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet. The XLSX file format also produces much smaller files than the XLS file format.
 
 
 

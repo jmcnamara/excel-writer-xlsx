@@ -453,6 +453,8 @@ t/regression/row_col_format11.t
 t/regression/row_col_format12.t
 t/regression/row_col_format13.t
 t/regression/row_col_format14.t
+t/regression/shared_strings01.t
+t/regression/shared_strings02.t
 t/regression/simple01.t
 t/regression/simple02.t
 t/regression/tab_color01.t
@@ -667,6 +669,8 @@ t/regression/xlsx_files/row_col_format11.xlsx
 t/regression/xlsx_files/row_col_format12.xlsx
 t/regression/xlsx_files/row_col_format13.xlsx
 t/regression/xlsx_files/row_col_format14.xlsx
+t/regression/xlsx_files/shared_strings01.xlsx
+t/regression/xlsx_files/shared_strings02.xlsx
 t/regression/xlsx_files/simple01.xlsx
 t/regression/xlsx_files/simple02.xlsx
 t/regression/xlsx_files/tab_color01.xlsx
