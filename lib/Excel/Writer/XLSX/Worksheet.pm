@@ -5599,21 +5599,27 @@ sub _write_cell {
             $self->{_writer}->startTag( 'c', @attributes );
             $self->{_writer}->startTag( 'is' );
 
+            my $string = $token;
+
+            # Escape control characters. See SharedString.pm for details.
+            $string =~ s/(_x[0-9a-fA-F]{4}_)/_x005F$1/g;
+            $string =~ s/([\x00-\x08\x0B-\x1F])/sprintf "_x%04X_", ord($1)/eg;
+
             # Write any rich strings without further tags.
-            if ( $token =~ m{^<r>} && $token =~ m{</r>$} ) {
+            if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
                 my $fh = $self->{_writer}->getOutput();
 
                 local $\ = undef;    # Protect print from -l on commandline.
-                print $fh $token;
+                print $fh $string;
             }
             else {
                 my @t_attributes;
 
                 # Add attribute to preserve leading or trailing whitespace.
-                if ( $token =~ /^\s/ || $token =~ /\s$/ ) {
+                if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
                     push @t_attributes, ( 'xml:space' => 'preserve' );
                 }
-                $self->{_writer}->dataElement( 't', $token, @t_attributes );
+                $self->{_writer}->dataElement( 't', $string, @t_attributes );
             }
 
             $self->{_writer}->endTag( 'is' );

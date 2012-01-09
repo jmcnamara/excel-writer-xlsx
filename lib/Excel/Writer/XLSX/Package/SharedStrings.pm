@@ -75,7 +75,7 @@ sub _assemble_xml_file {
     # Close the sst tag.
     $self->{_writer}->endTag( 'sst' );
 
-    # Close the XM writer object and filehandle.
+    # Close the XML writer object and filehandle.
     $self->{_writer}->end();
     $self->{_writer}->getOutput()->close();
 }
@@ -188,6 +188,18 @@ sub _write_si {
     my $self       = shift;
     my $string     = shift;
     my @attributes = ();
+
+    # Excel escapes control characters with _xHHHH_ and also escapes any
+    # literal strings of that type by encoding the leading underscore. So
+    # "\0" -> _x0000_ and "_x0000_" -> _x005F_x0000_.
+    # The following substitutions deal with those cases.
+
+    # Escape the escape.
+    $string =~ s/(_x[0-9a-fA-F]{4}_)/_x005F$1/g;
+
+    # Convert control character to the _xHHHH_ escape.
+    $string =~ s/([\x00-\x08\x0B-\x1F])/sprintf "_x%04X_", ord($1)/eg;
+
 
     # Add attribute to preserve leading or trailing whitespace.
     if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
