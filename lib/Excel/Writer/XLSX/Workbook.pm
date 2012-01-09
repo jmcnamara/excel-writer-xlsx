@@ -20,7 +20,7 @@ use warnings;
 use Carp;
 use IO::File;
 use File::Find;
-use File::Temp qw(tempfile tempdir);
+use File::Temp qw(tempfile);
 use File::Basename 'fileparse';
 use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
@@ -768,7 +768,7 @@ sub set_properties {
 sub _store_workbook {
 
     my $self     = shift;
-    my $tempdir  = tempdir( CLEANUP => 1, DIR => $self->{_tempdir} );
+    my $tempdir  = File::Temp->newdir( DIR => $self->{_tempdir} );
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
