@@ -309,6 +309,7 @@ sub add_worksheet {
         $self->{_1904},
         $self->{_palette},
         $self->{_optimization},
+        $self->{_tempdir},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
