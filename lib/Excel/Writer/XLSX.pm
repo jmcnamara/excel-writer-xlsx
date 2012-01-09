@@ -428,14 +428,13 @@ The C<File::Temp> module is used to create these temporary files. File::Temp use
 
     perl -MFile::Spec -le "print File::Spec->tmpdir()"
 
-If the default temporary file directory isn't accessible to your application you can specify an alternative location using the C<set_tempdir()> method:
+If the default temporary file directory isn't accessible to your application, or doesn't contain enought space, you can specify an alternative location using the C<set_tempdir()> method:
 
     $workbook->set_tempdir( '/tmp/writeexcel' );
     $workbook->set_tempdir( 'c:\windows\temp\writeexcel' );
 
 The directory for the temporary file must exist, C<set_tempdir()> will not create a new directory.
 
-A potential issue is that some Windows systems will are limited to approximately 800 concurrent tempfiles. This means that a single program running on one of these systems will be limited to creating a total of 800 workbook and worksheet objects. You can run multiple, non-concurrent programs to work around this if necessary.
 
 
 

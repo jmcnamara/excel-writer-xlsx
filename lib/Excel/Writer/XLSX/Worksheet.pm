@@ -60,6 +60,7 @@ sub new {
     $self->{_1904}         = $_[7];
     $self->{_palette}      = $_[8];
     $self->{_optimization} = $_[9] || 0;
+    $self->{_tempdir}      = $_[10];
 
     $self->{_ext_sheets} = [];
     $self->{_fileclosed} = 0;
@@ -183,7 +184,7 @@ sub new {
     $self->{_previous_row} = 0;
 
     if ( $self->{_optimization} == 1 ) {
-        my $fh  = tempfile();
+        my $fh  = tempfile( DIR => $self->{_tempdir} );
         binmode $fh, ':utf8';
 
         my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $fh );
