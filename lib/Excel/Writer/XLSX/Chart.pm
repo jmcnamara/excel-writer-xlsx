@@ -1744,10 +1744,10 @@ sub _write_cat_val_axis {
     $self->_write_cross_between();
 
     # Write the c:majorUnit element.
-    $self->_write_c_major_unit( $y_axis->{_major_unit} );
+    $self->_write_c_major_unit( $x_axis->{_major_unit} );
 
     # Write the c:minorUnit element.
-    $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
+    $self->_write_c_minor_unit( $x_axis->{_minor_unit} );
 
     $self->{_writer}->endTag( 'c:valAx' );
 }
