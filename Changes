@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+
+0.46 February 10 2012
+
+    ! Fix for x-axis major/minor units in scatter charts.
+      Reported by Carey Drake.
+
+
 0.45 January 9 2012
 
     ! Changed from File::Temp tempdir() to newdir() to cleanup the temp dir at
