@@ -428,7 +428,7 @@ The C<File::Temp> module is used to create these temporary files. File::Temp use
 
     perl -MFile::Spec -le "print File::Spec->tmpdir()"
 
-If the default temporary file directory isn't accessible to your application, or doesn't contain enought space, you can specify an alternative location using the C<set_tempdir()> method:
+If the default temporary file directory isn't accessible to your application, or doesn't contain enough space, you can specify an alternative location using the C<set_tempdir()> method:
 
     $workbook->set_tempdir( '/tmp/writeexcel' );
     $workbook->set_tempdir( 'c:\windows\temp\writeexcel' );
