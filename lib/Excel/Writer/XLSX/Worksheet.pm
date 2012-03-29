@@ -3240,10 +3240,19 @@ sub data_validation {
 #
 sub conditional_formatting {
 
-    my $self = shift;
+    my $self       = shift;
+    my $user_range = '';
 
     # Check for a cell reference in A1 notation and substitute row and column
     if ( $_[0] =~ /^\D/ ) {
+
+        # Check for a user defined multiple range like B3:K6,B8:K11.
+        if ( $_[0] =~ /,/ ) {
+            $user_range = $_[0];
+            $user_range =~ s/\s*,\s*/ /g;
+            $user_range =~ s/\$//g;
+        }
+
         @_ = $self->_substitute_cellref( @_ );
     }
 
@@ -3274,12 +3283,21 @@ sub conditional_formatting {
 
     # List of valid input parameters.
     my %valid_parameter = (
-        type     => 1,
-        format   => 1,
-        criteria => 1,
-        value    => 1,
-        minimum  => 1,
-        maximum  => 1,
+        type      => 1,
+        format    => 1,
+        criteria  => 1,
+        value     => 1,
+        minimum   => 1,
+        maximum   => 1,
+        min_type  => 1,
+        mid_type  => 1,
+        max_type  => 1,
+        min_value => 1,
+        mid_value => 1,
+        max_value => 1,
+        min_color => 1,
+        mid_color => 1,
+        max_color => 1,
     );
 
     # Check for valid input parameters.
@@ -3437,6 +3455,11 @@ sub conditional_formatting {
         $start_cell = xl_rowcol_to_cell( $row1, $col1 );
     }
 
+    # Override with user defined multiple range if provided.
+    if ( $user_range ) {
+        $range = $user_range;
+    }
+
     # Get the dxf format index.
     if ( defined $param->{format} && ref $param->{format} ) {
         $param->{format} = $param->{format}->get_dxf_index();
@@ -3449,23 +3472,23 @@ sub conditional_formatting {
     if ( $param->{type} eq 'text' ) {
 
         if ( $param->{criteria} eq 'containsText' ) {
-            $param->{type}     = 'containsText';
-            $param->{formula}  = sprintf 'NOT(ISERROR(SEARCH("%s",%s)))',
+            $param->{type}    = 'containsText';
+            $param->{formula} = sprintf 'NOT(ISERROR(SEARCH("%s",%s)))',
               $param->{value}, $start_cell;
         }
         elsif ( $param->{criteria} eq 'notContains' ) {
-            $param->{type}     = 'notContainsText';
-            $param->{formula}  = sprintf 'ISERROR(SEARCH("%s",%s))',
+            $param->{type}    = 'notContainsText';
+            $param->{formula} = sprintf 'ISERROR(SEARCH("%s",%s))',
               $param->{value}, $start_cell;
         }
         elsif ( $param->{criteria} eq 'beginsWith' ) {
-            $param->{type}     = 'beginsWith';
-            $param->{formula}  = sprintf 'LEFT(%s,1)="%s"',
+            $param->{type}    = 'beginsWith';
+            $param->{formula} = sprintf 'LEFT(%s,1)="%s"',
               $start_cell, $param->{value};
         }
         elsif ( $param->{criteria} eq 'endsWith' ) {
-            $param->{type}     = 'endsWith';
-            $param->{formula}  = sprintf 'RIGHT(%s,1)="%s"',
+            $param->{type}    = 'endsWith';
+            $param->{formula} = sprintf 'RIGHT(%s,1)="%s"',
               $start_cell, $param->{value};
         }
         else {
