@@ -1804,7 +1804,7 @@ Examples:
     $worksheet->set_column( 'E:E', 20 );   # Column  E   width set to 20
     $worksheet->set_column( 'F:H', 30 );   # Columns F-H width set to 30
 
-The width corresponds to the column width value that is specified in Excel. It is approximately equal to the length of a string in the default font of Arial 10. Unfortunately, there is no way to specify "AutoFit" for a column in the Excel file format. This feature is only available at runtime from within Excel.
+The width corresponds to the column width value that is specified in Excel. It is approximately equal to the length of a string in the default font of Calibri 11. Unfortunately, there is no way to specify "AutoFit" for a column in the Excel file format. This feature is only available at runtime from within Excel.
 
 As usual the C<$format> parameter is optional, for additional information, see L<CELL FORMATTING>. If you wish to set the format without changing the width you can pass C<undef> as the width parameter:
 
@@ -2720,7 +2720,7 @@ or after the Format has been constructed by means of the C<set_format_properties
 You can also store the properties in one or more named hashes and pass them to the required method:
 
     my %font = (
-        font  => 'Arial',
+        font  => 'Calibri',
         size  => 12,
         color => 'blue',
         bold  => 1,
@@ -2741,7 +2741,7 @@ The provision of two ways of setting properties might lead you to wonder which i
 The Perl/Tk style of adding properties is also supported:
 
     my %font = (
-        -font  => 'Arial',
+        -font  => 'Calibri',
         -size  => 12,
         -color => 'blue',
         -bold  => 1,
@@ -2752,7 +2752,7 @@ The Perl/Tk style of adding properties is also supported:
 
 =head2 Working with formats
 
-The default format is Arial 10 with all other properties off.
+The default format is Calibri 11 with all other properties off.
 
 Each unique format in Excel::Writer::XLSX must have a corresponding Format object. It isn't possible to use a Format with a write() method and then redefine the Format for use at a later stage. This is because a Format is applied to a cell not in its current state but in its final state. Consider the following example:
 
@@ -2833,7 +2833,7 @@ However, this method is here mainly for legacy reasons. It is preferable to set 
 
 =head2 set_font( $fontname )
 
-    Default state:      Font is Arial
+    Default state:      Font is Calibri
     Default action:     None
     Valid args:         Any valid font name
 
@@ -2841,7 +2841,7 @@ Specify the font used:
 
     $format->set_font('Times New Roman');
 
-Excel can only display fonts that are installed on the system that it is running on. Therefore it is best to use the fonts that come as standard such as 'Arial', 'Times New Roman' and 'Courier New'. See also the Fonts worksheet created by formats.pl
+Excel can only display fonts that are installed on the system that it is running on. Therefore it is best to use the fonts that come as standard such as 'Calibri', 'Times New Roman' and 'Courier New'. See also the Fonts worksheet created by formats.pl
 
 
 
@@ -3504,7 +3504,7 @@ Excel provides a colour palette of 56 colours. In Excel::Writer::XLSX these colo
 
     my $format = $workbook->add_format(
                                         color => 12, # index for blue
-                                        font  => 'Arial',
+                                        font  => 'Calibri',
                                         size  => 12,
                                         bold  => 1,
                                      );
