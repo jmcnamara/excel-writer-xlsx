@@ -577,7 +577,7 @@ The following methods are available through a new worksheet:
     insert_image()
     insert_chart()
     data_validation()
-    conditional_format()
+    conditional_formatting()
     get_name()
     activate()
     select()
@@ -1579,9 +1579,9 @@ See also the C<data_validate.pl> program in the examples directory of the distro
 
 
 
-=head2 conditional_format()
+=head2 conditional_formatting()
 
-The C<conditional_format()> method is used to add formatting to a cell or range of cells based on user defined criteria.
+The C<conditional_formatting()> method is used to add formatting to a cell or range of cells based on user defined criteria.
 
     $worksheet->conditional_formatting( 'A1:J10',
         {
@@ -4212,24 +4212,24 @@ For example the following criteria is used to highlight cells >= 50 in red in th
 
 
 
-=head2 conditional_format( $row, $col, { parameter => 'value', ... } )
+=head2 conditional_formatting( $row, $col, { parameter => 'value', ... } )
 
-The C<conditional_format()> method is used to apply formatting  based on used defined criteria to an Excel::Writer::XLSX file.
+The C<conditional_formatting()> method is used to apply formatting  based on used defined criteria to an Excel::Writer::XLSX file.
 
 It can be applied to a single cell or a range of cells. You can pass 3 parameters such as C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
 
-    $worksheet->conditional_format( 0, 0,       {...} );
-    $worksheet->conditional_format( 0, 0, 4, 1, {...} );
+    $worksheet->conditional_formatting( 0, 0,       {...} );
+    $worksheet->conditional_formatting( 0, 0, 4, 1, {...} );
 
     # Which are the same as:
 
-    $worksheet->conditional_format( 'A1',       {...} );
-    $worksheet->conditional_format( 'A1:B5',    {...} );
+    $worksheet->conditional_formatting( 'A1',       {...} );
+    $worksheet->conditional_formatting( 'A1:B5',    {...} );
 
 See also the note about L<Cell notation> for more information.
 
 
-The last parameter in C<conditional_format()> must be a hash ref containing the parameters that describe the type and style of the data validation. The main parameters are:
+The last parameter in C<conditional_formatting()> must be a hash ref containing the parameters that describe the type and style of the data validation. The main parameters are:
 
     type
     format
@@ -4242,7 +4242,7 @@ Additional parameters which are used for specific conditional format types are s
 
 =head2 type
 
-This parameter is passed in a hash ref to C<conditional_format()>.
+This parameter is passed in a hash ref to C<conditional_formatting()>.
 
 The C<type> parameter is used to set the type of conditional formatting that you wish to apply. It is always required and it has no default value. Allowable C<type> values and their associated parameters are:
 
@@ -5314,7 +5314,7 @@ It support all of the features of Spreadsheet::WriteExcel with some minor differ
     insert_image()              Yes/Partial, see docs.
     insert_chart()              Yes
     data_validation()           Yes
-    conditional_format()        Yes. Not in Spreadsheet::WriteExcel.
+    conditional_formatting()    Yes. Not in Spreadsheet::WriteExcel.
     get_name()                  Yes
     activate()                  Yes
     select()                    Yes
