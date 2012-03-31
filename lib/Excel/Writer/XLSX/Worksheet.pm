@@ -3298,6 +3298,7 @@ sub conditional_formatting {
         min_color => 1,
         mid_color => 1,
         max_color => 1,
+        bar_color => 1,
     );
 
     # Check for valid input parameters.

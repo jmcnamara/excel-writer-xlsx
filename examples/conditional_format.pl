@@ -21,6 +21,8 @@ my $worksheet3 = $workbook->add_worksheet();
 my $worksheet4 = $workbook->add_worksheet();
 my $worksheet5 = $workbook->add_worksheet();
 my $worksheet6 = $workbook->add_worksheet();
+my $worksheet7 = $workbook->add_worksheet();
+my $worksheet8 = $workbook->add_worksheet();
 
 
 # Light red fill with dark red text.
@@ -194,42 +196,119 @@ $worksheet5->conditional_formatting( 'B3:K12',
 );
 
 
-
 ###############################################################################
 #
 # Example 6.
 #
-$caption = 'Examples of color scales and data bars.';
+$caption = 'Cells with values >= 50 are in light red. '
+  . 'Values < 50 are in light green. Non-contiguous ranges.';
+
+# Write the data.
+$worksheet6->write( 'A1', $caption );
+$worksheet6->write_col( 'B3', $data );
+
+# Write a conditional format over a range.
+$worksheet6->conditional_formatting( 'B3:K6,B9:K12',
+    {
+        type     => 'cell',
+        criteria => '>=',
+        value    => 50,
+        format   => $format1,
+    }
+);
+
+# Write another conditional format over the same range.
+$worksheet6->conditional_formatting( 'B3:K6,B9:K12',
+    {
+        type     => 'cell',
+        criteria => '<',
+        value    => 50,
+        format   => $format2,
+    }
+);
+
+
+###############################################################################
+#
+# Example 7.
+#
+$caption = 'Examples of color scales and data bars. Default colors.';
 
 $data = [ 1 .. 12 ];
 
-$worksheet6->write( 'A1', $caption );
+$worksheet7->write( 'A1', $caption );
 
-$worksheet6->write    ( 'B2', "2 Color Scale" );
-$worksheet6->write_col( 'B3', $data );
+$worksheet7->write    ( 'B2', "2 Color Scale" );
+$worksheet7->write_col( 'B3', $data );
 
-$worksheet6->write    ( 'D2', "3 Color Scale" );
-$worksheet6->write_col( 'D3', $data );
+$worksheet7->write    ( 'D2', "3 Color Scale" );
+$worksheet7->write_col( 'D3', $data );
 
-$worksheet6->write    ( 'F2', "Data Bars" );
-$worksheet6->write_col( 'F3', $data );
+$worksheet7->write    ( 'F2', "Data Bars" );
+$worksheet7->write_col( 'F3', $data );
 
 
-$worksheet6->conditional_formatting( 'B3:B14',
+$worksheet7->conditional_formatting( 'B3:B14',
     {
         type => '2_color_scale',
     }
 );
 
-$worksheet6->conditional_formatting( 'D3:D14',
+$worksheet7->conditional_formatting( 'D3:D14',
     {
         type => '3_color_scale',
     }
 );
 
-$worksheet6->conditional_formatting( 'F3:F14',
+$worksheet7->conditional_formatting( 'F3:F14',
     {
         type => 'data_bar',
+    }
+);
+
+
+###############################################################################
+#
+# Example 8.
+#
+$caption = 'Examples of color scales and data bars. Modified colors.';
+
+$data = [ 1 .. 12 ];
+
+$worksheet8->write( 'A1', $caption );
+
+$worksheet8->write    ( 'B2', "2 Color Scale" );
+$worksheet8->write_col( 'B3', $data );
+
+$worksheet8->write    ( 'D2', "3 Color Scale" );
+$worksheet8->write_col( 'D3', $data );
+
+$worksheet8->write    ( 'F2', "Data Bars" );
+$worksheet8->write_col( 'F3', $data );
+
+
+$worksheet8->conditional_formatting( 'B3:B14',
+    {
+        type      => '2_color_scale',
+        min_color => "#FF0000",
+        max_color => "#00FF00",
+
+    }
+);
+
+$worksheet8->conditional_formatting( 'D3:D14',
+    {
+        type      => '3_color_scale',
+        min_color => "#C5D9F1",
+        mid_color => "#8DB4E3",
+        max_color => "#538ED5",
+    }
+);
+
+$worksheet8->conditional_formatting( 'F3:F14',
+    {
+        type      => 'data_bar',
+        bar_color => '#63C384'
     }
 );
 

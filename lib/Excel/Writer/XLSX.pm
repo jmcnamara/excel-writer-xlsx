@@ -4228,6 +4228,9 @@ It can be applied to a single cell or a range of cells. You can pass 3 parameter
 
 See also the note about L<Cell notation> for more information.
 
+Using C<A1> style notation is is also possible to specify non-contiguous ranges, separated by a comma. For example:
+
+    $worksheet->conditional_formatting( 'A1:D5,A8:D12', {...} );
 
 The last parameter in C<conditional_formatting()> must be a hash ref containing the parameters that describe the type and style of the data validation. The main parameters are:
 
@@ -4237,6 +4240,19 @@ The last parameter in C<conditional_formatting()> must be a hash ref containing 
     value
     minimum
     maximum
+
+Other, less used parameters are:
+
+    min_type
+    mid_type
+    max_type
+    min_value
+    mid_value
+    max_value
+    min_color
+    mid_color
+    max_color
+    bar_color
 
 Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
 
@@ -4654,6 +4670,53 @@ $worksheet->conditional_formatting( 'A1:A4',
 );
 
 The formula is specified in the C<criteria>.
+
+
+=head2 min_type, mid_type, max_type
+
+The C<min_type> and C<max_type> properties are available when the conditional formatting type is C<2_color_scale>, C<3_color_scale> or C<data_bar>. The C<mid_type> is available for C<3_color_scale>. The properties are used as follows:
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type      => '2_color_scale',
+            min_type  => 'percent',
+            max_type  => 'percent',
+        }
+    );
+
+The available min/mid/max types are:
+
+    num
+    percent
+    percentile
+    formula
+
+
+=head2 min_value, mid_value, max_value
+
+The C<min_value> and C<max_value> properties are available when the conditional formatting type is C<2_color_scale>, C<3_color_scale> or C<data_bar>. The C<mid_value> is available for C<3_color_scale>. The properties are used as follows:
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type       => '2_color_scale',
+            min_value  => 10,
+            max_value  => 90,
+        }
+    );
+
+=head2 min_color, mid_color,  max_color, bar_color
+
+The C<min_color> and C<max_color> properties are available when the conditional formatting type is C<2_color_scale>, C<3_color_scale> or C<data_bar>. The C<mid_color> is available for C<3_color_scale>. The properties are used as follows:
+
+    $worksheet->conditional_formatting( 'A1:A12',
+        {
+            type      => '2_color_scale',
+            min_color => "#C5D9F1",
+            max_color => "#538ED5",
+        }
+    );
+
+The color can be specifies as an Excel::Write::Excel color index or, more usefully, as a Html style RGB hex number, as shown above.
 
 
 =head2 Conditional Formatting Examples
