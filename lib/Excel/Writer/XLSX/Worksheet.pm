@@ -2784,11 +2784,17 @@ sub set_row {
     my $hidden    = shift || 0;     # Hidden flag.
     my $level     = shift || 0;     # Outline level.
     my $collapsed = shift || 0;     # Collapsed row.
+    my $min_col   = 0;
 
     return unless defined $row;     # Ensure at least $row is specified.
 
-    # Check that row and col are valid and store max and min values.
-    return -2 if $self->_check_dimensions( $row, 0 );
+    # Use min col in _check_dimensions(). Default to 0 if undefined.
+    if ( defined $self->{_dim_colmin} ) {
+        $min_col = $self->{_dim_colmin};
+    }
+
+    # Check that row is valid.
+    return -2 if $self->_check_dimensions( $row, $min_col );
 
     $height = 15 if !defined $height;
 
