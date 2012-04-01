@@ -6219,7 +6219,8 @@ sub _write_autofilters {
         my @tokens = @{ $self->{_filter_cols}->{$col} };
         my $type   = $self->{_filter_type}->{$col};
 
-        $self->_write_filter_column( $col, $type, \@tokens );
+        # Filters are relative to first column in the autofiter.
+        $self->_write_filter_column( $col - $col1, $type, \@tokens );
     }
 }
 
