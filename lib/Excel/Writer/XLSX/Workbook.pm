@@ -85,6 +85,13 @@ sub new {
     $self->{_localtime}          = [ localtime() ];
     $self->{_num_comment_files}  = 0;
     $self->{_optimization}       = 0;
+    $self->{_x_window}           = 240;
+    $self->{_y_window}           = 15;
+    $self->{_window_width}       = 16095;
+    $self->{_window_height}      = 9660;
+    $self->{_tab_ratio}          = 500;
+
+
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -1995,11 +2002,11 @@ sub _write_book_views {
 sub _write_workbook_view {
 
     my $self          = shift;
-    my $x_window      = 240;
-    my $y_window      = 15;
-    my $window_width  = 16095;
-    my $window_height = 9660;
-    my $tab_ratio     = 500;
+    my $x_window      = $self->{_x_window};
+    my $y_window      = $self->{_y_window};
+    my $window_width  = $self->{_window_width};
+    my $window_height = $self->{_window_height};
+    my $tab_ratio     = $self->{_tab_ratio};
     my $active_tab    = $self->{_activesheet};
     my $first_sheet   = $self->{_firstsheet};
 
@@ -2009,6 +2016,9 @@ sub _write_workbook_view {
         'windowWidth'  => $window_width,
         'windowHeight' => $window_height,
     );
+
+    # Store the tabRatio attribute when it isn't the default.
+    push @attributes, ( tabRatio => $tab_ratio ) if $tab_ratio != 500;
 
     # Store the firstSheet attribute when it isn't the default.
     push @attributes, ( firstSheet => $first_sheet ) if $first_sheet > 0;
