@@ -5,6 +5,22 @@ Revision history for Perl module Excel::Writer::XLSX.
 ! Bug fix.
 
 
+0.47 April 10 2012
+
+    + Additional conditional formatting options such as color, type and value
+      for 2_color_scale, 3_color_scale and data_bar. Added option for non-
+      contiguous data ranges as well.
+
+    + Additional chart data label parameters such as position, leader lines
+      and percentage. Initial patch by George E. Tarrant III.
+
+    ! Fixed for Autofilter filter_column() offset bug reported by 
+      Krishna Rajendran.
+
+    ! Fix for write_url() where url contains invalid whitespace, RT #75808,
+      reported by Oleg G. The write_url() method now throws a warning and
+      rejects the invalid url to avoid file corruption. 
+
 0.46 February 10 2012
 
     ! Fix for x-axis major/minor units in scatter charts.

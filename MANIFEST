@@ -122,6 +122,7 @@ t/chart/sub_write_ax_pos.t
 t/chart/sub_write_chart_space.t
 t/chart/sub_write_cross_ax.t
 t/chart/sub_write_crosses.t
+t/chart/sub_write_d_lbls.t
 t/chart/sub_write_format_code.t
 t/chart/sub_write_idx.t
 t/chart/sub_write_label_align.t
@@ -243,6 +244,7 @@ t/regression/autofilter03.t
 t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
+t/regression/autofilter07.t
 t/regression/chart_area01.t
 t/regression/chart_axis01.t
 t/regression/chart_axis02.t
@@ -310,6 +312,7 @@ t/regression/chart_format12.t
 t/regression/chart_format13.t
 t/regression/chart_format14.t
 t/regression/chart_format15.t
+t/regression/chart_format16.t
 t/regression/chart_line01.t
 t/regression/chart_pie01.t
 t/regression/chart_scatter01.t
@@ -470,6 +473,7 @@ t/regression/xlsx_files/autofilter03.xlsx
 t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
+t/regression/xlsx_files/autofilter07.xlsx
 t/regression/xlsx_files/chart_area01.xlsx
 t/regression/xlsx_files/chart_axis01.xlsx
 t/regression/xlsx_files/chart_axis02.xlsx
@@ -537,6 +541,7 @@ t/regression/xlsx_files/chart_format12.xlsx
 t/regression/xlsx_files/chart_format13.xlsx
 t/regression/xlsx_files/chart_format14.xlsx
 t/regression/xlsx_files/chart_format15.xlsx
+t/regression/xlsx_files/chart_format16.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_scatter01.xlsx
@@ -782,6 +787,10 @@ t/worksheet/worksheet_cond_format_12.t
 t/worksheet/worksheet_cond_format_13.t
 t/worksheet/worksheet_cond_format_14.t
 t/worksheet/worksheet_cond_format_15.t
+t/worksheet/worksheet_cond_format_16.t
+t/worksheet/worksheet_cond_format_17.t
+t/worksheet/worksheet_cond_format_18.t
+t/worksheet/worksheet_cond_format_19.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t
