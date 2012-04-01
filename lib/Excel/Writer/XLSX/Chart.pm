@@ -938,6 +938,31 @@ sub _get_labels_properties {
 
     return undef unless $labels;
 
+    # Map user defined label positions to Excel positions.
+    if ( my $position = $labels->{position} ) {
+
+        my %positions = (
+            center      => 'ctr',
+            right       => 'r',
+            left        => 'l',
+            top         => 't',
+            above       => 't',
+            bottom      => 'b',
+            below       => 'b',
+            inside_end  => 'inEnd',
+            outside_end => 'outEnd',
+            best_fit    => 'bestFit',
+        );
+
+        if ( exists $positions{$position} ) {
+            $labels->{position} = $positions{$position};
+        }
+        else {
+            carp "Unknown label position '$position'";
+            $labels->{position} = $positions{$position};
+        }
+    }
+
     return $labels;
 }
 
@@ -3412,6 +3437,9 @@ sub _write_d_lbls {
 
     $self->{_writer}->startTag( 'c:dLbls' );
 
+    # Write the c:dLblPos element.
+    $self->_write_d_lbl_pos( $labels->{position} ) if $labels->{position};
+
     # Write the c:showVal element.
     $self->_write_show_val() if $labels->{value};
 
@@ -3420,6 +3448,12 @@ sub _write_d_lbls {
 
     # Write the c:showSerName element.
     $self->_write_show_ser_name() if $labels->{series_name};
+
+    # Write the c:showPercent element.
+    $self->_write_show_percent() if $labels->{percentage};
+
+    # Write the c:showLeaderLines element.
+    $self->_write_show_leader_lines() if $labels->{leader_lines};
 
     $self->{_writer}->endTag( 'c:dLbls' );
 }
@@ -3473,6 +3507,57 @@ sub _write_show_ser_name {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:showSerName', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_percent()
+#
+# Write the <c:showPercent> element.
+#
+sub _write_show_percent {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:showPercent', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_leader_lines()
+#
+# Write the <c:showLeaderLines> element.
+#
+sub _write_show_leader_lines {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:showLeaderLines', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_d_lbl_pos()
+#
+# Write the <c:dLblPos> element.
+#
+sub _write_d_lbl_pos {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:dLblPos', @attributes );
 }
 
 
@@ -4178,6 +4263,9 @@ The following properties can be set for C<data_labels> formats in a chart.
     value
     category
     series_name
+    position
+    leader_lines
+    percentage
 
 
 The C<value> property turns on the I<Value> data label for a series.
@@ -4200,6 +4288,40 @@ The C<series_name> property turns on the I<Series Name> data label for a series.
     $chart->add_series(
         values      => '=Sheet1!$B$1:$B$5',
         data_labels => { series_name => 1 },
+    );
+
+The C<position> property is used to position the data label for a series.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { value => 1, position => 'center' },
+    );
+
+Valid positions are:
+
+    center
+    right
+    left
+    top
+    bottom
+    above           # Same as top
+    below           # Same as bottom
+    inside_end      # Pie chart mainly.
+    outside_end     # Pie chart mainly.
+    best_fit        # Pie chart mainly.
+
+The C<percentage> property is used to turn on the I<Percentage> for the data label for a series. It is mainly used for pie charts.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { percentage => 1 },
+    );
+
+The C<leader_lines> property is used to turn on  I<Leader Lines> for the data label for a series. It is mainly used for pie charts.
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { value => 1, leader_lines => 1 },
     );
 
 
