@@ -1155,6 +1155,8 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
     $worksheet->write_url( 'A14', "external:c:/temp/foo.xlsx" );
     $worksheet->write_url( 'A15', 'external://NETWORK/share/foo.xlsx' );
 
+Note, Excel doesn't allow white space in hyperlink urls. Urls with whitespace will generate a warning and be ignored.
+
 See also, the note about L<Cell notation>.
 
 

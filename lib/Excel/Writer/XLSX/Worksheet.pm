@@ -2474,6 +2474,7 @@ sub outline_settings {
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
 #         -3 : long string truncated to 32767 chars
+#         -4 : url contains whitespace
 #
 sub write_url {
 
@@ -2542,6 +2543,13 @@ sub write_url {
     # External links to URLs and to other Excel workbooks have slightly
     # different characteristics that we have to account for.
     if ( $link_type == 1 ) {
+
+        # Check for white space in url.
+        if ($url =~ /[\s\x00]/) {
+            carp "White space in url '$url' is not allowed by Excel";
+            return -4;
+
+        }
 
         # Ordinary URL style external links don't have a "location" string.
         $str = undef;
@@ -6225,7 +6233,7 @@ sub _write_autofilters {
         my @tokens = @{ $self->{_filter_cols}->{$col} };
         my $type   = $self->{_filter_type}->{$col};
 
-        # Filters are relative to first column in the autofiter.
+        # Filters are relative to first column in the autofilter.
         $self->_write_filter_column( $col - $col1, $type, \@tokens );
     }
 }
