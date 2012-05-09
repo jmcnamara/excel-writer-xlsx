@@ -4674,8 +4674,6 @@ sub _auto_locate_connectors {
 
     $shape->{connect} = $connector_shapes->{ $shape_base } // 0;
     
-    warn "$shape->{type}, $shape->{connect}\n";
-    
     return unless $shape->{connect};
 
     # Both ends have to be connected, to size it
