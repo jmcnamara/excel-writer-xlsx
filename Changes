@@ -4,6 +4,10 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.48 XXX XX 2012
+
+    + Added stacked and percent_stacked chart subtypes to Area charts.
+
 
 0.47 April 10 2012
 

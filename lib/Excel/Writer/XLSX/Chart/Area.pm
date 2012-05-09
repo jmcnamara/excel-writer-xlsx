@@ -35,6 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
+    $self->{_subtype}       = $self->{_subtype} || 'standard';
     $self->{_cross_between} = 'midCat';
 
     bless $self, $class;
@@ -66,17 +67,48 @@ sub _write_chart_type {
 sub _write_area_chart {
 
     my $self = shift;
+    my $subtype = $self->{_subtype};
+
+    $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
 
     $self->{_writer}->startTag( 'c:areaChart' );
 
     # Write the c:grouping element.
-    $self->_write_grouping( 'standard' );
+    $self->_write_grouping( $subtype );
 
     # Write the series elements.
     $self->_write_series();
 
 
     $self->{_writer}->endTag( 'c:areaChart' );
+}
+
+
+##############################################################################
+#
+# _write_num_fmt()
+#
+# Over-ridden to add % format. TODO. This will be refactored back up to the
+# SUPER class later.
+#
+# Write the <c:numFmt> element.
+#
+sub _write_number_format {
+
+    my $self          = shift;
+    my $format_code   = shift || 'General';
+    my $source_linked = 1;
+
+    if ($self->{_subtype} eq 'percent_stacked') {
+        $format_code = '0%';
+    }
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
 }
 
 
@@ -138,7 +170,15 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 =head1 Area Chart Methods
 
-There aren't currently any area chart specific methods. See the TODO section of L<Excel::Writer::XLSX::Chart>.
+
+The C<Area> chart module also supports the following sub-types:
+
+    stacked
+    percent_stacked
+
+These can be specified at creation time via the C<add_chart()> Worksheet method:
+
+    my $chart = $workbook->add_chart( type => 'area', subtype => 'stacked' );
 
 =head1 EXAMPLE
 
