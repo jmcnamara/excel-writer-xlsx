@@ -142,6 +142,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     add_worksheet()
     add_format()
     add_chart()
+    add_shape()
     close()
     set_properties()
     define_name()
@@ -331,8 +332,18 @@ Specifies that the Chart object will be inserted in a worksheet via the C<insert
 
 See Excel::Writer::XLSX::Chart for details on how to configure the chart object once it is created. See also the C<chart_*.pl> programs in the examples directory of the distro.
 
+=head2 add_shape( %properties )
 
+The C<add_shape()> method can be used to create new shapes that may be inserted into a worksheet.
+You can either define the properties at creation time via a hash of property values or later via method calls.
 
+    # Set properties at creation
+    $plus = $workbook->add_shape( type => 'plus', id=>3, width=> $pw, height => $ph );
+    $rect = $workbook->add_shape( %props );    
+    $smiley = $workbook->add_shape();            # Default rectangle shape; set properties later
+
+See L<Excel::Writer::XLSX::Shape> for details on how to configure the shape object once it is created. 
+See also the C<shape*.pl> programs in the examples directory of the distro.
 
 =head2 close()
 
@@ -576,6 +587,7 @@ The following methods are available through a new worksheet:
     add_write_handler()
     insert_image()
     insert_chart()
+    insert_shape()
     data_validation()
     conditional_formatting()
     get_name()
@@ -1552,8 +1564,31 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted ima
     # Scale the width by 120% and the height by 150%
     $worksheet->insert_chart( 'E2', $chart, 0, 0, 1.2, 1.5 );
 
+=head2 insert_shape( $row, $col, $shape, $x, $y, $scale_x, $scale_y )
 
+This method can be used to insert a Shape object into a worksheet. The Shape must be created by the C<add_shape()> Workbook method.
 
+    my $shape = $workbook->add_shape( name => 'My Shape', type => 'plus' );
+
+    # Configure the shape.
+    $shape->{text} = 'foo'
+    ...
+
+    # Insert the shape into the a worksheet.
+    $worksheet->insert_shape( 'E2', $shape );
+
+See C<add_shape()> for details on how to create the Shape object and L<Excel::Writer::XLSX::Shape> for details on how to configure it. See also the C<shape*.pl> programs in the examples directory of the distro.
+
+The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
+
+The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
+
+    $worksheet1->insert_shape( 'E2', $chart, 3, 3 );
+
+The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted shape horizontally and vertically:
+
+    # Scale the width by 120% and the height by 150%
+    $worksheet->insert_shape( 'E2', $shape, 0, 0, 1.2, 1.5 );
 
 =head2 data_validation()
 
