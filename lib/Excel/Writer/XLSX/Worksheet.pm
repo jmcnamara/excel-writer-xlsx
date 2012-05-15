@@ -4587,7 +4587,8 @@ sub insert_shape {
     $shape->{scale_y}       = $_[6] || 1;
 
     while (1) {
-        my $id = $shape->{id} // 0;
+        my $id = $shape->{id};
+        $id = 0 unless defined $id;
         my $used = exists $self->{_shape_hash}->{ $id } ? 1 : 0;
         # test if Shape ID already used.  Assign a new one
         last if !$used and ($id != 0);
@@ -4595,7 +4596,8 @@ sub insert_shape {
     }
 
     # Verify we are being asked to insert a shape object
-    croak "Not a Shape object in insert_shape()" unless $shape->isa( 'Excel::Writer::XLSX::Shape' );
+    croak "Not a Shape object in insert_shape()" 
+        unless $shape->isa( 'Excel::Writer::XLSX::Shape' );
     croak "Insufficient arguments in insert_shape()" unless @_ >= 3;
 
     # For connectors: change x/y coordinate based on location of connected shapes
@@ -4640,7 +4642,8 @@ sub _prepare_shape {
         $drawing->{_embedded} = 1;
         $self->{_drawing} = $drawing;
 
-        push @{ $self->{_external_drawing_links} }, [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+        push @{ $self->{_external_drawing_links} }, 
+            [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
         $drawing = $self->{_drawing};
@@ -4650,7 +4653,9 @@ sub _prepare_shape {
     _validate_shape($shape, $index);
 
     $self->_position_shape_emus($shape);
-    my @dimensions = map { $shape->{$_} } qw[column_start row_start x1 y1 column_end row_end x2 y2 x_abs y_abs width_emu height_emu];
+    my @dimensions = 
+        map { $shape->{$_} } 
+        qw[column_start row_start x1 y1 column_end row_end x2 y2 x_abs y_abs width_emu height_emu];
     
     my $drawing_type = 3;               # a shape, not a chart or an image
     $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{name}, $shape );
@@ -4666,13 +4671,15 @@ sub _auto_locate_connectors {
     my ($self, $shape) = @_;
 
     # Create a hash of valid connector shapes
-    my @list  = qw[straightConnector Connector bentConnector curvedConnector line];
-    my $connector_shapes = { map {$_, 1} @list };
+    my $connector_shapes = { 
+        map {$_, 1} 
+        qw[straightConnector Connector bentConnector curvedConnector line]
+    };
 
     my $shape_base = $shape->{type};
     chop $shape_base;		# Remove number of segments from end of type
 
-    $shape->{connect} = $connector_shapes->{ $shape_base } // 0;
+    $shape->{connect} = $connector_shapes->{ $shape_base } ? 1 : 0;
     
     return unless $shape->{connect};
 
@@ -4706,8 +4713,14 @@ sub _auto_locate_connectors {
             my $ey = $els->{y_offset};
             $shape->{width} = abs( int($emidx-$smidx) );
             $shape->{x_offset} = int(min($smidx, $emidx));
-            $shape->{height} = abs(int( $els->{y_offset} - ($sls->{y_offset} + $sls->{height}) ));
-            $shape->{y_offset} = int(min(($sls->{y_offset} + $sls->{height}), $els->{y_offset}));
+            $shape->{height} = 
+                abs(
+                    int( $els->{y_offset} - ($sls->{y_offset} + $sls->{height}) )
+                );
+            $shape->{y_offset} = 
+                int(
+                    min(($sls->{y_offset} + $sls->{height}), $els->{y_offset})
+                );
             $shape->{flipH} = ($smidx < $emidx) ? 1 : 0;
             $shape->{rot} = 90;
             if (($sy > $ey) and ($smidx < $emidx)) {
@@ -4730,7 +4743,10 @@ sub _auto_locate_connectors {
         };
 
         /rl/  && do {
-            $shape->{width} = abs( int( $els->{x_offset} - ($sls->{x_offset} + $sls->{width}) ) );
+            $shape->{width} = 
+                abs( 
+                    int( $els->{x_offset} - ($sls->{x_offset} + $sls->{width}) )
+                );
             $shape->{height} = abs( int($emidy-$smidy) );
             $shape->{x_offset} = min($sls->{x_offset} + $sls->{width}, $els->{x_offset});
             $shape->{y_offset} = min($smidy, $emidy);
@@ -4756,8 +4772,10 @@ sub _auto_locate_connectors {
 #
 sub _validate_shape {
     my ($shape, $index)= @_;
-    croak "Shape $index ($shape->{type}) alignment ($shape->{align}), not in ('l', 'ctr', 'r', 'just')\n" unless grep (/^$shape->{align}$/, qw[l ctr r just]);
-    croak "Shape $index ($shape->{type}) vertical alignment ($shape->{valign}), not ('t', 'ctr', 'b')\n" unless grep (/^$shape->{valign}$/, qw[t ctr b]);
+    croak "Shape $index ($shape->{type}) alignment ($shape->{align}), not in ('l', 'ctr', 'r', 'just')\n" 
+        unless grep (/^$shape->{align}$/, qw[l ctr r just]);
+    croak "Shape $index ($shape->{type}) vertical alignment ($shape->{valign}), not ('t', 'ctr', 'b')\n" 
+        unless grep (/^$shape->{valign}$/, qw[t ctr b]);
 }
 
 ###############################################################################
@@ -7677,7 +7695,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-ï¿½ MM-MMXII, John McNamara.
+© MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

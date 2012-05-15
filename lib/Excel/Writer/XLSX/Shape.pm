@@ -33,53 +33,96 @@ sub new {
 
     $self->{name} = undef;
     $self->{type} = 'rect';
-    $self->{connect} = 0;                   # isa Connector shape.  1/0 Value is a hash lookup from type
-    $self->{drawing} = 0;                   # isa Drawing, always 0, since a single shape never fills an entire sheet
-    $self->{editAs} = '';                   # OneCell or Absolute: options to move and/or size with cells
+
+    # isa Connector shape.  1/0 Value is a hash lookup from type
+    $self->{connect} = 0;
+
+    # isa Drawing, always 0, since a single shape never fills an entire sheet
+    $self->{drawing} = 0;
+
+    # OneCell or Absolute: options to move and/or size with cells
+    $self->{editAs} = '';
+
+    # Auto-incremented, unless supplied by user.
+    $self->{id} = 0;
+
     $self->{text} = 0;
-    $self->{id} = 0;                        # Auto-incremented, unless supplied by user.
-    $self->{element} = -1;                  # Index to _shapes array when inserted
-    $self->{format} = '';                   # Workbook format (for font, text decoration)
 
-    $self->{start} = undef;                 # Shape ID of starting connection, if any
-    $self->{start_idx} = undef;             # Shape vertice, starts at 0, numbered clockwise from 12 oclock
-    $self->{end} = undef;                   # Shape ID of ending connection, if any
-    $self->{end_idx} = undef;               # End shape vertice
-    $self->{adjustments} = [];              # Number and size of adjustments for shapes (usually connectors)
-    $self->{start_side} = '';               # t)op, b)ottom, l)eft, or r)ight
-    $self->{end_side} = '';
+    # Index to _shapes array when inserted
+    $self->{element} = -1;
 
-    $self->{flipH} = 0;                     # Flip shape Horizontally. eg. arrow left to arrow right
-    $self->{flipV} = 0;                     # Flip shape Vertically. eg. up arrow to down arrow
-    $self->{rot} = 0;                       # shape rotation (in degrees 0-360)
-    $self->{txBox} = 0;                     # Really just a rectangle with text
-    $self->{line} = '000000';               # Shape outline color, or 0 for noFill (default black)
-    $self->{line_type} = '';                # dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot
-    $self->{line_weight} = 1;               # Line weight (integer)
-    $self->{fill} = 0;                      # Shape fill color, or 0 for noFill (default noFill)
+    # Workbook format (for font, text decoration)
+    $self->{format} = '';
 
-    $self->{format} = {};
+    # Shape ID of starting connection, if any
+    $self->{start} = undef;
+
+    # Shape vertice, starts at 0, numbered clockwise from 12 oclock
+    $self->{start_idx} = undef;
+
+    $self->{end}     = undef;
+    $self->{end_idx} = undef;
+
+    # Number and size of adjustments for shapes (usually connectors)
+    $self->{adjustments} = [];
+
+    # t)op, b)ottom, l)eft, or r)ight
+    $self->{start_side} = '';
+    $self->{end_side}   = '';
+
+    # Flip shape Horizontally. eg. arrow left to arrow right
+    $self->{flipH} = 0;
+
+    # Flip shape Vertically. eg. up arrow to down arrow
+    $self->{flipV} = 0;
+
+    # shape rotation (in degrees 0-360)
+    $self->{rot} = 0;
+
+    # Really just a rectangle with text
+    $self->{txBox} = 0;
+
+    # Shape outline color, or 0 for noFill (default black)
+    $self->{line} = '000000';
+
+    # dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot
+    $self->{line_type} = '';
+
+    # Line weight (integer)
+    $self->{line_weight} = 1;
+
+    # Shape fill color, or 0 for noFill (default noFill)
+    $self->{fill} = 0;
+
+    $self->{format}   = {};
     $self->{typeface} = 'Arial';
-    $self->{valign} = 'ctr';                # t, ctr, b
-    $self->{align} = 'ctr';                 # l, ctr, r, just
 
-    $self->{x_offset}   = 0;
-    $self->{y_offset}   = 0;
-    $self->{scale_x}    = 1;
-    $self->{scale_y}    = 1;
-    $self->{width}      = 50;               # Default size, which can be modified a/o scaled
-    $self->{height}     = 50;
+    # t, ctr, b
+    $self->{valign} = 'ctr';
 
-    $self->{column_start}  = 0;             # Initial assignment.  May be modified when prepared
-    $self->{row_start}     = 0;
-    $self->{x1}            = 0;
-    $self->{y1}            = 0;
-    $self->{column_end}    = 0;
-    $self->{row_end}       = 0;
-    $self->{x2}            = 0;
-    $self->{y2}            = 0;
-    $self->{x_abs}         = 0;
-    $self->{y_abs}         = 0;
+    # l, ctr, r, just
+    $self->{align} = 'ctr';
+
+    $self->{x_offset} = 0;
+    $self->{y_offset} = 0;
+    $self->{scale_x}  = 1;
+    $self->{scale_y}  = 1;
+
+    # Default size, which can be modified a/o scaled
+    $self->{width}  = 50;
+    $self->{height} = 50;
+
+    # Initial assignment.  May be modified when prepared
+    $self->{column_start} = 0;
+    $self->{row_start}    = 0;
+    $self->{x1}           = 0;
+    $self->{y1}           = 0;
+    $self->{column_end}   = 0;
+    $self->{row_end}      = 0;
+    $self->{x2}           = 0;
+    $self->{y2}           = 0;
+    $self->{x_abs}        = 0;
+    $self->{y_abs}        = 0;
 
     bless $self, $class;
     return $self;
@@ -318,7 +361,7 @@ Dave Clarke dclarke@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXII, John McNamara.
+© MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or 
 modified under the same terms as Perl itself.
