@@ -6,6 +6,9 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.48 XXX XX 2012
 
+    + Fixed bug with Unicode characters in rich strings.
+      Reported by Michiel van Rhee.
+
     + Added stacked and percent_stacked chart subtypes to Area charts.
 
 

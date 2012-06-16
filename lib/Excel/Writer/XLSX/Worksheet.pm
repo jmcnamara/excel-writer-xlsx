@@ -2162,6 +2162,7 @@ sub write_rich_string {
     # Create a temp XML::Writer object and use it to write the rich string
     # XML to a string.
     open my $str_fh, '>', \$str or die "Failed to open filehandle: $!";
+    binmode $str_fh, ':utf8';
 
     my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $str_fh );
 
