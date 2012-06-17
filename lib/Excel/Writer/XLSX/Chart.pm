@@ -84,6 +84,7 @@ sub new {
     $self->{_protection}        = 0;
     $self->{_x_axis}            = {};
     $self->{_y_axis}            = {};
+    $self->{_chart_name}        = '';
 
     bless $self, $class;
     $self->_set_default_properties();

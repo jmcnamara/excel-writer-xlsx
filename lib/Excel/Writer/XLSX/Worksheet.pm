@@ -4315,11 +4315,15 @@ sub _prepare_chart {
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
         $height );
 
+    # Set the chart name for the embedded object if it has been specified.
+    my $name = $chart->{_chart_name};
+
     # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_add_drawing_object( $drawing_type, @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
+            $name );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -4329,7 +4333,8 @@ sub _prepare_chart {
     }
     else {
         my $drawing = $self->{_drawing};
-        $drawing->_add_drawing_object( $drawing_type, @dimensions );
+        $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
+            $name );
 
     }
 

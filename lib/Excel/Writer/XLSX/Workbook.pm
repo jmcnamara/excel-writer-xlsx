@@ -399,6 +399,9 @@ sub add_chart {
     }
     else {
 
+        # Set the embedded chart name if present.
+        $chart->{_chart_name} = $arg{name} if $arg{name};
+
         # Set index to 0 so that the activate() and set_first_sheet() methods
         # point back to the first worksheet if used for embedded charts.
         $chart->{_index}   = 0;

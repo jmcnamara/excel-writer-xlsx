@@ -199,7 +199,7 @@ sub _write_two_cell_anchor {
     if ( $type == 1 ) {
 
         # Write the xdr:graphicFrame element for charts.
-        $self->_write_graphic_frame( $index );
+        $self->_write_graphic_frame( $index, $description );
     }
     else {
 
@@ -435,6 +435,7 @@ sub _write_graphic_frame {
 
     my $self   = shift;
     my $index  = shift;
+    my $name   = shift;
     my $macro  = '';
 
     my @attributes = ( 'macro' => $macro );
@@ -442,7 +443,7 @@ sub _write_graphic_frame {
     $self->{_writer}->startTag( 'xdr:graphicFrame', @attributes );
 
     # Write the xdr:nvGraphicFramePr element.
-    $self->_write_nv_graphic_frame_pr( $index );
+    $self->_write_nv_graphic_frame_pr( $index, $name );
 
     # Write the xdr:xfrm element.
     $self->_write_xfrm();
@@ -462,13 +463,18 @@ sub _write_graphic_frame {
 #
 sub _write_nv_graphic_frame_pr {
 
-    my $self  = shift;
+    my $self   = shift;
     my $index  = shift;
+    my $name   = shift;
+
+    if (!$name) {
+        $name = 'Chart ' . $index;
+    }
 
     $self->{_writer}->startTag( 'xdr:nvGraphicFramePr' );
 
     # Write the xdr:cNvPr element.
-    $self->_write_c_nv_pr( $index + 1, 'Chart ' . $index );
+    $self->_write_c_nv_pr( $index + 1, $name );
 
     # Write the xdr:cNvGraphicFramePr element.
     $self->_write_c_nv_graphic_frame_pr();
