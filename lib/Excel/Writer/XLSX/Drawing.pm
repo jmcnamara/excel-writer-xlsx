@@ -100,7 +100,7 @@ sub _assemble_xml_file {
 #
 # _add_drawing_object()
 #
-# Add a chart or image or shape sub object to the drawing.
+# Add a chart, image or shape sub object to the drawing.
 #
 sub _add_drawing_object {
 
@@ -156,7 +156,7 @@ sub _write_two_cell_anchor {
 
     my $self            = shift;
     my $index           = shift;
-    my $type            = shift;    # 1 Graphic frame, 2 pic, 3 shape
+    my $type            = shift;
     my $col_from        = shift;
     my $row_from        = shift;
     my $col_from_offset = shift;
@@ -179,6 +179,8 @@ sub _write_two_cell_anchor {
     if ( $type == 2 ) {
         push @attributes, ( editAs => 'oneCell' );
     }
+
+    # Add editAs attribute for shapes.
     push @attributes, ( editAs => $shape->{editAs} ) if $shape->{editAs};
 
     $self->{_writer}->startTag( 'xdr:twoCellAnchor', @attributes );
@@ -203,6 +205,8 @@ sub _write_two_cell_anchor {
 
     if ( $type == 1 ) {
 
+        # Graphic frame.
+
         # Write the xdr:graphicFrame element for charts.
         $self->_write_graphic_frame( $index, $description );
     }
@@ -212,8 +216,9 @@ sub _write_two_cell_anchor {
         $self->_write_pic( $index, $col_absolute, $row_absolute, $width,
             $height, $description );
     }
-    else {    # Type == 3 (shape)
-              # Write the xdr:sp element.
+    else {
+
+        # Write the xdr:sp element for shapes.
         $self->_write_sp( $index, $col_absolute, $row_absolute, $width, $height,
             $shape );
     }
@@ -443,10 +448,10 @@ sub _write_ext {
 #
 sub _write_graphic_frame {
 
-    my $self   = shift;
-    my $index  = shift;
-    my $name   = shift;
-    my $macro  = '';
+    my $self  = shift;
+    my $index = shift;
+    my $name  = shift;
+    my $macro = '';
 
     my @attributes = ( 'macro' => $macro );
 
@@ -473,11 +478,11 @@ sub _write_graphic_frame {
 #
 sub _write_nv_graphic_frame_pr {
 
-    my $self   = shift;
-    my $index  = shift;
-    my $name   = shift;
+    my $self  = shift;
+    my $index = shift;
+    my $name  = shift;
 
-    if (!$name) {
+    if ( !$name ) {
         $name = 'Chart ' . $index;
     }
 
@@ -811,17 +816,19 @@ sub _write_nv_sp_pr {
 
     $self->{_writer}->startTag( 'xdr:nvSpPr' );
 
-    my $shape_name = join( ' ', $shape->{type}, $index );
+    my $shape_name = $shape->{type} . ' ' . $index;
+
     $self->_write_c_nv_pr( $shape->{id}, $shape_name );
 
     @attributes = ( 'txBox' => 1 ) if $shape->{txBox};
+
     $self->{_writer}->startTag( 'xdr:cNvSpPr', @attributes );
 
     @attributes = ( noChangeArrowheads => '1' );
+
     $self->{_writer}->emptyTag( 'a:spLocks', @attributes );
 
     $self->{_writer}->endTag( 'xdr:cNvSpPr' );
-
     $self->{_writer}->endTag( 'xdr:nvSpPr' );
 }
 
@@ -850,8 +857,10 @@ sub _write_pic {
     # Write the xdr:blipFill element.
     $self->_write_blip_fill( $index );
 
+    # Pictures are rectangle shapes by default.
+    my $shape = { type => 'rect' };
+
     # Write the xdr:spPr element.
-    my $shape = { type => 'rect' };   # Pictures are rectangle shapes by default
     $self->_write_sp_pr( $col_absolute, $row_absolute, $width, $height,
         $shape );
 
@@ -1002,7 +1011,7 @@ sub _write_a_fill_rect {
 #
 # _write_sp_pr()
 #
-# Write the <xdr:spPr> element, for charts
+# Write the <xdr:spPr> element, for charts.
 #
 sub _write_sp_pr {
 
@@ -1011,9 +1020,7 @@ sub _write_sp_pr {
     my $row_absolute = shift;
     my $width        = shift;
     my $height       = shift;
-    my $shape        = shift;
-
-    $shape = {} unless defined $shape;
+    my $shape        = shift || {};
 
     $self->{_writer}->startTag( 'xdr:spPr' );
 
@@ -1031,7 +1038,7 @@ sub _write_sp_pr {
 #
 # _write_xdr_sp_pr()
 #
-# Write the <xdr:spPr> element, specifically for shapes
+# Write the <xdr:spPr> element for shapes.
 #
 sub _write_xdr_sp_pr {
 
@@ -1043,7 +1050,8 @@ sub _write_xdr_sp_pr {
     my $height       = shift;
     my $shape        = shift;
 
-    my @attributes = ( 'bwMode', 'auto' );
+    my @attributes = ( 'bwMode' => 'auto' );
+
     $self->{_writer}->startTag( 'xdr:spPr', @attributes );
 
     # Write the a:xfrm element.
@@ -1054,7 +1062,8 @@ sub _write_xdr_sp_pr {
     $self->_write_a_prst_geom( $shape );
 
     my $fill = $shape->{fill};
-    if ( length( $fill ) > 1 ) {
+
+    if ( length $fill > 1 ) {
 
         # Write the a:solidFill element.
         $self->_write_a_solid_fill( $fill );
@@ -1082,16 +1091,15 @@ sub _write_a_xfrm {
     my $row_absolute = shift;
     my $width        = shift;
     my $height       = shift;
-    my $shape        = shift;
-    $shape = {} unless defined $shape;
+    my $shape        = shift || {};
+    my @attributes   = ();
 
-    my @attributes = ();
-    my $rot        = $shape->{rot};
-    $rot = 0 unless defined $rot;
-    $rot *= 60000;
-    push( @attributes, ( 'rot'   => "$rot" ) ) if $rot;
-    push( @attributes, ( 'flipH' => 1 ) )      if $shape->{flipH};
-    push( @attributes, ( 'flipV' => 1 ) )      if $shape->{flipV};
+    my $rotation = $shape->{rot} || 0;
+    $rotation *= 60000;
+
+    push( @attributes, ( 'rot'   => $rotation ) ) if $rotation;
+    push( @attributes, ( 'flipH' => 1 ) )         if $shape->{flipH};
+    push( @attributes, ( 'flipV' => 1 ) )         if $shape->{flipV};
 
     $self->{_writer}->startTag( 'a:xfrm', @attributes );
 
@@ -1155,12 +1163,13 @@ sub _write_a_ext {
 #
 sub _write_a_prst_geom {
 
-    my $self  = shift;
-    my $shape = shift;
-    $shape = {} unless defined $shape;
+    my $self = shift;
+    my $shape = shift || {};
 
     my @attributes = ();
+
     @attributes = ( 'prst' => $shape->{type} ) if $shape->{type};
+
     $self->{_writer}->startTag( 'a:prstGeom', @attributes );
 
     # Write the a:avLst element.
@@ -1177,25 +1186,31 @@ sub _write_a_prst_geom {
 # Write the <a:avLst> element.
 #
 sub _write_a_av_lst {
-    my $self  = shift;
-    my $shape = shift;
-    $shape = {} unless defined $shape;
 
-    my $adjustments = $shape->{adjustments};
-    $adjustments = [] unless defined $adjustments;
+    my $self        = shift;
+    my $shape       = shift || {};
+    my $adjustments = [];
 
-    if ( @{$adjustments} ) {
+    if ( defined $shape->{adjustments} ) {
+        $adjustments = $shape->{adjustments};
+    }
+
+    if ( @$adjustments ) {
+
         $self->{_writer}->startTag( 'a:avLst' );
+
         my $s;
         foreach my $sv ( @{$adjustments} ) {
-            ++$s;
+            $s++;
 
-            # Only connectors have multiple adjustments
-            my $ss = $shape->{connect} ? ( $s ) : '';
+            # Only connectors have multiple adjustments.
+            my $ss = $shape->{connect} ? $s : '';
 
-            # Scale Adjustments: 100,000 = 100%
+            # Scale Adjustments: 100,000 = 100%.
             my $sv_int = int( $sv * 1000 );
-            my @attributes = ( name => "adj${ss}", fmla => "val $sv_int" );
+
+            my @attributes = ( name => 'adj' . $ss, fmla => "val $sv_int" );
+
             $self->{_writer}->emptyTag( 'a:gd', @attributes );
         }
         $self->{_writer}->endTag( 'a:avLst' );
@@ -1216,15 +1231,18 @@ sub _write_a_solid_fill {
 
     my $self = shift;
     my $rgb  = shift;
+
     $rgb = '000000' unless defined $rgb;
+
+    my @attributes = ( 'val' => $rgb );
 
     $self->{_writer}->startTag( 'a:solidFill' );
 
-    my @attributes = ( 'val' => $rgb );
     $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
 
     $self->{_writer}->endTag( 'a:solidFill' );
 }
+
 
 ##############################################################################
 #
@@ -1234,25 +1252,28 @@ sub _write_a_solid_fill {
 #
 sub _write_a_ln {
 
-    my $self  = shift;
-    my $shape = shift;
-    $shape = {} unless defined $shape;
+    my $self = shift;
+    my $shape = shift || {};
 
-    my $w = $shape->{line_weight};
-    my @attributes = ( 'w' => $w * 9525 );
+    my $weight = $shape->{line_weight};
+
+    my @attributes = ( 'w' => $weight * 9525 );
+
     $self->{_writer}->startTag( 'a:ln', @attributes );
 
-    my $ln = $shape->{line};
-    if ( length( $ln ) > 1 ) {
+    my $line = $shape->{line};
+
+    if ( length $line > 1 ) {
 
         # Write the a:solidFill element.
-        $self->_write_a_solid_fill( $ln );
+        $self->_write_a_solid_fill( $line );
     }
     else {
         $self->{_writer}->emptyTag( 'a:noFill' );
     }
 
     if ( $shape->{line_type} ) {
+
         @attributes = ( 'val' => $shape->{line_type} );
         $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
     }
@@ -1261,15 +1282,16 @@ sub _write_a_ln {
         $self->{_writer}->emptyTag( 'a:round' );
     }
     else {
-        @attributes = ( 'lim' => '800000' );
+        @attributes = ( 'lim' => 800000 );
         $self->{_writer}->emptyTag( 'a:miter', @attributes );
     }
+
     $self->{_writer}->emptyTag( 'a:headEnd' );
     $self->{_writer}->emptyTag( 'a:tailEnd' );
 
     $self->{_writer}->endTag( 'a:ln' );
-
 }
+
 
 ##############################################################################
 #
@@ -1286,11 +1308,7 @@ sub _write_txBody {
     my $height       = shift;
     my $shape        = shift;
 
-    my @attributes = ();
-
-    $self->{_writer}->startTag( 'xdr:txBody' );
-
-    @attributes = (
+    my @attributes = (
         vertOverflow => "clip",
         wrap         => "square",
         lIns         => "27432",
@@ -1301,51 +1319,51 @@ sub _write_txBody {
         upright      => "1"
     );
 
+    $self->{_writer}->startTag( 'xdr:txBody' );
     $self->{_writer}->emptyTag( 'a:bodyPr', @attributes );
     $self->{_writer}->emptyTag( 'a:lstStyle' );
 
     $self->{_writer}->startTag( 'a:p' );
 
-    my $rot = $shape->{format}->{_rotation};
-    $rot = 0 unless defined $rot;
-    $rot *= 60000;
-    @attributes = ( algn => $shape->{align}, rtl => $rot );
+    my $rotation = $shape->{format}->{_rotation};
+    $rotation = 0 unless defined $rotation;
+    $rotation *= 60000;
+
+    @attributes = ( algn => $shape->{align}, rtl => $rotation );
     $self->{_writer}->startTag( 'a:pPr', @attributes );
 
     @attributes = ( sz => "1000" );
     $self->{_writer}->emptyTag( 'a:defRPr', @attributes );
 
     $self->{_writer}->endTag( 'a:pPr' );
-
     $self->{_writer}->startTag( 'a:r' );
 
-    my $sz = $shape->{format}->{_size};
-    $sz = 8 unless defined $sz;
-    $sz *= 100;
+    my $size = $shape->{format}->{_size};
+    $size = 8 unless defined $size;
+    $size *= 100;
 
-    my $b = $shape->{format}->{_bold};
-    $b = 0 unless defined $b;
+    my $bold = $shape->{format}->{_bold};
+    $bold = 0 unless defined $bold;
 
-    my $i = $shape->{format}->{_italic};
-    $i = 0 unless defined $i;
+    my $italic = $shape->{format}->{_italic};
+    $italic = 0 unless defined $italic;
 
-    my $u = $shape->{format}->{_underline};
-    $u = 0 unless defined $u;
-    $u = $u ? 'sng' : 'none';
+    my $underline = $shape->{format}->{_underline};
+    $underline = $underline ? 'sng' : 'none';
 
-    my $so = $shape->{format}->{_font_strikeout};
-    $so = 0 unless defined $so;
-    $so = $so ? 'Strike' : 'noStrike';
+    my $strike = $shape->{format}->{_font_strikeout};
+    $strike = $strike ? 'Strike' : 'noStrike';
 
     @attributes = (
         lang     => "en-US",
-        sz       => $sz,       # 8 points
-        b        => $b,
-        i        => $i,
-        u        => $u,
-        strike   => $so,
-        baseline => "0"
+        sz       => $size,
+        b        => $bold,
+        i        => $italic,
+        u        => $underline,
+        strike   => $strike,
+        baseline => 0,
     );
+
     $self->{_writer}->startTag( 'a:rPr', @attributes );
 
     my $color = $shape->{format}->{_color};
@@ -1354,7 +1372,8 @@ sub _write_txBody {
     $self->{_palette} = $shape->{_palette};
     $color = $self->_get_palette_color( $color );
     $color =~ s/^FF//;    # Remove leading FF from rgb for shape color
-    $self->_write_a_solid_fill( "$color" );
+
+    $self->_write_a_solid_fill( $color );
 
     @attributes = ( typeface => $shape->{typeface} );
     $self->{_writer}->emptyTag( 'a:latin', @attributes );
