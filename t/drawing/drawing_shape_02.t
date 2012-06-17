@@ -21,10 +21,11 @@ use Test::More tests => 1;
 my $expected;
 my $caption;
 my $got;
-my $shape = _new_object( \$got, 'Excel::Writer::XLSX::Shape' );
-$shape->{id} = 1000;
-$shape->{name} = 'Connector 1';
-$shape->{type} = 'straightConnector1';
+
+my $shape = Excel::Writer::XLSX::Shape->new();
+$shape->{id}      = 1000;
+$shape->{name}    = 'Connector 1';
+$shape->{type}    = 'straightConnector1';
 $shape->{connect} = 1;
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
@@ -36,7 +37,8 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _assemble_xml_file() shape connection";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, 'Connector 1', $shape );
+$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260,
+    10000, 20000, 95250, 190500, 'Connector 1', $shape );
 
 $drawing->_assemble_xml_file();
 

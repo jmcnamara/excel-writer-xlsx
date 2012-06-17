@@ -20,29 +20,20 @@ use Test::More tests => 1;
 #
 my $expected;
 my $caption;
-my ($wbk, $shp, $got);
-my $w1 = _new_object( \$wbk, 'Excel::Writer::XLSX::Worksheet' );
+my $got;
 
-my $shape = _new_object( \$shp, 'Excel::Writer::XLSX::Shape' );
-$shape->{id} = 1000;
+my $shape = Excel::Writer::XLSX::Shape->new();
+$shape->{id}   = 1000;
 $shape->{text} = 'test';
 
-# Override subroutine to avoid errors in method call
-sub Excel::Writer::XLSX::Worksheet::_get_palette_color {
+# Mock up the color palette.
+$shape->{_palette}->[0] = [ 0x00, 0x00, 0x00, 0x00 ];
+$shape->{_palette}->[7] = [ 0x00, 0x00, 0x00, 0x00 ];
 
-    my $self    = shift;
-    my $index   = shift;
-    my $palette = $self->{_palette};
-
-    # Handle colours in #XXXXXX RGB format.
-    if ( $index =~ m/^#([0-9A-F]{6})$/i ) {
-        return "FF" . uc( $1 );
-    }
-}
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
-$drawing->{_palette} = $w1->{_palette};
 $drawing->{_embedded} = 1;
+
 
 ###############################################################################
 #
@@ -50,7 +41,10 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _assemble_xml_file() shape text";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, 'rect 1', $shape );
+$drawing->_add_drawing_object(
+    3,     4,     8,     209550, 95250,  12,       22, 209660,
+    96260, 10000, 20000, 95250,  190500, 'rect 1', $shape
+);
 
 $drawing->_assemble_xml_file();
 
@@ -110,7 +104,7 @@ __DATA__
                     <a:r>
                         <a:rPr lang="en-US" sz="800" b="0" i="0" u="none" strike="noStrike" baseline="0">
                             <a:solidFill>
-                                <a:srgbClr val=""/>
+                                <a:srgbClr val="000000"/>
                             </a:solidFill>
                             <a:latin typeface="Arial"/>
                             <a:cs typeface="Arial"/>

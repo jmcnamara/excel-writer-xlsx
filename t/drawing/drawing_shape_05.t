@@ -1,8 +1,9 @@
-###############################################################################
+﻿###############################################################################
 #
 # Tests for Excel::Writer::XLSX::Drawing methods.
 #
-# reverse('�'), May 2012, John McNamara, jmcnamara@cpan.org
+# reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+
 #
 
 use lib 't/lib';
@@ -20,17 +21,17 @@ use Test::More tests => 1;
 #
 my $expected;
 my $caption;
-my ($wbk, $shp, $got);
-my $w1 = _new_object( \$wbk, 'Excel::Writer::XLSX::Worksheet' );
+my $got;
+my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
-my $shape = _new_object( \$shp, 'Excel::Writer::XLSX::Shape' );
-$shape->{id} = 1000;
+my $shape = Excel::Writer::XLSX::Shape->new();
+$shape->{id}    = 1000;
 $shape->{flipV} = 1;
 $shape->{flipH} = 1;
-$shape->{rot} = 90;
+$shape->{rot}   = 90;
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
-$drawing->{_palette} = $w1->{_palette};
+$drawing->{_palette}  = $worksheet->{_palette};
 $drawing->{_embedded} = 1;
 
 ###############################################################################
@@ -39,9 +40,12 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _write_a_xfrm() shape rotation/flip";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, '', $shape );
+$drawing->_add_drawing_object(
+    3,     4,     8,     209550, 95250,  12, 22, 209660,
+    96260, 10000, 20000, 95250,  190500, '', $shape
+);
 
-$drawing->_write_a_xfrm(100, 200, 10, 20, $shape );
+$drawing->_write_a_xfrm( 100, 200, 10, 20, $shape );
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );

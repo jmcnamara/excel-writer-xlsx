@@ -21,10 +21,10 @@ use Test::More tests => 1;
 my $expected;
 my $caption;
 my $got;
-my $shp;
-my $shape = _new_object( \$shp, 'Excel::Writer::XLSX::Shape' );
+
+my $shape = Excel::Writer::XLSX::Shape->new();
 $shape->{line_weight} = 5;
-$shape->{line_type} = 'lgDashDot';
+$shape->{line_type}   = 'lgDashDot';
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;
@@ -35,7 +35,10 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: __write_a_ln() line weight and type";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, '', $shape );
+$drawing->_add_drawing_object(
+    3,     4,     8,     209550, 95250,  12, 22, 209660,
+    96260, 10000, 20000, 95250,  190500, '', $shape
+);
 
 $drawing->_write_a_ln( $shape );
 

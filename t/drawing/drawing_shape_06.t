@@ -21,9 +21,9 @@ use Test::More tests => 1;
 my $expected;
 my $caption;
 my $got;
-my $shp;
-my $shape = _new_object( \$shp, 'Excel::Writer::XLSX::Shape' );
-$shape->{adjustments} = [-10, 100, 20];
+
+my $shape = Excel::Writer::XLSX::Shape->new();
+$shape->{adjustments} = [ -10, 100, 20 ];
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;
@@ -34,7 +34,10 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _write_a_av_lst() shape adjustments";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, '', $shape );
+$drawing->_add_drawing_object(
+    3,     4,     8,     209550, 95250,  12, 22, 209660,
+    96260, 10000, 20000, 95250,  190500, '', $shape
+);
 
 $drawing->_write_a_av_lst( $shape );
 

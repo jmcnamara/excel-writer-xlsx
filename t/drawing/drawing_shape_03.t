@@ -20,19 +20,19 @@ use Test::More tests => 1;
 #
 my $expected;
 my $caption;
-my ($wbk, $shp, $got);
-my $w1 = _new_object( \$wbk, 'Excel::Writer::XLSX::Worksheet' );
+my $got;
+my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
-my $shape = _new_object( \$shp, 'Excel::Writer::XLSX::Shape' );
-$shape->{id} = 1000;
-$shape->{start} = 1001;
+my $shape = Excel::Writer::XLSX::Shape->new();
+$shape->{id}        = 1000;
+$shape->{start}     = 1001;
 $shape->{start_idx} = 1;
-$shape->{end} = 1002;
-$shape->{end_idx} = 4;
-$shape->{id} = 1000;
+$shape->{end}       = 1002;
+$shape->{end_idx}   = 4;
+$shape->{id}        = 1000;
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
-$drawing->{_palette} = $w1->{_palette};
+$drawing->{_palette}  = $worksheet->{_palette};
 $drawing->{_embedded} = 1;
 
 ###############################################################################
@@ -41,9 +41,12 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _write_nv_cxn_sp_pr() shape connection";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000, 95250, 190500, '', $shape );
+$drawing->_add_drawing_object(
+    3,     4,     8,     209550, 95250,  12, 22, 209660,
+    96260, 10000, 20000, 95250,  190500, '', $shape
+);
 
-$drawing->_write_nv_cxn_sp_pr(1, $shape );
+$drawing->_write_nv_cxn_sp_pr( 1, $shape );
 
 $expected = _expected_to_aref();
 $got      = _got_to_aref( $got );
