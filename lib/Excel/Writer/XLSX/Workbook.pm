@@ -1,4 +1,4 @@
-package Excel::Writer::XLSX::Workbook;
+﻿package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
@@ -26,6 +26,7 @@ use Archive::Zip;
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
+use Excel::Writer::XLSX::Shape;
 use Excel::Writer::XLSX::Chart;
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
@@ -492,6 +493,31 @@ sub add_format {
     push @{ $self->{_formats} }, $format;    # Store format reference
 
     return $format;
+}
+
+
+###############################################################################
+#
+# add_shape(%properties)
+#
+# Add a new shape to the Excel workbook.
+#
+sub add_shape {
+
+    my $self = shift;
+    my $shape = Excel::Writer::XLSX::Shape->new( );
+    my %properties = @_;    # Merge multiple hashes into one
+
+    while ( my ( $key, $value ) = each( %properties ) ) {
+
+        # Strip leading "-" from Tk style properties e.g. -color => 'red'.
+        $key =~ s/^-//;
+
+        $shape->{$key} = $value;
+    }
+
+    push @{ $self->{_shapes} }, $shape;    # Store shape reference
+    return $shape;
 }
 
 
@@ -1385,7 +1411,8 @@ sub _prepare_drawings {
 
         my $chart_count = scalar @{ $sheet->{_charts} };
         my $image_count = scalar @{ $sheet->{_images} };
-        next unless ( $chart_count + $image_count );
+        my $shape_count = scalar @{ $sheet->{_shapes} };
+        next unless ( $chart_count + $image_count + $shape_count);
 
         $drawing_id++;
 
@@ -1405,6 +1432,10 @@ sub _prepare_drawings {
 
             $sheet->_prepare_image( $index, $image_ref_id, $drawing_id, $width,
                 $height, $name, $type );
+        }
+
+        for my $index ( 0 .. $shape_count - 1 ) {
+            $sheet->_prepare_shape( $index, $drawing_id );
         }
 
         my $drawing = $sheet->{_drawing};

@@ -19,6 +19,7 @@ use strict;
 use warnings;
 use Carp;
 use File::Temp 'tempfile';
+use List::Util qw(max min);
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
@@ -170,6 +171,7 @@ sub new {
     $self->{_col_size_changed} = 0;
     $self->{_row_size_changed} = 0;
 
+    $self->{_last_shape_id}          = 1;
     $self->{_hlink_count}            = 0;
     $self->{_hlink_refs}             = [];
     $self->{_external_hyper_links}   = [];
@@ -178,6 +180,8 @@ sub new {
     $self->{_drawing_links}          = [];
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
+    $self->{_shapes}                 = [];
+    $self->{_shape_hash}             = {};      # Keyed by ID
     $self->{_drawing}                = 0;
 
     $self->{_rstring}      = '';
@@ -4082,6 +4086,54 @@ sub _position_object_emus {
 
 ###############################################################################
 #
+#  _position_shape_emus()
+#
+# Calculate the vertices that define the position of a shape object within
+# the worksheet in EMUs.  Save the vertices with the object.
+#
+# The vertices are expressed as English Metric Units (EMUs). There are 12,700
+# EMUs per point. Therefore, 12,700 * 3 /4 = 9,525 EMUs per pixel.
+#
+sub _position_shape_emus {
+
+    my $self       = shift;
+    my $shape      = shift;
+
+    my (
+        $col_start, $row_start, $x1, $y1,
+        $col_end,   $row_end,   $x2, $y2,
+        $x_abs,     $y_abs
+    ) = $self->_position_object_pixels(
+            $shape->{column_start},
+            $shape->{row_start},
+            $shape->{x_offset},
+            $shape->{y_offset},
+            $shape->{width} * $shape->{scale_x},
+            $shape->{height} * $shape->{scale_y},
+            $shape->{drawing}
+     );
+
+# Now that x2/y2 have been calculated with a potentially negative width/height
+# use an absolute value, and convert to EMUs
+
+    $shape->{width_emu} = abs( $shape->{width} * 9_525 );
+    $shape->{height_emu} = abs( $shape->{height} * 9_525 );
+
+    $shape->{column_start} = $col_start;
+    $shape->{row_start}    = $row_start;
+    $shape->{column_end}   = $col_end;
+    $shape->{row_end}      = $row_end;
+    # Convert the pixel values to EMUs. See above.
+    $shape->{x1}           = $x1    * 9_525;
+    $shape->{y1}           = $y1    * 9_525;
+    $shape->{x2}           = $x2    * 9_525;
+    $shape->{y2}           = $y2    * 9_525;
+    $shape->{x_abs}        = $x_abs * 9_525;
+    $shape->{y_abs}        = $y_abs * 9_525;
+}
+
+###############################################################################
+#
 # _size_col($col)
 #
 # Convert the width of a cell from user's units to pixels. Excel rounds the
@@ -4516,6 +4568,221 @@ sub _prepare_image {
       [ '/image', '../media/image' .  $image_id . '.' . $image_type ];
 }
 
+###############################################################################
+#
+# insert_shape( $row, $col, $shape, $x, $y, $scale_x, $scale_y )
+#
+# Insert a shape into the worksheet.
+#
+sub insert_shape {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column.
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $shape               = $_[2];                # shape object: rect, cross, triangle, ...
+
+    $shape->{row_start}     = $_[0];
+    $shape->{column_start}  = $_[1];
+    $shape->{x_offset}      = $_[3] || 0;
+    $shape->{y_offset}      = $_[4] || 0;
+    $shape->{scale_x}       = $_[5] || 1;
+    $shape->{scale_y}       = $_[6] || 1;
+
+    while (1) {
+        my $id = $shape->{id};
+        $id = 0 unless defined $id;
+        my $used = exists $self->{_shape_hash}->{ $id } ? 1 : 0;
+        # test if Shape ID already used.  Assign a new one
+        last if !$used and ($id != 0);
+        $shape->{id} = ++$self->{_last_shape_id};
+    }
+
+    # Verify we are being asked to insert a shape object
+    croak "Not a Shape object in insert_shape()" 
+        unless $shape->isa( 'Excel::Writer::XLSX::Shape' );
+    croak "Insufficient arguments in insert_shape()" unless @_ >= 3;
+
+    # For connectors: change x/y coordinate based on location of connected shapes
+    $self->_auto_locate_connectors ($shape);
+
+    $shape->{element} = $#{$self->{_shapes}} + 1;
+
+    # Allow lookup of entry into shape array by shape id
+    $self->{_shape_hash}->{ $shape->{id} } = $shape->{element};
+
+    # Create link to Worksheet color palette
+    $shape->{_palette} = $self->{_palette};
+
+    # Insert a copy of the shape, not a reference
+    # so that shape is used as a stencil;
+    # previously stamped copies dont get modified if the stencil is modified.
+    my $insert = { %{$shape} };
+    push @{ $self->{_shapes} }, $insert;
+    return $insert;
+}
+
+###############################################################################
+#
+# _prepare_shape()
+#
+# Set up drawing shapes
+#
+sub _prepare_shape {
+
+    my $self         = shift;
+    my $index        = shift;
+    my $drawing_id   = shift;
+
+    my $drawing;
+
+    my $shape= $self->{_shapes}->[$index];
+
+    # Create a Drawing object to use with worksheet unless one already exists.
+    if ( !$self->{_drawing} ) {
+
+        $drawing = Excel::Writer::XLSX::Drawing->new();
+        $drawing->{_embedded} = 1;
+        $self->{_drawing} = $drawing;
+
+        push @{ $self->{_external_drawing_links} }, 
+            [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+    }
+    else {
+        $drawing = $self->{_drawing};
+    }
+
+    # Check shape against various rules to prevent generation of mal-formed xml, that wont load in Excel
+    _validate_shape($shape, $index);
+
+    $self->_position_shape_emus($shape);
+    my @dimensions = 
+        map { $shape->{$_} } 
+        qw[column_start row_start x1 y1 column_end row_end x2 y2 x_abs y_abs width_emu height_emu];
+    
+    my $drawing_type = 3;               # a shape, not a chart or an image
+    $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{name}, $shape );
+}
+
+###############################################################################
+#
+# _auto_locate_connectors()
+#
+# re-size connector shapes if they are connected to other shapes
+#
+sub _auto_locate_connectors {
+    my ($self, $shape) = @_;
+
+    # Create a hash of valid connector shapes
+    my $connector_shapes = { 
+        map {$_, 1} 
+        qw[straightConnector Connector bentConnector curvedConnector line]
+    };
+
+    my $shape_base = $shape->{type};
+    chop $shape_base;		# Remove number of segments from end of type
+
+    $shape->{connect} = $connector_shapes->{ $shape_base } ? 1 : 0;
+    
+    return unless $shape->{connect};
+
+    # Both ends have to be connected, to size it
+    return unless ($shape->{start} and $shape->{end} );
+ 
+    # Both ends need to provide info about where to connect
+    return unless ($shape->{start_side} and $shape->{end_side} );
+ 
+    my $sid = $shape->{start};
+    my $eid = $shape->{end};
+    
+    my $slink_id = $self->{_shape_hash}->{$sid};
+    my $sls = $self->{_shapes}[$slink_id];        # start Linked shape
+    my $elink_id = $self->{_shape_hash}->{$eid};
+    my $els = $self->{_shapes}[$elink_id];        # end Linked shape
+
+    # Assume shape connections are to the middle of an object, not a corner (for now)
+     my $connect_type = $shape->{start_side} . $shape->{end_side};
+     my $smidx = $sls->{x_offset} + $sls->{width}/2;
+     my $emidx = $els->{x_offset} + $els->{width}/2;
+     my $smidy = $sls->{y_offset} + $sls->{height}/2;
+     my $emidy = $els->{y_offset} + $els->{height}/2;
+
+     my $netx = abs($smidx - $emidx);
+     my $nety = abs($smidy - $emidy);
+
+    CT: for ($connect_type ) {
+        /bt/  && do {
+            my $sy = $sls->{y_offset} + $sls->{height};
+            my $ey = $els->{y_offset};
+            $shape->{width} = abs( int($emidx-$smidx) );
+            $shape->{x_offset} = int(min($smidx, $emidx));
+            $shape->{height} = 
+                abs(
+                    int( $els->{y_offset} - ($sls->{y_offset} + $sls->{height}) )
+                );
+            $shape->{y_offset} = 
+                int(
+                    min(($sls->{y_offset} + $sls->{height}), $els->{y_offset})
+                );
+            $shape->{flipH} = ($smidx < $emidx) ? 1 : 0;
+            $shape->{rot} = 90;
+            if (($sy > $ey) and ($smidx < $emidx)) {
+                $shape->{flipV} = 1;
+                # Create 3 adjustments for an end shape vertically above a start shape
+                # Adjustments count from the upper left object
+                my $adj = [-10, 50, 110];
+                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
+                $shape->{type} = 'bentConnector5';
+            }
+            if (($sy > $ey) and ($smidx > $emidx)) {
+                $shape->{flipV} = 1;
+                # Create 3 adjustments for an end shape vertically above a start shape
+                # Adjustments count from the upper left object
+                my $adj = [-10, 50, 110];
+                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
+                $shape->{type} = 'bentConnector5';
+            }
+        last CT;
+        };
+
+        /rl/  && do {
+            $shape->{width} = 
+                abs( 
+                    int( $els->{x_offset} - ($sls->{x_offset} + $sls->{width}) )
+                );
+            $shape->{height} = abs( int($emidy-$smidy) );
+            $shape->{x_offset} = min($sls->{x_offset} + $sls->{width}, $els->{x_offset});
+            $shape->{y_offset} = min($smidy, $emidy);
+            $shape->{flipH} = ($smidy > $emidy);
+            if ($smidx > $emidx) {
+                # Create 3 adjustments for an end shape to the left of a start shape
+                my $adj = [-10, 50, 110];
+                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
+                $shape->{type} = 'bentConnector5';
+            }
+        last CT;
+        };
+
+        warn "Connection $connect_type not implemented yet\n";
+    }
+}
+###############################################################################
+#
+# _validate_shape()
+#
+# Check shape attributes to ensure they are legal.  Excel crashes on some
+# illegal parameters.
+#
+sub _validate_shape {
+    my ($shape, $index)= @_;
+    croak "Shape $index ($shape->{type}) alignment ($shape->{align}), not in ('l', 'ctr', 'r', 'just')\n" 
+        unless grep (/^$shape->{align}$/, qw[l ctr r just]);
+    croak "Shape $index ($shape->{type}) vertical alignment ($shape->{valign}), not ('t', 'ctr', 'b')\n" 
+        unless grep (/^$shape->{valign}$/, qw[t ctr b]);
+}
 
 ###############################################################################
 #
@@ -7434,7 +7701,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-ï¿½ MM-MMXII, John McNamara.
+© MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
