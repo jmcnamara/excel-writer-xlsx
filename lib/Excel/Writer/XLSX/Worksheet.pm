@@ -4293,6 +4293,32 @@ sub insert_chart {
 
 ###############################################################################
 #
+# _sort_charts()
+#
+# Sort the worksheet charts into the order that they were created in rather
+# than the insertion order. This is ensure that the chart and drawing objects
+# written in the same order. The chart id is used to sort back into creation
+# order.
+#
+sub _sort_charts {
+
+    my $self        = shift;
+    my $chart_count = scalar @{ $self->{_charts} };
+
+    # Return if no sorting is required.
+    return if $chart_count < 2;
+
+    my @chart_data = @{ $self->{_charts} };
+
+    # Sort the charts into creation order based on the chart id.
+    @chart_data = sort { $a->[2]->{_id} <=> $b->[2]->{_id} } @chart_data;
+
+    $self->{_charts} = \@chart_data;
+}
+
+
+###############################################################################
+#
 # _prepare_chart()
 #
 # Set up chart/drawings.
