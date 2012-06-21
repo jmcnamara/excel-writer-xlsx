@@ -181,7 +181,7 @@ sub _write_two_cell_anchor {
     }
 
     # Add editAs attribute for shapes.
-    push @attributes, ( editAs => $shape->{editAs} ) if $shape->{editAs};
+    push @attributes, ( editAs => $shape->{_editAs} ) if $shape->{_editAs};
 
     $self->{_writer}->startTag( 'xdr:twoCellAnchor', @attributes );
 
@@ -728,7 +728,7 @@ sub _write_sp {
     my $height       = shift;
     my $shape        = shift;
 
-    if ( $shape->{connect} ) {
+    if ( $shape->{_connect} ) {
         my @attributes = ( macro => '' );
         $self->{_writer}->startTag( 'xdr:cxnSp', @attributes );
 
@@ -755,7 +755,7 @@ sub _write_sp {
             $height, $shape );
 
         # Write the xdr:txBody element.
-        if ( $shape->{text} ) {
+        if ( $shape->{_text} ) {
             $self->_write_txBody( $col_absolute, $row_absolute, $width, $height,
                 $shape );
         }
@@ -777,22 +777,22 @@ sub _write_nv_cxn_sp_pr {
 
     $self->{_writer}->startTag( 'xdr:nvCxnSpPr' );
 
-    $shape->{name} = join( ' ', $shape->{type}, $index )
-      unless defined $shape->{name};
-    $self->_write_c_nv_pr( $shape->{id}, $shape->{name} );
+    $shape->{_name} = join( ' ', $shape->{_type}, $index )
+      unless defined $shape->{_name};
+    $self->_write_c_nv_pr( $shape->{_id}, $shape->{_name} );
 
     $self->{_writer}->startTag( 'xdr:cNvCxnSpPr' );
 
     my @attributes = ( noChangeShapeType => '1' );
     $self->{_writer}->emptyTag( 'a:cxnSpLocks', @attributes );
 
-    if ( $shape->{start} ) {
-        @attributes = ( 'id' => $shape->{start}, 'idx' => $shape->{start_idx} );
+    if ( $shape->{_start} ) {
+        @attributes = ( 'id' => $shape->{_start}, 'idx' => $shape->{_start_index} );
         $self->{_writer}->emptyTag( 'a:stCxn', @attributes );
     }
 
-    if ( $shape->{end} ) {
-        @attributes = ( 'id' => $shape->{end}, 'idx' => $shape->{end_idx} );
+    if ( $shape->{_end} ) {
+        @attributes = ( 'id' => $shape->{_end}, 'idx' => $shape->{_end_index} );
         $self->{_writer}->emptyTag( 'a:endCxn', @attributes );
     }
     $self->{_writer}->endTag( 'xdr:cNvCxnSpPr' );
@@ -816,11 +816,11 @@ sub _write_nv_sp_pr {
 
     $self->{_writer}->startTag( 'xdr:nvSpPr' );
 
-    my $shape_name = $shape->{type} . ' ' . $index;
+    my $shape_name = $shape->{_type} . ' ' . $index;
 
-    $self->_write_c_nv_pr( $shape->{id}, $shape_name );
+    $self->_write_c_nv_pr( $shape->{_id}, $shape_name );
 
-    @attributes = ( 'txBox' => 1 ) if $shape->{txBox};
+    @attributes = ( 'txBox' => 1 ) if $shape->{_txBox};
 
     $self->{_writer}->startTag( 'xdr:cNvSpPr', @attributes );
 
@@ -858,7 +858,7 @@ sub _write_pic {
     $self->_write_blip_fill( $index );
 
     # Pictures are rectangle shapes by default.
-    my $shape = { type => 'rect' };
+    my $shape = { _type => 'rect' };
 
     # Write the xdr:spPr element.
     $self->_write_sp_pr( $col_absolute, $row_absolute, $width, $height,
@@ -1061,7 +1061,7 @@ sub _write_xdr_sp_pr {
     # Write the a:prstGeom element.
     $self->_write_a_prst_geom( $shape );
 
-    my $fill = $shape->{fill};
+    my $fill = $shape->{_fill};
 
     if ( length $fill > 1 ) {
 
@@ -1094,12 +1094,12 @@ sub _write_a_xfrm {
     my $shape        = shift || {};
     my @attributes   = ();
 
-    my $rotation = $shape->{rot} || 0;
+    my $rotation = $shape->{_rotation} || 0;
     $rotation *= 60000;
 
     push( @attributes, ( 'rot'   => $rotation ) ) if $rotation;
-    push( @attributes, ( 'flipH' => 1 ) )         if $shape->{flipH};
-    push( @attributes, ( 'flipV' => 1 ) )         if $shape->{flipV};
+    push( @attributes, ( 'flipH' => 1 ) )         if $shape->{_flip_h};
+    push( @attributes, ( 'flipV' => 1 ) )         if $shape->{_flip_v};
 
     $self->{_writer}->startTag( 'a:xfrm', @attributes );
 
@@ -1168,7 +1168,7 @@ sub _write_a_prst_geom {
 
     my @attributes = ();
 
-    @attributes = ( 'prst' => $shape->{type} ) if $shape->{type};
+    @attributes = ( 'prst' => $shape->{_type} ) if $shape->{_type};
 
     $self->{_writer}->startTag( 'a:prstGeom', @attributes );
 
@@ -1191,25 +1191,25 @@ sub _write_a_av_lst {
     my $shape       = shift || {};
     my $adjustments = [];
 
-    if ( defined $shape->{adjustments} ) {
-        $adjustments = $shape->{adjustments};
+    if ( defined $shape->{_adjustments} ) {
+        $adjustments = $shape->{_adjustments};
     }
 
     if ( @$adjustments ) {
 
         $self->{_writer}->startTag( 'a:avLst' );
 
-        my $s;
-        foreach my $sv ( @{$adjustments} ) {
-            $s++;
+        my $i;                  # adjustments array index
+        foreach my $adj ( @{$adjustments} ) {
+            $i++;               # Excel adjustment array is 1-based, perl is 0-based  
 
             # Only connectors have multiple adjustments.
-            my $ss = $shape->{connect} ? $s : '';
+            my $suffix = $shape->{_connect} ? $i : '';
 
             # Scale Adjustments: 100,000 = 100%.
-            my $sv_int = int( $sv * 1000 );
+            my $adj_int = int( $adj * 1000 );
 
-            my @attributes = ( name => 'adj' . $ss, fmla => "val $sv_int" );
+            my @attributes = ( name => 'adj' . $suffix, fmla => "val $adj_int" );
 
             $self->{_writer}->emptyTag( 'a:gd', @attributes );
         }
@@ -1255,13 +1255,13 @@ sub _write_a_ln {
     my $self = shift;
     my $shape = shift || {};
 
-    my $weight = $shape->{line_weight};
+    my $weight = $shape->{_line_weight};
 
     my @attributes = ( 'w' => $weight * 9525 );
 
     $self->{_writer}->startTag( 'a:ln', @attributes );
 
-    my $line = $shape->{line};
+    my $line = $shape->{_line};
 
     if ( length $line > 1 ) {
 
@@ -1272,13 +1272,13 @@ sub _write_a_ln {
         $self->{_writer}->emptyTag( 'a:noFill' );
     }
 
-    if ( $shape->{line_type} ) {
+    if ( $shape->{_line_type} ) {
 
-        @attributes = ( 'val' => $shape->{line_type} );
+        @attributes = ( 'val' => $shape->{_line_type} );
         $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
     }
 
-    if ( $shape->{connect} ) {
+    if ( $shape->{_connect} ) {
         $self->{_writer}->emptyTag( 'a:round' );
     }
     else {
@@ -1315,7 +1315,7 @@ sub _write_txBody {
         tIns         => "22860",
         rIns         => "27432",
         bIns         => "22860",
-        anchor       => $shape->{valign},
+        anchor       => $shape->{_valign},
         upright      => "1"
     );
 
@@ -1325,11 +1325,11 @@ sub _write_txBody {
 
     $self->{_writer}->startTag( 'a:p' );
 
-    my $rotation = $shape->{format}->{_rotation};
+    my $rotation = $shape->{_format}->{_rotation};
     $rotation = 0 unless defined $rotation;
     $rotation *= 60000;
 
-    @attributes = ( algn => $shape->{align}, rtl => $rotation );
+    @attributes = ( algn => $shape->{_align}, rtl => $rotation );
     $self->{_writer}->startTag( 'a:pPr', @attributes );
 
     @attributes = ( sz => "1000" );
@@ -1338,20 +1338,20 @@ sub _write_txBody {
     $self->{_writer}->endTag( 'a:pPr' );
     $self->{_writer}->startTag( 'a:r' );
 
-    my $size = $shape->{format}->{_size};
+    my $size = $shape->{_format}->{_size};
     $size = 8 unless defined $size;
     $size *= 100;
 
-    my $bold = $shape->{format}->{_bold};
+    my $bold = $shape->{_format}->{_bold};
     $bold = 0 unless defined $bold;
 
-    my $italic = $shape->{format}->{_italic};
+    my $italic = $shape->{_format}->{_italic};
     $italic = 0 unless defined $italic;
 
-    my $underline = $shape->{format}->{_underline};
+    my $underline = $shape->{_format}->{_underline};
     $underline = $underline ? 'sng' : 'none';
 
-    my $strike = $shape->{format}->{_font_strikeout};
+    my $strike = $shape->{_format}->{_font_strikeout};
     $strike = $strike ? 'Strike' : 'noStrike';
 
     @attributes = (
@@ -1366,25 +1366,28 @@ sub _write_txBody {
 
     $self->{_writer}->startTag( 'a:rPr', @attributes );
 
-    my $color = $shape->{format}->{_color};
-    $color = 0 unless defined $color;
-
-    $self->{_palette} = $shape->{_palette};
-    $color = $self->_get_palette_color( $color );
-    $color =~ s/^FF//;    # Remove leading FF from rgb for shape color
+    my $color = $shape->{_format}->{_color};
+    if (defined $color) {
+        $self->{_palette} = $shape->{_palette};
+        $color = $self->_get_palette_color( $color );
+        $color =~ s/^FF//;    # Remove leading FF from rgb for shape color
+    } else {
+        $color = '000000';
+    }
 
     $self->_write_a_solid_fill( $color );
 
-    @attributes = ( typeface => $shape->{typeface} );
+    my $font = $shape->{_format}->{_font};
+    $font = 'Calibri' unless defined $font;
+    @attributes = ( typeface => $font );
     $self->{_writer}->emptyTag( 'a:latin', @attributes );
 
-    @attributes = ( typeface => $shape->{typeface} );
     $self->{_writer}->emptyTag( 'a:cs', @attributes );
 
     $self->{_writer}->endTag( 'a:rPr' );
 
     $self->{_writer}->startTag( 'a:t' );
-    $self->{_writer}->characters( $shape->{text} );
+    $self->{_writer}->characters( $shape->{_text} );
     $self->{_writer}->endTag( 'a:t' );
 
     $self->{_writer}->endTag( 'a:r' );

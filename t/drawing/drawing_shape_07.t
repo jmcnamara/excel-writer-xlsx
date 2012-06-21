@@ -23,8 +23,8 @@ my $caption;
 my $got;
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{line_weight} = 5;
-$shape->{line_type}   = 'lgDashDot';
+$shape->set_line_weight(5);
+$shape->set_line_type('lgDashDot');
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;

@@ -25,10 +25,10 @@ my $got;
 my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{id}    = 1000;
-$shape->{flipV} = 1;
-$shape->{flipH} = 1;
-$shape->{rot}   = 90;
+$shape->set_id(1000);
+$shape->set_flip_v(1);
+$shape->set_flip_h(1);
+$shape->set_rotation(90);
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_palette}  = $worksheet->{_palette};

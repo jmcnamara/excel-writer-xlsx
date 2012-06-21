@@ -4104,32 +4104,32 @@ sub _position_shape_emus {
         $col_end,   $row_end,   $x2, $y2,
         $x_abs,     $y_abs
     ) = $self->_position_object_pixels(
-            $shape->{column_start},
-            $shape->{row_start},
-            $shape->{x_offset},
-            $shape->{y_offset},
-            $shape->{width} * $shape->{scale_x},
-            $shape->{height} * $shape->{scale_y},
-            $shape->{drawing}
+            $shape->{_column_start},
+            $shape->{_row_start},
+            $shape->{_x_offset},
+            $shape->{_y_offset},
+            $shape->{_width} * $shape->{_scale_x},
+            $shape->{_height} * $shape->{_scale_y},
+            $shape->{_drawing}
      );
 
 # Now that x2/y2 have been calculated with a potentially negative width/height
 # use an absolute value, and convert to EMUs
 
-    $shape->{width_emu} = abs( $shape->{width} * 9_525 );
-    $shape->{height_emu} = abs( $shape->{height} * 9_525 );
+    $shape->{_width_emu} = abs( $shape->{_width} * 9_525 );
+    $shape->{_height_emu} = abs( $shape->{_height} * 9_525 );
 
-    $shape->{column_start} = $col_start;
-    $shape->{row_start}    = $row_start;
-    $shape->{column_end}   = $col_end;
-    $shape->{row_end}      = $row_end;
+    $shape->{_column_start} = $col_start;
+    $shape->{_row_start}    = $row_start;
+    $shape->{_column_end}   = $col_end;
+    $shape->{_row_end}      = $row_end;
     # Convert the pixel values to EMUs. See above.
-    $shape->{x1}           = $x1    * 9_525;
-    $shape->{y1}           = $y1    * 9_525;
-    $shape->{x2}           = $x2    * 9_525;
-    $shape->{y2}           = $y2    * 9_525;
-    $shape->{x_abs}        = $x_abs * 9_525;
-    $shape->{y_abs}        = $y_abs * 9_525;
+    $shape->{_x1}           = $x1    * 9_525;
+    $shape->{_y1}           = $y1    * 9_525;
+    $shape->{_x2}           = $x2    * 9_525;
+    $shape->{_y2}           = $y2    * 9_525;
+    $shape->{_x_abs}        = $x_abs * 9_525;
+    $shape->{_y_abs}        = $y_abs * 9_525;
 }
 
 ###############################################################################
@@ -4585,20 +4585,21 @@ sub insert_shape {
 
     my $shape               = $_[2];                # shape object: rect, cross, triangle, ...
 
-    $shape->{row_start}     = $_[0];
-    $shape->{column_start}  = $_[1];
-    $shape->{x_offset}      = $_[3] || 0;
-    $shape->{y_offset}      = $_[4] || 0;
-    $shape->{scale_x}       = $_[5] || 1;
-    $shape->{scale_y}       = $_[6] || 1;
+    $shape->{_row_start}     = $_[0];
+    $shape->{_column_start}  = $_[1];
+    $shape->{_x_offset}      = $_[3] || 0;
+    $shape->{_y_offset}      = $_[4] || 0;
+    # Override shape scale if supplied as an argument.  Otherwise, use the existing shape scale factors
+    $shape->{_scale_x}       = $_[5] if defined $_[5];
+    $shape->{_scale_y}       = $_[6] if defined $_[6];
 
     while (1) {
-        my $id = $shape->{id};
+        my $id = $shape->{_id};
         $id = 0 unless defined $id;
         my $used = exists $self->{_shape_hash}->{ $id } ? 1 : 0;
         # test if Shape ID already used.  Assign a new one
         last if !$used and ($id != 0);
-        $shape->{id} = ++$self->{_last_shape_id};
+        $shape->{_id} = ++$self->{_last_shape_id};
     }
 
     # Verify we are being asked to insert a shape object
@@ -4609,20 +4610,31 @@ sub insert_shape {
     # For connectors: change x/y coordinate based on location of connected shapes
     $self->_auto_locate_connectors ($shape);
 
-    $shape->{element} = $#{$self->{_shapes}} + 1;
+    $shape->{_element} = $#{$self->{_shapes}} + 1;
 
     # Allow lookup of entry into shape array by shape id
-    $self->{_shape_hash}->{ $shape->{id} } = $shape->{element};
+    $self->{_shape_hash}->{ $shape->{_id} } = $shape->{_element};
 
     # Create link to Worksheet color palette
     $shape->{_palette} = $self->{_palette};
 
-    # Insert a copy of the shape, not a reference
-    # so that shape is used as a stencil;
-    # previously stamped copies dont get modified if the stencil is modified.
-    my $insert = { %{$shape} };
-    push @{ $self->{_shapes} }, $insert;
-    return $insert;
+    if ( $shape->{_stencil} ) {
+        # Insert a copy of the shape, not a reference
+        # so that shape is used as a stencil;
+        # previously stamped copies dont get modified if the stencil is modified.
+        my $insert = { %{$shape} };
+    
+        # Bless the copy into this class, so AUTOLOADED _get, _set methods still work on the child
+        bless $insert, ref $shape;
+    
+        push @{ $self->{_shapes} }, $insert;
+        return $insert;
+    } else {
+        # insert a link to the shape to the list of shapes.
+        # Connection to parent shape is maintained
+        push @{ $self->{_shapes} }, $shape;
+        return $shape;
+    }
 }
 
 ###############################################################################
@@ -4661,10 +4673,10 @@ sub _prepare_shape {
     $self->_position_shape_emus($shape);
     my @dimensions = 
         map { $shape->{$_} } 
-        qw[column_start row_start x1 y1 column_end row_end x2 y2 x_abs y_abs width_emu height_emu];
+        qw[_column_start _row_start _x1 _y1 _column_end _row_end _x2 _y2 _x_abs _y_abs _width_emu _height_emu];
     
     my $drawing_type = 3;               # a shape, not a chart or an image
-    $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{name}, $shape );
+    $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{_name}, $shape );
 }
 
 ###############################################################################
@@ -4682,21 +4694,21 @@ sub _auto_locate_connectors {
         qw[straightConnector Connector bentConnector curvedConnector line]
     };
 
-    my $shape_base = $shape->{type};
+    my $shape_base = $shape->{_type};
     chop $shape_base;		# Remove number of segments from end of type
 
-    $shape->{connect} = $connector_shapes->{ $shape_base } ? 1 : 0;
+    $shape->{_connect} = $connector_shapes->{ $shape_base } ? 1 : 0;
     
-    return unless $shape->{connect};
+    return unless $shape->{_connect};
 
     # Both ends have to be connected, to size it
-    return unless ($shape->{start} and $shape->{end} );
+    return unless ($shape->{_start} and $shape->{_end} );
  
     # Both ends need to provide info about where to connect
-    return unless ($shape->{start_side} and $shape->{end_side} );
+    return unless ($shape->{_start_side} and $shape->{_end_side} );
  
-    my $sid = $shape->{start};
-    my $eid = $shape->{end};
+    my $sid = $shape->{_start};
+    my $eid = $shape->{_end};
     
     my $slink_id = $self->{_shape_hash}->{$sid};
     my $sls = $self->{_shapes}[$slink_id];        # start Linked shape
@@ -4704,64 +4716,64 @@ sub _auto_locate_connectors {
     my $els = $self->{_shapes}[$elink_id];        # end Linked shape
 
     # Assume shape connections are to the middle of an object, not a corner (for now)
-     my $connect_type = $shape->{start_side} . $shape->{end_side};
-     my $smidx = $sls->{x_offset} + $sls->{width}/2;
-     my $emidx = $els->{x_offset} + $els->{width}/2;
-     my $smidy = $sls->{y_offset} + $sls->{height}/2;
-     my $emidy = $els->{y_offset} + $els->{height}/2;
+     my $connect_type = $shape->{_start_side} . $shape->{_end_side};
+     my $smidx = $sls->{_x_offset} + $sls->{_width}/2;
+     my $emidx = $els->{_x_offset} + $els->{_width}/2;
+     my $smidy = $sls->{_y_offset} + $sls->{_height}/2;
+     my $emidy = $els->{_y_offset} + $els->{_height}/2;
 
      my $netx = abs($smidx - $emidx);
      my $nety = abs($smidy - $emidy);
 
     CT: for ($connect_type ) {
         /bt/  && do {
-            my $sy = $sls->{y_offset} + $sls->{height};
-            my $ey = $els->{y_offset};
-            $shape->{width} = abs( int($emidx-$smidx) );
-            $shape->{x_offset} = int(min($smidx, $emidx));
-            $shape->{height} = 
+            my $sy = $sls->{_y_offset} + $sls->{_height};
+            my $ey = $els->{_y_offset};
+            $shape->{_width} = abs( int($emidx-$smidx) );
+            $shape->{_x_offset} = int(min($smidx, $emidx));
+            $shape->{_height} = 
                 abs(
-                    int( $els->{y_offset} - ($sls->{y_offset} + $sls->{height}) )
+                    int( $els->{_y_offset} - ($sls->{_y_offset} + $sls->{_height}) )
                 );
-            $shape->{y_offset} = 
+            $shape->{_y_offset} = 
                 int(
-                    min(($sls->{y_offset} + $sls->{height}), $els->{y_offset})
+                    min(($sls->{_y_offset} + $sls->{_height}), $els->{_y_offset})
                 );
-            $shape->{flipH} = ($smidx < $emidx) ? 1 : 0;
-            $shape->{rot} = 90;
+            $shape->{_flip_h} = ($smidx < $emidx) ? 1 : 0;
+            $shape->{_rotation} = 90;
             if (($sy > $ey) and ($smidx < $emidx)) {
-                $shape->{flipV} = 1;
+                $shape->{_flip_v} = 1;
                 # Create 3 adjustments for an end shape vertically above a start shape
                 # Adjustments count from the upper left object
                 my $adj = [-10, 50, 110];
-                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
-                $shape->{type} = 'bentConnector5';
+                $shape->{_adjustments} = $adj unless $#{ $shape->{_adjustments} } >= 0;
+                $shape->{_type} = 'bentConnector5';
             }
             if (($sy > $ey) and ($smidx > $emidx)) {
-                $shape->{flipV} = 1;
+                $shape->{_flipV} = 1;
                 # Create 3 adjustments for an end shape vertically above a start shape
                 # Adjustments count from the upper left object
                 my $adj = [-10, 50, 110];
-                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
-                $shape->{type} = 'bentConnector5';
+                $shape->{_adjustments} = $adj unless $#{ $shape->{_adjustments} } >= 0;
+                $shape->{_type} = 'bentConnector5';
             }
         last CT;
         };
 
         /rl/  && do {
-            $shape->{width} = 
+            $shape->{_width} = 
                 abs( 
-                    int( $els->{x_offset} - ($sls->{x_offset} + $sls->{width}) )
+                    int( $els->{_x_offset} - ($sls->{_x_offset} + $sls->{_width}) )
                 );
-            $shape->{height} = abs( int($emidy-$smidy) );
-            $shape->{x_offset} = min($sls->{x_offset} + $sls->{width}, $els->{x_offset});
-            $shape->{y_offset} = min($smidy, $emidy);
-            $shape->{flipH} = ($smidy > $emidy);
+            $shape->{_height} = abs( int($emidy-$smidy) );
+            $shape->{_x_offset} = min($sls->{_x_offset} + $sls->{_width}, $els->{_x_offset});
+            $shape->{_y_offset} = min($smidy, $emidy);
+            $shape->{_flip_v} = ($smidy > $emidy);
             if ($smidx > $emidx) {
                 # Create 3 adjustments for an end shape to the left of a start shape
                 my $adj = [-10, 50, 110];
-                $shape->{adjustments} = $adj unless $#{ $shape->{adjustments} } >= 0;
-                $shape->{type} = 'bentConnector5';
+                $shape->{_adjustments} = $adj unless $#{ $shape->{_adjustments} } >= 0;
+                $shape->{_type} = 'bentConnector5';
             }
         last CT;
         };
@@ -4778,10 +4790,10 @@ sub _auto_locate_connectors {
 #
 sub _validate_shape {
     my ($shape, $index)= @_;
-    croak "Shape $index ($shape->{type}) alignment ($shape->{align}), not in ('l', 'ctr', 'r', 'just')\n" 
-        unless grep (/^$shape->{align}$/, qw[l ctr r just]);
-    croak "Shape $index ($shape->{type}) vertical alignment ($shape->{valign}), not ('t', 'ctr', 'b')\n" 
-        unless grep (/^$shape->{valign}$/, qw[t ctr b]);
+    croak "Shape $index ($shape->{_type}) alignment ($shape->{align}), not in ('l', 'ctr', 'r', 'just')\n" 
+        unless grep (/^$shape->{_align}$/, qw[l ctr r just]);
+    croak "Shape $index ($shape->{_type}) vertical alignment ($shape->{valign}), not ('t', 'ctr', 'b')\n" 
+        unless grep (/^$shape->{_valign}$/, qw[t ctr b]);
 }
 
 ###############################################################################

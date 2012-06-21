@@ -44,14 +44,14 @@ $worksheet->insert_shape('A1', $s2, 250, 200);
 my $cxn_shape = $workbook->add_shape( type => 'curvedConnector3' );
 
 # Link the start of the connector to the right side
-$cxn_shape->{start} = $s1->{id};
-$cxn_shape->{start_idx} = 2;                # 2nd connection point, clockwise from top(0)
-$cxn_shape->{start_side} = 'r';             # r)ight or b)ottom
+$cxn_shape->set_start( $s1->get_id() );
+$cxn_shape->set_start_index(2);                # 2nd connection point, clockwise from top(0)
+$cxn_shape->set_start_side('r');               # r)ight or b)ottom
 
 # Link the end of the connector to the left side
-$cxn_shape->{end} = $s2->{id};
-$cxn_shape->{end_idx} = 4;                  # 4th connection point, clockwise from top(0)
-$cxn_shape->{end_side} = 'l';               # l)eft or t)op
+$cxn_shape->set_end ( $s2->get_id() );
+$cxn_shape->set_end_index(4);                  # 4th connection point, clockwise from top(0)
+$cxn_shape->set_end_side('l');                 # l)eft or t)op
 
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 $workbook->close();

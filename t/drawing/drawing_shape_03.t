@@ -24,12 +24,11 @@ my $got;
 my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{id}        = 1000;
-$shape->{start}     = 1001;
-$shape->{start_idx} = 1;
-$shape->{end}       = 1002;
-$shape->{end_idx}   = 4;
-$shape->{id}        = 1000;
+$shape->set_id(1000);
+$shape->set_start(1001);
+$shape->set_start_index(1);
+$shape->set_end(1002);
+$shape->set_end_index(4);
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_palette}  = $worksheet->{_palette};

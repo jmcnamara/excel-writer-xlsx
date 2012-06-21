@@ -23,10 +23,12 @@ my $caption;
 my $got;
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{id}      = 1000;
-$shape->{name}    = 'Connector 1';
-$shape->{type}    = 'straightConnector1';
-$shape->{connect} = 1;
+# Set shape properties via AUTOLOAD
+$shape->set_id(1000);
+$shape->set_name('Connector 1');
+
+# Set bulk shape properties via set_properties method
+$shape->set_properties(type => 'straightConnector1', connect => 1);
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;

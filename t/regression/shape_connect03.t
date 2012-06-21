@@ -39,7 +39,8 @@ my $ch = 60;
 my $cx = 210;
 my $cy = 190;
 
-my $ellipse = $workbook->add_shape( type => 'ellipse', id=>2, text=>"Hello\nWorld", width=> $cw, height => $ch );
+my $format = $workbook->add_format(font => 'Arial', size => 8);
+my $ellipse = $workbook->add_shape( type => 'ellipse', id=>2, text=>"Hello\nWorld", width=> $cw, height => $ch, format => $format);
 $worksheet->insert_shape('A1', $ellipse, $cx, $cy);
 
 # Add a plus sign at 4 different positions around the circle
@@ -51,28 +52,29 @@ my $plus = $workbook->add_shape( type => 'plus', id=>3, width=> $pw, height => $
 my $p1 = $worksheet->insert_shape('A1', $plus, 350, 350);
 my $p2 = $worksheet->insert_shape('A1', $plus, 150, 350);
 my $p3 = $worksheet->insert_shape('A1', $plus, 350, 150);
-$plus->{adjustments} = [35];    # change shape of plus symbol
+
+$plus->set_adjustments(35);    # change shape of plus symbol
 my $p4 = $worksheet->insert_shape('A1', $plus, 150, 150);
 
 my $cxn_shape = $workbook->add_shape( type => 'bentConnector3', fill=> 0);
+$cxn_shape->set_start( $ellipse->get_id() );
+$cxn_shape->set_start_index(4);                # 4th connection point, clockwise from top(0)
+$cxn_shape->set_start_side('b');               # r)ight or b)ottom
 
-$cxn_shape->{start} = $ellipse->{id};
-$cxn_shape->{start_idx} = 4;                # 4th connection from top
-$cxn_shape->{start_side} = 'b';             # b)ottom
+$cxn_shape->set_end( $p1->get_id() );
+$cxn_shape->set_end_index(0);                  # first connection (zero based) from top
+$cxn_shape->set_end_side('t');                 # l)eft or t)op
 
-$cxn_shape->{end} = $p1->{id};
-$cxn_shape->{end_idx} = 0;                  # first connection (zero based) from top
-$cxn_shape->{end_side} = 't';               # t)op
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
-$cxn_shape->{end} = $p2->{id};
+$cxn_shape->set_end ( $p2->get_id() );
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
-$cxn_shape->{end} = $p3->{id};
+$cxn_shape->set_end ( $p3->get_id() );
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
-$cxn_shape->{end} = $p4->{id};
-$cxn_shape->{adjustments} = [-50, 45, 120];    
+$cxn_shape->set_end ( $p4->get_id() );
+$cxn_shape->set_adjustments(-50, 45, 120);    
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
 $workbook->close();

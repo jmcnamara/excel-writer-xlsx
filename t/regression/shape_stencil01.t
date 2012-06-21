@@ -35,17 +35,20 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 $worksheet->hide_gridlines(2);
 
+my $format = $workbook->add_format(font => 'Arial', size => 8);
 my $shape = $workbook->add_shape( 
     type => 'rect', 
     width=> 90, 
     height => 90,
+    format => $format,
 );
 
 for my $n (1..10) {
     # Change the last 5 rectangles to stars.  Previously inserted shapes stay as rectangles
-    $shape->{type} = 'star5' if $n == 6;
-    $shape->{text} = join (' ', $shape->{type}, $n); 
-    $worksheet->insert_shape('A1', $shape,  $n * 100,  50);
+    $shape->set_type('star5') if $n == 6;
+    my $text = $shape->get_type(); 
+    $shape->set_text( join (' ', $text, $n) ); 
+    $worksheet->insert_shape('A1', $shape,  $n * 100, 50);
 }
 
 $workbook->close();

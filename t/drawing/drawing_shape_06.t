@@ -23,7 +23,7 @@ my $caption;
 my $got;
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{adjustments} = [ -10, 100, 20 ];
+$shape->set_adjustments(-10, 100, 20);
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;

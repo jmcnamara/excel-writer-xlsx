@@ -22,14 +22,11 @@ my $expected;
 my $caption;
 my $got;
 
-my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{id}   = 1000;
-$shape->{text} = 'test';
+my $shape = Excel::Writer::XLSX::Shape->new(text => 'test', id => 1000 );
 
 # Mock up the color palette.
 $shape->{_palette}->[0] = [ 0x00, 0x00, 0x00, 0x00 ];
 $shape->{_palette}->[7] = [ 0x00, 0x00, 0x00, 0x00 ];
-
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;
@@ -106,8 +103,8 @@ __DATA__
                             <a:solidFill>
                                 <a:srgbClr val="000000"/>
                             </a:solidFill>
-                            <a:latin typeface="Arial"/>
-                            <a:cs typeface="Arial"/>
+                            <a:latin typeface="Calibri"/>
+                            <a:cs typeface="Calibri"/>
                         </a:rPr>
                         <a:t>test</a:t>
                     </a:r>

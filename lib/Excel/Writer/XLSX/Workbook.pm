@@ -505,21 +505,12 @@ sub add_format {
 sub add_shape {
 
     my $self = shift;
-    my $shape = Excel::Writer::XLSX::Shape->new( );
     my %properties = @_;    # Merge multiple hashes into one
-
-    while ( my ( $key, $value ) = each( %properties ) ) {
-
-        # Strip leading "-" from Tk style properties e.g. -color => 'red'.
-        $key =~ s/^-//;
-
-        $shape->{$key} = $value;
-    }
-
+    my $shape = Excel::Writer::XLSX::Shape->new( %properties );
     push @{ $self->{_shapes} }, $shape;    # Store shape reference
+
     return $shape;
 }
-
 
 ###############################################################################
 #

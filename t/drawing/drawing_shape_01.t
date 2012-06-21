@@ -23,7 +23,7 @@ my $caption;
 my $got;
 
 my $shape = Excel::Writer::XLSX::Shape->new();
-$shape->{id} = 1000;
+$shape->set_id(1000);
 
 my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 $drawing->{_embedded} = 1;

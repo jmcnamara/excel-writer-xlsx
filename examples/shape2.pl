@@ -26,7 +26,7 @@ my $plain = $workbook->add_shape(
     height => 100,
 );
 
-my $bbformat = $workbook->add_format(color => 'red');
+my $bbformat = $workbook->add_format(color => 'red', font => 'Lucida Calligraphy');
 $bbformat->set_bold();
 $bbformat->set_underline();
 $bbformat->set_italic();
@@ -34,11 +34,10 @@ $bbformat->set_italic();
 my $decor = $workbook->add_shape( 
     type => 'smileyFace', 
     text=> "Decorated", 
-    rot => 45,
+    rotation => 45,
     width=> 200, 
     height => 100,
     format => $bbformat,
-    typeface => 'Lucida Calligraphy',
     line_type => 'sysDot',
     line_weight => 3,
     fill => 'FFFF00',
