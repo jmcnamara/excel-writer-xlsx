@@ -3400,7 +3400,9 @@ sub conditional_formatting {
     );
 
     # Check for valid criteria types.
-    if ( exists $criteria_type{ lc( $param->{criteria} ) } ) {
+    if ( defined $param->{criteria}
+        && exists $criteria_type{ lc( $param->{criteria} ) } )
+    {
         $param->{criteria} = $criteria_type{ lc( $param->{criteria} ) };
     }
 
