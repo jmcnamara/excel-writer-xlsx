@@ -517,7 +517,7 @@ The following example returns the first and last worksheet in a workbook:
     }
 
 
-Array slices are explained in the perldata manpage.
+Array slices are explained in the C<perldata> manpage.
 
 
 
@@ -2566,7 +2566,7 @@ Note that although it is valid to use both C<fit_to_pages()> and C<set_print_sca
 
 Note that C<fit_to_pages()> will override any manual page breaks that are defined in the worksheet.
 
-
+Note: When using C<fit_to_pages()> it may also be required to set the printer paper size using C<set_paper()> or else Excel will default to "US Letter".
 
 
 =head2 set_start_page( $start_page )
