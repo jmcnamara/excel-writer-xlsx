@@ -17,9 +17,9 @@ use 5.008002;
 use strict;
 use warnings;
 use Carp;
-use Excel::Writer::XLSX::Worksheet;
+use Exporter;
 
-our @ISA     = qw(Excel::Writer::XLSX::Worksheet);
+our @ISA     = qw(Exporter);
 our $VERSION = '0.47';
 our $AUTOLOAD;
 
@@ -253,6 +253,30 @@ sub AUTOLOAD {
 }
 
 
+###############################################################################
+#
+# _get_palette_color()
+#
+# Convert from an Excel internal colour index to a XML style #RRGGBB index
+# based on the default or user defined values in the Workbook palette.
+# Note: This version doesn't add an alpha channel.
+#
+sub _get_palette_color {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $palette = $self->{_palette};
+
+    # Adjust the colour index.
+    $index -= 8;
+
+    # Palette is passed in from the Workbook class.
+    my @rgb = @{ $palette->[$index] };
+
+    return sprintf "%02X%02X%02X", @rgb;
+}
+
+
 1;
 
 __END__
@@ -371,7 +395,7 @@ See also the C<shapes_all.pl> program in the C<examples> directory of the distro
     gear6                 gear9          heart         heptagon      hexagon
     homePlate             lightningBolt  line          lineInv       moon
     nonIsoscelesTrapezoid noSmoking      octagon       parallelogram pentagon
-    pie                   pieWedge       plaquerect    round1Rect
+    pie                   pieWedge       plaque        rect          round1Rect
     round2DiagRect        round2SameRect roundRect     rtTriangle    smileyFace
     snip1Rect             snip2DiagRect  snip2SameRect snipRoundRect star10
     star12                star16         star24        star32        star4

@@ -20,8 +20,7 @@ use Carp;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Worksheet;
 
-our @ISA =
-  qw(Excel::Writer::XLSX::Package::XMLwriter Excel::Writer::XLSX::Worksheet);
+our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.47';
 
 
@@ -1368,8 +1367,7 @@ sub _write_txBody {
 
     my $color = $shape->{_format}->{_color};
     if (defined $color) {
-        $self->{_palette} = $shape->{_palette};
-        $color = $self->_get_palette_color( $color );
+        $color = $shape->_get_palette_color( $color );
         $color =~ s/^FF//;    # Remove leading FF from rgb for shape color.
     } else {
         $color = '000000';

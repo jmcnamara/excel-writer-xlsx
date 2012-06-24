@@ -507,6 +507,9 @@ sub add_shape {
     my $self = shift;
     my $shape = Excel::Writer::XLSX::Shape->new( @_ );
 
+    $shape->{_palette} = $self->{_palette};
+
+
     push @{ $self->{_shapes} }, $shape;    # Store shape reference.
 
     return $shape;
