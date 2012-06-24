@@ -1405,6 +1405,8 @@ sub _prepare_drawings {
         my $shape_count = scalar @{ $sheet->{_shapes} };
         next unless ( $chart_count + $image_count + $shape_count);
 
+        $sheet->_sort_charts();
+
         $drawing_id++;
 
         for my $index ( 0 .. $chart_count - 1 ) {
