@@ -1196,12 +1196,11 @@ sub _write_a_av_lst {
     }
 
     if ( @$adjustments ) {
-
         $self->{_writer}->startTag( 'a:avLst' );
 
-        my $i;                  # adjustments array index
+        my $i = 0;
         foreach my $adj ( @{$adjustments} ) {
-            $i++;               # Excel adjustment array is 1-based, perl is 0-based  
+            $i++;
 
             # Only connectors have multiple adjustments.
             my $suffix = $shape->{_connect} ? $i : '';
@@ -1209,7 +1208,8 @@ sub _write_a_av_lst {
             # Scale Adjustments: 100,000 = 100%.
             my $adj_int = int( $adj * 1000 );
 
-            my @attributes = ( name => 'adj' . $suffix, fmla => "val $adj_int" );
+            my @attributes =
+              ( name => 'adj' . $suffix, fmla => "val $adj_int" );
 
             $self->{_writer}->emptyTag( 'a:gd', @attributes );
         }
@@ -1316,7 +1316,7 @@ sub _write_txBody {
         rIns         => "27432",
         bIns         => "22860",
         anchor       => $shape->{_valign},
-        upright      => "1"
+        upright      => "1",
     );
 
     $self->{_writer}->startTag( 'xdr:txBody' );
@@ -1370,7 +1370,7 @@ sub _write_txBody {
     if (defined $color) {
         $self->{_palette} = $shape->{_palette};
         $color = $self->_get_palette_color( $color );
-        $color =~ s/^FF//;    # Remove leading FF from rgb for shape color
+        $color =~ s/^FF//;    # Remove leading FF from rgb for shape color.
     } else {
         $color = '000000';
     }
@@ -1395,6 +1395,7 @@ sub _write_txBody {
     $self->{_writer}->endTag( 'xdr:txBody' );
 
 }
+
 
 1;
 __END__

@@ -505,9 +505,9 @@ sub add_format {
 sub add_shape {
 
     my $self = shift;
-    my %properties = @_;    # Merge multiple hashes into one
-    my $shape = Excel::Writer::XLSX::Shape->new( %properties );
-    push @{ $self->{_shapes} }, $shape;    # Store shape reference
+    my $shape = Excel::Writer::XLSX::Shape->new( @_ );
+
+    push @{ $self->{_shapes} }, $shape;    # Store shape reference.
 
     return $shape;
 }

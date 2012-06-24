@@ -29,98 +29,100 @@ our $AUTOLOAD;
 #
 sub new {
 
-    my $class = shift;
+    my $class      = shift;
     my %properties = @_;
-    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $self       = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_name} = undef;
     $self->{_type} = 'rect';
 
-    # isa Connector shape. 1/0 Value is a hash lookup from type
+    # Is a Connector shape. 1/0 Value is a hash lookup from type.
     $self->{_connect} = 0;
 
-    # isa Drawing, always 0, since a single shape never fills an entire sheet
+    # Is a Drawing. Always 0, since a single shape never fills an entire sheet.
     $self->{_drawing} = 0;
 
-    # OneCell or Absolute: options to move and/or size with cells
+    # OneCell or Absolute: options to move and/or size with cells.
     $self->{_editAs} = '';
 
     # Auto-incremented, unless supplied by user.
     $self->{_id} = 0;
 
-    # Shape text (usually centered on shape geometry)
+    # Shape text (usually centered on shape geometry).
     $self->{_text} = 0;
 
-    # Shape stencil mode.  A copy (child) is created when inserted.  Link to parent is broken.
+    # Shape stencil mode.  A copy (child) is created when inserted.
+    # The link to parent is broken.
     $self->{_stencil} = 1;
 
-    # Index to _shapes array when inserted
+    # Index to _shapes array when inserted.
     $self->{_element} = -1;
 
-    # Shape ID of starting connection, if any
+    # Shape ID of starting connection, if any.
     $self->{_start} = undef;
 
-    # Shape vertice, starts at 0, numbered clockwise from 12 oclock
+    # Shape vertex, starts at 0, numbered clockwise from 12 o'clock.
     $self->{_start_index} = undef;
 
-    $self->{_end}     = undef;
+    $self->{_end}       = undef;
     $self->{_end_index} = undef;
 
-    # Number and size of adjustments for shapes (usually connectors)
+    # Number and size of adjustments for shapes (usually connectors).
     $self->{_adjustments} = [];
 
-    # t)op, b)ottom, l)eft, or r)ight
+    # Start and end sides. t)op, b)ottom, l)eft, or r)ight.
     $self->{_start_side} = '';
     $self->{_end_side}   = '';
 
-    # Flip shape Horizontally. eg. arrow left to arrow right
+    # Flip shape Horizontally. eg. arrow left to arrow right.
     $self->{_flip_h} = 0;
 
-    # Flip shape Vertically. eg. up arrow to down arrow
+    # Flip shape Vertically. eg. up arrow to down arrow.
     $self->{_flip_v} = 0;
 
-    # shape rotation (in degrees 0-360)
+    # shape rotation (in degrees 0-360).
     $self->{_rotation} = 0;
 
-    # An alternate way to create a text box, because Excel allows it.  It is just a rectangle with text
+    # An alternate way to create a text box, because Excel allows it.
+    # It is just a rectangle with text.
     $self->{_txBox} = 0;
 
-    # Shape outline color, or 0 for noFill (default black)
+    # Shape outline colour, or 0 for noFill (default black).
     $self->{_line} = '000000';
 
-    # dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot
+    # Line type: dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot.
     $self->{_line_type} = '';
 
-    # Line weight (integer)
+    # Line weight (integer).
     $self->{_line_weight} = 1;
 
-    # Shape fill color, or 0 for noFill (default noFill)
+    # Shape fill colour, or 0 for noFill (default noFill).
     $self->{_fill} = 0;
 
-    # Formatting for shape text, if any
-    $self->{_format}   = {};
+    # Formatting for shape text, if any.
+    $self->{_format} = {};
 
-    # copy of color palette table from Workbook.pm
-    $self->{_palette}   = [];
+    # copy of colour palette table from Workbook.pm.
+    $self->{_palette} = [];
 
-    # t, ctr, b
+    # Vertical alignment: t, ctr, b.
     $self->{_valign} = 'ctr';
 
-    # l, ctr, r, just
+    # Alignment: l, ctr, r, just
     $self->{_align} = 'ctr';
 
     $self->{_x_offset} = 0;
     $self->{_y_offset} = 0;
 
     # Scale factors, which also may be set when the shape is inserted.
-    $self->{_scale_x}  = 1;
-    $self->{_scale_y}  = 1;
+    $self->{_scale_x} = 1;
+    $self->{_scale_y} = 1;
 
-    # Default size, which can be modified a/o scaled
+    # Default size, which can be modified and/or scaled.
     $self->{_width}  = 50;
     $self->{_height} = 50;
 
-    # Initial assignment. May be modified when prepared
+    # Initial assignment. May be modified when prepared.
     $self->{_column_start} = 0;
     $self->{_row_start}    = 0;
     $self->{_x1}           = 0;
@@ -147,16 +149,20 @@ sub new {
     bless $self, $class;
     return $self;
 }
+
+
 ###############################################################################
 #
-# set_properties ( name => 'Shape 1', type => 'rect' )
+# set_properties( name => 'Shape 1', type => 'rect' )
 #
-# Set shape properties 
+# Set shape properties.
 #
 sub set_properties {
-    my $self = shift;
+
+    my $self       = shift;
     my %properties = @_;
-    # Update properties with passed arguments
+
+    # Update properties with passed arguments.
     while ( my ( $key, $value ) = each( %properties ) ) {
 
         # Strip leading "-" from Tk style properties e.g. -color => 'red'.
@@ -165,21 +171,28 @@ sub set_properties {
         # Add leading underscore "_" to internal hash keys, if not supplied.
         $key = "_" . $key unless $key =~ m/^_/;
 
-        exists $self->{$key} or do {warn "Unknown shape property: $key.  Property not set\n"; next};
+        if ( !exists $self->{$key} ) {
+            warn "Unknown shape property: $key. Property not set.\n";
+            next;
+        }
+
         $self->{$key} = $value;
     }
 }
 
+
 ###############################################################################
 #
-# set_adjustment ( adj1, adj2, adj3, ... )
+# set_adjustment( adj1, adj2, adj3, ... )
 #
-# Set the shape adjustments array (as a reference)
+# Set the shape adjustments array (as a reference).
 #
 sub set_adjustments {
+
     my $self = shift;
     $self->{_adjustments} = \@_;
 }
+
 
 ###############################################################################
 #
@@ -191,23 +204,23 @@ sub AUTOLOAD {
 
     my $self = shift;
 
-    # Ignore calls to DESTROY
+    # Ignore calls to DESTROY.
     return if $AUTOLOAD =~ /::DESTROY$/;
 
-    # Check for a valid method names, i.e. "set_xxx_yyy".
+    # Check for a valid method names, i.e. "set_xxx_Cy".
     $AUTOLOAD =~ /.*::(get|set)(\w+)/ or die "Unknown method: $AUTOLOAD\n";
 
     # Match the function (get or set) and attribute, i.e. "_xxx_yyy".
-    my $gs = $1;
+    my $gs        = $1;
     my $attribute = $2;
 
-    # Check that the attribute exists
+    # Check that the attribute exists.
     exists $self->{$attribute} or die "Unknown method: $AUTOLOAD\n";
 
     # The attribute value
     my $value;
 
-    # set_property() pattern
+    # set_property() pattern.
     # When a method is AUTOLOADED we store a new anonymous
     # sub in the appropriate slot in the symbol table. The speeds up subsequent
     # calls to the same method.
@@ -217,19 +230,20 @@ sub AUTOLOAD {
     $value = $_[0];
     $value = 1 if not defined $value;    # The default value is always 1
 
-    if ($gs eq 'set') {
+    if ( $gs eq 'set' ) {
         *{$AUTOLOAD} = sub {
             my $self  = shift;
             my $value = shift;
-    
+
             $value = 1 if not defined $value;
             $self->{$attribute} = $value;
         };
 
         $self->{$attribute} = $value;
-    } else {
+    }
+    else {
         *{$AUTOLOAD} = sub {
-            my $self  = shift;
+            my $self = shift;
             return $self->{$attribute};
         };
 
@@ -237,6 +251,8 @@ sub AUTOLOAD {
         return $self->{$attribute};
     }
 }
+
+
 1;
 
 __END__
@@ -247,7 +263,7 @@ Shape - A class for creating Excel Drawing shapes
 
 =head1 SYNOPSIS
 
-To create a simple Excel file containing shapes using Excel::Writer::XLSX:
+To create a simple Excel file containing shapes using L<Excel::Writer::XLSX>:
 
     #!/usr/bin/perl
 
@@ -261,41 +277,45 @@ To create a simple Excel file containing shapes using Excel::Writer::XLSX:
     # Add a default rectangle shape.
     my $rect = $workbook->add_shape();
 
-    # Add an ellipse, with centered text.
+    # Add an ellipse with centered text.
     my $ellipse = $workbook->add_shape(
         type => 'ellipse',
         text => "Hello\nWorld"
     );
 
-    # Add a cross, with a user-defined id.
-    my $cross = $workbook->add_shape( type => 'cross', id => 33 );
+    # Add a cross shape.
+    my $cross = $workbook->add_shape( type => 'cross');
 
     # Insert the shapes in the worksheet.
-    $sheet->insert_shape( 'A1', $rect );
-    $sheet->insert_shape( 'B2', $ellipse );
-    $sheet->insert_shape( 'C3', $cross );
+    $worksheet->insert_shape( 'A1', $rect );
+    $worksheet->insert_shape( 'B2', $ellipse );
+    $worksheet->insert_shape( 'C3', $cross );
 
 =head1 DESCRIPTION
 
-The C<Excel::Writer::XLSX::Shape> module is used to create shape objects for L<Excel::Writer::XLSX>.
+The C<Excel::Writer::XLSX::Shape> module is used to create Shape objects for L<Excel::Writer::XLSX>.
 
-A shape object is created via the Workbook C<add_shape()> method:
+A Shape object is created via the Workbook C<add_shape()> method:
 
     my $shape_rect = $workbook->add_shape( type => 'rect' );
 
-Once the object is created it can be inserted into a worksheet using the C<insert_shape()> method. A shape can be inserted mulitple times if required.
+Once the object is created it can be inserted into a worksheet using the C<insert_shape()> method:
 
-    $sheet->insert_shape('A1', $shape_rect);
-    $sheet->insert_shape('B2', $shape_rect, 20, 30);
+    $worksheet->insert_shape('A1', $shape_rect);
+
+A Shape can be inserted multiple times if required.
+
+    $worksheet->insert_shape('A1', $shape_rect);
+    $worksheet->insert_shape('B2', $shape_rect, 20, 30);
 
 
 =head1 METHODS
 
 =head2 add_shape( %properties )
 
-The C<add_shape()> Workboook method specifies the properties of the shape in hashC<( property => value )> format:
+The C<add_shape()> Workbook method specifies the properties of the Shape in hash C<< property => value >> format:
 
-    my $shape = $workbook->add_shape( %proprties );
+    my $shape = $workbook->add_shape( %properties );
 
 The available properties are shown below.
 
@@ -313,122 +333,119 @@ A more detailed explanation of the C<insert_shape()> method is given in the main
 
 =head1 SHAPE PROPERTIES
 
-Any shape property can be queried/modifed by the corresponding get/set method:
-    
-    my $ellipse = $workbook->add_shape( %proprties );
-    $ellipse->set_type('cross');            # No longer an ellipse!
-    my $type = $elipse->get_type();         # Find out what it really is
+Any shape property can be queried or modified by the corresponding get/set method:
 
-Multiple shape properties may also be modifed, by using the C<set_shape_properties> method.
+    my $ellipse = $workbook->add_shape( %properties );
+    $ellipse->set_type( 'cross' );    # No longer an ellipse!
+    my $type = $ellipse->get_type();  # Find out what it really is.
 
-        $shape->set_properties( type => 'ellipse', text => 'A Circle' );
+Multiple shape properties may also be modified in one go by using the C<set_shape_properties()> method:
+
+    $shape->set_properties( type => 'ellipse', text => 'Hello' );
 
 The properties of a shape object that can be defined via C<add_shape()> are shown below.
 
 =head2 name
 
-Defines the name of the shape. This is optional.
+Defines the name of the shape. This is an optional property and the shape will be given a default name if not supplied. The name is generally only used by Excel Macros to refer to the object.
 
 =head2 type
 
 Defines the type of the object such as C<rect>, C<ellipse> or C<triangle>:
 
     my $ellipse = $workbook->add_shape( type => 'ellipse' );
-    
+
+The default type is C<rect>.
 
 The full list of available shapes is shown below.
 
-See also the C<all_shapes.pl> program in the C<examples> directory of the distro.
-It creates an example workbook with all the shapes, labelled with their shape names.
+See also the C<shapes_all.pl> program in the C<examples> directory of the distro. It creates an example workbook with all supported shapes labelled with their shape names.
 
-The list in the consists of all the shape types
-defined under xsd:simpleType name="ST_ShapeType" in ECMA-376 Office Open XML File Formats Part 4
-the grouping by tab name is not part of the standard.
 
 =over 4
 
-=item * Action Shapes
+=item * Basic Shapes
 
-actionButtonBackPrevious actionButtonBeginning actionButtonBlank 
-actionButtonDocument actionButtonEnd actionButtonForwardNext 
-actionButtonHelp actionButtonHome actionButtonInformation actionButtonMovie 
-actionButtonReturn actionButtonSound
+    blockArc              can            chevron       cube          decagon
+    diamond               dodecagon      donut         ellipse       funnel
+    gear6                 gear9          heart         heptagon      hexagon
+    homePlate             lightningBolt  line          lineInv       moon
+    nonIsoscelesTrapezoid noSmoking      octagon       parallelogram pentagon
+    pie                   pieWedge       plaquerect    round1Rect
+    round2DiagRect        round2SameRect roundRect     rtTriangle    smileyFace
+    snip1Rect             snip2DiagRect  snip2SameRect snipRoundRect star10
+    star12                star16         star24        star32        star4
+    star5                 star6          star7         star8         sun
+    teardrop              trapezoid      triangle
 
 =item * Arrow Shapes
 
-bentArrow bentUpArrow circularArrow curvedDownArrow curvedLeftArrow 
-curvedRightArrow curvedUpArrow downArrow leftArrow leftCircularArrow 
-leftRightArrow leftRightCircularArrow leftRightUpArrow leftUpArrow 
-notchedRightArrow quadArrow rightArrow stripedRightArrow swooshArrow upArrow 
-upDownArrow uturnArrow
-
-=item * Basic Shapes
-
-blockArc can chevron cube decagon diamond dodecagon donut ellipse funnel 
-gear6 gear9 heart heptagon hexagon homePlate lightningBolt line lineInv moon 
-nonIsoscelesTrapezoid noSmoking octagon parallelogram pentagon pie pieWedge 
-plaque rect round1Rect round2DiagRect round2SameRect roundRect rtTriangle 
-smileyFace snip1Rect snip2DiagRect snip2SameRect snipRoundRect star10 star12 
-star16 star24 star32 star4 star5 star6 star7 star8 sun teardrop trapezoid 
-triangle
-
-=item * Callout Shapes
-
-accentBorderCallout1 accentBorderCallout2 accentBorderCallout3 
-accentCallout1 accentCallout2 accentCallout3 borderCallout1 borderCallout2 
-borderCallout3 callout1 callout2 callout3 cloudCallout downArrowCallout 
-leftArrowCallout leftRightArrowCallout quadArrowCallout rightArrowCallout 
-upArrowCallout upDownArrowCallout wedgeEllipseCallout wedgeRectCallout 
-wedgeRoundRectCallout
-
-=item * Chart Shapes 
-
-Not to be confused with Excel Charts.  There is no relationship.
-
-chartPlus chartStar chartX
+    bentArrow        bentUpArrow       circularArrow     curvedDownArrow
+    curvedLeftArrow  curvedRightArrow  curvedUpArrow     downArrow
+    leftArrow        leftCircularArrow leftRightArrow    leftRightCircularArrow
+    leftRightUpArrow leftUpArrow       notchedRightArrow quadArrow
+    rightArrow       stripedRightArrow swooshArrow       upArrow
+    upDownArrow      uturnArrow
 
 =item * Connector Shapes
 
-bentConnector2 bentConnector3 bentConnector4 bentConnector5 curvedConnector2 
-curvedConnector3 curvedConnector4 curvedConnector5 straightConnector1
+    bentConnector2   bentConnector3   bentConnector4
+    bentConnector5   curvedConnector2 curvedConnector3
+    curvedConnector4 curvedConnector5 straightConnector1
 
-=item * Arrow Shapes
+=item * Callout Shapes
 
-rightArrow leftArrow upArrow downArrow leftRightArrow upDownArrow 4wayarrow
-3wayarrow curvedRightArrow curvedLeftArrow curvedUpArrow curvedDownArrow
-notchedRightArrow homePlate chevron rightArrowCallout leftArrowCallout
-upArrowCallout downArrowCallout leftRightArrowCallout upDownArrowCallout
-4wayarrowcallout
+    accentBorderCallout1  accentBorderCallout2  accentBorderCallout3
+    accentCallout1        accentCallout2        accentCallout3
+    borderCallout1        borderCallout2        borderCallout3
+    callout1              callout2              callout3
+    cloudCallout          downArrowCallout      leftArrowCallout
+    leftRightArrowCallout quadArrowCallout      rightArrowCallout
+    upArrowCallout        upDownArrowCallout    wedgeEllipseCallout
+    wedgeRectCallout      wedgeRoundRectCallout
 
 =item * Flow Chart Shapes
 
-flowChartAlternateProcess   flowChartCollate            flowChartConnector 
-flowChartDecision           flowChartDelay              flowChartDisplay 
-flowChartDocument           flowChartExtract            flowChartInputOutput 
-flowChartInternalStorage    flowChartMagneticDisk       flowChartMagneticDrum 
-flowChartMagneticTape       flowChartManualInput        flowChartManualOperation 
-flowChartMerge              flowChartMultidocument      flowChartOfflineStorage 
-flowChartOffpageConnector   flowChartOnlineStorage      flowChartOr 
-flowChartPredefinedProcess  flowChartPreparation        flowChartProcess 
-flowChartPunchedCard        flowChartPunchedTape        flowChartSort 
-flowChartSummingJunction    flowChartTerminator         
+    flowChartAlternateProcess  flowChartCollate        flowChartConnector
+    flowChartDecision          flowChartDelay          flowChartDisplay
+    flowChartDocument          flowChartExtract        flowChartInputOutput
+    flowChartInternalStorage   flowChartMagneticDisk   flowChartMagneticDrum
+    flowChartMagneticTape      flowChartManualInput    flowChartManualOperation
+    flowChartMerge             flowChartMultidocument  flowChartOfflineStorage
+    flowChartOffpageConnector  flowChartOnlineStorage  flowChartOr
+    flowChartPredefinedProcess flowChartPreparation    flowChartProcess
+    flowChartPunchedCard       flowChartPunchedTape    flowChartSort
+    flowChartSummingJunction   flowChartTerminator
+
+=item * Action Shapes
+
+    actionButtonBackPrevious actionButtonBeginning actionButtonBlank
+    actionButtonDocument     actionButtonEnd       actionButtonForwardNext
+    actionButtonHelp         actionButtonHome      actionButtonInformation
+    actionButtonMovie        actionButtonReturn    actionButtonSound
+
+=item * Chart Shapes
+
+Not to be confused with Excel Charts.
+
+    chartPlus chartStar chartX
 
 =item * Math Shapes
 
-mathDivide   mathEqual    mathMinus    mathMultiply mathNotEqual mathPlus     
+    mathDivide mathEqual mathMinus mathMultiply mathNotEqual mathPlus
 
 =item * Stars and Banners
 
-arc             bevel           bracePair       bracketPair     chord 
-cloud           corner          diagStripe      doubleWave      ellipseRibbon 
-ellipseRibbon2  foldedCorner    frame           halfFrame       horizontalScroll 
-irregularSeal1  irregularSeal2  leftBrace       leftBracket     leftRightRibbon 
-plus            ribbon          ribbon2         rightBrace      rightBracket 
-verticalScroll  wave            
+    arc            bevel          bracePair  bracketPair chord
+    cloud          corner         diagStripe doubleWave  ellipseRibbon
+    ellipseRibbon2 foldedCorner   frame      halfFrame   horizontalScroll
+    irregularSeal1 irregularSeal2 leftBrace  leftBracket leftRightRibbon
+    plus           ribbon         ribbon2    rightBrace  rightBracket
+    verticalScroll wave
 
 =item * Tab Shapes
 
-cornerTabs plaqueTabs squareTabs
+    cornerTabs plaqueTabs squareTabs
 
 =back
 
@@ -442,23 +459,28 @@ The text is super-imposed over the shape. The text can be wrapped using the newl
 
 =head2 id
 
-Identification number for internal identification, or for identification in the resulting xml file. This number will be auto-assigned, if not assigned, or if it is a duplicate.
+Identification number for internal identification. This number will be auto-assigned, if not assigned, or if it is a duplicate.
 
 =head2 format
 
-Workbook format for decorating shape text (font family, size, and decoration).
+Workbook format for decorating the shape text (font family, size, and decoration).
 
-=head2 start, start_index, end, end_index
+=head2 start, start_index
 
-Shape ID of starting connection point for a connector, and index of connection. Index numbers are zero-based, and start from the top center, and count clockwise. Indices are are typically created for vertices and center points of shapes. They are the blue connection points that appear when connection shapes manually in Excel.
+Shape indices of the starting point for a connector and the index of the connection. Index numbers are zero-based, start from the top dead centre and are counted clockwise.
 
-end and end_index are for the connection end point, obviously.
+Indices are are typically created for vertices and centre points of shapes. They are the blue connection points that appear when connection shapes are selected manually in Excel.
+
+=head2 end, end_index
+
+Same as above but for end points and end connections.
+
 
 =head2 start_side, end_side
 
 This is either the letter C<b> or C<r> for the bottom or right side of the shape to be connected to and from.
 
-If the start, start_index, and start_side parameters are defined for a connection shape, the shape will be auto located and linked to the starting and ending shapes respectively. This can be very helpful for flow charts, organization charts, etc.
+If the C<start>, C<start_index>, and C<start_side> parameters are defined for a connection shape, the shape will be auto located and linked to the starting and ending shapes respectively. This can be very useful for flow and organisation charts.
 
 =head2 flip_h, flip_v
 
@@ -470,76 +492,113 @@ Shape rotation, in degrees, from 0 to 360.
 
 =head2 line, fill
 
-Shape color for the outline and fill. Colors may be specified as a color index, or in rgb format, i.e. AA00FF.
-see L<COLOURS IN EXCEL> for more information.
+Shape color for the outline and fill. Colours may be specified as a color index, or in RGB format, i.e. C<AA00FF>.
+
+See C<COLOURS IN EXCEL> in the main documentation for more information.
 
 =head2 line_type
 
 Line type for shape outline. The default is solid. The list of possible values is:
 
-    dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot
+    dash, sysDot, dashDot, lgDash, lgDashDot, lgDashDotDot, solid
 
 =head2 valign, align
 
-Text alignment within the shape. Vertical alignment may be t)top, ctr or b)ottom. Likewise,
-horizontal alignment may be l, ctr, r, or just. The default is to center both horizontally and vertically.
+Text alignment within the shape.
+
+Vertical alignment can be:
+
+    Setting     Meaning
+    =======     =======
+    t           Top
+    ctr         Centre
+    b           Bottom
+
+Horizontal alignment can be:
+
+    Setting     Meaning
+    =======     =======
+    l           Left
+    r           Right
+    ctr         Centre
+    just        Justified
+
+The default is to centre both horizontally and vertically.
 
 =head2 scale_x, scale_y
 
-Scale factor in x and y dimension, for scaling the shape width and height. Default value is 1.
-Scaling may be set on the shape object, or adjusted via C<< insert_shape >>.
+Scale factor in x and y dimension, for scaling the shape width and height. The default value is 1.
+
+Scaling may be set on the shape object or via C<insert_shape()>.
 
 =head2 adjustments
 
 Adjustment of shape vertices. Most shapes do not use this. For some shapes, there is a single adjustment to modify the geometry. For instance, the plus shape has one adjustment to control the width of the spokes.
 
-Connectors can have a number of adjustments to control the shape routing. Typically, a connector will have 3 to 5 handles for routing the shape. The adjustment is in percent of the distance from the starting shape to the ending shape, alternating between the x and y dimension. Adjustments may be negative, to route the shape away from the endpoint. The best way to learn about these is to play with them in Excel, and examine the xml that is produced.
+Connectors can have a number of adjustments to control the shape routing. Typically, a connector will have 3 to 5 handles for routing the shape. The adjustment is in percent of the distance from the starting shape to the ending shape, alternating between the x and y dimension. Adjustments may be negative, to route the shape away from the endpoint.
 
 =head2 stencil
 
-Shapes work in stencil mode by default. That is, once a shape is inserted, its connection
-is separated from its master. The master shape may be modified after an 
-instance is inserted, and only subsequent insertions will show the 
-modifications. This is helpful for org charts, where an employee shape may be 
-created once, and then the text of the shape is modified for each employee.
-the C<< insert_shape >> method returns a reference to the inserted shape (the child).
+Shapes work in stencil mode by default. That is, once a shape is inserted, its connection is separated from its master. The master shape may be modified after an instance is inserted, and only subsequent insertions will show the modifications.
 
-Stencil mode can be turned off, allowing for shape(s) to be modified after insertion.
-the C<< insert_shape >> method returns a reference to the inserted shape (the master).
-This is not very useful for inserting multiple shapes, since the x/y coordinates also 
-get modified.
+This is helpful for Org charts, where an employee shape may be created once, and then the text of the shape is modified for each employee.
+
+The C<insert_shape()> method returns a reference to the inserted shape (the child).
+
+Stencil mode can be turned off, allowing for shape(s) to be modified after insertion. In this case the C<insert_shape()> method returns a reference to the inserted shape (the master). This is not very useful for inserting multiple shapes, since the x/y coordinates also gets modified.
 
 =head1 TIPS
 
 Use C<< worksheet->hide_gridlines(2) >> to prepare a blank canvas without gridlines.
 
-Shapes do not need to fit on one page. A large drawing may be created, and Excel 
-will split the drawing into multiple pages. Use the page break preview to show 
-page boundaries super imposed on the drawing.
+Shapes do not need to fit on one page. Excel will split a large drawing into multiple pages if required. Use the page break preview to show page boundaries superimposed on the drawing.
 
-Connected shapes will auto-locate in Excel, if you move either the starting 
-shape or the ending shape separately. However, if you select both shapes (lasso 
-or control-click), the connector will move with it, and the shape adjustments 
-will not re-calculate.
+Connected shapes will auto-locate in Excel if you move either the starting shape or the ending shape separately. However, if you select both shapes (lasso or control-click), the connector will move with it, and the shape adjustments will not re-calculate.
 
 =head1 EXAMPLE
 
-A complete example is provided in the synopsis section. Also see shape1.pl, shape2.pl, ... and shape_all.pl
-in the examples folder of the distribution.
+    #!/usr/bin/perl
 
-=head1 TO DO
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+
+    my $workbook  = Excel::Writer::XLSX->new( 'shape.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+
+    # Add a default rectangle shape.
+    my $rect = $workbook->add_shape();
+
+    # Add an ellipse with centered text.
+    my $ellipse = $workbook->add_shape(
+        type => 'ellipse',
+        text => "Hello\nWorld"
+    );
+
+    # Add a cross with a user-defined id.
+    my $cross = $workbook->add_shape( type => 'cross', id => 33 );
+
+    # Insert the shapes in the worksheet.
+    $worksheet->insert_shape( 'A1', $rect );
+    $worksheet->insert_shape( 'B2', $ellipse );
+    $worksheet->insert_shape( 'C3', $cross );
+
+
+See also the C<shapes_*.pl> program in the C<examples> directory of the distro.
+
+=head1 TODO
 
 =over 4
 
-=item * Add shapes which have custom geometries
+=item * Add shapes which have custom geometries.
 
-=item * Provide better integration of workbook formats for shapes
+=item * Provide better integration of workbook formats for shapes.
 
-=item * Add validation of shape properties to prevent creation of workbooks that will not open.
+=item * Add further validation of shape properties to prevent creation of workbooks that will not open.
 
-=item * Auto connect shapes that are not anchored to cell A1
+=item * Auto connect shapes that are not anchored to cell A1.
 
-=item * Add automatic shape connection to shape vertices besides the object center.
+=item * Add automatic shape connection to shape vertices besides the object centre.
 
 =item * Improve automatic shape connection to shapes with concave sides (e.g. chevron).
 
@@ -553,5 +612,4 @@ Dave Clarke dclarke@cpan.org
 
 © MM-MMXII, John McNamara.
 
-All Rights Reserved. This module is free software. It may be used, redistributed and/or
-modified under the same terms as Perl itself.
+All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

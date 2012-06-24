@@ -55,6 +55,14 @@ protection.pl           Example of cell locking and formula hiding.
 rich_strings.pl         Example of strings with multiple formats.
 right_to_left.pl        Change default sheet direction to right to left.
 sales.pl                An example of a simple sales spreadsheet.
+shape1.pl               Insert shapes in worksheet.
+shape2.pl               Insert shapes in worksheet. With properties.
+shape3.pl               Insert shapes in worksheet. Scaled.
+shape4.pl               Insert shapes in worksheet. With modification.
+shape5.pl               Insert shapes in worksheet. With connections.
+shape6.pl               Insert shapes in worksheet. With connections.
+shape7.pl               Insert shapes in worksheet. One to many connections.
+shape_all.pl            Demo of all the available shape and connector types.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
 tab_colors.pl           Example of how to set worksheet tab colours.

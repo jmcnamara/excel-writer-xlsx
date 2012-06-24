@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #######################################################################
 #
@@ -9,21 +9,24 @@
 #
 
 use strict;
+use warnings;
 use Excel::Writer::XLSX;
 
-# Create a new workbook called simple.xls and add a worksheet
-my $workbook = Excel::Writer::XLSX->new( 'shape1.xlsx' );
-
-die "Couldn't create new Excel file: $!.\n" unless defined $workbook;
-
+my $workbook  = Excel::Writer::XLSX->new( 'shape1.xlsx' );
 my $worksheet = $workbook->add_worksheet();
 
-# Add a circle, with centered text
-my $ellipse = $workbook->add_shape( type => 'ellipse', text=>"Hello\nWorld", width=> 60, height => 60 );
-$worksheet->insert_shape('A1', $ellipse, 50, 50);
+# Add a circle, with centered text.
+my $ellipse = $workbook->add_shape(
+    type   => 'ellipse',
+    text   => "Hello\nWorld",
+    width  => 60,
+    height => 60
+);
 
-# Add a plus sign
-my $plus = $workbook->add_shape( type => 'plus', width=> 20, height => 20 );
-$worksheet->insert_shape('D8', $plus);
+$worksheet->insert_shape( 'A1', $ellipse, 50, 50 );
+
+# Add a plus sign.
+my $plus = $workbook->add_shape( type => 'plus', width => 20, height => 20 );
+$worksheet->insert_shape( 'D8', $plus );
 
 __END__

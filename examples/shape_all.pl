@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #######################################################################
 #
@@ -6,31 +6,43 @@
 # add all shapes (as currently implemented) to an Excel xlsx file.
 #
 # The list in the <DATA> section consists of all the shape types
-# defined under <xsd:simpleType name="ST_ShapeType"> in ECMA-376 Office Open XML File Formats Part 4
-# the grouping by tab name is not part of the standard.
+# defined under <xsd:simpleType name="ST_ShapeType"> in ECMA-376
+# Office Open XML File Formats Part 4.
+#
+# The grouping by tab name is not part of the standard.
 #
 # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
 #
 
+use strict;
+use warnings;
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( 'shape_all.xlsx' );
+my $workbook = Excel::Writer::XLSX->new( 'shape_all.xlsx' );
 
-my ($worksheet, $last_sheet, $shape, $r) = (0, '', '', undef, 0);
-while (<DATA>) {    
+my ( $worksheet, $last_sheet, $shape, $r ) = ( 0, '', '', undef, 0 );
+
+while ( <DATA> ) {
     chomp;
-    next unless m/^\w/;             # Skip blank lines and comments
-    my ($sheet, $name) = split(/\t/, $_);
-    if ($last_sheet ne $sheet) {
-        $worksheet = $workbook->add_worksheet($sheet);
-        $r = 2;
+    next unless m/^\w/;    # Skip blank lines and comments.
+
+    my ( $sheet, $name ) = split( /\t/, $_ );
+    if ( $last_sheet ne $sheet ) {
+        $worksheet = $workbook->add_worksheet( $sheet );
+        $r         = 2;
     }
     $last_sheet = $sheet;
-    $shape = $workbook->add_shape( type => $name, text=>$name, width=>90, height =>90);
+    $shape      = $workbook->add_shape(
+        type   => $name,
+        text   => $name,
+        width  => 90,
+        height => 90
+    );
 
-    # Connectors can not have labels, so write the connector name in the cell to the left.
-    $worksheet->write($r, 0, $name) if $sheet eq 'Connector';
-    $worksheet->insert_shape($r, 2, $shape, 0, 0);
+    # Connectors can not have labels, so write the connector name in the cell
+    # to the left.
+    $worksheet->write( $r, 0, $name ) if $sheet eq 'Connector';
+    $worksheet->insert_shape( $r, 2, $shape, 0, 0 );
     $r += 5;
 }
 
