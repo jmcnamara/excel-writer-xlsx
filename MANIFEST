@@ -49,6 +49,14 @@ examples/regions.pl
 examples/rich_strings.pl
 examples/right_to_left.pl
 examples/sales.pl
+examples/shape1.pl
+examples/shape2.pl
+examples/shape3.pl
+examples/shape4.pl
+examples/shape5.pl
+examples/shape6.pl
+examples/shape7.pl
+examples/shape_all.pl
 examples/stats.pl
 examples/stats_ext.pl
 examples/stocks.pl
@@ -102,6 +110,7 @@ lib/Excel/Writer/XLSX/Package/Theme.pm
 lib/Excel/Writer/XLSX/Package/VML.pm
 lib/Excel/Writer/XLSX/Package/XMLwriter.pm
 lib/Excel/Writer/XLSX/Package/XMLwriterSimple.pm
+lib/Excel/Writer/XLSX/Shape.pm
 lib/Excel/Writer/XLSX/Utility.pm
 lib/Excel/Writer/XLSX/Workbook.pm
 lib/Excel/Writer/XLSX/Worksheet.pm
@@ -155,6 +164,13 @@ t/chartsheet/chartsheet01.t
 t/chartsheet/sub_write_xml_declaration.t
 t/drawing/drawing_chart_01.t
 t/drawing/drawing_image_01.t
+t/drawing/drawing_shape_01.t
+t/drawing/drawing_shape_02.t
+t/drawing/drawing_shape_03.t
+t/drawing/drawing_shape_04.t
+t/drawing/drawing_shape_05.t
+t/drawing/drawing_shape_06.t
+t/drawing/drawing_shape_07.t
 t/drawing/sub_write_a_graphic_frame_locks.t
 t/drawing/sub_write_c_chart.t
 t/drawing/sub_write_c_nv_graphic_frame_pr.t
@@ -246,6 +262,8 @@ t/regression/autofilter05.t
 t/regression/autofilter06.t
 t/regression/autofilter07.t
 t/regression/chart_area01.t
+t/regression/chart_area02.t
+t/regression/chart_area03.t
 t/regression/chart_axis01.t
 t/regression/chart_axis02.t
 t/regression/chart_axis03.t
@@ -314,6 +332,9 @@ t/regression/chart_format14.t
 t/regression/chart_format15.t
 t/regression/chart_format16.t
 t/regression/chart_line01.t
+t/regression/chart_name01.t
+t/regression/chart_name02.t
+t/regression/chart_name03.t
 t/regression/chart_pie01.t
 t/regression/chart_scatter01.t
 t/regression/chart_scatter02.t
@@ -443,6 +464,7 @@ t/regression/rich_string07.t
 t/regression/rich_string08.t
 t/regression/rich_string09.t
 t/regression/rich_string10.t
+t/regression/rich_string11.t
 t/regression/row_col_format01.t
 t/regression/row_col_format02.t
 t/regression/row_col_format03.t
@@ -457,6 +479,11 @@ t/regression/row_col_format11.t
 t/regression/row_col_format12.t
 t/regression/row_col_format13.t
 t/regression/row_col_format14.t
+t/regression/shape_connect01.t
+t/regression/shape_connect02.t
+t/regression/shape_connect03.t
+t/regression/shape_scale01.t
+t/regression/shape_stencil01.t
 t/regression/shared_strings01.t
 t/regression/shared_strings02.t
 t/regression/simple01.t
@@ -475,6 +502,8 @@ t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
 t/regression/xlsx_files/autofilter07.xlsx
 t/regression/xlsx_files/chart_area01.xlsx
+t/regression/xlsx_files/chart_area02.xlsx
+t/regression/xlsx_files/chart_area03.xlsx
 t/regression/xlsx_files/chart_axis01.xlsx
 t/regression/xlsx_files/chart_axis02.xlsx
 t/regression/xlsx_files/chart_axis03.xlsx
@@ -543,6 +572,9 @@ t/regression/xlsx_files/chart_format14.xlsx
 t/regression/xlsx_files/chart_format15.xlsx
 t/regression/xlsx_files/chart_format16.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
+t/regression/xlsx_files/chart_name01.xlsx
+t/regression/xlsx_files/chart_name02.xlsx
+t/regression/xlsx_files/chart_name03.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_scatter01.xlsx
 t/regression/xlsx_files/chart_scatter02.xlsx
@@ -662,6 +694,7 @@ t/regression/xlsx_files/rich_string07.xlsx
 t/regression/xlsx_files/rich_string08.xlsx
 t/regression/xlsx_files/rich_string09.xlsx
 t/regression/xlsx_files/rich_string10.xlsx
+t/regression/xlsx_files/rich_string11.xlsx
 t/regression/xlsx_files/row_col_format01.xlsx
 t/regression/xlsx_files/row_col_format02.xlsx
 t/regression/xlsx_files/row_col_format03.xlsx
@@ -676,6 +709,11 @@ t/regression/xlsx_files/row_col_format11.xlsx
 t/regression/xlsx_files/row_col_format12.xlsx
 t/regression/xlsx_files/row_col_format13.xlsx
 t/regression/xlsx_files/row_col_format14.xlsx
+t/regression/xlsx_files/shape_connect01.xlsx
+t/regression/xlsx_files/shape_connect02.xlsx
+t/regression/xlsx_files/shape_connect03.xlsx
+t/regression/xlsx_files/shape_scale01.xlsx
+t/regression/xlsx_files/shape_stencil01.xlsx
 t/regression/xlsx_files/shared_strings01.xlsx
 t/regression/xlsx_files/shared_strings02.xlsx
 t/regression/xlsx_files/simple01.xlsx

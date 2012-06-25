@@ -326,6 +326,14 @@ rich_strings.jpg
 right_to_left.jpg
 row_wrap.jpg
 sales.jpg
+shape1.jpg
+shape2.jpg
+shape3.jpg
+shape4.jpg
+shape5.jpg
+shape6.jpg
+shape7.jpg
+shape_all.jpg
 stats.jpg
 stats_ext.jpg
 stocks.jpg

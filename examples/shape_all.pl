@@ -5,11 +5,11 @@
 # A simple example of how to use the Excel::Writer::XLSX module to
 # add all shapes (as currently implemented) to an Excel xlsx file.
 #
-# The list in the <DATA> section consists of all the shape types
-# defined under <xsd:simpleType name="ST_ShapeType"> in ECMA-376
-# Office Open XML File Formats Part 4.
+# The list at the end consists of all the shape types defined as
+# ST_ShapeType in ECMA-376, Office Open XML File Formats Part 4.
 #
-# The grouping by tab name is not part of the standard.
+# The grouping by worksheet name is for illustration only. It isn't
+# part of the ECMA-376 standard.
 #
 # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
 #

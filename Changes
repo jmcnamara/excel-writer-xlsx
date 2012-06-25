@@ -4,15 +4,18 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
-0.48 XXX XX 2012
+0.48 June 25 2012
 
-    + Added fix for chart names in embedded charts.
-      Reported by Matt Freel.
-
-    + Fixed bug with Unicode characters in rich strings.
-      Reported by Michiel van Rhee.
+    + Added worksheet shapes. A major new feature.
+      Patch, docs, tests and example programs by Dave Clarke.
 
     + Added stacked and percent_stacked chart subtypes to Area charts.
+
+    ! Added fix for chart names in embedded charts.
+      Reported by Matt Freel.
+
+    ! Fixed bug with Unicode characters in rich strings.
+      Reported by Michiel van Rhee.
 
 
 0.47 April 10 2012
@@ -24,12 +27,12 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Additional chart data label parameters such as position, leader lines
       and percentage. Initial patch by George E. Tarrant III.
 
-    ! Fixed for Autofilter filter_column() offset bug reported by 
+    ! Fixed for Autofilter filter_column() offset bug reported by
       Krishna Rajendran.
 
     ! Fix for write_url() where url contains invalid whitespace, RT #75808,
       reported by Oleg G. The write_url() method now throws a warning and
-      rejects the invalid url to avoid file corruption. 
+      rejects the invalid url to avoid file corruption.
 
 0.46 February 10 2012
 
@@ -408,4 +411,3 @@ Revision history for Perl module Excel::Writer::XLSX.
 0.01 October 11 2010
 
     First CPAN release.
-
