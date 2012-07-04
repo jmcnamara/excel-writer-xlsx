@@ -512,6 +512,13 @@ sub _write_fill {
     my $bg_color   = $format->{_bg_color};
     my $fg_color   = $format->{_fg_color};
 
+    # Colors for dxf formats are handled differently from normal formats since
+    # the normal format reverses the meaning of BG and FG for solid fills.
+    if ( $dxf_format ) {
+        $bg_color = $format->{_dxf_bg_color};
+        $fg_color = $format->{_dxf_fg_color};
+    }
+
 
     my @patterns = qw(
       none
