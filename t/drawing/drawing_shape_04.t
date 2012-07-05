@@ -9,10 +9,11 @@ use lib 't/lib';
 use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_object);
 use strict;
 use warnings;
+use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Shape;
 use Excel::Writer::XLSX::Drawing;
 
-use Test::More tests => 1;
+use Test::More tests => 2;
 
 ###############################################################################
 #
@@ -20,7 +21,7 @@ use Test::More tests => 1;
 #
 my $expected;
 my $caption;
-my $got;
+my ($got1, $got2);
 
 my $shape = Excel::Writer::XLSX::Shape->new(text => 'test', id => 1000 );
 
@@ -28,9 +29,8 @@ my $shape = Excel::Writer::XLSX::Shape->new(text => 'test', id => 1000 );
 $shape->{_palette}->[0] = [ 0x00, 0x00, 0x00, 0x00 ];
 $shape->{_palette}->[7] = [ 0x00, 0x00, 0x00, 0x00 ];
 
-my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
-$drawing->{_embedded} = 1;
-
+my $drawing = _new_object( \$got1, 'Excel::Writer::XLSX::Drawing' );
+$drawing->{_embedded} = 2;
 
 ###############################################################################
 #
@@ -39,16 +39,38 @@ $drawing->{_embedded} = 1;
 $caption = " \tDrawing: _assemble_xml_file() shape text";
 
 $drawing->_add_drawing_object(
-    3,     4,     8,     209550, 95250,  12,       22, 209660,
+    3,     4,     8,     209550,   95250,  12,       22, 209660,
     96260, 10000, 20000, 95250,  190500, 'rect 1', $shape
 );
 
 $drawing->_assemble_xml_file();
 
 $expected = _expected_to_aref();
-$got      = _got_to_aref( $got );
+$got1      = _got_to_aref( $got1 );
 
-_is_deep_diff( $got, $expected, $caption );
+_is_deep_diff( $got1, $expected, $caption );
+
+###############################################################################
+#
+# Test for rounding of shape dimensions
+#
+$caption = " \tDrawing: _assemble_xml_file() integer shape dimensions";
+
+my $sheet = Excel::Writer::XLSX::Worksheet->new();
+my $drawing1 = _new_object( \$got2, 'Excel::Writer::XLSX::Drawing' );
+$sheet->{_drawing} = $drawing1;
+my $inserted = $sheet->insert_shape(4, 8, $shape, 300, 400);
+
+# Force the shape cell x offset to be non-integer
+$inserted->{_x_offset} += 0.5;
+$sheet->_prepare_shape( 0, 1);
+
+# Truncate drawing object to just the dimensions
+$#{ $drawing1->{_drawings}->[0] } = 12;
+
+# Verify fractional dimensions have been rounded
+$expected = [3 , 12, 24, 423862, 0, 13, 26, 290512, 95250, 7739062, 4572000,  476250, 476250];
+_is_deep_diff( $drawing1->{_drawings}->[0], $expected, $caption );
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
