@@ -9,8 +9,11 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Added show_blanks_as() chart method to control the display of
       blank data.
 
-    ! Added fix for fg/bg colours in conditional formats which
-      are shared with cell formats.
+    + Added show_hidden_data() chart method to control the display of
+      data in hidden rows and columns.
+
+    ! Added fix for fg/bg colours in conditional formats which are
+      shared with cell formats.
       Reported by Patryk Kwiatkowski.
 
 
@@ -171,7 +174,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 0.29 October 5 2011
 
     + Added the merge_range_type() method for finer control over the types
-      writen using merge_range().
+      written using merge_range().
 
 
 0.28 October 4 2011

@@ -86,6 +86,7 @@ sub new {
     $self->{_y_axis}            = {};
     $self->{_chart_name}        = '';
     $self->{_show_blanks}       = 'gap';
+    $self->{_show_hidden_data}  = 0;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -463,6 +464,20 @@ sub show_blanks_as {
     }
 
     $self->{_show_blanks} = $option;
+}
+
+
+###############################################################################
+#
+# show_hidden_data()
+#
+# Display data in hidden rows or columns.
+#
+sub show_hidden_data {
+
+    my $self = shift;
+
+    $self->{_show_hidden_data} = 1;
 }
 
 
@@ -2445,6 +2460,9 @@ sub _write_plot_vis_only {
     my $self = shift;
     my $val  = 1;
 
+    # Ignore this element if we are plitting hidden data.
+    return if $self->{_show_hidden_data};
+
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:plotVisOnly', @attributes );
@@ -4021,6 +4039,14 @@ The available options are:
         gap    # Blank data is show as a gap. The default.
         zero   # Blank data is displayed as zero.
         span   # Blank data is connected with a line.
+
+
+=head2 show_hidden_data()
+
+Display data in hidden rows or columns on the chart.
+
+    $chart->show_hidden_data();
+
 
 =head1 CHART FORMATTING
 
