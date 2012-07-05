@@ -4,6 +4,16 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
+0.49 July XX 2012
+
+    + Added show_blanks_as() chart method to control the display of
+      blank data.
+
+    ! Added fix for fg/bg colours in conditional formats which
+      are shared with cell formats.
+      Reported by Patryk Kwiatkowski.
+
+
 0.48 June 25 2012
 
     + Added worksheet shapes. A major new feature.

@@ -85,6 +85,7 @@ sub new {
     $self->{_x_axis}            = {};
     $self->{_y_axis}            = {};
     $self->{_chart_name}        = '';
+    $self->{_show_blanks}       = 'gap';
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -433,6 +434,35 @@ sub set_style {
     }
 
     $self->{_style_id} = $style_id;
+}
+
+
+###############################################################################
+#
+# show_blanks_as()
+#
+# Set the option for displaying blank data in a chart. The default is 'gap'.
+#
+sub show_blanks_as {
+
+    my $self   = shift;
+    my $option = shift;
+
+    return unless $option;
+
+    my %valid = (
+        gap  => 1,
+        zero => 1,
+        span => 1,
+
+    );
+
+    if ( !exists $valid{$option} ) {
+        warn "Unknown show_blanks_as() option '$option'\n";
+        return;
+    }
+
+    $self->{_show_blanks} = $option;
 }
 
 
@@ -1167,7 +1197,30 @@ sub _write_chart {
     # Write the c:plotVisOnly element.
     $self->_write_plot_vis_only();
 
+    # Write the c:dispBlanksAs element.
+    $self->_write_disp_blanks_as();
+
     $self->{_writer}->endTag( 'c:chart' );
+}
+
+
+##############################################################################
+#
+# _write_disp_blanks_as()
+#
+# Write the <c:dispBlanksAs> element.
+#
+sub _write_disp_blanks_as {
+
+    my $self = shift;
+    my $val  = $self->{_show_blanks};
+
+    # Ignore the default value.
+    return if $val eq 'gap';
+
+    my @attributes = ( 'val' => $val );
+
+    $self->{_writer}->emptyTag( 'c:dispBlanksAs', @attributes );
 }
 
 
@@ -3956,6 +4009,18 @@ The C<set_style()> method is used to set the style of the chart to one of the 42
     $chart->set_style( 4 );
 
 The default style is 2.
+
+=head2 show_blanks_as()
+
+The C<show_blanks_as()> method controls how blank data is displayed in a chart.
+
+    $chart->show_blanks_as( 'span' );
+
+The available options are:
+
+        gap    # Blank data is show as a gap. The default.
+        zero   # Blank data is displayed as zero.
+        span   # Blank data is connected with a line.
 
 =head1 CHART FORMATTING
 
