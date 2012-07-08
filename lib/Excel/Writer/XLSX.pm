@@ -102,7 +102,7 @@ This module cannot, as yet, be used to write to an existing Excel XLSX file.
 
 C<Excel::Writer::XLSX> uses the same interface as the L<Spreadsheet::WriteExcel> module which produces an Excel file in binary XLS format.
 
-Excel::Writer::XLSX supports all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L<Compatibility with Spreadsheet::WriteExcel>.
+Excel::Writer::XLSX supports all of the features of Spreadsheet::WriteExcel and in some cases has more functionality. For more details see L</Compatibility with Spreadsheet::WriteExcel>.
 
 The main advantage of the XLSX format over the XLS format is that it allows a larger number of rows and columns in a worksheet. The XLSX file format also produces much smaller files than the XLS file format.
 
@@ -127,7 +127,7 @@ Like this:
     $worksheet = $workbook->add_worksheet();                   # Step 2
     $worksheet->write( 'A1', 'Hi Excel!' );                    # Step 3
 
-This will create an Excel file called C<perl.xlsx> with a single worksheet and the text C<'Hi Excel!'> in the relevant cell. And that's it. Okay, so there is actually a zeroth step as well, but C<use module> goes without saying. There are many examples that come with the distribution and which you can use to get you started. See L<EXAMPLES>.
+This will create an Excel file called C<perl.xlsx> with a single worksheet and the text C<'Hi Excel!'> in the relevant cell. And that's it. Okay, so there is actually a zeroth step as well, but C<use module> goes without saying. There are many examples that come with the distribution and which you can use to get you started. See L</EXAMPLES>.
 
 Those of you who read the instructions first and assemble the furniture afterwards will know how to proceed. ;-)
 
@@ -178,7 +178,7 @@ It is recommended that the filename uses the extension C<.xlsx> rather than C<.x
 
 The C<new()> constructor returns a Excel::Writer::XLSX object that you can use to add worksheets and store data. It should be noted that although C<my> is not specifically required it defines the scope of the new workbook variable and, in the majority of cases, ensures that the workbook is closed properly without explicitly calling the C<close()> method.
 
-If the file cannot be created, due to file permissions or some other reason,  C<new> will return C<undef>. Therefore, it is good practice to check the return value of C<new> before proceeding. As usual the Perl variable C<$!> will be set if there is a file creation error. You will also see one of the warning messages detailed in L<DIAGNOSTICS>:
+If the file cannot be created, due to file permissions or some other reason,  C<new> will return C<undef>. Therefore, it is good practice to check the return value of C<new> before proceeding. As usual the Perl variable C<$!> will be set if there is a file creation error. You will also see one of the warning messages detailed in L</DIAGNOSTICS>:
 
     my $workbook = Excel::Writer::XLSX->new( 'protected.xlsx' );
     die "Problems creating new Excel file: $!" unless defined $workbook;
@@ -266,7 +266,7 @@ The C<add_format()> method can be used to create new Format objects which are us
     $format1 = $workbook->add_format( %props );    # Set properties at creation
     $format2 = $workbook->add_format();            # Set properties later
 
-See the L<CELL FORMATTING> section for more details about Format properties and how to set them.
+See the L</CELL FORMATTING> section for more details about Format properties and how to set them.
 
 
 
@@ -463,7 +463,7 @@ The directory for the temporary file must exist, C<set_tempdir()> will not creat
 
 The C<set_custom_color()> method can be used to override one of the built-in palette values with a more suitable colour.
 
-The value for C<$index> should be in the range 8..63, see L<COLOURS IN EXCEL>.
+The value for C<$index> should be in the range 8..63, see L</COLOURS IN EXCEL>.
 
 The default named colours use the following indices:
 
@@ -548,7 +548,7 @@ Excel stores dates as real numbers where the integer part stores the number of d
 
 Excel::Writer::XLSX stores dates in the 1900 format by default. If you wish to change this you can call the C<set_1904()> workbook method. You can query the current value by calling the C<get_1904()> workbook method. This returns 0 for 1900 and 1 for 1904.
 
-See also L<DATES AND TIME IN EXCEL> for more information about working with Excel's date system.
+See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's date system.
 
 In general you probably won't need to use C<set_1904()>.
 
@@ -562,7 +562,7 @@ The C<set_optimization()> method is used to turn on optimizations in the Excel::
     $workbook->set_optimization();
 
 
-See L<SPEED AND MEMORY USAGE> for more background information.
+See L</SPEED AND MEMORY USAGE> for more background information.
 
 Note, that with this optimization turned on a row of data is written and then discarded when a cell in a new row is added via one of the Worksheet C<write_*()> methods. As such data should be written in sequential row order once the optimization is turned on.
 
@@ -728,7 +728,7 @@ C<write_col()> if C<$token> is an array ref of array refs.
 
 C<write_string()> if none of the previous conditions apply.
 
-The C<$format> parameter is optional. It should be a valid Format object, see L<CELL FORMATTING>:
+The C<$format> parameter is optional. It should be a valid Format object, see L</CELL FORMATTING>:
 
     my $format = $workbook->add_format();
     $format->set_bold();
@@ -762,7 +762,7 @@ Write an integer or a float to the cell specified by C<$row> and C<$column>:
     $worksheet->write_number( 0, 0, 123456 );
     $worksheet->write_number( 'A2', 2.3451 );
 
-See the note about L<Cell notation>. The C<$format> parameter is optional.
+See the note about L</Cell notation>. The C<$format> parameter is optional.
 
 In general it is sufficient to use the C<write()> method.
 
@@ -794,7 +794,7 @@ However, if the user edits this string Excel may convert it back to a number. To
     my $format1 = $workbook->add_format( num_format => '@' );
     $worksheet->write_string( 'A2', '01209', $format1 );
 
-See also the note about L<Cell notation>.
+See also the note about L</Cell notation>.
 
 
 
@@ -878,7 +878,7 @@ See the C<rich_strings.pl> example in the distro for more examples.
 
 =end html
 
-As with C<write_sting()> the maximum string size is 32767 characters. See also the note about L<Cell notation>.
+As with C<write_sting()> the maximum string size is 32767 characters. See also the note about L</Cell notation>.
 
 
 
@@ -919,7 +919,7 @@ The above code would generate a worksheet that looked like the following:
     | 4 | 01209     |           |           |           | ...
 
 
-The examples are on different sides of the cells due to the fact that Excel displays strings with a left justification and numbers with a right justification by default. You can change this by using a format to justify the data, see L<CELL FORMATTING>.
+The examples are on different sides of the cells due to the fact that Excel displays strings with a left justification and numbers with a right justification by default. You can change this by using a format to justify the data, see L</CELL FORMATTING>.
 
 It should be noted that if the user edits the data in examples C<A3> and C<A4> the strings will revert back to numbers. Again this is Excel's default behaviour. To avoid this you can use the text format C<@>:
 
@@ -953,7 +953,7 @@ As such, if you write an empty cell without formatting it is ignored:
 
 This seemingly uninteresting fact means that you can write arrays of data without special treatment for C<undef> or empty string values.
 
-See the note about L<Cell notation>.
+See the note about L</Cell notation>.
 
 
 
@@ -1112,7 +1112,7 @@ The following variations on the C<$date_string> parameter are permitted:
 
 Note that the C<T> is required in all cases.
 
-A date should always have a C<$format>, otherwise it will appear as a number, see L<DATES AND TIME IN EXCEL> and L<CELL FORMATTING>. Here is a typical example:
+A date should always have a C<$format>, otherwise it will appear as a number, see L</DATES AND TIME IN EXCEL> and L</CELL FORMATTING>. Here is a typical example:
 
     my $date_format = $workbook->add_format( num_format => 'mm/dd/yy' );
     $worksheet->write_date_time( 'A1', '2004-05-13T23:20', $date_format );
@@ -1178,7 +1178,7 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
 
 Note, Excel doesn't allow white space in hyperlink urls. Urls with whitespace will generate a warning and be ignored.
 
-See also, the note about L<Cell notation>.
+See also, the note about L</Cell notation>.
 
 
 
@@ -1200,7 +1200,7 @@ Array formulas are also supported:
 
 See also the C<write_array_formula()> method below.
 
-See the note about L<Cell notation>. For more information about writing Excel formulas see L<FORMULAS AND FUNCTIONS IN EXCEL>
+See the note about L</Cell notation>. For more information about writing Excel formulas see L</FORMULAS AND FUNCTIONS IN EXCEL>
 
 If required, it is also possible to specify the calculated value of the formula. This is occasionally necessary when working with non-Excel applications that don't calculate the value of the formula. The calculated C<$value> is added at the end of the argument list:
 
@@ -1273,7 +1273,7 @@ The following example shows how to add a comment to a cell:
     $worksheet->write        ( 2, 2, 'Hello' );
     $worksheet->write_comment( 2, 2, 'This is a comment.' );
 
-As usual you can replace the C<$row> and C<$column> parameters with an C<A1> cell reference. See the note about L<Cell notation>.
+As usual you can replace the C<$row> and C<$column> parameters with an C<A1> cell reference. See the note about L</Cell notation>.
 
     $worksheet->write        ( 'C3', 'Hello');
     $worksheet->write_comment( 'C3', 'This is a comment.' );
@@ -1359,7 +1359,7 @@ This option is used to set the height of the cell comment box explicitly in pixe
 
 =item Option: color
 
-This option is used to set the background colour of cell comment box. You can use one of the named colours recognised by Excel::Writer::XLSX or a colour index. See L<COLOURS IN EXCEL>.
+This option is used to set the background colour of cell comment box. You can use one of the named colours recognised by Excel::Writer::XLSX or a colour index. See L</COLOURS IN EXCEL>.
 
     $worksheet->write_comment( 'C3', 'Hello', color => 'green' );
     $worksheet->write_comment( 'C4', 'Hello', color => 0x35 );      # Orange
@@ -1619,7 +1619,7 @@ The C<data_validation()> method is used to construct an Excel data validation or
             value    => ['open', 'high', 'close'],
         });
 
-This method contains a lot of parameters and is described in detail in a separate section L<DATA VALIDATION IN EXCEL>.
+This method contains a lot of parameters and is described in detail in a separate section L</DATA VALIDATION IN EXCEL>.
 
 
 See also the C<data_validate.pl> program in the examples directory of the distro
@@ -1733,7 +1733,7 @@ The C<protect()> method is used to protect a worksheet from modification:
 
 The C<protect()> method also has the effect of enabling a cell's C<locked> and C<hidden> properties if they have been set. A I<locked> cell cannot be edited and this property is on by default for all cells. A I<hidden> cell will display the results of a formula but not the formula itself.
 
-See the C<protection.pl> program in the examples directory of the distro for an illustrative example and the C<set_locked> and C<set_hidden> format methods in L<CELL FORMATTING>.
+See the C<protection.pl> program in the examples directory of the distro for an illustrative example and the C<set_locked> and C<set_hidden> format methods in L<C/ELL FORMATTING>.
 
 You can optionally add a password to the worksheet protection:
 
@@ -1773,7 +1773,7 @@ The default boolean values are shown above. Individual elements can be protected
 
 =head2 set_selection( $first_row, $first_col, $last_row, $last_col )
 
-This method can be used to specify which cell or cells are selected in a worksheet. The most common requirement is to select a single cell, in which case C<$last_row> and C<$last_col> can be omitted. The active cell within a selected range is determined by the order in which C<$first> and C<$last> are specified. It is also possible to specify a cell or a range using A1 notation. See the note about L<Cell notation>.
+This method can be used to specify which cell or cells are selected in a worksheet. The most common requirement is to select a single cell, in which case C<$last_row> and C<$last_col> can be omitted. The active cell within a selected range is determined by the order in which C<$first> and C<$last> are specified. It is also possible to specify a cell or a range using A1 notation. See the note about L</Cell notation>.
 
 Examples:
 
@@ -1814,7 +1814,7 @@ The C<$hidden> parameter should be set to 1 if you wish to hide a row. This can 
     $worksheet->set_row( 0, 20,    $format, 1 );
     $worksheet->set_row( 1, undef, undef,   1 );
 
-The C<$level> parameter is used to set the outline level of the row. Outlines are described in L<OUTLINES AND GROUPING IN EXCEL>. Adjacent rows with the same outline level are grouped together into a single outline.
+The C<$level> parameter is used to set the outline level of the row. Outlines are described in L</OUTLINES AND GROUPING IN EXCEL>. Adjacent rows with the same outline level are grouped together into a single outline.
 
 The following example sets an outline level of 1 for rows 1 and 2 (zero-indexed):
 
@@ -1843,7 +1843,7 @@ This method can be used to change the default properties of a single column or a
 
 If C<set_column()> is applied to a single column the value of C<$first_col> and C<$last_col> should be the same. In the case where C<$last_col> is zero it is set to the same value as C<$first_col>.
 
-It is also possible, and generally clearer, to specify a column range using the form of A1 notation used for columns. See the note about L<Cell notation>.
+It is also possible, and generally clearer, to specify a column range using the form of A1 notation used for columns. See the note about L</Cell notation>.
 
 Examples:
 
@@ -1854,7 +1854,7 @@ Examples:
 
 The width corresponds to the column width value that is specified in Excel. It is approximately equal to the length of a string in the default font of Calibri 11. Unfortunately, there is no way to specify "AutoFit" for a column in the Excel file format. This feature is only available at runtime from within Excel.
 
-As usual the C<$format> parameter is optional, for additional information, see L<CELL FORMATTING>. If you wish to set the format without changing the width you can pass C<undef> as the width parameter:
+As usual the C<$format> parameter is optional, for additional information, see L</CELL FORMATTING>. If you wish to set the format without changing the width you can pass C<undef> as the width parameter:
 
     $worksheet->set_column( 0, 0, undef, $format );
 
@@ -1878,7 +1878,7 @@ The C<$hidden> parameter should be set to 1 if you wish to hide a column. This c
     $worksheet->set_column( 'D:D', 20,    $format, 1 );
     $worksheet->set_column( 'E:E', undef, undef,   1 );
 
-The C<$level> parameter is used to set the outline level of the column. Outlines are described in L<OUTLINES AND GROUPING IN EXCEL>. Adjacent columns with the same outline level are grouped together into a single outline.
+The C<$level> parameter is used to set the outline level of the column. Outlines are described in L</OUTLINES AND GROUPING IN EXCEL>. Adjacent columns with the same outline level are grouped together into a single outline.
 
 The following example sets an outline level of 1 for columns B to G:
 
@@ -1901,7 +1901,7 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 =head2 outline_settings( $visible, $symbols_below, $symbols_right, $auto_style )
 
-The C<outline_settings()> method is used to control the appearance of outlines in Excel. Outlines are described in L<OUTLINES AND GROUPING IN EXCEL>.
+The C<outline_settings()> method is used to control the appearance of outlines in Excel. Outlines are described in L</OUTLINES AND GROUPING IN EXCEL>.
 
 The C<$visible> parameter is used to control whether or not outlines are visible. Setting this parameter to 0 will cause all outlines on the worksheet to be hidden. They can be unhidden in Excel by means of the "Show Outline Symbols" command button. The default setting is 1 for visible outlines.
 
@@ -2060,7 +2060,7 @@ In Excel this option is found under Tools->Options->View.
 
 =head2 set_tab_color()
 
-The C<set_tab_color()> method is used to change the colour of the worksheet tab. This feature is only available in Excel 2002 and later. You can use one of the standard colour names provided by the Format object or a colour index. See L<COLOURS IN EXCEL> and the C<set_custom_color()> method.
+The C<set_tab_color()> method is used to change the colour of the worksheet tab. This feature is only available in Excel 2002 and later. You can use one of the standard colour names provided by the Format object or a colour index. See L</COLOURS IN EXCEL> and the C<set_custom_color()> method.
 
     $worksheet1->set_tab_color( 'red' );
     $worksheet2->set_tab_color( 0x0C );
@@ -2512,7 +2512,7 @@ For large Excel documents it is often desirable to have the first row or rows of
 
 Set the columns to repeat at the left hand side of each printed page.
 
-For large Excel documents it is often desirable to have the first column or columns of the worksheet print out at the left hand side of each page. This can be achieved by using the C<repeat_columns()> method. The parameters C<$first_column> and C<$last_column> are zero based. The C<$last_column> parameter is optional if you only wish to specify one column. You can also specify the columns using A1 column notation, see the note about L<Cell notation>.
+For large Excel documents it is often desirable to have the first column or columns of the worksheet print out at the left hand side of each page. This can be achieved by using the C<repeat_columns()> method. The parameters C<$first_column> and C<$last_column> are zero based. The C<$last_column> parameter is optional if you only wish to specify one column. You can also specify the columns using A1 column notation, see the note about L</Cell notation>.
 
     $worksheet1->repeat_columns( 0 );        # Repeat the first column
     $worksheet2->repeat_columns( 0, 1 );     # Repeat the first two columns
@@ -2565,7 +2565,7 @@ Do not confuse these headers with page headers as described in the C<set_header(
 
 =head2 print_area( $first_row, $first_col, $last_row, $last_col )
 
-This method is used to specify the area of the worksheet that will be printed. All four parameters must be specified. You can also use A1 notation, see the note about L<Cell notation>.
+This method is used to specify the area of the worksheet that will be printed. All four parameters must be specified. You can also use A1 notation, see the note about L</Cell notation>.
 
 
     $worksheet1->print_area( 'A1:H20' );    # Cells A1 to H20
@@ -2942,7 +2942,7 @@ Note: The C<set_color()> method is used to set the colour of the font in a cell.
 
 For additional examples see the 'Named colors' and 'Standard colors' worksheets created by formats.pl in the examples directory.
 
-See also L<COLOURS IN EXCEL>.
+See also L</COLOURS IN EXCEL>.
 
 
 
@@ -3098,7 +3098,7 @@ Using format strings you can define very sophisticated formatting of numbers.
     $worksheet->write( 14, 0, '01209', $format13 );
 
 
-The number system used for dates is described in L<DATES AND TIME IN EXCEL>.
+The number system used for dates is described in L</DATES AND TIME IN EXCEL>.
 
 The colour format should have one of the following values:
 
@@ -3877,7 +3877,7 @@ It can be applied to a single cell or a range of cells. You can pass 3 parameter
     $worksheet->data_validation( 'A1',       {...} );
     $worksheet->data_validation( 'A1:B5',    {...} );
 
-See also the note about L<Cell notation> for more information.
+See also the note about L</Cell notation> for more information.
 
 
 The last parameter in C<data_validation()> must be a hash ref containing the parameters that describe the type and style of the data validation. The allowable parameters are:
@@ -3955,7 +3955,7 @@ The C<validate> parameter is used to set the type of data that you wish to valid
 
 Excel requires that range references are only to cells on the same worksheet.
 
-=item * B<date> restricts the cell to date values. Dates in Excel are expressed as integer values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L<DATES AND TIME IN EXCEL> for more information about working with Excel's dates.
+=item * B<date> restricts the cell to date values. Dates in Excel are expressed as integer values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's dates.
 
     validate => 'date',
     criteria => '>',
@@ -3963,7 +3963,7 @@ Excel requires that range references are only to cells on the same worksheet.
     # Or like this:
     value    => '2008-07-24T',
 
-=item * B<time> restricts the cell to time values. Times in Excel are expressed as decimal values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L<DATES AND TIME IN EXCEL> for more information about working with Excel's times.
+=item * B<time> restricts the cell to time values. Times in Excel are expressed as decimal values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's times.
 
     validate => 'time',
     criteria => '>',
@@ -4274,7 +4274,7 @@ It can be applied to a single cell or a range of cells. You can pass 3 parameter
     $worksheet->conditional_formatting( 'A1',       {...} );
     $worksheet->conditional_formatting( 'A1:B5',    {...} );
 
-See also the note about L<Cell notation> for more information.
+See also the note about L</Cell notation> for more information.
 
 Using C<A1> style notation is is also possible to specify non-contiguous ranges, separated by a comma. For example:
 
@@ -5679,7 +5679,7 @@ You can also access Spreadsheet::ParseExcel using the standard DBI interface via
 
 =item * Win32::OLE module and office automation (reading)
 
-See, the section L<WRITING EXCEL FILES>.
+See, the section L</WRITING EXCEL FILES>.
 
 =item * HTML tables (reading)
 
@@ -5687,7 +5687,7 @@ If the files are saved from Excel in a HTML format the data can be accessed usin
 
 =item * DBI with DBD::ADO or DBD::ODBC.
 
-See, the section L<WRITING EXCEL FILES>.
+See, the section L</WRITING EXCEL FILES>.
 
 =item * XML::Excel
 
