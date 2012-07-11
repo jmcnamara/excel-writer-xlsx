@@ -290,7 +290,7 @@ sub xl_parse_time {
         my $hours    = $1;
         my $minutes  = $2;
         my $seconds  = $3 || 0;
-        my $meridian = lc( $4 ) || '';
+        my $meridian = lc( $4 || '' );
 
         # Normalise midnight and midday
         $hours = 0 if ( $hours == 12 && $meridian ne '' );
