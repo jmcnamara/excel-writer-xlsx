@@ -16,6 +16,10 @@ Revision history for Perl module Excel::Writer::XLSX.
       shared with cell formats.
       Reported by Patryk Kwiatkowski.
 
+    ! Fix for xl_parse_time() with hours > 24. Github issue #11.
+
+    ! Fixed lc() warning in Utility.pm in recent perls. Github issue #10.
+
 
 0.48 June 25 2012
 

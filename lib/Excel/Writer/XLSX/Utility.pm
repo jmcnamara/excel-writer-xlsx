@@ -285,7 +285,7 @@ sub xl_parse_time {
 
     my $time = shift;
 
-    if ( $time =~ /(\d{1,2}):(\d\d):?((?:\d\d)(?:\.\d+)?)?(?:\s+)?(am|pm)?/i ) {
+    if ( $time =~ /(\d+):(\d\d):?((?:\d\d)(?:\.\d+)?)?(?:\s+)?(am|pm)?/i ) {
 
         my $hours    = $1;
         my $minutes  = $2;
@@ -349,7 +349,7 @@ sub xl_decode_date_EU {
     my $time = 0;
 
     # Remove and decode the time portion of the string
-    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
+    if ( $date =~ s/(\d+:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
         $time = xl_parse_time( $1 );
     }
 
@@ -377,7 +377,7 @@ sub xl_decode_date_US {
     my $time = 0;
 
     # Remove and decode the time portion of the string
-    if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
+    if ( $date =~ s/(\d+:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
         $time = xl_parse_time( $1 );
     }
 
