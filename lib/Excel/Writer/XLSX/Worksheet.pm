@@ -4117,21 +4117,21 @@ sub _position_shape_emus {
 
     # Now that x2/y2 have been calculated with a potentially negative
     # width/height we use the absolute value and convert to EMUs.
-    $shape->{_width_emu}  = abs( $shape->{_width} * 9_525 );
-    $shape->{_height_emu} = abs( $shape->{_height} * 9_525 );
+    $shape->{_width_emu}  = int( abs( $shape->{_width} * 9_525 ) );
+    $shape->{_height_emu} = int( abs( $shape->{_height} * 9_525 ) );
 
-    $shape->{_column_start} = $col_start;
-    $shape->{_row_start}    = $row_start;
-    $shape->{_column_end}   = $col_end;
-    $shape->{_row_end}      = $row_end;
+    $shape->{_column_start} = int( $col_start );
+    $shape->{_row_start}    = int( $row_start );
+    $shape->{_column_end}   = int( $col_end );
+    $shape->{_row_end}      = int( $row_end );
 
     # Convert the pixel values to EMUs. See above.
-    $shape->{_x1}    = $x1 * 9_525;
-    $shape->{_y1}    = $y1 * 9_525;
-    $shape->{_x2}    = $x2 * 9_525;
-    $shape->{_y2}    = $y2 * 9_525;
-    $shape->{_x_abs} = $x_abs * 9_525;
-    $shape->{_y_abs} = $y_abs * 9_525;
+    $shape->{_x1}    = int( $x1 * 9_525 );
+    $shape->{_y1}    = int( $y1 * 9_525 );
+    $shape->{_x2}    = int( $x2 * 9_525 );
+    $shape->{_y2}    = int( $y2 * 9_525 );
+    $shape->{_x_abs} = int( $x_abs * 9_525 );
+    $shape->{_y_abs} = int( $y_abs * 9_525 );
 }
 
 ###############################################################################
@@ -4769,9 +4769,21 @@ sub _auto_locate_connectors {
     my $eid = $shape->{_end};
 
     my $slink_id = $self->{_shape_hash}->{$sid};
-    my $sls      = $self->{_shapes}->[$slink_id];    # Start linked shape.
+    my ($sls, $els);
+    if (defined $slink_id) {
+        $sls = $self->{_shapes}->[$slink_id];    # Start linked shape.
+    } else {
+        warn "missing start connection for '$shape->{_name}', id=$sid\n";
+        return;
+    }
+
     my $elink_id = $self->{_shape_hash}->{$eid};
-    my $els      = $self->{_shapes}->[$elink_id];    # End linked shape.
+    if (defined $elink_id) {
+        $els = $self->{_shapes}->[$elink_id];    # Start linked shape.
+    } else {
+        warn "missing end connection for '$shape->{_name}', id=$eid\n";
+        return;
+    }
 
     # Assume shape connections are to the middle of an object, and
     # not a corner (for now).
