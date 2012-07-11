@@ -87,6 +87,8 @@ sub xl_cell_to_rowcol {
 
     my $cell = shift;
 
+    return ( 0, 0, 0, 0 ) unless $cell;
+
     $cell =~ /(\$?)([A-Z]{1,3})(\$?)(\d+)/;
 
     my $col_abs = $1 eq "" ? 0 : 1;
@@ -314,8 +316,6 @@ sub xl_parse_date {
 
     my $date = ParseDate( $_[0] );
 
-    return undef unless defined $date;
-
     # Unpack the return value from ParseDate()
     my ( $years, $months, $days, $hours, undef, $minutes, undef, $seconds ) =
       unpack( "A4     A2      A2     A2      C        A2      C       A2",
@@ -351,7 +351,6 @@ sub xl_decode_date_EU {
     # Remove and decode the time portion of the string
     if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
         $time = xl_parse_time( $1 );
-        return undef unless defined $time;
     }
 
     # Return if the string is now blank, i.e. it contained a time only.
@@ -380,7 +379,6 @@ sub xl_decode_date_US {
     # Remove and decode the time portion of the string
     if ( $date =~ s/(\d{1,2}:\d\d:?(\d\d(\.\d+)?)?(\s+)?(am|pm)?)//i ) {
         $time = xl_parse_time( $1 );
-        return undef unless defined $time;
     }
 
     # Return if the string is now blank, i.e. it contained a time only.
@@ -899,7 +897,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXII, John McNamara.
+Copyright MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
