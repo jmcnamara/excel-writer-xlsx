@@ -18,7 +18,7 @@ if ($@) {
     plan skip_all => 'Date::Manip required to run optional tests.';
 }
 else {
-    plan tests => 5;
+    plan tests => 4;
 }
 
 
@@ -32,20 +32,6 @@ my $caption;
 my $date;
 
 xl_parse_date_init( "TZ=GMT", "DateFormat=non-US" );
-
-
-###############################################################################
-#
-# Test the xl_parse_date() method.
-#
-$date     = '';
-$expected = undef;
-$caption  = " \tUtility: xl_parse_date( $date )";
-
-# Trap warning from Date::Calc::PP::Delta_DHMS().
-eval{ $got = xl_parse_date( $date ) };
-
-is( $got, $expected, $caption );
 
 
 ###############################################################################
