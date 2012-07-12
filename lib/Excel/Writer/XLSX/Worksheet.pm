@@ -4769,18 +4769,20 @@ sub _auto_locate_connectors {
     my $eid = $shape->{_end};
 
     my $slink_id = $self->{_shape_hash}->{$sid};
-    my ($sls, $els);
-    if (defined $slink_id) {
+    my ( $sls, $els );
+    if ( defined $slink_id ) {
         $sls = $self->{_shapes}->[$slink_id];    # Start linked shape.
-    } else {
+    }
+    else {
         warn "missing start connection for '$shape->{_name}', id=$sid\n";
         return;
     }
 
     my $elink_id = $self->{_shape_hash}->{$eid};
-    if (defined $elink_id) {
+    if ( defined $elink_id ) {
         $els = $self->{_shapes}->[$elink_id];    # Start linked shape.
-    } else {
+    }
+    else {
         warn "missing end connection for '$shape->{_name}', id=$eid\n";
         return;
     }

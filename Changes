@@ -4,7 +4,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 - Removed/deprecated feature.
 ! Bug fix.
 
-0.49 July XX 2012
+0.49 July 12 2012
 
     + Added show_blanks_as() chart method to control the display of
       blank data.
@@ -19,6 +19,10 @@ Revision history for Perl module Excel::Writer::XLSX.
     ! Fix for xl_parse_time() with hours > 24. Github issue #11.
 
     ! Fixed lc() warning in Utility.pm in recent perls. Github issue #10.
+
+    ! Fixed issue with non-integer shape dimensions. Thanks Dave Clarke.
+
+    ! Fixed error handling for shape connectors. Thanks Dave Clarke.
 
 
 0.48 June 25 2012
