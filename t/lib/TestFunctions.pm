@@ -127,7 +127,7 @@ sub _xml_str_to_array {
 sub _vml_str_to_array {
 
     my $vml_str = shift;
-    my @vml     = split /[\r\n]+/, $vml_str;
+    my @vml = split /[\r\n]+/, $vml_str;
 
     $vml_str = '';
 
@@ -151,7 +151,7 @@ sub _vml_str_to_array {
         $vml_str .= $_;
     }
 
-    return (split "\n", $vml_str );
+    return ( split "\n", $vml_str );
 }
 
 
@@ -203,7 +203,7 @@ sub _compare_xlsx_files {
     my @exp_members = sort $exp_zip->memberNames();
 
     # Ignore some test specific filenames.
-    if ( defined $ignore_members && @$ignore_members) {
+    if ( defined $ignore_members && @$ignore_members ) {
         my $ignore_regex = join '|', @$ignore_members;
 
         @got_members = grep { !/$ignore_regex/ } @got_members;
