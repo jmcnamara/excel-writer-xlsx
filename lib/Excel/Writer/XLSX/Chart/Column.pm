@@ -67,7 +67,7 @@ sub _write_chart_type {
 #
 sub _write_bar_chart {
 
-    my $self = shift;
+    my $self    = shift;
     my $subtype = $self->{_subtype};
 
     $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
@@ -153,7 +153,7 @@ sub _write_number_format {
     my $format_code   = shift || 'General';
     my $source_linked = 1;
 
-    if ($self->{_subtype} eq 'percent_stacked') {
+    if ( $self->{_subtype} eq 'percent_stacked' ) {
         $format_code = '0%';
     }
 

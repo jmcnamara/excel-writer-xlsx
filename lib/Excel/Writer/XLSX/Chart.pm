@@ -1719,8 +1719,10 @@ sub _write_val_axis {
     $self->_write_axis_id( $self->{_axis_ids}->[1] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $y_axis->{_reverse}, $y_axis->{_min},
-        $y_axis->{_max}, $y_axis->{_log_base}  );
+    $self->_write_scaling(
+        $y_axis->{_reverse}, $y_axis->{_min},
+        $y_axis->{_max},     $y_axis->{_log_base}
+    );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -1795,8 +1797,10 @@ sub _write_cat_val_axis {
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_axis->{_reverse}, $x_axis->{_min},
-        $x_axis->{_max}, $x_axis->{_log_base} );
+    $self->_write_scaling(
+        $x_axis->{_reverse}, $x_axis->{_min},
+        $x_axis->{_max},     $x_axis->{_log_base}
+    );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -1868,8 +1872,10 @@ sub _write_date_axis {
     $self->_write_axis_id( $self->{_axis_ids}->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_axis->{_reverse}, $x_axis->{_min},
-        $x_axis->{_max}, $x_axis->{_log_base} );
+    $self->_write_scaling(
+        $x_axis->{_reverse}, $x_axis->{_min},
+        $x_axis->{_max},     $x_axis->{_log_base}
+    );
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -2095,10 +2101,10 @@ sub _write_num_fmt {
 sub _write_tick_label_pos {
 
     my $self = shift;
-    my $val  = shift || 'nextTo';
+    my $val = shift || 'nextTo';
 
-    if ($val eq 'next_to') {
-        $val =  'nextTo';
+    if ( $val eq 'next_to' ) {
+        $val = 'nextTo';
     }
 
     my @attributes = ( 'val' => $val );
@@ -2133,7 +2139,7 @@ sub _write_cross_axis {
 sub _write_crosses {
 
     my $self = shift;
-    my $val  = shift || 'autoZero';
+    my $val = shift || 'autoZero';
 
     my @attributes = ( 'val' => $val );
 
@@ -2255,7 +2261,7 @@ sub _write_cross_between {
 
     my $self = shift;
 
-    my $val  = $self->{_cross_between} || 'between';
+    my $val = $self->{_cross_between} || 'between';
 
     my @attributes = ( 'val' => $val );
 
@@ -3256,7 +3262,7 @@ sub _write_name {
 sub _write_trendline_order {
 
     my $self = shift;
-    my $val  = defined $_[0] ? $_[0] : 2;
+    my $val = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
@@ -3273,7 +3279,7 @@ sub _write_trendline_order {
 sub _write_period {
 
     my $self = shift;
-    my $val  = defined $_[0] ? $_[0] : 2;
+    my $val = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
