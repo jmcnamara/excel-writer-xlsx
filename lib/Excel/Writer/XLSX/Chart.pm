@@ -522,6 +522,7 @@ sub _convert_axis_args {
         _position        => $arg{position},
         _label_position  => $arg{label_position},
         _major_gridlines => $arg{major_gridlines},
+        _show            => $arg{show} // 1,
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -1649,6 +1650,8 @@ sub _write_cat_axis {
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{_reverse} );
 
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
+
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
@@ -1670,16 +1673,19 @@ sub _write_cat_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+    if ( $x_axis->{_show} ) {
 
-        # Write the c:crosses element.
-        $self->_write_crosses( $y_axis->{_crossing} );
-    }
-    else {
+        # Note, the category crossing comes from the value axis.
+        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
 
-        # Write the c:crossesAt element.
-        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+            # Write the c:crosses element.
+            $self->_write_crosses( $y_axis->{_crossing} );
+        }
+        else {
+
+            # Write the c:crossesAt element.
+            $self->_write_c_crosses_at( $y_axis->{_crossing} );
+        }
     }
 
     # Write the c:auto element.
@@ -1723,6 +1729,8 @@ sub _write_val_axis {
         $y_axis->{_reverse}, $y_axis->{_min},
         $y_axis->{_max},     $y_axis->{_log_base}
     );
+
+    $self->_write_delete( 1 ) unless $y_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -3872,6 +3880,7 @@ The properties that can be set are:
     log_base
     label_position
     major_gridlines
+    show
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -3948,6 +3957,10 @@ Set the "Axis labels" position for the axis. The following positions are availab
 =item * C<major_gridlines>
 
 Show or hide the major gridlines for a given axis.  Acceptable values are true or false (1 or 0).
+
+=item * C<show>
+
+Show or hide the axis.  Acceptable values are true or false (1 or 0).
 
 =back
 
