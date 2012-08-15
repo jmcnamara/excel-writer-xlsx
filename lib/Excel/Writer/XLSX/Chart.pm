@@ -1021,21 +1021,20 @@ sub _get_labels_properties {
 
 ###############################################################################
 #
-# _add_axis_id()
+# _add_axis_ids()
 #
-# Add a unique id for an axis.
+# Add unique ids x and y axes
 #
-sub _add_axis_id {
+sub _add_axis_ids {
 
     my $self       = shift;
     my $chart_id   = 1 + $self->{_id};
     my $axis_count = 1 + @{ $self->{_axis_ids} };
 
-    my $axis_id = sprintf '5%03d%04d', $chart_id, $axis_count;
+    my $id1 = sprintf '5%03d%04d', $chart_id, $axis_count;
+    my $id2 = sprintf '5%03d%04d', $chart_id, $axis_count + 1;
 
-    push @{ $self->{_axis_ids} }, $axis_id;
-
-    return $axis_id;
+    push @{ $self->{_axis_ids} }, $id1, $id2;
 }
 
 
@@ -1335,13 +1334,8 @@ sub _write_series {
     # Write the c:marker element.
     $self->_write_marker_value();
 
-    # Generate the axis ids.
-    $self->_add_axis_id();
-    $self->_add_axis_id();
-
-    # Write the c:axId element.
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
-    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+    # Write the c:axId elements for each axis
+    $self->_write_axis_ids();
 }
 
 
@@ -1609,6 +1603,25 @@ sub _write_series_formula {
     $formula =~ s/^=//;
 
     $self->{_writer}->dataElement( 'c:f', $formula );
+}
+
+
+##############################################################################
+#
+# _write_axis_ids()
+#
+# Write the <c:axId> elements for the x and y axes.
+#
+sub _write_axis_ids {
+
+    my $self = shift;
+
+    # Generate the axis ids.
+    $self->_add_axis_ids();
+
+    ## Write the axis ids for each axis.
+    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $self->{_axis_ids}->[1] );
 }
 
 
