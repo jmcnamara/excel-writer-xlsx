@@ -53,7 +53,7 @@ sub _write_chart_type {
     my $self = shift;
 
     # Write the c:lineChart element.
-    $self->_write_line_chart();
+    $self->_write_line_chart( @_ );
 }
 
 
@@ -66,6 +66,13 @@ sub _write_chart_type {
 sub _write_line_chart {
 
     my $self = shift;
+    my %args = @_;
+
+    my @series = $args{primary_axes}    #
+      ? $self->_get_primary_axes_series
+      : $self->_get_secondary_axes_series;
+
+    return unless scalar @series;
 
     $self->{_writer}->startTag( 'c:lineChart' );
 
@@ -73,8 +80,13 @@ sub _write_line_chart {
     $self->_write_grouping( 'standard' );
 
     # Write the series elements.
-    $self->_write_series();
+    $self->_write_series( $_ ) for @series;
 
+    # Write the c:marker element.
+    $self->_write_marker_value();
+
+    # Write the c:axId elements
+    $self->_write_axis_ids( %args );
 
     $self->{_writer}->endTag( 'c:lineChart' );
 }
