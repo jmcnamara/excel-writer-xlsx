@@ -247,7 +247,10 @@ sub set_x_axis {
 sub set_y_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args( @_ );
+    my $axis = $self->_convert_axis_args(    #
+        major_gridlines => { show => 1 },
+        @_
+    );
 
     $self->{_y_axis} = $axis;
 }
@@ -521,6 +524,7 @@ sub _convert_axis_args {
         _crossing        => $arg{crossing},
         _position        => $arg{position},
         _label_position  => $arg{label_position},
+        _major_gridlines => $arg{major_gridlines} || { show => 1 },
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -1263,9 +1267,9 @@ sub _write_plot_area {
     # Write the c:catAx element.
     $self->_write_val_axis();
 
+
     $self->{_writer}->endTag( 'c:plotArea' );
 }
-
 
 ##############################################################################
 #
@@ -1704,12 +1708,11 @@ sub _write_cat_axis {
 #
 sub _write_val_axis {
 
-    my $self                 = shift;
-    my $position             = shift || $self->{_val_axis_position};
-    my $hide_major_gridlines = shift;
-    my $horiz                = $self->{_horiz_val_axis};
-    my $x_axis               = $self->{_x_axis};
-    my $y_axis               = $self->{_y_axis};
+    my $self     = shift;
+    my $position = shift || $self->{_val_axis_position};
+    my $horiz    = $self->{_horiz_val_axis};
+    my $x_axis   = $self->{_x_axis};
+    my $y_axis   = $self->{_y_axis};
 
     # Overwrite the default axis position with a user supplied value.
     $position = $y_axis->{_position} || $position;
@@ -1728,7 +1731,7 @@ sub _write_val_axis {
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
 
     # Write the c:majorGridlines element.
-    $self->_write_major_gridlines() if not $hide_major_gridlines;
+    $self->_write_major_gridlines( $y_axis->{_major_gridlines} );
 
     # Write the axis title elements.
     my $title;
@@ -1782,12 +1785,11 @@ sub _write_val_axis {
 #
 sub _write_cat_val_axis {
 
-    my $self                 = shift;
-    my $position             = shift || $self->{_val_axis_position};
-    my $hide_major_gridlines = shift;
-    my $horiz                = $self->{_horiz_val_axis};
-    my $x_axis               = $self->{_x_axis};
-    my $y_axis               = $self->{_y_axis};
+    my $self     = shift;
+    my $position = shift || $self->{_val_axis_position};
+    my $horiz    = $self->{_horiz_val_axis};
+    my $x_axis   = $self->{_x_axis};
+    my $y_axis   = $self->{_y_axis};
 
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
@@ -1806,7 +1808,7 @@ sub _write_cat_val_axis {
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
     # Write the c:majorGridlines element.
-    $self->_write_major_gridlines() if not $hide_major_gridlines;
+    # $self->_write_major_gridlines($y_axis->{_major_gridlines})
 
     # Write the axis title elements.
     my $title;
@@ -2223,7 +2225,10 @@ sub _write_label_offset {
 #
 sub _write_major_gridlines {
 
-    my $self = shift;
+    my $self    = shift;
+    my $options = shift;
+
+    return unless $options->{show};
 
     $self->{_writer}->emptyTag( 'c:majorGridlines' );
 }
@@ -3872,6 +3877,7 @@ The properties that can be set are:
     reverse
     log_base
     label_position
+    major_gridlines
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -3944,6 +3950,14 @@ Set the "Axis labels" position for the axis. The following positions are availab
     high
     low
     none
+
+=item * C<major_gridlines>
+
+Options for configuring the major gridlines.  The only option currently
+available shows or hides the major gridlines for a given axis.  Acceptable
+values are true or false.
+
+    $chart->set_x_axis( major_gridlines => { show => 1 } );
 
 =back
 
