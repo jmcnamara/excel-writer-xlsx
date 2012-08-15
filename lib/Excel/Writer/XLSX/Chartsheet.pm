@@ -136,6 +136,8 @@ sub protect {
 sub add_series       { return shift->{_chart}->add_series( @_ ) }
 sub set_x_axis       { return shift->{_chart}->set_x_axis( @_ ) }
 sub set_y_axis       { return shift->{_chart}->set_y_axis( @_ ) }
+sub set_x2_axis      { return shift->{_chart}->set_x2_axis( @_ ) }
+sub set_y2_axis      { return shift->{_chart}->set_y2_axis( @_ ) }
 sub set_title        { return shift->{_chart}->set_title( @_ ) }
 sub set_legend       { return shift->{_chart}->set_legend( @_ ) }
 sub set_plotarea     { return shift->{_chart}->set_plotarea( @_ ) }
@@ -150,7 +152,6 @@ sub show_hidden_data { return shift->{_chart}->show_hidden_data( @_ ) }
 # Internal methods.
 #
 ###############################################################################
-
 
 
 ###############################################################################
@@ -179,13 +180,11 @@ sub _prepare_chart {
 }
 
 
-
 ###############################################################################
 #
 # XML writing methods.
 #
 ###############################################################################
-
 
 
 ###############################################################################
@@ -212,8 +211,6 @@ sub _write_chartsheet {
 
     $self->{_writer}->startTag( 'chartsheet', @attributes );
 }
-
-
 
 
 ###############################################################################
