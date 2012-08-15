@@ -525,6 +525,7 @@ sub _convert_axis_args {
         _position        => $arg{position},
         _label_position  => $arg{label_position},
         _major_gridlines => $arg{major_gridlines} || { show => 1 },
+        _show            => defined $arg{show} ? $arg{show} : 1,
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -1652,6 +1653,8 @@ sub _write_cat_axis {
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{_reverse} );
 
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
+
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
@@ -1726,6 +1729,8 @@ sub _write_val_axis {
         $y_axis->{_reverse}, $y_axis->{_min},
         $y_axis->{_max},     $y_axis->{_log_base}
     );
+
+    $self->_write_delete( 1 ) unless $y_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -1804,6 +1809,8 @@ sub _write_cat_val_axis {
         $x_axis->{_max},     $x_axis->{_log_base}
     );
 
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
+
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
@@ -1879,6 +1886,8 @@ sub _write_date_axis {
         $x_axis->{_max},     $x_axis->{_log_base}
     );
 
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
+
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
@@ -1900,16 +1909,19 @@ sub _write_date_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $self->{_axis_ids}->[1] );
 
-    # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
 
-        # Write the c:crosses element.
-        $self->_write_crosses( $y_axis->{_crossing} );
-    }
-    else {
+        # Note, the category crossing comes from the value axis.
+        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
 
-        # Write the c:crossesAt element.
-        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+            # Write the c:crosses element.
+            $self->_write_crosses( $y_axis->{_crossing} );
+        }
+        else {
+
+            # Write the c:crossesAt element.
+            $self->_write_c_crosses_at( $y_axis->{_crossing} );
+        }
     }
 
     # Write the c:auto element.

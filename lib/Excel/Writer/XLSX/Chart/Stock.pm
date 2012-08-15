@@ -34,6 +34,7 @@ sub new {
 
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
+    $self->{_show_crosses} = 0;
 
     bless $self, $class;
     return $self;
