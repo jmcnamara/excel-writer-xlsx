@@ -70,6 +70,7 @@ sub new {
     $self->{_series}            = [];
     $self->{_embedded}          = 0;
     $self->{_id}                = '';
+    $self->{_series_index}      = 0;
     $self->{_style_id}          = 2;
     $self->{_axis_ids}          = [];
     $self->{_has_category}      = 0;
@@ -1324,9 +1325,8 @@ sub _write_series {
     my $self = shift;
 
     # Write each series with subelements.
-    my $index = 0;
     for my $series ( @{ $self->{_series} } ) {
-        $self->_write_ser( $index++, $series );
+        $self->_write_ser( $series );
     }
 
     # Write the c:marker element.
@@ -1351,8 +1351,8 @@ sub _write_series {
 sub _write_ser {
 
     my $self   = shift;
-    my $index  = shift;
     my $series = shift;
+    my $index  = $self->{_series_index}++;
 
     $self->{_writer}->startTag( 'c:ser' );
 
