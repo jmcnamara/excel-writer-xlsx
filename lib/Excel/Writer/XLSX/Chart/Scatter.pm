@@ -35,9 +35,10 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_subtype} = $self->{_subtype} || 'marker_only';
-    $self->{_cross_between} = 'midCat';
-    $self->{_horiz_val_axis}    = 0;
+    $self->{_subtype}          = $self->{_subtype} || 'marker_only';
+    $self->{_cross_between}    = 'midCat';
+    $self->{_horiz_val_axis}   = 0;
+    $self->{_val_axis_postion} = 'b';
 
     bless $self, $class;
     return $self;
@@ -55,7 +56,7 @@ sub _write_chart_type {
     my $self = shift;
 
     # Write the c:scatterChart element.
-    $self->_write_scatter_chart();
+    $self->_write_scatter_chart( @_ );
 }
 
 
@@ -67,7 +68,15 @@ sub _write_chart_type {
 #
 sub _write_scatter_chart {
 
-    my $self    = shift;
+    my $self = shift;
+    my %args = @_;
+
+    my @series = $args{primary_axes}    #
+      ? $self->_get_primary_axes_series
+      : $self->_get_secondary_axes_series;
+
+    return unless scalar @series;
+
     my $style   = 'lineMarker';
     my $subtype = $self->{_subtype};
 
@@ -87,7 +96,13 @@ sub _write_scatter_chart {
     $self->_write_scatter_style( $style );
 
     # Write the series elements.
-    $self->_write_series();
+    $self->_write_ser( $_ ) for @series;
+
+    # Write the c:marker element.
+    $self->_write_marker_value();
+
+    # Write the c:axId elements
+    $self->_write_axis_ids( %args );
 
     $self->{_writer}->endTag( 'c:scatterChart' );
 }
@@ -103,9 +118,9 @@ sub _write_scatter_chart {
 #
 sub _write_ser {
 
-    my $self       = shift;
-    my $index      = shift;
-    my $series     = shift;
+    my $self   = shift;
+    my $series = shift;
+    my $index  = $self->{_series_index}++;
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -161,15 +176,44 @@ sub _write_plot_area {
     # Write the c:layout element.
     $self->_write_layout();
 
-    # Write the subclass chart type element.
-    $self->_write_chart_type();
+    # TODO: (for JMCNAMARA todo :)
+    # foreach my $chart_type (@chart_types)
 
-    # Write the c:catAx element.
-    $self->_write_cat_val_axis( 'b', 1 );
+    # Write the subclass chart type elements for primary and secondary axes
+    $self->_write_chart_type( primary_axes => 1 );
+    $self->_write_chart_type( primary_axes => 0 );
 
-    # Write the c:catAx element.
+    # Write c:catAx and c:valAx elements for series using primary axes
+    $self->_write_cat_val_axis(
+        x_axis   => $self->{_x_axis},
+        y_axis   => $self->{_y_axis},
+        axis_ids => $self->{_axis_ids},
+        position => 'b',
+    );
+    my $tmp = $self->{_horiz_val_axis};
     $self->{_horiz_val_axis} = 1;
-    $self->_write_val_axis( 'l' );
+    $self->_write_val_axis(
+        x_axis   => $self->{_x_axis},
+        y_axis   => $self->{_y_axis},
+        axis_ids => $self->{_axis_ids},
+        position => 'l',
+    );
+    $self->{_horiz_val_axis} = $tmp;
+
+    # Write c:valAx and c:catAx elements for series using secondary axes
+    $self->_write_cat_val_axis(
+        x_axis   => $self->{_x2_axis},
+        y_axis   => $self->{_y2_axis},
+        axis_ids => $self->{_axis2_ids},
+        position => 'b',
+    );
+    $self->{_horiz_val_axis} = 1;
+    $self->_write_val_axis(
+        x_axis   => $self->{_x2_axis},
+        y_axis   => $self->{_y2_axis},
+        axis_ids => $self->{_axis2_ids},
+        position => 'l',
+    );
 
     $self->{_writer}->endTag( 'c:plotArea' );
 }
