@@ -89,6 +89,7 @@ sub new {
     $self->{_chart_name}        = '';
     $self->{_show_blanks}       = 'gap';
     $self->{_show_hidden_data}  = 0;
+    $self->{_show_crosses}      = 1;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -1743,16 +1744,19 @@ sub _write_cat_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
 
-    # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
 
-        # Write the c:crosses element.
-        $self->_write_crosses( $y_axis->{_crossing} );
-    }
-    else {
+        # Note, the category crossing comes from the value axis.
+        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
 
-        # Write the c:crossesAt element.
-        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+            # Write the c:crosses element.
+            $self->_write_crosses( $y_axis->{_crossing} );
+        }
+        else {
+
+            # Write the c:crossesAt element.
+            $self->_write_c_crosses_at( $y_axis->{_crossing} );
+        }
     }
 
     # Write the c:auto element.
