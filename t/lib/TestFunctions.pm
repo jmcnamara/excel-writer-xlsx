@@ -223,7 +223,7 @@ sub _compare_xlsx_files {
 
         # Remove dates and user specific data from the core.xml data.
         if ( $filename eq 'docProps/core.xml' ) {
-            $exp_xml_str =~ s/John//g;
+            $exp_xml_str =~ s/ ?John//g;
             $exp_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
             $got_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
         }
@@ -233,6 +233,33 @@ sub _compare_xlsx_files {
             $exp_xml_str =~ s/horizontalDpi="200" //;
             $exp_xml_str =~ s/verticalDpi="200" //;
             $exp_xml_str =~ s/(<pageSetup.* )r:id="rId1"/$1/;
+        }
+
+        # Not sure what these attributes do.  Hopefully not important.
+        if ( $filename =~ m(xl/workbook.xml) ) {
+
+            # Remove <fileversion> rupBuild attribute.
+            $exp_xml_str =~ s/\srupBuild="\d+"//;
+            $got_xml_str =~ s/\srupBuild="\d+"//;
+
+            # Remove <calcPr> calcId attribute.
+            $exp_xml_str =~ s/\scalcId="\d+"//;
+            $got_xml_str =~ s/\scalcId="\d+"//;
+        }
+
+        # Remove c:margins measurements.  Floating point errors in Excel cause
+        # tiny differences when converting from cm to inches.
+        if ( $filename =~ m(xl/charts/chart\d+.xml) ) {
+            my $margins_regex = qr/
+                \sb="\d*\.\d*"
+                \sl="\d*\.\d*"
+                \sr="\d*\.\d*"
+                \st="\d*\.\d*"
+                \sheader="\d*\.\d*"
+                \sfooter="\d*\.\d*"
+            /x;
+            $exp_xml_str =~ s/$margins_regex//;
+            $got_xml_str =~ s/$margins_regex//;
         }
 
         if ( $filename =~ /.vml$/ ) {
