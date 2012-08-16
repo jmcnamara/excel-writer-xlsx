@@ -55,7 +55,7 @@ sub _write_chart_type {
     my $self = shift;
 
     # Write the c:barChart element.
-    $self->_write_bar_chart();
+    $self->_write_bar_chart( @_ );
 }
 
 
@@ -67,9 +67,20 @@ sub _write_chart_type {
 #
 sub _write_bar_chart {
 
-    my $self    = shift;
-    my $subtype = $self->{_subtype};
+    my $self = shift;
+    my %args = @_;
 
+    my @series;
+    if ( $args{primary_axes} ) {
+        @series = $self->_get_primary_axes_series;
+    }
+    else {
+        @series = $self->_get_secondary_axes_series;
+    }
+
+    return unless scalar @series;
+
+    my $subtype = $self->{_subtype};
     $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
 
     $self->{_writer}->startTag( 'c:barChart' );
@@ -80,8 +91,17 @@ sub _write_bar_chart {
     # Write the c:grouping element.
     $self->_write_grouping( $subtype );
 
-    # Write the series elements.
-    $self->_write_series();
+    # Write the c:ser elements.
+    $self->_write_ser( $_ ) for @series;
+
+    # Write the c:marker element.
+    $self->_write_marker_value();
+
+    # Write the c:overlap element.
+    $self->_write_overlap() if $self->{_subtype} =~ /stacked/;
+
+    # Write the c:axId elements
+    $self->_write_axis_ids( %args );
 
     $self->{_writer}->endTag( 'c:barChart' );
 }
@@ -101,40 +121,6 @@ sub _write_bar_dir {
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:barDir', @attributes );
-}
-
-
-##############################################################################
-#
-# _write_series()
-#
-# Over-ridden to add c:overlap.
-#
-# Write the series elements.
-#
-sub _write_series {
-
-    my $self = shift;
-
-    # Write each series with subelements.
-    my $index = 0;
-    for my $series ( @{ $self->{_series} } ) {
-        $self->_write_ser( $index++, $series );
-    }
-
-    # Write the c:marker element.
-    $self->_write_marker_value();
-
-    # Write the c:overlap element.
-    $self->_write_overlap() if $self->{_subtype} =~ /stacked/;
-
-    # Generate the axis ids.
-    $self->_add_axis_id();
-    $self->_add_axis_id();
-
-    # Write the c:axId element.
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
-    $self->_write_axis_id( $self->{_axis_ids}->[1] );
 }
 
 
