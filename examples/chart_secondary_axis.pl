@@ -36,15 +36,13 @@ $chart->add_series(
     values => '=Sheet1!$B$2:$B$7',
 );
 
-
 $chart->set_legend( position => 'right' );    # none, bottom, etc
 
 # Add a chart title and some axis labels.
 $chart->set_title( name => 'Intergalactic survey results' );
 $chart->set_x_axis( name => 'Days', );
 $chart->set_y_axis( name => 'Population', major_gridlines => 0 );
-$chart->set_x2_axis();
-$chart->set_y2_axis( name => 'not sure what this measures', );
+$chart->set_y2_axis( name => 'Not sure what this measures' );
 
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'D2', $chart, 25, 10 );
