@@ -22,13 +22,11 @@ use Excel::Writer::XLSX::Worksheet;
 our @ISA     = qw(Excel::Writer::XLSX::Worksheet);
 our $VERSION = '0.49';
 
-
 ###############################################################################
 #
 # Public and private API methods.
 #
 ###############################################################################
-
 
 ###############################################################################
 #
@@ -52,7 +50,6 @@ sub new {
 
     return $self;
 }
-
 
 ###############################################################################
 #
@@ -103,7 +100,6 @@ sub _assemble_xml_file {
     $self->{_writer}->getOutput()->close();
 }
 
-
 ###############################################################################
 #
 # Public methods.
@@ -126,7 +122,6 @@ sub protect {
     $self->SUPER::protect( $password, $options );
 }
 
-
 ###############################################################################
 #
 # Encapsulated Chart methods.
@@ -136,6 +131,8 @@ sub protect {
 sub add_series       { return shift->{_chart}->add_series( @_ ) }
 sub set_x_axis       { return shift->{_chart}->set_x_axis( @_ ) }
 sub set_y_axis       { return shift->{_chart}->set_y_axis( @_ ) }
+sub set_x2_axis      { return shift->{_chart}->set_x2_axis( @_ ) }
+sub set_y2_axis      { return shift->{_chart}->set_y2_axis( @_ ) }
 sub set_title        { return shift->{_chart}->set_title( @_ ) }
 sub set_legend       { return shift->{_chart}->set_legend( @_ ) }
 sub set_plotarea     { return shift->{_chart}->set_plotarea( @_ ) }
@@ -144,14 +141,11 @@ sub set_style        { return shift->{_chart}->set_style( @_ ) }
 sub show_blanks_as   { return shift->{_chart}->show_blanks_as( @_ ) }
 sub show_hidden_data { return shift->{_chart}->show_hidden_data( @_ ) }
 
-
 ###############################################################################
 #
 # Internal methods.
 #
 ###############################################################################
-
-
 
 ###############################################################################
 #
@@ -166,7 +160,6 @@ sub _prepare_chart {
     my $chart_id   = shift;
     my $drawing_id = shift;
 
-
     my $drawing = Excel::Writer::XLSX::Drawing->new();
     $self->{_drawing} = $drawing;
     $self->{_drawing}->{_orientation} = $self->{_orientation};
@@ -178,15 +171,11 @@ sub _prepare_chart {
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
 }
 
-
-
 ###############################################################################
 #
 # XML writing methods.
 #
 ###############################################################################
-
-
 
 ###############################################################################
 #
@@ -213,9 +202,6 @@ sub _write_chartsheet {
     $self->{_writer}->startTag( 'chartsheet', @attributes );
 }
 
-
-
-
 ###############################################################################
 #
 # _write_sheet_pr()
@@ -226,7 +212,6 @@ sub _write_sheet_pr {
 
     my $self       = shift;
     my @attributes = ();
-
 
     push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
 
@@ -242,7 +227,6 @@ sub _write_sheet_pr {
 }
 
 1;
-
 
 __END__
 
