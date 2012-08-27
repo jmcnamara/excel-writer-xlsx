@@ -2564,13 +2564,20 @@ sub write_url {
         # External Workbook links need to be modified into the right format.
         # The URL will look something like 'c:\temp\file.xlsx#Sheet!A1'.
         # We need the part to the left of the # as the URL and the part to
-        # the right as the "location" string (if it exists)
+        # the right as the "location" string (if it exists).
         ( $url, $str ) = split /#/, $url;
 
         # Add the file:/// URI to the $url if non-local.
-        if ( $url =~ m{[\\/]} && $url !~ m{^\.\.} ) {
+        if (
+            $url =~ m{[:]}         # Windows style "C:/" link.
+            || $url =~ m{^\\\\}    # Network share.
+          )
+        {
             $url = 'file:///' . $url;
         }
+
+        # Convert a ./dir/file.xlsx link to dir/file.xlsx.
+        $url =~ s{^.\\}{};
 
         # Treat as a default external link now that the data has been modified.
         $link_type = 1;
