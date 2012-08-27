@@ -1505,19 +1505,10 @@ sub _write_val {
 
     $self->{_writer}->startTag( 'c:val' );
 
-    # Check the type of cached data.
-    my $type = $self->_get_data_type( $data );
+    # Unlike Cat axes data should only be numeric.
 
-    if ( $type eq 'str' ) {
-
-        # Write the c:numRef element.
-        $self->_write_str_ref( $formula, $data, $type );
-    }
-    else {
-
-        # Write the c:numRef element.
-        $self->_write_num_ref( $formula, $data, $type );
-    }
+    # Write the c:numRef element.
+    $self->_write_num_ref( $formula, $data, 'num' );
 
     $self->{_writer}->endTag( 'c:val' );
 }
@@ -3370,9 +3361,17 @@ sub _write_num_cache {
     $self->_write_pt_count( $count );
 
     for my $i ( 0 .. $count - 1 ) {
+        my $token = $data->[$i];
+
+        # Write non-numeric data as 0.
+        if ( defined $token
+            && $token !~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ )
+        {
+            $token = 0;
+        }
 
         # Write the c:pt element.
-        $self->_write_pt( $i, $data->[$i] );
+        $self->_write_pt( $i, $token );
     }
 
     $self->{_writer}->endTag( 'c:numCache' );
