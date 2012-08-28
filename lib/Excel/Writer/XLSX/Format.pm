@@ -130,12 +130,22 @@ sub copy {
     return unless defined $other;
     return unless ( ref( $self ) eq ref( $other ) );
 
+    # Store properties that we don't want over-ridden.
+    my $xf_index           = $self->{_xf_index};
+    my $dxf_index          = $self->{_dxf_index};
+    my $xf_format_indices  = $self->{_xf_format_indices};
+    my $dxf_format_indices = $self->{_dxf_format_indices};
+    my $palette            = $self->{_palette};
 
-    my $xf      = $self->{_xf_index};   # Store XF index assigned by Workbook.pm
-    my $palette = $self->{_palette};    # Store palette assigned by Workbook.pm
-    %$self             = %$other;       # Copy properties
-    $self->{_xf_index} = $xf;           # Restore XF index
-    $self->{_palette}  = $palette;      # Restore palette
+    # Copy properties.
+    %$self             = %$other;
+
+    # Restore original properties.
+    $self->{_xf_index}           = $xf_index;
+    $self->{_dxf_index}          = $dxf_index;
+    $self->{_xf_format_indices}  = $xf_format_indices;
+    $self->{_dxf_format_indices} = $dxf_format_indices;
+    $self->{_palette}            = $palette;
 }
 
 
