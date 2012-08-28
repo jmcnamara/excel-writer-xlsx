@@ -4654,9 +4654,6 @@ sub insert_shape {
         }
     }
 
-    # For connectors change x/y coords based on location of connected shapes.
-    $self->_auto_locate_connectors( $shape );
-
     $shape->{_element} = $#{ $self->{_shapes} } + 1;
 
     # Allow lookup of entry into shape array by shape ID.
@@ -4672,6 +4669,9 @@ sub insert_shape {
         # if the stencil is modified.
         my $insert = { %{$shape} };
 
+        # For connectors change x/y coords based on location of connected shapes.
+        $self->_auto_locate_connectors( $insert );
+
         # Bless the copy into this class, so AUTOLOADED _get, _set methods
         #still work on the child.
         bless $insert, ref $shape;
@@ -4680,6 +4680,9 @@ sub insert_shape {
         return $insert;
     }
     else {
+
+        # For connectors change x/y coords based on location of connected shapes.
+        $self->_auto_locate_connectors( $shape );
 
         # Insert a link to the shape on the list of shapes. Connection to
         # the parent shape is maintained
@@ -4819,7 +4822,7 @@ sub _auto_locate_connectors {
         $shape->{_flip_h} = ( $smidx < $emidx ) ? 1 : 0;
         $shape->{_rotation} = 90;
 
-        if ( ( $sy > $ey ) and ( $smidx < $emidx ) ) {
+        if ( $sy > $ey ) {
             $shape->{_flip_v} = 1;
 
             # Create 3 adjustments for an end shape vertically above a
@@ -4839,12 +4842,12 @@ sub _auto_locate_connectors {
         $shape->{_x_offset} =
           min( $sls->{_x_offset} + $sls->{_width}, $els->{_x_offset} );
         $shape->{_y_offset} = min( $smidy, $emidy );
-        $shape->{_flip_v} = ( $smidy > $emidy );
 
+        $shape->{_flip_h} = 1 if ( $smidx < $emidx ) and ($smidy > $emidy);
+        $shape->{_flip_h} = 1 if ( $smidx > $emidx ) and ($smidy < $emidy);
         if ( $smidx > $emidx ) {
 
-            # Create 3 adjustments for an end shape to the left of a
-            # start shape.
+            # Create 3 adjustments if end shape is left of start
             if ( $#{ $shape->{_adjustments} } < 0 ) {
                 $shape->{_adjustments} = [ -10, 50, 110 ];
             }
