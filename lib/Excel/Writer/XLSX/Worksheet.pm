@@ -180,6 +180,7 @@ sub new {
     $self->{_drawing_links}          = [];
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
+    $self->{_tables}                 = [];
     $self->{_shapes}                 = [];
     $self->{_shape_hash}             = {};
     $self->{_drawing}                = 0;
@@ -295,6 +296,10 @@ sub _assemble_xml_file {
 
     # Write the worksheet page_margins.
     $self->_write_page_margins();
+
+    # TODO check order.
+    # Write the tableParts element.
+    $self->_write_table_parts();
 
     # Write the worksheet page setup.
     $self->_write_page_setup();
@@ -7775,6 +7780,55 @@ sub _write_color {
     my @attributes = ( $name => $value );
 
     $self->{_writer}->emptyTag( 'color', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_table_parts()
+#
+# Write the <tableParts> element.
+#
+sub _write_table_parts {
+
+    my $self   = shift;
+    my @tables = @{ $self->{_tables} };
+    my $count  = scalar @tables;
+
+    # Return if worksheet doesn't contain any tables.
+    return unless $count;
+
+    my @attributes = ( 'count' => $count, );
+
+    $self->{_writer}->startTag( 'tableParts', @attributes );
+
+    for my $table ( @tables ) {
+
+        # Write the tablePart element.
+        $self->_write_table_part( $table->{_id} );
+
+    }
+
+    $self->{_writer}->endTag( 'tableParts' );
+}
+
+
+##############################################################################
+#
+# _write_table_part()
+#
+# Write the <tablePart> element.
+#
+sub _write_table_part {
+
+    my $self = shift;
+    my $id   = shift;
+    my $r_id = 'rId' . $id;
+
+    my @attributes = ( 'r:id' => $r_id, );
+
+    $self->{_writer}->emptyTag( 'tablePart', @attributes );
 }
 
 

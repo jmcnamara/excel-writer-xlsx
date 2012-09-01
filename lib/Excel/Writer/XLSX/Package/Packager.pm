@@ -26,6 +26,7 @@ use Excel::Writer::XLSX::Package::Core;
 use Excel::Writer::XLSX::Package::Relationships;
 use Excel::Writer::XLSX::Package::SharedStrings;
 use Excel::Writer::XLSX::Package::Styles;
+use Excel::Writer::XLSX::Package::Table;
 use Excel::Writer::XLSX::Package::Theme;
 use Excel::Writer::XLSX::Package::VML;
 
@@ -58,6 +59,7 @@ sub new {
         _chartsheet_count => 0,
         _chart_count      => 0,
         _drawing_count    => 0,
+        _table_count      => 0,
         _named_ranges     => [],
     };
 
@@ -129,6 +131,7 @@ sub _create_package {
     $self->_write_drawing_files();
     $self->_write_vml_files();
     $self->_write_comment_files();
+    $self->_write_table_files();
     $self->_write_shared_strings_file();
     $self->_write_app_file();
     $self->_write_core_file();
@@ -460,6 +463,10 @@ sub _write_content_types_file {
         $content->_add_vml_name();
     }
 
+    for my $i ( 1 .. $self->{_table_count} ) {
+        $content->_add_table_name( 'table' . $i );
+    }
+
     for my $i ( 1 .. $self->{_num_comment_files} ) {
         $content->_add_comment_name( 'comments' . $i );
     }
@@ -531,6 +538,43 @@ sub _write_theme_file {
 
     $rels->_set_xml_writer( $dir . '/xl/theme/theme1.xml' );
     $rels->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_table_files()
+#
+# Write the table files.
+#
+sub _write_table_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+    my $index = 1;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        my @table_props = @{ $worksheet->{_tables} };
+
+        next unless @table_props;
+
+        _mkdir( $dir . '/xl' );
+        _mkdir( $dir . '/xl/tables' );
+
+        for my $table_props ( @table_props ) {
+
+            my $table = Excel::Writer::XLSX::Package::Table->new();
+
+            $table->_set_xml_writer(
+                $dir . '/xl/tables/table' . $index++ . '.xml' );
+
+            $table->_set_properties( $table_props );
+
+            $table->_assemble_xml_file();
+
+            $self->{_table_count}++;
+        }
+    }
 }
 
 

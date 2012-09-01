@@ -283,6 +283,24 @@ sub _add_image_types {
 
 ###############################################################################
 #
+# _add_table_name()
+#
+# Add the name of a table to the ContentTypes overrides.
+#
+sub _add_table_name {
+
+    my $self       = shift;
+    my $table_name = shift;
+
+    $table_name = "/xl/tables/$table_name.xml";
+
+    $self->_add_override( $table_name,
+        $app_document . 'spreadsheetml.table+xml' );
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
