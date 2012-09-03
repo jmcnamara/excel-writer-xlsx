@@ -668,6 +668,8 @@ sub _write_worksheet_rels_files {
         my @external_links = (
             @{ $worksheet->{_external_hyper_links} },
             @{ $worksheet->{_external_drawing_links} },
+            @{ $worksheet->{_external_vml_links} },
+            @{ $worksheet->{_external_table_links} },
             @{ $worksheet->{_external_comment_links} },
         );
 

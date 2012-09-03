@@ -172,11 +172,13 @@ sub new {
     $self->{_row_size_changed} = 0;
 
     $self->{_last_shape_id}          = 1;
-    $self->{_hlink_count}            = 0;
+    $self->{_rel_count}              = 0;
     $self->{_hlink_refs}             = [];
     $self->{_external_hyper_links}   = [];
     $self->{_external_drawing_links} = [];
     $self->{_external_comment_links} = [];
+    $self->{_external_vml_links}     = [];
+    $self->{_external_table_links}   = [];
     $self->{_drawing_links}          = [];
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
@@ -297,10 +299,6 @@ sub _assemble_xml_file {
     # Write the worksheet page_margins.
     $self->_write_page_margins();
 
-    # TODO check order.
-    # Write the tableParts element.
-    $self->_write_table_parts();
-
     # Write the worksheet page setup.
     $self->_write_page_setup();
 
@@ -318,6 +316,9 @@ sub _assemble_xml_file {
 
     # Write the legacyDrawing element.
     $self->_write_legacy_drawing();
+
+    # Write the tableParts element.
+    $self->_write_table_parts();
 
     # Write the worksheet extension storage.
     #$self->_write_ext_lst();
@@ -3679,6 +3680,160 @@ sub conditional_formatting {
 
 ###############################################################################
 #
+# add_table()
+#
+# TODO
+#
+sub add_table {
+
+    my $self       = shift;
+    my $user_range = '';
+    my %table;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    # Check for a valid number of args.
+    if ( @_ < 4 ) {
+
+        # TODO add warning/error.
+        return -1;
+    }
+
+    my ( $row1, $col1, $row2, $col2 ) = @_;
+
+    # Check that row and col are valid without storing the values.
+    return -2 if $self->_check_dimensions( $row1, $col1, 1, 1 );
+    return -2 if $self->_check_dimensions( $row2, $col2, 1, 1 );
+
+
+    # The final hashref contains the validation parameters.
+    my $param = $_[4] || {};
+
+    # Check that the last parameter is a hash list.
+    if ( ref $param ne 'HASH' ) {
+        carp "Last parameter '$param' in add_table() must be a hash ref";
+        return -3;
+    }
+
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        name           => 1,
+        autofilter     => 1,
+        columns        => 1,
+        style          => 1,
+        first_column   => 1,
+        last_column    => 1,
+        banded_rows    => 1,
+        banded_columns => 1,
+        header_row     => 1,
+        total_row      => 1,
+        column_headers => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $param_key ( keys %$param ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in add_table()";
+            return -3;
+        }
+    }
+
+    # Turn on Excel's defaults.
+    $param->{banded_rows} = 1 if !defined $param->{banded_rows};
+    $param->{header_row}  = 1 if !defined $param->{header_row};
+    $param->{autofilter}  = 1 if !defined $param->{autofilter};
+
+    # Set the table options.
+    $table{_show_first_col}   = $param->{first_column}   ? 1 : 0;
+    $table{_show_last_col}    = $param->{last_column}    ? 1 : 0;
+    $table{_show_row_stripes} = $param->{banded_rows}    ? 1 : 0;
+    $table{_show_col_stripes} = $param->{banded_columns} ? 1 : 0;
+    $table{_header_row_count} = $param->{header_row}     ? 1 : 0;
+
+
+    # Hardcode "Total row" off for now. TODO. Add later.
+    $table{_totals_row_shown} = 0;
+
+
+    # Set the table style.
+    if ( defined $param->{style} ) {
+        $table{_style} = $param->{style};
+
+        # Remove whitespace from style name.
+        $table{_style} =~ s/\s//g;
+    }
+    else {
+        $table{_style} = "TableStyleMedium9";
+    }
+
+
+    # Swap last row/col for first row/col as necessary.
+    if ( $row1 > $row2 ) {
+        ( $row1, $row2 ) = ( $row2, $row1 );
+    }
+
+    if ( $col1 > $col2 ) {
+        ( $col1, $col2 ) = ( $col2, $col1 );
+    }
+
+    # If the first and last cell are the same then range is a single cell.
+    if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
+        $table{_range} = xl_rowcol_to_cell( $row1, $col1 );
+    }
+    else {
+        $table{_range} = xl_range( $row1, $row2, $col1, $col2 );
+    }
+
+    # If the header row if off the default is to turn autofilter off.
+    if ( !$param->{header_row} ) {
+        $param->{autofilter} = 0;
+    }
+
+    # Set the autofilter range.
+    if ( $param->{autofilter} ) {
+        $table{_autofilter} = $table{_range};
+    }
+
+
+    # Add the table columns.
+    my $col_id = 1;
+    for my $col_num ( $col1 .. $col2 ) {
+
+        # Create a default column name.
+        my $col_name = 'Column' . $col_id;
+
+        # Check for a user define column header name.
+        if ( my $header = $param->{column_headers}->[ $col_id - 1 ] ) {
+            $col_name = $header;
+        }
+
+        # Store the column data.
+        push @{ $table{_columns} }, [ $col_id, $col_name ];
+
+        # Write the column headers to the worksheet.
+        $self->write_string( $row1, $col_num, $col_name );
+
+        $col_id++;
+    }
+
+
+    # TODO
+    # $table{_id}   = 1;
+    # $table{_name} = 'Table1';
+
+
+    push @{ $self->{_tables} }, \%table;
+
+
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
@@ -4747,6 +4902,30 @@ sub _prepare_shape {
 
 ###############################################################################
 #
+# _prepare_table()
+#
+# Set up tables.
+#
+sub _prepare_table {
+
+    my $self     = shift;
+    my $index    = shift;
+    my $table_id = shift;
+    my $table    = $self->{_tables}->[$index];
+    my $name     = 'Table' . $table_id;
+
+    # Set the table name and id.
+    $table->{_id}    = $table_id;
+    $table->{_name}  = $name;
+
+    # Store the link used for the rels file.
+    push @{ $self->{_external_table_links} },
+      [ '/table', '../tables/table' . $table_id . '.xml' ];
+}
+
+
+###############################################################################
+#
 # _auto_locate_connectors()
 #
 # Re-size connector shapes if they are connected to other shapes.
@@ -4932,8 +5111,10 @@ sub _prepare_comments {
 
     $self->{_comments_array} = \@comments;
 
+    push @{ $self->{_external_vml_links} },
+      [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ];
+
     push @{ $self->{_external_comment_links} },
-      [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ],
       [ '/comments',   '../comments' . $comment_id . '.xml' ];
 
     my $count         = scalar @comments;
@@ -6075,8 +6256,8 @@ sub _write_cell {
             # External link with rel file relationship.
             push @{ $self->{_hlink_refs} },
               [
-                $link_type,              $row,       $col,
-                ++$self->{_hlink_count}, $cell->[5], $cell->[6]
+                $link_type,            $row,       $col,
+                ++$self->{_rel_count}, $cell->[5], $cell->[6]
               ];
 
             push @{ $self->{_external_hyper_links} },
@@ -7181,7 +7362,7 @@ sub _write_drawings {
 
     return unless $self->{_drawing};
 
-    $self->_write_drawing( $self->{_hlink_count} + 1 );
+    $self->_write_drawing( ++$self->{_rel_count} );
 }
 
 
@@ -7217,9 +7398,7 @@ sub _write_legacy_drawing {
     return unless $self->{_has_comments};
 
     # Increment the relationship id for any drawings or comments.
-    $id = $self->{_hlink_count} + 1;
-    $id++ if $self->{_drawing};
-
+    $id = ++$self->{_rel_count};
 
     my @attributes = ( 'r:id' => 'rId' . $id );
 
@@ -7806,7 +7985,7 @@ sub _write_table_parts {
     for my $table ( @tables ) {
 
         # Write the tablePart element.
-        $self->_write_table_part( $table->{_id} );
+        $self->_write_table_part( ++$self->{_rel_count} );
 
     }
 

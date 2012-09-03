@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table01.xlsx';
+my $filename     = 'table04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -40,6 +40,13 @@ $worksheet->set_column('C:F', 10.288);
 # Add the table.
 $worksheet->add_table('C3:F13');
 
+# Add a link to check rId handling.
+$worksheet->write( 'A1', 'http://perl.com/' );
+
+# Add comments to check rId handling.
+$worksheet->set_comments_author( 'John' );
+$worksheet->write_comment( 'H1', 'Test1' );
+$worksheet->write_comment( 'J1', 'Test2' );
 
 $workbook->close();
 

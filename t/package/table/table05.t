@@ -25,7 +25,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::Table' );
 my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
 # Set the table properties.
-$worksheet->add_table( 'C3:F13');
+$worksheet->add_table( 'C4:F13', { header_row => 0 } );
 
 # Simulate setting the table properties set by the parent workbook.
 $worksheet->{_tables}->[0]->{_id}   = 1;
@@ -48,8 +48,7 @@ _is_deep_diff( $got, $expected, $caption );
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="Table1" displayName="Table1" ref="C3:F13" totalsRowShown="0">
-  <autoFilter ref="C3:F13"/>
+<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="Table1" displayName="Table1" ref="C4:F13" headerRowCount="0" totalsRowShown="0">
   <tableColumns count="4">
     <tableColumn id="1" name="Column1"/>
     <tableColumn id="2" name="Column2"/>

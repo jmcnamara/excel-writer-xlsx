@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table01.xlsx';
+my $filename     = 'table06.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -35,11 +35,24 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 # Set the column width to match the target worksheet.
-$worksheet->set_column('C:F', 10.288);
+$worksheet->set_column('C:H', 10.288);
 
-# Add the table.
+# Add the tables.
 $worksheet->add_table('C3:F13');
+$worksheet->add_table('F15:H20');
+$worksheet->add_table('C23:D30');
 
+# Add a link to check rId handling.
+$worksheet->write( 'A1', 'http://perl.com/' );
+$worksheet->write( 'C1', 'http://perl.com/' );
+
+# Add comments to check rId handling.
+$worksheet->set_comments_author( 'John' );
+$worksheet->write_comment( 'H1', 'Test1' );
+$worksheet->write_comment( 'J1', 'Test2' );
+
+# Add drawing to check rId handling.
+$worksheet->insert_image( 'A4',  $dir . 'images/blue.png' );
 
 $workbook->close();
 

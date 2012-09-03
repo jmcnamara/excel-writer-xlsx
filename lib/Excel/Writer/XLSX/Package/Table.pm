@@ -140,26 +140,29 @@ sub _write_xml_declaration {
 #
 sub _write_table {
 
-    my $self                 = shift;
-    my $xmlns                = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-    my $id                   = 1;
-    my $name                 = 'Table1';
-    my $display_name         = 'Table1';
-    my $ref                  = 'C3:F13';
-    my $totals_row_shown     = 0;
+    my $self             = shift;
+    my $schema           = 'http://schemas.openxmlformats.org/';
+    my $xmlns            = $schema . 'spreadsheetml/2006/main';
+    my $id               = $self->{_properties}->{_id};
+    my $name             = $self->{_properties}->{_name};
+    my $display_name     = $self->{_properties}->{_name};
+    my $ref              = $self->{_properties}->{_range};
+    my $totals_row_shown = $self->{_properties}->{_totals_row_shown};
+    my $header_row_count = $self->{_properties}->{_header_row_count};
 
     my @attributes = (
-        'xmlns'              => $xmlns,
-        'id'                 => $id,
-        'name'               => $name,
-        'displayName'        => $display_name,
-        'ref'                => $ref,
-        'totalsRowShown'     => $totals_row_shown,
+        'xmlns'       => $xmlns,
+        'id'          => $id,
+        'name'        => $name,
+        'displayName' => $display_name,
+        'ref'         => $ref,
     );
+
+    push @attributes, ( 'headerRowCount' => 0 ) if !$header_row_count;
+    push @attributes, ( 'totalsRowShown' => $totals_row_shown );
 
     $self->{_writer}->startTag( 'table', @attributes );
 }
-
 
 
 ##############################################################################
@@ -189,7 +192,7 @@ sub _write_auto_filter {
 #
 sub _write_table_columns {
 
-    my $self = shift;
+    my $self    = shift;
     my @columns = @{ $self->{_properties}->{_columns} };
 
     my $count = scalar @columns;
@@ -229,7 +232,6 @@ sub _write_table_column {
 }
 
 
-
 ##############################################################################
 #
 # _write_table_style_info()
@@ -257,7 +259,6 @@ sub _write_table_style_info {
 
     $self->{_writer}->emptyTag( 'tableStyleInfo', @attributes );
 }
-
 
 
 1;

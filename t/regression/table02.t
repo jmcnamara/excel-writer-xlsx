@@ -16,13 +16,13 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table01.xlsx';
+my $filename     = 'table02.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
-my $ignore_elements = {};
+my $ignore_elements = { 'xl/workbook.xml' => ['<workbookView'] };
 
 
 ###############################################################################
@@ -31,14 +31,21 @@ my $ignore_elements = {};
 #
 use Excel::Writer::XLSX;
 
-my $workbook  = Excel::Writer::XLSX->new( $got_filename );
-my $worksheet = $workbook->add_worksheet();
+my $workbook   = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet1 = $workbook->add_worksheet();
+my $worksheet2 = $workbook->add_worksheet();
 
 # Set the column width to match the target worksheet.
-$worksheet->set_column('C:F', 10.288);
+$worksheet1->set_column('B:J', 10.288);
+$worksheet2->set_column('C:L', 10.288);
 
-# Add the table.
-$worksheet->add_table('C3:F13');
+# Add the tables.
+$worksheet1->add_table('B3:E11');
+$worksheet1->add_table('G10:J16');
+$worksheet1->add_table('C18:F25');
+
+$worksheet2->add_table('I4:L11');
+$worksheet2->add_table('C16:H23');
 
 
 $workbook->close();

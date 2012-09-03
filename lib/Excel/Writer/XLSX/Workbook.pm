@@ -830,6 +830,9 @@ sub _store_workbook {
     # Prepare the drawings, charts and images.
     $self->_prepare_drawings();
 
+    # Prepare the worksheet tables.
+    $self->_prepare_tables();
+
     # Add cached data to charts.
     $self->_add_chart_data();
 
@@ -1499,6 +1502,38 @@ sub _prepare_comments {
         push @{ $self->{_formats} }, $format;
     }
 }
+
+
+
+###############################################################################
+#
+# _prepare_tables()
+#
+# Iterate through the worksheets and set up the table data.
+#
+sub _prepare_tables {
+
+    my $self       = shift;
+    my $table_id   = 0;
+    my $drawing_id = 0;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        my $table_count = scalar @{ $sheet->{_tables} };
+
+        next unless $table_count;
+
+        for my $index ( 0 .. $table_count - 1 ) {
+            $table_id++;
+
+            $sheet->_prepare_table( $index, $table_id );
+        }
+    }
+
+    # TODO is this required?
+    $self->{_table_count} = $table_id;
+}
+
 
 
 ###############################################################################
