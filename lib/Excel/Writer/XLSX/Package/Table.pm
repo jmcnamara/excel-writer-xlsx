@@ -159,7 +159,14 @@ sub _write_table {
     );
 
     push @attributes, ( 'headerRowCount' => 0 ) if !$header_row_count;
-    push @attributes, ( 'totalsRowShown' => $totals_row_shown );
+
+    if ( $totals_row_shown ) {
+        push @attributes, ( 'totalsRowCount' => 1 );
+    }
+    else {
+        push @attributes, ( 'totalsRowShown' => 0 );
+    }
+
 
     $self->{_writer}->startTag( 'table', @attributes );
 }

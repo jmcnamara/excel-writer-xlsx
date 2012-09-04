@@ -3758,9 +3758,10 @@ sub add_table {
     $table{_show_row_stripes} = $param->{banded_rows}    ? 1 : 0;
     $table{_show_col_stripes} = $param->{banded_columns} ? 1 : 0;
     $table{_header_row_count} = $param->{header_row}     ? 1 : 0;
+    $table{_totals_row_shown} = $param->{total_row}      ? 1 : 0;
 
     # Hardcode "Total row" off for now. TODO. Add later.
-    $table{_totals_row_shown} = 0;
+    #$table{_totals_row_shown} = 0;
 
 
     # Set the table name.
@@ -3801,6 +3802,17 @@ sub add_table {
     }
     else {
         $table{_range} = xl_range( $row1, $row2, $col1, $col2 );
+
+        # If there is a total row the filter range is one row less than
+        # the table range.
+        if ( $param->{total_row} ) {
+            $table{_a_range} = xl_range( $row1, $row2 - 1, $col1, $col2 );
+        }
+        else {
+
+            # Otherwise it is the same as the table ranage.
+            $table{_a_range} = $table{_range};
+        }
     }
 
     # If the header row if off the default is to turn autofilter off.
@@ -3810,7 +3822,7 @@ sub add_table {
 
     # Set the autofilter range.
     if ( $param->{autofilter} ) {
-        $table{_autofilter} = $table{_range};
+        $table{_autofilter} = $table{_a_range};
     }
 
 
