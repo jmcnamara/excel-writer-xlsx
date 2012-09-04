@@ -35,10 +35,6 @@ $worksheet->add_table(
     }
 );
 
-# Simulate setting the table properties set by the parent workbook.
-$worksheet->{_tables}->[0]->{_id}   = 1;
-$worksheet->{_tables}->[0]->{_name} = 'Table1';
-
 
 ###############################################################################
 #

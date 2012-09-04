@@ -91,6 +91,7 @@ sub new {
     $self->{_window_width}       = 16095;
     $self->{_window_height}      = 9660;
     $self->{_tab_ratio}          = 500;
+    $self->{_table_count}        = 0;
 
 
 
@@ -314,10 +315,13 @@ sub add_worksheet {
         \$self->{_str_unique},
         \$self->{_str_table},
 
+        \$self->{_table_count},
+
         $self->{_1904},
         $self->{_palette},
         $self->{_optimization},
         $self->{_tempdir},
+
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
@@ -367,6 +371,8 @@ sub add_chart {
         \$self->{_str_total},
         \$self->{_str_unique},
         \$self->{_str_table},
+
+        \$self->{_table_count},
 
         $self->{_1904},
         $self->{_palette},
@@ -829,9 +835,6 @@ sub _store_workbook {
 
     # Prepare the drawings, charts and images.
     $self->_prepare_drawings();
-
-    # Prepare the worksheet tables.
-    $self->_prepare_tables();
 
     # Add cached data to charts.
     $self->_add_chart_data();
@@ -1502,38 +1505,6 @@ sub _prepare_comments {
         push @{ $self->{_formats} }, $format;
     }
 }
-
-
-
-###############################################################################
-#
-# _prepare_tables()
-#
-# Iterate through the worksheets and set up the table data.
-#
-sub _prepare_tables {
-
-    my $self       = shift;
-    my $table_id   = 0;
-    my $drawing_id = 0;
-
-    for my $sheet ( @{ $self->{_worksheets} } ) {
-
-        my $table_count = scalar @{ $sheet->{_tables} };
-
-        next unless $table_count;
-
-        for my $index ( 0 .. $table_count - 1 ) {
-            $table_id++;
-
-            $sheet->_prepare_table( $index, $table_id );
-        }
-    }
-
-    # TODO is this required?
-    $self->{_table_count} = $table_id;
-}
-
 
 
 ###############################################################################

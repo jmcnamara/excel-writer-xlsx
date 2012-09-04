@@ -27,10 +27,6 @@ my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 # Set the table properties.
 $worksheet->add_table( 'C4:F13', { header_row => 0 } );
 
-# Simulate setting the table properties set by the parent workbook.
-$worksheet->{_tables}->[0]->{_id}   = 1;
-$worksheet->{_tables}->[0]->{_name} = 'Table1';
-
 
 ###############################################################################
 #

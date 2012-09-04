@@ -58,10 +58,11 @@ sub new {
     $self->{_str_total}    = $_[4];
     $self->{_str_unique}   = $_[5];
     $self->{_str_table}    = $_[6];
-    $self->{_1904}         = $_[7];
-    $self->{_palette}      = $_[8];
-    $self->{_optimization} = $_[9] || 0;
-    $self->{_tempdir}      = $_[10];
+    $self->{_table_count}  = $_[7];
+    $self->{_1904}         = $_[8];
+    $self->{_palette}      = $_[9];
+    $self->{_optimization} = $_[10] || 0;
+    $self->{_tempdir}      = $_[11];
 
     $self->{_ext_sheets} = [];
     $self->{_fileclosed} = 0;
@@ -3742,6 +3743,10 @@ sub add_table {
         }
     }
 
+    # Table count is a member of Workbook, global to all Worksheet.
+    ${ $self->{_table_count} }++;
+    $table{_id} = ${ $self->{_table_count} };
+
     # Turn on Excel's defaults.
     $param->{banded_rows} = 1 if !defined $param->{banded_rows};
     $param->{header_row}  = 1 if !defined $param->{header_row};
@@ -3754,9 +3759,19 @@ sub add_table {
     $table{_show_col_stripes} = $param->{banded_columns} ? 1 : 0;
     $table{_header_row_count} = $param->{header_row}     ? 1 : 0;
 
-
     # Hardcode "Total row" off for now. TODO. Add later.
     $table{_totals_row_shown} = 0;
+
+
+    # Set the table name.
+    if ( defined $param->{name} ) {
+        $table{_name} = $param->{name};
+    }
+    else {
+
+        # Set a default name.
+        $table{_name} = 'Table' . $table{_id};
+    }
 
 
     # Set the table style.
@@ -3821,14 +3836,12 @@ sub add_table {
     }
 
 
-    # TODO
-    # $table{_id}   = 1;
-    # $table{_name} = 'Table1';
-
-
+    # Store the table data.
     push @{ $self->{_tables} }, \%table;
 
-
+    # Store the link used for the rels file.
+    push @{ $self->{_external_table_links} },
+      [ '/table', '../tables/table' . $table{_id} . '.xml' ];
 }
 
 
@@ -4897,30 +4910,6 @@ sub _prepare_shape {
 
     $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{_name},
         $shape );
-}
-
-
-###############################################################################
-#
-# _prepare_table()
-#
-# Set up tables.
-#
-sub _prepare_table {
-
-    my $self     = shift;
-    my $index    = shift;
-    my $table_id = shift;
-    my $table    = $self->{_tables}->[$index];
-    my $name     = 'Table' . $table_id;
-
-    # Set the table name and id.
-    $table->{_id}    = $table_id;
-    $table->{_name}  = $name;
-
-    # Store the link used for the rels file.
-    push @{ $self->{_external_table_links} },
-      [ '/table', '../tables/table' . $table_id . '.xml' ];
 }
 
 
