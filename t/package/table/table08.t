@@ -26,14 +26,12 @@ my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 
 # Set the table properties.
 $worksheet->add_table(
-    'C3:F13',
+    'C3:F14',
     {
-        columns => [
-            { header => 'Foo' },
-            { header => '' },
-            { },
-            { header => 'Baz' }
-        ],
+        total_row => 1,
+        columns =>
+          [ { total_string => 'Total' }, {}, {}, { total_function => 'count' } ],
+
     }
 );
 
@@ -54,13 +52,13 @@ _is_deep_diff( $got, $expected, $caption );
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="Table1" displayName="Table1" ref="C3:F13" totalsRowShown="0">
+<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="Table1" displayName="Table1" ref="C3:F14" totalsRowCount="1">
   <autoFilter ref="C3:F13"/>
   <tableColumns count="4">
-    <tableColumn id="1" name="Foo"/>
+    <tableColumn id="1" name="Column1" totalsRowLabel="Total"/>
     <tableColumn id="2" name="Column2"/>
     <tableColumn id="3" name="Column3"/>
-    <tableColumn id="4" name="Baz"/>
+    <tableColumn id="4" name="Column4" totalsRowFunction="count"/>
   </tableColumns>
   <tableStyleInfo name="TableStyleMedium9" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/>
 </table>

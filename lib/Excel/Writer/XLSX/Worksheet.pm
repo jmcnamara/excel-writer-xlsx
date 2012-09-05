@@ -3732,7 +3732,7 @@ sub add_table {
         banded_columns => 1,
         header_row     => 1,
         total_row      => 1,
-        column_headers => 1,
+        columns        => 1,
     );
 
     # Check for valid input parameters.
@@ -3830,19 +3830,51 @@ sub add_table {
     my $col_id = 1;
     for my $col_num ( $col1 .. $col2 ) {
 
-        # Create a default column name.
-        my $col_name = 'Column' . $col_id;
+        # Set up the default column data.
+        my $col_data = {
+            _id             => $col_id,
+            _name           => 'Column' . $col_id,
+            _total_string   => '',
+            _total_function => '',
+            _formula        => '',
+        };
 
-        # Check for a user define column header name.
-        if ( my $header = $param->{column_headers}->[ $col_id - 1 ] ) {
-            $col_name = $header;
+        # Overwrite the defaults with any use defined values.
+        if ( $param->{columns} ) {
+
+            if ( my $user_data = $param->{columns}->[ $col_id - 1 ] ) {
+                $col_data->{_name} = $user_data->{header}
+                  if $user_data->{header};
+
+                $col_data->{_total_string} = $user_data->{total_string}
+                  if $user_data->{total_string};
+
+                $col_data->{_formula} = $user_data->{_formula}
+                  if $user_data->{_formula};
+
+                if ( $user_data->{total_function} ) {
+                    my $function = $user_data->{total_function};
+
+                    $function = lc $function;
+                    $function =~ s/_//g;
+                    $function =~ s/\s//g;
+
+                    $function = 'countNums' if $function eq 'countnums';
+                    $function = 'stdDev'    if $function eq 'stddev';
+
+                    $col_data->{_total_function} = $function;
+                }
+            }
         }
 
+
         # Store the column data.
-        push @{ $table{_columns} }, [ $col_id, $col_name ];
+        push @{ $table{_columns} }, $col_data;
 
         # Write the column headers to the worksheet.
-        $self->write_string( $row1, $col_num, $col_name );
+        if ( $param->{header_row} ) {
+            $self->write_string( $row1, $col_num, $col_data->{_name} );
+        }
 
         $col_id++;
     }

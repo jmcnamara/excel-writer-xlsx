@@ -211,7 +211,7 @@ sub _write_table_columns {
     for my $col_data ( @columns ) {
 
         # Write the tableColumn element.
-        $self->_write_table_column( @$col_data );
+        $self->_write_table_column( $col_data );
     }
 
     $self->{_writer}->endTag( 'tableColumns' );
@@ -226,14 +226,22 @@ sub _write_table_columns {
 #
 sub _write_table_column {
 
-    my $self = shift;
-    my $id   = shift;
-    my $name = shift;
+    my $self     = shift;
+    my $col_data = shift;
 
     my @attributes = (
-        'id'   => $id,
-        'name' => $name,
+        'id'   => $col_data->{_id},
+        'name' => $col_data->{_name},
     );
+
+
+    if ( $col_data->{_total_string} ) {
+        push @attributes, ( totalsRowLabel => $col_data->{_total_string} );
+    }
+    elsif ( $col_data->{_total_function} ) {
+        push @attributes, ( totalsRowFunction => $col_data->{_total_function} );
+    }
+
 
     $self->{_writer}->emptyTag( 'tableColumn', @attributes );
 }
