@@ -243,7 +243,22 @@ sub _write_table_column {
     }
 
 
-    $self->{_writer}->emptyTag( 'tableColumn', @attributes );
+    if ( defined $col_data->{_format} ) {
+        push @attributes, ( dataDxfId => $col_data->{_format} );
+    }
+
+    if ( $col_data->{_formula} ) {
+        $self->{_writer}->startTag( 'tableColumn', @attributes );
+
+        # Write the calculatedColumnFormula element.
+        $self->_write_calculated_column_formula( $col_data->{_formula} );
+
+        $self->{_writer}->endTag( 'tableColumn' );
+    }
+    else {
+        $self->{_writer}->emptyTag( 'tableColumn', @attributes );
+    }
+
 }
 
 
@@ -273,6 +288,21 @@ sub _write_table_style_info {
     );
 
     $self->{_writer}->emptyTag( 'tableStyleInfo', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_calculated_column_formula()
+#
+# Write the <calculatedColumnFormula> element.
+#
+sub _write_calculated_column_formula {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->{_writer}->dataElement( 'calculatedColumnFormula', $formula );
 }
 
 

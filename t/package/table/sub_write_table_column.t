@@ -33,7 +33,7 @@ $expected = '<tableColumn id="1" name="Column1" />';
 
 $table = _new_object( \$got, 'Excel::Writer::XLSX::Package::Table' );
 
-$table->_write_table_column( 1, 'Column1' );
+$table->_write_table_column( { _name => 'Column1', _id => 1 } );
 
 is( $got, $expected, $caption );
 

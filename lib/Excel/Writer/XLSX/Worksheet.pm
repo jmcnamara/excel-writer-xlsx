@@ -3683,13 +3683,15 @@ sub conditional_formatting {
 #
 # add_table()
 #
-# TODO
+# Add an Excel table to a worksheet.
 #
 sub add_table {
 
     my $self       = shift;
     my $user_range = '';
     my %table;
+
+    # TODO. Exit in optimisation mode?
 
     # Check for a cell reference in A1 notation and substitute row and column
     if ( $_[0] =~ /^\D/ ) {
@@ -3760,9 +3762,6 @@ sub add_table {
     $table{_header_row_count} = $param->{header_row}     ? 1 : 0;
     $table{_totals_row_shown} = $param->{total_row}      ? 1 : 0;
 
-    # Hardcode "Total row" off for now. TODO. Add later.
-    #$table{_totals_row_shown} = 0;
-
 
     # Set the table name.
     if ( defined $param->{name} ) {
@@ -3796,24 +3795,18 @@ sub add_table {
         ( $col1, $col2 ) = ( $col2, $col1 );
     }
 
-    # If the first and last cell are the same then range is a single cell.
-    if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
-        $table{_range} = xl_rowcol_to_cell( $row1, $col1 );
-    }
-    else {
-        $table{_range} = xl_range( $row1, $row2, $col1, $col2 );
 
-        # If there is a total row the filter range is one row less than
-        # the table range.
-        if ( $param->{total_row} ) {
-            $table{_a_range} = xl_range( $row1, $row2 - 1, $col1, $col2 );
-        }
-        else {
+    # Set the data range rows (without the header and footer).
+    my $first_data_row = $row1;
+    my $last_data_row  = $row2;
+    $first_data_row++ if $param->{header_row};
+    $last_data_row--  if $param->{total_row};
 
-            # Otherwise it is the same as the table ranage.
-            $table{_a_range} = $table{_range};
-        }
-    }
+
+    # Set the table and autofilter ranges.
+    $table{_range}   = xl_range( $row1, $row2,          $col1, $col2 );
+    $table{_a_range} = xl_range( $row1, $last_data_row, $col1, $col2 );
+
 
     # If the header row if off the default is to turn autofilter off.
     if ( !$param->{header_row} ) {
@@ -3837,24 +3830,43 @@ sub add_table {
             _total_string   => '',
             _total_function => '',
             _formula        => '',
+            _format         => undef,
         };
 
         # Overwrite the defaults with any use defined values.
         if ( $param->{columns} ) {
 
+            # Check if there are user defined values for this column.
             if ( my $user_data = $param->{columns}->[ $col_id - 1 ] ) {
+
+                # Map user defined values to internal values.
                 $col_data->{_name} = $user_data->{header}
                   if $user_data->{header};
 
-                $col_data->{_total_string} = $user_data->{total_string}
-                  if $user_data->{total_string};
+                # Handle the column formula.
+                if ( $user_data->{formula} ) {
+                    my $formula = $user_data->{formula};
 
-                $col_data->{_formula} = $user_data->{_formula}
-                  if $user_data->{_formula};
+                    # Remove the leading = from formula.
+                    $formula =~ s/^=//;
 
+                    # Covert Excel 2010 "@" ref to 2007 "#This Row".
+                    $formula =~ s/@/[#This Row],/g;
+
+                    $col_data->{_formula} = $formula;
+
+                    for my $row ( $first_data_row .. $last_data_row ) {
+                        $self->write_formula( $row, $col_num, $formula,
+                            $user_data->{format} );
+                    }
+
+                }
+
+                # Handle the function for the total row.
                 if ( $user_data->{total_function} ) {
                     my $function = $user_data->{total_function};
 
+                    # Massage the function name.
                     $function = lc $function;
                     $function =~ s/_//g;
                     $function =~ s/\s//g;
@@ -3863,6 +3875,32 @@ sub add_table {
                     $function = 'stdDev'    if $function eq 'stddev';
 
                     $col_data->{_total_function} = $function;
+
+                    my $formula = _table_function_to_formula(
+                        $function,
+                        $col_data->{_name}
+
+                    );
+
+                    $self->write_formula( $row2, $col_num, $formula,
+                        $user_data->{format} );
+
+                }
+                elsif ( $user_data->{total_string} ) {
+
+                    # Total label only (not a function).
+                    my $total_string = $user_data->{total_string};
+                    $col_data->{_total_string} = $total_string;
+
+                    $self->write_string( $row2, $col_num, $total_string,
+                        $user_data->{format} );
+                }
+
+                # Get the dxf format index.
+                if ( defined $user_data->{format} && ref $user_data->{format} )
+                {
+                    $col_data->{_format} =
+                      $user_data->{format}->get_dxf_index();
                 }
             }
         }
@@ -3877,7 +3915,7 @@ sub add_table {
         }
 
         $col_id++;
-    }
+    }    # Table columns.
 
 
     # Store the table data.
@@ -3894,6 +3932,42 @@ sub add_table {
 # Internal methods.
 #
 ###############################################################################
+
+
+###############################################################################
+#
+# _table_function_to_formula
+#
+# Convert a table total funtion to a worksheet formula.
+#
+sub _table_function_to_formula {
+
+    my $function = shift;
+    my $col_name = shift;
+    my $formula  = '';
+
+    my %subtotals = (
+        average   => 101,
+        countNums => 102,
+        count     => 103,
+        max       => 104,
+        min       => 105,
+        stdDev    => 107,
+        sum       => 109,
+        var       => 110,
+    );
+
+    if ( exists $subtotals{$function} ) {
+        my $func_num = $subtotals{$function};
+        $formula = qq{SUBTOTAL($func_num,[$col_name])};
+    }
+    else {
+        # TODO warn;
+    }
+
+    return $formula;
+}
+
 
 
 ###############################################################################
