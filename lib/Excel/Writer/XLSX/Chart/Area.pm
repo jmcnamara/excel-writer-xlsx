@@ -37,6 +37,7 @@ sub new {
 
     $self->{_subtype}       = $self->{_subtype} || 'standard';
     $self->{_cross_between} = 'midCat';
+    $self->{_show_crosses}  = 0;
 
     bless $self, $class;
     return $self;
@@ -54,7 +55,7 @@ sub _write_chart_type {
     my $self = shift;
 
     # Write the c:areaChart element.
-    $self->_write_area_chart();
+    $self->_write_area_chart( @_ );
 }
 
 
@@ -67,6 +68,18 @@ sub _write_chart_type {
 sub _write_area_chart {
 
     my $self = shift;
+    my %args = @_;
+
+    my @series;
+    if ( $args{primary_axes} ) {
+        @series = $self->_get_primary_axes_series;
+    }
+    else {
+        @series = $self->_get_secondary_axes_series;
+    }
+
+    return unless scalar @series;
+
     my $subtype = $self->{_subtype};
 
     $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
@@ -77,8 +90,13 @@ sub _write_area_chart {
     $self->_write_grouping( $subtype );
 
     # Write the series elements.
-    $self->_write_series();
+    $self->_write_series( $_ ) for @series;
 
+    # Write the c:marker element.
+    $self->_write_marker_value();
+
+    # Write the c:axId elements
+    $self->_write_axis_ids( %args );
 
     $self->{_writer}->endTag( 'c:areaChart' );
 }
@@ -99,7 +117,7 @@ sub _write_number_format {
     my $format_code   = shift || 'General';
     my $source_linked = 1;
 
-    if ($self->{_subtype} eq 'percent_stacked') {
+    if ( $self->{_subtype} eq 'percent_stacked' ) {
         $format_code = '0%';
     }
 

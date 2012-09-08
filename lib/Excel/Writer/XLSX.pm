@@ -6095,6 +6095,8 @@ The following people contributed to the debugging and testing of Excel::Writer::
 
 Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey also sponsored large files optimisations and the charting feature.
 
+Eric Johnson provided the ability to use secondary axes with charts.  Thanks to Foxtons (L<http://foxtons.co.uk>) for sponsoring this work.
+
 
 
 
