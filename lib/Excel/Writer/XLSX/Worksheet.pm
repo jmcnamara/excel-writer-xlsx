@@ -3692,18 +3692,22 @@ sub add_table {
     my %table;
     my @col_formats;
 
-
-    # TODO. Exit in optimisation mode?
+    # We would need to order the write statements very carefully within this
+    # function to support optimisation mode. Disable add_table() when it is
+    # on for now.
+    if ( $self->{_optimization} == 1 ) {
+        carp "add_table() isn't supported when set_optimization() is on";
+        return -1;
+    }
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ( $_[0] =~ /^\D/ ) {
+    if ( @_ && $_[0] =~ /^\D/ ) {
         @_ = $self->_substitute_cellref( @_ );
     }
 
     # Check for a valid number of args.
     if ( @_ < 4 ) {
-
-        # TODO add warning/error.
+        carp "Not enough parameters to add_table()";
         return -1;
     }
 
@@ -3991,7 +3995,7 @@ sub _table_function_to_formula {
         $formula = qq{SUBTOTAL($func_num,[$col_name])};
     }
     else {
-        # TODO warn;
+        carp "Unsupported function '$function' in add_table()";
     }
 
     return $formula;
