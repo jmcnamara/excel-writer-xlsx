@@ -5589,6 +5589,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_line.pl           A demo of line style charts.
     chart_pie.pl            A demo of pie style charts.
     chart_scatter.pl        A demo of scatter style charts.
+    chart_secondary.pl      A demo of a line chart with a secondary axis.
     chart_stock.pl          A demo of stock style charts.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
