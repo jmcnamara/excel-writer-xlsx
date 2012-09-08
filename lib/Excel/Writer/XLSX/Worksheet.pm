@@ -3690,6 +3690,8 @@ sub add_table {
     my $self       = shift;
     my $user_range = '';
     my %table;
+    my @col_formats;
+
 
     # TODO. Exit in optimisation mode?
 
@@ -3724,17 +3726,18 @@ sub add_table {
 
     # List of valid input parameters.
     my %valid_parameter = (
-        name           => 1,
         autofilter     => 1,
-        columns        => 1,
-        style          => 1,
-        first_column   => 1,
-        last_column    => 1,
-        banded_rows    => 1,
         banded_columns => 1,
-        header_row     => 1,
-        total_row      => 1,
+        banded_rows    => 1,
         columns        => 1,
+        columns        => 1,
+        data           => 1,
+        first_column   => 1,
+        header_row     => 1,
+        last_column    => 1,
+        name           => 1,
+        style          => 1,
+        total_row      => 1,
     );
 
     # Check for valid input parameters.
@@ -3818,7 +3821,6 @@ sub add_table {
         $table{_autofilter} = $table{_a_range};
     }
 
-
     # Add the table columns.
     my $col_id = 1;
     for my $col_num ( $col1 .. $col2 ) {
@@ -3859,7 +3861,6 @@ sub add_table {
                         $self->write_formula( $row, $col_num, $formula,
                             $user_data->{format} );
                     }
-
                 }
 
                 # Handle the function for the total row.
@@ -3902,9 +3903,12 @@ sub add_table {
                     $col_data->{_format} =
                       $user_data->{format}->get_dxf_index();
                 }
+
+                # Store the column format for writing the cell data.
+                # It doesn't matter if it is undefined.
+                $col_formats[$col_id - 1 ] = $user_data->{format};
             }
         }
-
 
         # Store the column data.
         push @{ $table{_columns} }, $col_data;
@@ -3918,12 +3922,37 @@ sub add_table {
     }    # Table columns.
 
 
+
+    # Write the cell data if supplied.
+    if ( my $data = $param->{data} ) {
+
+        my $i = 0;    # For indexing the row data.
+        for my $row ( $first_data_row .. $last_data_row ) {
+            my $j = 0;    # For indexing the col data.
+
+            for my $col ( $col1 .. $col2 ) {
+
+                my $token = $data->[$i]->[$j];
+
+                if ($token) {
+                    $self->write( $row, $col, $token, $col_formats[$j] );
+                }
+
+                $j++;
+            }
+            $i++;
+        }
+    }
+
+
     # Store the table data.
     push @{ $self->{_tables} }, \%table;
 
     # Store the link used for the rels file.
     push @{ $self->{_external_table_links} },
       [ '/table', '../tables/table' . $table{_id} . '.xml' ];
+
+    return \%table;
 }
 
 
