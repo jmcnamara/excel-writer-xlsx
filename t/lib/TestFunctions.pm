@@ -4,7 +4,7 @@ package TestFunctions;
 #
 # TestFunctions - Helper functions for Excel::Writer::XLSX test cases.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use 5.008002;
@@ -127,7 +127,7 @@ sub _xml_str_to_array {
 sub _vml_str_to_array {
 
     my $vml_str = shift;
-    my @vml = split /[\r\n]+/, $vml_str;
+    my @vml     = split /[\r\n]+/, $vml_str;
 
     $vml_str = '';
 
@@ -151,7 +151,7 @@ sub _vml_str_to_array {
         $vml_str .= $_;
     }
 
-    return ( split "\n", $vml_str );
+    return (split "\n", $vml_str );
 }
 
 
@@ -203,7 +203,7 @@ sub _compare_xlsx_files {
     my @exp_members = sort $exp_zip->memberNames();
 
     # Ignore some test specific filenames.
-    if ( defined $ignore_members && @$ignore_members ) {
+    if ( defined $ignore_members && @$ignore_members) {
         my $ignore_regex = join '|', @$ignore_members;
 
         @got_members = grep { !/$ignore_regex/ } @got_members;
@@ -233,33 +233,6 @@ sub _compare_xlsx_files {
             $exp_xml_str =~ s/horizontalDpi="200" //;
             $exp_xml_str =~ s/verticalDpi="200" //;
             $exp_xml_str =~ s/(<pageSetup.* )r:id="rId1"/$1/;
-        }
-
-        # Not sure what these attributes do.  Hopefully not important.
-        if ( $filename =~ m(xl/workbook.xml) ) {
-
-            # Remove <fileversion> rupBuild attribute.
-            $exp_xml_str =~ s/\srupBuild="\d+"//;
-            $got_xml_str =~ s/\srupBuild="\d+"//;
-
-            # Remove <calcPr> calcId attribute.
-            $exp_xml_str =~ s/\scalcId="\d+"//;
-            $got_xml_str =~ s/\scalcId="\d+"//;
-        }
-
-        # Remove c:margins measurements.  Floating point errors in Excel cause
-        # tiny differences when converting from cm to inches.
-        if ( $filename =~ m(xl/charts/chart\d+.xml) ) {
-            my $margins_regex = qr/
-                \sb="\d*\.\d*"
-                \sl="\d*\.\d*"
-                \sr="\d*\.\d*"
-                \st="\d*\.\d*"
-                \sheader="\d*\.\d*"
-                \sfooter="\d*\.\d*"
-            /x;
-            $exp_xml_str =~ s/$margins_regex//;
-            $got_xml_str =~ s/$margins_regex//;
         }
 
         if ( $filename =~ /.vml$/ ) {

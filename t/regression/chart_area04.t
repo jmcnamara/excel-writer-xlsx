@@ -22,9 +22,10 @@ my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members = [];
-
-my $ignore_elements = {};
-
+my $ignore_elements = {
+    'xl/charts/chart1.xml' => ['<c:pageMargins'],
+    'xl/workbook.xml'      => [ '<fileVersion', '<calcPr' ],
+};
 
 ###############################################################################
 #

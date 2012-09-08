@@ -21,17 +21,12 @@ my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members = [];
-
+my $ignore_members  = [];
 my $ignore_elements = {
-
-    'xl/charts/chart1.xml' => [ '<c:formatCode', ],
-
-    # Ignore the workbookView.
-    'xl/workbook.xml' => ['<workbookView'],
+    'xl/charts/chart1.xml' => [ '<c:formatCode', '<c:pageMargins' ],
+    'xl/workbook.xml'      => [ '<fileVersion',  '<calcPr' ],
     'xl/worksheets/sheet1.xml' =>
       [ '<sheetView', '<selection activeCell', '</sheetView' ],
-
 };
 
 
