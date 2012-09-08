@@ -66,6 +66,7 @@ shape_all.pl            Demo of all the available shape and connector types.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
 tab_colors.pl           Example of how to set worksheet tab colours.
+tables.pl               Add Excel tables to a worksheet.
 write_handler1.pl       Example of extending the write() method. Step 1.
 write_handler2.pl       Example of extending the write() method. Step 2.
 write_handler3.pl       Example of extending the write() method. Step 3.
