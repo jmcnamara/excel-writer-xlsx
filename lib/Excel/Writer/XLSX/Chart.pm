@@ -255,7 +255,7 @@ sub set_y_axis {
 
     my $self = shift;
     my $axis = $self->_convert_axis_args(    #
-        major_gridlines => { show => 1 },
+        major_gridlines => { visible => 1 },
         @_
     );
 
@@ -275,7 +275,7 @@ sub set_x2_axis {
     my $axis = $self->_convert_axis_args(
         label_position => 'none',
         crossing       => 'max',
-        show           => 0,
+        visible        => 0,
         @_
     );
 
@@ -293,9 +293,9 @@ sub set_y2_axis {
 
     my $self = shift;
     my $axis = $self->_convert_axis_args(
-        major_gridlines => { show => 0 },
+        major_gridlines => { visible => 0 },
         position        => 'r',
-        show            => 1,
+        visible         => 1,
         @_
     );
 
@@ -570,8 +570,8 @@ sub _convert_axis_args {
         _crossing        => $arg{crossing},
         _position        => $arg{position},
         _label_position  => $arg{label_position},
-        _major_gridlines => $arg{major_gridlines} || { show => 1 },
-        _show            => defined $arg{show} ? $arg{show} : 1,
+        _major_gridlines => $arg{major_gridlines} || { visible => 1 },
+        _visible         => defined $arg{visible} ? $arg{visible} : 1,
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -1771,7 +1771,7 @@ sub _write_cat_axis {
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{_reverse} );
 
-    $self->_write_delete( 1 ) unless $x_axis->{_show};
+    $self->_write_delete( 1 ) unless $x_axis->{_visible};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -1794,7 +1794,7 @@ sub _write_cat_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
 
-    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
+    if ( $self->{_show_crosses} || $x_axis->{_visible} ) {
 
         # Note, the category crossing comes from the value axis.
         if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
@@ -1855,7 +1855,7 @@ sub _write_val_axis {
         $y_axis->{_max},     $y_axis->{_log_base}
     );
 
-    $self->_write_delete( 1 ) unless $y_axis->{_show};
+    $self->_write_delete( 1 ) unless $y_axis->{_visible};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
@@ -1938,7 +1938,7 @@ sub _write_cat_val_axis {
         $x_axis->{_max},     $x_axis->{_log_base}
     );
 
-    $self->_write_delete( 1 ) unless $x_axis->{_show};
+    $self->_write_delete( 1 ) unless $x_axis->{_visible};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -2020,7 +2020,7 @@ sub _write_date_axis {
         $x_axis->{_max},     $x_axis->{_log_base}
     );
 
-    $self->_write_delete( 1 ) unless $x_axis->{_show};
+    $self->_write_delete( 1 ) unless $x_axis->{_visible};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -2043,7 +2043,7 @@ sub _write_date_axis {
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
 
-    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
+    if ( $self->{_show_crosses} || $x_axis->{_visible} ) {
 
         # Note, the category crossing comes from the value axis.
         if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
@@ -2374,7 +2374,7 @@ sub _write_major_gridlines {
     my $self    = shift;
     my $options = shift;
 
-    return unless $options->{show};
+    return unless $options->{visible};
 
     $self->{_writer}->emptyTag( 'c:majorGridlines' );
 }
@@ -4110,7 +4110,7 @@ Options for configuring the major gridlines.  The only option currently
 available shows or hides the major gridlines for a given axis.  Acceptable
 values are true or false.
 
-    $chart->set_x_axis( major_gridlines => { show => 1 } );
+    $chart->set_x_axis( major_gridlines => { visible => 1 } );
 
 =back
 
@@ -4136,7 +4136,7 @@ The default properties for this axis are:
 
     label_position => 'none',
     crossing       => 'max',
-    show           => 0,
+    visible           => 0,
 
 
 =head2 set_y2_axis()
@@ -4145,7 +4145,7 @@ The C<set_y2_axis()> method is used to set properties of the secondary Y axis.
 The properties that can be set are the same as for C<set_x_axis>, see above.
 The default properties for this axis are:
 
-    major_gridlines => { show => 0 }
+    major_gridlines => { visible => 0 }
 
 
 =head2 set_title()
