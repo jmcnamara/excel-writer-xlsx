@@ -3734,7 +3734,6 @@ sub add_table {
         banded_columns => 1,
         banded_rows    => 1,
         columns        => 1,
-        columns        => 1,
         data           => 1,
         first_column   => 1,
         header_row     => 1,
@@ -3971,7 +3970,7 @@ sub add_table {
 #
 # _table_function_to_formula
 #
-# Convert a table total funtion to a worksheet formula.
+# Convert a table total function to a worksheet formula.
 #
 sub _table_function_to_formula {
 
@@ -4969,7 +4968,7 @@ sub insert_shape {
         my $id = $shape->{_id} || 0;
         my $used = exists $self->{_shape_hash}->{$id} ? 1 : 0;
 
-        # Test if shape ID is already used. Othewise assign a new one.
+        # Test if shape ID is already used. Otherwise assign a new one.
         if ( !$used && $id != 0 ) {
             $needs_id = 0;
         }
@@ -8175,6 +8174,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXII, John McNamara.
+ï¿½ MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

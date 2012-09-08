@@ -599,6 +599,7 @@ The following methods are available through a new worksheet:
     insert_shape()
     data_validation()
     conditional_formatting()
+    add_table()
     get_name()
     activate()
     select()
@@ -1644,6 +1645,18 @@ This method contains a lot of parameters and is described in detail in a separat
 
 See also the C<conditional_format.pl> program in the examples directory of the distro
 
+
+
+
+=head2 add_table()
+
+The C<add_table()> method is used to group a range of cells into an Excel Table.
+
+    $worksheet->add_table( 'B3:F7', { ... } );
+
+This method contains a lot of parameters and is described in detail in a separate section L<TABLES IN EXCEL>.
+
+See also the C<tables.pl> program in the examples directory of the distro
 
 
 
@@ -4356,7 +4369,7 @@ The C<type> parameter is used to set the type of conditional formatting that you
     formula         criteria
 
 
-All conditional formatting types have a C<format> paramter, see below. Other types and parameters such as icon sets will be added in time.
+All conditional formatting types have a C<format> parameter, see below. Other types and parameters such as icon sets will be added in time.
 
 =head2 type => 'cell'
 
@@ -4874,6 +4887,274 @@ Example 10. Highlight blank cells.
 See also the C<conditional_format.pl> example program in C<EXAMPLES>.
 
 
+
+=head1 TABLES IN EXCEL
+
+Tables in Excel are a way of grouping a range of cells into a single entity that has common formatting or that can be referenced from formulas. Tables can have column headers, autofilters, total rows, column formulas and default formatting.
+
+For more information see "An Overview of Excel Tables" L<http://office.microsoft.com/en-us/excel-help/overview-of-excel-tables-HA010048546.aspx>.
+
+
+=head2 add_table( $row1, $col1, $row2, $col2, { parameter => 'value', ... })
+
+Tables are added to a worksheet using the C<add_table()> method:
+
+    $worksheet->add_table( 'B3:F7', { %parameters } );
+
+The data range can be specified in 'A1' or 'row/col' notation (see also the note about L</Cell notation> for more information):
+
+
+    $worksheet->add_table( 'B3:F7' );
+    # Same as:
+    $worksheet->add_table(  2, 1, 6, 5 );
+
+The last parameter in C<add_table()> should be a hash ref containing the parameters that describe the table options and data. The available parameters are:
+
+        data
+        autofilter
+        header_row
+        banded_columns
+        banded_rows
+        first_column
+        last_column
+        style
+        total_row
+        columns
+        name
+
+The table parameters are detailed below. There are no required parameters and the hash ref isn't required if no options are specified.
+
+
+
+=head2 data
+
+The C<data> parameter can be used to specify the data in the cells of the table.
+
+    my $data = [
+        [ 'Apples',  10000, 5000, 8000, 6000 ],
+        [ 'Pears',   2000,  3000, 4000, 5000 ],
+        [ 'Bananas', 6000,  6000, 6500, 6000 ],
+        [ 'Oranges', 500,   300,  200,  700 ],
+
+    ];
+
+    $worksheet->add_table( 'B3:F7', { data => $data } );
+
+Table data can also be written separately, as an array or individual cells.
+
+    # These two statements are the same as the single statement above.
+    $worksheet->add_table( 'B3:F7' );
+    $worksheet->write_col( 'B4', $data );
+
+Writing the cell data separately is occasionally required when you need to control the C<write_*()> method used to populate the cells or if you wish to tweak the cell formatting.
+
+The C<data> structure should be an array ref of array refs holding row data as shown above.
+
+=head2 header_row
+
+The C<header_row> parameter can be used to turn on or off the header row in the table. It is on by default.
+
+    $worksheet->add_table( 'B4:F7', { header_row => 0 } ); # Turn header off.
+
+The header row will contain default captions such as C<Column 1>, C<Column 2>,  etc. These captions can be overridden using the C<columns> parameter below.
+
+
+=head2 autofilter
+
+The C<autofilter> parameter can be used to turn on or off the autofilter in the header row. It is on by default.
+
+    $worksheet->add_table( 'B3:F7', { autofilter => 0 } ); # Turn autofilter off.
+
+The C<autofilter> is only shown if the C<header_row> is on. Filters within the table are not supported.
+
+
+=head2 banded_rows
+
+The C<banded_rows> parameter can be used to used to create rows of alternating colour in the table. It is on by default.
+
+    $worksheet->add_table( 'B3:F7', { banded_rows => 0 } );
+
+
+=head2 banded_columns
+
+The C<banded_columns> parameter can be used to used to create columns of alternating colour in the table. It is off by default.
+
+    $worksheet->add_table( 'B3:F7', { banded_columns => 1 } );
+
+
+=head2 first_column
+
+The C<first_column> parameter can be used to highlight the first column of the table. The type of highlighting will depend on the C<style> of the table. It may be bold text or a different colour. It is off by default.
+
+    $worksheet->add_table( 'B3:F7', { first_column => 1 } );
+
+
+=head2 last_column
+
+The C<last_column> parameter can be used to highlight the last column of the table. The type of highlighting will depend on the C<style> of the table. It may be bold text or a different colour. It is off by default.
+
+    $worksheet->add_table( 'B3:F7', { last_column => 1 } );
+
+
+=head2 style
+
+The C<style> parameter can be used to set the style of the table. Standard Excel table format names should be used (with matching capitalisation):
+
+    $worksheet11->add_table(
+        'B3:F7',
+        {
+            data      => $data,
+            style     => 'Table Style Light 11',
+        }
+    );
+
+The default table style is 'Table Style Medium 9'.
+
+
+=head2 name
+
+The C<name> parameter can be used to set the name of the table.
+
+By default tables are named C<Table1>, C<Table2>, etc. If you override the table name you must ensure that it doesn't clash with an existing table name and that it follows Excel's requirements for table names.
+
+    $worksheet->add_table( 'B3:F7', { name => 'SalesData' } );
+
+If you need to know the name of the table, for example to use it in a formula, you can get it as follows:
+
+    my $table      = $worksheet2->add_table( 'B3:F7' );
+    my $table_name = $table->{_name};
+
+
+=head2 total_row
+
+The C<total_row> parameter can be used to turn on the total row in the last row of a table. It is distinguished from the other rows by a different formatting and also with dropdown C<SUBTOTAL> functions.
+
+    $worksheet->add_table( 'B3:F7', { total_row => 1 } );
+
+The default total row doesn't have any captions or functions. These must by specified via the C<columns> parameter below.
+
+=head2 columns
+
+The C<columns> parameter can be used to set properties for columns within the table.
+
+The sub-properties that can be set are:
+
+    header
+    formula
+    total_string
+    total_function
+    format
+
+The column data must be specified as an array ref of hash refs. For example to override the default 'Column n' style table headers:
+
+    $worksheet->add_table(
+        'B3:F7',
+        {
+            data    => $data,
+            columns => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { header => 'Quarter 2' },
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+            ]
+        }
+    );
+
+If you don't wish to specify properties for a specific column you pass an empty hash ref and the defaults will be applied:
+
+            ...
+            columns => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { },                        # Defaults to 'Column 3'.
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+            ]
+            ...
+
+
+Column formulas can by applied using the C<formula> column property:
+
+    $worksheet8->add_table(
+        'B3:G7',
+        {
+            data    => $data,
+            columns => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { header => 'Quarter 2' },
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+                {
+                    header  => 'Year',
+                    formula => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])'
+                },
+            ]
+        }
+    );
+
+The Excel 2007 C<[#This Row]> and Excel 2010 C<@> structural references are supported within the formula.
+
+As stated above the C<total_row> table parameter turns on the "Total" row in the table but it doesn't populate it with any defaults. Total captions and functions must be specified via the C<columns> property and the C<total_string> and C<total_function> sub properties:
+
+    $worksheet10->add_table(
+        'B3:F8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { header => 'Product',   total_string   => 'Totals' },
+                { header => 'Quarter 1', total_function => 'sum' },
+                { header => 'Quarter 2', total_function => 'sum' },
+                { header => 'Quarter 3', total_function => 'sum' },
+                { header => 'Quarter 4', total_function => 'sum' },
+            ]
+        }
+    );
+
+The supported totals row C<SUBTOTAL> functions are:
+
+        average
+        count_nums
+        count
+        max
+        min
+        std_dev
+        sum
+        var
+
+User defined functions or formulas aren't supported.
+
+Format can also be applied to columns:
+
+    my $currency_format = $workbook->add_format( num_format => '$#,##0' );
+
+    $worksheet->add_table(
+        'B3:D8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { header => 'Product', total_string => 'Totals' },
+                {
+                    header         => 'Quarter 1',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+                {
+                    header         => 'Quarter 2',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+            ]
+        }
+    );
+
+Standard Excel::Writer::XLSX format objects can be used. However, they should be limited to numerical formats. Overriding other table formatting may produce inconsistent results.
+
+
+
 =head1 FORMULAS AND FUNCTIONS IN EXCEL
 
 
@@ -5350,6 +5631,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
     tab_colors.pl           Example of how to set worksheet tab colours.
+    tables.pl               Add Excel tables to a worksheet.
     write_handler1.pl       Example of extending the write() method. Step 1.
     write_handler2.pl       Example of extending the write() method. Step 2.
     write_handler3.pl       Example of extending the write() method. Step 3.
@@ -5436,6 +5718,7 @@ It support all of the features of Spreadsheet::WriteExcel with some minor differ
     insert_shape()              Yes. Not in Spreadsheet::WriteExcel.
     data_validation()           Yes
     conditional_formatting()    Yes. Not in Spreadsheet::WriteExcel.
+    add_table()                 Yes. Not in Spreadsheet::WriteExcel.
     get_name()                  Yes
     activate()                  Yes
     select()                    Yes
