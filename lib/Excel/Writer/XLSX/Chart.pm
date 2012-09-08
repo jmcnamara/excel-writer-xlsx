@@ -28,7 +28,6 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.49';
 
-
 ###############################################################################
 #
 # factory()
@@ -52,7 +51,6 @@ sub factory {
     return $module->new( @_ );
 }
 
-
 ###############################################################################
 #
 # new()
@@ -70,8 +68,10 @@ sub new {
     $self->{_series}            = [];
     $self->{_embedded}          = 0;
     $self->{_id}                = '';
+    $self->{_series_index}      = 0;
     $self->{_style_id}          = 2;
     $self->{_axis_ids}          = [];
+    $self->{_axis2_ids}         = [];
     $self->{_has_category}      = 0;
     $self->{_requires_category} = 0;
     $self->{_legend_position}   = 'right';
@@ -84,15 +84,17 @@ sub new {
     $self->{_protection}        = 0;
     $self->{_x_axis}            = {};
     $self->{_y_axis}            = {};
+    $self->{_y2_axis}           = {};
+    $self->{_x2_axis}           = {};
     $self->{_chart_name}        = '';
     $self->{_show_blanks}       = 'gap';
     $self->{_show_hidden_data}  = 0;
+    $self->{_show_crosses}      = 1;
 
     bless $self, $class;
     $self->_set_default_properties();
     return $self;
 }
-
 
 ###############################################################################
 #
@@ -107,7 +109,6 @@ sub _assemble_xml_file {
     return unless $self->{_writer};
 
     $self->_write_xml_declaration();
-
 
     # Write the c:chartSpace element.
     $self->_write_chart_space();
@@ -135,13 +136,11 @@ sub _assemble_xml_file {
     $self->{_writer}->getOutput()->close();
 }
 
-
 ###############################################################################
 #
 # Public methods.
 #
 ###############################################################################
-
 
 ###############################################################################
 #
@@ -163,11 +162,9 @@ sub add_series {
         croak "Must specify 'categories' in add_series() for this chart type";
     }
 
-
     # Convert aref params into a formula string.
     my $values     = $self->_aref_to_formula( $arg{values} );
     my $categories = $self->_aref_to_formula( $arg{categories} );
-
 
     # Switch name and name_formula parameters if required.
     my ( $name, $name_formula ) =
@@ -201,6 +198,10 @@ sub add_series {
     # Set the "invert if negative" fill property.
     my $invert_if_neg = $arg{invert_if_negative};
 
+    # Set the secondary axis properties.
+    my $x2_axis = $arg{x2_axis};
+    my $y2_axis = $arg{y2_axis};
+
     # Add the user supplied data to the internal structures.
     %arg = (
         _values        => $values,
@@ -216,12 +217,12 @@ sub add_series {
         _trendline     => $trendline,
         _labels        => $labels,
         _invert_if_neg => $invert_if_neg,
+        _x2_axis       => $x2_axis,
+        _y2_axis       => $y2_axis,
     );
-
 
     push @{ $self->{_series} }, \%arg;
 }
-
 
 ###############################################################################
 #
@@ -237,7 +238,6 @@ sub set_x_axis {
     $self->{_x_axis} = $axis;
 }
 
-
 ###############################################################################
 #
 # set_y_axis()
@@ -247,11 +247,51 @@ sub set_x_axis {
 sub set_y_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args( @_ );
+    my $axis = $self->_convert_axis_args(    #
+        major_gridlines => { show => 1 },
+        @_
+    );
 
     $self->{_y_axis} = $axis;
 }
 
+###############################################################################
+#
+# set_x2_axis()
+#
+# Set the properties of the secondary X-axis.
+#
+sub set_x2_axis {
+
+    my $self = shift;
+    my $axis = $self->_convert_axis_args(
+        label_position => 'none',
+        crossing       => 'max',
+        show           => 0,
+        @_
+    );
+
+    $self->{_x2_axis} = $axis;
+}
+
+###############################################################################
+#
+# set_y2_axis()
+#
+# Set the properties of the secondary Y-axis.
+#
+sub set_y2_axis {
+
+    my $self = shift;
+    my $axis = $self->_convert_axis_args(
+        major_gridlines => { show => 0 },
+        position        => 'r',
+        show            => 1,
+        @_
+    );
+
+    $self->{_y2_axis} = $axis;
+}
 
 ###############################################################################
 #
@@ -274,7 +314,6 @@ sub set_title {
     $self->{_title_data_id} = $data_id;
 }
 
-
 ###############################################################################
 #
 # set_legend()
@@ -289,7 +328,6 @@ sub set_legend {
     $self->{_legend_position} = $arg{position} || 'right';
     $self->{_legend_delete_series} = $arg{delete_series};
 }
-
 
 ###############################################################################
 #
@@ -350,7 +388,6 @@ sub set_plotarea {
     }
 }
 
-
 ###############################################################################
 #
 # set_chartarea()
@@ -370,7 +407,6 @@ sub set_chartarea {
 
     # Embedded automatic line weight has a different default value.
     $area->{_line_weight} = 0xFFFF if $self->{_embedded};
-
 
     # Set the chart background colour.
     if ( defined $arg{color} ) {
@@ -418,7 +454,6 @@ sub set_chartarea {
     }
 }
 
-
 ###############################################################################
 #
 # set_style()
@@ -436,7 +471,6 @@ sub set_style {
 
     $self->{_style_id} = $style_id;
 }
-
 
 ###############################################################################
 #
@@ -466,7 +500,6 @@ sub show_blanks_as {
     $self->{_show_blanks} = $option;
 }
 
-
 ###############################################################################
 #
 # show_hidden_data()
@@ -480,14 +513,12 @@ sub show_hidden_data {
     $self->{_show_hidden_data} = 1;
 }
 
-
 ###############################################################################
 #
 # Internal methods. The following section of methods are used for the internal
 # structuring of the Chart object and file format.
 #
 ###############################################################################
-
 
 ###############################################################################
 #
@@ -521,6 +552,8 @@ sub _convert_axis_args {
         _crossing        => $arg{crossing},
         _position        => $arg{position},
         _label_position  => $arg{label_position},
+        _major_gridlines => $arg{major_gridlines} || { show => 1 },
+        _show            => defined $arg{show} ? $arg{show} : 1,
     };
 
     # Only use the first letter of bottom, top, left or right.
@@ -530,7 +563,6 @@ sub _convert_axis_args {
 
     return $axis;
 }
-
 
 ###############################################################################
 #
@@ -550,7 +582,6 @@ sub _aref_to_formula {
 
     return $formula;
 }
-
 
 ###############################################################################
 #
@@ -572,7 +603,6 @@ sub _process_names {
 
     return ( $name, $name_formula );
 }
-
 
 ###############################################################################
 #
@@ -601,7 +631,6 @@ sub _get_data_type {
     # The series data was all numeric.
     return 'num';
 }
-
 
 ###############################################################################
 #
@@ -651,7 +680,6 @@ sub _get_data_id {
     return $id;
 }
 
-
 ###############################################################################
 #
 # _get_color()
@@ -681,7 +709,6 @@ sub _get_color {
     return $self->_get_palette_color( $index );
 }
 
-
 ###############################################################################
 #
 # _get_palette_color()
@@ -704,7 +731,6 @@ sub _get_palette_color {
 
     return sprintf "%02X%02X%02X", @rgb;
 }
-
 
 ###############################################################################
 #
@@ -751,7 +777,6 @@ sub _get_line_pattern {
     return $pattern;
 }
 
-
 ###############################################################################
 #
 # _get_line_weight()
@@ -786,7 +811,6 @@ sub _get_line_weight {
 
     return $weight;
 }
-
 
 ###############################################################################
 #
@@ -833,7 +857,6 @@ sub _get_line_properties {
     return $line;
 }
 
-
 ###############################################################################
 #
 # _get_fill_properties()
@@ -851,7 +874,6 @@ sub _get_fill_properties {
 
     return $fill;
 }
-
 
 ###############################################################################
 #
@@ -911,13 +933,11 @@ sub _get_marker_properties {
     # Set the fill properties for the marker.
     my $fill = $self->_get_fill_properties( $marker->{fill} );
 
-
     $marker->{_line} = $line;
     $marker->{_fill} = $fill;
 
     return $marker;
 }
-
 
 ###############################################################################
 #
@@ -963,13 +983,11 @@ sub _get_trendline_properties {
     # Set the fill properties for the trendline.
     my $fill = $self->_get_fill_properties( $trendline->{fill} );
 
-
     $trendline->{_line} = $line;
     $trendline->{_fill} = $fill;
 
     return $trendline;
 }
-
 
 ###############################################################################
 #
@@ -1012,33 +1030,67 @@ sub _get_labels_properties {
     return $labels;
 }
 
+###############################################################################
+#
+# _get_primary_axes_series()
+#
+# Returns series which use the primary axes.
+#
+sub _get_primary_axes_series {
+
+    my $self = shift;
+    my @primary_axes_series;
+
+    for my $series ( @{ $self->{_series} } ) {
+        push @primary_axes_series, $series unless $series->{_y2_axis};
+    }
+
+    return @primary_axes_series;
+}
 
 ###############################################################################
 #
-# _add_axis_id()
+# _get_secondary_axes_series()
 #
-# Add a unique id for an axis.
+# Returns series which use the secondary axes.
 #
-sub _add_axis_id {
+sub _get_secondary_axes_series {
 
-    my $self       = shift;
-    my $chart_id   = 1 + $self->{_id};
-    my $axis_count = 1 + @{ $self->{_axis_ids} };
+    my $self = shift;
+    my @secondary_axes_series;
 
-    my $axis_id = sprintf '5%03d%04d', $chart_id, $axis_count;
+    for my $series ( @{ $self->{_series} } ) {
+        push @secondary_axes_series, $series if $series->{_y2_axis};
+    }
 
-    push @{ $self->{_axis_ids} }, $axis_id;
-
-    return $axis_id;
+    return @secondary_axes_series;
 }
 
+###############################################################################
+#
+# _add_axis_ids()
+#
+# Add unique ids for primary or secondary axes
+#
+sub _add_axis_ids {
+
+    my $self       = shift;
+    my %args       = @_;
+    my $chart_id   = 1 + $self->{_id};
+    my $axis_count = 1 + @{ $self->{_axis2_ids} } + @{ $self->{_axis_ids} };
+
+    my $id1 = sprintf '5%03d%04d', $chart_id, $axis_count;
+    my $id2 = sprintf '5%03d%04d', $chart_id, $axis_count + 1;
+
+    push @{ $self->{_axis_ids} },  $id1, $id2 if $args{primary_axes};
+    push @{ $self->{_axis2_ids} }, $id1, $id2 if !$args{primary_axes};
+}
 
 ###############################################################################
 #
 # Config data.
 #
 ###############################################################################
-
 
 ###############################################################################
 #
@@ -1079,8 +1131,13 @@ sub _set_default_properties {
         _line_color_rgb   => 0x808080,
         _line_options     => 0x0000,
     };
-}
 
+    $self->set_x_axis();
+    $self->set_y_axis();
+
+    $self->set_x2_axis();
+    $self->set_y2_axis();
+}
 
 ###############################################################################
 #
@@ -1113,13 +1170,11 @@ sub _set_embedded_config_data {
 
 }
 
-
 ###############################################################################
 #
 # XML writing methods.
 #
 ###############################################################################
-
 
 ##############################################################################
 #
@@ -1144,7 +1199,6 @@ sub _write_chart_space {
     $self->{_writer}->startTag( 'c:chartSpace', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_lang()
@@ -1160,7 +1214,6 @@ sub _write_lang {
 
     $self->{_writer}->emptyTag( 'c:lang', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -1180,7 +1233,6 @@ sub _write_style {
 
     $self->{_writer}->emptyTag( 'c:style', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -1218,7 +1270,6 @@ sub _write_chart {
     $self->{_writer}->endTag( 'c:chart' );
 }
 
-
 ##############################################################################
 #
 # _write_disp_blanks_as()
@@ -1238,7 +1289,6 @@ sub _write_disp_blanks_as {
     $self->{_writer}->emptyTag( 'c:dispBlanksAs', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_plot_area()
@@ -1254,18 +1304,36 @@ sub _write_plot_area {
     # Write the c:layout element.
     $self->_write_layout();
 
-    # Write the subclass chart type element.
-    $self->_write_chart_type();
+    # Write the subclass chart type elements for primary and secondary axes.
+    $self->_write_chart_type( primary_axes => 1 );
+    $self->_write_chart_type( primary_axes => 0 );
 
-    # Write the c:catAx element.
-    $self->_write_cat_axis();
+    # Write c:catAx and c:valAx elements for series using primary axes.
+    $self->_write_cat_axis(
+        x_axis   => $self->{_x_axis},
+        y_axis   => $self->{_y_axis},
+        axis_ids => $self->{_axis_ids}
+    );
+    $self->_write_val_axis(
+        x_axis   => $self->{_x_axis},
+        y_axis   => $self->{_y_axis},
+        axis_ids => $self->{_axis_ids}
+    );
 
-    # Write the c:catAx element.
-    $self->_write_val_axis();
+    # Write c:valAx and c:catAx elements for series using secondary axes.
+    $self->_write_val_axis(
+        x_axis   => $self->{_x2_axis},
+        y_axis   => $self->{_y2_axis},
+        axis_ids => $self->{_axis2_ids}
+    );
+    $self->_write_cat_axis(
+        x_axis   => $self->{_x2_axis},
+        y_axis   => $self->{_y2_axis},
+        axis_ids => $self->{_axis2_ids}
+    );
 
     $self->{_writer}->endTag( 'c:plotArea' );
 }
-
 
 ##############################################################################
 #
@@ -1280,7 +1348,6 @@ sub _write_layout {
     $self->{_writer}->emptyTag( 'c:layout' );
 }
 
-
 ##############################################################################
 #
 # _write_chart_type()
@@ -1292,7 +1359,6 @@ sub _write_chart_type {
 
     my $self = shift;
 }
-
 
 ##############################################################################
 #
@@ -1310,7 +1376,6 @@ sub _write_grouping {
     $self->{_writer}->emptyTag( 'c:grouping', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_series()
@@ -1319,26 +1384,11 @@ sub _write_grouping {
 #
 sub _write_series {
 
-    my $self = shift;
+    my $self   = shift;
+    my $series = shift;
 
-    # Write each series with subelements.
-    my $index = 0;
-    for my $series ( @{ $self->{_series} } ) {
-        $self->_write_ser( $index++, $series );
-    }
-
-    # Write the c:marker element.
-    $self->_write_marker_value();
-
-    # Generate the axis ids.
-    $self->_add_axis_id();
-    $self->_add_axis_id();
-
-    # Write the c:axId element.
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
-    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+    $self->_write_ser( $series );
 }
-
 
 ##############################################################################
 #
@@ -1349,8 +1399,8 @@ sub _write_series {
 sub _write_ser {
 
     my $self   = shift;
-    my $index  = shift;
     my $series = shift;
+    my $index  = $self->{_series_index}++;
 
     $self->{_writer}->startTag( 'c:ser' );
 
@@ -1387,7 +1437,6 @@ sub _write_ser {
     $self->{_writer}->endTag( 'c:ser' );
 }
 
-
 ##############################################################################
 #
 # _write_idx()
@@ -1404,7 +1453,6 @@ sub _write_idx {
     $self->{_writer}->emptyTag( 'c:idx', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_order()
@@ -1420,7 +1468,6 @@ sub _write_order {
 
     $self->{_writer}->emptyTag( 'c:order', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -1442,7 +1489,6 @@ sub _write_series_name {
     }
 
 }
-
 
 ##############################################################################
 #
@@ -1488,7 +1534,6 @@ sub _write_cat {
     $self->{_writer}->endTag( 'c:cat' );
 }
 
-
 ##############################################################################
 #
 # _write_val()
@@ -1512,7 +1557,6 @@ sub _write_val {
 
     $self->{_writer}->endTag( 'c:val' );
 }
-
 
 ##############################################################################
 #
@@ -1546,7 +1590,6 @@ sub _write_num_ref {
     $self->{_writer}->endTag( 'c:numRef' );
 }
 
-
 ##############################################################################
 #
 # _write_str_ref()
@@ -1579,7 +1622,6 @@ sub _write_str_ref {
     $self->{_writer}->endTag( 'c:strRef' );
 }
 
-
 ##############################################################################
 #
 # _write_series_formula()
@@ -1597,6 +1639,31 @@ sub _write_series_formula {
     $self->{_writer}->dataElement( 'c:f', $formula );
 }
 
+##############################################################################
+#
+# _write_axis_ids()
+#
+# Write the <c:axId> elements for the primary or secondary axes.
+#
+sub _write_axis_ids {
+
+    my $self = shift;
+    my %args = @_;
+
+    # Generate the axis ids.
+    $self->_add_axis_ids( %args );
+
+    if ( $args{primary_axes} ) {
+        ## Write the axis ids for the primary axes.
+        $self->_write_axis_id( $self->{_axis_ids}->[0] );
+        $self->_write_axis_id( $self->{_axis_ids}->[1] );
+    }
+    else {
+        ## Write the axis ids for the secondary axes.
+        $self->_write_axis_id( $self->{_axis2_ids}->[0] );
+        $self->_write_axis_id( $self->{_axis2_ids}->[1] );
+    }
+}
 
 ##############################################################################
 #
@@ -1614,7 +1681,6 @@ sub _write_axis_id {
     $self->{_writer}->emptyTag( 'c:axId', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_cat_axis()
@@ -1624,20 +1690,29 @@ sub _write_axis_id {
 sub _write_cat_axis {
 
     my $self     = shift;
+    my %args     = @_;
+    my $x_axis   = $args{x_axis};
+    my $y_axis   = $args{y_axis};
+    my $axis_ids = $args{axis_ids};
+
+    # if there are no axis_ids then we don't need to write this element
+    return unless $axis_ids;
+    return unless scalar @$axis_ids;
+
     my $position = $self->{_cat_axis_position};
     my $horiz    = $self->{_horiz_cat_axis};
-    my $x_axis   = $self->{_x_axis};
-    my $y_axis   = $self->{_y_axis};
 
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:catAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $axis_ids->[0] );
 
     # Write the c:scaling element.
     $self->_write_scaling( $x_axis->{_reverse} );
+
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -1658,18 +1733,21 @@ sub _write_cat_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
+    $self->_write_cross_axis( $axis_ids->[1] );
 
-    # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
 
-        # Write the c:crosses element.
-        $self->_write_crosses( $y_axis->{_crossing} );
-    }
-    else {
+        # Note, the category crossing comes from the value axis.
+        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
 
-        # Write the c:crossesAt element.
-        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+            # Write the c:crosses element.
+            $self->_write_crosses( $y_axis->{_crossing} );
+        }
+        else {
+
+            # Write the c:crossesAt element.
+            $self->_write_c_crosses_at( $y_axis->{_crossing} );
+        }
     }
 
     # Write the c:auto element.
@@ -1684,7 +1762,6 @@ sub _write_cat_axis {
     $self->{_writer}->endTag( 'c:catAx' );
 }
 
-
 ##############################################################################
 #
 # _write_val_axis()
@@ -1695,29 +1772,36 @@ sub _write_cat_axis {
 #
 sub _write_val_axis {
 
-    my $self                 = shift;
-    my $position             = shift || $self->{_val_axis_position};
-    my $hide_major_gridlines = shift;
-    my $horiz                = $self->{_horiz_val_axis};
-    my $x_axis               = $self->{_x_axis};
-    my $y_axis               = $self->{_y_axis};
+    my $self     = shift;
+    my %args     = @_;
+    my $x_axis   = $args{x_axis};
+    my $y_axis   = $args{y_axis};
+    my $axis_ids = $args{axis_ids};
+    my $position = $args{position} || $self->{_val_axis_position};
+    my $horiz    = $self->{_horiz_val_axis};
+
+    return unless $axis_ids && scalar @$axis_ids;
 
     # Overwrite the default axis position with a user supplied value.
     $position = $y_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[1] );
+    $self->_write_axis_id( $axis_ids->[1] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $y_axis->{_reverse}, $y_axis->{_min},
-        $y_axis->{_max}, $y_axis->{_log_base}  );
+    $self->_write_scaling(
+        $y_axis->{_reverse}, $y_axis->{_min},
+        $y_axis->{_max},     $y_axis->{_log_base}
+    );
+
+    $self->_write_delete( 1 ) unless $y_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $x_axis->{_reverse} );
 
     # Write the c:majorGridlines element.
-    $self->_write_major_gridlines() if not $hide_major_gridlines;
+    $self->_write_major_gridlines( $y_axis->{_major_gridlines} );
 
     # Write the axis title elements.
     my $title;
@@ -1735,7 +1819,7 @@ sub _write_val_axis {
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[0] );
+    $self->_write_cross_axis( $axis_ids->[0] );
 
     # Note, the category crossing comes from the value axis.
     if ( !defined $x_axis->{_crossing} || $x_axis->{_crossing} eq 'max' ) {
@@ -1761,7 +1845,6 @@ sub _write_val_axis {
     $self->{_writer}->endTag( 'c:valAx' );
 }
 
-
 ##############################################################################
 #
 # _write_cat_val_axis()
@@ -1771,29 +1854,36 @@ sub _write_val_axis {
 #
 sub _write_cat_val_axis {
 
-    my $self                 = shift;
-    my $position             = shift || $self->{_val_axis_position};
-    my $hide_major_gridlines = shift;
-    my $horiz                = $self->{_horiz_val_axis};
-    my $x_axis               = $self->{_x_axis};
-    my $y_axis               = $self->{_y_axis};
+    my $self     = shift;
+    my %args     = @_;
+    my $x_axis   = $args{x_axis};
+    my $y_axis   = $args{y_axis};
+    my $axis_ids = $args{axis_ids};
+    my $position = $args{position} || $self->{_val_axis_position};
+    my $horiz    = $self->{_horiz_val_axis};
+
+    return unless $axis_ids && scalar @$axis_ids;
 
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:valAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $axis_ids->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_axis->{_reverse}, $x_axis->{_min},
-        $x_axis->{_max}, $x_axis->{_log_base} );
+    $self->_write_scaling(
+        $x_axis->{_reverse}, $x_axis->{_min},
+        $x_axis->{_max},     $x_axis->{_log_base}
+    );
+
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
     # Write the c:majorGridlines element.
-    $self->_write_major_gridlines() if not $hide_major_gridlines;
+    # $self->_write_major_gridlines($y_axis->{_major_gridlines})
 
     # Write the axis title elements.
     my $title;
@@ -1811,7 +1901,7 @@ sub _write_cat_val_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
+    $self->_write_cross_axis( $axis_ids->[1] );
 
     # Note, the category crossing comes from the value axis.
     if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
@@ -1837,7 +1927,6 @@ sub _write_cat_val_axis {
     $self->{_writer}->endTag( 'c:valAx' );
 }
 
-
 ##############################################################################
 #
 # _write_date_axis()
@@ -1847,20 +1936,29 @@ sub _write_cat_val_axis {
 sub _write_date_axis {
 
     my $self     = shift;
+    my %args     = @_;
+    my $x_axis   = $args{x_axis};
+    my $y_axis   = $args{y_axis};
+    my $axis_ids = $args{axis_ids};
+
+    return unless $axis_ids && scalar @$axis_ids;
+
     my $position = $self->{_cat_axis_position};
-    my $x_axis   = $self->{_x_axis};
-    my $y_axis   = $self->{_y_axis};
 
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
     $self->{_writer}->startTag( 'c:dateAx' );
 
-    $self->_write_axis_id( $self->{_axis_ids}->[0] );
+    $self->_write_axis_id( $axis_ids->[0] );
 
     # Write the c:scaling element.
-    $self->_write_scaling( $x_axis->{_reverse}, $x_axis->{_min},
-        $x_axis->{_max}, $x_axis->{_log_base} );
+    $self->_write_scaling(
+        $x_axis->{_reverse}, $x_axis->{_min},
+        $x_axis->{_max},     $x_axis->{_log_base}
+    );
+
+    $self->_write_delete( 1 ) unless $x_axis->{_show};
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
@@ -1881,18 +1979,21 @@ sub _write_date_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the c:crossAx element.
-    $self->_write_cross_axis( $self->{_axis_ids}->[1] );
+    $self->_write_cross_axis( $axis_ids->[1] );
 
-    # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
+    if ( $self->{_show_crosses} || $x_axis->{_show} ) {
 
-        # Write the c:crosses element.
-        $self->_write_crosses( $y_axis->{_crossing} );
-    }
-    else {
+        # Note, the category crossing comes from the value axis.
+        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
 
-        # Write the c:crossesAt element.
-        $self->_write_c_crosses_at( $y_axis->{_crossing} );
+            # Write the c:crosses element.
+            $self->_write_crosses( $y_axis->{_crossing} );
+        }
+        else {
+
+            # Write the c:crossesAt element.
+            $self->_write_c_crosses_at( $y_axis->{_crossing} );
+        }
     }
 
     # Write the c:auto element.
@@ -1919,7 +2020,6 @@ sub _write_date_axis {
 
     $self->{_writer}->endTag( 'c:dateAx' );
 }
-
 
 ##############################################################################
 #
@@ -1952,7 +2052,6 @@ sub _write_scaling {
     $self->{_writer}->endTag( 'c:scaling' );
 }
 
-
 ##############################################################################
 #
 # _write_c_log_base()
@@ -1970,7 +2069,6 @@ sub _write_c_log_base {
 
     $self->{_writer}->emptyTag( 'c:logBase', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -1991,7 +2089,6 @@ sub _write_orientation {
     $self->{_writer}->emptyTag( 'c:orientation', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_c_max()
@@ -2010,7 +2107,6 @@ sub _write_c_max {
     $self->{_writer}->emptyTag( 'c:max', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_c_min()
@@ -2028,7 +2124,6 @@ sub _write_c_min {
 
     $self->{_writer}->emptyTag( 'c:min', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2051,7 +2146,6 @@ sub _write_axis_pos {
 
     $self->{_writer}->emptyTag( 'c:axPos', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2076,7 +2170,6 @@ sub _write_num_fmt {
     $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_tick_label_pos()
@@ -2086,17 +2179,16 @@ sub _write_num_fmt {
 sub _write_tick_label_pos {
 
     my $self = shift;
-    my $val  = shift || 'nextTo';
+    my $val = shift || 'nextTo';
 
-    if ($val eq 'next_to') {
-        $val =  'nextTo';
+    if ( $val eq 'next_to' ) {
+        $val = 'nextTo';
     }
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:tickLblPos', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2114,7 +2206,6 @@ sub _write_cross_axis {
     $self->{_writer}->emptyTag( 'c:crossAx', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_crosses()
@@ -2124,13 +2215,12 @@ sub _write_cross_axis {
 sub _write_crosses {
 
     my $self = shift;
-    my $val  = shift || 'autoZero';
+    my $val = shift || 'autoZero';
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crosses', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2148,7 +2238,6 @@ sub _write_c_crosses_at {
     $self->{_writer}->emptyTag( 'c:crossesAt', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_auto()
@@ -2164,7 +2253,6 @@ sub _write_auto {
 
     $self->{_writer}->emptyTag( 'c:auto', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2182,7 +2270,6 @@ sub _write_label_align {
     $self->{_writer}->emptyTag( 'c:lblAlgn', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_label_offset()
@@ -2199,7 +2286,6 @@ sub _write_label_offset {
     $self->{_writer}->emptyTag( 'c:lblOffset', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_major_gridlines()
@@ -2208,11 +2294,13 @@ sub _write_label_offset {
 #
 sub _write_major_gridlines {
 
-    my $self = shift;
+    my $self    = shift;
+    my $options = shift;
+
+    return unless $options->{show};
 
     $self->{_writer}->emptyTag( 'c:majorGridlines' );
 }
-
 
 ##############################################################################
 #
@@ -2246,13 +2334,12 @@ sub _write_cross_between {
 
     my $self = shift;
 
-    my $val  = $self->{_cross_between} || 'between';
+    my $val = $self->{_cross_between} || 'between';
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2272,7 +2359,6 @@ sub _write_c_major_unit {
     $self->{_writer}->emptyTag( 'c:majorUnit', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_c_minor_unit()
@@ -2291,7 +2377,6 @@ sub _write_c_minor_unit {
     $self->{_writer}->emptyTag( 'c:minorUnit', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_c_major_time_unit()
@@ -2308,7 +2393,6 @@ sub _write_c_major_time_unit {
     $self->{_writer}->emptyTag( 'c:majorTimeUnit', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_c_minor_time_unit()
@@ -2324,7 +2408,6 @@ sub _write_c_minor_time_unit {
 
     $self->{_writer}->emptyTag( 'c:minorTimeUnit', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2382,7 +2465,6 @@ sub _write_legend {
     $self->{_writer}->endTag( 'c:legend' );
 }
 
-
 ##############################################################################
 #
 # _write_legend_pos()
@@ -2398,7 +2480,6 @@ sub _write_legend_pos {
 
     $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2422,7 +2503,6 @@ sub _write_legend_entry {
     $self->{_writer}->endTag( 'c:legendEntry' );
 }
 
-
 ##############################################################################
 #
 # _write_overlay()
@@ -2438,7 +2518,6 @@ sub _write_overlay {
 
     $self->{_writer}->emptyTag( 'c:overlay', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2458,7 +2537,6 @@ sub _write_plot_vis_only {
 
     $self->{_writer}->emptyTag( 'c:plotVisOnly', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2484,7 +2562,6 @@ sub _write_print_settings {
     $self->{_writer}->endTag( 'c:printSettings' );
 }
 
-
 ##############################################################################
 #
 # _write_header_footer()
@@ -2497,7 +2574,6 @@ sub _write_header_footer {
 
     $self->{_writer}->emptyTag( 'c:headerFooter' );
 }
-
 
 ##############################################################################
 #
@@ -2527,7 +2603,6 @@ sub _write_page_margins {
     $self->{_writer}->emptyTag( 'c:pageMargins', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_page_setup()
@@ -2540,7 +2615,6 @@ sub _write_page_setup {
 
     $self->{_writer}->emptyTag( 'c:pageSetup' );
 }
-
 
 ##############################################################################
 #
@@ -2564,7 +2638,6 @@ sub _write_title_rich {
 
     $self->{_writer}->endTag( 'c:title' );
 }
-
 
 ##############################################################################
 #
@@ -2593,7 +2666,6 @@ sub _write_title_formula {
     $self->{_writer}->endTag( 'c:title' );
 }
 
-
 ##############################################################################
 #
 # _write_tx_rich()
@@ -2614,7 +2686,6 @@ sub _write_tx_rich {
     $self->{_writer}->endTag( 'c:tx' );
 }
 
-
 ##############################################################################
 #
 # _write_tx_value()
@@ -2633,7 +2704,6 @@ sub _write_tx_value {
 
     $self->{_writer}->endTag( 'c:tx' );
 }
-
 
 ##############################################################################
 #
@@ -2660,7 +2730,6 @@ sub _write_tx_formula {
     $self->{_writer}->endTag( 'c:tx' );
 }
 
-
 ##############################################################################
 #
 # _write_rich()
@@ -2684,10 +2753,8 @@ sub _write_rich {
     # Write the a:p element.
     $self->_write_a_p_rich( $title );
 
-
     $self->{_writer}->endTag( 'c:rich' );
 }
-
 
 ##############################################################################
 #
@@ -2712,7 +2779,6 @@ sub _write_a_body_pr {
     $self->{_writer}->emptyTag( 'a:bodyPr', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_a_lst_style()
@@ -2725,7 +2791,6 @@ sub _write_a_lst_style {
 
     $self->{_writer}->emptyTag( 'a:lstStyle' );
 }
-
 
 ##############################################################################
 #
@@ -2749,7 +2814,6 @@ sub _write_a_p_rich {
     $self->{_writer}->endTag( 'a:p' );
 }
 
-
 ##############################################################################
 #
 # _write_a_p_formula()
@@ -2772,7 +2836,6 @@ sub _write_a_p_formula {
     $self->{_writer}->endTag( 'a:p' );
 }
 
-
 ##############################################################################
 #
 # _write_a_p_pr_rich()
@@ -2790,7 +2853,6 @@ sub _write_a_p_pr_rich {
 
     $self->{_writer}->endTag( 'a:pPr' );
 }
-
 
 ##############################################################################
 #
@@ -2810,7 +2872,6 @@ sub _write_a_p_pr_formula {
     $self->{_writer}->endTag( 'a:pPr' );
 }
 
-
 ##############################################################################
 #
 # _write_a_def_rpr()
@@ -2823,7 +2884,6 @@ sub _write_a_def_rpr {
 
     $self->{_writer}->emptyTag( 'a:defRPr' );
 }
-
 
 ##############################################################################
 #
@@ -2840,7 +2900,6 @@ sub _write_a_end_para_rpr {
 
     $self->{_writer}->emptyTag( 'a:endParaRPr', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -2864,7 +2923,6 @@ sub _write_a_r {
     $self->{_writer}->endTag( 'a:r' );
 }
 
-
 ##############################################################################
 #
 # _write_a_r_pr()
@@ -2881,7 +2939,6 @@ sub _write_a_r_pr {
     $self->{_writer}->emptyTag( 'a:rPr', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_a_t()
@@ -2895,7 +2952,6 @@ sub _write_a_t {
 
     $self->{_writer}->dataElement( 'a:t', $title );
 }
-
 
 ##############################################################################
 #
@@ -2921,7 +2977,6 @@ sub _write_tx_pr {
 
     $self->{_writer}->endTag( 'c:txPr' );
 }
-
 
 ##############################################################################
 #
@@ -2952,7 +3007,6 @@ sub _write_marker {
     $self->{_writer}->endTag( 'c:marker' );
 }
 
-
 ##############################################################################
 #
 # _write_marker_value()
@@ -2971,7 +3025,6 @@ sub _write_marker_value {
     $self->{_writer}->emptyTag( 'c:marker', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_marker_size()
@@ -2988,7 +3041,6 @@ sub _write_marker_size {
     $self->{_writer}->emptyTag( 'c:size', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_symbol()
@@ -3004,7 +3056,6 @@ sub _write_symbol {
 
     $self->{_writer}->emptyTag( 'c:symbol', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3035,7 +3086,6 @@ sub _write_sp_pr {
 
     $self->{_writer}->endTag( 'c:spPr' );
 }
-
 
 ##############################################################################
 #
@@ -3085,7 +3135,6 @@ sub _write_a_ln {
     $self->{_writer}->endTag( 'a:ln' );
 }
 
-
 ##############################################################################
 #
 # _write_a_no_fill()
@@ -3098,7 +3147,6 @@ sub _write_a_no_fill {
 
     $self->{_writer}->emptyTag( 'a:noFill' );
 }
-
 
 ##############################################################################
 #
@@ -3121,10 +3169,8 @@ sub _write_a_solid_fill {
         $self->_write_a_srgb_clr( $color );
     }
 
-
     $self->{_writer}->endTag( 'a:solidFill' );
 }
-
 
 ##############################################################################
 #
@@ -3142,7 +3188,6 @@ sub _write_a_srgb_clr {
     $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_a_prst_dash()
@@ -3158,7 +3203,6 @@ sub _write_a_prst_dash {
 
     $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3203,7 +3247,6 @@ sub _write_trendline {
     $self->{_writer}->endTag( 'c:trendline' );
 }
 
-
 ##############################################################################
 #
 # _write_trendline_type()
@@ -3219,7 +3262,6 @@ sub _write_trendline_type {
 
     $self->{_writer}->emptyTag( 'c:trendlineType', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3237,7 +3279,6 @@ sub _write_name {
     $self->{_writer}->dataElement( 'c:name', $data );
 }
 
-
 ##############################################################################
 #
 # _write_trendline_order()
@@ -3247,13 +3288,12 @@ sub _write_name {
 sub _write_trendline_order {
 
     my $self = shift;
-    my $val  = defined $_[0] ? $_[0] : 2;
+    my $val = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:order', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3264,13 +3304,12 @@ sub _write_trendline_order {
 sub _write_period {
 
     my $self = shift;
-    my $val  = defined $_[0] ? $_[0] : 2;
+    my $val = defined $_[0] ? $_[0] : 2;
 
     my @attributes = ( 'val' => $val );
 
     $self->{_writer}->emptyTag( 'c:period', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3308,7 +3347,6 @@ sub _write_backward {
     $self->{_writer}->emptyTag( 'c:backward', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_hi_low_lines()
@@ -3321,7 +3359,6 @@ sub _write_hi_low_lines {
 
     $self->{_writer}->emptyTag( 'c:hiLowLines' );
 }
-
 
 ##############################################################################
 #
@@ -3338,7 +3375,6 @@ sub _write_overlap {
 
     $self->{_writer}->emptyTag( 'c:overlap', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3377,7 +3413,6 @@ sub _write_num_cache {
     $self->{_writer}->endTag( 'c:numCache' );
 }
 
-
 ##############################################################################
 #
 # _write_str_cache()
@@ -3404,7 +3439,6 @@ sub _write_str_cache {
     $self->{_writer}->endTag( 'c:strCache' );
 }
 
-
 ##############################################################################
 #
 # _write_format_code()
@@ -3418,7 +3452,6 @@ sub _write_format_code {
 
     $self->{_writer}->dataElement( 'c:formatCode', $data );
 }
-
 
 ##############################################################################
 #
@@ -3435,7 +3468,6 @@ sub _write_pt_count {
 
     $self->{_writer}->emptyTag( 'c:ptCount', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3461,7 +3493,6 @@ sub _write_pt {
     $self->{_writer}->endTag( 'c:pt' );
 }
 
-
 ##############################################################################
 #
 # _write_v()
@@ -3475,7 +3506,6 @@ sub _write_v {
 
     $self->{_writer}->dataElement( 'c:v', $data );
 }
-
 
 ##############################################################################
 #
@@ -3491,7 +3521,6 @@ sub _write_protection {
 
     $self->{_writer}->emptyTag( 'c:protection' );
 }
-
 
 ##############################################################################
 #
@@ -3529,7 +3558,6 @@ sub _write_d_lbls {
     $self->{_writer}->endTag( 'c:dLbls' );
 }
 
-
 ##############################################################################
 #
 # _write_show_val()
@@ -3545,7 +3573,6 @@ sub _write_show_val {
 
     $self->{_writer}->emptyTag( 'c:showVal', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3563,7 +3590,6 @@ sub _write_show_cat_name {
     $self->{_writer}->emptyTag( 'c:showCatName', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_show_ser_name()
@@ -3579,7 +3605,6 @@ sub _write_show_ser_name {
 
     $self->{_writer}->emptyTag( 'c:showSerName', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3597,7 +3622,6 @@ sub _write_show_percent {
     $self->{_writer}->emptyTag( 'c:showPercent', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_show_leader_lines()
@@ -3613,7 +3637,6 @@ sub _write_show_leader_lines {
 
     $self->{_writer}->emptyTag( 'c:showLeaderLines', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3631,7 +3654,6 @@ sub _write_d_lbl_pos {
     $self->{_writer}->emptyTag( 'c:dLblPos', @attributes );
 }
 
-
 ##############################################################################
 #
 # _write_delete()
@@ -3647,7 +3669,6 @@ sub _write_delete {
 
     $self->{_writer}->emptyTag( 'c:delete', @attributes );
 }
-
 
 ##############################################################################
 #
@@ -3667,7 +3688,6 @@ sub _write_c_invert_if_negative {
 
     $self->{_writer}->emptyTag( 'c:invertIfNegative', @attributes );
 }
-
 
 1;
 
@@ -3865,6 +3885,7 @@ The properties that can be set are:
     reverse
     log_base
     label_position
+    major_gridlines
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -3938,6 +3959,14 @@ Set the "Axis labels" position for the axis. The following positions are availab
     low
     none
 
+=item * C<major_gridlines>
+
+Options for configuring the major gridlines.  The only option currently
+available shows or hides the major gridlines for a given axis.  Acceptable
+values are true or false.
+
+    $chart->set_x_axis( major_gridlines => { show => 1 } );
+
 =back
 
 More than one property can be set in a call to C<set_x_axis>:
@@ -3952,6 +3981,26 @@ More than one property can be set in a call to C<set_x_axis>:
 =head2 set_y_axis()
 
 The C<set_y_axis()> method is used to set properties of the Y axis. The properties that can be set are the same as for C<set_x_axis>, see above.
+
+
+=head2 set_x2_axis()
+
+The C<set_x2_axis()> method is used to set properties of the secondary X axis.
+The properties that can be set are the same as for C<set_x_axis>, see above.
+The default properties for this axis are:
+
+    label_position => 'none',
+    crossing       => 'max',
+    show           => 0,
+
+
+=head2 set_y2_axis()
+
+The C<set_y2_axis()> method is used to set properties of the secondary Y axis.
+The properties that can be set are the same as for C<set_x_axis>, see above.
+The default properties for this axis are:
+
+    major_gridlines => { show => 0 }
 
 
 =head2 set_title()

@@ -33,7 +33,7 @@ $expected = '<c:majorGridlines />';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
-$chart->_write_major_gridlines();
+$chart->_write_major_gridlines( { show => 1 } );
 
 is( $got, $expected, $caption );
 
