@@ -4901,6 +4901,8 @@ Tables in Excel are a way of grouping a range of cells into a single entity that
 
 For more information see "An Overview of Excel Tables" L<http://office.microsoft.com/en-us/excel-help/overview-of-excel-tables-HA010048546.aspx>.
 
+Note, tables don't work in Excel::Writer::XLSX when C<set_optimization()> mode in on.
+
 
 =head2 add_table( $row1, $col1, $row2, $col2, { parameter => 'value', ... })
 
