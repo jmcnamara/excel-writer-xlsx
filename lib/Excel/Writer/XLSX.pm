@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.49';
+our $VERSION = '0.50';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.49 of Excel::Writer::XLSX, released July 12, 2012.
+This document refers to version 0.50 of Excel::Writer::XLSX, released September 9, 2012.
 
 
 
@@ -4892,6 +4892,13 @@ See also the C<conditional_format.pl> example program in C<EXAMPLES>.
 
 Tables in Excel are a way of grouping a range of cells into a single entity that has common formatting or that can be referenced from formulas. Tables can have column headers, autofilters, total rows, column formulas and default formatting.
 
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/tables.jpg" width="640" height="420" alt="Output from tables.pl" /></center></p>
+
+=end html
+
+
 For more information see "An Overview of Excel Tables" L<http://office.microsoft.com/en-us/excel-help/overview-of-excel-tables-HA010048546.aspx>.
 
 
@@ -5589,7 +5596,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_line.pl           A demo of line style charts.
     chart_pie.pl            A demo of pie style charts.
     chart_scatter.pl        A demo of scatter style charts.
-    chart_secondary.pl      A demo of a line chart with a secondary axis.
+    chart_secondary_axis.pl A demo of a line chart with a secondary axis.
     chart_stock.pl          A demo of stock style charts.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
@@ -5628,6 +5635,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     shape5.pl               Insert shapes in worksheet. With connections.
     shape6.pl               Insert shapes in worksheet. With connections.
     shape7.pl               Insert shapes in worksheet. One to many connections.
+    shape8.pl               Insert shapes in worksheet. One to many connections.
     shape_all.pl            Demo of all the available shape and connector types.
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
@@ -6121,25 +6129,17 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    An ancient business
-    A modern piece of glass work
-    Down on the corner that you walk each day in passing
-    The elderly sales clerk won't eye us with suspicion
-    The whole, immortal corporation's given its permission
+    The ashtray says
+    You were up all night.
+    When you went to bed
+    With your darkest mind.
+    Your pillow wept
+    And covered your eyes.
+    And you finally slept
+    While the sun caught fire.
 
-    A little stairway
-    A little bit of carpet
-    A pair of mirrors that
-    Are facing one another
-    Out in both directions
-    A thousand little Julias
-    That come together
-    In the middle of Manhattan
-
-    You waited since lunch
-    It all comes at once
-
-      -- Vampire Weekend
+    You've changed.
+      -- Jeff Tweedy
 
 
 

@@ -289,6 +289,7 @@ chart_column.jpg
 chart_line.jpg
 chart_pie.jpg
 chart_scatter.jpg
+chart_secondary_axis.jpg
 chart_stock.jpg
 chess.jpg
 colors.jpg
@@ -333,11 +334,13 @@ shape4.jpg
 shape5.jpg
 shape6.jpg
 shape7.jpg
+shape8.jpg
 shape_all.jpg
 stats.jpg
 stats_ext.jpg
 stocks.jpg
 tab_colors.jpg
+tables.jpg
 textwrap.jpg
 unicode_2022_jp.jpg
 unicode_8859_11.jpg

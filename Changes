@@ -1,8 +1,33 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
-+ New feature.
-- Removed/deprecated feature.
-! Bug fix.
+     + New feature.
+     - Removed/deprecated feature.
+     ! Bug fix.
+
+
+0.50 September 9 2012
+
+     + Added option to add secondary axes to charts.
+       Thanks to Eric Johnson and to Foxtons for sponsoring the work.
+
+     + Added add_table() method to add Excel tables to worksheets.
+
+     ! Fix for right/left auto shape connection when destination
+       is left of source shape. Thanks to Dave Clarke for fix.
+
+     ! Fix for issue #16. Format::copy() method not protecting values.
+       The Format copy() method over-writes certain new properties that
+       weren't in Spreadsheet::WriteExcel. This fixes the issue by
+       storing and restoring the properties during copy.
+
+     ! Fix for issue #15: write_url with local sub directory.
+       Local sub-directories were incorrectly treated as 
+       file:// external.
+
+     ! Fix for for issue #14: Non-numeric data in chart value axes
+       are now converted to zero in chart data cache, as required
+       by Excel.
+
 
 0.49 July 12 2012
 

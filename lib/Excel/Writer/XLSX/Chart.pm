@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.49';
+our $VERSION = '0.50';
 
 
 ###############################################################################
@@ -1942,9 +1942,6 @@ sub _write_cat_val_axis {
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
-
-    # Write the c:majorGridlines element.
-    # $self->_write_major_gridlines($y_axis->{_major_gridlines})
 
     # Write the axis title elements.
     my $title;
@@ -4106,9 +4103,7 @@ Set the "Axis labels" position for the axis. The following positions are availab
 
 =item * C<major_gridlines>
 
-Options for configuring the major gridlines.  The only option currently
-available shows or hides the major gridlines for a given axis.  Acceptable
-values are true or false.
+Configure the major gridlines for the axis.  The only option currently available is used to shows or hide the major gridlines.
 
     $chart->set_x_axis( major_gridlines => { visible => 1 } );
 
@@ -4136,7 +4131,7 @@ The default properties for this axis are:
 
     label_position => 'none',
     crossing       => 'max',
-    visible           => 0,
+    visible        => 0,
 
 
 =head2 set_y2_axis()

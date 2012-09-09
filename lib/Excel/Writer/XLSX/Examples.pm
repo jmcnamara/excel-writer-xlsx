@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '0.49';
+our $VERSION = '0.50';
 
 1;
 
@@ -39,7 +39,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 72 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 75 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -72,6 +72,8 @@ The following is a list of the 72 example programs that are included in the Exce
 =item * L<Example: chart_pie.pl> A demo of pie style charts.
 
 =item * L<Example: chart_scatter.pl> A demo of scatter style charts.
+
+=item * L<Example: chart_secondary_axis.pl> A demo of a line chart with a secondary axis.
 
 =item * L<Example: chart_stock.pl> A demo of stock style charts.
 
@@ -149,6 +151,8 @@ The following is a list of the 72 example programs that are included in the Exce
 
 =item * L<Example: shape7.pl> Insert shapes in worksheet. One to many connections.
 
+=item * L<Example: shape8.pl> Insert shapes in worksheet. One to many connections.
+
 =item * L<Example: shape_all.pl> Demo of all the available shape and connector types.
 
 =item * L<Example: stats_ext.pl> Same as stats.pl with external references.
@@ -156,6 +160,8 @@ The following is a list of the 72 example programs that are included in the Exce
 =item * L<Example: stocks.pl> Demonstrates conditional formatting.
 
 =item * L<Example: tab_colors.pl> Example of how to set worksheet tab colours.
+
+=item * L<Example: tables.pl> Add Excel tables to a worksheet.
 
 =item * L<Example: write_handler1.pl> Example of extending the write() method. Step 1.
 
@@ -254,7 +260,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -404,7 +410,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -546,7 +552,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -1084,7 +1090,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1151,7 +1157,7 @@ Source code for this example:
     $south->set_selection( 0, 1 );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1242,7 +1248,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/stats.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1542,7 +1548,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1597,7 +1603,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1672,7 +1678,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/cgi.pl>
 
 =head2 Example: chart_area.pl
 
@@ -1751,7 +1757,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_area.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_area.pl>
 
 =head2 Example: chart_bar.pl
 
@@ -1830,7 +1836,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_bar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_bar.pl>
 
 =head2 Example: chart_column.pl
 
@@ -1909,7 +1915,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_column.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_column.pl>
 
 =head2 Example: chart_line.pl
 
@@ -1988,7 +1994,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_line.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_line.pl>
 
 =head2 Example: chart_pie.pl
 
@@ -2056,7 +2062,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_pie.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_pie.pl>
 
 =head2 Example: chart_scatter.pl
 
@@ -2141,7 +2147,83 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_scatter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_scatter.pl>
+
+=head2 Example: chart_secondary_axis.pl
+
+
+
+A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
+
+
+
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/chart_secondary_axis.jpg" width="640" height="420" alt="Output from chart_secondary_axis.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
+    #
+    # reverse('Â©'), March 2011, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_secondary_axis.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+    
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Aliens', 'Humans', ];
+    my $data = [
+        [ 2,  3,  4,  5,  6,  7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+    
+    ];
+    
+    
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+    
+    # Create a new chart object. In this case an embedded chart.
+    my $chart = $workbook->add_chart( type => 'line', embedded => 1 );
+    
+    # Configure a series with a secondary axis
+    $chart->add_series(
+        name    => '=Sheet1!$A$1',
+        values  => '=Sheet1!$A$2:$A$7',
+        y2_axis => 1,
+    );
+    
+    $chart->add_series(
+        name   => '=Sheet1!$B$1',
+        values => '=Sheet1!$B$2:$B$7',
+    );
+    
+    $chart->set_legend( position => 'right' );
+    
+    # Add a chart title and some axis labels.
+    $chart->set_title( name => 'Survey results' );
+    $chart->set_x_axis( name => 'Days', );
+    $chart->set_y_axis( name => 'Population', major_gridlines => { show => 0 } );
+    $chart->set_y2_axis( name => 'Laser wounds' );
+    
+    # Insert the chart into the worksheet (with an offset).
+    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_secondary_axis.pl>
 
 =head2 Example: chart_stock.pl
 
@@ -2230,7 +2312,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/chart_stock.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/chart_stock.pl>
 
 =head2 Example: colors.pl
 
@@ -2362,7 +2444,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/colors.pl>
 
 =head2 Example: comments1.pl
 
@@ -2413,7 +2495,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/comments1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/comments1.pl>
 
 =head2 Example: comments2.pl
 
@@ -2785,7 +2867,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/comments2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/comments2.pl>
 
 =head2 Example: conditional_format.pl
 
@@ -3128,7 +3210,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/conditional_format.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/conditional_format.pl>
 
 =head2 Example: data_validate.pl
 
@@ -3465,7 +3547,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/data_validate.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/data_validate.pl>
 
 =head2 Example: date_time.pl
 
@@ -3577,7 +3659,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/date_time.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/date_time.pl>
 
 =head2 Example: defined_name.pl
 
@@ -3638,7 +3720,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/defined_name.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/defined_name.pl>
 
 =head2 Example: diag_border.pl
 
@@ -3698,7 +3780,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/diag_border.pl>
 
 =head2 Example: filehandle.pl
 
@@ -3822,7 +3904,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/filehandle.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/filehandle.pl>
 
 =head2 Example: headers.pl
 
@@ -3988,7 +4070,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/headers.pl>
 
 =head2 Example: hide_sheet.pl
 
@@ -4039,7 +4121,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/hide_sheet.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/hide_sheet.pl>
 
 =head2 Example: hyperlink1.pl
 
@@ -4118,7 +4200,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/hyperlink1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/hyperlink1.pl>
 
 =head2 Example: hyperlink2.pl
 
@@ -4287,7 +4369,7 @@ See also hyperlink1.pl for web URL examples.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/hyperlink2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -4338,7 +4420,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/indent.pl>
 
 =head2 Example: merge1.pl
 
@@ -4400,7 +4482,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -4471,7 +4553,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
@@ -4536,7 +4618,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -4645,7 +4727,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -4742,7 +4824,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -4816,7 +4898,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -4941,7 +5023,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -5069,7 +5151,7 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/mod_perl2.pl>
 
 =head2 Example: outline.pl
 
@@ -5397,7 +5479,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/outline.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/outline.pl>
 
 =head2 Example: outline_collapsed.pl
 
@@ -5633,7 +5715,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/outline_collapsed.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/outline_collapsed.pl>
 
 =head2 Example: panes.pl
 
@@ -5786,7 +5868,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/panes.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/panes.pl>
 
 =head2 Example: properties.pl
 
@@ -5841,7 +5923,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/properties.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/properties.pl>
 
 =head2 Example: protection.pl
 
@@ -5905,7 +5987,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/protection.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/protection.pl>
 
 =head2 Example: rich_strings.pl
 
@@ -5969,7 +6051,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/rich_strings.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/rich_strings.pl>
 
 =head2 Example: right_to_left.pl
 
@@ -6016,7 +6098,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/right_to_left.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/right_to_left.pl>
 
 =head2 Example: sales.pl
 
@@ -6139,7 +6221,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/sales.pl>
 
 =head2 Example: shape1.pl
 
@@ -6192,7 +6274,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape1.pl>
 
 =head2 Example: shape2.pl
 
@@ -6265,7 +6347,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape2.pl>
 
 =head2 Example: shape3.pl
 
@@ -6317,7 +6399,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape3.pl>
 
 =head2 Example: shape4.pl
 
@@ -6394,7 +6476,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape4.pl>
 
 =head2 Example: shape5.pl
 
@@ -6454,7 +6536,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape5.pl>
 
 =head2 Example: shape6.pl
 
@@ -6514,7 +6596,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape6.pl>
 
 =head2 Example: shape7.pl
 
@@ -6603,7 +6685,95 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape7.pl>
+
+=head2 Example: shape8.pl
+
+
+
+A simple example of how to use the Excel::Writer::XLSX module to
+add shapes and one-to-many connectors to an Excel xlsx file.
+
+
+
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/shape8.jpg" width="640" height="420" alt="Output from shape8.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    #######################################################################
+    #
+    # A simple example of how to use the Excel::Writer::XLSX module to
+    # add shapes and one-to-many connectors to an Excel xlsx file.
+    #
+    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'shape8.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    # Add a circle, with centered text. c is for circle, not center.
+    my $cw = 60;
+    my $ch = 60;
+    my $cx = 210;
+    my $cy = 190;
+    
+    my $ellipse = $workbook->add_shape(
+        type   => 'ellipse',
+        id     => 2,
+        text   => "Hello\nWorld",
+        width  => $cw,
+        height => $ch
+    );
+    $worksheet->insert_shape( 'A1', $ellipse, $cx, $cy );
+    
+    # Add a plus sign at 4 different positions around the circle.
+    my $pw = 20;
+    my $ph = 20;
+    my $px = 120;
+    my $py = 250;
+    my $plus =
+      $workbook->add_shape( type => 'plus', id => 3, width => $pw, height => $ph );
+    my $p1 = $worksheet->insert_shape( 'A1', $plus, 350, 150 );    #  2:00
+    my $p2 = $worksheet->insert_shape( 'A1', $plus, 350, 350 );    #  4:00
+    my $p3 = $worksheet->insert_shape( 'A1', $plus, 150, 350 );    #  8:00
+    my $p4 = $worksheet->insert_shape( 'A1', $plus, 150, 150 );    # 10:00
+    
+    my $cxn_shape = $workbook->add_shape( type => 'bentConnector3', fill => 0 );
+    
+    $cxn_shape->set_start( $ellipse->get_id() );
+    $cxn_shape->set_start_index( 2 );    # 2nd connection pt, clockwise from top(0).
+    $cxn_shape->set_start_side( 'r' );   # r)ight or b)ottom.
+    
+    $cxn_shape->set_end( $p1->get_id() );
+    $cxn_shape->set_end_index( 3 );      # 3rd connection point on plus, right side
+    $cxn_shape->set_end_side( 'l' );
+    $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
+    
+    $cxn_shape->set_end( $p2->get_id() );
+    $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
+    
+    $cxn_shape->set_end( $p3->get_id() );
+    $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
+    
+    $cxn_shape->set_end( $p4->get_id() );
+    $cxn_shape->set_adjustments( -50, 45, 120 );
+    $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
+    
+    __END__
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape8.pl>
 
 =head2 Example: shape_all.pl
 
@@ -6866,7 +7036,7 @@ Source code for this example:
     Tabs	squareTabs
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/shape_all.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/shape_all.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -6965,7 +7135,7 @@ Source code for this example:
     $worksheet2->write( 'B9', 24.8,     $numformat );
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -7064,7 +7234,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/stocks.pl>
 
 =head2 Example: tab_colors.pl
 
@@ -7109,7 +7279,398 @@ Source code for this example:
     $worksheet4->set_tab_color( 0x35 );    # Orange
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/tab_colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/tab_colors.pl>
+
+=head2 Example: tables.pl
+
+
+
+Example of how to add tables to an Excel::Writer::XLSX worksheet.
+
+Tables in Excel are use to group rows and columns of data into a single
+structure that can be references in a formula or formatted collectively.
+
+
+
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/tables.jpg" width="640" height="420" alt="Output from tables.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl
+    
+    ###############################################################################
+    #
+    # Example of how to add tables to an Excel::Writer::XLSX worksheet.
+    #
+    # Tables in Excel are use to group rows and columns of data into a single
+    # structure that can be references in a formula or formatted collectively.
+    #
+    # reverse('©'), September 2012, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+    
+    my $workbook    = Excel::Writer::XLSX->new( 'tables.xlsx' );
+    my $worksheet1  = $workbook->add_worksheet();
+    my $worksheet2  = $workbook->add_worksheet();
+    my $worksheet3  = $workbook->add_worksheet();
+    my $worksheet4  = $workbook->add_worksheet();
+    my $worksheet5  = $workbook->add_worksheet();
+    my $worksheet6  = $workbook->add_worksheet();
+    my $worksheet7  = $workbook->add_worksheet();
+    my $worksheet8  = $workbook->add_worksheet();
+    my $worksheet9  = $workbook->add_worksheet();
+    my $worksheet10 = $workbook->add_worksheet();
+    my $worksheet11 = $workbook->add_worksheet();
+    my $worksheet12 = $workbook->add_worksheet();
+    
+    my $currency_format = $workbook->add_format( num_format => '$#,##0' );
+    
+    
+    # Some sample data for the table.
+    my $data = [
+        [ 'Apples',  10000, 5000, 8000, 6000 ],
+        [ 'Pears',   2000,  3000, 4000, 5000 ],
+        [ 'Bananas', 6000,  6000, 6500, 6000 ],
+        [ 'Oranges', 500,   300,  200,  700 ],
+    
+    ];
+    
+    
+    ###############################################################################
+    #
+    # Example 1.
+    #
+    my $caption = 'Default table with no data.';
+    
+    # Set the columns widths.
+    $worksheet1->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet1->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet1->add_table( 'B3:F7' );
+    
+    
+    ###############################################################################
+    #
+    # Example 2.
+    #
+    $caption = 'Default table with data.';
+    
+    # Set the columns widths.
+    $worksheet2->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet2->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet2->add_table( 'B3:F7', { data => $data } );
+    
+    
+    ###############################################################################
+    #
+    # Example 3.
+    #
+    $caption = 'Table without default autofilter.';
+    
+    # Set the columns widths.
+    $worksheet3->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet3->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet3->add_table( 'B3:F7', { autofilter => 0 } );
+    
+    # Table data can also be written separately, as an array or individual cells.
+    $worksheet3->write_col( 'B4', $data );
+    
+    
+    ###############################################################################
+    #
+    # Example 4.
+    #
+    $caption = 'Table without default header row.';
+    
+    # Set the columns widths.
+    $worksheet4->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet4->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet4->add_table( 'B4:F7', { header_row => 0 } );
+    
+    # Table data can also be written separately, as an array or individual cells.
+    $worksheet4->write_col( 'B4', $data );
+    
+    
+    ###############################################################################
+    #
+    # Example 5.
+    #
+    $caption = 'Default table with "First Column" and "Last Column" options.';
+    
+    # Set the columns widths.
+    $worksheet5->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet5->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet5->add_table( 'B3:F7', { first_column => 1, last_column => 1 } );
+    
+    # Table data can also be written separately, as an array or individual cells.
+    $worksheet5->write_col( 'B4', $data );
+    
+    
+    ###############################################################################
+    #
+    # Example 6.
+    #
+    $caption = 'Table with banded columns but without default banded rows.';
+    
+    # Set the columns widths.
+    $worksheet6->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet6->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet6->add_table( 'B3:F7', { banded_rows => 0, banded_columns => 1 } );
+    
+    # Table data can also be written separately, as an array or individual cells.
+    $worksheet6->write_col( 'B4', $data );
+    
+    
+    ###############################################################################
+    #
+    # Example 7.
+    #
+    $caption = 'Table with user defined column headers';
+    
+    # Set the columns widths.
+    $worksheet7->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet7->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet7->add_table(
+        'B3:F7',
+        {
+            data    => $data,
+            columns => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { header => 'Quarter 2' },
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+            ]
+        }
+    );
+    
+    
+    ###############################################################################
+    #
+    # Example 8.
+    #
+    $caption = 'Table with user defined column headers';
+    
+    # Set the columns widths.
+    $worksheet8->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet8->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet8->add_table(
+        'B3:G7',
+        {
+            data    => $data,
+            columns => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { header => 'Quarter 2' },
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+                {
+                    header  => 'Year',
+                    formula => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])'
+                },
+            ]
+        }
+    );
+    
+    
+    ###############################################################################
+    #
+    # Example 9.
+    #
+    $caption = 'Table with totals row (but no caption or totals).';
+    
+    # Set the columns widths.
+    $worksheet9->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet9->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet9->add_table(
+        'B3:G8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { header => 'Product' },
+                { header => 'Quarter 1' },
+                { header => 'Quarter 2' },
+                { header => 'Quarter 3' },
+                { header => 'Quarter 4' },
+                {
+                    header  => 'Year',
+                    formula => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])'
+                },
+            ]
+        }
+    );
+    
+    
+    ###############################################################################
+    #
+    # Example 10.
+    #
+    $caption = 'Table with totals row with user captions and functions.';
+    
+    # Set the columns widths.
+    $worksheet10->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet10->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet10->add_table(
+        'B3:G8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { header => 'Product',   total_string   => 'Totals' },
+                { header => 'Quarter 1', total_function => 'sum' },
+                { header => 'Quarter 2', total_function => 'sum' },
+                { header => 'Quarter 3', total_function => 'sum' },
+                { header => 'Quarter 4', total_function => 'sum' },
+                {
+                    header         => 'Year',
+                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    total_function => 'sum'
+                },
+            ]
+        }
+    );
+    
+    
+    ###############################################################################
+    #
+    # Example 11.
+    #
+    $caption = 'Table with alternative Excel style.';
+    
+    # Set the columns widths.
+    $worksheet11->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet11->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet11->add_table(
+        'B3:G8',
+        {
+            data      => $data,
+            style     => 'Table Style Light 11',
+            total_row => 1,
+            columns   => [
+                { header => 'Product',   total_string   => 'Totals' },
+                { header => 'Quarter 1', total_function => 'sum' },
+                { header => 'Quarter 2', total_function => 'sum' },
+                { header => 'Quarter 3', total_function => 'sum' },
+                { header => 'Quarter 4', total_function => 'sum' },
+                {
+                    header         => 'Year',
+                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    total_function => 'sum'
+                },
+            ]
+        }
+    );
+    
+    
+    ###############################################################################
+    #
+    # Example 12.
+    #
+    $caption = 'Table with column formats.';
+    
+    # Set the columns widths.
+    $worksheet12->set_column( 'B:G', 12 );
+    
+    # Write the caption.
+    $worksheet12->write( 'B1', $caption );
+    
+    # Add a table to the worksheet.
+    $worksheet12->add_table(
+        'B3:G8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { header => 'Product', total_string => 'Totals' },
+                {
+                    header         => 'Quarter 1',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+                {
+                    header         => 'Quarter 2',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+                {
+                    header         => 'Quarter 3',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+                {
+                    header         => 'Quarter 4',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+                {
+                    header         => 'Year',
+                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    total_function => 'sum',
+                    format         => $currency_format,
+                },
+            ]
+        }
+    );
+    
+    
+    __END__
+    
+    
+    
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/tables.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -7197,7 +7758,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -7294,7 +7855,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -7383,7 +7944,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -7512,7 +8073,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/write_handler4.pl>
 
 =head2 Example: write_to_scalar.pl
 
@@ -7561,7 +8122,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/write_to_scalar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/write_to_scalar.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -7626,7 +8187,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -7691,7 +8252,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -7756,7 +8317,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -7821,7 +8382,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -7886,7 +8447,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -7951,7 +8512,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -8021,7 +8582,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -8086,7 +8647,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -8151,7 +8712,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -8216,7 +8777,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.49/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-0.50/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 

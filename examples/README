@@ -24,7 +24,7 @@ chart_column.pl         A demo of column (histogram) style charts.
 chart_line.pl           A demo of line style charts.
 chart_pie.pl            A demo of pie style charts.
 chart_scatter.pl        A demo of scatter style charts.
-chart_secondary.pl      A demo of a line chart with a secondary axis.
+chart_secondary_axis.pl A demo of a line chart with a secondary axis.
 chart_stock.pl          A demo of stock style charts.
 colors.pl               A demo of the colour palette and named colours.
 comments1.pl            Add comments to worksheet cells.
@@ -63,6 +63,7 @@ shape4.pl               Insert shapes in worksheet. With modification.
 shape5.pl               Insert shapes in worksheet. With connections.
 shape6.pl               Insert shapes in worksheet. With connections.
 shape7.pl               Insert shapes in worksheet. One to many connections.
+shape8.pl               Insert shapes in worksheet. One to many connections.
 shape_all.pl            Demo of all the available shape and connector types.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
