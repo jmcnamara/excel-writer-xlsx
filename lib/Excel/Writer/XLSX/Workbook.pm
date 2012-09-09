@@ -1554,8 +1554,12 @@ sub _add_chart_data {
             # Skip if we couldn't parse the formula.
             next RANGE if !defined $sheetname;
 
-            # Skip if the name is unknown. Probably should throw exception.
-            next RANGE if !exists $worksheets{$sheetname};
+            # Die if the name is unknown since it indicates a user error in
+            # a chart series formula.
+            if ( !exists $worksheets{$sheetname} ) {
+                die "Unknown worksheet reference '$sheetname' in range "
+                  . "'$range' passed to add_series().\n";
+            }
 
             # Find the worksheet object based on the sheet name.
             my $worksheet = $worksheets{$sheetname};
