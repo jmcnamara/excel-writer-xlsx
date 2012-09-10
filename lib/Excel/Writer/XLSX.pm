@@ -601,6 +601,7 @@ The following methods are available through a new worksheet:
     conditional_formatting()
     add_table()
     get_name()
+    set_name()
     activate()
     select()
     hide()
@@ -1668,7 +1669,14 @@ The C<get_name()> method is used to retrieve the name of a worksheet. For exampl
         print $sheet->get_name();
     }
 
-For reasons related to the design of Excel::Writer::XLSX and to the internals of Excel there is no C<set_name()> method. The only way to set the worksheet name is via the C<add_worksheet()> method.
+
+
+
+=head2 set_name($name)
+
+The C<set_name()> method is used to set the name of a worksheet. For example:
+
+    $worksheet->set_name('My Worksheet');
 
 
 

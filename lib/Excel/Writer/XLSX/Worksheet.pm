@@ -364,6 +364,21 @@ sub get_name {
 
 ###############################################################################
 #
+# set_name().
+#
+# Set the worksheet name.
+#
+sub set_name {
+
+    my $self = shift;
+    my $name = shift;
+
+    $self->{_name} = $name;
+}
+
+
+###############################################################################
+#
 # select()
 #
 # Set this worksheet as a selected worksheet, i.e. the worksheet has its tab
