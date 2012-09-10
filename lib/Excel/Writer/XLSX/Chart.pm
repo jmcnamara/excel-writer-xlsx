@@ -3914,11 +3914,35 @@ Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
 
 Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
 
-=item * C<...>
+=back
+
+Chart subtypes are also supported in some cases:
+
+    $workbook->add_chart( type => 'bar', subtype => 'stacked' );
+
+The currently available subtypes are:
+
+    area
+        stacked
+        percent_stacked
+
+    bar
+        stacked
+        percent_stacked
+
+    column
+        stacked
+        percent_stacked
+
+    scatter
+        straight_with_markers
+        straight
+        smooth_with_markers
+        smooth
+
+
 
 More charts and sub-types will be supported in time. See the L</TODO> section.
-
-=back
 
 
 =head1 CHART METHODS

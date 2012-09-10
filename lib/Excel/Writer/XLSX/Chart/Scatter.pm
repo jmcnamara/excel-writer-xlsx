@@ -422,7 +422,7 @@ Once the object is created it can be configured via the following methods that a
 
 These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class specific methods or settings, if any, are explained below.
 
-=head1 Scatter Chart Methods
+=head1 Scatter Chart Subtypes
 
 The C<Scatter> chart module also supports the following sub-types:
 
