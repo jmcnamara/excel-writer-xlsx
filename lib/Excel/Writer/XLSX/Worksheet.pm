@@ -2445,6 +2445,17 @@ sub write_array_formula {
     $self->{_table}->[$row1]->[$col1] =
       [ $type, $formula, $xf, $range, $value ];
 
+
+    # Pad out the rest of the area with formatted zeroes.
+    if ( !$self->{_optimization} ) {
+        for my $row ( $row1 .. $row2 ) {
+            for my $col ( $col1 .. $col2 ) {
+                next if $row == $row1 and $col == $col1;
+                $self->write_number( $row, $col, 0, $xf );
+            }
+        }
+    }
+
     return 0;
 }
 
