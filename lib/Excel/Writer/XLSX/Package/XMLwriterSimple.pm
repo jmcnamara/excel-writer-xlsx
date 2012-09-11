@@ -237,6 +237,29 @@ sub dataElementEncoded {
 }
 
 
+
+sub stringElement {
+
+    my $self  = shift;
+    my $index = shift;
+    my $attr  = '';
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<c$attr t=\"s\"><v>$index</v></c>";
+}
+
+
+
+
+
+
+
 ###############################################################################
 #
 # characters()

@@ -6338,10 +6338,11 @@ sub _write_cell {
 
         # Write a string.
         if ( $self->{_optimization} == 0 ) {
-            push @attributes, ( 't' => 's' );
-            $self->{_writer}->startTag( 'c', @attributes );
-            $self->_write_cell_value( $token );
-            $self->{_writer}->endTag( 'c' );
+            $self->{_writer}->stringElement($token, @attributes);
+            # push @attributes, ( 't' => 's' );
+            # $self->{_writer}->startTag( 'c', @attributes );
+            # $self->_write_cell_value( $token );
+            # $self->{_writer}->endTag( 'c' );
         }
         else {
             push @attributes, ( 't' => 'inlineStr' );
