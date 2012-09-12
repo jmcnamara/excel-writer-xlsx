@@ -207,7 +207,13 @@ sub _write_si {
         push @attributes, ( 'xml:space' => 'preserve' );
     }
 
+    $self->{_writer}->siElement( $string, @attributes );
+    return;
+
     $self->{_writer}->startTag( 'si' );
+    $self->{_writer}->dataElement( 't', $string, @attributes );
+    $self->{_writer}->endTag( 'si' );
+    return;
 
     # Write any rich strings without further tags.
     if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {

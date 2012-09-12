@@ -259,6 +259,25 @@ sub stringElement {
     print { $self->{_fh} } "<c$attr t=\"s\"><v>$index</v></c>";
 }
 
+sub siElement {
+
+    my $self  = shift;
+    my $string = shift;
+    my $attr  = '';
+
+    $string = _escape_xml_chars( $string );
+
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<si$attr><t>$string</t></si>";
+}
+
 
 ###############################################################################
 #
