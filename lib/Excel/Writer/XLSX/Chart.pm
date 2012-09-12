@@ -3186,9 +3186,18 @@ sub _write_sp_pr {
 
     $self->{_writer}->startTag( 'c:spPr' );
 
-    # Write the a:solidFill element for solid charts such as pie and bar.
+    # Write the fill elements for solid charts such as pie and bar.
     if ( $series->{_fill}->{_defined} ) {
-        $self->_write_a_solid_fill( $series->{_fill} );
+
+        if ( $series->{_fill}->{none} ) {
+
+            # Write the a:noFill element.
+            $self->_write_a_no_fill();
+        }
+        else {
+            # Write the a:solidFill element.
+            $self->_write_a_solid_fill( $series->{_fill} );
+        }
     }
 
     # Write the a:ln element.
