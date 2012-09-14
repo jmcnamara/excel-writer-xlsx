@@ -2128,7 +2128,7 @@ sub _write_sheet {
     push @attributes, ( 'r:id' => $r_id );
 
 
-    $self->{_writer}->emptyTag( 'sheet', @attributes );
+    $self->{_writer}->emptyTagEncoded( 'sheet', @attributes );
 }
 
 

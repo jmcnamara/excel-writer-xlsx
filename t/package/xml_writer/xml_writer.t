@@ -190,9 +190,9 @@ TEST: {
 # Attributes
 TEST: {
 	initEnv();
-	$w->emptyTag("foo", "x" => "1>2");
+	$w->emptyTag("foo", "x" => "12");
 	$w->end();
-	checkResult("<foo x=\"1&gt;2\" />\n", 'Simple attributes');
+	checkResult("<foo x=\"12\" />\n", 'Simple attributes');
 };
 
 # Character data

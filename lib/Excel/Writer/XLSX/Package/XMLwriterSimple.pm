@@ -78,6 +78,29 @@ sub startTag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
+
+        $tag .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<$tag>";
+}
+
+
+###############################################################################
+#
+# startTag()
+#
+# Write an XML start tag with optional encoded attributes.
+#
+sub startTagEncoded {
+
+    my $self = shift;
+    my $tag  = shift;
+
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
         $value = _escape_xml_chars( $value );
 
         $tag .= qq( $key="$value");
@@ -118,6 +141,32 @@ sub emptyTag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
+
+        $tag .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+
+    # Note extra space before closing tag like XML::Writer.
+    print { $self->{_fh} } "<$tag />";
+
+}
+
+
+###############################################################################
+#
+# emptyTagEncoded()
+#
+# Write an empty XML tag with optional encoded attributes.
+#
+sub emptyTagEncoded {
+
+    my $self = shift;
+    my $tag  = shift;
+
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
         $value = _escape_xml_chars( $value );
 
         $tag .= qq( $key="$value");
@@ -136,9 +185,37 @@ sub emptyTag {
 # dataElement()
 #
 # Write an XML element containing data with optional attributes.
-# XML characters in the data are escaped.
+# XML characters in the data are encoded.
 #
 sub dataElement {
+
+    my $self    = shift;
+    my $tag     = shift;
+    my $data    = shift;
+    my $end_tag = $tag;
+
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
+
+        $tag .= qq( $key="$value");
+    }
+
+    $data = _escape_xml_chars( $data );
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<$tag>$data</$end_tag>";
+}
+
+
+###############################################################################
+#
+# dataElementEncoded()
+#
+# Write an XML element containing data with optional encoded attributes.
+# XML characters in the data are encoded.
+#
+sub dataElementEncoded {
 
     my $self    = shift;
     my $tag     = shift;
