@@ -4151,6 +4151,21 @@ sub _cell_to_rowcol {
 
 ###############################################################################
 #
+# _xl_rowcol_to_cell($row, $col)
+#
+# Optimised version of xl_rowcol_to_cell from Utility.pm for the inner loop
+# of write_cell().
+#
+
+our @col_names = ( 'A' .. 'XFD' );
+
+sub _xl_rowcol_to_cell {
+    return $col_names[ $_[1] ] . ( $_[0] + 1 );
+}
+
+
+###############################################################################
+#
 # _sort_pagebreaks()
 #
 # This is an internal method that is used to filter elements of the array of
@@ -6274,6 +6289,7 @@ sub _write_empty_row {
 }
 
 
+
 ###############################################################################
 #
 # _write_cell()
@@ -6309,7 +6325,7 @@ sub _write_cell {
          $xf_index = $xf->get_xf_index();
     }
 
-    my $range = xl_rowcol_to_cell( $row, $col );
+    my $range = _xl_rowcol_to_cell( $row, $col );
     my @attributes = ( 'r' => $range );
 
     # Add the cell format index.
