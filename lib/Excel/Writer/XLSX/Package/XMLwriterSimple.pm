@@ -72,22 +72,19 @@ sub xmlDecl {
 #
 sub startTag {
 
-    my $self       = shift;
-    my $tag        = shift;
-    my @attributes = @_;
-    local $\ = undef;    # Protect print from -l on commandline.
+    my $self = shift;
+    my $tag  = shift;
 
-    print { $self->{_fh} } "<$tag";
-
-    while ( @attributes ) {
-        my $key   = shift @attributes;
-        my $value = shift @attributes;
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
         $value = _escape_xml_chars( $value );
 
-        print { $self->{_fh} } qq( $key="$value");
+        $tag .= qq( $key="$value");
     }
 
-    print { $self->{_fh} } ">";
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<$tag>";
 }
 
 
@@ -115,23 +112,21 @@ sub endTag {
 #
 sub emptyTag {
 
-    my $self       = shift;
-    my $tag        = shift;
-    my @attributes = @_;
-    local $\ = undef;    # Protect print from -l on commandline.
+    my $self = shift;
+    my $tag  = shift;
 
-    print { $self->{_fh} } "<$tag";
-
-    while ( @attributes ) {
-        my $key   = shift @attributes;
-        my $value = shift @attributes;
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
         $value = _escape_xml_chars( $value );
 
-        print { $self->{_fh} } qq( $key="$value");
+        $tag .= qq( $key="$value");
     }
 
+    local $\ = undef;    # Protect print from -l on commandline.
+
     # Note extra space before closing tag like XML::Writer.
-    print { $self->{_fh} } " />";
+    print { $self->{_fh} } "<$tag />";
 
 }
 
@@ -145,27 +140,23 @@ sub emptyTag {
 #
 sub dataElement {
 
-    my $self       = shift;
-    my $tag        = shift;
-    my $data       = shift;
-    my @attributes = @_;
-    local $\ = undef;    # Protect print from -l on commandline.
+    my $self    = shift;
+    my $tag     = shift;
+    my $data    = shift;
+    my $end_tag = $tag;
 
-    print { $self->{_fh} } "<$tag";
-
-    while ( @attributes ) {
-        my $key   = shift @attributes;
-        my $value = shift @attributes;
+    while ( @_ ) {
+        my $key   = shift @_;
+        my $value = shift @_;
         $value = _escape_xml_chars( $value );
 
-        print { $self->{_fh} } qq( $key="$value");
+        $tag .= qq( $key="$value");
     }
 
     $data = _escape_xml_chars( $data );
 
-    print { $self->{_fh} } ">";
-    print { $self->{_fh} } $data;
-    print { $self->{_fh} } "</$tag>";
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<$tag>$data</$end_tag>";
 }
 
 
