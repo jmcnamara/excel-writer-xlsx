@@ -237,7 +237,12 @@ sub dataElementEncoded {
 }
 
 
-
+###############################################################################
+#
+# stringElement()
+#
+# Optimised tag writer for <c> cell string elements in the inner loop.
+#
 sub stringElement {
 
     my $self  = shift;
@@ -253,11 +258,6 @@ sub stringElement {
     local $\ = undef;    # Protect print from -l on commandline.
     print { $self->{_fh} } "<c$attr t=\"s\"><v>$index</v></c>";
 }
-
-
-
-
-
 
 
 ###############################################################################
