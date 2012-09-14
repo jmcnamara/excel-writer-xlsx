@@ -262,6 +262,29 @@ sub stringElement {
 
 ###############################################################################
 #
+# numberElement()
+#
+# Optimised tag writer for <c> cell number elements in the inner loop.
+#
+sub numberElement {
+
+    my $self  = shift;
+    my $index = shift;
+    my $attr  = '';
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<c$attr><v>$index</v></c>";
+}
+
+
+###############################################################################
+#
 # characters()
 #
 # For compatibility with XML::Writer only.

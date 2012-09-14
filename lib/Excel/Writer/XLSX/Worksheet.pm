@@ -6330,9 +6330,7 @@ sub _write_cell {
     if ( $type eq 'n' ) {
 
         # Write a number.
-        $self->{_writer}->startTag( 'c', @attributes );
-        $self->_write_cell_value( $token );
-        $self->{_writer}->endTag( 'c' );
+        $self->{_writer}->numberElement($token, @attributes);
     }
     elsif ( $type eq 's' ) {
 
