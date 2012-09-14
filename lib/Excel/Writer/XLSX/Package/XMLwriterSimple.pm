@@ -259,13 +259,18 @@ sub stringElement {
     print { $self->{_fh} } "<c$attr t=\"s\"><v>$index</v></c>";
 }
 
+
+###############################################################################
+#
+# siElement()
+#
+# Optimised tag writer for shared strings <si> elements.
+#
 sub siElement {
 
     my $self  = shift;
     my $string = shift;
     my $attr  = '';
-
-    $string = _escape_xml_chars( $string );
 
 
     while ( @_ ) {
@@ -274,8 +279,29 @@ sub siElement {
         $attr .= qq( $key="$value");
     }
 
+    $string = _escape_xml_chars( $string );
+
     local $\ = undef;    # Protect print from -l on commandline.
-    print { $self->{_fh} } "<si$attr><t>$string</t></si>";
+    print { $self->{_fh} } "<si><t$attr>$string</t></si>";
+}
+
+
+
+
+###############################################################################
+#
+# siRichElement()
+#
+# Optimised tag writer for shared strings <si> rich string elements.
+#
+sub siRichElement {
+
+    my $self  = shift;
+    my $string = shift;
+
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<si>$string</si>";
 }
 
 
@@ -357,7 +383,7 @@ sub getOutput {
 #
 sub _escape_xml_chars {
 
-    my $str = defined $_[0] ? $_[0] : '';
+    my $str = $_[0];
 
     return $str if $str !~ m/[&<>"]/;
 

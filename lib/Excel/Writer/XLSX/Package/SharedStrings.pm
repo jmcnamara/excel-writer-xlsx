@@ -207,31 +207,19 @@ sub _write_si {
         push @attributes, ( 'xml:space' => 'preserve' );
     }
 
-    $self->{_writer}->siElement( $string, @attributes );
-    return;
-
-    $self->{_writer}->startTag( 'si' );
-    $self->{_writer}->dataElement( 't', $string, @attributes );
-    $self->{_writer}->endTag( 'si' );
-    return;
 
     # Write any rich strings without further tags.
     if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
-        my $fh = $self->{_writer}->getOutput();
 
         # Prevent utf8 strings from getting double encoded.
         $string = decode_utf8( $string );
 
-        # Protect print from -l on commandline.
-        local $\ = undef;
-
-        print $fh $string;
+        $self->{_writer}->siRichElement( $string );
     }
     else {
-        $self->{_writer}->dataElement( 't', $string, @attributes );
+        $self->{_writer}->siElement( $string, @attributes );
     }
 
-    $self->{_writer}->endTag( 'si' );
 }
 
 
