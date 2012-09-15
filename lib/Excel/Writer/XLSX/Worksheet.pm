@@ -6355,9 +6355,6 @@ sub _write_cell {
             $self->{_writer}->stringElement($token, @attributes);
         }
         else {
-            push @attributes, ( 't' => 'inlineStr' );
-            $self->{_writer}->startTag( 'c', @attributes );
-            $self->{_writer}->startTag( 'is' );
 
             my $string = $token;
 
@@ -6367,23 +6364,19 @@ sub _write_cell {
 
             # Write any rich strings without further tags.
             if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
-                my $fh = $self->{_writer}->getOutput();
 
-                local $\ = undef;    # Protect print from -l on commandline.
-                print $fh $string;
+                $self->{_writer}->richInlineStr($string, @attributes );
             }
             else {
-                my @t_attributes;
 
                 # Add attribute to preserve leading or trailing whitespace.
+                my $preserve = 0;
                 if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
-                    push @t_attributes, ( 'xml:space' => 'preserve' );
+                    $preserve = 1;
                 }
-                $self->{_writer}->dataElement( 't', $string, @t_attributes );
-            }
 
-            $self->{_writer}->endTag( 'is' );
-            $self->{_writer}->endTag( 'c' );
+                $self->{_writer}->inlineStr( $string, $preserve, @attributes );
+            }
         }
     }
     elsif ( $type eq 'f' ) {

@@ -330,6 +330,60 @@ sub numberElement {
 
 ###############################################################################
 #
+# inlineStr()
+#
+# Optimised tag writer for inlineStr cell elements in the inner loop.
+#
+sub inlineStr {
+
+    my $self     = shift;
+    my $string   = shift;
+    my $preserve = shift;
+    my $attr     = '';
+    my $t_attr   = '';
+
+    # Set the <t> attribute to preserve whitespace.
+    $t_attr = ' xml:space="preserve"' if $preserve;
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    $string = _escape_xml_chars( $string );
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} }
+      "<c$attr t=\"inlineStr\"><is><t$t_attr>$string</t></is></c>";
+}
+
+
+###############################################################################
+#
+# richInlineStr()
+#
+# Optimised tag writer for rich inlineStr cell elements in the inner loop.
+#
+sub richInlineStr {
+
+    my $self  = shift;
+    my $string = shift;
+    my $attr  = '';
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<c$attr t=\"inlineStr\"><is>$string</is></c>";
+}
+
+
+###############################################################################
+#
 # characters()
 #
 # For compatibility with XML::Writer only.
