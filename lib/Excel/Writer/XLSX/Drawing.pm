@@ -21,7 +21,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Worksheet;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.50';
+our $VERSION = '0.51';
 
 
 ###############################################################################

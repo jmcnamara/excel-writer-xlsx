@@ -1,8 +1,45 @@
 Revision history for Perl module Excel::Writer::XLSX.
 
-     + New feature.
+     + New feature/improvement.
      - Removed/deprecated feature.
      ! Bug fix.
+
+
+
+
+0.51 September 16 2012
+
+    + Speed optimisations.
+
+      This release contains a series of optimisations aimed
+      at increasing the speed of Excel::Writer::XLSX. The
+      overall improvement is around 66%.
+      See the SPEED AND MEMORY USAGE section of the documentation.
+
+    + Memory usage optimisations.
+
+      This fixes an issue where the memory used for the worksheet
+      data tables was freed but then brought back into usage due
+      to the use of an array as the base data structure. This
+      meant that the memory usage still continued to grow with
+      large row counts.
+
+
+    ! Added warning about Excel limit to 65,530 urls per worksheet.
+
+    ! Limit URLs to Excel's limit of 255 chars. Fixes Issue #26.
+
+    ! Fix for whitespace in urls. Fixes Issue #25.
+
+    ! Fix for solid fill of type 'none' is chart series.
+      Closes issue #27 reported on Stack Overflow.
+
+    ! Modified write_array_formula() to apply format over full range.
+      Fixes issue #18.
+
+    ! Fix for issue with chart formula referring to non-existent sheet name.
+      It is now a fatal error to specify a chart series formula that
+      refers to an non-existent worksheet name. Fixes issue #17.
 
 
 0.50 September 9 2012
@@ -21,7 +58,7 @@ Revision history for Perl module Excel::Writer::XLSX.
        storing and restoring the properties during copy.
 
      ! Fix for issue #15: write_url with local sub directory.
-       Local sub-directories were incorrectly treated as 
+       Local sub-directories were incorrectly treated as
        file:// external.
 
      ! Fix for for issue #14: Non-numeric data in chart value axes

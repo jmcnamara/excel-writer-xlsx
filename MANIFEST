@@ -274,6 +274,8 @@ t/package/vml/sub_write_textbox.t
 t/package/vml/vml_01.t
 t/package/xml_writer/sub_write_xml_declaration.t
 t/package/xml_writer/xml_writer.t
+t/regression/array_formula01.t
+t/regression/array_formula02.t
 t/regression/autofilter00.t
 t/regression/autofilter01.t
 t/regression/autofilter02.t
@@ -341,6 +343,8 @@ t/regression/chart_column01.t
 t/regression/chart_column02.t
 t/regression/chart_column03.t
 t/regression/chart_column04.t
+t/regression/chart_column05.t
+t/regression/chart_column06.t
 t/regression/chart_crossing01.t
 t/regression/chart_crossing02.t
 t/regression/chart_crossing03.t
@@ -361,6 +365,8 @@ t/regression/chart_format13.t
 t/regression/chart_format14.t
 t/regression/chart_format15.t
 t/regression/chart_format16.t
+t/regression/chart_format17.t
+t/regression/chart_format18.t
 t/regression/chart_line01.t
 t/regression/chart_line02.t
 t/regression/chart_name01.t
@@ -414,6 +420,9 @@ t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
 t/regression/defined_name01.t
+t/regression/escapes01.t
+t/regression/escapes02.t
+t/regression/escapes03.t
 t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
@@ -441,6 +450,8 @@ t/regression/hyperlink13.t
 t/regression/hyperlink14.t
 t/regression/hyperlink15.t
 t/regression/hyperlink16.t
+t/regression/hyperlink17.t
+t/regression/hyperlink18.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -460,6 +471,11 @@ t/regression/images/yellow.png
 t/regression/optimize01.t
 t/regression/optimize02.t
 t/regression/optimize03.t
+t/regression/optimize04.t
+t/regression/optimize05.t
+t/regression/optimize06.t
+t/regression/optimize07.t
+t/regression/optimize08.t
 t/regression/outline01.t
 t/regression/outline02.t
 t/regression/outline03.t
@@ -550,6 +566,8 @@ t/regression/taint01.t
 t/regression/taint02.t
 t/regression/utf8_01.t
 t/regression/utf8_02.t
+t/regression/xlsx_files/array_formula01.xlsx
+t/regression/xlsx_files/array_formula02.xlsx
 t/regression/xlsx_files/autofilter00.xlsx
 t/regression/xlsx_files/autofilter01.xlsx
 t/regression/xlsx_files/autofilter02.xlsx
@@ -617,6 +635,8 @@ t/regression/xlsx_files/chart_column01.xlsx
 t/regression/xlsx_files/chart_column02.xlsx
 t/regression/xlsx_files/chart_column03.xlsx
 t/regression/xlsx_files/chart_column04.xlsx
+t/regression/xlsx_files/chart_column05.xlsx
+t/regression/xlsx_files/chart_column06.xlsx
 t/regression/xlsx_files/chart_crossing01.xlsx
 t/regression/xlsx_files/chart_crossing02.xlsx
 t/regression/xlsx_files/chart_crossing03.xlsx
@@ -637,6 +657,8 @@ t/regression/xlsx_files/chart_format13.xlsx
 t/regression/xlsx_files/chart_format14.xlsx
 t/regression/xlsx_files/chart_format15.xlsx
 t/regression/xlsx_files/chart_format16.xlsx
+t/regression/xlsx_files/chart_format17.xlsx
+t/regression/xlsx_files/chart_format18.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
 t/regression/xlsx_files/chart_name01.xlsx
@@ -689,6 +711,9 @@ t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
 t/regression/xlsx_files/defined_name01.xlsx
+t/regression/xlsx_files/escapes01.xlsx
+t/regression/xlsx_files/escapes02.xlsx
+t/regression/xlsx_files/escapes03.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
@@ -716,6 +741,8 @@ t/regression/xlsx_files/hyperlink13.xlsx
 t/regression/xlsx_files/hyperlink14.xlsx
 t/regression/xlsx_files/hyperlink15.xlsx
 t/regression/xlsx_files/hyperlink16.xlsx
+t/regression/xlsx_files/hyperlink17.xlsx
+t/regression/xlsx_files/hyperlink18.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -726,6 +753,11 @@ t/regression/xlsx_files/image07.xlsx
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
 t/regression/xlsx_files/optimize03.xlsx
+t/regression/xlsx_files/optimize04.xlsx
+t/regression/xlsx_files/optimize05.xlsx
+t/regression/xlsx_files/optimize06.xlsx
+t/regression/xlsx_files/optimize07.xlsx
+t/regression/xlsx_files/optimize08.xlsx
 t/regression/xlsx_files/outline01.xlsx
 t/regression/xlsx_files/outline02.xlsx
 t/regression/xlsx_files/outline03.xlsx
