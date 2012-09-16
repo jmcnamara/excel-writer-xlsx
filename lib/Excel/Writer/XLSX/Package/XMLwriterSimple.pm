@@ -465,13 +465,12 @@ sub _escape_xml_chars {
 
     my $str = $_[0];
 
-    return $str if $str !~ m/[&<>"]/;
+    return $str if $str !~ m/[&<>]/;
 
     for ( $str ) {
         s/&/&amp;/g;
         s/</&lt;/g;
         s/>/&gt;/g;
-        s/"/&quot;/g;
     }
 
     return $str;

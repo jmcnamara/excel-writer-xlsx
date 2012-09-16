@@ -121,7 +121,7 @@ __DATA__
       <formula>$A$2&lt;80</formula>
     </cfRule>
     <cfRule type="expression" priority="3">
-      <formula>&quot;1+2&quot;</formula>
+      <formula>"1+2"</formula>
     </cfRule>
     <cfRule type="expression" priority="4">
       <formula>$A$3&gt;$A$4</formula>

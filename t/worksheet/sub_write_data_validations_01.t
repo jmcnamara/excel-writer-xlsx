@@ -136,7 +136,7 @@ _is_deep_diff( $got, $expected, $caption );
 # Data validation example 4 from docs.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="A4"><formula1>&quot;open,high,close&quot;</formula1></dataValidation></dataValidations>';
+$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="A4"><formula1>"open,high,close"</formula1></dataValidation></dataValidations>';
 
 $worksheet = _new_worksheet(\$got);
 

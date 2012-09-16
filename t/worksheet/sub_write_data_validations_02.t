@@ -590,7 +590,7 @@ $worksheet->data_validation(
 $worksheet->_write_data_validations();
 
 $caption  = " \tData validation api: explicit list";
-$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>&quot;a,bb,ccc&quot;</formula1></dataValidation></dataValidations>';
+$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>"a,bb,ccc"</formula1></dataValidation></dataValidations>';
 
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
@@ -615,7 +615,7 @@ $worksheet->data_validation(
 $worksheet->_write_data_validations();
 
 $caption  = " \tData validation api: list with no dropdown";
-$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showDropDown="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>&quot;a,bb,ccc&quot;</formula1></dataValidation></dataValidations>';
+$expected = '<dataValidations count="1"><dataValidation type="list" allowBlank="1" showDropDown="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>"a,bb,ccc"</formula1></dataValidation></dataValidations>';
 
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
