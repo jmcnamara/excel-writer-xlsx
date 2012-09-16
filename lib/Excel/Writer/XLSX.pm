@@ -5832,13 +5832,57 @@ Perl 5.8.2.
 
 C<Spreadsheet::WriteExcel> was written to optimise speed and reduce memory usage. However, these design goals meant that it wasn't easy to implement features that many users requested such as writing formatting and data separately.
 
-As a result C<Excel::Writer::XLSX> takes a different design approach and holds a lot more data in memory so that it is functionally more flexible. The effect of this is that Excel::Writer::XLSX is about 50% slower than Spreadsheet::WriteExcel and can use significantly more memory. When you add to this the extended row and column ranges it is possible to run out of memory creating very large files. This was almost never an issue with Spreadsheet::WriteExcel.
+As a result C<Excel::Writer::XLSX> takes a different design approach and holds a lot more data in memory so that it is functionally more flexible.
+
+The effect of this is that Excel::Writer::XLSX is about 30% slower than Spreadsheet::WriteExcel and uses 5 times more memory.
+
+When you add to this the extended row and column ranges it is possible to run out of memory creating very large files. This was almost never an issue with Spreadsheet::WriteExcel.
 
 This memory usage can be reduced almost completely by using the Workbook C<set_optimization()> method:
 
     $workbook->set_optimization();
 
-The trade-off is that you won't be able to take advantage of any new features that manipulate cell data, after it is written, with this optimization turned on.
+This also gives an increase in performance to within 1-10% of Spreadsheet::WriteExcel, see below.
+
+The trade-off is that you won't be able to take advantage of any new features that manipulate cell data after it is written. One such feature is tables.
+
+
+=head2 Performance figures
+
+The performance figures below show execution speed and memory usage for 60 columns x N rows for a 50/50 mixture of strings and numbers. Percentage speeds are relative to Spreadsheet::WriteExcel.
+
+    Excel::Writer::XLSX
+         Rows  Time (s)    Memory (bytes)  Rel. Time
+          400      0.66         6,586,254       129%
+          800      1.26        13,099,422       125%
+         1600      2.55        26,126,361       123%
+         3200      5.16        52,211,284       125%
+         6400     10.47       104,401,428       128%
+        12800     21.48       208,784,519       131%
+        25600     43.90       417,700,746       126%
+        51200     88.52       835,900,298       126%
+
+    Excel::Writer::XLSX + set_optimisation()
+         Rows  Time (s)    Memory (bytes)  Rel. Time
+          400      0.70            63,059       135%
+          800      1.10            63,059       110%
+         1600      2.30            63,062       111%
+         3200      4.44            63,062       107%
+         6400      8.91            63,062       109%
+        12800     17.69            63,065       108%
+        25600     35.15            63,065       101%
+        51200     70.67            63,065       101%
+
+    Spreadsheet::WriteExcel
+         Rows  Time (s)    Memory (bytes)
+          400      0.51         1,265,583
+          800      1.01         2,424,855
+         1600      2.07         4,743,400
+         3200      4.14         9,411,139
+         6400      8.20        18,766,915
+        12800     16.39        37,478,468
+        25600     34.72        75,044,423
+        51200     70.21       150,543,431
 
 
 =head1 DOWNLOADING
@@ -6006,6 +6050,8 @@ If you wish to view Excel files on a Windows platform which doesn't have Excel i
 =head1 BUGS
 
 Some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. Applying all available Service Packs to Excel should fix this.
+
+If you run out of memory creating large worksheets use the C<set_optimization()> method. See L</SPEED AND MEMORY USAGE> for more background information.
 
 When using Excel::Writer::XLSX charts with Perl packagers such as PAR or Cava you should explicitly include the chart that you are trying to create in your C<use> statements. This isn't a bug as such but it might help someone from banging their head off a wall:
 
