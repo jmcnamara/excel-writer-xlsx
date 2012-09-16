@@ -174,6 +174,7 @@ sub new {
 
     $self->{_last_shape_id}          = 1;
     $self->{_rel_count}              = 0;
+    $self->{_hlink_count}            = 0;
     $self->{_hlink_refs}             = [];
     $self->{_external_hyper_links}   = [];
     $self->{_external_drawing_links} = [];
@@ -2498,6 +2499,7 @@ sub outline_settings {
 #         -2 : row or column out of range
 #         -3 : long string truncated to 32767 chars
 #         -4 : URL longer than 255 characters
+#         -5 : Exceeds limit of 65_530 urls per worksheet
 #
 sub write_url {
 
@@ -2601,8 +2603,18 @@ sub write_url {
     if ( length $url > 255 ) {
         carp "Ignoring URL '$url' > 255 characters since it exceeds Excel's "
           . "limit for URLS. See LIMITATIONS section of the "
-          . "Excel::Writer::XLSX documentation.\n";
+          . "Excel::Writer::XLSX documentation.";
         return -4;
+    }
+
+    # Check the limit of URLS per worksheet.
+    $self->{_hlink_count}++;
+
+    if ( $self->{_hlink_count} > 65_530 ) {
+        carp "Ignoring URL '$url' since it exceeds Excel's limit of 65,530 "
+          . "URLS per worksheet. See LIMITATIONS section of the "
+          . "Excel::Writer::XLSX documentation.";
+        return -5;
     }
 
 
