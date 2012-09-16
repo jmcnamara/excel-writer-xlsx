@@ -5677,6 +5677,11 @@ The following limits are imposed by Excel 2007+:
     Maximum chars in a sheet name        31
     Maximum chars in a header/footer     254
 
+    Maximum characters in hyperlink      255
+    Maximum number of unique hyperlinks* 65,530
+
+* Per worksheet. Excel allows a greater number of non-unique hyperlinks if they are contiguous and can be grouped into a single range. This will be supported in a later version of Excel::Writer::XLSX if possible.
+
 
 
 

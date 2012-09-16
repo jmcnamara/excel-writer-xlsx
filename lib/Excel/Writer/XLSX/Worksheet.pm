@@ -2497,7 +2497,7 @@ sub outline_settings {
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
 #         -3 : long string truncated to 32767 chars
-#         -4 : url contains whitespace
+#         -4 : URL longer than 255 characters
 #
 sub write_url {
 
@@ -2596,6 +2596,15 @@ sub write_url {
         # Treat as a default external link now that the data has been modified.
         $link_type = 1;
     }
+
+    # Excel limits escaped URL to 255 characters.
+    if ( length $url > 255 ) {
+        carp "Ignoring URL '$url' > 255 characters since it exceeds Excel's "
+          . "limit for URLS. See LIMITATIONS section of the "
+          . "Excel::Writer::XLSX documentation.\n";
+        return -4;
+    }
+
 
     # Write previous row if in in-line string optimization mode.
     if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
