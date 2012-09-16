@@ -2567,12 +2567,8 @@ sub write_url {
     # different characteristics that we have to account for.
     if ( $link_type == 1 ) {
 
-        # Check for white space in url.
-        if ($url =~ /[\s\x00]/) {
-            carp "White space in url '$url' is not allowed by Excel";
-            return -4;
-
-        }
+        # Substiture white space in url.
+        $url =~ s/[\s\x00]/%20/;
 
         # Ordinary URL style external links don't have a "location" string.
         $str = undef;
