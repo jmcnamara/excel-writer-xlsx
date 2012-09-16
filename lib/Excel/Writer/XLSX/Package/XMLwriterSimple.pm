@@ -330,6 +330,32 @@ sub numberElement {
 
 ###############################################################################
 #
+# formulaElement()
+#
+# Optimised tag writer for <c> cell formula elements in the inner loop.
+#
+sub formulaElement {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $value   = shift;
+    my $attr    = '';
+
+    while ( @_ ) {
+        my $key   = shift;
+        my $value = shift;
+        $attr .= qq( $key="$value");
+    }
+
+    $formula = _escape_xml_chars( $formula );
+
+    local $\ = undef;    # Protect print from -l on commandline.
+    print { $self->{_fh} } "<c$attr><f>$formula</f><v>$value</v></c>";
+}
+
+
+###############################################################################
+#
 # inlineStr()
 #
 # Optimised tag writer for inlineStr cell elements in the inner loop.
