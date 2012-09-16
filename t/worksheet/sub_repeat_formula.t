@@ -38,7 +38,7 @@ $col      = 0;
 $formula = $worksheet->store_formula( '=SUM(A1:A10)' );
 $worksheet->repeat_formula( $row, $col, $formula, $format );
 
-$got = $worksheet->{_table}->[$row]->[$col]->[1];
+$got = $worksheet->{_table}->{$row}->{$col}->[1];
 
 is( $got, $expected, $caption );
 
@@ -55,7 +55,7 @@ $col      = 0;
 $formula = $worksheet->store_formula( '=SUM(A1:A10)' );
 $worksheet->repeat_formula( $row, $col, $formula, $format, 'A1', 'A2' );
 
-$got = $worksheet->{_table}->[$row]->[$col]->[1];
+$got = $worksheet->{_table}->{$row}->{$col}->[1];
 
 is( $got, $expected, $caption );
 
@@ -72,7 +72,7 @@ $col      = 0;
 $formula = $worksheet->store_formula( '=SUM(A1:A10)' );
 $worksheet->repeat_formula( $row, $col, $formula, $format, qr/^A1$/, 'A2' );
 
-$got = $worksheet->{_table}->[$row]->[$col]->[1];
+$got = $worksheet->{_table}->{$row}->{$col}->[1];
 
 is( $got, $expected, $caption );
 
@@ -89,7 +89,7 @@ $col      = 0;
 $formula = $worksheet->store_formula( 'A1+A1' );
 $worksheet->repeat_formula( $row, $col, $formula, $format, ('A1', 'A2') x 2 );
 
-$got = $worksheet->{_table}->[$row]->[$col]->[1];
+$got = $worksheet->{_table}->{$row}->{$col}->[1];
 
 is( $got, $expected, $caption );
 
@@ -106,7 +106,7 @@ $col      = 0;
 $formula = $worksheet->store_formula( 'A1 + SIN(A1)' );
 $worksheet->repeat_formula( $row, $col, $formula, $format, (qr/^A1$/, 'A10') x 2 );
 
-$got = $worksheet->{_table}->[$row]->[$col]->[1];
+$got = $worksheet->{_table}->{$row}->{$col}->[1];
 
 is( $got, $expected, $caption );
 

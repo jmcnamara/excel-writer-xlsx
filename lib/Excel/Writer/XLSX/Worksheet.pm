@@ -151,7 +151,7 @@ sub new {
 
     $self->{prev_col} = -1;
 
-    $self->{_table} = [];
+    $self->{_table} = {};
     $self->{_merge} = [];
 
     $self->{_has_comments}     = 0;
@@ -2062,7 +2062,7 @@ sub write_number {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $num, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $num, $xf ];
 
     return 0;
 }
@@ -2120,7 +2120,7 @@ sub write_string {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $index, $xf ];
 
     return $str_error;
 }
@@ -2269,7 +2269,7 @@ sub write_rich_string {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $index, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $index, $xf ];
 
     return 0;
 }
@@ -2319,7 +2319,7 @@ sub write_blank {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, undef, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, undef, $xf ];
 
     return 0;
 }
@@ -2372,7 +2372,7 @@ sub write_formula {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $formula, $xf, $value ];
+    $self->{_table}->{$row}->{$col} = [ $type, $formula, $xf, $value ];
 
     return 0;
 }
@@ -2442,7 +2442,7 @@ sub write_array_formula {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row1]->[$col1] =
+    $self->{_table}->{$row1}->{$col1} =
       [ $type, $formula, $xf, $range, $value ];
 
 
@@ -2606,7 +2606,7 @@ sub write_url {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] =
+    $self->{_table}->{$row}->{$col} =
 
       # 0      1       2    3           4     5     6
       [ $type, $index, $xf, $link_type, $url, $str, $tip ];
@@ -2661,7 +2661,7 @@ sub write_date_time {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->[$row]->[$col] = [ $type, $date_time, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $date_time, $xf ];
 
     return $str_error;
 }
@@ -4804,14 +4804,14 @@ sub _get_range_data {
     for my $row_num ( $row_start .. $row_end ) {
 
         # Store undef if row doesn't exist.
-        if ( !$self->{_table}->[$row_num] ) {
+        if ( ! exists $self->{_table}->{$row_num} ) {
             push @data, undef;
             next;
         }
 
         for my $col_num ( $col_start .. $col_end ) {
 
-            if ( my $cell = $self->{_table}->[$row_num]->[$col_num] ) {
+            if ( my $cell = $self->{_table}->{$row_num}->{$col_num} ) {
 
                 my $type  = $cell->[0];
                 my $token = $cell->[1];
@@ -6049,7 +6049,7 @@ sub _write_rows {
 
         # Skip row if it doesn't contain row formatting, cell data or a comment.
         if (   !$self->{_set_rows}->{$row_num}
-            && !$self->{_table}->[$row_num]
+            && !$self->{_table}->{$row_num}
             && !$self->{_comments}->{$row_num} )
         {
             next;
@@ -6059,7 +6059,7 @@ sub _write_rows {
         my $span       = $self->{_row_spans}->[$span_index];
 
         # Write the cells if the row contains data.
-        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+        if ( my $row_ref = $self->{_table}->{$row_num} ) {
 
             if ( !$self->{_set_rows}->{$row_num} ) {
                 $self->_write_row( $row_num, $span );
@@ -6071,7 +6071,7 @@ sub _write_rows {
 
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
-                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                if ( my $col_ref = $self->{_table}->{$row_num}->{$col_num} ) {
                     $self->_write_cell( $row_num, $col_num, $col_ref );
                 }
             }
@@ -6113,14 +6113,14 @@ sub _write_single_row {
 
     # Skip row if it doesn't contain row formatting, cell data or a comment.
     if (   !$self->{_set_rows}->{$row_num}
-        && !$self->{_table}->[$row_num]
+        && !$self->{_table}->{$row_num}
         && !$self->{_comments}->{$row_num} )
     {
         return;
     }
 
     # Write the cells if the row contains data.
-    if ( my $row_ref = $self->{_table}->[$row_num] ) {
+    if ( my $row_ref = $self->{_table}->{$row_num} ) {
 
         if ( !$self->{_set_rows}->{$row_num} ) {
             $self->_write_row( $row_num );
@@ -6131,7 +6131,7 @@ sub _write_single_row {
         }
 
         for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
-            if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+            if ( my $col_ref = $self->{_table}->{$row_num}->{$col_num} ) {
                 $self->_write_cell( $row_num, $col_num, $col_ref );
             }
         }
@@ -6146,7 +6146,7 @@ sub _write_single_row {
     }
 
     # Reset table.
-    $self->{_table} = [];
+    $self->{_table} = {};
 
 }
 
@@ -6172,10 +6172,10 @@ sub _calculate_spans {
     for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
 
         # Calculate spans for cell data.
-        if ( my $row_ref = $self->{_table}->[$row_num] ) {
+        if ( my $row_ref = $self->{_table}->{$row_num} ) {
 
             for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
-                if ( my $col_ref = $self->{_table}->[$row_num]->[$col_num] ) {
+                if ( my $col_ref = $self->{_table}->{$row_num}->{$col_num} ) {
 
                     if ( !defined $span_min ) {
                         $span_min = $col_num;
