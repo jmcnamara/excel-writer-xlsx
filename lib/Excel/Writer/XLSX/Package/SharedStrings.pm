@@ -42,7 +42,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}       = undef;
     $self->{_strings}      = [];
     $self->{_string_count} = 0;
     $self->{_unique_count} = 0;
@@ -63,8 +62,6 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
 
     # Write the sst table.
@@ -74,11 +71,11 @@ sub _assemble_xml_file {
     $self->_write_sst_strings();
 
     # Close the sst tag.
-    $self->{_writer}->endTag( 'sst' );
+    $self->endTag( 'sst' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -158,7 +155,7 @@ sub _write_sst {
         'uniqueCount' => $unique_count,
     );
 
-    $self->{_writer}->startTag( 'sst', @attributes );
+    $self->startTag( 'sst', @attributes );
 }
 
 
@@ -214,10 +211,10 @@ sub _write_si {
         # Prevent utf8 strings from getting double encoded.
         $string = decode_utf8( $string );
 
-        $self->{_writer}->siRichElement( $string );
+        $self->siRichElement( $string );
     }
     else {
-        $self->{_writer}->siElement( $string, @attributes );
+        $self->siElement( $string, @attributes );
     }
 
 }

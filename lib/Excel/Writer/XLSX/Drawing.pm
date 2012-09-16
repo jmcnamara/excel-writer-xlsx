@@ -42,7 +42,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}      = undef;
     $self->{_drawings}    = [];
     $self->{_embedded}    = 0;
     $self->{_orientation} = 0;
@@ -62,8 +61,6 @@ sub new {
 sub _assemble_xml_file {
 
     my $self = shift;
-
-    return unless $self->{_writer};
 
     $self->_write_xml_declaration;
 
@@ -87,11 +84,11 @@ sub _assemble_xml_file {
         $self->_write_absolute_anchor( ++$index );
     }
 
-    $self->{_writer}->endTag( 'xdr:wsDr' );
+    $self->endTag( 'xdr:wsDr' );
 
     # Close the XM writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -141,7 +138,7 @@ sub _write_drawing_workspace {
         'xmlns:a'   => $xmlns_a,
     );
 
-    $self->{_writer}->startTag( 'xdr:wsDr', @attributes );
+    $self->startTag( 'xdr:wsDr', @attributes );
 }
 
 
@@ -182,7 +179,7 @@ sub _write_two_cell_anchor {
     # Add editAs attribute for shapes.
     push @attributes, ( editAs => $shape->{_editAs} ) if $shape->{_editAs};
 
-    $self->{_writer}->startTag( 'xdr:twoCellAnchor', @attributes );
+    $self->startTag( 'xdr:twoCellAnchor', @attributes );
 
     # Write the xdr:from element.
     $self->_write_from(
@@ -225,7 +222,7 @@ sub _write_two_cell_anchor {
     # Write the xdr:clientData element.
     $self->_write_client_data();
 
-    $self->{_writer}->endTag( 'xdr:twoCellAnchor' );
+    $self->endTag( 'xdr:twoCellAnchor' );
 }
 
 
@@ -240,7 +237,7 @@ sub _write_absolute_anchor {
     my $self  = shift;
     my $index = shift;
 
-    $self->{_writer}->startTag( 'xdr:absoluteAnchor' );
+    $self->startTag( 'xdr:absoluteAnchor' );
 
     # Different co-ordinates for horizonatal (= 0) and vertical (= 1).
     if ( $self->{_orientation} == 0 ) {
@@ -269,7 +266,7 @@ sub _write_absolute_anchor {
     # Write the xdr:clientData element.
     $self->_write_client_data();
 
-    $self->{_writer}->endTag( 'xdr:absoluteAnchor' );
+    $self->endTag( 'xdr:absoluteAnchor' );
 }
 
 
@@ -287,7 +284,7 @@ sub _write_from {
     my $col_offset = shift;
     my $row_offset = shift;
 
-    $self->{_writer}->startTag( 'xdr:from' );
+    $self->startTag( 'xdr:from' );
 
     # Write the xdr:col element.
     $self->_write_col( $col );
@@ -301,7 +298,7 @@ sub _write_from {
     # Write the xdr:rowOff element.
     $self->_write_row_off( $row_offset );
 
-    $self->{_writer}->endTag( 'xdr:from' );
+    $self->endTag( 'xdr:from' );
 }
 
 
@@ -319,7 +316,7 @@ sub _write_to {
     my $col_offset = shift;
     my $row_offset = shift;
 
-    $self->{_writer}->startTag( 'xdr:to' );
+    $self->startTag( 'xdr:to' );
 
     # Write the xdr:col element.
     $self->_write_col( $col );
@@ -333,7 +330,7 @@ sub _write_to {
     # Write the xdr:rowOff element.
     $self->_write_row_off( $row_offset );
 
-    $self->{_writer}->endTag( 'xdr:to' );
+    $self->endTag( 'xdr:to' );
 }
 
 
@@ -348,7 +345,7 @@ sub _write_col {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'xdr:col', $data );
+    $self->dataElement( 'xdr:col', $data );
 }
 
 
@@ -363,7 +360,7 @@ sub _write_col_off {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'xdr:colOff', $data );
+    $self->dataElement( 'xdr:colOff', $data );
 }
 
 
@@ -378,7 +375,7 @@ sub _write_row {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'xdr:row', $data );
+    $self->dataElement( 'xdr:row', $data );
 }
 
 
@@ -393,7 +390,7 @@ sub _write_row_off {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'xdr:rowOff', $data );
+    $self->dataElement( 'xdr:rowOff', $data );
 }
 
 
@@ -414,7 +411,7 @@ sub _write_pos {
         'y' => $y,
     );
 
-    $self->{_writer}->emptyTag( 'xdr:pos', @attributes );
+    $self->emptyTag( 'xdr:pos', @attributes );
 }
 
 
@@ -435,7 +432,7 @@ sub _write_ext {
         'cy' => $cy,
     );
 
-    $self->{_writer}->emptyTag( 'xdr:ext', @attributes );
+    $self->emptyTag( 'xdr:ext', @attributes );
 }
 
 
@@ -454,7 +451,7 @@ sub _write_graphic_frame {
 
     my @attributes = ( 'macro' => $macro );
 
-    $self->{_writer}->startTag( 'xdr:graphicFrame', @attributes );
+    $self->startTag( 'xdr:graphicFrame', @attributes );
 
     # Write the xdr:nvGraphicFramePr element.
     $self->_write_nv_graphic_frame_pr( $index, $name );
@@ -465,7 +462,7 @@ sub _write_graphic_frame {
     # Write the a:graphic element.
     $self->_write_atag_graphic( $index );
 
-    $self->{_writer}->endTag( 'xdr:graphicFrame' );
+    $self->endTag( 'xdr:graphicFrame' );
 }
 
 
@@ -485,7 +482,7 @@ sub _write_nv_graphic_frame_pr {
         $name = 'Chart ' . $index;
     }
 
-    $self->{_writer}->startTag( 'xdr:nvGraphicFramePr' );
+    $self->startTag( 'xdr:nvGraphicFramePr' );
 
     # Write the xdr:cNvPr element.
     $self->_write_c_nv_pr( $index + 1, $name );
@@ -493,7 +490,7 @@ sub _write_nv_graphic_frame_pr {
     # Write the xdr:cNvGraphicFramePr element.
     $self->_write_c_nv_graphic_frame_pr();
 
-    $self->{_writer}->endTag( 'xdr:nvGraphicFramePr' );
+    $self->endTag( 'xdr:nvGraphicFramePr' );
 }
 
 
@@ -520,7 +517,7 @@ sub _write_c_nv_pr {
         push @attributes, ( descr => $descr );
     }
 
-    $self->{_writer}->emptyTag( 'xdr:cNvPr', @attributes );
+    $self->emptyTag( 'xdr:cNvPr', @attributes );
 }
 
 
@@ -535,15 +532,15 @@ sub _write_c_nv_graphic_frame_pr {
     my $self = shift;
 
     if ( $self->{_embedded} ) {
-        $self->{_writer}->emptyTag( 'xdr:cNvGraphicFramePr' );
+        $self->emptyTag( 'xdr:cNvGraphicFramePr' );
     }
     else {
-        $self->{_writer}->startTag( 'xdr:cNvGraphicFramePr' );
+        $self->startTag( 'xdr:cNvGraphicFramePr' );
 
         # Write the a:graphicFrameLocks element.
         $self->_write_a_graphic_frame_locks();
 
-        $self->{_writer}->endTag( 'xdr:cNvGraphicFramePr' );
+        $self->endTag( 'xdr:cNvGraphicFramePr' );
     }
 }
 
@@ -561,7 +558,7 @@ sub _write_a_graphic_frame_locks {
 
     my @attributes = ( 'noGrp' => $no_grp );
 
-    $self->{_writer}->emptyTag( 'a:graphicFrameLocks', @attributes );
+    $self->emptyTag( 'a:graphicFrameLocks', @attributes );
 }
 
 
@@ -575,7 +572,7 @@ sub _write_xfrm {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'xdr:xfrm' );
+    $self->startTag( 'xdr:xfrm' );
 
     # Write the xfrmOffset element.
     $self->_write_xfrm_offset();
@@ -583,7 +580,7 @@ sub _write_xfrm {
     # Write the xfrmOffset element.
     $self->_write_xfrm_extension();
 
-    $self->{_writer}->endTag( 'xdr:xfrm' );
+    $self->endTag( 'xdr:xfrm' );
 }
 
 
@@ -604,7 +601,7 @@ sub _write_xfrm_offset {
         'y' => $y,
     );
 
-    $self->{_writer}->emptyTag( 'a:off', @attributes );
+    $self->emptyTag( 'a:off', @attributes );
 }
 
 
@@ -625,7 +622,7 @@ sub _write_xfrm_extension {
         'cy' => $y,
     );
 
-    $self->{_writer}->emptyTag( 'a:ext', @attributes );
+    $self->emptyTag( 'a:ext', @attributes );
 }
 
 
@@ -640,12 +637,12 @@ sub _write_atag_graphic {
     my $self  = shift;
     my $index = shift;
 
-    $self->{_writer}->startTag( 'a:graphic' );
+    $self->startTag( 'a:graphic' );
 
     # Write the a:graphicData element.
     $self->_write_atag_graphic_data( $index );
 
-    $self->{_writer}->endTag( 'a:graphic' );
+    $self->endTag( 'a:graphic' );
 }
 
 
@@ -663,12 +660,12 @@ sub _write_atag_graphic_data {
 
     my @attributes = ( 'uri' => $uri, );
 
-    $self->{_writer}->startTag( 'a:graphicData', @attributes );
+    $self->startTag( 'a:graphicData', @attributes );
 
     # Write the c:chart element.
     $self->_write_c_chart( 'rId' . $index );
 
-    $self->{_writer}->endTag( 'a:graphicData' );
+    $self->endTag( 'a:graphicData' );
 }
 
 
@@ -693,7 +690,7 @@ sub _write_c_chart {
         'r:id'    => $r_id,
     );
 
-    $self->{_writer}->emptyTag( 'c:chart', @attributes );
+    $self->emptyTag( 'c:chart', @attributes );
 }
 
 
@@ -707,7 +704,7 @@ sub _write_client_data {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'xdr:clientData' );
+    $self->emptyTag( 'xdr:clientData' );
 }
 
 
@@ -729,7 +726,7 @@ sub _write_sp {
 
     if ( $shape->{_connect} ) {
         my @attributes = ( macro => '' );
-        $self->{_writer}->startTag( 'xdr:cxnSp', @attributes );
+        $self->startTag( 'xdr:cxnSp', @attributes );
 
         # Write the xdr:nvCxnSpPr element.
         $self->_write_nv_cxn_sp_pr( $index, $shape );
@@ -738,13 +735,13 @@ sub _write_sp {
         $self->_write_xdr_sp_pr( $index, $col_absolute, $row_absolute, $width,
             $height, $shape );
 
-        $self->{_writer}->endTag( 'xdr:cxnSp' );
+        $self->endTag( 'xdr:cxnSp' );
     }
     else {
 
         # Add attribute for shapes.
         my @attributes = ( macro => '', textlink => '' );
-        $self->{_writer}->startTag( 'xdr:sp', @attributes );
+        $self->startTag( 'xdr:sp', @attributes );
 
         # Write the xdr:nvSpPr element.
         $self->_write_nv_sp_pr( $index, $shape );
@@ -759,7 +756,7 @@ sub _write_sp {
                 $shape );
         }
 
-        $self->{_writer}->endTag( 'xdr:sp' );
+        $self->endTag( 'xdr:sp' );
     }
 }
 ##############################################################################
@@ -774,28 +771,29 @@ sub _write_nv_cxn_sp_pr {
     my $index = shift;
     my $shape = shift;
 
-    $self->{_writer}->startTag( 'xdr:nvCxnSpPr' );
+    $self->startTag( 'xdr:nvCxnSpPr' );
 
     $shape->{_name} = join( ' ', $shape->{_type}, $index )
       unless defined $shape->{_name};
     $self->_write_c_nv_pr( $shape->{_id}, $shape->{_name} );
 
-    $self->{_writer}->startTag( 'xdr:cNvCxnSpPr' );
+    $self->startTag( 'xdr:cNvCxnSpPr' );
 
     my @attributes = ( noChangeShapeType => '1' );
-    $self->{_writer}->emptyTag( 'a:cxnSpLocks', @attributes );
+    $self->emptyTag( 'a:cxnSpLocks', @attributes );
 
     if ( $shape->{_start} ) {
-        @attributes = ( 'id' => $shape->{_start}, 'idx' => $shape->{_start_index} );
-        $self->{_writer}->emptyTag( 'a:stCxn', @attributes );
+        @attributes =
+          ( 'id' => $shape->{_start}, 'idx' => $shape->{_start_index} );
+        $self->emptyTag( 'a:stCxn', @attributes );
     }
 
     if ( $shape->{_end} ) {
         @attributes = ( 'id' => $shape->{_end}, 'idx' => $shape->{_end_index} );
-        $self->{_writer}->emptyTag( 'a:endCxn', @attributes );
+        $self->emptyTag( 'a:endCxn', @attributes );
     }
-    $self->{_writer}->endTag( 'xdr:cNvCxnSpPr' );
-    $self->{_writer}->endTag( 'xdr:nvCxnSpPr' );
+    $self->endTag( 'xdr:cNvCxnSpPr' );
+    $self->endTag( 'xdr:nvCxnSpPr' );
 }
 
 
@@ -813,7 +811,7 @@ sub _write_nv_sp_pr {
 
     my @attributes = ();
 
-    $self->{_writer}->startTag( 'xdr:nvSpPr' );
+    $self->startTag( 'xdr:nvSpPr' );
 
     my $shape_name = $shape->{_type} . ' ' . $index;
 
@@ -821,14 +819,14 @@ sub _write_nv_sp_pr {
 
     @attributes = ( 'txBox' => 1 ) if $shape->{_txBox};
 
-    $self->{_writer}->startTag( 'xdr:cNvSpPr', @attributes );
+    $self->startTag( 'xdr:cNvSpPr', @attributes );
 
     @attributes = ( noChangeArrowheads => '1' );
 
-    $self->{_writer}->emptyTag( 'a:spLocks', @attributes );
+    $self->emptyTag( 'a:spLocks', @attributes );
 
-    $self->{_writer}->endTag( 'xdr:cNvSpPr' );
-    $self->{_writer}->endTag( 'xdr:nvSpPr' );
+    $self->endTag( 'xdr:cNvSpPr' );
+    $self->endTag( 'xdr:nvSpPr' );
 }
 
 
@@ -848,7 +846,7 @@ sub _write_pic {
     my $height       = shift;
     my $description  = shift;
 
-    $self->{_writer}->startTag( 'xdr:pic' );
+    $self->startTag( 'xdr:pic' );
 
     # Write the xdr:nvPicPr element.
     $self->_write_nv_pic_pr( $index, $description );
@@ -863,7 +861,7 @@ sub _write_pic {
     $self->_write_sp_pr( $col_absolute, $row_absolute, $width, $height,
         $shape );
 
-    $self->{_writer}->endTag( 'xdr:pic' );
+    $self->endTag( 'xdr:pic' );
 }
 
 
@@ -879,7 +877,7 @@ sub _write_nv_pic_pr {
     my $index       = shift;
     my $description = shift;
 
-    $self->{_writer}->startTag( 'xdr:nvPicPr' );
+    $self->startTag( 'xdr:nvPicPr' );
 
     # Write the xdr:cNvPr element.
     $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index, $description );
@@ -887,7 +885,7 @@ sub _write_nv_pic_pr {
     # Write the xdr:cNvPicPr element.
     $self->_write_c_nv_pic_pr();
 
-    $self->{_writer}->endTag( 'xdr:nvPicPr' );
+    $self->endTag( 'xdr:nvPicPr' );
 }
 
 
@@ -901,12 +899,12 @@ sub _write_c_nv_pic_pr {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'xdr:cNvPicPr' );
+    $self->startTag( 'xdr:cNvPicPr' );
 
     # Write the a:picLocks element.
     $self->_write_a_pic_locks();
 
-    $self->{_writer}->endTag( 'xdr:cNvPicPr' );
+    $self->endTag( 'xdr:cNvPicPr' );
 }
 
 
@@ -923,7 +921,7 @@ sub _write_a_pic_locks {
 
     my @attributes = ( 'noChangeAspect' => $no_change_aspect );
 
-    $self->{_writer}->emptyTag( 'a:picLocks', @attributes );
+    $self->emptyTag( 'a:picLocks', @attributes );
 }
 
 
@@ -938,7 +936,7 @@ sub _write_blip_fill {
     my $self  = shift;
     my $index = shift;
 
-    $self->{_writer}->startTag( 'xdr:blipFill' );
+    $self->startTag( 'xdr:blipFill' );
 
     # Write the a:blip element.
     $self->_write_a_blip( $index );
@@ -946,7 +944,7 @@ sub _write_blip_fill {
     # Write the a:stretch element.
     $self->_write_a_stretch();
 
-    $self->{_writer}->endTag( 'xdr:blipFill' );
+    $self->endTag( 'xdr:blipFill' );
 }
 
 
@@ -969,7 +967,7 @@ sub _write_a_blip {
         'r:embed' => $r_embed,
     );
 
-    $self->{_writer}->emptyTag( 'a:blip', @attributes );
+    $self->emptyTag( 'a:blip', @attributes );
 }
 
 
@@ -983,12 +981,12 @@ sub _write_a_stretch {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'a:stretch' );
+    $self->startTag( 'a:stretch' );
 
     # Write the a:fillRect element.
     $self->_write_a_fill_rect();
 
-    $self->{_writer}->endTag( 'a:stretch' );
+    $self->endTag( 'a:stretch' );
 }
 
 
@@ -1002,7 +1000,7 @@ sub _write_a_fill_rect {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'a:fillRect' );
+    $self->emptyTag( 'a:fillRect' );
 }
 
 
@@ -1021,7 +1019,7 @@ sub _write_sp_pr {
     my $height       = shift;
     my $shape        = shift || {};
 
-    $self->{_writer}->startTag( 'xdr:spPr' );
+    $self->startTag( 'xdr:spPr' );
 
     # Write the a:xfrm element.
     $self->_write_a_xfrm( $col_absolute, $row_absolute, $width, $height );
@@ -1029,7 +1027,7 @@ sub _write_sp_pr {
     # Write the a:prstGeom element.
     $self->_write_a_prst_geom( $shape );
 
-    $self->{_writer}->endTag( 'xdr:spPr' );
+    $self->endTag( 'xdr:spPr' );
 }
 
 
@@ -1051,7 +1049,7 @@ sub _write_xdr_sp_pr {
 
     my @attributes = ( 'bwMode' => 'auto' );
 
-    $self->{_writer}->startTag( 'xdr:spPr', @attributes );
+    $self->startTag( 'xdr:spPr', @attributes );
 
     # Write the a:xfrm element.
     $self->_write_a_xfrm( $col_absolute, $row_absolute, $width, $height,
@@ -1068,13 +1066,13 @@ sub _write_xdr_sp_pr {
         $self->_write_a_solid_fill( $fill );
     }
     else {
-        $self->{_writer}->emptyTag( 'a:noFill' );
+        $self->emptyTag( 'a:noFill' );
     }
 
     # Write the a:ln element.
     $self->_write_a_ln( $shape );
 
-    $self->{_writer}->endTag( 'xdr:spPr' );
+    $self->endTag( 'xdr:spPr' );
 }
 
 ##############################################################################
@@ -1100,7 +1098,7 @@ sub _write_a_xfrm {
     push( @attributes, ( 'flipH' => 1 ) )         if $shape->{_flip_h};
     push( @attributes, ( 'flipV' => 1 ) )         if $shape->{_flip_v};
 
-    $self->{_writer}->startTag( 'a:xfrm', @attributes );
+    $self->startTag( 'a:xfrm', @attributes );
 
     # Write the a:off element.
     $self->_write_a_off( $col_absolute, $row_absolute );
@@ -1108,7 +1106,7 @@ sub _write_a_xfrm {
     # Write the a:ext element.
     $self->_write_a_ext( $width, $height );
 
-    $self->{_writer}->endTag( 'a:xfrm' );
+    $self->endTag( 'a:xfrm' );
 }
 
 
@@ -1129,7 +1127,7 @@ sub _write_a_off {
         'y' => $y,
     );
 
-    $self->{_writer}->emptyTag( 'a:off', @attributes );
+    $self->emptyTag( 'a:off', @attributes );
 }
 
 
@@ -1150,7 +1148,7 @@ sub _write_a_ext {
         'cy' => $cy,
     );
 
-    $self->{_writer}->emptyTag( 'a:ext', @attributes );
+    $self->emptyTag( 'a:ext', @attributes );
 }
 
 
@@ -1169,12 +1167,12 @@ sub _write_a_prst_geom {
 
     @attributes = ( 'prst' => $shape->{_type} ) if $shape->{_type};
 
-    $self->{_writer}->startTag( 'a:prstGeom', @attributes );
+    $self->startTag( 'a:prstGeom', @attributes );
 
     # Write the a:avLst element.
     $self->_write_a_av_lst( $shape );
 
-    $self->{_writer}->endTag( 'a:prstGeom' );
+    $self->endTag( 'a:prstGeom' );
 }
 
 
@@ -1195,7 +1193,7 @@ sub _write_a_av_lst {
     }
 
     if ( @$adjustments ) {
-        $self->{_writer}->startTag( 'a:avLst' );
+        $self->startTag( 'a:avLst' );
 
         my $i = 0;
         foreach my $adj ( @{$adjustments} ) {
@@ -1210,12 +1208,12 @@ sub _write_a_av_lst {
             my @attributes =
               ( name => 'adj' . $suffix, fmla => "val $adj_int" );
 
-            $self->{_writer}->emptyTag( 'a:gd', @attributes );
+            $self->emptyTag( 'a:gd', @attributes );
         }
-        $self->{_writer}->endTag( 'a:avLst' );
+        $self->endTag( 'a:avLst' );
     }
     else {
-        $self->{_writer}->emptyTag( 'a:avLst' );
+        $self->emptyTag( 'a:avLst' );
     }
 }
 
@@ -1235,11 +1233,11 @@ sub _write_a_solid_fill {
 
     my @attributes = ( 'val' => $rgb );
 
-    $self->{_writer}->startTag( 'a:solidFill' );
+    $self->startTag( 'a:solidFill' );
 
-    $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
+    $self->emptyTag( 'a:srgbClr', @attributes );
 
-    $self->{_writer}->endTag( 'a:solidFill' );
+    $self->endTag( 'a:solidFill' );
 }
 
 
@@ -1258,7 +1256,7 @@ sub _write_a_ln {
 
     my @attributes = ( 'w' => $weight * 9525 );
 
-    $self->{_writer}->startTag( 'a:ln', @attributes );
+    $self->startTag( 'a:ln', @attributes );
 
     my $line = $shape->{_line};
 
@@ -1268,27 +1266,27 @@ sub _write_a_ln {
         $self->_write_a_solid_fill( $line );
     }
     else {
-        $self->{_writer}->emptyTag( 'a:noFill' );
+        $self->emptyTag( 'a:noFill' );
     }
 
     if ( $shape->{_line_type} ) {
 
         @attributes = ( 'val' => $shape->{_line_type} );
-        $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
+        $self->emptyTag( 'a:prstDash', @attributes );
     }
 
     if ( $shape->{_connect} ) {
-        $self->{_writer}->emptyTag( 'a:round' );
+        $self->emptyTag( 'a:round' );
     }
     else {
         @attributes = ( 'lim' => 800000 );
-        $self->{_writer}->emptyTag( 'a:miter', @attributes );
+        $self->emptyTag( 'a:miter', @attributes );
     }
 
-    $self->{_writer}->emptyTag( 'a:headEnd' );
-    $self->{_writer}->emptyTag( 'a:tailEnd' );
+    $self->emptyTag( 'a:headEnd' );
+    $self->emptyTag( 'a:tailEnd' );
 
-    $self->{_writer}->endTag( 'a:ln' );
+    $self->endTag( 'a:ln' );
 }
 
 
@@ -1318,24 +1316,24 @@ sub _write_txBody {
         upright      => "1",
     );
 
-    $self->{_writer}->startTag( 'xdr:txBody' );
-    $self->{_writer}->emptyTag( 'a:bodyPr', @attributes );
-    $self->{_writer}->emptyTag( 'a:lstStyle' );
+    $self->startTag( 'xdr:txBody' );
+    $self->emptyTag( 'a:bodyPr', @attributes );
+    $self->emptyTag( 'a:lstStyle' );
 
-    $self->{_writer}->startTag( 'a:p' );
+    $self->startTag( 'a:p' );
 
     my $rotation = $shape->{_format}->{_rotation};
     $rotation = 0 unless defined $rotation;
     $rotation *= 60000;
 
     @attributes = ( algn => $shape->{_align}, rtl => $rotation );
-    $self->{_writer}->startTag( 'a:pPr', @attributes );
+    $self->startTag( 'a:pPr', @attributes );
 
     @attributes = ( sz => "1000" );
-    $self->{_writer}->emptyTag( 'a:defRPr', @attributes );
+    $self->emptyTag( 'a:defRPr', @attributes );
 
-    $self->{_writer}->endTag( 'a:pPr' );
-    $self->{_writer}->startTag( 'a:r' );
+    $self->endTag( 'a:pPr' );
+    $self->startTag( 'a:r' );
 
     my $size = $shape->{_format}->{_size};
     $size = 8 unless defined $size;
@@ -1363,13 +1361,14 @@ sub _write_txBody {
         baseline => 0,
     );
 
-    $self->{_writer}->startTag( 'a:rPr', @attributes );
+    $self->startTag( 'a:rPr', @attributes );
 
     my $color = $shape->{_format}->{_color};
-    if (defined $color) {
+    if ( defined $color ) {
         $color = $shape->_get_palette_color( $color );
         $color =~ s/^FF//;    # Remove leading FF from rgb for shape color.
-    } else {
+    }
+    else {
         $color = '000000';
     }
 
@@ -1378,19 +1377,19 @@ sub _write_txBody {
     my $font = $shape->{_format}->{_font};
     $font = 'Calibri' unless defined $font;
     @attributes = ( typeface => $font );
-    $self->{_writer}->emptyTag( 'a:latin', @attributes );
+    $self->emptyTag( 'a:latin', @attributes );
 
-    $self->{_writer}->emptyTag( 'a:cs', @attributes );
+    $self->emptyTag( 'a:cs', @attributes );
 
-    $self->{_writer}->endTag( 'a:rPr' );
+    $self->endTag( 'a:rPr' );
 
-    $self->{_writer}->startTag( 'a:t' );
-    $self->{_writer}->characters( $shape->{_text} );
-    $self->{_writer}->endTag( 'a:t' );
+    $self->startTag( 'a:t' );
+    $self->characters( $shape->{_text} );
+    $self->endTag( 'a:t' );
 
-    $self->{_writer}->endTag( 'a:r' );
-    $self->{_writer}->endTag( 'a:p' );
-    $self->{_writer}->endTag( 'xdr:txBody' );
+    $self->endTag( 'a:r' );
+    $self->endTag( 'a:p' );
+    $self->endTag( 'xdr:txBody' );
 
 }
 

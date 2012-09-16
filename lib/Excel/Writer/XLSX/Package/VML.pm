@@ -40,7 +40,7 @@ sub new {
 
     my $class = shift;
 
-    my $self = { _writer => undef, };
+    my $self = {};
 
     bless $self, $class;
 
@@ -61,8 +61,6 @@ sub _assemble_xml_file {
     my $vml_shape_id  = shift;
     my $comments_data = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_namespace;
 
     # Write the o:shapelayout element.
@@ -78,11 +76,11 @@ sub _assemble_xml_file {
         $self->_write_shape( ++$vml_shape_id, $z_index++, $comment );
     }
 
-    $self->{_writer}->endTag( 'xml' );
+    $self->endTag( 'xml' );
 
     # Close the XM writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -144,7 +142,7 @@ sub _write_xml_namespace {
         'xmlns:x' => $xmlns_x,
     );
 
-    $self->{_writer}->startTag( 'xml', @attributes );
+    $self->startTag( 'xml', @attributes );
 }
 
 
@@ -162,12 +160,12 @@ sub _write_shapelayout {
 
     my @attributes = ( 'v:ext' => $ext );
 
-    $self->{_writer}->startTag( 'o:shapelayout', @attributes );
+    $self->startTag( 'o:shapelayout', @attributes );
 
     # Write the o:idmap element.
     $self->_write_idmap( $data_id );
 
-    $self->{_writer}->endTag( 'o:shapelayout' );
+    $self->endTag( 'o:shapelayout' );
 }
 
 
@@ -188,7 +186,7 @@ sub _write_idmap {
         'data'  => $data_id,
     );
 
-    $self->{_writer}->emptyTag( 'o:idmap', @attributes );
+    $self->emptyTag( 'o:idmap', @attributes );
 }
 
 
@@ -213,7 +211,7 @@ sub _write_shapetype {
         'path'      => $path,
     );
 
-    $self->{_writer}->startTag( 'v:shapetype', @attributes );
+    $self->startTag( 'v:shapetype', @attributes );
 
     # Write the v:stroke element.
     $self->_write_stroke();
@@ -221,7 +219,7 @@ sub _write_shapetype {
     # Write the v:path element.
     $self->_write_path( 't', 'rect' );
 
-    $self->{_writer}->endTag( 'v:shapetype' );
+    $self->endTag( 'v:shapetype' );
 }
 
 
@@ -238,7 +236,7 @@ sub _write_stroke {
 
     my @attributes = ( 'joinstyle' => $joinstyle );
 
-    $self->{_writer}->emptyTag( 'v:stroke', @attributes );
+    $self->emptyTag( 'v:stroke', @attributes );
 }
 
 
@@ -258,7 +256,7 @@ sub _write_path {
     push @attributes, ( 'gradientshapeok' => 't' ) if $gradientshapeok;
     push @attributes, ( 'o:connecttype' => $connecttype );
 
-    $self->{_writer}->emptyTag( 'v:path', @attributes );
+    $self->emptyTag( 'v:path', @attributes );
 }
 
 
@@ -319,7 +317,7 @@ sub _write_shape {
         'o:insetmode' => $insetmode,
     );
 
-    $self->{_writer}->startTag( 'v:shape', @attributes );
+    $self->startTag( 'v:shape', @attributes );
 
     # Write the v:fill element.
     $self->_write_fill();
@@ -336,7 +334,7 @@ sub _write_shape {
     # Write the x:ClientData element.
     $self->_write_client_data( $row, $col, $visible, $vertices );
 
-    $self->{_writer}->endTag( 'v:shape' );
+    $self->endTag( 'v:shape' );
 }
 
 
@@ -353,7 +351,7 @@ sub _write_fill {
 
     my @attributes = ( 'color2' => $color_2 );
 
-    $self->{_writer}->emptyTag( 'v:fill', @attributes );
+    $self->emptyTag( 'v:fill', @attributes );
 }
 
 
@@ -376,7 +374,7 @@ sub _write_shadow {
         'obscured' => $obscured,
     );
 
-    $self->{_writer}->emptyTag( 'v:shadow', @attributes );
+    $self->emptyTag( 'v:shadow', @attributes );
 }
 
 
@@ -393,12 +391,12 @@ sub _write_textbox {
 
     my @attributes = ( 'style' => $style );
 
-    $self->{_writer}->startTag( 'v:textbox', @attributes );
+    $self->startTag( 'v:textbox', @attributes );
 
     # Write the div element.
     $self->_write_div();
 
-    $self->{_writer}->endTag( 'v:textbox' );
+    $self->endTag( 'v:textbox' );
 }
 
 
@@ -415,10 +413,10 @@ sub _write_div {
 
     my @attributes = ( 'style' => $style );
 
-    $self->{_writer}->startTag( 'div', @attributes );
+    $self->startTag( 'div', @attributes );
 
 
-    $self->{_writer}->endTag( 'div' );
+    $self->endTag( 'div' );
 }
 
 
@@ -439,7 +437,7 @@ sub _write_client_data {
 
     my @attributes = ( 'ObjectType' => $object_type );
 
-    $self->{_writer}->startTag( 'x:ClientData', @attributes );
+    $self->startTag( 'x:ClientData', @attributes );
 
     # Write the x:MoveWithCells element.
     $self->_write_move_with_cells();
@@ -462,7 +460,7 @@ sub _write_client_data {
     # Write the x:Visible element.
     $self->_write_visible() if $visible;
 
-    $self->{_writer}->endTag( 'x:ClientData' );
+    $self->endTag( 'x:ClientData' );
 }
 
 
@@ -476,7 +474,7 @@ sub _write_move_with_cells {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'x:MoveWithCells' );
+    $self->emptyTag( 'x:MoveWithCells' );
 }
 
 
@@ -490,7 +488,7 @@ sub _write_size_with_cells {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'x:SizeWithCells' );
+    $self->emptyTag( 'x:SizeWithCells' );
 }
 
 
@@ -504,7 +502,7 @@ sub _write_visible {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'x:Visible' );
+    $self->emptyTag( 'x:Visible' );
 }
 
 
@@ -525,7 +523,7 @@ sub _write_anchor {
     my $data = join ", ",
       ( $col_start, $x1, $row_start, $y1, $col_end, $x2, $row_end, $y2 );
 
-    $self->{_writer}->dataElement( 'x:Anchor', $data );
+    $self->dataElement( 'x:Anchor', $data );
 }
 
 
@@ -540,7 +538,7 @@ sub _write_auto_fill {
     my $self = shift;
     my $data = 'False';
 
-    $self->{_writer}->dataElement( 'x:AutoFill', $data );
+    $self->dataElement( 'x:AutoFill', $data );
 }
 
 
@@ -555,7 +553,7 @@ sub _write_row {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'x:Row', $data );
+    $self->dataElement( 'x:Row', $data );
 }
 
 
@@ -570,7 +568,7 @@ sub _write_column {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'x:Column', $data );
+    $self->dataElement( 'x:Column', $data );
 }
 
 

@@ -193,13 +193,13 @@ sub new {
     $self->{_previous_row} = 0;
 
     if ( $self->{_optimization} == 1 ) {
-        my $fh  = tempfile( DIR => $self->{_tempdir} );
+        my $fh = tempfile( DIR => $self->{_tempdir} );
         binmode $fh, ':utf8';
 
-        my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $fh );
+        my $writer = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
         $self->{_cell_data_fh} = $fh;
-        $self->{_writer} = $writer;
+        $self->{_fh}           = $fh;
     }
 
     $self->{_validations}  = [];
@@ -239,8 +239,6 @@ sub _set_xml_writer {
 sub _assemble_xml_file {
 
     my $self = shift;
-
-    return unless $self->{_writer};
 
     $self->_write_xml_declaration();
 
@@ -326,11 +324,11 @@ sub _assemble_xml_file {
     #$self->_write_ext_lst();
 
     # Close the worksheet tag.
-    $self->{_writer}->endTag( 'worksheet' );
+    $self->endTag( 'worksheet' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -1518,7 +1516,8 @@ sub _convert_name_area {
 sub hide_gridlines {
 
     my $self = shift;
-    my $option = defined $_[0] ? $_[0] : 1;    # Default to hiding printed gridlines
+    my $option =
+      defined $_[0] ? $_[0] : 1;    # Default to hiding printed gridlines
 
     if ( $option == 0 ) {
         $self->{_print_gridlines}       = 1;    # 1 = display, 0 = hide
@@ -2003,11 +2002,11 @@ sub write_comment {
     my $self = shift;
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ($_[0] =~ /^\D/) {
-        @_ = $self->_substitute_cellref(@_);
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
     }
 
-    if (@_ < 3) { return -1 } # Check the number of args
+    if ( @_ < 3 ) { return -1 }    # Check the number of args
 
     my $row = $_[0];
     my $col = $_[1];
@@ -2016,12 +2015,12 @@ sub write_comment {
     croak "Uneven number of additional arguments" unless @_ % 2;
 
     # Check that row and col are valid and store max and min values
-    return -2 if $self->_check_dimensions($row, $col);
+    return -2 if $self->_check_dimensions( $row, $col );
 
     $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
-    $self->{_comments}->{$row}->{$col} = [ $self->_comment_params(@_) ];
+    $self->{_comments}->{$row}->{$col} = [ $self->_comment_params( @_ ) ];
 }
 
 
@@ -2049,17 +2048,17 @@ sub write_number {
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
 
-    my $row  = $_[0];                  # Zero indexed row
-    my $col  = $_[1];                  # Zero indexed column
+    my $row  = $_[0];              # Zero indexed row
+    my $col  = $_[1];              # Zero indexed column
     my $num  = $_[2] + 0;
-    my $xf   = $_[3];                  # The cell format
-    my $type = 'n';                    # The data type
+    my $xf   = $_[3];              # The cell format
+    my $type = 'n';                # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2091,11 +2090,11 @@ sub write_string {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row  = $_[0];                  # Zero indexed row
-    my $col  = $_[1];                  # Zero indexed column
+    my $row  = $_[0];              # Zero indexed row
+    my $col  = $_[1];              # Zero indexed column
     my $str  = $_[2];
-    my $xf   = $_[3];                  # The cell format
-    my $type = 's';                    # The data type
+    my $xf   = $_[3];              # The cell format
+    my $type = 's';                # The data type
     my $index;
     my $str_error = 0;
 
@@ -2117,7 +2116,7 @@ sub write_string {
     }
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2176,7 +2175,7 @@ sub write_rich_string {
     open my $str_fh, '>', \$str or die "Failed to open filehandle: $!";
     binmode $str_fh, ':utf8';
 
-    my $writer = Excel::Writer::XLSX::Package::XMLwriterSimple->new( $str_fh );
+    my $writer = Excel::Writer::XLSX::Package::XMLwriter->new( $str_fh );
 
     $self->{_rstring} = $writer;
 
@@ -2266,7 +2265,7 @@ sub write_rich_string {
     }
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2307,16 +2306,16 @@ sub write_blank {
     # Don't write a blank cell unless it has a format
     return 0 if not defined $_[2];
 
-    my $row  = $_[0];                  # Zero indexed row
-    my $col  = $_[1];                  # Zero indexed column
-    my $xf   = $_[2];                  # The cell format
-    my $type = 'b';                    # The data type
+    my $row  = $_[0];    # Zero indexed row
+    my $col  = $_[1];    # Zero indexed column
+    my $xf   = $_[2];    # The cell format
+    my $type = 'b';      # The data type
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2369,7 +2368,7 @@ sub write_formula {
     $formula =~ s/^=//;
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2439,7 +2438,7 @@ sub write_array_formula {
 
     # Write previous row if in in-line string optimization mode.
     my $row = $row1;
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2520,13 +2519,13 @@ sub write_url {
     ( $args[3], $args[4] ) = ( $args[4], $args[3] ) if ref $args[3];
 
 
-    my $row       = $args[0];                  # Zero indexed row
-    my $col       = $args[1];                  # Zero indexed column
-    my $url       = $args[2];                  # URL string
-    my $str       = $args[3];                  # Alternative label
-    my $xf        = $args[4];                  # Cell format
-    my $tip       = $args[5];                  # Tool tip
-    my $type      = 'l';                       # XML data type
+    my $row       = $args[0];    # Zero indexed row
+    my $col       = $args[1];    # Zero indexed column
+    my $url       = $args[2];    # URL string
+    my $str       = $args[3];    # Alternative label
+    my $xf        = $args[4];    # Cell format
+    my $tip       = $args[5];    # Tool tip
+    my $type      = 'l';         # XML data type
     my $link_type = 1;
 
 
@@ -2619,7 +2618,7 @@ sub write_url {
 
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2655,11 +2654,11 @@ sub write_date_time {
 
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
-    my $row  = $_[0];                  # Zero indexed row
-    my $col  = $_[1];                  # Zero indexed column
+    my $row  = $_[0];              # Zero indexed row
+    my $col  = $_[1];              # Zero indexed column
     my $str  = $_[2];
-    my $xf   = $_[3];                  # The cell format
-    my $type = 'n';                    # The data type
+    my $xf   = $_[3];              # The cell format
+    my $type = 'n';                # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -2674,7 +2673,7 @@ sub write_date_time {
     }
 
     # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row}) {
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
     }
 
@@ -2833,15 +2832,15 @@ sub convert_date_time {
 sub set_row {
 
     my $self      = shift;
-    my $row       = shift;          # Row Number.
-    my $height    = shift;          # Row height.
-    my $xf        = shift;          # Format object.
-    my $hidden    = shift || 0;     # Hidden flag.
-    my $level     = shift || 0;     # Outline level.
-    my $collapsed = shift || 0;     # Collapsed row.
+    my $row       = shift;         # Row Number.
+    my $height    = shift;         # Row height.
+    my $xf        = shift;         # Format object.
+    my $hidden    = shift || 0;    # Hidden flag.
+    my $level     = shift || 0;    # Outline level.
+    my $collapsed = shift || 0;    # Collapsed row.
     my $min_col   = 0;
 
-    return unless defined $row;     # Ensure at least $row is specified.
+    return unless defined $row;    # Ensure at least $row is specified.
 
     # Use min col in _check_dimensions(). Default to 0 if undefined.
     if ( defined $self->{_dim_colmin} ) {
@@ -2972,7 +2971,8 @@ sub merge_range_type {
     }
 
     # Check that there is a format object.
-    croak "Format object missing or in an incorrect position" unless ref $format;
+    croak "Format object missing or in an incorrect position"
+      unless ref $format;
 
     # Excel doesn't allow a single cell to be merged
     if ( $row_first == $row_last and $col_first == $col_last ) {
@@ -3937,7 +3937,7 @@ sub add_table {
 
                 # Store the column format for writing the cell data.
                 # It doesn't matter if it is undefined.
-                $col_formats[$col_id - 1 ] = $user_data->{format};
+                $col_formats[ $col_id - 1 ] = $user_data->{format};
             }
         }
 
@@ -3953,7 +3953,6 @@ sub add_table {
     }    # Table columns.
 
 
-
     # Write the cell data if supplied.
     if ( my $data = $param->{data} ) {
 
@@ -3965,7 +3964,7 @@ sub add_table {
 
                 my $token = $data->[$i]->[$j];
 
-                if ($token) {
+                if ( $token ) {
                     $self->write( $row, $col, $token, $col_formats[$j] );
                 }
 
@@ -4027,7 +4026,6 @@ sub _table_function_to_formula {
 
     return $formula;
 }
-
 
 
 ###############################################################################
@@ -4336,7 +4334,7 @@ sub _position_object_pixels {
 
     my $is_drawing = 0;
 
-    ( $col_start, $row_start, $x1, $y1, $width, $height, $is_drawing) = @_;
+    ( $col_start, $row_start, $x1, $y1, $width, $height, $is_drawing ) = @_;
 
     # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
@@ -4529,7 +4527,7 @@ sub _size_col {
         my $width = $self->{_col_sizes}->{$col};
 
         # Convert to pixels.
-        if ( $width == 0) {
+        if ( $width == 0 ) {
             $pixels = 0;
         }
         elsif ( $width < 1 ) {
@@ -4796,7 +4794,6 @@ sub _prepare_chart {
 }
 
 
-
 ###############################################################################
 #
 # _get_range_data
@@ -4821,7 +4818,7 @@ sub _get_range_data {
     for my $row_num ( $row_start .. $row_end ) {
 
         # Store undef if row doesn't exist.
-        if ( ! exists $self->{_table}->{$row_num} ) {
+        if ( !exists $self->{_table}->{$row_num} ) {
             push @data, undef;
             next;
         }
@@ -4843,7 +4840,7 @@ sub _get_range_data {
 
                     # Store a string.
                     if ( $self->{_optimization} == 0 ) {
-                        push @data, { 'sst_id' => $token};
+                        push @data, { 'sst_id' => $token };
                     }
                     else {
                         push @data, $token;
@@ -4862,7 +4859,7 @@ sub _get_range_data {
                 elsif ( $type eq 'l' ) {
 
                     # Store the string part a hyperlink.
-                    push @data, { 'sst_id' => $token};
+                    push @data, { 'sst_id' => $token };
                 }
                 elsif ( $type eq 'b' ) {
 
@@ -4966,7 +4963,7 @@ sub _prepare_image {
 
 
     push @{ $self->{_drawing_links} },
-      [ '/image', '../media/image' .  $image_id . '.' . $image_type ];
+      [ '/image', '../media/image' . $image_id . '.' . $image_type ];
 }
 
 
@@ -5035,7 +5032,7 @@ sub insert_shape {
         # if the stencil is modified.
         my $insert = { %{$shape} };
 
-        # For connectors change x/y coords based on location of connected shapes.
+       # For connectors change x/y coords based on location of connected shapes.
         $self->_auto_locate_connectors( $insert );
 
         # Bless the copy into this class, so AUTOLOADED _get, _set methods
@@ -5047,7 +5044,7 @@ sub insert_shape {
     }
     else {
 
-        # For connectors change x/y coords based on location of connected shapes.
+       # For connectors change x/y coords based on location of connected shapes.
         $self->_auto_locate_connectors( $shape );
 
         # Insert a link to the shape on the list of shapes. Connection to
@@ -5209,8 +5206,8 @@ sub _auto_locate_connectors {
           min( $sls->{_x_offset} + $sls->{_width}, $els->{_x_offset} );
         $shape->{_y_offset} = min( $smidy, $emidy );
 
-        $shape->{_flip_h} = 1 if ( $smidx < $emidx ) and ($smidy > $emidy);
-        $shape->{_flip_h} = 1 if ( $smidx > $emidx ) and ($smidy < $emidy);
+        $shape->{_flip_h} = 1 if ( $smidx < $emidx ) and ( $smidy > $emidy );
+        $shape->{_flip_h} = 1 if ( $smidx > $emidx ) and ( $smidy < $emidy );
         if ( $smidx > $emidx ) {
 
             # Create 3 adjustments if end shape is left of start
@@ -5297,7 +5294,7 @@ sub _prepare_comments {
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ];
 
     push @{ $self->{_external_comment_links} },
-      [ '/comments',   '../comments' . $comment_id . '.xml' ];
+      [ '/comments', '../comments' . $comment_id . '.xml' ];
 
     my $count         = scalar @comments;
     my $start_data_id = $vml_data_id;
@@ -5334,18 +5331,18 @@ sub _comment_params {
     my $default_height = 74;
 
     my %params = (
-        author          => undef,
-        color           => 81,
-        start_cell      => undef,
-        start_col       => undef,
-        start_row       => undef,
-        visible         => undef,
-        width           => $default_width,
-        height          => $default_height,
-        x_offset        => undef,
-        x_scale         => 1,
-        y_offset        => undef,
-        y_scale         => 1,
+        author     => undef,
+        color      => 81,
+        start_cell => undef,
+        start_col  => undef,
+        start_row  => undef,
+        visible    => undef,
+        width      => $default_width,
+        height     => $default_height,
+        x_offset   => undef,
+        x_scale    => 1,
+        y_offset   => undef,
+        y_scale    => 1,
     );
 
 
@@ -5456,7 +5453,7 @@ sub _comment_params {
     my @vertices = $self->_position_object_pixels(
         $params{start_col}, $params{start_row}, $params{x_offset},
         $params{y_offset},  $params{width},     $params{height}
-      );
+    );
 
     # Add the width and height for VML.
     push @vertices, ( $params{width}, $params{height} );
@@ -5610,7 +5607,7 @@ sub _write_worksheet {
         'xmlns:r' => $xmlns_r,
     );
 
-    $self->{_writer}->startTag( 'worksheet', @attributes );
+    $self->startTag( 'worksheet', @attributes );
 }
 
 
@@ -5639,14 +5636,14 @@ sub _write_sheet_pr {
         || $self->{_tab_color}
         || $self->{_outline_changed} )
     {
-        $self->{_writer}->startTag( 'sheetPr', @attributes );
+        $self->startTag( 'sheetPr', @attributes );
         $self->_write_tab_color();
         $self->_write_outline_pr();
         $self->_write_page_set_up_pr();
-        $self->{_writer}->endTag( 'sheetPr' );
+        $self->endTag( 'sheetPr' );
     }
     else {
-        $self->{_writer}->emptyTag( 'sheetPr', @attributes );
+        $self->emptyTag( 'sheetPr', @attributes );
     }
 }
 
@@ -5665,7 +5662,7 @@ sub _write_page_set_up_pr {
 
     my @attributes = ( 'fitToPage' => 1 );
 
-    $self->{_writer}->emptyTag( 'pageSetUpPr', @attributes );
+    $self->emptyTag( 'pageSetUpPr', @attributes );
 }
 
 
@@ -5728,7 +5725,7 @@ sub _write_dimension {
 
     my @attributes = ( 'ref' => $ref );
 
-    $self->{_writer}->emptyTag( 'dimension', @attributes );
+    $self->emptyTag( 'dimension', @attributes );
 }
 
 
@@ -5744,9 +5741,9 @@ sub _write_sheet_views {
 
     my @attributes = ();
 
-    $self->{_writer}->startTag( 'sheetViews', @attributes );
+    $self->startTag( 'sheetViews', @attributes );
     $self->_write_sheet_view();
-    $self->{_writer}->endTag( 'sheetViews' );
+    $self->endTag( 'sheetViews' );
 }
 
 
@@ -5825,13 +5822,13 @@ sub _write_sheet_view {
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
 
     if ( @{ $self->{_panes} } || @{ $self->{_selections} } ) {
-        $self->{_writer}->startTag( 'sheetView', @attributes );
+        $self->startTag( 'sheetView', @attributes );
         $self->_write_panes();
         $self->_write_selections();
-        $self->{_writer}->endTag( 'sheetView' );
+        $self->endTag( 'sheetView' );
     }
     else {
-        $self->{_writer}->emptyTag( 'sheetView', @attributes );
+        $self->emptyTag( 'sheetView', @attributes );
     }
 }
 
@@ -5870,7 +5867,7 @@ sub _write_selection {
     push @attributes, ( 'activeCell' => $active_cell ) if $active_cell;
     push @attributes, ( 'sqref'      => $sqref )       if $sqref;
 
-    $self->{_writer}->emptyTag( 'selection', @attributes );
+    $self->emptyTag( 'selection', @attributes );
 }
 
 
@@ -5885,14 +5882,14 @@ sub _write_sheet_format_pr {
     my $self               = shift;
     my $base_col_width     = 10;
     my $default_row_height = 15;
-    my $row_level      = $self->{_outline_row_level};
-    my $col_level      = $self->{_outline_col_level};
+    my $row_level          = $self->{_outline_row_level};
+    my $col_level          = $self->{_outline_col_level};
 
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
     push @attributes, ( 'outlineLevelRow' => $row_level ) if $row_level;
     push @attributes, ( 'outlineLevelCol' => $col_level ) if $col_level;
 
-    $self->{_writer}->emptyTag( 'sheetFormatPr', @attributes );
+    $self->emptyTag( 'sheetFormatPr', @attributes );
 }
 
 
@@ -5909,13 +5906,13 @@ sub _write_cols {
     # Exit unless some column have been formatted.
     return unless @{ $self->{_colinfo} };
 
-    $self->{_writer}->startTag( 'cols' );
+    $self->startTag( 'cols' );
 
     for my $col_info ( @{ $self->{_colinfo} } ) {
         $self->_write_col_info( @$col_info );
     }
 
-    $self->{_writer}->endTag( 'cols' );
+    $self->endTag( 'cols' );
 }
 
 
@@ -5940,7 +5937,7 @@ sub _write_col_info {
 
     # Get the format index.
     if ( ref( $format ) ) {
-        $xf_index =  $format->get_xf_index();
+        $xf_index = $format->get_xf_index();
     }
 
     # Set the Excel default col width.
@@ -5984,7 +5981,7 @@ sub _write_col_info {
     push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
 
 
-    $self->{_writer}->emptyTag( 'col', @attributes );
+    $self->emptyTag( 'col', @attributes );
 }
 
 
@@ -6001,12 +5998,12 @@ sub _write_sheet_data {
     if ( not defined $self->{_dim_rowmin} ) {
 
         # If the dimensions aren't defined then there is no data to write.
-        $self->{_writer}->emptyTag( 'sheetData' );
+        $self->emptyTag( 'sheetData' );
     }
     else {
-        $self->{_writer}->startTag( 'sheetData' );
+        $self->startTag( 'sheetData' );
         $self->_write_rows();
-        $self->{_writer}->endTag( 'sheetData' );
+        $self->endTag( 'sheetData' );
 
     }
 
@@ -6028,15 +6025,16 @@ sub _write_optimized_sheet_data {
     if ( not defined $self->{_dim_rowmin} ) {
 
         # If the dimensions aren't defined then there is no data to write.
-        $self->{_writer}->emptyTag( 'sheetData' );
+        $self->emptyTag( 'sheetData' );
     }
     else {
-        $self->{_writer}->startTag( 'sheetData' );
+        $self->startTag( 'sheetData' );
 
-        my $xlsx_fh = $self->{_writer}->getOutput();
+        my $xlsx_fh = $self->getOutput();
         my $cell_fh = $self->{_cell_data_fh};
 
         my $buffer;
+
         # Rewind the temp file.
         seek $cell_fh, 0, 0;
 
@@ -6045,7 +6043,7 @@ sub _write_optimized_sheet_data {
             print $xlsx_fh $buffer;
         }
 
-        $self->{_writer}->endTag( 'sheetData' );
+        $self->endTag( 'sheetData' );
     }
 }
 
@@ -6093,7 +6091,7 @@ sub _write_rows {
                 }
             }
 
-            $self->{_writer}->endTag( 'row' );
+            $self->endTag( 'row' );
         }
         elsif ( $self->{_comments}->{$row_num} ) {
 
@@ -6153,7 +6151,7 @@ sub _write_single_row {
             }
         }
 
-        $self->{_writer}->endTag( 'row' );
+        $self->endTag( 'row' );
     }
     else {
 
@@ -6267,7 +6265,7 @@ sub _write_row {
 
     # Get the format index.
     if ( ref( $format ) ) {
-        $xf_index =  $format->get_xf_index();
+        $xf_index = $format->get_xf_index();
     }
 
     push @attributes, ( 'spans'        => $spans )    if defined $spans;
@@ -6281,10 +6279,10 @@ sub _write_row {
 
 
     if ( $empty_row ) {
-        $self->{_writer}->emptyTag( 'row', @attributes );
+        $self->emptyTag( 'row', @attributes );
     }
     else {
-        $self->{_writer}->startTag( 'row', @attributes );
+        $self->startTag( 'row', @attributes );
     }
 }
 
@@ -6302,9 +6300,8 @@ sub _write_empty_row {
     # Set the $empty_row parameter.
     $_[7] = 1;
 
-    $self->_write_row( @_);
+    $self->_write_row( @_ );
 }
-
 
 
 ###############################################################################
@@ -6328,18 +6325,18 @@ sub _write_empty_row {
 #
 sub _write_cell {
 
-    my $self  = shift;
-    my $row   = shift;
-    my $col   = shift;
-    my $cell  = shift;
-    my $type  = $cell->[0];
-    my $token = $cell->[1];
-    my $xf    = $cell->[2];
+    my $self     = shift;
+    my $row      = shift;
+    my $col      = shift;
+    my $cell     = shift;
+    my $type     = $cell->[0];
+    my $token    = $cell->[1];
+    my $xf       = $cell->[2];
     my $xf_index = 0;
 
     # Get the format index.
     if ( ref( $xf ) ) {
-         $xf_index = $xf->get_xf_index();
+        $xf_index = $xf->get_xf_index();
     }
 
     my $range = _xl_rowcol_to_cell( $row, $col );
@@ -6363,13 +6360,13 @@ sub _write_cell {
     if ( $type eq 'n' ) {
 
         # Write a number.
-        $self->{_writer}->numberElement($token, @attributes);
+        $self->numberElement( $token, @attributes );
     }
     elsif ( $type eq 's' ) {
 
         # Write a string.
         if ( $self->{_optimization} == 0 ) {
-            $self->{_writer}->stringElement($token, @attributes);
+            $self->stringElement( $token, @attributes );
         }
         else {
 
@@ -6382,7 +6379,7 @@ sub _write_cell {
             # Write any rich strings without further tags.
             if ( $string =~ m{^<r>} && $string =~ m{</r>$} ) {
 
-                $self->{_writer}->richInlineStr($string, @attributes );
+                $self->richInlineStr( $string, @attributes );
             }
             else {
 
@@ -6392,7 +6389,7 @@ sub _write_cell {
                     $preserve = 1;
                 }
 
-                $self->{_writer}->inlineStr( $string, $preserve, @attributes );
+                $self->inlineStr( $string, $preserve, @attributes );
             }
         }
     }
@@ -6407,21 +6404,21 @@ sub _write_cell {
         {
             push @attributes, ( 't' => 'str' );
             $value =
-              Excel::Writer::XLSX::Package::XMLwriterSimple::_escape_xml_chars(
+              Excel::Writer::XLSX::Package::XMLwriter::_escape_xml_chars(
                 $value );
         }
 
 
-        $self->{_writer}->formulaElement($token, $value, @attributes);
+        $self->formulaElement( $token, $value, @attributes );
 
     }
     elsif ( $type eq 'a' ) {
 
         # Write an array formula.
-        $self->{_writer}->startTag( 'c', @attributes );
+        $self->startTag( 'c', @attributes );
         $self->_write_cell_array_formula( $token, $cell->[3] );
         $self->_write_cell_value( $cell->[4] );
-        $self->{_writer}->endTag( 'c' );
+        $self->endTag( 'c' );
     }
     elsif ( $type eq 'l' ) {
         my $link_type = $cell->[3];
@@ -6429,9 +6426,9 @@ sub _write_cell {
         # Write the string part a hyperlink.
         push @attributes, ( 't' => 's' );
 
-        $self->{_writer}->startTag( 'c', @attributes );
+        $self->startTag( 'c', @attributes );
         $self->_write_cell_value( $token );
-        $self->{_writer}->endTag( 'c' );
+        $self->endTag( 'c' );
 
         if ( $link_type == 1 ) {
 
@@ -6456,7 +6453,7 @@ sub _write_cell {
     elsif ( $type eq 'b' ) {
 
         # Write a empty cell.
-        $self->{_writer}->emptyTag( 'c', @attributes );
+        $self->emptyTag( 'c', @attributes );
     }
 }
 
@@ -6472,7 +6469,7 @@ sub _write_cell_value {
     my $self = shift;
     my $value = defined $_[0] ? $_[0] : '';
 
-    $self->{_writer}->dataElement( 'v', $value );
+    $self->dataElement( 'v', $value );
 }
 
 
@@ -6487,7 +6484,7 @@ sub _write_cell_formula {
     my $self = shift;
     my $formula = defined $_[0] ? $_[0] : '';
 
-    $self->{_writer}->dataElement( 'f', $formula );
+    $self->dataElement( 'f', $formula );
 }
 
 
@@ -6505,7 +6502,7 @@ sub _write_cell_array_formula {
 
     my @attributes = ( 't' => 'array', 'ref' => $range );
 
-    $self->{_writer}->dataElement( 'f', $formula, @attributes );
+    $self->dataElement( 'f', $formula, @attributes );
 }
 
 
@@ -6522,7 +6519,7 @@ sub _write_sheet_calc_pr {
 
     my @attributes = ( 'fullCalcOnLoad' => $full_calc_on_load );
 
-    $self->{_writer}->emptyTag( 'sheetCalcPr', @attributes );
+    $self->emptyTag( 'sheetCalcPr', @attributes );
 }
 
 
@@ -6543,7 +6540,7 @@ sub _write_phonetic_pr {
         'type'   => $type,
     );
 
-    $self->{_writer}->emptyTag( 'phoneticPr', @attributes );
+    $self->emptyTag( 'phoneticPr', @attributes );
 }
 
 
@@ -6566,7 +6563,7 @@ sub _write_page_margins {
         'footer' => $self->{_margin_footer},
     );
 
-    $self->{_writer}->emptyTag( 'pageMargins', @attributes );
+    $self->emptyTag( 'pageMargins', @attributes );
 }
 
 
@@ -6632,7 +6629,7 @@ sub _write_page_setup {
     }
 
 
-    $self->{_writer}->emptyTag( 'pageSetup', @attributes );
+    $self->emptyTag( 'pageSetup', @attributes );
 }
 
 
@@ -6646,9 +6643,9 @@ sub _write_ext_lst {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'extLst' );
+    $self->startTag( 'extLst' );
     $self->_write_ext();
-    $self->{_writer}->endTag( 'extLst' );
+    $self->endTag( 'extLst' );
 }
 
 
@@ -6669,9 +6666,9 @@ sub _write_ext {
         'uri'      => $uri,
     );
 
-    $self->{_writer}->startTag( 'ext', @attributes );
+    $self->startTag( 'ext', @attributes );
     $self->_write_mx_plv();
-    $self->{_writer}->endTag( 'ext' );
+    $self->endTag( 'ext' );
 }
 
 ###############################################################################
@@ -6693,7 +6690,7 @@ sub _write_mx_plv {
         'WScale'  => $w_scale,
     );
 
-    $self->{_writer}->emptyTag( 'mx:PLV', @attributes );
+    $self->emptyTag( 'mx:PLV', @attributes );
 }
 
 
@@ -6713,7 +6710,7 @@ sub _write_merge_cells {
 
     my @attributes = ( 'count' => $count );
 
-    $self->{_writer}->startTag( 'mergeCells', @attributes );
+    $self->startTag( 'mergeCells', @attributes );
 
     for my $merged_range ( @$merged_cells ) {
 
@@ -6721,7 +6718,7 @@ sub _write_merge_cells {
         $self->_write_merge_cell( $merged_range );
     }
 
-    $self->{_writer}->endTag( 'mergeCells' );
+    $self->endTag( 'mergeCells' );
 }
 
 
@@ -6745,7 +6742,7 @@ sub _write_merge_cell {
 
     my @attributes = ( 'ref' => $ref );
 
-    $self->{_writer}->emptyTag( 'mergeCell', @attributes );
+    $self->emptyTag( 'mergeCell', @attributes );
 }
 
 
@@ -6783,7 +6780,7 @@ sub _write_print_options {
     }
 
 
-    $self->{_writer}->emptyTag( 'printOptions', @attributes );
+    $self->emptyTag( 'printOptions', @attributes );
 }
 
 
@@ -6799,10 +6796,10 @@ sub _write_header_footer {
 
     return unless $self->{_header_footer_changed};
 
-    $self->{_writer}->startTag( 'headerFooter' );
+    $self->startTag( 'headerFooter' );
     $self->_write_odd_header() if $self->{_header};
     $self->_write_odd_footer() if $self->{_footer};
-    $self->{_writer}->endTag( 'headerFooter' );
+    $self->endTag( 'headerFooter' );
 }
 
 
@@ -6817,7 +6814,7 @@ sub _write_odd_header {
     my $self = shift;
     my $data = $self->{_header};
 
-    $self->{_writer}->dataElement( 'oddHeader', $data );
+    $self->dataElement( 'oddHeader', $data );
 }
 
 
@@ -6832,7 +6829,7 @@ sub _write_odd_footer {
     my $self = shift;
     my $data = $self->{_footer};
 
-    $self->{_writer}->dataElement( 'oddFooter', $data );
+    $self->dataElement( 'oddFooter', $data );
 }
 
 
@@ -6856,13 +6853,13 @@ sub _write_row_breaks {
         'manualBreakCount' => $count,
     );
 
-    $self->{_writer}->startTag( 'rowBreaks', @attributes );
+    $self->startTag( 'rowBreaks', @attributes );
 
     for my $row_num ( @page_breaks ) {
         $self->_write_brk( $row_num, 16383 );
     }
 
-    $self->{_writer}->endTag( 'rowBreaks' );
+    $self->endTag( 'rowBreaks' );
 }
 
 
@@ -6886,13 +6883,13 @@ sub _write_col_breaks {
         'manualBreakCount' => $count,
     );
 
-    $self->{_writer}->startTag( 'colBreaks', @attributes );
+    $self->startTag( 'colBreaks', @attributes );
 
     for my $col_num ( @page_breaks ) {
         $self->_write_brk( $col_num, 1048575 );
     }
 
-    $self->{_writer}->endTag( 'colBreaks' );
+    $self->endTag( 'colBreaks' );
 }
 
 
@@ -6915,7 +6912,7 @@ sub _write_brk {
         'man' => $man,
     );
 
-    $self->{_writer}->emptyTag( 'brk', @attributes );
+    $self->emptyTag( 'brk', @attributes );
 }
 
 
@@ -6937,17 +6934,17 @@ sub _write_auto_filter {
     if ( $self->{_filter_on} ) {
 
         # Autofilter defined active filters.
-        $self->{_writer}->startTag( 'autoFilter', @attributes );
+        $self->startTag( 'autoFilter', @attributes );
 
         $self->_write_autofilters();
 
-        $self->{_writer}->endTag( 'autoFilter' );
+        $self->endTag( 'autoFilter' );
 
     }
     else {
 
         # Autofilter defined without active filters.
-        $self->{_writer}->emptyTag( 'autoFilter', @attributes );
+        $self->emptyTag( 'autoFilter', @attributes );
     }
 
 }
@@ -6996,7 +6993,7 @@ sub _write_filter_column {
 
     my @attributes = ( 'colId' => $col_id );
 
-    $self->{_writer}->startTag( 'filterColumn', @attributes );
+    $self->startTag( 'filterColumn', @attributes );
 
 
     if ( $type == 1 ) {
@@ -7011,7 +7008,7 @@ sub _write_filter_column {
         $self->_write_custom_filters( @$filters );
     }
 
-    $self->{_writer}->endTag( 'filterColumn' );
+    $self->endTag( 'filterColumn' );
 }
 
 
@@ -7029,18 +7026,18 @@ sub _write_filters {
     if ( @filters == 1 && $filters[0] eq 'blanks' ) {
 
         # Special case for blank cells only.
-        $self->{_writer}->emptyTag( 'filters', 'blank' => 1 );
+        $self->emptyTag( 'filters', 'blank' => 1 );
     }
     else {
 
         # General case.
-        $self->{_writer}->startTag( 'filters' );
+        $self->startTag( 'filters' );
 
         for my $filter ( @filters ) {
             $self->_write_filter( $filter );
         }
 
-        $self->{_writer}->endTag( 'filters' );
+        $self->endTag( 'filters' );
     }
 }
 
@@ -7058,7 +7055,7 @@ sub _write_filter {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'filter', @attributes );
+    $self->emptyTag( 'filter', @attributes );
 }
 
 
@@ -7076,9 +7073,9 @@ sub _write_custom_filters {
     if ( @tokens == 2 ) {
 
         # One filter expression only.
-        $self->{_writer}->startTag( 'customFilters' );
+        $self->startTag( 'customFilters' );
         $self->_write_custom_filter( @tokens );
-        $self->{_writer}->endTag( 'customFilters' );
+        $self->endTag( 'customFilters' );
 
     }
     else {
@@ -7096,10 +7093,10 @@ sub _write_custom_filters {
         }
 
         # Write the two custom filters.
-        $self->{_writer}->startTag( 'customFilters', @attributes );
+        $self->startTag( 'customFilters', @attributes );
         $self->_write_custom_filter( $tokens[0], $tokens[1] );
         $self->_write_custom_filter( $tokens[3], $tokens[4] );
-        $self->{_writer}->endTag( 'customFilters' );
+        $self->endTag( 'customFilters' );
     }
 }
 
@@ -7140,7 +7137,7 @@ sub _write_custom_filter {
     push @attributes, ( 'operator' => $operator ) unless $operator eq 'equal';
     push @attributes, ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'customFilter', @attributes );
+    $self->emptyTag( 'customFilter', @attributes );
 }
 
 
@@ -7158,7 +7155,7 @@ sub _write_hyperlinks {
 
     return unless @hlink_refs;
 
-    $self->{_writer}->startTag( 'hyperlinks' );
+    $self->startTag( 'hyperlinks' );
 
     for my $aref ( @hlink_refs ) {
         my ( $type, @args ) = @$aref;
@@ -7171,7 +7168,7 @@ sub _write_hyperlinks {
         }
     }
 
-    $self->{_writer}->endTag( 'hyperlinks' );
+    $self->endTag( 'hyperlinks' );
 }
 
 
@@ -7201,7 +7198,7 @@ sub _write_hyperlink_external {
     push @attributes, ( 'location' => $location ) if defined $location;
     push @attributes, ( 'tooltip'  => $tooltip )  if defined $tooltip;
 
-    $self->{_writer}->emptyTag( 'hyperlink', @attributes );
+    $self->emptyTag( 'hyperlink', @attributes );
 }
 
 
@@ -7227,7 +7224,7 @@ sub _write_hyperlink_internal {
     push @attributes, ( 'tooltip' => $tooltip ) if defined $tooltip;
     push @attributes, ( 'display' => $display );
 
-    $self->{_writer}->emptyTag( 'hyperlink', @attributes );
+    $self->emptyTag( 'hyperlink', @attributes );
 }
 
 
@@ -7323,7 +7320,7 @@ sub _write_freeze_panes {
     push @attributes, ( 'state'       => $state );
 
 
-    $self->{_writer}->emptyTag( 'pane', @attributes );
+    $self->emptyTag( 'pane', @attributes );
 }
 
 
@@ -7405,7 +7402,7 @@ sub _write_split_panes {
     push @attributes, ( 'topLeftCell' => $top_left_cell );
     push @attributes, ( 'activePane' => $active_pane ) if $has_selection;
 
-    $self->{_writer}->emptyTag( 'pane', @attributes );
+    $self->emptyTag( 'pane', @attributes );
 }
 
 
@@ -7462,7 +7459,7 @@ sub _write_tab_color {
 
     my @attributes = ( 'rgb' => $rgb );
 
-    $self->{_writer}->emptyTag( 'tabColor', @attributes );
+    $self->emptyTag( 'tabColor', @attributes );
 }
 
 
@@ -7474,17 +7471,17 @@ sub _write_tab_color {
 #
 sub _write_outline_pr {
 
-    my $self        = shift;
+    my $self       = shift;
     my @attributes = ();
 
     return unless $self->{_outline_changed};
 
-    push @attributes, ( "applyStyles"  => 1 ) if $self->{_outline_style};
-    push @attributes, ( "summaryBelow" => 0 ) if !$self->{_outline_below};
-    push @attributes, ( "summaryRight" => 0 ) if !$self->{_outline_right};
+    push @attributes, ( "applyStyles"        => 1 ) if $self->{_outline_style};
+    push @attributes, ( "summaryBelow"       => 0 ) if !$self->{_outline_below};
+    push @attributes, ( "summaryRight"       => 0 ) if !$self->{_outline_right};
     push @attributes, ( "showOutlineSymbols" => 0 ) if !$self->{_outline_on};
 
-    $self->{_writer}->emptyTag( 'outlinePr', @attributes );
+    $self->emptyTag( 'outlinePr', @attributes );
 }
 
 
@@ -7503,12 +7500,12 @@ sub _write_sheet_protection {
 
     my %arg = %{ $self->{_protect} };
 
-    push @attributes, ( "password" => $arg{password} ) if $arg{password};
-    push @attributes, ( "sheet"            => 1 ) if $arg{sheet};
-    push @attributes, ( "content"          => 1 ) if $arg{content};
-    push @attributes, ( "objects"          => 1 ) if !$arg{objects};
-    push @attributes, ( "scenarios"        => 1 ) if !$arg{scenarios};
-    push @attributes, ( "formatCells"      => 0 ) if $arg{format_cells};
+    push @attributes, ( "password"    => $arg{password} ) if $arg{password};
+    push @attributes, ( "sheet"       => 1 )              if $arg{sheet};
+    push @attributes, ( "content"     => 1 )              if $arg{content};
+    push @attributes, ( "objects"     => 1 )              if !$arg{objects};
+    push @attributes, ( "scenarios"   => 1 )              if !$arg{scenarios};
+    push @attributes, ( "formatCells" => 0 )              if $arg{format_cells};
     push @attributes, ( "formatColumns"    => 0 ) if $arg{format_columns};
     push @attributes, ( "formatRows"       => 0 ) if $arg{format_rows};
     push @attributes, ( "insertColumns"    => 0 ) if $arg{insert_columns};
@@ -7528,7 +7525,7 @@ sub _write_sheet_protection {
       if !$arg{select_unlocked_cells};
 
 
-    $self->{_writer}->emptyTag( 'sheetProtection', @attributes );
+    $self->emptyTag( 'sheetProtection', @attributes );
 }
 
 
@@ -7562,7 +7559,7 @@ sub _write_drawing {
 
     my @attributes = ( 'r:id' => $r_id );
 
-    $self->{_writer}->emptyTag( 'drawing', @attributes );
+    $self->emptyTag( 'drawing', @attributes );
 }
 
 
@@ -7584,7 +7581,7 @@ sub _write_legacy_drawing {
 
     my @attributes = ( 'r:id' => 'rId' . $id );
 
-    $self->{_writer}->emptyTag( 'legacyDrawing', @attributes );
+    $self->emptyTag( 'legacyDrawing', @attributes );
 }
 
 
@@ -7732,7 +7729,7 @@ sub _write_data_validations {
 
     my @attributes = ( 'count' => $count );
 
-    $self->{_writer}->startTag( 'dataValidations', @attributes );
+    $self->startTag( 'dataValidations', @attributes );
 
     for my $validation ( @validations ) {
 
@@ -7740,7 +7737,7 @@ sub _write_data_validations {
         $self->_write_data_validation( $validation );
     }
 
-    $self->{_writer}->endTag( 'dataValidations' );
+    $self->endTag( 'dataValidations' );
 }
 
 
@@ -7817,7 +7814,7 @@ sub _write_data_validation {
 
     push @attributes, ( 'sqref' => $sqref );
 
-    $self->{_writer}->startTag( 'dataValidation', @attributes );
+    $self->startTag( 'dataValidation', @attributes );
 
     # Write the formula1 element.
     $self->_write_formula_1( $param->{value} );
@@ -7825,7 +7822,7 @@ sub _write_data_validation {
     # Write the formula2 element.
     $self->_write_formula_2( $param->{maximum} ) if defined $param->{maximum};
 
-    $self->{_writer}->endTag( 'dataValidation' );
+    $self->endTag( 'dataValidation' );
 }
 
 
@@ -7841,14 +7838,14 @@ sub _write_formula_1 {
     my $formula = shift;
 
     # Convert a list array ref into a comma separated string.
-    if (ref $formula eq 'ARRAY') {
-        $formula   = join ',', @$formula;
-        $formula   = qq("$formula");
+    if ( ref $formula eq 'ARRAY' ) {
+        $formula = join ',', @$formula;
+        $formula = qq("$formula");
     }
 
     $formula =~ s/^=//;    # Remove formula symbol.
 
-    $self->{_writer}->dataElement( 'formula1', $formula );
+    $self->dataElement( 'formula1', $formula );
 }
 
 
@@ -7865,7 +7862,7 @@ sub _write_formula_2 {
 
     $formula =~ s/^=//;    # Remove formula symbol.
 
-    $self->{_writer}->dataElement( 'formula2', $formula );
+    $self->dataElement( 'formula2', $formula );
 }
 
 
@@ -7877,8 +7874,8 @@ sub _write_formula_2 {
 #
 sub _write_conditional_formats {
 
-    my $self     = shift;
-    my @ranges   = sort keys %{ $self->{_cond_formats} };
+    my $self   = shift;
+    my @ranges = sort keys %{ $self->{_cond_formats} };
 
     return unless scalar @ranges;
 
@@ -7903,7 +7900,7 @@ sub _write_conditional_formatting {
 
     my @attributes = ( 'sqref' => $range );
 
-    $self->{_writer}->startTag( 'conditionalFormatting', @attributes );
+    $self->startTag( 'conditionalFormatting', @attributes );
 
     for my $param ( @$params ) {
 
@@ -7911,7 +7908,7 @@ sub _write_conditional_formatting {
         $self->_write_cf_rule( $param );
     }
 
-    $self->{_writer}->endTag( 'conditionalFormatting' );
+    $self->endTag( 'conditionalFormatting' );
 }
 
 ##############################################################################
@@ -7935,7 +7932,7 @@ sub _write_cf_rule {
     if ( $param->{type} eq 'cellIs' ) {
         push @attributes, ( 'operator' => $param->{criteria} );
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
 
         if ( defined $param->{minimum} && defined $param->{maximum} ) {
             $self->_write_formula( $param->{minimum} );
@@ -7945,7 +7942,7 @@ sub _write_cf_rule {
             $self->_write_formula( $param->{value} );
         }
 
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'aboveAverage' ) {
         if ( $param->{criteria} =~ /below/ ) {
@@ -7960,7 +7957,7 @@ sub _write_cf_rule {
             push @attributes, ( 'stdDev' => $1 );
         }
 
-        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+        $self->emptyTag( 'cfRule', @attributes );
     }
     elsif ( $param->{type} eq 'top10' ) {
         if ( defined $param->{criteria} && $param->{criteria} eq '%' ) {
@@ -7974,13 +7971,13 @@ sub _write_cf_rule {
         my $rank = $param->{value} || 10;
         push @attributes, ( 'rank' => $rank );
 
-        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+        $self->emptyTag( 'cfRule', @attributes );
     }
     elsif ( $param->{type} eq 'duplicateValues' ) {
-        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+        $self->emptyTag( 'cfRule', @attributes );
     }
     elsif ( $param->{type} eq 'uniqueValues' ) {
-        $self->{_writer}->emptyTag( 'cfRule', @attributes );
+        $self->emptyTag( 'cfRule', @attributes );
     }
     elsif ($param->{type} eq 'containsText'
         || $param->{type} eq 'notContainsText'
@@ -7990,43 +7987,43 @@ sub _write_cf_rule {
         push @attributes, ( 'operator' => $param->{criteria} );
         push @attributes, ( 'text'     => $param->{value} );
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{formula} );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'timePeriod' ) {
         push @attributes, ( 'timePeriod' => $param->{criteria} );
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{formula} );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ($param->{type} eq 'containsBlanks'
         || $param->{type} eq 'notContainsBlanks'
         || $param->{type} eq 'containsErrors'
         || $param->{type} eq 'notContainsErrors' )
     {
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{formula} );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'colorScale' ) {
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_color_scale( $param );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'dataBar' ) {
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_data_bar( $param );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'expression' ) {
 
-        $self->{_writer}->startTag( 'cfRule', @attributes );
+        $self->startTag( 'cfRule', @attributes );
         $self->_write_formula( $param->{criteria} );
-        $self->{_writer}->endTag( 'cfRule' );
+        $self->endTag( 'cfRule' );
     }
 }
 
@@ -8045,7 +8042,7 @@ sub _write_formula {
     # Remove equality from formula.
     $data =~ s/^=//;
 
-    $self->{_writer}->dataElement( 'formula', $data );
+    $self->dataElement( 'formula', $data );
 }
 
 
@@ -8060,7 +8057,7 @@ sub _write_color_scale {
     my $self  = shift;
     my $param = shift;
 
-    $self->{_writer}->startTag( 'colorScale' );
+    $self->startTag( 'colorScale' );
 
     $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
 
@@ -8078,7 +8075,7 @@ sub _write_color_scale {
 
     $self->_write_color( 'rgb' => $param->{max_color} );
 
-    $self->{_writer}->endTag( 'colorScale' );
+    $self->endTag( 'colorScale' );
 }
 
 
@@ -8093,14 +8090,14 @@ sub _write_data_bar {
     my $self  = shift;
     my $param = shift;
 
-    $self->{_writer}->startTag( 'dataBar' );
+    $self->startTag( 'dataBar' );
 
     $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
     $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
 
     $self->_write_color( 'rgb' => $param->{bar_color} );
 
-    $self->{_writer}->endTag( 'dataBar' );
+    $self->endTag( 'dataBar' );
 }
 
 
@@ -8121,9 +8118,8 @@ sub _write_cfvo {
         'val'  => $val
     );
 
-    $self->{_writer}->emptyTag( 'cfvo', @attributes );
+    $self->emptyTag( 'cfvo', @attributes );
 }
-
 
 
 ##############################################################################
@@ -8140,9 +8136,8 @@ sub _write_color {
 
     my @attributes = ( $name => $value );
 
-    $self->{_writer}->emptyTag( 'color', @attributes );
+    $self->emptyTag( 'color', @attributes );
 }
-
 
 
 ##############################################################################
@@ -8162,7 +8157,7 @@ sub _write_table_parts {
 
     my @attributes = ( 'count' => $count, );
 
-    $self->{_writer}->startTag( 'tableParts', @attributes );
+    $self->startTag( 'tableParts', @attributes );
 
     for my $table ( @tables ) {
 
@@ -8171,7 +8166,7 @@ sub _write_table_parts {
 
     }
 
-    $self->{_writer}->endTag( 'tableParts' );
+    $self->endTag( 'tableParts' );
 }
 
 
@@ -8189,7 +8184,7 @@ sub _write_table_part {
 
     my @attributes = ( 'r:id' => $r_id, );
 
-    $self->{_writer}->emptyTag( 'tablePart', @attributes );
+    $self->emptyTag( 'tablePart', @attributes );
 }
 
 

@@ -81,7 +81,7 @@ sub _write_stock_chart {
     # Add default formatting to the series data.
     $self->_modify_series_formatting();
 
-    $self->{_writer}->startTag( 'c:stockChart' );
+    $self->startTag( 'c:stockChart' );
 
     # Write the series elements.
     $self->_write_ser( $_ ) for @series;
@@ -95,7 +95,7 @@ sub _write_stock_chart {
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 
-    $self->{_writer}->endTag( 'c:stockChart' );
+    $self->endTag( 'c:stockChart' );
 }
 
 
@@ -109,7 +109,7 @@ sub _write_plot_area {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'c:plotArea' );
+    $self->startTag( 'c:plotArea' );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -146,7 +146,7 @@ sub _write_plot_area {
     );
 
 
-    $self->{_writer}->endTag( 'c:plotArea' );
+    $self->endTag( 'c:plotArea' );
 }
 
 

@@ -94,7 +94,7 @@ sub _write_scatter_chart {
     # Add default formatting to the series data.
     $self->_modify_series_formatting();
 
-    $self->{_writer}->startTag( 'c:scatterChart' );
+    $self->startTag( 'c:scatterChart' );
 
     # Write the c:scatterStyle element.
     $self->_write_scatter_style( $style );
@@ -108,7 +108,7 @@ sub _write_scatter_chart {
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 
-    $self->{_writer}->endTag( 'c:scatterChart' );
+    $self->endTag( 'c:scatterChart' );
 }
 
 
@@ -126,7 +126,7 @@ sub _write_ser {
     my $series = shift;
     my $index  = $self->{_series_index}++;
 
-    $self->{_writer}->startTag( 'c:ser' );
+    $self->startTag( 'c:ser' );
 
     # Write the c:idx element.
     $self->_write_idx( $index );
@@ -158,7 +158,7 @@ sub _write_ser {
     # Write the c:smooth element.
     $self->_write_c_smooth();
 
-    $self->{_writer}->endTag( 'c:ser' );
+    $self->endTag( 'c:ser' );
 }
 
 
@@ -175,7 +175,7 @@ sub _write_plot_area {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'c:plotArea' );
+    $self->startTag( 'c:plotArea' );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -216,7 +216,7 @@ sub _write_plot_area {
         position => 'l',
     );
 
-    $self->{_writer}->endTag( 'c:plotArea' );
+    $self->endTag( 'c:plotArea' );
 }
 
 
@@ -234,7 +234,7 @@ sub _write_x_val {
     my $data_id = $series->{_cat_data_id};
     my $data    = $self->{_formula_data}->[$data_id];
 
-    $self->{_writer}->startTag( 'c:xVal' );
+    $self->startTag( 'c:xVal' );
 
     # Check the type of cached data.
     my $type = $self->_get_data_type( $data );
@@ -252,7 +252,7 @@ sub _write_x_val {
         $self->_write_num_ref( $formula, $data, $type );
     }
 
-    $self->{_writer}->endTag( 'c:xVal' );
+    $self->endTag( 'c:xVal' );
 }
 
 
@@ -270,14 +270,14 @@ sub _write_y_val {
     my $data_id = $series->{_val_data_id};
     my $data    = $self->{_formula_data}->[$data_id];
 
-    $self->{_writer}->startTag( 'c:yVal' );
+    $self->startTag( 'c:yVal' );
 
     # Unlike Cat axes data should only be numeric.
 
     # Write the c:numRef element.
     $self->_write_num_ref( $formula, $data, 'num' );
 
-    $self->{_writer}->endTag( 'c:yVal' );
+    $self->endTag( 'c:yVal' );
 }
 
 
@@ -294,7 +294,7 @@ sub _write_scatter_style {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:scatterStyle', @attributes );
+    $self->emptyTag( 'c:scatterStyle', @attributes );
 }
 
 
@@ -314,7 +314,7 @@ sub _write_c_smooth {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:smooth', @attributes );
+    $self->emptyTag( 'c:smooth', @attributes );
 }
 
 

@@ -109,8 +109,6 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration();
 
     # Write the c:chartSpace element.
@@ -132,11 +130,11 @@ sub _assemble_xml_file {
     $self->_write_print_settings() if $self->{_embedded};
 
     # Close the worksheet tag.
-    $self->{_writer}->endTag( 'c:chartSpace' );
+    $self->endTag( 'c:chartSpace' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -1234,7 +1232,7 @@ sub _write_chart_space {
         'xmlns:r' => $xmlns_r,
     );
 
-    $self->{_writer}->startTag( 'c:chartSpace', @attributes );
+    $self->startTag( 'c:chartSpace', @attributes );
 }
 
 
@@ -1251,7 +1249,7 @@ sub _write_lang {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:lang', @attributes );
+    $self->emptyTag( 'c:lang', @attributes );
 }
 
 
@@ -1271,7 +1269,7 @@ sub _write_style {
 
     my @attributes = ( 'val' => $style_id );
 
-    $self->{_writer}->emptyTag( 'c:style', @attributes );
+    $self->emptyTag( 'c:style', @attributes );
 }
 
 
@@ -1285,7 +1283,7 @@ sub _write_chart {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'c:chart' );
+    $self->startTag( 'c:chart' );
 
     # Write the chart title elements.
     my $title;
@@ -1308,7 +1306,7 @@ sub _write_chart {
     # Write the c:dispBlanksAs element.
     $self->_write_disp_blanks_as();
 
-    $self->{_writer}->endTag( 'c:chart' );
+    $self->endTag( 'c:chart' );
 }
 
 
@@ -1328,7 +1326,7 @@ sub _write_disp_blanks_as {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:dispBlanksAs', @attributes );
+    $self->emptyTag( 'c:dispBlanksAs', @attributes );
 }
 
 
@@ -1342,7 +1340,7 @@ sub _write_plot_area {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'c:plotArea' );
+    $self->startTag( 'c:plotArea' );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -1375,7 +1373,7 @@ sub _write_plot_area {
         axis_ids => $self->{_axis2_ids}
     );
 
-    $self->{_writer}->endTag( 'c:plotArea' );
+    $self->endTag( 'c:plotArea' );
 }
 
 
@@ -1389,7 +1387,7 @@ sub _write_layout {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'c:layout' );
+    $self->emptyTag( 'c:layout' );
 }
 
 
@@ -1419,7 +1417,7 @@ sub _write_grouping {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:grouping', @attributes );
+    $self->emptyTag( 'c:grouping', @attributes );
 }
 
 
@@ -1450,7 +1448,7 @@ sub _write_ser {
     my $series = shift;
     my $index  = $self->{_series_index}++;
 
-    $self->{_writer}->startTag( 'c:ser' );
+    $self->startTag( 'c:ser' );
 
     # Write the c:idx element.
     $self->_write_idx( $index );
@@ -1482,7 +1480,7 @@ sub _write_ser {
     # Write the c:val element.
     $self->_write_val( $series );
 
-    $self->{_writer}->endTag( 'c:ser' );
+    $self->endTag( 'c:ser' );
 }
 
 
@@ -1499,7 +1497,7 @@ sub _write_idx {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:idx', @attributes );
+    $self->emptyTag( 'c:idx', @attributes );
 }
 
 
@@ -1516,7 +1514,7 @@ sub _write_order {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:order', @attributes );
+    $self->emptyTag( 'c:order', @attributes );
 }
 
 
@@ -1565,7 +1563,7 @@ sub _write_cat {
 
     $self->{_has_category} = 1;
 
-    $self->{_writer}->startTag( 'c:cat' );
+    $self->startTag( 'c:cat' );
 
     # Check the type of cached data.
     my $type = $self->_get_data_type( $data );
@@ -1583,7 +1581,7 @@ sub _write_cat {
         $self->_write_num_ref( $formula, $data, $type );
     }
 
-    $self->{_writer}->endTag( 'c:cat' );
+    $self->endTag( 'c:cat' );
 }
 
 
@@ -1601,14 +1599,14 @@ sub _write_val {
     my $data_id = $series->{_val_data_id};
     my $data    = $self->{_formula_data}->[$data_id];
 
-    $self->{_writer}->startTag( 'c:val' );
+    $self->startTag( 'c:val' );
 
     # Unlike Cat axes data should only be numeric.
 
     # Write the c:numRef element.
     $self->_write_num_ref( $formula, $data, 'num' );
 
-    $self->{_writer}->endTag( 'c:val' );
+    $self->endTag( 'c:val' );
 }
 
 
@@ -1625,7 +1623,7 @@ sub _write_num_ref {
     my $data    = shift;
     my $type    = shift;
 
-    $self->{_writer}->startTag( 'c:numRef' );
+    $self->startTag( 'c:numRef' );
 
     # Write the c:f element.
     $self->_write_series_formula( $formula );
@@ -1641,7 +1639,7 @@ sub _write_num_ref {
         $self->_write_str_cache( $data );
     }
 
-    $self->{_writer}->endTag( 'c:numRef' );
+    $self->endTag( 'c:numRef' );
 }
 
 
@@ -1658,7 +1656,7 @@ sub _write_str_ref {
     my $data    = shift;
     my $type    = shift;
 
-    $self->{_writer}->startTag( 'c:strRef' );
+    $self->startTag( 'c:strRef' );
 
     # Write the c:f element.
     $self->_write_series_formula( $formula );
@@ -1674,7 +1672,7 @@ sub _write_str_ref {
         $self->_write_str_cache( $data );
     }
 
-    $self->{_writer}->endTag( 'c:strRef' );
+    $self->endTag( 'c:strRef' );
 }
 
 
@@ -1692,7 +1690,7 @@ sub _write_series_formula {
     # Strip the leading '=' from the formula.
     $formula =~ s/^=//;
 
-    $self->{_writer}->dataElement( 'c:f', $formula );
+    $self->dataElement( 'c:f', $formula );
 }
 
 
@@ -1736,7 +1734,7 @@ sub _write_axis_id {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:axId', @attributes );
+    $self->emptyTag( 'c:axId', @attributes );
 }
 
 
@@ -1764,7 +1762,7 @@ sub _write_cat_axis {
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
-    $self->{_writer}->startTag( 'c:catAx' );
+    $self->startTag( 'c:catAx' );
 
     $self->_write_axis_id( $axis_ids->[0] );
 
@@ -1818,7 +1816,7 @@ sub _write_cat_axis {
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
 
-    $self->{_writer}->endTag( 'c:catAx' );
+    $self->endTag( 'c:catAx' );
 }
 
 
@@ -1845,7 +1843,7 @@ sub _write_val_axis {
     # Overwrite the default axis position with a user supplied value.
     $position = $y_axis->{_position} || $position;
 
-    $self->{_writer}->startTag( 'c:valAx' );
+    $self->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $axis_ids->[1] );
 
@@ -1902,7 +1900,7 @@ sub _write_val_axis {
     # Write the c:minorUnit element.
     $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
 
-    $self->{_writer}->endTag( 'c:valAx' );
+    $self->endTag( 'c:valAx' );
 }
 
 
@@ -1928,7 +1926,7 @@ sub _write_cat_val_axis {
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
-    $self->{_writer}->startTag( 'c:valAx' );
+    $self->startTag( 'c:valAx' );
 
     $self->_write_axis_id( $axis_ids->[0] );
 
@@ -1982,7 +1980,7 @@ sub _write_cat_val_axis {
     # Write the c:minorUnit element.
     $self->_write_c_minor_unit( $x_axis->{_minor_unit} );
 
-    $self->{_writer}->endTag( 'c:valAx' );
+    $self->endTag( 'c:valAx' );
 }
 
 
@@ -2007,7 +2005,7 @@ sub _write_date_axis {
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
 
-    $self->{_writer}->startTag( 'c:dateAx' );
+    $self->startTag( 'c:dateAx' );
 
     $self->_write_axis_id( $axis_ids->[0] );
 
@@ -2077,7 +2075,7 @@ sub _write_date_axis {
         $self->_write_c_minor_time_unit( $x_axis->{_minor_unit_type} );
     }
 
-    $self->{_writer}->endTag( 'c:dateAx' );
+    $self->endTag( 'c:dateAx' );
 }
 
 
@@ -2095,7 +2093,7 @@ sub _write_scaling {
     my $max      = shift;
     my $log_base = shift;
 
-    $self->{_writer}->startTag( 'c:scaling' );
+    $self->startTag( 'c:scaling' );
 
     # Write the c:logBase element.
     $self->_write_c_log_base( $log_base );
@@ -2109,7 +2107,7 @@ sub _write_scaling {
     # Write the c:min element.
     $self->_write_c_min( $min );
 
-    $self->{_writer}->endTag( 'c:scaling' );
+    $self->endTag( 'c:scaling' );
 }
 
 
@@ -2128,7 +2126,7 @@ sub _write_c_log_base {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:logBase', @attributes );
+    $self->emptyTag( 'c:logBase', @attributes );
 }
 
 
@@ -2148,7 +2146,7 @@ sub _write_orientation {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:orientation', @attributes );
+    $self->emptyTag( 'c:orientation', @attributes );
 }
 
 
@@ -2167,7 +2165,7 @@ sub _write_c_max {
 
     my @attributes = ( 'val' => $max );
 
-    $self->{_writer}->emptyTag( 'c:max', @attributes );
+    $self->emptyTag( 'c:max', @attributes );
 }
 
 
@@ -2186,7 +2184,7 @@ sub _write_c_min {
 
     my @attributes = ( 'val' => $min );
 
-    $self->{_writer}->emptyTag( 'c:min', @attributes );
+    $self->emptyTag( 'c:min', @attributes );
 }
 
 
@@ -2209,7 +2207,7 @@ sub _write_axis_pos {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:axPos', @attributes );
+    $self->emptyTag( 'c:axPos', @attributes );
 }
 
 
@@ -2233,7 +2231,7 @@ sub _write_num_fmt {
         'sourceLinked' => $source_linked,
     );
 
-    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
+    $self->emptyTag( 'c:numFmt', @attributes );
 }
 
 
@@ -2254,7 +2252,7 @@ sub _write_tick_label_pos {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:tickLblPos', @attributes );
+    $self->emptyTag( 'c:tickLblPos', @attributes );
 }
 
 
@@ -2271,7 +2269,7 @@ sub _write_cross_axis {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:crossAx', @attributes );
+    $self->emptyTag( 'c:crossAx', @attributes );
 }
 
 
@@ -2288,7 +2286,7 @@ sub _write_crosses {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:crosses', @attributes );
+    $self->emptyTag( 'c:crosses', @attributes );
 }
 
 
@@ -2305,7 +2303,7 @@ sub _write_c_crosses_at {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:crossesAt', @attributes );
+    $self->emptyTag( 'c:crossesAt', @attributes );
 }
 
 
@@ -2322,7 +2320,7 @@ sub _write_auto {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:auto', @attributes );
+    $self->emptyTag( 'c:auto', @attributes );
 }
 
 
@@ -2339,7 +2337,7 @@ sub _write_label_align {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:lblAlgn', @attributes );
+    $self->emptyTag( 'c:lblAlgn', @attributes );
 }
 
 
@@ -2356,7 +2354,7 @@ sub _write_label_offset {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:lblOffset', @attributes );
+    $self->emptyTag( 'c:lblOffset', @attributes );
 }
 
 
@@ -2373,7 +2371,7 @@ sub _write_major_gridlines {
 
     return unless $options->{visible};
 
-    $self->{_writer}->emptyTag( 'c:majorGridlines' );
+    $self->emptyTag( 'c:majorGridlines' );
 }
 
 
@@ -2396,7 +2394,7 @@ sub _write_number_format {
         'sourceLinked' => $source_linked,
     );
 
-    $self->{_writer}->emptyTag( 'c:numFmt', @attributes );
+    $self->emptyTag( 'c:numFmt', @attributes );
 }
 
 
@@ -2414,7 +2412,7 @@ sub _write_cross_between {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:crossBetween', @attributes );
+    $self->emptyTag( 'c:crossBetween', @attributes );
 }
 
 
@@ -2433,7 +2431,7 @@ sub _write_c_major_unit {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:majorUnit', @attributes );
+    $self->emptyTag( 'c:majorUnit', @attributes );
 }
 
 
@@ -2452,7 +2450,7 @@ sub _write_c_minor_unit {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:minorUnit', @attributes );
+    $self->emptyTag( 'c:minorUnit', @attributes );
 }
 
 
@@ -2469,7 +2467,7 @@ sub _write_c_major_time_unit {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:majorTimeUnit', @attributes );
+    $self->emptyTag( 'c:majorTimeUnit', @attributes );
 }
 
 
@@ -2486,7 +2484,7 @@ sub _write_c_minor_time_unit {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:minorTimeUnit', @attributes );
+    $self->emptyTag( 'c:minorTimeUnit', @attributes );
 }
 
 
@@ -2525,7 +2523,7 @@ sub _write_legend {
 
     $position = $allowed{$position};
 
-    $self->{_writer}->startTag( 'c:legend' );
+    $self->startTag( 'c:legend' );
 
     # Write the c:legendPos element.
     $self->_write_legend_pos( $position );
@@ -2543,7 +2541,7 @@ sub _write_legend {
     # Write the c:overlay element.
     $self->_write_overlay() if $overlay;
 
-    $self->{_writer}->endTag( 'c:legend' );
+    $self->endTag( 'c:legend' );
 }
 
 
@@ -2560,7 +2558,7 @@ sub _write_legend_pos {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:legendPos', @attributes );
+    $self->emptyTag( 'c:legendPos', @attributes );
 }
 
 
@@ -2575,7 +2573,7 @@ sub _write_legend_entry {
     my $self  = shift;
     my $index = shift;
 
-    $self->{_writer}->startTag( 'c:legendEntry' );
+    $self->startTag( 'c:legendEntry' );
 
     # Write the c:idx element.
     $self->_write_idx( $index );
@@ -2583,7 +2581,7 @@ sub _write_legend_entry {
     # Write the c:delete element.
     $self->_write_delete( 1 );
 
-    $self->{_writer}->endTag( 'c:legendEntry' );
+    $self->endTag( 'c:legendEntry' );
 }
 
 
@@ -2600,7 +2598,7 @@ sub _write_overlay {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:overlay', @attributes );
+    $self->emptyTag( 'c:overlay', @attributes );
 }
 
 
@@ -2620,7 +2618,7 @@ sub _write_plot_vis_only {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:plotVisOnly', @attributes );
+    $self->emptyTag( 'c:plotVisOnly', @attributes );
 }
 
 
@@ -2634,7 +2632,7 @@ sub _write_print_settings {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'c:printSettings' );
+    $self->startTag( 'c:printSettings' );
 
     # Write the c:headerFooter element.
     $self->_write_header_footer();
@@ -2645,7 +2643,7 @@ sub _write_print_settings {
     # Write the c:pageSetup element.
     $self->_write_page_setup();
 
-    $self->{_writer}->endTag( 'c:printSettings' );
+    $self->endTag( 'c:printSettings' );
 }
 
 
@@ -2659,7 +2657,7 @@ sub _write_header_footer {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'c:headerFooter' );
+    $self->emptyTag( 'c:headerFooter' );
 }
 
 
@@ -2688,7 +2686,7 @@ sub _write_page_margins {
         'footer' => $footer,
     );
 
-    $self->{_writer}->emptyTag( 'c:pageMargins', @attributes );
+    $self->emptyTag( 'c:pageMargins', @attributes );
 }
 
 
@@ -2702,7 +2700,7 @@ sub _write_page_setup {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'c:pageSetup' );
+    $self->emptyTag( 'c:pageSetup' );
 }
 
 
@@ -2718,7 +2716,7 @@ sub _write_title_rich {
     my $title = shift;
     my $horiz = shift;
 
-    $self->{_writer}->startTag( 'c:title' );
+    $self->startTag( 'c:title' );
 
     # Write the c:tx element.
     $self->_write_tx_rich( $title, $horiz );
@@ -2726,7 +2724,7 @@ sub _write_title_rich {
     # Write the c:layout element.
     $self->_write_layout();
 
-    $self->{_writer}->endTag( 'c:title' );
+    $self->endTag( 'c:title' );
 }
 
 
@@ -2743,7 +2741,7 @@ sub _write_title_formula {
     my $data_id = shift;
     my $horiz   = shift;
 
-    $self->{_writer}->startTag( 'c:title' );
+    $self->startTag( 'c:title' );
 
     # Write the c:tx element.
     $self->_write_tx_formula( $title, $data_id );
@@ -2754,7 +2752,7 @@ sub _write_title_formula {
     # Write the c:txPr element.
     $self->_write_tx_pr( $horiz );
 
-    $self->{_writer}->endTag( 'c:title' );
+    $self->endTag( 'c:title' );
 }
 
 
@@ -2770,12 +2768,12 @@ sub _write_tx_rich {
     my $title = shift;
     my $horiz = shift;
 
-    $self->{_writer}->startTag( 'c:tx' );
+    $self->startTag( 'c:tx' );
 
     # Write the c:rich element.
     $self->_write_rich( $title, $horiz );
 
-    $self->{_writer}->endTag( 'c:tx' );
+    $self->endTag( 'c:tx' );
 }
 
 
@@ -2790,12 +2788,12 @@ sub _write_tx_value {
     my $self  = shift;
     my $title = shift;
 
-    $self->{_writer}->startTag( 'c:tx' );
+    $self->startTag( 'c:tx' );
 
     # Write the c:v element.
     $self->_write_v( $title );
 
-    $self->{_writer}->endTag( 'c:tx' );
+    $self->endTag( 'c:tx' );
 }
 
 
@@ -2816,12 +2814,12 @@ sub _write_tx_formula {
         $data = $self->{_formula_data}->[$data_id];
     }
 
-    $self->{_writer}->startTag( 'c:tx' );
+    $self->startTag( 'c:tx' );
 
     # Write the c:strRef element.
     $self->_write_str_ref( $title, $data, 'str' );
 
-    $self->{_writer}->endTag( 'c:tx' );
+    $self->endTag( 'c:tx' );
 }
 
 
@@ -2837,7 +2835,7 @@ sub _write_rich {
     my $title = shift;
     my $horiz = shift;
 
-    $self->{_writer}->startTag( 'c:rich' );
+    $self->startTag( 'c:rich' );
 
     # Write the a:bodyPr element.
     $self->_write_a_body_pr( $horiz );
@@ -2848,7 +2846,7 @@ sub _write_rich {
     # Write the a:p element.
     $self->_write_a_p_rich( $title );
 
-    $self->{_writer}->endTag( 'c:rich' );
+    $self->endTag( 'c:rich' );
 }
 
 
@@ -2872,7 +2870,7 @@ sub _write_a_body_pr {
 
     @attributes = () if !$horiz;
 
-    $self->{_writer}->emptyTag( 'a:bodyPr', @attributes );
+    $self->emptyTag( 'a:bodyPr', @attributes );
 }
 
 
@@ -2886,7 +2884,7 @@ sub _write_a_lst_style {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'a:lstStyle' );
+    $self->emptyTag( 'a:lstStyle' );
 }
 
 
@@ -2901,7 +2899,7 @@ sub _write_a_p_rich {
     my $self  = shift;
     my $title = shift;
 
-    $self->{_writer}->startTag( 'a:p' );
+    $self->startTag( 'a:p' );
 
     # Write the a:pPr element.
     $self->_write_a_p_pr_rich();
@@ -2909,7 +2907,7 @@ sub _write_a_p_rich {
     # Write the a:r element.
     $self->_write_a_r( $title );
 
-    $self->{_writer}->endTag( 'a:p' );
+    $self->endTag( 'a:p' );
 }
 
 
@@ -2924,7 +2922,7 @@ sub _write_a_p_formula {
     my $self  = shift;
     my $title = shift;
 
-    $self->{_writer}->startTag( 'a:p' );
+    $self->startTag( 'a:p' );
 
     # Write the a:pPr element.
     $self->_write_a_p_pr_formula();
@@ -2932,7 +2930,7 @@ sub _write_a_p_formula {
     # Write the a:endParaRPr element.
     $self->_write_a_end_para_rpr();
 
-    $self->{_writer}->endTag( 'a:p' );
+    $self->endTag( 'a:p' );
 }
 
 
@@ -2946,12 +2944,12 @@ sub _write_a_p_pr_rich {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'a:pPr' );
+    $self->startTag( 'a:pPr' );
 
     # Write the a:defRPr element.
     $self->_write_a_def_rpr();
 
-    $self->{_writer}->endTag( 'a:pPr' );
+    $self->endTag( 'a:pPr' );
 }
 
 
@@ -2965,12 +2963,12 @@ sub _write_a_p_pr_formula {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'a:pPr' );
+    $self->startTag( 'a:pPr' );
 
     # Write the a:defRPr element.
     $self->_write_a_def_rpr();
 
-    $self->{_writer}->endTag( 'a:pPr' );
+    $self->endTag( 'a:pPr' );
 }
 
 
@@ -2984,7 +2982,7 @@ sub _write_a_def_rpr {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'a:defRPr' );
+    $self->emptyTag( 'a:defRPr' );
 }
 
 
@@ -3001,7 +2999,7 @@ sub _write_a_end_para_rpr {
 
     my @attributes = ( 'lang' => $lang );
 
-    $self->{_writer}->emptyTag( 'a:endParaRPr', @attributes );
+    $self->emptyTag( 'a:endParaRPr', @attributes );
 }
 
 
@@ -3016,7 +3014,7 @@ sub _write_a_r {
     my $self  = shift;
     my $title = shift;
 
-    $self->{_writer}->startTag( 'a:r' );
+    $self->startTag( 'a:r' );
 
     # Write the a:rPr element.
     $self->_write_a_r_pr();
@@ -3024,7 +3022,7 @@ sub _write_a_r {
     # Write the a:t element.
     $self->_write_a_t( $title );
 
-    $self->{_writer}->endTag( 'a:r' );
+    $self->endTag( 'a:r' );
 }
 
 
@@ -3041,7 +3039,7 @@ sub _write_a_r_pr {
 
     my @attributes = ( 'lang' => $lang, );
 
-    $self->{_writer}->emptyTag( 'a:rPr', @attributes );
+    $self->emptyTag( 'a:rPr', @attributes );
 }
 
 
@@ -3056,7 +3054,7 @@ sub _write_a_t {
     my $self  = shift;
     my $title = shift;
 
-    $self->{_writer}->dataElement( 'a:t', $title );
+    $self->dataElement( 'a:t', $title );
 }
 
 
@@ -3071,7 +3069,7 @@ sub _write_tx_pr {
     my $self  = shift;
     my $horiz = shift;
 
-    $self->{_writer}->startTag( 'c:txPr' );
+    $self->startTag( 'c:txPr' );
 
     # Write the a:bodyPr element.
     $self->_write_a_body_pr( $horiz );
@@ -3082,7 +3080,7 @@ sub _write_tx_pr {
     # Write the a:p element.
     $self->_write_a_p_formula();
 
-    $self->{_writer}->endTag( 'c:txPr' );
+    $self->endTag( 'c:txPr' );
 }
 
 
@@ -3100,7 +3098,7 @@ sub _write_marker {
     return unless $marker;
     return if $marker->{automatic};
 
-    $self->{_writer}->startTag( 'c:marker' );
+    $self->startTag( 'c:marker' );
 
     # Write the c:symbol element.
     $self->_write_symbol( $marker->{type} );
@@ -3112,7 +3110,7 @@ sub _write_marker {
     # Write the c:spPr element.
     $self->_write_sp_pr( $marker );
 
-    $self->{_writer}->endTag( 'c:marker' );
+    $self->endTag( 'c:marker' );
 }
 
 
@@ -3131,7 +3129,7 @@ sub _write_marker_value {
 
     my @attributes = ( 'val' => 1 );
 
-    $self->{_writer}->emptyTag( 'c:marker', @attributes );
+    $self->emptyTag( 'c:marker', @attributes );
 }
 
 
@@ -3148,7 +3146,7 @@ sub _write_marker_size {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:size', @attributes );
+    $self->emptyTag( 'c:size', @attributes );
 }
 
 
@@ -3165,7 +3163,7 @@ sub _write_symbol {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:symbol', @attributes );
+    $self->emptyTag( 'c:symbol', @attributes );
 }
 
 
@@ -3184,7 +3182,7 @@ sub _write_sp_pr {
         return;
     }
 
-    $self->{_writer}->startTag( 'c:spPr' );
+    $self->startTag( 'c:spPr' );
 
     # Write the fill elements for solid charts such as pie and bar.
     if ( $series->{_fill}->{_defined} ) {
@@ -3205,7 +3203,7 @@ sub _write_sp_pr {
         $self->_write_a_ln( $series->{_line} );
     }
 
-    $self->{_writer}->endTag( 'c:spPr' );
+    $self->endTag( 'c:spPr' );
 }
 
 
@@ -3233,7 +3231,7 @@ sub _write_a_ln {
         @attributes = ( 'w' => $width );
     }
 
-    $self->{_writer}->startTag( 'a:ln', @attributes );
+    $self->startTag( 'a:ln', @attributes );
 
     # Write the line fill.
     if ( $line->{none} ) {
@@ -3254,7 +3252,7 @@ sub _write_a_ln {
         $self->_write_a_prst_dash( $type );
     }
 
-    $self->{_writer}->endTag( 'a:ln' );
+    $self->endTag( 'a:ln' );
 }
 
 
@@ -3268,7 +3266,7 @@ sub _write_a_no_fill {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'a:noFill' );
+    $self->emptyTag( 'a:noFill' );
 }
 
 
@@ -3283,7 +3281,7 @@ sub _write_a_solid_fill {
     my $self = shift;
     my $line = shift;
 
-    $self->{_writer}->startTag( 'a:solidFill' );
+    $self->startTag( 'a:solidFill' );
 
     if ( $line->{color} ) {
 
@@ -3293,7 +3291,7 @@ sub _write_a_solid_fill {
         $self->_write_a_srgb_clr( $color );
     }
 
-    $self->{_writer}->endTag( 'a:solidFill' );
+    $self->endTag( 'a:solidFill' );
 }
 
 
@@ -3310,7 +3308,7 @@ sub _write_a_srgb_clr {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'a:srgbClr', @attributes );
+    $self->emptyTag( 'a:srgbClr', @attributes );
 }
 
 
@@ -3327,7 +3325,7 @@ sub _write_a_prst_dash {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'a:prstDash', @attributes );
+    $self->emptyTag( 'a:prstDash', @attributes );
 }
 
 
@@ -3344,7 +3342,7 @@ sub _write_trendline {
 
     return unless $trendline;
 
-    $self->{_writer}->startTag( 'c:trendline' );
+    $self->startTag( 'c:trendline' );
 
     # Write the c:name element.
     $self->_write_name( $trendline->{name} );
@@ -3371,7 +3369,7 @@ sub _write_trendline {
     # Write the c:backward element.
     $self->_write_backward( $trendline->{backward} );
 
-    $self->{_writer}->endTag( 'c:trendline' );
+    $self->endTag( 'c:trendline' );
 }
 
 
@@ -3388,7 +3386,7 @@ sub _write_trendline_type {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:trendlineType', @attributes );
+    $self->emptyTag( 'c:trendlineType', @attributes );
 }
 
 
@@ -3405,7 +3403,7 @@ sub _write_name {
 
     return unless defined $data;
 
-    $self->{_writer}->dataElement( 'c:name', $data );
+    $self->dataElement( 'c:name', $data );
 }
 
 
@@ -3422,7 +3420,7 @@ sub _write_trendline_order {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:order', @attributes );
+    $self->emptyTag( 'c:order', @attributes );
 }
 
 
@@ -3439,7 +3437,7 @@ sub _write_period {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:period', @attributes );
+    $self->emptyTag( 'c:period', @attributes );
 }
 
 
@@ -3458,7 +3456,7 @@ sub _write_forward {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:forward', @attributes );
+    $self->emptyTag( 'c:forward', @attributes );
 }
 
 
@@ -3477,7 +3475,7 @@ sub _write_backward {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:backward', @attributes );
+    $self->emptyTag( 'c:backward', @attributes );
 }
 
 
@@ -3491,7 +3489,7 @@ sub _write_hi_low_lines {
 
     my $self = shift;
 
-    $self->{_writer}->emptyTag( 'c:hiLowLines' );
+    $self->emptyTag( 'c:hiLowLines' );
 }
 
 
@@ -3508,7 +3506,7 @@ sub _write_overlap {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:overlap', @attributes );
+    $self->emptyTag( 'c:overlap', @attributes );
 }
 
 
@@ -3524,7 +3522,7 @@ sub _write_num_cache {
     my $data  = shift;
     my $count = @$data;
 
-    $self->{_writer}->startTag( 'c:numCache' );
+    $self->startTag( 'c:numCache' );
 
     # Write the c:formatCode element.
     $self->_write_format_code( 'General' );
@@ -3546,7 +3544,7 @@ sub _write_num_cache {
         $self->_write_pt( $i, $token );
     }
 
-    $self->{_writer}->endTag( 'c:numCache' );
+    $self->endTag( 'c:numCache' );
 }
 
 
@@ -3562,7 +3560,7 @@ sub _write_str_cache {
     my $data  = shift;
     my $count = @$data;
 
-    $self->{_writer}->startTag( 'c:strCache' );
+    $self->startTag( 'c:strCache' );
 
     # Write the c:ptCount element.
     $self->_write_pt_count( $count );
@@ -3573,7 +3571,7 @@ sub _write_str_cache {
         $self->_write_pt( $i, $data->[$i] );
     }
 
-    $self->{_writer}->endTag( 'c:strCache' );
+    $self->endTag( 'c:strCache' );
 }
 
 
@@ -3588,7 +3586,7 @@ sub _write_format_code {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'c:formatCode', $data );
+    $self->dataElement( 'c:formatCode', $data );
 }
 
 
@@ -3605,7 +3603,7 @@ sub _write_pt_count {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:ptCount', @attributes );
+    $self->emptyTag( 'c:ptCount', @attributes );
 }
 
 
@@ -3625,12 +3623,12 @@ sub _write_pt {
 
     my @attributes = ( 'idx' => $idx );
 
-    $self->{_writer}->startTag( 'c:pt', @attributes );
+    $self->startTag( 'c:pt', @attributes );
 
     # Write the c:v element.
     $self->_write_v( $value );
 
-    $self->{_writer}->endTag( 'c:pt' );
+    $self->endTag( 'c:pt' );
 }
 
 
@@ -3645,7 +3643,7 @@ sub _write_v {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'c:v', $data );
+    $self->dataElement( 'c:v', $data );
 }
 
 
@@ -3661,7 +3659,7 @@ sub _write_protection {
 
     return unless $self->{_protection};
 
-    $self->{_writer}->emptyTag( 'c:protection' );
+    $self->emptyTag( 'c:protection' );
 }
 
 
@@ -3678,7 +3676,7 @@ sub _write_d_lbls {
 
     return unless $labels;
 
-    $self->{_writer}->startTag( 'c:dLbls' );
+    $self->startTag( 'c:dLbls' );
 
     # Write the c:dLblPos element.
     $self->_write_d_lbl_pos( $labels->{position} ) if $labels->{position};
@@ -3698,7 +3696,7 @@ sub _write_d_lbls {
     # Write the c:showLeaderLines element.
     $self->_write_show_leader_lines() if $labels->{leader_lines};
 
-    $self->{_writer}->endTag( 'c:dLbls' );
+    $self->endTag( 'c:dLbls' );
 }
 
 
@@ -3715,7 +3713,7 @@ sub _write_show_val {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:showVal', @attributes );
+    $self->emptyTag( 'c:showVal', @attributes );
 }
 
 
@@ -3732,7 +3730,7 @@ sub _write_show_cat_name {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:showCatName', @attributes );
+    $self->emptyTag( 'c:showCatName', @attributes );
 }
 
 
@@ -3749,7 +3747,7 @@ sub _write_show_ser_name {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:showSerName', @attributes );
+    $self->emptyTag( 'c:showSerName', @attributes );
 }
 
 
@@ -3766,7 +3764,7 @@ sub _write_show_percent {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:showPercent', @attributes );
+    $self->emptyTag( 'c:showPercent', @attributes );
 }
 
 
@@ -3783,7 +3781,7 @@ sub _write_show_leader_lines {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:showLeaderLines', @attributes );
+    $self->emptyTag( 'c:showLeaderLines', @attributes );
 }
 
 
@@ -3800,7 +3798,7 @@ sub _write_d_lbl_pos {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:dLblPos', @attributes );
+    $self->emptyTag( 'c:dLblPos', @attributes );
 }
 
 
@@ -3817,7 +3815,7 @@ sub _write_delete {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:delete', @attributes );
+    $self->emptyTag( 'c:delete', @attributes );
 }
 
 
@@ -3837,7 +3835,7 @@ sub _write_c_invert_if_negative {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'c:invertIfNegative', @attributes );
+    $self->emptyTag( 'c:invertIfNegative', @attributes );
 }
 
 1;

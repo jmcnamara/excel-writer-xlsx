@@ -811,8 +811,8 @@ sub _mkdir {
 
     my $ret = mkdir( $dir );
 
-    if (!$ret) {
-       croak "Couldn't create sub directory $dir: $!";
+    if ( !$ret ) {
+        croak "Couldn't create sub directory $dir: $!";
     }
 }
 

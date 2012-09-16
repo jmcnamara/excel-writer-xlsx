@@ -64,7 +64,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}    = undef;
     $self->{_defaults}  = [@defaults];
     $self->{_overrides} = [@overrides];
 
@@ -84,18 +83,16 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
     $self->_write_types();
     $self->_write_defaults();
     $self->_write_overrides();
 
-    $self->{_writer}->endTag( 'Types' );
+    $self->endTag( 'Types' );
 
     # Close the XM writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -318,7 +315,7 @@ sub _write_defaults {
 
     for my $aref ( @{ $self->{_defaults} } ) {
         #<<<
-        $self->{_writer}->emptyTag(
+        $self->emptyTag(
             'Default',
             'Extension',   $aref->[0],
             'ContentType', $aref->[1] );
@@ -339,7 +336,7 @@ sub _write_overrides {
 
     for my $aref ( @{ $self->{_overrides} } ) {
         #<<<
-        $self->{_writer}->emptyTag(
+        $self->emptyTag(
             'Override',
             'PartName',    $aref->[0],
             'ContentType', $aref->[1] );
@@ -368,7 +365,7 @@ sub _write_types {
 
     my @attributes = ( 'xmlns' => $xmlns, );
 
-    $self->{_writer}->startTag( 'Types', @attributes );
+    $self->startTag( 'Types', @attributes );
 }
 
 ###############################################################################
@@ -388,7 +385,7 @@ sub _write_default {
         'ContentType' => $content_type,
     );
 
-    $self->{_writer}->emptyTag( 'Default', @attributes );
+    $self->emptyTag( 'Default', @attributes );
 }
 
 
@@ -403,14 +400,14 @@ sub _write_override {
     my $self         = shift;
     my $part_name    = shift;
     my $content_type = shift;
-    my $writer       = $self->{_writer};
+    my $writer       = $self;
 
     my @attributes = (
         'PartName'    => $part_name,
         'ContentType' => $content_type,
     );
 
-    $self->{_writer}->emptyTag( 'Override', @attributes );
+    $self->emptyTag( 'Override', @attributes );
 }
 
 

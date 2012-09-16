@@ -41,7 +41,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}     = undef;
     $self->{_properties} = {};
 
     bless $self, $class;
@@ -60,8 +59,6 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
 
     # Write the table element.
@@ -78,11 +75,11 @@ sub _assemble_xml_file {
 
 
     # Close the table tag.
-    $self->{_writer}->endTag( 'table' );
+    $self->endTag( 'table' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -124,7 +121,7 @@ sub _set_properties {
 sub _write_xml_declaration {
 
     my $self       = shift;
-    my $writer     = $self->{_writer};
+    my $writer     = $self;
     my $encoding   = 'UTF-8';
     my $standalone = 1;
 
@@ -168,7 +165,7 @@ sub _write_table {
     }
 
 
-    $self->{_writer}->startTag( 'table', @attributes );
+    $self->startTag( 'table', @attributes );
 }
 
 
@@ -187,7 +184,7 @@ sub _write_auto_filter {
 
     my @attributes = ( 'ref' => $autofilter, );
 
-    $self->{_writer}->emptyTag( 'autoFilter', @attributes );
+    $self->emptyTag( 'autoFilter', @attributes );
 }
 
 
@@ -206,7 +203,7 @@ sub _write_table_columns {
 
     my @attributes = ( 'count' => $count, );
 
-    $self->{_writer}->startTag( 'tableColumns', @attributes );
+    $self->startTag( 'tableColumns', @attributes );
 
     for my $col_data ( @columns ) {
 
@@ -214,7 +211,7 @@ sub _write_table_columns {
         $self->_write_table_column( $col_data );
     }
 
-    $self->{_writer}->endTag( 'tableColumns' );
+    $self->endTag( 'tableColumns' );
 }
 
 
@@ -248,15 +245,15 @@ sub _write_table_column {
     }
 
     if ( $col_data->{_formula} ) {
-        $self->{_writer}->startTag( 'tableColumn', @attributes );
+        $self->startTag( 'tableColumn', @attributes );
 
         # Write the calculatedColumnFormula element.
         $self->_write_calculated_column_formula( $col_data->{_formula} );
 
-        $self->{_writer}->endTag( 'tableColumn' );
+        $self->endTag( 'tableColumn' );
     }
     else {
-        $self->{_writer}->emptyTag( 'tableColumn', @attributes );
+        $self->emptyTag( 'tableColumn', @attributes );
     }
 
 }
@@ -287,7 +284,7 @@ sub _write_table_style_info {
         'showColumnStripes' => $show_column_stripes,
     );
 
-    $self->{_writer}->emptyTag( 'tableStyleInfo', @attributes );
+    $self->emptyTag( 'tableStyleInfo', @attributes );
 }
 
 
@@ -302,7 +299,7 @@ sub _write_calculated_column_formula {
     my $self    = shift;
     my $formula = shift;
 
-    $self->{_writer}->dataElement( 'calculatedColumnFormula', $formula );
+    $self->dataElement( 'calculatedColumnFormula', $formula );
 }
 
 

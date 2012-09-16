@@ -3,7 +3,7 @@
 ########################################################################
 #
 # The tests below are a subset of tests taken from XML::Writer to ensure
-# XMLsimpleWriter complies with the basic functionality of that module.
+# our XMLWriter complies with the basic functionality of that module.
 #
 # I'm maintaining the same structure and methodology so that I can
 # borrow more tests if required. Original documentation and copyrights
@@ -56,7 +56,7 @@ sub isUnicodeSupported()
 	return $] >= 5.008001;
 }
 
-require Excel::Writer::XLSX::Package::XMLwriterSimple;
+require Excel::Writer::XLSX::Package::XMLwriter;
 
 TEST: {
 
@@ -96,7 +96,8 @@ sub initEnv(@)
 	$args{'NAMESPACES'} = 1 unless(defined($args{'NAMESPACES'}));
 
 	undef($warning);
-	$w = new Excel::Writer::XLSX::Package::XMLwriterSimple($outputFile) || die "Cannot create XML writer";
+	$w = new Excel::Writer::XLSX::Package::XMLwriter() || die "Cannot create XML writer";
+    $w->{_fh} = $outputFile;
 }
 
 #

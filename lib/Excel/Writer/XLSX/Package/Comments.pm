@@ -43,7 +43,6 @@ sub new {
     my $class = shift;
 
     my $self = {
-        _writer     => undef,
         _author_ids => {},
     };
 
@@ -64,8 +63,6 @@ sub _assemble_xml_file {
     my $self          = shift;
     my $comments_data = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
 
     # Write the comments element.
@@ -77,11 +74,11 @@ sub _assemble_xml_file {
     # Write the commentList element.
     $self->_write_comment_list( $comments_data );
 
-    $self->{_writer}->endTag( 'comments' );
+    $self->endTag( 'comments' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -112,7 +109,7 @@ sub _write_comments {
 
     my @attributes = ( 'xmlns' => $xmlns );
 
-    $self->{_writer}->startTag( 'comments', @attributes );
+    $self->startTag( 'comments', @attributes );
 }
 
 
@@ -128,7 +125,7 @@ sub _write_authors {
     my $comment_data = shift;
     my $author_count = 0;
 
-    $self->{_writer}->startTag( 'authors' );
+    $self->startTag( 'authors' );
 
     for my $comment ( @$comment_data ) {
         my $author = $comment->[3];
@@ -143,7 +140,7 @@ sub _write_authors {
         }
     }
 
-    $self->{_writer}->endTag( 'authors' );
+    $self->endTag( 'authors' );
 }
 
 
@@ -158,7 +155,7 @@ sub _write_author {
     my $self = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( 'author', $data );
+    $self->dataElement( 'author', $data );
 }
 
 
@@ -173,7 +170,7 @@ sub _write_comment_list {
     my $self         = shift;
     my $comment_data = shift;
 
-    $self->{_writer}->startTag( 'commentList' );
+    $self->startTag( 'commentList' );
 
     for my $comment ( @$comment_data ) {
         my $row    = $comment->[0];
@@ -189,7 +186,7 @@ sub _write_comment_list {
         $self->_write_comment( $row, $col, $text, $author_id );
     }
 
-    $self->{_writer}->endTag( 'commentList' );
+    $self->endTag( 'commentList' );
 }
 
 
@@ -213,13 +210,13 @@ sub _write_comment {
     push @attributes, ( 'authorId' => $author_id ) if defined $author_id;
 
 
-    $self->{_writer}->startTag( 'comment', @attributes );
+    $self->startTag( 'comment', @attributes );
 
     # Write the text element.
     $self->_write_text( $text );
 
 
-    $self->{_writer}->endTag( 'comment' );
+    $self->endTag( 'comment' );
 }
 
 
@@ -234,12 +231,12 @@ sub _write_text {
     my $self = shift;
     my $text = shift;
 
-    $self->{_writer}->startTag( 'text' );
+    $self->startTag( 'text' );
 
     # Write the text r element.
     $self->_write_text_r( $text );
 
-    $self->{_writer}->endTag( 'text' );
+    $self->endTag( 'text' );
 }
 
 
@@ -254,7 +251,7 @@ sub _write_text_r {
     my $self = shift;
     my $text = shift;
 
-    $self->{_writer}->startTag( 'r' );
+    $self->startTag( 'r' );
 
     # Write the rPr element.
     $self->_write_r_pr();
@@ -262,7 +259,7 @@ sub _write_text_r {
     # Write the text r element.
     $self->_write_text_t( $text );
 
-    $self->{_writer}->endTag( 'r' );
+    $self->endTag( 'r' );
 }
 
 
@@ -283,7 +280,7 @@ sub _write_text_t {
         push @attributes, ( 'xml:space' => 'preserve' );
     }
 
-    $self->{_writer}->dataElement( 't', $text, @attributes );
+    $self->dataElement( 't', $text, @attributes );
 }
 
 
@@ -297,7 +294,7 @@ sub _write_r_pr {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'rPr' );
+    $self->startTag( 'rPr' );
 
     # Write the sz element.
     $self->_write_sz();
@@ -311,7 +308,7 @@ sub _write_r_pr {
     # Write the family element.
     $self->_write_family();
 
-    $self->{_writer}->endTag( 'rPr' );
+    $self->endTag( 'rPr' );
 }
 
 
@@ -328,7 +325,7 @@ sub _write_sz {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'sz', @attributes );
+    $self->emptyTag( 'sz', @attributes );
 }
 
 
@@ -345,7 +342,7 @@ sub _write_color {
 
     my @attributes = ( 'indexed' => $indexed );
 
-    $self->{_writer}->emptyTag( 'color', @attributes );
+    $self->emptyTag( 'color', @attributes );
 }
 
 
@@ -362,7 +359,7 @@ sub _write_r_font {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'rFont', @attributes );
+    $self->emptyTag( 'rFont', @attributes );
 }
 
 
@@ -379,7 +376,7 @@ sub _write_family {
 
     my @attributes = ( 'val' => $val );
 
-    $self->{_writer}->emptyTag( 'family', @attributes );
+    $self->emptyTag( 'family', @attributes );
 }
 
 

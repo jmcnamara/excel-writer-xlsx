@@ -64,8 +64,6 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
 
     # Write the root chartsheet element.
@@ -96,11 +94,11 @@ sub _assemble_xml_file {
     $self->_write_drawings();
 
     # Close the worksheet tag.
-    $self->{_writer}->endTag( 'chartsheet' );
+    $self->endTag( 'chartsheet' );
 
     # Close the XML writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -209,7 +207,7 @@ sub _write_chartsheet {
         'xmlns:r' => $xmlns_r,
     );
 
-    $self->{_writer}->startTag( 'chartsheet', @attributes );
+    $self->startTag( 'chartsheet', @attributes );
 }
 
 
@@ -228,13 +226,13 @@ sub _write_sheet_pr {
     push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
 
     if ( $self->{_fit_page} || $self->{_tab_color} ) {
-        $self->{_writer}->startTag( 'sheetPr', @attributes );
+        $self->startTag( 'sheetPr', @attributes );
         $self->_write_tab_color();
         $self->_write_page_set_up_pr();
-        $self->{_writer}->endTag( 'sheetPr' );
+        $self->endTag( 'sheetPr' );
     }
     else {
-        $self->{_writer}->emptyTag( 'sheetPr', @attributes );
+        $self->emptyTag( 'sheetPr', @attributes );
     }
 }
 

@@ -41,7 +41,6 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_writer}        = undef;
     $self->{_part_names}    = [];
     $self->{_heading_pairs} = [];
     $self->{_properties}    = {};
@@ -62,8 +61,6 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    return unless $self->{_writer};
-
     $self->_write_xml_declaration;
     $self->_write_properties();
     $self->_write_application();
@@ -78,11 +75,11 @@ sub _assemble_xml_file {
     $self->_write_hyperlinks_changed();
     $self->_write_app_version();
 
-    $self->{_writer}->endTag( 'Properties' );
+    $self->endTag( 'Properties' );
 
     # Close the XM writer object and filehandle.
-    $self->{_writer}->end();
-    $self->{_writer}->getOutput()->close();
+    $self->end();
+    $self->getOutput()->close();
 }
 
 
@@ -171,7 +168,7 @@ sub _write_properties {
         'xmlns:vt' => $xmlns_vt,
     );
 
-    $self->{_writer}->startTag( 'Properties', @attributes );
+    $self->startTag( 'Properties', @attributes );
 }
 
 ###############################################################################
@@ -185,7 +182,7 @@ sub _write_application {
     my $self = shift;
     my $data = 'Microsoft Excel';
 
-    $self->{_writer}->dataElement( 'Application', $data );
+    $self->dataElement( 'Application', $data );
 }
 
 
@@ -200,7 +197,7 @@ sub _write_doc_security {
     my $self = shift;
     my $data = 0;
 
-    $self->{_writer}->dataElement( 'DocSecurity', $data );
+    $self->dataElement( 'DocSecurity', $data );
 }
 
 
@@ -215,7 +212,7 @@ sub _write_scale_crop {
     my $self = shift;
     my $data = 'false';
 
-    $self->{_writer}->dataElement( 'ScaleCrop', $data );
+    $self->dataElement( 'ScaleCrop', $data );
 }
 
 
@@ -229,11 +226,11 @@ sub _write_heading_pairs {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'HeadingPairs' );
+    $self->startTag( 'HeadingPairs' );
 
     $self->_write_vt_vector( 'variant', $self->{_heading_pairs} );
 
-    $self->{_writer}->endTag( 'HeadingPairs' );
+    $self->endTag( 'HeadingPairs' );
 }
 
 
@@ -247,7 +244,7 @@ sub _write_titles_of_parts {
 
     my $self = shift;
 
-    $self->{_writer}->startTag( 'TitlesOfParts' );
+    $self->startTag( 'TitlesOfParts' );
 
     my @parts_data;
 
@@ -257,7 +254,7 @@ sub _write_titles_of_parts {
 
     $self->_write_vt_vector( 'lpstr', \@parts_data );
 
-    $self->{_writer}->endTag( 'TitlesOfParts' );
+    $self->endTag( 'TitlesOfParts' );
 }
 
 
@@ -279,15 +276,15 @@ sub _write_vt_vector {
         'baseType' => $base_type,
     );
 
-    $self->{_writer}->startTag( 'vt:vector', @attributes );
+    $self->startTag( 'vt:vector', @attributes );
 
     for my $aref ( @$data ) {
-        $self->{_writer}->startTag( 'vt:variant' ) if $base_type eq 'variant';
+        $self->startTag( 'vt:variant' ) if $base_type eq 'variant';
         $self->_write_vt_data( @$aref );
-        $self->{_writer}->endTag( 'vt:variant' ) if $base_type eq 'variant';
+        $self->endTag( 'vt:variant' ) if $base_type eq 'variant';
     }
 
-    $self->{_writer}->endTag( 'vt:vector' );
+    $self->endTag( 'vt:vector' );
 }
 
 
@@ -303,7 +300,7 @@ sub _write_vt_data {
     my $type = shift;
     my $data = shift;
 
-    $self->{_writer}->dataElement( "vt:$type", $data );
+    $self->dataElement( "vt:$type", $data );
 }
 
 
@@ -318,7 +315,7 @@ sub _write_company {
     my $self = shift;
     my $data = $self->{_properties}->{company} || '';
 
-    $self->{_writer}->dataElement( 'Company', $data );
+    $self->dataElement( 'Company', $data );
 }
 
 
@@ -335,7 +332,7 @@ sub _write_manager {
 
     return unless $data;
 
-    $self->{_writer}->dataElement( 'Manager', $data );
+    $self->dataElement( 'Manager', $data );
 }
 
 
@@ -350,7 +347,7 @@ sub _write_links_up_to_date {
     my $self = shift;
     my $data = 'false';
 
-    $self->{_writer}->dataElement( 'LinksUpToDate', $data );
+    $self->dataElement( 'LinksUpToDate', $data );
 }
 
 
@@ -365,7 +362,7 @@ sub _write_shared_doc {
     my $self = shift;
     my $data = 'false';
 
-    $self->{_writer}->dataElement( 'SharedDoc', $data );
+    $self->dataElement( 'SharedDoc', $data );
 }
 
 
@@ -380,7 +377,7 @@ sub _write_hyperlinks_changed {
     my $self = shift;
     my $data = 'false';
 
-    $self->{_writer}->dataElement( 'HyperlinksChanged', $data );
+    $self->dataElement( 'HyperlinksChanged', $data );
 }
 
 
@@ -395,7 +392,7 @@ sub _write_app_version {
     my $self = shift;
     my $data = '12.0000';
 
-    $self->{_writer}->dataElement( 'AppVersion', $data );
+    $self->dataElement( 'AppVersion', $data );
 }
 
 
