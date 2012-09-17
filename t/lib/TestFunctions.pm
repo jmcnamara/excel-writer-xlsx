@@ -226,6 +226,12 @@ sub _compare_xlsx_files {
             $got_xml_str =~ s/\d\d\d\d-\d\d-\d\dT\d\d\:\d\d:\d\dZ//g;
         }
 
+        # Remove workbookView dimensions which are almost always different.
+        if ( $filename eq 'xl/workbook.xml' ) {
+            $exp_xml_str =~ s{<workbookView[^>]*>}{<workbookView/>};
+            $got_xml_str =~ s{<workbookView[^>]*>}{<workbookView/>};
+        }
+
         # Remove printer specific settings from Worksheet pageSetup elements.
         if ( $filename =~ m(xl/worksheets/sheet\d.xml) ) {
             $exp_xml_str =~ s/horizontalDpi="200" //;

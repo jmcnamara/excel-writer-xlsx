@@ -23,7 +23,7 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 
 my $ignore_members  = [];
-my $ignore_elements = {  'xl/workbook.xml' => ['<workbookView'] };
+my $ignore_elements = {};
 
 
 ###############################################################################
