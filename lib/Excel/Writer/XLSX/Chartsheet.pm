@@ -96,8 +96,7 @@ sub _assemble_xml_file {
     # Close the worksheet tag.
     $self->endTag( 'chartsheet' );
 
-    # Close the XML writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 

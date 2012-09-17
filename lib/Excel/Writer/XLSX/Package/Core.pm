@@ -76,8 +76,7 @@ sub _assemble_xml_file {
 
     $self->endTag( 'cp:coreProperties' );
 
-    # Close the XML writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 

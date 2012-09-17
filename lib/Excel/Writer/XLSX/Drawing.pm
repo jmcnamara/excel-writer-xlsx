@@ -87,8 +87,7 @@ sub _assemble_xml_file {
 
     $self->endTag( 'xdr:wsDr' );
 
-    # Close the XM writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 
@@ -1384,9 +1383,7 @@ sub _write_txBody {
 
     $self->endTag( 'a:rPr' );
 
-    $self->startTag( 'a:t' );
-    $self->characters( $shape->{_text} );
-    $self->endTag( 'a:t' );
+    $self->dataElementEncoded( 'a:t', $shape->{_text} );
 
     $self->endTag( 'a:r' );
     $self->endTag( 'a:p' );

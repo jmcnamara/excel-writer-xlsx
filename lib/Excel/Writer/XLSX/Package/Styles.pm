@@ -105,8 +105,7 @@ sub _assemble_xml_file {
     # Close the style sheet tag.
     $self->endTag( 'styleSheet' );
 
-    # Close the XML writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 

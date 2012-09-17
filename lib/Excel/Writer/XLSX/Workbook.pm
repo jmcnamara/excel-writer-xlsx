@@ -186,8 +186,7 @@ sub _assemble_xml_file {
     # Close the workbook tag.
     $self->endTag( 'workbook' );
 
-    # Close the XML writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 

@@ -84,20 +84,6 @@ sub _set_xml_writer {
 sub _write_xml_declaration {
 
     my $self = shift;
-
-    $self->xmlDecl();
-}
-
-
-###############################################################################
-#
-# xmlDecl()
-#
-# Write the XML declaration at the start of an XML document.
-#
-sub xmlDecl {
-
-    my $self = shift;
     local $\ = undef;
 
     print { $self->{_fh} }
@@ -443,39 +429,6 @@ sub richInlineStr {
 
     local $\ = undef;
     print { $self->{_fh} } "<c$attr t=\"inlineStr\"><is>$string</is></c>";
-}
-
-
-###############################################################################
-#
-# characters()
-#
-# For compatibility with XML::Writer only.
-#
-sub characters {
-
-    my $self = shift;
-    my $data = shift;
-    local $\ = undef;
-
-    $data = _escape_xml_chars( $data );
-
-    print { $self->{_fh} } $data;
-}
-
-
-###############################################################################
-#
-# end()
-#
-# For compatibility with XML::Writer only.
-#
-sub end {
-
-    my $self = shift;
-    local $\ = undef;
-
-    #print { $self->{_fh} } "\n";
 }
 
 

@@ -78,8 +78,7 @@ sub _assemble_xml_file {
 
     $self->endTag( 'xml' );
 
-    # Close the XM writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 

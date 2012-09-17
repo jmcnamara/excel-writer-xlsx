@@ -78,8 +78,7 @@ sub _assemble_xml_file {
     # Close the table tag.
     $self->endTag( 'table' );
 
-    # Close the XML writer object and filehandle.
-    $self->end();
+    # Close the XML writer filehandle.
     $self->getOutput()->close();
 }
 
@@ -111,23 +110,6 @@ sub _set_properties {
 # XML writing methods.
 #
 ###############################################################################
-
-
-###############################################################################
-#
-# _write_xml_declaration()
-#
-# Write the XML declaration.
-#
-sub _write_xml_declaration {
-
-    my $self       = shift;
-    my $writer     = $self;
-    my $encoding   = 'UTF-8';
-    my $standalone = 1;
-
-    $writer->xmlDecl( $encoding, $standalone );
-}
 
 
 ##############################################################################
