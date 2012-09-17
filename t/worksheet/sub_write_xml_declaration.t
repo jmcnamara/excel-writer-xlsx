@@ -25,14 +25,14 @@ my $worksheet;
 
 ###############################################################################
 #
-# Test the _write_xml_declaration() method.
+# Test the xml_declaration() method.
 #
-$caption  = " \tWorksheet: _write_xml_declaration()";
+$caption  = " \tWorksheet: xml_declaration()";
 $expected = qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->_write_xml_declaration();
+$worksheet->xml_declaration();
 
 is( $got, $expected, $caption );
 

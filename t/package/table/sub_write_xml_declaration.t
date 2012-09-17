@@ -25,14 +25,14 @@ my $style;
 
 ###############################################################################
 #
-# Test the _write_xml_declaration() method.
+# Test the xml_declaration() method.
 #
-$caption  = " \tTable: _write_xml_declaration()";
+$caption  = " \tTable: xml_declaration()";
 $expected = qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
 
 $style = _new_style(\$got);
 
-$style->_write_xml_declaration();
+$style->xml_declaration();
 
 is( $got, $expected, $caption );
 

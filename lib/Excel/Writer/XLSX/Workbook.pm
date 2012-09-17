@@ -157,7 +157,7 @@ sub _assemble_xml_file {
     # Prepare format object for passing to Style.pm.
     $self->_prepare_format_properties();
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
 
     # Write the root workbook element.
     $self->_write_workbook();
@@ -184,10 +184,10 @@ sub _assemble_xml_file {
     #$self->_write_ext_lst();
 
     # Close the workbook tag.
-    $self->endTag( 'workbook' );
+    $self->xml_end_tag( 'workbook' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -1977,7 +1977,7 @@ sub _write_workbook {
         'xmlns:r' => $xmlns_r,
     );
 
-    $self->startTag( 'workbook', @attributes );
+    $self->xml_start_tag( 'workbook', @attributes );
 }
 
 
@@ -2002,7 +2002,7 @@ sub _write_file_version {
         'rupBuild'     => $rup_build,
     );
 
-    $self->emptyTag( 'fileVersion', @attributes );
+    $self->xml_empty_tag( 'fileVersion', @attributes );
 }
 
 
@@ -2024,7 +2024,7 @@ sub _write_workbook_pr {
     push @attributes, ( 'date1904' => 1 ) if $date_1904;
     push @attributes, ( 'defaultThemeVersion' => $default_theme_version );
 
-    $self->emptyTag( 'workbookPr', @attributes );
+    $self->xml_empty_tag( 'workbookPr', @attributes );
 }
 
 
@@ -2038,9 +2038,9 @@ sub _write_book_views {
 
     my $self = shift;
 
-    $self->startTag( 'bookViews' );
+    $self->xml_start_tag( 'bookViews' );
     $self->_write_workbook_view();
-    $self->endTag( 'bookViews' );
+    $self->xml_end_tag( 'bookViews' );
 }
 
 ###############################################################################
@@ -2076,7 +2076,7 @@ sub _write_workbook_view {
     # Store the activeTab attribute when it isn't the first sheet.
     push @attributes, ( activeTab => $active_tab ) if $active_tab > 0;
 
-    $self->emptyTag( 'workbookView', @attributes );
+    $self->xml_empty_tag( 'workbookView', @attributes );
 }
 
 ###############################################################################
@@ -2090,14 +2090,14 @@ sub _write_sheets {
     my $self   = shift;
     my $id_num = 1;
 
-    $self->startTag( 'sheets' );
+    $self->xml_start_tag( 'sheets' );
 
     for my $worksheet ( @{ $self->{_worksheets} } ) {
         $self->_write_sheet( $worksheet->{_name}, $id_num++,
             $worksheet->{_hidden} );
     }
 
-    $self->endTag( 'sheets' );
+    $self->xml_end_tag( 'sheets' );
 }
 
 
@@ -2124,7 +2124,7 @@ sub _write_sheet {
     push @attributes, ( 'r:id' => $r_id );
 
 
-    $self->emptyTagEncoded( 'sheet', @attributes );
+    $self->xml_encoded_empty_tag( 'sheet', @attributes );
 }
 
 
@@ -2142,7 +2142,7 @@ sub _write_calc_pr {
 
     my @attributes = ( 'calcId' => $calc_id, );
 
-    $self->emptyTag( 'calcPr', @attributes );
+    $self->xml_empty_tag( 'calcPr', @attributes );
 }
 
 
@@ -2156,9 +2156,9 @@ sub _write_ext_lst {
 
     my $self = shift;
 
-    $self->startTag( 'extLst' );
+    $self->xml_start_tag( 'extLst' );
     $self->_write_ext();
-    $self->endTag( 'extLst' );
+    $self->xml_end_tag( 'extLst' );
 }
 
 
@@ -2179,9 +2179,9 @@ sub _write_ext {
         'uri'      => $uri,
     );
 
-    $self->startTag( 'ext', @attributes );
+    $self->xml_start_tag( 'ext', @attributes );
     $self->_write_mx_arch_id();
-    $self->endTag( 'ext' );
+    $self->xml_end_tag( 'ext' );
 }
 
 ###############################################################################
@@ -2197,7 +2197,7 @@ sub _write_mx_arch_id {
 
     my @attributes = ( 'Flags' => $Flags, );
 
-    $self->emptyTag( 'mx:ArchID', @attributes );
+    $self->xml_empty_tag( 'mx:ArchID', @attributes );
 }
 
 
@@ -2213,13 +2213,13 @@ sub _write_defined_names {
 
     return unless @{ $self->{_defined_names} };
 
-    $self->startTag( 'definedNames' );
+    $self->xml_start_tag( 'definedNames' );
 
     for my $aref ( @{ $self->{_defined_names} } ) {
         $self->_write_defined_name( $aref );
     }
 
-    $self->endTag( 'definedNames' );
+    $self->xml_end_tag( 'definedNames' );
 }
 
 
@@ -2244,7 +2244,7 @@ sub _write_defined_name {
     push @attributes, ( 'localSheetId' => $id ) if $id != -1;
     push @attributes, ( 'hidden'       => 1 )   if $hidden;
 
-    $self->dataElement( 'definedName', $range, @attributes );
+    $self->xml_data_element( 'definedName', $range, @attributes );
 }
 
 

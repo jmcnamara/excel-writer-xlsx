@@ -25,12 +25,12 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::Relationships' );
 
 ###############################################################################
 #
-# Test the _write_xml_declaration() method.
+# Test the xml_declaration() method.
 #
-$caption  = " \tRelationships: _write_xml_declaration()";
+$caption  = " \tRelationships: xml_declaration()";
 $expected = qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
 
-$obj->_write_xml_declaration();
+$obj->xml_declaration();
 
 is( $got, $expected, $caption );
 

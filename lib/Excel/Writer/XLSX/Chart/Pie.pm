@@ -68,7 +68,7 @@ sub _write_pie_chart {
 
     my $self = shift;
 
-    $self->startTag( 'c:pieChart' );
+    $self->xml_start_tag( 'c:pieChart' );
 
     # Write the c:varyColors element.
     $self->_write_vary_colors();
@@ -79,7 +79,7 @@ sub _write_pie_chart {
     # Write the c:firstSliceAng element.
     $self->_write_first_slice_ang();
 
-    $self->endTag( 'c:pieChart' );
+    $self->xml_end_tag( 'c:pieChart' );
 }
 
 
@@ -96,7 +96,7 @@ sub _write_plot_area {
 
     my $self = shift;
 
-    $self->startTag( 'c:plotArea' );
+    $self->xml_start_tag( 'c:plotArea' );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -104,7 +104,7 @@ sub _write_plot_area {
     # Write the subclass chart type element.
     $self->_write_chart_type();
 
-    $self->endTag( 'c:plotArea' );
+    $self->xml_end_tag( 'c:plotArea' );
 }
 
 
@@ -138,7 +138,7 @@ sub _write_legend {
 
     $position = $allowed{$position};
 
-    $self->startTag( 'c:legend' );
+    $self->xml_start_tag( 'c:legend' );
 
     # Write the c:legendPos element.
     $self->_write_legend_pos( $position );
@@ -152,7 +152,7 @@ sub _write_legend {
     # Write the c:txPr element. Over-ridden.
     $self->_write_tx_pr_legend();
 
-    $self->endTag( 'c:legend' );
+    $self->xml_end_tag( 'c:legend' );
 }
 
 
@@ -167,7 +167,7 @@ sub _write_tx_pr_legend {
     my $self  = shift;
     my $horiz = 0;
 
-    $self->startTag( 'c:txPr' );
+    $self->xml_start_tag( 'c:txPr' );
 
     # Write the a:bodyPr element.
     $self->_write_a_body_pr( $horiz );
@@ -178,7 +178,7 @@ sub _write_tx_pr_legend {
     # Write the a:p element.
     $self->_write_a_p_legend();
 
-    $self->endTag( 'c:txPr' );
+    $self->xml_end_tag( 'c:txPr' );
 }
 
 
@@ -193,7 +193,7 @@ sub _write_a_p_legend {
     my $self  = shift;
     my $title = shift;
 
-    $self->startTag( 'a:p' );
+    $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
     $self->_write_a_p_pr_legend();
@@ -201,7 +201,7 @@ sub _write_a_p_legend {
     # Write the a:endParaRPr element.
     $self->_write_a_end_para_rpr();
 
-    $self->endTag( 'a:p' );
+    $self->xml_end_tag( 'a:p' );
 }
 
 
@@ -218,12 +218,12 @@ sub _write_a_p_pr_legend {
 
     my @attributes = ( 'rtl' => $rtl );
 
-    $self->startTag( 'a:pPr', @attributes );
+    $self->xml_start_tag( 'a:pPr', @attributes );
 
     # Write the a:defRPr element.
     $self->_write_a_def_rpr();
 
-    $self->endTag( 'a:pPr' );
+    $self->xml_end_tag( 'a:pPr' );
 }
 
 
@@ -240,7 +240,7 @@ sub _write_vary_colors {
 
     my @attributes = ( 'val' => $val );
 
-    $self->emptyTag( 'c:varyColors', @attributes );
+    $self->xml_empty_tag( 'c:varyColors', @attributes );
 }
 
 
@@ -257,7 +257,7 @@ sub _write_first_slice_ang {
 
     my @attributes = ( 'val' => $val );
 
-    $self->emptyTag( 'c:firstSliceAng', @attributes );
+    $self->xml_empty_tag( 'c:firstSliceAng', @attributes );
 }
 
 1;

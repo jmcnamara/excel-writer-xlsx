@@ -78,7 +78,7 @@ sub _write_line_chart {
 
     return unless scalar @series;
 
-    $self->startTag( 'c:lineChart' );
+    $self->xml_start_tag( 'c:lineChart' );
 
     # Write the c:grouping element.
     $self->_write_grouping( 'standard' );
@@ -92,7 +92,7 @@ sub _write_line_chart {
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 
-    $self->endTag( 'c:lineChart' );
+    $self->xml_end_tag( 'c:lineChart' );
 }
 
 

@@ -83,7 +83,7 @@ sub _write_bar_chart {
     my $subtype = $self->{_subtype};
     $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
 
-    $self->startTag( 'c:barChart' );
+    $self->xml_start_tag( 'c:barChart' );
 
     # Write the c:barDir element.
     $self->_write_bar_dir();
@@ -103,7 +103,7 @@ sub _write_bar_chart {
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 
-    $self->endTag( 'c:barChart' );
+    $self->xml_end_tag( 'c:barChart' );
 }
 
 
@@ -120,7 +120,7 @@ sub _write_bar_dir {
 
     my @attributes = ( 'val' => $val );
 
-    $self->emptyTag( 'c:barDir', @attributes );
+    $self->xml_empty_tag( 'c:barDir', @attributes );
 }
 
 
@@ -148,7 +148,7 @@ sub _write_number_format {
         'sourceLinked' => $source_linked,
     );
 
-    $self->emptyTag( 'c:numFmt', @attributes );
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 

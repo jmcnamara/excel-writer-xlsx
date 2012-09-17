@@ -25,14 +25,14 @@ my $workbook;
 
 ###############################################################################
 #
-# Test the _write_xml_declaration() method.
+# Test the xml_declaration() method.
 #
-$caption  = " \tWorkbook: _write_xml_declaration()";
+$caption  = " \tWorkbook: xml_declaration()";
 $expected = qq(<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n);
 
 $workbook = _new_workbook(\$got);
 
-$workbook->_write_xml_declaration();
+$workbook->xml_declaration();
 
 is( $got, $expected, $caption );
 

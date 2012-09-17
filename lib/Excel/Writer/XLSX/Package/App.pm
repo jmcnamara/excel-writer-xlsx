@@ -62,7 +62,7 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
     $self->_write_properties();
     $self->_write_application();
     $self->_write_doc_security();
@@ -76,10 +76,10 @@ sub _assemble_xml_file {
     $self->_write_hyperlinks_changed();
     $self->_write_app_version();
 
-    $self->endTag( 'Properties' );
+    $self->xml_end_tag( 'Properties' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -168,7 +168,7 @@ sub _write_properties {
         'xmlns:vt' => $xmlns_vt,
     );
 
-    $self->startTag( 'Properties', @attributes );
+    $self->xml_start_tag( 'Properties', @attributes );
 }
 
 ###############################################################################
@@ -182,7 +182,7 @@ sub _write_application {
     my $self = shift;
     my $data = 'Microsoft Excel';
 
-    $self->dataElement( 'Application', $data );
+    $self->xml_data_element( 'Application', $data );
 }
 
 
@@ -197,7 +197,7 @@ sub _write_doc_security {
     my $self = shift;
     my $data = 0;
 
-    $self->dataElement( 'DocSecurity', $data );
+    $self->xml_data_element( 'DocSecurity', $data );
 }
 
 
@@ -212,7 +212,7 @@ sub _write_scale_crop {
     my $self = shift;
     my $data = 'false';
 
-    $self->dataElement( 'ScaleCrop', $data );
+    $self->xml_data_element( 'ScaleCrop', $data );
 }
 
 
@@ -226,11 +226,11 @@ sub _write_heading_pairs {
 
     my $self = shift;
 
-    $self->startTag( 'HeadingPairs' );
+    $self->xml_start_tag( 'HeadingPairs' );
 
     $self->_write_vt_vector( 'variant', $self->{_heading_pairs} );
 
-    $self->endTag( 'HeadingPairs' );
+    $self->xml_end_tag( 'HeadingPairs' );
 }
 
 
@@ -244,7 +244,7 @@ sub _write_titles_of_parts {
 
     my $self = shift;
 
-    $self->startTag( 'TitlesOfParts' );
+    $self->xml_start_tag( 'TitlesOfParts' );
 
     my @parts_data;
 
@@ -254,7 +254,7 @@ sub _write_titles_of_parts {
 
     $self->_write_vt_vector( 'lpstr', \@parts_data );
 
-    $self->endTag( 'TitlesOfParts' );
+    $self->xml_end_tag( 'TitlesOfParts' );
 }
 
 
@@ -276,15 +276,15 @@ sub _write_vt_vector {
         'baseType' => $base_type,
     );
 
-    $self->startTag( 'vt:vector', @attributes );
+    $self->xml_start_tag( 'vt:vector', @attributes );
 
     for my $aref ( @$data ) {
-        $self->startTag( 'vt:variant' ) if $base_type eq 'variant';
+        $self->xml_start_tag( 'vt:variant' ) if $base_type eq 'variant';
         $self->_write_vt_data( @$aref );
-        $self->endTag( 'vt:variant' ) if $base_type eq 'variant';
+        $self->xml_end_tag( 'vt:variant' ) if $base_type eq 'variant';
     }
 
-    $self->endTag( 'vt:vector' );
+    $self->xml_end_tag( 'vt:vector' );
 }
 
 
@@ -300,7 +300,7 @@ sub _write_vt_data {
     my $type = shift;
     my $data = shift;
 
-    $self->dataElement( "vt:$type", $data );
+    $self->xml_data_element( "vt:$type", $data );
 }
 
 
@@ -315,7 +315,7 @@ sub _write_company {
     my $self = shift;
     my $data = $self->{_properties}->{company} || '';
 
-    $self->dataElement( 'Company', $data );
+    $self->xml_data_element( 'Company', $data );
 }
 
 
@@ -332,7 +332,7 @@ sub _write_manager {
 
     return unless $data;
 
-    $self->dataElement( 'Manager', $data );
+    $self->xml_data_element( 'Manager', $data );
 }
 
 
@@ -347,7 +347,7 @@ sub _write_links_up_to_date {
     my $self = shift;
     my $data = 'false';
 
-    $self->dataElement( 'LinksUpToDate', $data );
+    $self->xml_data_element( 'LinksUpToDate', $data );
 }
 
 
@@ -362,7 +362,7 @@ sub _write_shared_doc {
     my $self = shift;
     my $data = 'false';
 
-    $self->dataElement( 'SharedDoc', $data );
+    $self->xml_data_element( 'SharedDoc', $data );
 }
 
 
@@ -377,7 +377,7 @@ sub _write_hyperlinks_changed {
     my $self = shift;
     my $data = 'false';
 
-    $self->dataElement( 'HyperlinksChanged', $data );
+    $self->xml_data_element( 'HyperlinksChanged', $data );
 }
 
 
@@ -392,7 +392,7 @@ sub _write_app_version {
     my $self = shift;
     my $data = '12.0000';
 
-    $self->dataElement( 'AppVersion', $data );
+    $self->xml_data_element( 'AppVersion', $data );
 }
 
 

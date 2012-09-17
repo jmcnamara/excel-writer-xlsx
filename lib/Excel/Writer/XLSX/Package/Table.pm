@@ -60,7 +60,7 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
 
     # Write the table element.
     $self->_write_table();
@@ -76,10 +76,10 @@ sub _assemble_xml_file {
 
 
     # Close the table tag.
-    $self->endTag( 'table' );
+    $self->xml_end_tag( 'table' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -148,7 +148,7 @@ sub _write_table {
     }
 
 
-    $self->startTag( 'table', @attributes );
+    $self->xml_start_tag( 'table', @attributes );
 }
 
 
@@ -167,7 +167,7 @@ sub _write_auto_filter {
 
     my @attributes = ( 'ref' => $autofilter, );
 
-    $self->emptyTag( 'autoFilter', @attributes );
+    $self->xml_empty_tag( 'autoFilter', @attributes );
 }
 
 
@@ -186,7 +186,7 @@ sub _write_table_columns {
 
     my @attributes = ( 'count' => $count, );
 
-    $self->startTag( 'tableColumns', @attributes );
+    $self->xml_start_tag( 'tableColumns', @attributes );
 
     for my $col_data ( @columns ) {
 
@@ -194,7 +194,7 @@ sub _write_table_columns {
         $self->_write_table_column( $col_data );
     }
 
-    $self->endTag( 'tableColumns' );
+    $self->xml_end_tag( 'tableColumns' );
 }
 
 
@@ -228,15 +228,15 @@ sub _write_table_column {
     }
 
     if ( $col_data->{_formula} ) {
-        $self->startTag( 'tableColumn', @attributes );
+        $self->xml_start_tag( 'tableColumn', @attributes );
 
         # Write the calculatedColumnFormula element.
         $self->_write_calculated_column_formula( $col_data->{_formula} );
 
-        $self->endTag( 'tableColumn' );
+        $self->xml_end_tag( 'tableColumn' );
     }
     else {
-        $self->emptyTag( 'tableColumn', @attributes );
+        $self->xml_empty_tag( 'tableColumn', @attributes );
     }
 
 }
@@ -267,7 +267,7 @@ sub _write_table_style_info {
         'showColumnStripes' => $show_column_stripes,
     );
 
-    $self->emptyTag( 'tableStyleInfo', @attributes );
+    $self->xml_empty_tag( 'tableStyleInfo', @attributes );
 }
 
 
@@ -282,7 +282,7 @@ sub _write_calculated_column_formula {
     my $self    = shift;
     my $formula = shift;
 
-    $self->dataElement( 'calculatedColumnFormula', $formula );
+    $self->xml_data_element( 'calculatedColumnFormula', $formula );
 }
 
 

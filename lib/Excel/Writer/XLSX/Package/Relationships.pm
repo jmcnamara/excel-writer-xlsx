@@ -64,7 +64,7 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
     $self->_write_relationships();
 }
 
@@ -153,16 +153,16 @@ sub _write_relationships {
 
     my @attributes = ( 'xmlns' => $package_schema, );
 
-    $self->startTag( 'Relationships', @attributes );
+    $self->xml_start_tag( 'Relationships', @attributes );
 
     for my $rel ( @{ $self->{_rels} } ) {
         $self->_write_relationship( @$rel );
     }
 
-    $self->endTag( 'Relationships' );
+    $self->xml_end_tag( 'Relationships' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -187,7 +187,7 @@ sub _write_relationship {
 
     push @attributes, ( 'TargetMode' => $target_mode ) if $target_mode;
 
-    $self->emptyTag( 'Relationship', @attributes );
+    $self->xml_empty_tag( 'Relationship', @attributes );
 }
 
 

@@ -63,7 +63,7 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
 
     # Write the sst table.
     $self->_write_sst( $self->{_string_count}, $self->{_unique_count} );
@@ -72,10 +72,10 @@ sub _assemble_xml_file {
     $self->_write_sst_strings();
 
     # Close the sst tag.
-    $self->endTag( 'sst' );
+    $self->xml_end_tag( 'sst' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -155,7 +155,7 @@ sub _write_sst {
         'uniqueCount' => $unique_count,
     );
 
-    $self->startTag( 'sst', @attributes );
+    $self->xml_start_tag( 'sst', @attributes );
 }
 
 
@@ -211,10 +211,10 @@ sub _write_si {
         # Prevent utf8 strings from getting double encoded.
         $string = decode_utf8( $string );
 
-        $self->siRichElement( $string );
+        $self->xml_rich_si_element( $string );
     }
     else {
-        $self->siElement( $string, @attributes );
+        $self->xml_si_element( $string, @attributes );
     }
 
 }

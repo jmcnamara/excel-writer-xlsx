@@ -43,9 +43,8 @@ sub new {
 
     my $class = shift;
 
-
-    # FH may be undef and set later in _set_xml_writer().
-    my $fh    = shift;
+    # FH may be undef and set later in _set_xml_writer(), see below.
+    my $fh = shift;
 
     my $self = { _fh => $fh };
 
@@ -59,7 +58,9 @@ sub new {
 #
 # _set_xml_writer()
 #
-# Set the XML writer filehandle for the object.
+# Set the XML writer filehandle for the object. This can either be done
+# in the constuctor (usually for testing since the file name isn't generally
+# known at that stage) or later via this method.
 #
 sub _set_xml_writer {
 
@@ -77,11 +78,11 @@ sub _set_xml_writer {
 
 ###############################################################################
 #
-# _write_xml_declaration()
+# xml_declaration()
 #
 # Write the XML declaration.
 #
-sub _write_xml_declaration {
+sub xml_declaration {
 
     my $self = shift;
     local $\ = undef;
@@ -94,11 +95,12 @@ sub _write_xml_declaration {
 
 ###############################################################################
 #
-# startTag()
+# xml_start_tag()
 #
-# Write an XML start tag with optional attributes.
+# Write an XML start tag with optional attributes. As an optimisation the
+# attributes aren't encoded by default: the most common case.
 #
-sub startTag {
+sub xml_start_tag {
 
     my $self = shift;
     my $tag  = shift;
@@ -117,11 +119,11 @@ sub startTag {
 
 ###############################################################################
 #
-# startTag()
+# xml_start_tag()
 #
-# Write an XML start tag with optional encoded attributes.
+# Write an XML start tag with optional, encoded, attributes.
 #
-sub startTagEncoded {
+sub xml_start_tag_encoded {
 
     my $self = shift;
     my $tag  = shift;
@@ -141,11 +143,11 @@ sub startTagEncoded {
 
 ###############################################################################
 #
-# endTag()
+# xml_end_tag()
 #
 # Write an XML end tag.
 #
-sub endTag {
+sub xml_end_tag {
 
     my $self = shift;
     my $tag  = shift;
@@ -157,11 +159,11 @@ sub endTag {
 
 ###############################################################################
 #
-# emptyTag()
+# xml_empty_tag()
 #
 # Write an empty XML tag with optional attributes.
 #
-sub emptyTag {
+sub xml_empty_tag {
 
     my $self = shift;
     my $tag  = shift;
@@ -181,11 +183,11 @@ sub emptyTag {
 
 ###############################################################################
 #
-# emptyTagEncoded()
+# xml_encoded_empty_tag()
 #
 # Write an empty XML tag with optional encoded attributes.
 #
-sub emptyTagEncoded {
+sub xml_encoded_empty_tag {
 
     my $self = shift;
     my $tag  = shift;
@@ -206,12 +208,12 @@ sub emptyTagEncoded {
 
 ###############################################################################
 #
-# dataElement()
+# xml_data_element()
 #
 # Write an XML element containing data with optional attributes.
 # XML characters in the data are encoded.
 #
-sub dataElement {
+sub xml_data_element {
 
     my $self    = shift;
     my $tag     = shift;
@@ -234,12 +236,12 @@ sub dataElement {
 
 ###############################################################################
 #
-# dataElementEncoded()
+# xml_encoded_data_element()
 #
-# Write an XML element containing data with optional encoded attributes.
+# Write an XML element containing data with optional, encoded, attributes.
 # XML characters in the data are encoded.
 #
-sub dataElementEncoded {
+sub xml_encoded_data_element {
 
     my $self    = shift;
     my $tag     = shift;
@@ -263,11 +265,11 @@ sub dataElementEncoded {
 
 ###############################################################################
 #
-# stringElement()
+# xml_string_element()
 #
 # Optimised tag writer for <c> cell string elements in the inner loop.
 #
-sub stringElement {
+sub xml_string_element {
 
     my $self  = shift;
     my $index = shift;
@@ -286,15 +288,15 @@ sub stringElement {
 
 ###############################################################################
 #
-# siElement()
+# xml_si_element()
 #
 # Optimised tag writer for shared strings <si> elements.
 #
-sub siElement {
+sub xml_si_element {
 
-    my $self  = shift;
+    my $self   = shift;
     my $string = shift;
-    my $attr  = '';
+    my $attr   = '';
 
 
     while ( @_ ) {
@@ -310,17 +312,15 @@ sub siElement {
 }
 
 
-
-
 ###############################################################################
 #
-# siRichElement()
+# xml_rich_si_element()
 #
 # Optimised tag writer for shared strings <si> rich string elements.
 #
-sub siRichElement {
+sub xml_rich_si_element {
 
-    my $self  = shift;
+    my $self   = shift;
     my $string = shift;
 
 
@@ -331,11 +331,11 @@ sub siRichElement {
 
 ###############################################################################
 #
-# numberElement()
+# xml_number_element()
 #
 # Optimised tag writer for <c> cell number elements in the inner loop.
 #
-sub numberElement {
+sub xml_number_element {
 
     my $self  = shift;
     my $index = shift;
@@ -354,11 +354,11 @@ sub numberElement {
 
 ###############################################################################
 #
-# formulaElement()
+# xml_formula_element()
 #
 # Optimised tag writer for <c> cell formula elements in the inner loop.
 #
-sub formulaElement {
+sub xml_formula_element {
 
     my $self    = shift;
     my $formula = shift;
@@ -380,11 +380,11 @@ sub formulaElement {
 
 ###############################################################################
 #
-# inlineStr()
+# xml_inline_string()
 #
 # Optimised tag writer for inlineStr cell elements in the inner loop.
 #
-sub inlineStr {
+sub xml_inline_string {
 
     my $self     = shift;
     my $string   = shift;
@@ -411,15 +411,15 @@ sub inlineStr {
 
 ###############################################################################
 #
-# richInlineStr()
+# xml_rich_inline_string()
 #
 # Optimised tag writer for rich inlineStr cell elements in the inner loop.
 #
-sub richInlineStr {
+sub xml_rich_inline_string {
 
-    my $self  = shift;
+    my $self   = shift;
     my $string = shift;
-    my $attr  = '';
+    my $attr   = '';
 
     while ( @_ ) {
         my $key   = shift;
@@ -434,11 +434,11 @@ sub richInlineStr {
 
 ###############################################################################
 #
-# getOutput()
+# xml_get_fh()
 #
 # Return the output filehandle.
 #
-sub getOutput {
+sub xml_get_fh {
 
     my $self = shift;
 

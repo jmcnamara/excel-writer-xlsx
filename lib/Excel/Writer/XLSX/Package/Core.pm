@@ -61,7 +61,7 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
     $self->_write_cp_core_properties();
     $self->_write_dc_title();
     $self->_write_dc_subject();
@@ -74,10 +74,10 @@ sub _assemble_xml_file {
     $self->_write_cp_category();
     $self->_write_cp_content_status();
 
-    $self->endTag( 'cp:coreProperties' );
+    $self->xml_end_tag( 'cp:coreProperties' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -155,7 +155,7 @@ sub _write_cp_core_properties {
         'xmlns:xsi'      => $xmlns_xsi,
     );
 
-    $self->startTag( 'cp:coreProperties', @attributes );
+    $self->xml_start_tag( 'cp:coreProperties', @attributes );
 }
 
 
@@ -170,7 +170,7 @@ sub _write_dc_creator {
     my $self = shift;
     my $data = $self->{_properties}->{author} || '';
 
-    $self->dataElement( 'dc:creator', $data );
+    $self->xml_data_element( 'dc:creator', $data );
 }
 
 
@@ -185,7 +185,7 @@ sub _write_cp_last_modified_by {
     my $self = shift;
     my $data = $self->{_properties}->{author} || '';
 
-    $self->dataElement( 'cp:lastModifiedBy', $data );
+    $self->xml_data_element( 'cp:lastModifiedBy', $data );
 }
 
 
@@ -205,7 +205,7 @@ sub _write_dcterms_created {
 
     my @attributes = ( 'xsi:type' => $xsi_type, );
 
-    $self->dataElement( 'dcterms:created', $date, @attributes );
+    $self->xml_data_element( 'dcterms:created', $date, @attributes );
 }
 
 
@@ -225,7 +225,7 @@ sub _write_dcterms_modified {
 
     my @attributes = ( 'xsi:type' => $xsi_type, );
 
-    $self->dataElement( 'dcterms:modified', $date, @attributes );
+    $self->xml_data_element( 'dcterms:modified', $date, @attributes );
 }
 
 
@@ -242,7 +242,7 @@ sub _write_dc_title {
 
     return unless $data;
 
-    $self->dataElement( 'dc:title', $data );
+    $self->xml_data_element( 'dc:title', $data );
 }
 
 
@@ -259,7 +259,7 @@ sub _write_dc_subject {
 
     return unless $data;
 
-    $self->dataElement( 'dc:subject', $data );
+    $self->xml_data_element( 'dc:subject', $data );
 }
 
 
@@ -276,7 +276,7 @@ sub _write_cp_keywords {
 
     return unless $data;
 
-    $self->dataElement( 'cp:keywords', $data );
+    $self->xml_data_element( 'cp:keywords', $data );
 }
 
 
@@ -293,7 +293,7 @@ sub _write_dc_description {
 
     return unless $data;
 
-    $self->dataElement( 'dc:description', $data );
+    $self->xml_data_element( 'dc:description', $data );
 }
 
 
@@ -310,7 +310,7 @@ sub _write_cp_category {
 
     return unless $data;
 
-    $self->dataElement( 'cp:category', $data );
+    $self->xml_data_element( 'cp:category', $data );
 }
 
 
@@ -327,7 +327,7 @@ sub _write_cp_content_status {
 
     return unless $data;
 
-    $self->dataElement( 'cp:contentStatus', $data );
+    $self->xml_data_element( 'cp:contentStatus', $data );
 }
 
 

@@ -84,15 +84,15 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
-    $self->_write_xml_declaration;
+    $self->xml_declaration;
     $self->_write_types();
     $self->_write_defaults();
     $self->_write_overrides();
 
-    $self->endTag( 'Types' );
+    $self->xml_end_tag( 'Types' );
 
     # Close the XML writer filehandle.
-    $self->getOutput()->close();
+    $self->xml_get_fh()->close();
 }
 
 
@@ -315,7 +315,7 @@ sub _write_defaults {
 
     for my $aref ( @{ $self->{_defaults} } ) {
         #<<<
-        $self->emptyTag(
+        $self->xml_empty_tag(
             'Default',
             'Extension',   $aref->[0],
             'ContentType', $aref->[1] );
@@ -336,7 +336,7 @@ sub _write_overrides {
 
     for my $aref ( @{ $self->{_overrides} } ) {
         #<<<
-        $self->emptyTag(
+        $self->xml_empty_tag(
             'Override',
             'PartName',    $aref->[0],
             'ContentType', $aref->[1] );
@@ -365,7 +365,7 @@ sub _write_types {
 
     my @attributes = ( 'xmlns' => $xmlns, );
 
-    $self->startTag( 'Types', @attributes );
+    $self->xml_start_tag( 'Types', @attributes );
 }
 
 ###############################################################################
@@ -385,7 +385,7 @@ sub _write_default {
         'ContentType' => $content_type,
     );
 
-    $self->emptyTag( 'Default', @attributes );
+    $self->xml_empty_tag( 'Default', @attributes );
 }
 
 
@@ -407,7 +407,7 @@ sub _write_override {
         'ContentType' => $content_type,
     );
 
-    $self->emptyTag( 'Override', @attributes );
+    $self->xml_empty_tag( 'Override', @attributes );
 }
 
 
