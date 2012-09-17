@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_number_format() method.
 #
 $caption  = " \tChart: _write_number_format()";
-$expected = '<c:numFmt formatCode="General" sourceLinked="1" />';
+$expected = '<c:numFmt formatCode="General" sourceLinked="1"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

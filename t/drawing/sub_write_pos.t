@@ -29,7 +29,7 @@ my $drawing;
 # Test the _write_pos() method.
 #
 $caption  = " \tDrawing: _write_pos()";
-$expected = '<xdr:pos x="0" y="0" />';
+$expected = '<xdr:pos x="0" y="0"/>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 

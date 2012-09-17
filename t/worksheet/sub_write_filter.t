@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_filter() method.
 #
 $caption  = " \tWorksheet: _write_filter()";
-$expected = '<filter val="East" />';
+$expected = '<filter val="East"/>';
 
 $worksheet = _new_worksheet(\$got);
 

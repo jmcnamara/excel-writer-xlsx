@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_path() method.
 #
 $caption  = " \tVML: _write_path()";
-$expected = '<v:path gradientshapeok="t" o:connecttype="rect" />';
+$expected = '<v:path gradientshapeok="t" o:connecttype="rect"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
@@ -43,7 +43,7 @@ is( $got, $expected, $caption );
 # Test the _write_path() method.
 #
 $caption  = " \tVML: _write_path()";
-$expected = '<v:path o:connecttype="none" />';
+$expected = '<v:path o:connecttype="none"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_mx_plv() method.
 #
 $caption  = " \tWorksheet: _write_mx_plv()";
-$expected = '<mx:PLV Mode="1" OnePage="0" WScale="0" />';
+$expected = '<mx:PLV Mode="1" OnePage="0" WScale="0"/>';
 
 $worksheet = _new_worksheet(\$got);
 

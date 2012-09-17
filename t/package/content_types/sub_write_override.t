@@ -28,7 +28,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::ContentTypes' );
 # Test the _write_override() method.
 #
 $caption  = " \tContentTypes: _write_override()";
-$expected = '<Override PartName="/docProps/core.xml" ContentType="app..." />';
+$expected = '<Override PartName="/docProps/core.xml" ContentType="app..."/>';
 
 $obj->_write_override( '/docProps/core.xml', 'app...' );
 

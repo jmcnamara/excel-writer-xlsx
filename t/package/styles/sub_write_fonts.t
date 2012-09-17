@@ -29,7 +29,7 @@ my $style;
 #
 $caption = " \tStyles: _write_fonts()";
 $expected =
-'<fonts count="1"><font><sz val="11" /><color theme="1" /><name val="Calibri" /><family val="2" /><scheme val="minor" /></font></fonts>';
+'<fonts count="1"><font><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font></fonts>';
 
 
 my @formats = ( Excel::Writer::XLSX::Format->new( 0, {}, has_font => 1 ) );

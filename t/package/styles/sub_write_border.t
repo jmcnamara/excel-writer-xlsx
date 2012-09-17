@@ -28,7 +28,7 @@ my $style;
 # Test the _write_border() method.
 #
 $caption  = " \tStyles: _write_border()";
-$expected = '<border><left /><right /><top /><bottom /><diagonal /></border>';
+$expected = '<border><left/><right/><top/><bottom/><diagonal/></border>';
 
 my $format = Excel::Writer::XLSX::Format->new( 0, {}, has_border => 1 );
 

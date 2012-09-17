@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_hyperlinks() method.
 #
 $caption  = " \tWorksheet: _write_hyperlinks()";
-$expected = '<hyperlinks><hyperlink ref="A1" r:id="rId1" /></hyperlinks>';
+$expected = '<hyperlinks><hyperlink ref="A1" r:id="rId1"/></hyperlinks>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -43,7 +43,7 @@ is( $got, $expected, $caption );
 # Test the _write_hyperlinks() method.
 #
 $caption  = " \tWorksheet: _write_hyperlinks()";
-$expected = '<hyperlinks><hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1" /></hyperlinks>';
+$expected = '<hyperlinks><hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/></hyperlinks>';
 
 $worksheet = _new_worksheet(\$got);
 

@@ -43,7 +43,7 @@ $got = ''; # Reset after previous undef value;
 # Test the _write_page_setup() method. With set_landscape();
 #
 $caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup orientation="landscape" />';
+$expected = '<pageSetup orientation="landscape"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->set_landscape();
@@ -58,7 +58,7 @@ is( $got, $expected, $caption );
 # Test the _write_page_setup() method. With set_portrait();
 #
 $caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup orientation="portrait" />';
+$expected = '<pageSetup orientation="portrait"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->set_portrait();
@@ -73,7 +73,7 @@ is( $got, $expected, $caption );
 # Test the _write_page_setup() method. With set_paper();
 #
 $caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup paperSize="9" orientation="portrait" />';
+$expected = '<pageSetup paperSize="9" orientation="portrait"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->set_paper( 9 );
@@ -88,7 +88,7 @@ is( $got, $expected, $caption );
 # Test the _write_page_setup() method. With print_across();
 #
 $caption  = " \tWorksheet: _write_page_setup()";
-$expected = '<pageSetup pageOrder="overThenDown" orientation="portrait" />';
+$expected = '<pageSetup pageOrder="overThenDown" orientation="portrait"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->print_across();

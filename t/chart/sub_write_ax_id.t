@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_axis_id() method.
 #
 $caption  = " \tChart: _write_axis_id()";
-$expected = '<c:axId val="53850880" />';
+$expected = '<c:axId val="53850880"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

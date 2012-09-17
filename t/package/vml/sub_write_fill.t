@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_fill() method.
 #
 $caption  = " \tVML: _write_fill()";
-$expected = '<v:fill color2="#ffffe1" />';
+$expected = '<v:fill color2="#ffffe1"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

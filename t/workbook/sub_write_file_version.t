@@ -29,7 +29,7 @@ my $workbook;
 #
 $caption  = " \tWorkbook: _write_file_version()";
 $expected = '<fileVersion appName="xl" lastEdited="4" '
-  . 'lowestEdited="4" rupBuild="4505" />';
+  . 'lowestEdited="4" rupBuild="4505"/>';
 
 $workbook = _new_workbook(\$got);
 

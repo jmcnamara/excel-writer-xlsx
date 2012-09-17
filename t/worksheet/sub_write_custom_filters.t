@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_custom_filters() method.
 #
 $caption  = " \tWorksheet: _write_custom_filters()";
-$expected = '<customFilters><customFilter operator="greaterThan" val="4000" /></customFilters>';
+$expected = '<customFilters><customFilter operator="greaterThan" val="4000"/></customFilters>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -42,7 +42,7 @@ is( $got, $expected, $caption );
 # Test the _write_custom_filters() method.
 #
 $caption  = " \tWorksheet: _write_custom_filters()";
-$expected = '<customFilters and="1"><customFilter operator="greaterThan" val="3000" /><customFilter operator="lessThan" val="8000" /></customFilters>';
+$expected = '<customFilters and="1"><customFilter operator="greaterThan" val="3000"/><customFilter operator="lessThan" val="8000"/></customFilters>';
 
 $worksheet = _new_worksheet(\$got);
 

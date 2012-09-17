@@ -46,7 +46,7 @@ is( $got, $expected, $caption );
 #
 $num_format_count = 1;
 $caption          = " \tStyles: _write_num_fmts()";
-$expected         =  '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0" /></numFmts>';
+$expected         =  '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts>';
 
 @formats = (
     Excel::Writer::XLSX::Format->new(

@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_size_with_cells() method.
 #
 $caption  = " \tVML: _write_size_with_cells()";
-$expected = '<x:SizeWithCells />';
+$expected = '<x:SizeWithCells/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

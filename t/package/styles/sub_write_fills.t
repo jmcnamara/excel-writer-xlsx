@@ -28,7 +28,7 @@ my $style;
 # Test the _write_fills() method.
 #
 $caption  = " \tStyles: _write_fills()";
-$expected = '<fills count="2"><fill><patternFill patternType="none" /></fill><fill><patternFill patternType="gray125" /></fill></fills>';
+$expected = '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>';
 
 $style = _new_style(\$got);
 $style->{_fill_count} = 2;

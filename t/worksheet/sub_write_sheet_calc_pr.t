@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_sheet_calc_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_calc_pr()";
-$expected = '<sheetCalcPr fullCalcOnLoad="1" />';
+$expected = '<sheetCalcPr fullCalcOnLoad="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

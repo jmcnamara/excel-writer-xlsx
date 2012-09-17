@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_col_breaks() method.
 #
 $caption  = " \tWorksheet: _write_col_breaks()";
-$expected = '<colBreaks count="1" manualBreakCount="1"><brk id="1" max="1048575" man="1" /></colBreaks>';
+$expected = '<colBreaks count="1" manualBreakCount="1"><brk id="1" max="1048575" man="1"/></colBreaks>';
 
 $worksheet = _new_worksheet( \$got );
 $worksheet->{_vbreaks} = [1];
@@ -42,7 +42,7 @@ is( $got, $expected, $caption );
 # Test the _write_col_breaks() method.
 #
 $caption  = " \tWorksheet: _write_col_breaks()";
-$expected = '<colBreaks count="3" manualBreakCount="3"><brk id="1" max="1048575" man="1" /><brk id="3" max="1048575" man="1" /><brk id="8" max="1048575" man="1" /></colBreaks>';
+$expected = '<colBreaks count="3" manualBreakCount="3"><brk id="1" max="1048575" man="1"/><brk id="3" max="1048575" man="1"/><brk id="8" max="1048575" man="1"/></colBreaks>';
 
 $worksheet = _new_worksheet( \$got );
 $worksheet->{_vbreaks} = [8, 3, 1, 0];

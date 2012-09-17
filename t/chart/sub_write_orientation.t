@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_orientation() method.
 #
 $caption  = " \tChart: _write_orientation()";
-$expected = '<c:orientation val="minMax" />';
+$expected = '<c:orientation val="minMax"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

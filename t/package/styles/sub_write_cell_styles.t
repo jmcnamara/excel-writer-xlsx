@@ -28,7 +28,7 @@ my $style;
 # Test the _write_cell_styles() method.
 #
 $caption  = " \tStyles: _write_cell_styles()";
-$expected = '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0" /></cellStyles>';
+$expected = '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>';
 
 $style = _new_style(\$got);
 

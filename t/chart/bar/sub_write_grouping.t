@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_grouping() method.
 #
 $caption  = " \tChart: _write_grouping()";
-$expected = '<c:grouping val="clustered" />';
+$expected = '<c:grouping val="clustered"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_order() method.
 #
 $caption  = " \tChart: _write_order()";
-$expected = '<c:order val="0" />';
+$expected = '<c:order val="0"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

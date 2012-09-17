@@ -28,7 +28,7 @@ my $style;
 # Test the _write_dxfs() method.
 #
 $caption  = " \tStyles: _write_dxfs()";
-$expected = '<dxfs count="0" />';
+$expected = '<dxfs count="0"/>';
 
 $style = _new_style(\$got);
 

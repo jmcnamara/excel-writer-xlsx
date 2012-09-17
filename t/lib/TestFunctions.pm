@@ -52,7 +52,6 @@ sub _expected_to_aref {
     while ( <main::DATA> ) {
         chomp;
         next unless /\S/;    # Skip blank lines.
-        s{/>$}{ />};         # Add space before element end like XML::Writer.
         s{^\s+}{};           # Remove leading whitespace from XML.
         push @data, $_;
     }
@@ -108,7 +107,7 @@ sub _xml_str_to_array {
     my $xml_str = shift;
     my @xml     = @{ _got_to_aref( $xml_str ) };
 
-    s{(\S)/>$}{$1 />} for @xml;
+    #s{ />$}{/>} for @xml;
 
     return @xml;
 }
@@ -139,7 +138,6 @@ sub _vml_str_to_array {
         s/^\s+//;            # Remove leading whitespace.
         s/\s+$//;            # Remove trailing whitespace.
         s/\'/"/g;            # Convert VMLs attribute quotes.
-        s{/>$}{ />}g;        # Add space before element end like XML::Writer.
 
         $_ .= " "  if /"$/;  # Add space between attributes.
         $_ .= "\n" if />$/;  # Add newline after element end.
@@ -232,7 +230,7 @@ sub _compare_xlsx_files {
         if ( $filename =~ m(xl/worksheets/sheet\d.xml) ) {
             $exp_xml_str =~ s/horizontalDpi="200" //;
             $exp_xml_str =~ s/verticalDpi="200" //;
-            $exp_xml_str =~ s/(<pageSetup.* )r:id="rId1"/$1/;
+            $exp_xml_str =~ s/(<pageSetup.*) r:id="rId1"/$1/;
         }
 
         if ( $filename =~ /.vml$/ ) {
@@ -357,8 +355,6 @@ sub _new_object {
     open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
 
     my $object = $class->new( $got_fh );
-
-    #$object->{_fh} = $got_fh;
 
     return $object;
 }

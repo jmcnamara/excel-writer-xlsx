@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_move_with_cells() method.
 #
 $caption  = " \tVML: _write_move_with_cells()";
-$expected = '<x:MoveWithCells />';
+$expected = '<x:MoveWithCells/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_label_offset() method.
 #
 $caption  = " \tChart: _write_label_offset()";
-$expected = '<c:lblOffset val="100" />';
+$expected = '<c:lblOffset val="100"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

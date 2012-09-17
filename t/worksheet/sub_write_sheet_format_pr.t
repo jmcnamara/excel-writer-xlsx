@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_sheet_format_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_format_pr()";
-$expected = '<sheetFormatPr defaultRowHeight="15" />';
+$expected = '<sheetFormatPr defaultRowHeight="15"/>';
 
 $worksheet = _new_worksheet(\$got);
 

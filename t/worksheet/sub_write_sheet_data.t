@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_sheet_data() method.
 #
 $caption  = " \tWorksheet: _write_sheet_data()";
-$expected = '<sheetData />';
+$expected = '<sheetData/>';
 
 $worksheet = _new_worksheet(\$got);
 

@@ -29,7 +29,7 @@ my $cell_ref;
 # 1. Test the _write_dimension() method with no dimensions set.
 #
 $caption  = " \tWorksheet: _write_dimension(undef)";
-$expected = '<dimension ref="A1" />';
+$expected = '<dimension ref="A1"/>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -44,7 +44,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
@@ -59,7 +59,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
@@ -74,7 +74,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'XFD1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
@@ -89,7 +89,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'XFD1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
@@ -104,7 +104,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( $cell_ref, 'some string' );
@@ -119,7 +119,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1:B2';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( 'A1', 'some string' );
@@ -135,7 +135,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1:B2';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( 'B2', 'some string' );
@@ -151,7 +151,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'B2:H11';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( 'B2',  'some string' );
@@ -167,7 +167,7 @@ is( $got, $expected, $caption );
 #
 $cell_ref = 'A1:XFD1048576';
 $caption  = " \tWorksheet: _write_dimension('$cell_ref')";
-$expected = qq(<dimension ref="$cell_ref" />);
+$expected = qq(<dimension ref="$cell_ref"/>);
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->write( 'A1',         'some string' );

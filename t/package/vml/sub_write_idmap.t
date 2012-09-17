@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_idmap() method.
 #
 $caption  = " \tVML: _write_idmap()";
-$expected = '<o:idmap v:ext="edit" data="1" />';
+$expected = '<o:idmap v:ext="edit" data="1"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

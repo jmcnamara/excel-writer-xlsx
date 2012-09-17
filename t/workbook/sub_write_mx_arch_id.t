@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_mx_arch_id() method.
 #
 $caption  = " \tWorkbook: _write_mx_arch_id()";
-$expected = '<mx:ArchID Flags="2" />';
+$expected = '<mx:ArchID Flags="2"/>';
 
 $workbook = _new_workbook(\$got);
 

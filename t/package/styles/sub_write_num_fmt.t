@@ -28,7 +28,7 @@ my $style;
 # Test the _write_num_fmt() method.
 #
 $caption  = " \tStyles: _write_num_fmt()";
-$expected = '<numFmt numFmtId="164" formatCode="#,##0.0" />';
+$expected = '<numFmt numFmtId="164" formatCode="#,##0.0"/>';
 
 $style = _new_style(\$got);
 

@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_filters() method.
 #
 $caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters><filter val="East" /></filters>';
+$expected = '<filters><filter val="East"/></filters>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -41,7 +41,7 @@ is( $got, $expected, $caption );
 # Test the _write_filters() method.
 #
 $caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters><filter val="East" /><filter val="South" /></filters>';
+$expected = '<filters><filter val="East"/><filter val="South"/></filters>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -55,7 +55,7 @@ is( $got, $expected, $caption );
 # Test the _write_filters() method.
 #
 $caption  = " \tWorksheet: _write_filters()";
-$expected = '<filters blank="1" />';
+$expected = '<filters blank="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_workbook_pr() method.
 #
 $caption  = " \tWorkbook: _write_workbook_pr()";
-$expected = '<workbookPr defaultThemeVersion="124226" />';
+$expected = '<workbookPr defaultThemeVersion="124226"/>';
 
 $workbook = _new_workbook(\$got);
 

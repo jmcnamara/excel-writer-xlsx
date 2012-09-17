@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="r" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="r"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -44,7 +44,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="r" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="r"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -60,7 +60,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="r" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="r"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -75,7 +75,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="t" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="t"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -90,7 +90,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="l" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="l"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -105,7 +105,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="b" /><c:layout /></c:legend>';
+$expected = '<c:legend><c:legendPos val="b"/><c:layout/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -150,7 +150,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="r" /><c:layout /><c:overlay val="1" /></c:legend>';
+$expected = '<c:legend><c:legendPos val="r"/><c:layout/><c:overlay val="1"/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
@@ -165,7 +165,7 @@ is( $got, $expected, $caption );
 # Test the _write_legend() method.
 #
 $caption  = " \tChart: _write_legend()";
-$expected = '<c:legend><c:legendPos val="l" /><c:layout /><c:overlay val="1" /></c:legend>';
+$expected = '<c:legend><c:legendPos val="l"/><c:layout/><c:overlay val="1"/></c:legend>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

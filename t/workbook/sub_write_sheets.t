@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_sheets() method.
 #
 $caption  = " \tWorkbook: _write_sheets()";
-$expected = '<sheets><sheet name="Sheet1" sheetId="1" r:id="rId1" /></sheets>';
+$expected = '<sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"/></sheets>';
 
 $workbook = _new_workbook(\$got);
 my $worksheet = $workbook->add_worksheet();

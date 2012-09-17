@@ -28,7 +28,7 @@ my $worksheet;
 # 1. Test the _write_sheet_views() method.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -43,7 +43,7 @@ is( $got, $expected, $caption );
 # 2. Test the _write_sheet_views() method.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -59,7 +59,7 @@ is( $got, $expected, $caption );
 # 3. Test the _write_sheet_views() method. With zoom.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" zoomScale="200" zoomScaleNormal="200" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" zoomScale="200" zoomScaleNormal="200" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -75,7 +75,7 @@ is( $got, $expected, $caption );
 # 4. Test the _write_sheet_views() method. Right to left.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView rightToLeft="1" tabSelected="1" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView rightToLeft="1" tabSelected="1" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -91,7 +91,7 @@ is( $got, $expected, $caption );
 # 5. Test the _write_sheet_views() method. Hide zeroes.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView showZeros="0" tabSelected="1" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView showZeros="0" tabSelected="1" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -107,7 +107,7 @@ is( $got, $expected, $caption );
 # 6. Test the _write_sheet_views() method. Set page view mode.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" view="pageLayout" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" view="pageLayout" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 

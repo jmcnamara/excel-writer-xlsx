@@ -29,7 +29,7 @@ my $table;
 # Test the _write_table_column() method.
 #
 $caption  = " \tTable: _write_table_column()";
-$expected = '<tableColumn id="1" name="Column1" />';
+$expected = '<tableColumn id="1" name="Column1"/>';
 
 $table = _new_object( \$got, 'Excel::Writer::XLSX::Package::Table' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_cross_axis() method.
 #
 $caption  = " \tChart: _write_cross_axis()";
-$expected = '<c:crossAx val="82642816" />';
+$expected = '<c:crossAx val="82642816"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_axis_pos() method.
 #
 $caption  = " \tChart: _write_axis_pos()";
-$expected = '<c:axPos val="l" />';
+$expected = '<c:axPos val="l"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

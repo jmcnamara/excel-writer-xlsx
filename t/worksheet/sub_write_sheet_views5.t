@@ -32,7 +32,7 @@ my $worksheet;
 # 1. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0" /></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"/></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -48,7 +48,7 @@ is( $got, $expected, $caption );
 # 2. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -64,7 +64,7 @@ is( $got, $expected, $caption );
 # 3. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="B1" sqref="B1" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="B1" sqref="B1"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -80,7 +80,7 @@ is( $got, $expected, $caption );
 # 4. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -96,7 +96,7 @@ is( $got, $expected, $caption );
 # 5. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3:F4" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="D3" sqref="D3:F4"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -112,7 +112,7 @@ is( $got, $expected, $caption );
 # 6. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="F4" sqref="D3:F4" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="F4" sqref="D3:F4"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -128,7 +128,7 @@ is( $got, $expected, $caption );
 # 7. Test the _write_sheet_views() method with selection set.
 #
 $caption  = " \tWorksheet: _write_sheet_views()";
-$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2" /></sheetView></sheetViews>';
+$expected = '<sheetViews><sheetView tabSelected="1" workbookViewId="0"><selection activeCell="A2" sqref="A2"/></sheetView></sheetViews>';
 
 $worksheet = _new_worksheet(\$got);
 

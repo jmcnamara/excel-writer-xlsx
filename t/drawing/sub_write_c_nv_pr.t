@@ -29,7 +29,7 @@ my $drawing;
 # Test the _write_c_nv_pr() method.
 #
 $caption  = " \tDrawing: _write_c_nv_pr()";
-$expected = '<xdr:cNvPr id="2" name="Chart 1" />';
+$expected = '<xdr:cNvPr id="2" name="Chart 1"/>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_legend_pos() method.
 #
 $caption  = " \tChart: _write_legend_pos()";
-$expected = '<c:legendPos val="r" />';
+$expected = '<c:legendPos val="r"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

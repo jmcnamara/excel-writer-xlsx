@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_num_cache() method.
 #
 $caption  = " \tChart: _write_num_cache()";
-$expected = '<c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="5" /><c:pt idx="0"><c:v>1</c:v></c:pt><c:pt idx="1"><c:v>2</c:v></c:pt><c:pt idx="2"><c:v>3</c:v></c:pt><c:pt idx="3"><c:v>4</c:v></c:pt><c:pt idx="4"><c:v>5</c:v></c:pt></c:numCache>';
+$expected = '<c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="5"/><c:pt idx="0"><c:v>1</c:v></c:pt><c:pt idx="1"><c:v>2</c:v></c:pt><c:pt idx="2"><c:v>3</c:v></c:pt><c:pt idx="3"><c:v>4</c:v></c:pt><c:pt idx="4"><c:v>5</c:v></c:pt></c:numCache>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

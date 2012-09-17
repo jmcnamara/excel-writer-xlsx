@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_tab_color() method.
 #
 $caption  = " \tWorksheet: _write_tab_color()";
-$expected = '<tabColor rgb="FFFF0000" />';
+$expected = '<tabColor rgb="FFFF0000"/>';
 
 $worksheet = _new_worksheet(\$got);
 # Mock up the color palette.

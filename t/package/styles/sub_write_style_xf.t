@@ -28,7 +28,7 @@ my $style;
 # Test the _write_style_xf() method.
 #
 $caption  = " \tStyles: _write_style_xf()";
-$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" />';
+$expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>';
 
 $style = _new_style(\$got);
 

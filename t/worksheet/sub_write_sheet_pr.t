@@ -28,7 +28,7 @@ my $worksheet;
 # 1. Test the _write_sheet_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_pr()";
-$expected = '<sheetPr><pageSetUpPr fitToPage="1" /></sheetPr>';
+$expected = '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->{_fit_page} = 1;
@@ -42,7 +42,7 @@ is( $got, $expected, $caption );
 # 2. Test the _write_sheet_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_pr()";
-$expected = '<sheetPr><tabColor rgb="FFFF0000" /></sheetPr>';
+$expected = '<sheetPr><tabColor rgb="FFFF0000"/></sheetPr>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -62,7 +62,7 @@ is( $got, $expected, $caption );
 # 3. Test the _write_sheet_pr() method.
 #
 $caption  = " \tWorksheet: _write_sheet_pr()";
-$expected = '<sheetPr><tabColor rgb="FFFF0000" /><pageSetUpPr fitToPage="1" /></sheetPr>';
+$expected = '<sheetPr><tabColor rgb="FFFF0000"/><pageSetUpPr fitToPage="1"/></sheetPr>';
 
 $worksheet = _new_worksheet(\$got);
 

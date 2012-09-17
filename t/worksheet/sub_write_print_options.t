@@ -42,7 +42,7 @@ $got = ''; # Reset after previous undef value;
 # Test the _write_print_options() method.
 #
 $caption  = " \tWorksheet: _write_print_options()";
-$expected = '<printOptions horizontalCentered="1" />';
+$expected = '<printOptions horizontalCentered="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->center_horizontally();
@@ -57,7 +57,7 @@ is( $got, $expected, $caption );
 # Test the _write_print_options() method.
 #
 $caption  = " \tWorksheet: _write_print_options()";
-$expected = '<printOptions verticalCentered="1" />';
+$expected = '<printOptions verticalCentered="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->center_vertically();
@@ -72,7 +72,7 @@ is( $got, $expected, $caption );
 # Test the _write_print_options() method.
 #
 $caption  = " \tWorksheet: _write_print_options()";
-$expected = '<printOptions horizontalCentered="1" verticalCentered="1" />';
+$expected = '<printOptions horizontalCentered="1" verticalCentered="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->center_horizontally();
@@ -104,7 +104,7 @@ is( $got, $expected, $caption );
 # Test the _write_print_options() method.
 #
 $caption  = " \tWorksheet: _write_print_options()";
-$expected = '<printOptions gridLines="1" />';
+$expected = '<printOptions gridLines="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -136,7 +136,7 @@ is( $got, $expected, $caption );
 # Test the _write_print_options() method.
 #
 $caption  = " \tWorksheet: _write_print_options()";
-$expected = '<printOptions gridLines="1" />';
+$expected = '<printOptions gridLines="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

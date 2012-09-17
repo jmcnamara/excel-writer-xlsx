@@ -29,7 +29,7 @@ my $drawing;
 # Test the _write_xfrm_offset() method.
 #
 $caption  = " \tDrawing: _write_xfrm_offset()";
-$expected = '<a:off x="0" y="0" />';
+$expected = '<a:off x="0" y="0"/>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_tick_lbl_pos() method.
 #
 $caption  = " \tChart: _write_tick_label_pos()";
-$expected = '<c:tickLblPos val="nextTo" />';
+$expected = '<c:tickLblPos val="nextTo"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

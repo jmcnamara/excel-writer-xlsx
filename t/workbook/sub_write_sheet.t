@@ -27,7 +27,7 @@ my $workbook;
 # Test the _write_sheet() method.
 #
 $caption  = " \tWorkbook: _write_sheet()";
-$expected = '<sheet name="Sheet1" sheetId="1" r:id="rId1" />';
+$expected = '<sheet name="Sheet1" sheetId="1" r:id="rId1"/>';
 
 $workbook = _new_workbook(\$got);
 $workbook->_write_sheet( 'Sheet1', 1 );
@@ -40,7 +40,7 @@ is( $got, $expected, $caption );
 # Test the _write_sheet() method. Hidden worksheet.
 #
 $caption  = " \tWorkbook: _write_sheet()";
-$expected = '<sheet name="Sheet1" sheetId="1" state="hidden" r:id="rId1" />';
+$expected = '<sheet name="Sheet1" sheetId="1" state="hidden" r:id="rId1"/>';
 
 $workbook = _new_workbook(\$got);
 $workbook->_write_sheet( 'Sheet1', 1, 1 );
@@ -53,7 +53,7 @@ is( $got, $expected, $caption );
 # Test the _write_sheet() method. Sheetname with XML character.
 #
 $caption  = " \tWorkbook: _write_sheet()";
-$expected = '<sheet name="Bits &amp; Bobs" sheetId="1" r:id="rId1" />';
+$expected = '<sheet name="Bits &amp; Bobs" sheetId="1" r:id="rId1"/>';
 
 $workbook = _new_workbook(\$got);
 $workbook->_write_sheet( 'Bits & Bobs', 1 );

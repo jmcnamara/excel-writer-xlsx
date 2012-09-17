@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_plot_vis_only() method.
 #
 $caption  = " \tChart: _write_plot_vis_only()";
-$expected = '<c:plotVisOnly val="1" />';
+$expected = '<c:plotVisOnly val="1"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

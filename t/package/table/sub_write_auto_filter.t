@@ -29,7 +29,7 @@ my $table;
 # Test the _write_auto_filter() method.
 #
 $caption  = " \tTable: _write_auto_filter()";
-$expected = '<autoFilter ref="C3:F13" />';
+$expected = '<autoFilter ref="C3:F13"/>';
 
 $table = _new_object( \$got, 'Excel::Writer::XLSX::Package::Table' );
 

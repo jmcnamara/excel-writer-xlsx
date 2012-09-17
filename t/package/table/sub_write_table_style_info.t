@@ -29,7 +29,7 @@ my $table;
 # Test the _write_table_style_info() method.
 #
 $caption  = " \tTable: _write_table_style_info()";
-$expected = '<tableStyleInfo name="TableStyleMedium9" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0" />';
+$expected = '<tableStyleInfo name="TableStyleMedium9" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/>';
 
 $table = _new_object( \$got, 'Excel::Writer::XLSX::Package::Table' );
 

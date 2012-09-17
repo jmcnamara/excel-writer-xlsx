@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_ext() method.
 #
 $caption  = " \tWorkbook: _write_ext()";
-$expected = '<ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main"><mx:ArchID Flags="2" /></ext>';
+$expected = '<ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main"><mx:ArchID Flags="2"/></ext>';
 
 $workbook = _new_workbook(\$got);
 

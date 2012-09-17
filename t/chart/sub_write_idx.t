@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_idx() method.
 #
 $caption  = " \tChart: _write_idx()";
-$expected = '<c:idx val="0" />';
+$expected = '<c:idx val="0"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

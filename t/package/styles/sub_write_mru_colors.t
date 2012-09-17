@@ -28,7 +28,7 @@ my $style;
 # Test the _write_mru_colors() method.
 #
 $caption  = " \tStyles: _write_mru_colors()";
-$expected = '<mruColors><color rgb="FF26DA55" /></mruColors>';
+$expected = '<mruColors><color rgb="FF26DA55"/></mruColors>';
 
 $style = _new_style(\$got);
 
@@ -42,7 +42,7 @@ is( $got, $expected, $caption );
 # Test the _write_mru_colors() method.
 #
 $caption  = " \tStyles: _write_mru_colors()";
-$expected = '<mruColors><color rgb="FF646462" /><color rgb="FF792DC8" /><color rgb="FF26DA55" /></mruColors>';
+$expected = '<mruColors><color rgb="FF646462"/><color rgb="FF792DC8"/><color rgb="FF26DA55"/></mruColors>';
 
 $style = _new_style(\$got);
 

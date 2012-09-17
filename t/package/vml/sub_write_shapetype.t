@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_shapetype() method.
 #
 $caption  = " \tVML: _write_shapetype()";
-$expected = '<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter" /><v:path gradientshapeok="t" o:connecttype="rect" /></v:shapetype>';
+$expected = '<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>';
 
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );

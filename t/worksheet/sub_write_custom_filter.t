@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_custom_filter() method.
 #
 $caption  = " \tWorksheet: _write_custom_filter()";
-$expected = '<customFilter operator="greaterThan" val="3000" />';
+$expected = '<customFilter operator="greaterThan" val="3000"/>';
 
 $worksheet = _new_worksheet(\$got);
 

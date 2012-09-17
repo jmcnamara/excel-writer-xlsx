@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_crosses() method.
 #
 $caption  = " \tChart: _write_crosses()";
-$expected = '<c:crosses val="autoZero" />';
+$expected = '<c:crosses val="autoZero"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

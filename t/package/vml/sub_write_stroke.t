@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_stroke() method.
 #
 $caption  = " \tVML: _write_stroke()";
-$expected = '<v:stroke joinstyle="miter" />';
+$expected = '<v:stroke joinstyle="miter"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

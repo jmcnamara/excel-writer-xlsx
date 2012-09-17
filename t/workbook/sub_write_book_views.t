@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_book_views() method.
 #
 $caption  = " \tWorkbook: _write_book_views()";
-$expected = '<bookViews><workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" /></bookViews>';
+$expected = '<bookViews><workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660"/></bookViews>';
 
 $workbook = _new_workbook(\$got);
 

@@ -42,7 +42,10 @@ our $VERSION = '0.51';
 sub new {
 
     my $class = shift;
-    my $fh    = shift;    # May be undef and set later.
+
+
+    # FH may be undef and set later in _set_xml_writer().
+    my $fh    = shift;
 
     my $self = { _fh => $fh };
 
@@ -186,9 +189,7 @@ sub emptyTag {
 
     local $\ = undef;
 
-    # Note extra space before closing tag like XML::Writer.
-    print { $self->{_fh} } "<$tag />";
-
+    print { $self->{_fh} } "<$tag/>";
 }
 
 
@@ -213,9 +214,7 @@ sub emptyTagEncoded {
 
     local $\ = undef;
 
-    # Note extra space before closing tag like XML::Writer.
-    print { $self->{_fh} } "<$tag />";
-
+    print { $self->{_fh} } "<$tag/>";
 }
 
 
@@ -476,7 +475,7 @@ sub end {
     my $self = shift;
     local $\ = undef;
 
-    print { $self->{_fh} } "\n";
+    #print { $self->{_fh} } "\n";
 }
 
 

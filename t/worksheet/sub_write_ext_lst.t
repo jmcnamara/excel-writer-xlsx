@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_ext_lst() method.
 #
 $caption  = " \tWorksheet: _write_ext_lst()";
-$expected = '<extLst><ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main"><mx:PLV Mode="1" OnePage="0" WScale="0" /></ext></extLst>';
+$expected = '<extLst><ext xmlns:mx="http://schemas.microsoft.com/office/mac/excel/2008/main" uri="http://schemas.microsoft.com/office/mac/excel/2008/main"><mx:PLV Mode="1" OnePage="0" WScale="0"/></ext></extLst>';
 
 $worksheet = _new_worksheet(\$got);
 

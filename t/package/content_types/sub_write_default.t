@@ -28,7 +28,7 @@ my $obj = _new_object( \$got, 'Excel::Writer::XLSX::Package::ContentTypes' );
 # Test the _write_default() method.
 #
 $caption  = " \tContentTypes: _write_default()";
-$expected = '<Default Extension="xml" ContentType="application/xml" />';
+$expected = '<Default Extension="xml" ContentType="application/xml"/>';
 
 $obj->_write_default( 'xml', 'application/xml' );
 

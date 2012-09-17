@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_selection() method.
 #
 $caption  = " \tWorksheet: _write_selection()";
-$expected = '<selection activeCell="A1" sqref="A1" />';
+$expected = '<selection activeCell="A1" sqref="A1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

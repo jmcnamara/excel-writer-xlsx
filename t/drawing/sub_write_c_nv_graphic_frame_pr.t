@@ -29,7 +29,7 @@ my $drawing;
 # Test the _write_c_nv_graphic_frame_pr() method.
 #
 $caption  = " \tDrawing: _write_c_nv_graphic_frame_pr()";
-$expected = '<xdr:cNvGraphicFramePr />';
+$expected = '<xdr:cNvGraphicFramePr/>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 
@@ -45,7 +45,7 @@ is( $got, $expected, $caption );
 # Test the _write_c_nv_graphic_frame_pr() method.
 #
 $caption  = " \tDrawing: _write_c_nv_graphic_frame_pr()";
-$expected = '<xdr:cNvGraphicFramePr><a:graphicFrameLocks noGrp="1" /></xdr:cNvGraphicFramePr>';
+$expected = '<xdr:cNvGraphicFramePr><a:graphicFrameLocks noGrp="1"/></xdr:cNvGraphicFramePr>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 

@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_brk() method.
 #
 $caption  = " \tWorksheet: _write_brk()";
-$expected = '<brk id="1" max="16383" man="1" />';
+$expected = '<brk id="1" max="16383" man="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

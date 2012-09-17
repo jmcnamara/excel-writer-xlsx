@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_pt_count() method.
 #
 $caption  = " \tChart: _write_pt_count()";
-$expected = '<c:ptCount val="5" />';
+$expected = '<c:ptCount val="5"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_page_setup() method.
 #
 $caption  = " \tChart: _write_page_setup()";
-$expected = '<c:pageSetup />';
+$expected = '<c:pageSetup/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

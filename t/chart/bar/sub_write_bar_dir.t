@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_bar_dir() method.
 #
 $caption  = " \tChart: _write_bar_dir()";
-$expected = '<c:barDir val="bar" />';
+$expected = '<c:barDir val="bar"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Bar' );
 

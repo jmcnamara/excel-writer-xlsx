@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_lang() method.
 #
 $caption  = " \tChart: _write_lang()";
-$expected = '<c:lang val="en-US" />';
+$expected = '<c:lang val="en-US"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

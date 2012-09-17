@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_layout() method.
 #
 $caption  = " \tChart: _write_layout()";
-$expected = '<c:layout />';
+$expected = '<c:layout/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

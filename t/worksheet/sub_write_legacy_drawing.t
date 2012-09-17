@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_legacy_drawing() method.
 #
 $caption  = " \tWorksheet: _write_legacy_drawing()";
-$expected = '<legacyDrawing r:id="rId1" />';
+$expected = '<legacyDrawing r:id="rId1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

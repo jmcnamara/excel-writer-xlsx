@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_merge_cell() method.
 #
 $caption  = " \tWorksheet: _write_merge_cell()";
-$expected = '<mergeCell ref="B3:C3" />';
+$expected = '<mergeCell ref="B3:C3"/>';
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->_write_merge_cell( [ 2, 1, 2, 2 ] );

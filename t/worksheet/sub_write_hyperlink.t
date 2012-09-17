@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_hyperlink_external() method.
 #
 $caption  = " \tWorksheet: _write_hyperlink_external()";
-$expected = '<hyperlink ref="A1" r:id="rId1" />';
+$expected = '<hyperlink ref="A1" r:id="rId1"/>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -42,7 +42,7 @@ is( $got, $expected, $caption );
 # Test the _write_hyperlink_internal() method.
 #
 $caption  = " \tWorksheet: _write_hyperlink_internal()";
-$expected = '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1" />';
+$expected = '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/>';
 
 $worksheet = _new_worksheet(\$got);
 
@@ -56,7 +56,7 @@ is( $got, $expected, $caption );
 # Test the _write_hyperlink_internal() method.
 #
 $caption  = " \tWorksheet: _write_hyperlink_internal()";
-$expected = q(<hyperlink ref="A5" location="'Data Sheet'!D5" display="'Data Sheet'!D5" />);
+$expected = q(<hyperlink ref="A5" location="'Data Sheet'!D5" display="'Data Sheet'!D5"/>);
 
 $worksheet = _new_worksheet(\$got);
 
@@ -70,7 +70,7 @@ is( $got, $expected, $caption );
 # Test the _write_hyperlink_internal() method.
 #
 $caption  = " \tWorksheet: _write_hyperlink_internal()";
-$expected = '<hyperlink ref="A18" location="Sheet2!A1" tooltip="Screen Tip 1" display="Sheet2!A1" />';
+$expected = '<hyperlink ref="A18" location="Sheet2!A1" tooltip="Screen Tip 1" display="Sheet2!A1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

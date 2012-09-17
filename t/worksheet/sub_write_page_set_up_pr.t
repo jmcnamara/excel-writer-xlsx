@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_page_set_up_pr() method.
 #
 $caption  = " \tWorksheet: _write_page_set_up_pr()";
-$expected = '<pageSetUpPr fitToPage="1" />';
+$expected = '<pageSetUpPr fitToPage="1"/>';
 
 $worksheet = _new_worksheet(\$got);
 

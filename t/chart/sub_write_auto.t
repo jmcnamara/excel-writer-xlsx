@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_auto() method.
 #
 $caption  = " \tChart: _write_auto()";
-$expected = '<c:auto val="1" />';
+$expected = '<c:auto val="1"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

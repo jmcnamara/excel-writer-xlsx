@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_style() method.
 #
 $caption  = " \tChart: _write_style()";
-$expected = '<c:style val="1" />';
+$expected = '<c:style val="1"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

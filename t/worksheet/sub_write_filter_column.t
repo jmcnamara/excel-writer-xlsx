@@ -27,7 +27,7 @@ my $worksheet;
 # Test the _write_filter_column() method.
 #
 $caption  = " \tWorksheet: _write_filter_column()";
-$expected = '<filterColumn colId="0"><filters><filter val="East" /></filters></filterColumn>';
+$expected = '<filterColumn colId="0"><filters><filter val="East"/></filters></filterColumn>';
 
 $worksheet = _new_worksheet( \$got );
 $worksheet->_write_filter_column( 0, 1, ['East'] );

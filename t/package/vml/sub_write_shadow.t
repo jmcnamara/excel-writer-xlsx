@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_shadow() method.
 #
 $caption  = " \tVML: _write_shadow()";
-$expected = '<v:shadow on="t" color="black" obscured="t" />';
+$expected = '<v:shadow on="t" color="black" obscured="t"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

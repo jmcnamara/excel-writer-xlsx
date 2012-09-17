@@ -29,7 +29,7 @@ my $style;
 #
 $caption = " \tStyles: _write_cell_xfs()";
 $expected =
-'<cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" /></cellXfs>';
+'<cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs>';
 
 my @formats = ( Excel::Writer::XLSX::Format->new( 0, {}, has_font => 1 ) );
 my $num_fonts = 1;

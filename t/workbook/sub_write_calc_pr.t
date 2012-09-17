@@ -28,7 +28,7 @@ my $workbook;
 # Test the _write_calc_pr() method.
 #
 $caption  = " \tWorkbook: _write_calc_pr()";
-$expected = '<calcPr calcId="124519" />';
+$expected = '<calcPr calcId="124519"/>';
 
 $workbook = _new_workbook(\$got);
 

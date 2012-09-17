@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_label_align() method.
 #
 $caption  = " \tChart: _write_label_align()";
-$expected = '<c:lblAlgn val="ctr" />';
+$expected = '<c:lblAlgn val="ctr"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

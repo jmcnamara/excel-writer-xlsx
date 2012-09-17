@@ -29,7 +29,7 @@ my $vml;
 # Test the _write_shapelayout() method.
 #
 $caption  = " \tVML: _write_shapelayout()";
-$expected = '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1" /></o:shapelayout>';
+$expected = '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 

@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_symbol() method.
 #
 $caption  = " \tChart: _write_symbol()";
-$expected = '<c:symbol val="none" />';
+$expected = '<c:symbol val="none"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

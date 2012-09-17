@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_major_gridlines() method.
 #
 $caption  = " \tChart: _write_major_gridlines()";
-$expected = '<c:majorGridlines />';
+$expected = '<c:majorGridlines/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

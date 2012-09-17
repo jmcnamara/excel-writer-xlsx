@@ -29,7 +29,7 @@ my $chart;
 # Test the _write_marker_size() method.
 #
 $caption  = " \tChart: _write_marker_size()";
-$expected = '<c:size val="3" />';
+$expected = '<c:size val="3"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 

@@ -28,7 +28,7 @@ my $style;
 # Test the _write_cell_style_xfs() method.
 #
 $caption  = " \tStyles: _write_cell_style_xfs()";
-$expected = '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" /></cellStyleXfs>';
+$expected = '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>';
 
 $style = _new_style(\$got);
 

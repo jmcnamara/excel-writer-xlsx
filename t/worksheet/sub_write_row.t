@@ -125,7 +125,7 @@ is( $got, $expected, $caption );
 # 8. Test the _write_empty_row() method.
 #
 $caption  = " \tWorksheet: _write_empty_row()";
-$expected = '<row r="13" ht="24" hidden="1" customHeight="1" />';
+$expected = '<row r="13" ht="24" hidden="1" customHeight="1"/>';
 
 $worksheet = _new_worksheet( \$got );
 

@@ -29,7 +29,7 @@ my $drawing;
 # Test the _write_ext() method.
 #
 $caption  = " \tDrawing: _write_ext()";
-$expected = '<xdr:ext cx="9308969" cy="6078325" />';
+$expected = '<xdr:ext cx="9308969" cy="6078325"/>';
 
 $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 
