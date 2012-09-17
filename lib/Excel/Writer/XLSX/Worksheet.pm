@@ -46,7 +46,8 @@ our $VERSION = '0.51';
 sub new {
 
     my $class  = shift;
-    my $self   = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $fh     = shift;
+    my $self   = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
     my $rowmax = 1_048_576;
     my $colmax = 16_384;
     my $strmax = 32767;

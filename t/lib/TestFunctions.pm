@@ -356,9 +356,9 @@ sub _new_object {
 
     open my $got_fh, '>', $got_ref or die "Failed to open filehandle: $!";
 
-    my $object = $class->new();
+    my $object = $class->new( $got_fh );
 
-    $object->{_fh} = $got_fh;
+    #$object->{_fh} = $got_fh;
 
     return $object;
 }

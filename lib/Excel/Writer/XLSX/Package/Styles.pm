@@ -39,8 +39,8 @@ our $VERSION = '0.51';
 sub new {
 
     my $class = shift;
-
-    my $self = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
     $self->{_xf_formats}       = undef;
     $self->{_palette}          = [];

@@ -50,18 +50,18 @@ our $VERSION = '0.51';
 sub new {
 
     my $class = shift;
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
-    my $self = {
-        _package_dir      => '',
-        _workbook         => undef,
-        _sheet_names      => [],
-        _worksheet_count  => 0,
-        _chartsheet_count => 0,
-        _chart_count      => 0,
-        _drawing_count    => 0,
-        _table_count      => 0,
-        _named_ranges     => [],
-    };
+    $self->{_package_dir}      = '';
+    $self->{_workbook}         = undef;
+    $self->{_sheet_names}      = [];
+    $self->{_worksheet_count}  = 0;
+    $self->{_chartsheet_count} = 0;
+    $self->{_chart_count}      = 0;
+    $self->{_drawing_count}    = 0;
+    $self->{_table_count}      = 0;
+    $self->{_named_ranges}     = [];
 
 
     bless $self, $class;

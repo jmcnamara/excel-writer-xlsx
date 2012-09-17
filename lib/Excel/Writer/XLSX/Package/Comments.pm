@@ -41,10 +41,10 @@ our $VERSION = '0.51';
 sub new {
 
     my $class = shift;
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
-    my $self = {
-        _author_ids => {},
-    };
+    $self->{_author_ids} = {};
 
     bless $self, $class;
 

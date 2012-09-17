@@ -39,8 +39,8 @@ our $VERSION = '0.51';
 sub new {
 
     my $class = shift;
-
-    my $self = {};
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
     bless $self, $class;
 

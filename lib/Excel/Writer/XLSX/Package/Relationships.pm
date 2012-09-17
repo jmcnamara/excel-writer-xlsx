@@ -42,7 +42,8 @@ our $document_schema = $schema_root . '/officeDocument/2006/relationships';
 sub new {
 
     my $class = shift;
-    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
     $self->{_rels} = [];
     $self->{_id}   = 1;

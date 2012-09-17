@@ -49,7 +49,8 @@ sub factory {
     # TODO. Need to re-raise this error from Workbook::add_chart().
     die "Chart type '$chart_subclass' not supported in add_chart()\n" if $@;
 
-    return $module->new( @_ );
+    my $fh = undef;
+    return $module->new( $fh, @_ );
 }
 
 
@@ -62,7 +63,8 @@ sub factory {
 sub new {
 
     my $class = shift;
-    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
     $self->{_subtype}           = shift;
     $self->{_sheet_type}        = 0x0200;

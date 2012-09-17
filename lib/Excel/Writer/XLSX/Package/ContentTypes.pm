@@ -62,7 +62,8 @@ our @overrides = (
 sub new {
 
     my $class = shift;
-    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
+    my $fh    = shift;
+    my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
     $self->{_defaults}  = [@defaults];
     $self->{_overrides} = [@overrides];

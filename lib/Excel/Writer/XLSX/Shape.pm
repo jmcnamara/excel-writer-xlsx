@@ -30,8 +30,10 @@ our $AUTOLOAD;
 sub new {
 
     my $class      = shift;
+    my $fh         = shift;
+    my $self       = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
+
     my %properties = @_;
-    my $self       = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_name} = undef;
     $self->{_type} = 'rect';

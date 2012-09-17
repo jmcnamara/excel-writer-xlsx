@@ -30,8 +30,11 @@ my $shape     = Excel::Writer::XLSX::Shape->new();
 my $inserted1 = $sheet->insert_shape( 4, 8, $shape, 300, 400 );
 my $inserted2 = $sheet->insert_shape( 8, 12, $shape, 500, 750 );
 
-my $cxn_shape =
-  Excel::Writer::XLSX::Shape->new( name => 'link', type => 'bentConnector3' );
+my $cxn_shape = Excel::Writer::XLSX::Shape->new(
+    undef,
+    name => 'link',
+    type => 'bentConnector3'
+);
 
 ###############################################################################
 #

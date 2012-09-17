@@ -293,7 +293,7 @@ sub add_worksheet {
     my $self  = shift;
     my $index = @{ $self->{_worksheets} };
     my $name  = $self->_check_sheetname( $_[0] );
-
+    my $fh    = undef;
 
     # Porters take note, the following scheme of passing references to Workbook
     # data (in the \$self->{_foo} cases) instead of a reference to the Workbook
@@ -302,6 +302,7 @@ sub add_worksheet {
     # language.
     #
     my @init_data = (
+        $fh,
         $name,
         $index,
 
@@ -341,6 +342,7 @@ sub add_chart {
     my %arg   = @_;
     my $name  = '';
     my $index = @{ $self->{_worksheets} };
+    my $fh    = undef;
 
     # Type must be specified so we can create the required chart instance.
     my $type = $arg{type};
@@ -358,6 +360,8 @@ sub add_chart {
 
 
     my @init_data = (
+
+        $fh,
         $name,
         $index,
 
@@ -504,7 +508,8 @@ sub add_format {
 sub add_shape {
 
     my $self  = shift;
-    my $shape = Excel::Writer::XLSX::Shape->new( @_ );
+    my $fh    = undef;
+    my $shape = Excel::Writer::XLSX::Shape->new( $fh, @_ );
 
     $shape->{_palette} = $self->{_palette};
 

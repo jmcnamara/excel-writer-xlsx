@@ -24,7 +24,7 @@ my $caption;
 my $got1;
 my $got2;
 
-my $shape = Excel::Writer::XLSX::Shape->new( text => 'test', id => 1000 );
+my $shape = Excel::Writer::XLSX::Shape->new( undef, text => 'test', id => 1000 );
 
 # Mock up the color palette.
 $shape->{_palette}->[0] = [ 0x00, 0x00, 0x00, 0x00 ];
