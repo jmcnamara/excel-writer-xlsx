@@ -45,19 +45,12 @@ WriteMakefile(%params);
 
 ###############################################################################
 #
-# Add 2 additional make targets for Excel::Writer::XLSX:
+# Additional target for Excel::Writer::XLSX:
 #    mydocs: make the Examples.pm doc.
-#    test_with_xml_writer: test with XML::Writer. See t/lib/TestFunctions.pm
 #
 sub MY::postamble {
     "mydocs:\n"
       . "\tperl -Mblib examples/gen_examples_pod.pl examples "
-      . "> lib/Excel/Writer/XLSX/Examples.pm\n\n"
-      . "test_with_xml_writer:\n"
-      . qq{\t_EXCEL_WRITER_XLSX_USE_XML_WRITER=1 }
-      . q{PERL_DL_NONLAZY=1 }
-      . q{$(FULLPERLRUN) "-MExtUtils::Command::MM" "-e" }
-      . q{"test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" }
-      . q{$(TEST_FILES)} . "\n\n";
+      . "> lib/Excel/Writer/XLSX/Examples.pm\n\n";
 }
 
