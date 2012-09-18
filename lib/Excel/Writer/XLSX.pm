@@ -6101,9 +6101,11 @@ Spreadsheet::XLSX: L<http://search.cpan.org/dist/Spreadsheet-XLSX>.
 =head1 ACKNOWLEDGMENTS
 
 
-The following people contributed to the debugging and testing of Excel::Writer::XLSX:
+The following people contributed to the debugging, testing or enhancement of Excel::Writer::XLSX:
 
-Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey also sponsored large files optimisations and the charting feature.
+Rob Messer of IntelliSurvey gave me the initial prompt to port Spreadsheet::WriteExcel to the XLSX format. IntelliSurvey (L<http://www.intellisurvey.com>) also sponsored large files optimisations and the charting feature.
+
+Bariatric Advantage (L<http://www.bariatricadvantage.com>) sponsored work on chart formatting.
 
 Eric Johnson provided the ability to use secondary axes with charts.  Thanks to Foxtons (L<http://foxtons.co.uk>) for sponsoring this work.
 
