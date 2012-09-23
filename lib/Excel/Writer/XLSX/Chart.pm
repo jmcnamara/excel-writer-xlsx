@@ -321,6 +321,9 @@ sub set_title {
     $self->{_title_name}    = $name;
     $self->{_title_formula} = $name_formula;
     $self->{_title_data_id} = $data_id;
+
+    # Set the font properties if present.
+    $self->{_title_font} = $self->_convert_font_args( $arg{font} );
 }
 
 
@@ -578,7 +581,44 @@ sub _convert_axis_args {
         $axis->{_position} = substr lc $axis->{_position}, 0, 1;
     }
 
+    # Set the font properties if present.
+    $axis->{_number_font} = $self->_convert_font_args( $arg{number_font} );
+    $axis->{_label_font}  = $self->_convert_font_args( $arg{label_font} );
+
     return $axis;
+}
+
+
+
+###############################################################################
+#
+# _convert_fonts_args()
+#
+# Convert user defined font values into private hash values.
+#
+sub _convert_font_args {
+
+    my $self = shift;
+    my $args = shift;
+
+    return unless $args;
+
+    my $font = {
+        _name         => $args->{name},
+        _color        => $args->{color},
+        _size         => $args->{size},
+        _bold         => $args->{bold},
+        _italic       => $args->{italic},
+        _underline    => $args->{underline},
+        _pitch_family => $args->{pitch_family},
+        _charset      => $args->{charset},
+        _baseline     => $args->{baseline} || 0,
+    };
+
+    # Convert font size units.
+    $font->{_size} *= 100 if $font->{_size};
+
+    return $font;
 }
 
 
@@ -1120,6 +1160,57 @@ sub _add_axis_ids {
 }
 
 
+##############################################################################
+#
+# _get_font_style_attributes.
+#
+# Get the font style attributes from a font hashref.
+#
+sub _get_font_style_attributes {
+
+    my $self = shift;
+    my $font = shift;
+
+    return () unless $font;
+
+    my @attributes;
+    push @attributes, ( 'sz' => $font->{_size} )   if $font->{_size};
+    push @attributes, ( 'b'  => $font->{_bold} )   if defined $font->{_bold};
+    push @attributes, ( 'i'  => $font->{_italic} ) if defined $font->{_italic};
+    push @attributes, ( 'u' => 'sng' ) if defined $font->{_underline};
+
+    push @attributes, ( 'baseline' => $font->{_baseline} );
+
+    return @attributes;
+}
+
+
+##############################################################################
+#
+# _get_font_latin_attributes.
+#
+# Get the font latin attributes from a font hashref.
+#
+sub _get_font_latin_attributes {
+
+    my $self = shift;
+    my $font = shift;
+
+    return () unless $font;
+
+    my @attributes;
+    push @attributes, ( 'typeface' => $font->{_name} ) if $font->{_name};
+
+    push @attributes, ( 'pitchFamily' => $font->{_pitch_family} )
+      if defined $font->{_pitch_family};
+
+    push @attributes, ( 'charset' => $font->{_charset} )
+      if defined $font->{_charset};
+
+    return @attributes;
+}
+
+
 ###############################################################################
 #
 # Config data.
@@ -1289,10 +1380,11 @@ sub _write_chart {
     # Write the chart title elements.
     my $title;
     if ( $title = $self->{_title_formula} ) {
-        $self->_write_title_formula( $title, $self->{_title_data_id} );
+        $self->_write_title_formula( $title, $self->{_title_data_id},
+            undef, $self->{_title_font} );
     }
     elsif ( $title = $self->{_title_name} ) {
-        $self->_write_title_rich( $title );
+        $self->_write_title_rich( $title, undef, $self->{_title_font} );
     }
 
     # Write the c:plotArea element.
@@ -1778,10 +1870,12 @@ sub _write_cat_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz );
+
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz,
+            $x_axis->{_label_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz );
+        $self->_write_title_rich( $title, $horiz, $x_axis->{_label_font} );
     }
 
     # Write the c:numFmt element.
@@ -1789,6 +1883,9 @@ sub _write_cat_axis {
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
+
+    # Write the axis font elements.
+    $self->_write_axis_font( $x_axis->{_number_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -1865,10 +1962,11 @@ sub _write_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $y_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz );
+        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
+            $y_axis->{_label_font} );
     }
     elsif ( $title = $y_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz );
+        $self->_write_title_rich( $title, $horiz, $y_axis->{_label_font} );
     }
 
     # Write the c:numberFormat element.
@@ -1876,6 +1974,9 @@ sub _write_val_axis {
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
+
+    # Write the axis font elements.
+    $self->_write_axis_font( $y_axis->{_number_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[0] );
@@ -1945,10 +2046,11 @@ sub _write_cat_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz );
+        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
+            $x_axis->{_label_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz );
+        $self->_write_title_rich( $title, $horiz, $x_axis->{_label_font} );
     }
 
     # Write the c:numberFormat element.
@@ -1956,6 +2058,9 @@ sub _write_cat_val_axis {
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
+
+    # Write the axis font elements.
+    $self->_write_axis_font( $x_axis->{_number_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -2024,10 +2129,11 @@ sub _write_date_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $x_axis->{_data_id} );
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, undef,
+            $x_axis->{_label_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title );
+        $self->_write_title_rich( $title, undef, $x_axis->{_label_font} );
     }
 
     # Write the c:numFmt element.
@@ -2035,6 +2141,9 @@ sub _write_date_axis {
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
+
+    # Write the axis font elements.
+    $self->_write_axis_font( $x_axis->{_number_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -2716,11 +2825,12 @@ sub _write_title_rich {
     my $self  = shift;
     my $title = shift;
     my $horiz = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx_rich( $title, $horiz );
+    $self->_write_tx_rich( $title, $horiz, $font );
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -2741,6 +2851,7 @@ sub _write_title_formula {
     my $title   = shift;
     my $data_id = shift;
     my $horiz   = shift;
+    my $font    = shift;
 
     $self->xml_start_tag( 'c:title' );
 
@@ -2751,7 +2862,7 @@ sub _write_title_formula {
     $self->_write_layout();
 
     # Write the c:txPr element.
-    $self->_write_tx_pr( $horiz );
+    $self->_write_tx_pr( $horiz, $font );
 
     $self->xml_end_tag( 'c:title' );
 }
@@ -2768,11 +2879,12 @@ sub _write_tx_rich {
     my $self  = shift;
     my $title = shift;
     my $horiz = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:rich element.
-    $self->_write_rich( $title, $horiz );
+    $self->_write_rich( $title, $horiz, $font );
 
     $self->xml_end_tag( 'c:tx' );
 }
@@ -2835,6 +2947,7 @@ sub _write_rich {
     my $self  = shift;
     my $title = shift;
     my $horiz = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'c:rich' );
 
@@ -2845,7 +2958,7 @@ sub _write_rich {
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p_rich( $title );
+    $self->_write_a_p_rich( $title, $font );
 
     $self->xml_end_tag( 'c:rich' );
 }
@@ -2899,14 +3012,15 @@ sub _write_a_p_rich {
 
     my $self  = shift;
     my $title = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
-    $self->_write_a_p_pr_rich();
+    $self->_write_a_p_pr_rich( $font );
 
     # Write the a:r element.
-    $self->_write_a_r( $title );
+    $self->_write_a_r( $title, $font );
 
     $self->xml_end_tag( 'a:p' );
 }
@@ -2921,12 +3035,12 @@ sub _write_a_p_rich {
 sub _write_a_p_formula {
 
     my $self  = shift;
-    my $title = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
-    $self->_write_a_p_pr_formula();
+    $self->_write_a_p_pr_formula( $font );
 
     # Write the a:endParaRPr element.
     $self->_write_a_end_para_rpr();
@@ -2944,11 +3058,12 @@ sub _write_a_p_formula {
 sub _write_a_p_pr_rich {
 
     my $self = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'a:pPr' );
 
     # Write the a:defRPr element.
-    $self->_write_a_def_rpr();
+    $self->_write_a_def_rpr( $font );
 
     $self->xml_end_tag( 'a:pPr' );
 }
@@ -2963,11 +3078,12 @@ sub _write_a_p_pr_rich {
 sub _write_a_p_pr_formula {
 
     my $self = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'a:pPr' );
 
     # Write the a:defRPr element.
-    $self->_write_a_def_rpr();
+    $self->_write_a_def_rpr( $font );
 
     $self->xml_end_tag( 'a:pPr' );
 }
@@ -2981,9 +3097,32 @@ sub _write_a_p_pr_formula {
 #
 sub _write_a_def_rpr {
 
-    my $self = shift;
+    my $self      = shift;
+    my $font      = shift;
+    my $has_color = 0;
 
-    $self->xml_empty_tag( 'a:defRPr' );
+    my @style_attributes = $self->_get_font_style_attributes( $font );
+    my @latin_attributes = $self->_get_font_latin_attributes( $font );
+
+    $has_color = 1 if $font && $font->{_color};
+
+    if ( @latin_attributes || $has_color ) {
+        $self->xml_start_tag( 'a:defRPr', @style_attributes );
+
+
+        if ( $has_color ) {
+            $self->_write_a_solid_fill( { color => $font->{_color} } );
+        }
+
+        if ( @latin_attributes ) {
+            $self->_write_a_latin( @latin_attributes );
+        }
+
+        $self->xml_end_tag( 'a:defRPr' );
+    }
+    else {
+        $self->xml_empty_tag( 'a:defRPr', @style_attributes );
+    }
 }
 
 
@@ -3014,11 +3153,12 @@ sub _write_a_r {
 
     my $self  = shift;
     my $title = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'a:r' );
 
     # Write the a:rPr element.
-    $self->_write_a_r_pr();
+    $self->_write_a_r_pr( $font );
 
     # Write the a:t element.
     $self->_write_a_t( $title );
@@ -3035,12 +3175,53 @@ sub _write_a_r {
 #
 sub _write_a_r_pr {
 
-    my $self = shift;
-    my $lang = 'en-US';
+    # my $self = shift;
+    # my $font  = shift;
+    # my $lang = 'en-US';
 
-    my @attributes = ( 'lang' => $lang, );
+    # my @attributes = ( 'lang' => $lang, );
 
-    $self->xml_empty_tag( 'a:rPr', @attributes );
+    # my @font_attrs = $self->_get_font_style_attributes($font);
+
+    # push @attributes, @font_attrs;
+
+    # $self->xml_empty_tag( 'a:rPr', @attributes );
+
+
+    my $self      = shift;
+    my $font      = shift;
+    my $has_color = 0;
+    my $lang      = 'en-US';
+
+    my @style_attributes = $self->_get_font_style_attributes( $font );
+    my @latin_attributes = $self->_get_font_latin_attributes( $font );
+
+    $has_color = 1 if $font && $font->{_color};
+
+    # Add the lang type to the attributes.
+    @style_attributes = ( 'lang' => $lang, @style_attributes );
+
+
+    if ( @latin_attributes || $has_color ) {
+        $self->xml_start_tag( 'a:rPr', @style_attributes );
+
+
+        if ( $has_color ) {
+            $self->_write_a_solid_fill( { color => $font->{_color} } );
+        }
+
+        if ( @latin_attributes ) {
+            $self->_write_a_latin( @latin_attributes );
+        }
+
+        $self->xml_end_tag( 'a:rPr' );
+    }
+    else {
+        $self->xml_empty_tag( 'a:rPr', @style_attributes );
+    }
+
+
+
 }
 
 
@@ -3069,6 +3250,7 @@ sub _write_tx_pr {
 
     my $self  = shift;
     my $horiz = shift;
+    my $font  = shift;
 
     $self->xml_start_tag( 'c:txPr' );
 
@@ -3079,7 +3261,7 @@ sub _write_tx_pr {
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p_formula();
+    $self->_write_a_p_formula( $font );
 
     $self->xml_end_tag( 'c:txPr' );
 }
@@ -3838,6 +4020,49 @@ sub _write_c_invert_if_negative {
 
     $self->xml_empty_tag( 'c:invertIfNegative', @attributes );
 }
+
+
+
+##############################################################################
+#
+# _write_axis_font()
+#
+# Write the axis font elements.
+#
+sub _write_axis_font {
+
+    my $self = shift;
+    my $font = shift;
+
+    return unless $font;
+
+    $self->xml_start_tag( 'c:txPr' );
+    $self->xml_empty_tag( 'a:bodyPr' );
+    $self->_write_a_lst_style();
+    $self->xml_start_tag( 'a:p' );
+
+    $self->_write_a_p_pr_rich( $font );
+
+    $self->_write_a_end_para_rpr();
+    $self->xml_end_tag( 'a:p' );
+    $self->xml_end_tag( 'c:txPr' );
+}
+
+
+##############################################################################
+#
+# _write_a_latin()
+#
+# Write the <a:latin> element.
+#
+sub _write_a_latin {
+
+    my $self       = shift;
+    my @attributes = @_;
+
+    $self->xml_empty_tag( 'a:latin', @attributes );
+}
+
 
 1;
 
