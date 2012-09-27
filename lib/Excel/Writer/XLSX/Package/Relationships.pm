@@ -187,7 +187,7 @@ sub _write_relationship {
 
     push @attributes, ( 'TargetMode' => $target_mode ) if $target_mode;
 
-    $self->xml_empty_tag( 'Relationship', @attributes );
+    $self->xml_encoded_empty_tag( 'Relationship', @attributes );
 }
 
 
