@@ -1,7 +1,9 @@
+/Excel/Writer/XLSX/Package/XMLwriterSimple.pm
 Changes
 MANIFEST
 Makefile.PL
 README
+ackage/xml_writer/xml_writer.t
 examples/README
 examples/a_simple.pl  
 examples/array_formula.pl
@@ -129,6 +131,7 @@ t/chart/scatter/sub_write_xml_declaration.t
 t/chart/stock/sub_write_xml_declaration.t
 t/chart/sub_add_series.t
 t/chart/sub_process_names.t
+t/chart/sub_write_a_latin.t
 t/chart/sub_write_auto.t
 t/chart/sub_write_ax_id.t
 t/chart/sub_write_ax_pos.t
@@ -349,6 +352,12 @@ t/regression/chart_crossing01.t
 t/regression/chart_crossing02.t
 t/regression/chart_crossing03.t
 t/regression/chart_crossing04.t
+t/regression/chart_font01.t
+t/regression/chart_font02.t
+t/regression/chart_font03.t
+t/regression/chart_font04.t
+t/regression/chart_font05.t
+t/regression/chart_font06.t
 t/regression/chart_format01.t
 t/regression/chart_format02.t
 t/regression/chart_format03.t
@@ -423,6 +432,7 @@ t/regression/defined_name01.t
 t/regression/escapes01.t
 t/regression/escapes02.t
 t/regression/escapes03.t
+t/regression/escapes04.t
 t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
@@ -641,6 +651,12 @@ t/regression/xlsx_files/chart_crossing01.xlsx
 t/regression/xlsx_files/chart_crossing02.xlsx
 t/regression/xlsx_files/chart_crossing03.xlsx
 t/regression/xlsx_files/chart_crossing04.xlsx
+t/regression/xlsx_files/chart_font01.xlsx
+t/regression/xlsx_files/chart_font02.xlsx
+t/regression/xlsx_files/chart_font03.xlsx
+t/regression/xlsx_files/chart_font04.xlsx
+t/regression/xlsx_files/chart_font05.xlsx
+t/regression/xlsx_files/chart_font06.xlsx
 t/regression/xlsx_files/chart_format01.xlsx
 t/regression/xlsx_files/chart_format02.xlsx
 t/regression/xlsx_files/chart_format03.xlsx
@@ -714,6 +730,7 @@ t/regression/xlsx_files/defined_name01.xlsx
 t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
 t/regression/xlsx_files/escapes03.xlsx
+t/regression/xlsx_files/escapes04.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx

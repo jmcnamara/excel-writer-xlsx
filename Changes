@@ -5,6 +5,16 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.52 October 9 2012
+
+    ! Added dependency on Date::Calc to xl_parse_date.t test.
+      Closes #30 and RT#79790.
+
+    ! Fix for XML encoding of URLs. Closes #31.
+
+    + Refactored XMLWriter into a single class. This breaks the last
+      remaining ties to XML::Writer to allow for future additions
+      and optimisations. Renamed methods for consistency.
 
 
 0.51 September 16 2012
