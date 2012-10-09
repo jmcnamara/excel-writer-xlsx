@@ -316,7 +316,25 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 =head1 Pie Chart Methods
 
-There aren't currently any pie chart specific methods. See the TODO section of L<Excel::Writer::XLSX::Chart>.
+It is possible to define chart colors for most types of Excel::Writer::XLSX charts via the add_series() method.
+
+However, Pie charts are a special case since each segment is a actually a point and there isn't, currently, any way to define colors for individual points in Excel::Writer::XLSX.
+
+Pie charts support leader lines:
+
+    $chart->add_series(
+        name        => 'Pie sales data',
+        categories  => [ 'Sheet1', 1, 3, 0, 0 ],
+        values      => [ 'Sheet1', 1, 3, 1, 1 ],
+        data_labels => {
+            series_name  => 1,
+            percentage   => 1,
+            leader_lines => 1,
+            position     => 'outside_end'
+        },
+    );
+
+Note: Even when leader lines are turned on they aren't automatically visible in Excel or Excel::Writer::XLSX. Due to an Excel limitation (or design) leader lines only appear if the data label is moved manually or if the data labels are very close and need to be adjusted automatically.
 
 A Pie chart doesn't have an X or Y axis so the following common chart methods are ignored.
 
@@ -388,4 +406,3 @@ John McNamara jmcnamara@cpan.org
 Copyright MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
-

@@ -4861,6 +4861,8 @@ The C<leader_lines> property is used to turn on  I<Leader Lines> for the data la
         data_labels => { value => 1, leader_lines => 1 },
     );
 
+Note: Even when leader lines are turned on they aren't automatically visible in Excel or Excel::Writer::XLSX. Due to an Excel limitation (or design) leader lines only appear if the data label is moved manually or if the data labels are very close and need to be adjusted automatically.
+
 
 =head2 Other formatting options
 
