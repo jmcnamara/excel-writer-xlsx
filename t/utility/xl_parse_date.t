@@ -12,10 +12,11 @@ use Excel::Writer::XLSX::Utility qw(xl_parse_date xl_parse_date_init);
 use Test::More;
 
 
-eval { require Date::Manip };
+eval { require Date::Manip;  require Date::Calc};
 
-if ($@) {
-    plan skip_all => 'Date::Manip required to run optional tests.';
+if ( $@ ) {
+    plan skip_all =>
+      'Date::Manip and Date::Calc required to run optional tests.';
 }
 else {
     plan tests => 4;
