@@ -4,7 +4,7 @@
 #
 # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
 #
-# reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+# reverse('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

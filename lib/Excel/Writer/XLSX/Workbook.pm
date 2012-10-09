@@ -1,4 +1,4 @@
-﻿package Excel::Writer::XLSX::Workbook;
+package Excel::Writer::XLSX::Workbook;
 
 ###############################################################################
 #
@@ -2272,6 +2272,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXII, John McNamara.
+(c) MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
