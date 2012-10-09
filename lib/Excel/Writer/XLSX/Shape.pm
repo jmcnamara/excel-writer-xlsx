@@ -309,13 +309,14 @@ To create a simple Excel file containing shapes using L<Excel::Writer::XLSX>:
         text => "Hello\nWorld"
     );
 
-    # Add a cross shape.
-    my $cross = $workbook->add_shape( type => 'cross');
+    # Add a plus shape.
+    my $plus = $workbook->add_shape( type => 'plus');
 
     # Insert the shapes in the worksheet.
-    $worksheet->insert_shape( 'A1', $rect );
-    $worksheet->insert_shape( 'B2', $ellipse );
-    $worksheet->insert_shape( 'C3', $cross );
+    $worksheet->insert_shape( 'B3', $rect );
+    $worksheet->insert_shape( 'C3', $ellipse );
+    $worksheet->insert_shape( 'D3', $plus );
+
 
 =head1 DESCRIPTION
 
