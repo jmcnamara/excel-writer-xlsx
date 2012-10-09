@@ -308,7 +308,7 @@ Used to define a chart subtype where available.
 
     my $chart = $workbook->add_chart( type => 'bar', subtype => 'stacked' );
 
-Currently only Bar and Column charts support subtypes (stacked and percent_stacked). See the documentation for those chart types.
+See the L<Excel::Writer::XLSX::Chart> documentation for a list of available chart subtypes.
 
 =item * C<name>
 
