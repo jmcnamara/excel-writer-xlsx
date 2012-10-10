@@ -1,9 +1,7 @@
-/Excel/Writer/XLSX/Package/XMLwriterSimple.pm
 Changes
 MANIFEST
 Makefile.PL
 README
-ackage/xml_writer/xml_writer.t
 examples/README
 examples/a_simple.pl  
 examples/array_formula.pl
@@ -115,7 +113,6 @@ lib/Excel/Writer/XLSX/Package/Table.pm
 lib/Excel/Writer/XLSX/Package/Theme.pm
 lib/Excel/Writer/XLSX/Package/VML.pm
 lib/Excel/Writer/XLSX/Package/XMLwriter.pm
-lib/Excel/Writer/XLSX/Package/XMLwriterSimple.pm
 lib/Excel/Writer/XLSX/Shape.pm
 lib/Excel/Writer/XLSX/Utility.pm
 lib/Excel/Writer/XLSX/Workbook.pm
@@ -276,7 +273,6 @@ t/package/vml/sub_write_stroke.t
 t/package/vml/sub_write_textbox.t
 t/package/vml/vml_01.t
 t/package/xml_writer/sub_write_xml_declaration.t
-t/package/xml_writer/xml_writer.t
 t/regression/array_formula01.t
 t/regression/array_formula02.t
 t/regression/autofilter00.t
