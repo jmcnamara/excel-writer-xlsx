@@ -478,7 +478,7 @@ All of these functions are exported by default. However, you can use import list
 
 L<Excel::Writer::XLSX> supports two forms of notation to designate the position of cells: Row-column notation and A1 notation.
 
-Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to IV i.e. 0 to 255, rows range from 1 to 16384 in Excel 5 and 65536 in Excel 97. For example:
+Row-column notation uses a zero based index for both row and column while A1 notation uses the standard Excel alphanumeric sequence of column letter and 1-based row. Columns range from A to XFD, i.e. 0 to 16,383, rows range from 0 to 1,048,575 in Excel 2007+. For example:
 
     (0, 0)      # The top left cell in row-column notation.
     ('A1')      # The top left cell in A1 notation.
@@ -510,7 +510,7 @@ Cell references in Excel can be either relative or absolute. Absolute references
     A$1     # Column is relative and row is absolute
     $A$1    # Column and row are absolute
 
-An absolute reference only has an effect if the cell is copied. Refer to the Excel documentation for further details. All of the following functions support absolute references.
+An absolute reference only makes a difference if the cell is copied. Refer to the Excel documentation for further details. All of the following functions support absolute references.
 
 =head2 xl_rowcol_to_cell($row, $col, $row_absolute, $col_absolute)
 
@@ -535,7 +535,7 @@ The optional parameters C<$row_absolute> and C<$col_absolute> can be used to ind
     $str = xl_rowcol_to_cell( 0, 0, 1, 0 );    # A$1
     $str = xl_rowcol_to_cell( 0, 0, 1, 1 );    # $A$1
 
-See L<ROW AND COLUMN FUNCTIONS> for an explanation of absolute cell references.
+See above for an explanation of absolute cell references.
 
 =head2 xl_cell_to_rowcol($string)
 
@@ -695,7 +695,7 @@ A date or time in Excel is like any other number. To display the number as a dat
 
 The date handling functions below are supplied for historical reasons. In the current version of the module it is easier to just use the C<write_date_time()> function to write dates or times. See the DATES AND TIME IN EXCEL section of the main L<Excel::Writer::XLSX> documentation for details.
 
-In addtion to use the functions below you must install the L<Date::Manip> and L<Date::Calc> modules. See L<REQUIREMENTS> and the individual requirements of each functions.
+In addition to using the functions below you must install the L<Date::Manip> and L<Date::Calc> modules. See L<REQUIREMENTS> and the individual requirements of each functions.
 
 For a C<DateTime.pm> solution see the L<DateTime::Format::Excel> module.
 
@@ -739,7 +739,7 @@ This function converts a time string into a number that represents an Excel time
     hh:mm:ss.ss [AM|PM]
 
 
-The meridian, AM or PM, is optional and case insensitive. A 24 hour time is assumed if the meridian is omitted
+The meridian, AM or PM, is optional and case insensitive. A 24 hour time is assumed if the meridian is omitted.
 
     $time1 = xl_parse_time( '12:18' );
     $time2 = xl_parse_time( '12:18:14' );
@@ -808,9 +808,9 @@ This function is a thin wrapper for the C<Date::Manip::Date_Init()> function. Yo
 
 This function converts a date and time string into a number that represents an Excel date.
 
-The date parsing is performed using the C<Decode_Date_EU()> function of the L<Date::Calc> module. Refer to the C<Date::Calc> for further information about the date formats that can be parsed. Also note the following from the C<Date::Calc> documentation:
+The date parsing is performed using the C<Decode_Date_EU()> function of the L<Date::Calc> module. Refer to the C<Date::Calc> documentation for further information about the date formats that can be parsed. Also note the following from the C<Date::Calc> documentation:
 
-"If the year is given as one or two digits only (i.e., if the year is less than 100), it is mapped to the window 1970 -2069 as follows":
+"If the year is given as one or two digits only (i.e., if the year is less than 100), it is mapped to the window 1970 -2069 as follows:"
 
      0 <= $year <  70  ==>  $year += 2000;
     70 <= $year < 100  ==>  $year += 1900;
@@ -835,9 +835,9 @@ Note: the EU in the function name means that a European date format is assumed i
 
 This function converts a date and time string into a number that represents an Excel date.
 
-The date parsing is performed using the C<Decode_Date_US()> function of the L<Date::Calc> module. Refer to the C<Date::Calc> for further information about the date formats that can be parsed. Also note the following from the C<Date::Calc> documentation:
+The date parsing is performed using the C<Decode_Date_US()> function of the L<Date::Calc> module. Refer to the C<Date::Calc> documentation for further information about the date formats that can be parsed. Also note the following from the C<Date::Calc> documentation:
 
-"If the year is given as one or two digits only (i.e., if the year is less than 100), it is mapped to the window 1970 -2069 as follows":
+"If the year is given as one or two digits only (i.e., if the year is less than 100), it is mapped to the window 1970 -2069 as follows:"
 
      0 <= $year <  70  ==>  $year += 2000;
     70 <= $year < 100  ==>  $year += 1900;

@@ -350,7 +350,7 @@ The available properties are shown below.
 
 The C<insert_shape()> Worksheet method sets the location and scale of the shape object within the worksheet.
 
-    # Insert the shape into the a worksheet.
+    # Insert the shape into the worksheet.
     $worksheet->insert_shape( 'E2', $shape );
 
 Using the cell location and the C<$x> and C<$y> cell offsets it is possible to position a shape anywhere on the canvas of a worksheet.
@@ -363,10 +363,10 @@ A more detailed explanation of the C<insert_shape()> method is given in the main
 Any shape property can be queried or modified by the corresponding get/set method:
 
     my $ellipse = $workbook->add_shape( %properties );
-    $ellipse->set_type( 'cross' );    # No longer an ellipse!
+    $ellipse->set_type( 'plus' );    # No longer an ellipse!
     my $type = $ellipse->get_type();  # Find out what it really is.
 
-Multiple shape properties may also be modified in one go by using the C<set_shape_properties()> method:
+Multiple shape properties may also be modified in one go by using the C<set_properties()> method:
 
     $shape->set_properties( type => 'ellipse', text => 'Hello' );
 
@@ -496,7 +496,7 @@ Workbook format for decorating the shape text (font family, size, and decoration
 
 Shape indices of the starting point for a connector and the index of the connection. Index numbers are zero-based, start from the top dead centre and are counted clockwise.
 
-Indices are are typically created for vertices and centre points of shapes. They are the blue connection points that appear when connection shapes are selected manually in Excel.
+Indices are typically created for vertices and centre points of shapes. They are the blue connection points that appear when connection shapes are selected manually in Excel.
 
 =head2 end, end_index
 
@@ -519,7 +519,7 @@ Shape rotation, in degrees, from 0 to 360.
 
 =head2 line, fill
 
-Shape color for the outline and fill. Colours may be specified as a color index, or in RGB format, i.e. C<AA00FF>.
+Shape colour for the outline and fill. Colours may be specified as a colour index, or in RGB format, i.e. C<AA00FF>.
 
 See C<COLOURS IN EXCEL> in the main documentation for more information.
 
@@ -576,7 +576,7 @@ Stencil mode can be turned off, allowing for shape(s) to be modified after inser
 
 =head1 TIPS
 
-Use C<< worksheet->hide_gridlines(2) >> to prepare a blank canvas without gridlines.
+Use C<< $worksheet->hide_gridlines(2) >> to prepare a blank canvas without gridlines.
 
 Shapes do not need to fit on one page. Excel will split a large drawing into multiple pages if required. Use the page break preview to show page boundaries superimposed on the drawing.
 
@@ -602,13 +602,13 @@ Connected shapes will auto-locate in Excel if you move either the starting shape
         text => "Hello\nWorld"
     );
 
-    # Add a cross with a user-defined id.
-    my $cross = $workbook->add_shape( type => 'cross', id => 33 );
+    # Add a plus shape.
+    my $plus = $workbook->add_shape( type => 'plus');
 
     # Insert the shapes in the worksheet.
-    $worksheet->insert_shape( 'A1', $rect );
-    $worksheet->insert_shape( 'B2', $ellipse );
-    $worksheet->insert_shape( 'C3', $cross );
+    $worksheet->insert_shape( 'B3', $rect );
+    $worksheet->insert_shape( 'C3', $ellipse );
+    $worksheet->insert_shape( 'D3', $plus );
 
 
 See also the C<shapes_*.pl> program in the C<examples> directory of the distro.
@@ -637,6 +637,6 @@ Dave Clarke dclarke@cpan.org
 
 =head1 COPYRIGHT
 
-© MM-MMXII, John McNamara.
+(c) MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

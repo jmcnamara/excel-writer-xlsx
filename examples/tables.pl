@@ -4,10 +4,10 @@
 #
 # Example of how to add tables to an Excel::Writer::XLSX worksheet.
 #
-# Tables in Excel are use to group rows and columns of data into a single
-# structure that can be references in a formula or formatted collectively.
+# Tables in Excel are used to group rows and columns of data into a single
+# structure that can be referenced in a formula or formatted collectively.
 #
-# reverse('©'), September 2012, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2012, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

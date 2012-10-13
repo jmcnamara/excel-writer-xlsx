@@ -6,7 +6,7 @@
 #
 # Run this program and read the output from the command line.
 #
-# reverse('©'), March 2004, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), March 2004, John McNamara, jmcnamara@cpan.org
 #
 
 
@@ -30,7 +30,7 @@ REPORTING A BUG OR ASKING A QUESTION
 
     Look at the example programs:
 
-        There are over 40 example programs shipped with the standard
+        There are over 70 example programs shipped with the standard
         Excel::Writer::XLSX distribution. Many of these were created
         in response to user questions. Try to identify an example program
         that corresponds to your query and adapt it to your needs.

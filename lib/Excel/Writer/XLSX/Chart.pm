@@ -4137,15 +4137,15 @@ Creates a Line style chart. See L<Excel::Writer::XLSX::Chart::Line>.
 
 =item * C<pie>
 
-Creates an Pie style chart. See L<Excel::Writer::XLSX::Chart::Pie>.
+Creates a Pie style chart. See L<Excel::Writer::XLSX::Chart::Pie>.
 
 =item * C<scatter>
 
-Creates an Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
+Creates a Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
 
 =item * C<stock>
 
-Creates an Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
+Creates a Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
 
 =back
 
@@ -4184,9 +4184,9 @@ Methods that are common to all chart types are documented below. See the documen
 
 =head2 add_series()
 
-In an Excel chart a "series" is a collection of information such as values, x-axis labels and the formatting that define which data is plotted.
+In an Excel chart a "series" is a collection of information such as values, X axis labels and the formatting that define which data is plotted.
 
-With a Excel::Writer::XLSX chart object the C<add_series()> method is used to set the properties for a series:
+With an Excel::Writer::XLSX chart object the C<add_series()> method is used to set the properties for a series:
 
     $chart->add_series(
         categories => '=Sheet1!$A$2:$A$10', # Optional.
@@ -4204,7 +4204,7 @@ This is the most important property of a series and must be set for every chart 
 
 =item * C<categories>
 
-This sets the chart category labels. The category is more or less the same as the X-axis. In most chart types the C<categories> property is optional and the chart will just assume a sequential series from C<1 .. n>.
+This sets the chart category labels. The category is more or less the same as the X axis. In most chart types the C<categories> property is optional and the chart will just assume a sequential series from C<1 .. n>.
 
 =item * C<name>
 
@@ -4224,7 +4224,7 @@ Set the fill properties of the series such as colour. See the L</CHART FORMATTIN
 
 =item * C<marker>
 
-Set the properties of the series marker such as style and color. See the L</CHART FORMATTING> section below.
+Set the properties of the series marker such as style and colour. See the L</CHART FORMATTING> section below.
 
 =item * C<trendline>
 
@@ -4249,7 +4249,7 @@ The following are equivalent:
     $chart->add_series( categories => '=Sheet1!$A$2:$A$7'      ); # Same as ...
     $chart->add_series( categories => [ 'Sheet1', 1, 6, 0, 0 ] ); # Zero-indexed.
 
-You can add more than one series to a chart. In fact, some chart types such as C<stock> require it. The series numbering and order in the Excel chart will be the same as the order in which that are added in Excel::Writer::XLSX.
+You can add more than one series to a chart. In fact, some chart types such as C<stock> require it. The series numbering and order in the Excel chart will be the same as the order in which they are added in Excel::Writer::XLSX.
 
     # Add the first series.
     $chart->add_series(
@@ -4285,6 +4285,7 @@ The properties that can be set are:
     log_base
     label_position
     major_gridlines
+    visible
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -4301,31 +4302,31 @@ The name can also be a formula such as C<=Sheet1!$A$1>.
 
 =item * C<min>
 
-Set the minimum value for the axis range. (Applicable to value axes only).
+Set the minimum value for the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( min => 20 );
 
 =item * C<max>
 
-Set the maximum value for the axis range. (Applicable to value axes only).
+Set the maximum value for the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( max => 80 );
 
 =item * C<minor_unit>
 
-Set the increment of the minor units in the axis range. (Applicable to value axes only).
+Set the increment of the minor units in the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( minor_unit => 0.4 );
 
 =item * C<major_unit>
 
-Set the increment of the major units in the axis range. (Applicable to value axes only).
+Set the increment of the major units in the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( major_unit => 2 );
 
 =item * C<crossing>
 
-Set the position where the y axis will cross the x axis. (Applicable to category and value axes).
+Set the position where the y axis will cross the x axis. (Applicable to category and value axes.)
 
 The C<crossing> value can either be the string C<'max'> to set the crossing at the maximum axis value or a numeric value.
 
@@ -4339,13 +4340,13 @@ If crossing is omitted (the default) the crossing will be set automatically by E
 
 =item * C<reverse>
 
-Reverse the order of the axis categories or values. (Applicable to category and value axes).
+Reverse the order of the axis categories or values. (Applicable to category and value axes.)
 
     $chart->set_x_axis( reverse => 1 );
 
 =item * C<log_base>
 
-Set the log base of the axis range. (Applicable to value axes only).
+Set the log base of the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( log_base => 10 );
 
@@ -4360,9 +4361,15 @@ Set the "Axis labels" position for the axis. The following positions are availab
 
 =item * C<major_gridlines>
 
-Configure the major gridlines for the axis.  The only option currently available is used to shows or hide the major gridlines.
+Configure the major gridlines for the axis. The only option currently available is used to show or hide the major gridlines.
 
     $chart->set_x_axis( major_gridlines => { visible => 1 } );
+
+=item * C<visible>
+
+Configure the visibility of the axis.
+
+    $chart->set_x_axis( visible => 0 );
 
 =back
 
@@ -4481,7 +4488,7 @@ The C<show_blanks_as()> method controls how blank data is displayed in a chart.
 
 The available options are:
 
-        gap    # Blank data is show as a gap. The default.
+        gap    # Blank data is shown as a gap. The default.
         zero   # Blank data is displayed as zero.
         span   # Blank data is connected with a line.
 
@@ -4551,7 +4558,7 @@ The C<color> property sets the color of the C<line>.
         line       => { color => 'red' },
     );
 
-The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a line with a HTML style RGB color:
+The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a line with a HTML style RGB colour:
 
     $chart->add_series(
         line       => { color => '#FF0000' },
@@ -4585,7 +4592,7 @@ The following C<dash_type> values are available. They are shown in the order tha
 
 The default line style is C<solid>.
 
-More than one C<line> property can be specified at time:
+More than one C<line> property can be specified at a time:
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -4612,7 +4619,7 @@ The following properties can be set for C<fill> formats in a chart.
     none
     color
 
-The C<none> property is uses to turn the C<fill> property off (it is generally on by default).
+The C<none> property is used to turn the C<fill> property off (it is generally on by default).
 
 
     $chart->add_series(
@@ -4620,14 +4627,14 @@ The C<none> property is uses to turn the C<fill> property off (it is generally o
         fill       => { none => 1 },
     );
 
-The C<color> property sets the color of the C<fill> area.
+The C<color> property sets the colour of the C<fill> area.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
         fill       => { color => 'red' },
     );
 
-The available colors are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the color of a fill with a HTML style RGB color:
+The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a fill with a HTML style RGB colour:
 
     $chart->add_series(
         fill       => { color => '#FF0000' },
@@ -4741,7 +4748,7 @@ A C<polynomial> trendline can also specify the C<order> of the polynomial. The d
         },
     );
 
-A C<moving_average> trendline can also the C<period> of the moving average. The default value is 2.
+A C<moving_average> trendline can also specify the C<period> of the moving average. The default value is 2.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -4789,7 +4796,7 @@ Several of these properties can be set in one go:
         },
     );
 
-Trendlines cannot be added to series in a stacked chart or pie chart or (when implemented) to 3-D, radar, surface, or doughnut charts.
+Trendlines cannot be added to series in a stacked chart or pie chart or (when implemented) to 3D, radar, surface, or doughnut charts.
 
 =head2 Data Labels
 
@@ -4847,7 +4854,7 @@ Valid positions are:
     outside_end     # Pie chart mainly.
     best_fit        # Pie chart mainly.
 
-The C<percentage> property is used to turn on the I<Percentage> for the data label for a series. It is mainly used for pie charts.
+The C<percentage> property is used to turn on the display of data labels as a I<Percentage> for a series. It is mainly used for pie charts.
 
     $chart->add_series(
         values      => '=Sheet1!$B$1:$B$5',
@@ -4870,7 +4877,7 @@ Other formatting options will be added in time. If there is a feature that you w
 
 =head1 WORKSHEET METHODS
 
-In Excel a chartsheet (i.e, a chart that isn't embedded) shares properties with data worksheets such as tab selection, headers, footers, margins and print properties.
+In Excel a chartsheet (i.e, a chart that isn't embedded) shares properties with data worksheets such as tab selection, headers, footers, margins, and print properties.
 
 In Excel::Writer::XLSX you can set chartsheet properties using the same methods that are used for Worksheet objects.
 
@@ -4964,9 +4971,9 @@ Here is a complete example that demonstrates some of the available features when
 
 Excel differentiates between a chart axis that is used for series B<categories> and an axis that is used for series B<values>.
 
-In the example above the x-axis is the category axis and each of the values is evenly spaced. The y-axis (in this case) is the value axis and points are displayed according to their value.
+In the example above the X axis is the category axis and each of the values is evenly spaced. The Y axis (in this case) is the value axis and points are displayed according to their value.
 
-Since Excel treats the axes differently it also handles their formatting differently and exposed different properties for each.
+Since Excel treats the axes differently it also handles their formatting differently and exposes different properties for each.
 
 As such some of C<Excel::Writer::XLSX> axis properties can be set for a value axis, some can be set for a category axis and some properties can be set for both.
 

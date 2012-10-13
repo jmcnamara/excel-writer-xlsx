@@ -142,7 +142,7 @@ Area - A class for writing Excel Area charts.
 
 =head1 SYNOPSIS
 
-To create a simple Excel file with a Area chart using Excel::Writer::XLSX:
+To create a simple Excel file with an Area chart using Excel::Writer::XLSX:
 
     #!/usr/bin/perl
 

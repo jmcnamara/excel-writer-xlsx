@@ -2,13 +2,13 @@
 
 ################################################################################
 #
-# Demonstrates Excel::Writer::XLSX's named colors and the Excel color
+# Demonstrates Excel::Writer::XLSX's named colours and the Excel colour
 # palette.
 #
 # The set_custom_color() Worksheet method can be used to override one of the
 # built-in palette values with a more suitable colour. See the main docs.
 #
-# reverse('©'), March 2002, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), March 2002, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

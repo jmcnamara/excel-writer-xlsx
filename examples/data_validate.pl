@@ -6,10 +6,10 @@
 # Excel::Writer::XLSX file.
 #
 # Data validation is a feature of Excel which allows you to restrict the data
-# that a users enters in a cell and to display help and warning messages. It
+# that a user enters in a cell and to display help and warning messages. It
 # also allows you to restrict input to values in a drop down list.
 #
-# reverse('©'), August 2008, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), August 2008, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

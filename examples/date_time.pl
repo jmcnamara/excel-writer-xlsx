@@ -5,7 +5,7 @@
 # Excel::Writer::XLSX example of writing dates and times using the
 # write_date_time() Worksheet method.
 #
-# reverse('©'), August 2004, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), August 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -19,7 +19,7 @@ my $worksheet = $workbook->add_worksheet();
 my $bold      = $workbook->add_format( bold => 1 );
 
 
-# Expand the first column so that the date is visible.
+# Expand the first columns so that the date is visible.
 $worksheet->set_column( "A:B", 30 );
 
 

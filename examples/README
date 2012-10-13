@@ -50,7 +50,7 @@ mod_perl1.pl            A simple mod_perl 1 program.
 mod_perl2.pl            A simple mod_perl 2 program.
 outline.pl              An example of outlines and grouping.
 outline_collapsed.pl    An example of collapsed outlines.
-panes.pl                An examples of how to create panes.
+panes.pl                An example of how to create panes.
 properties.pl           Add document properties to a workbook.
 protection.pl           Example of cell locking and formula hiding.
 rich_strings.pl         Example of strings with multiple formats.

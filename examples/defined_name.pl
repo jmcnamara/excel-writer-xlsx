@@ -2,12 +2,12 @@
 
 ##############################################################################
 #
-# Example of how to create defined names in a Excel::Writer::XLSX file.
+# Example of how to create defined names in an Excel::Writer::XLSX file.
 #
 # This method is used to define a user friendly name to represent a value,
 # a single cell or a range of cells in a workbook.
 #
-# reverse('©'), September 2008, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2008, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

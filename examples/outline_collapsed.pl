@@ -2,13 +2,13 @@
 
 ###############################################################################
 #
-# Example of how use Excel::Writer::XLSX to generate Excel outlines and
+# Example of how to use Excel::Writer::XLSX to generate Excel outlines and
 # grouping.
 #
-# These example focus mainly on collapsed outlines. See also the
+# These examples focus mainly on collapsed outlines. See also the
 # outlines.pl example program for more general examples.
 #
-# reverse('©'), March 2008, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), March 2008, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

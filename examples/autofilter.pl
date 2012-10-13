@@ -5,10 +5,10 @@
 # An example of how to create autofilters with Excel::Writer::XLSX.
 #
 # An autofilter is a way of adding drop down lists to the headers of a 2D range
-# of worksheet data. This is turn allow users to filter the data based on
+# of worksheet data. This allows users to filter the data based on
 # simple criteria so that some data is shown and some is hidden.
 #
-# reverse('©'), September 2007, John McNamara, jmcnamara@cpan.org
+# reverse('ï¿½'), September 2007, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

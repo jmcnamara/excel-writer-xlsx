@@ -196,7 +196,7 @@ In C<mod_perl> programs where you will have to do something like the following:
 
     # mod_perl 1
     ...
-    tie *XLS, 'Apache';
+    tie *XLSX, 'Apache';
     binmode( XLSX );
     my $workbook = Excel::Writer::XLSX->new( \*XLSX );
     ...
@@ -699,9 +699,9 @@ The general rule is that if the data looks like a I<something> then a I<somethin
     $worksheet->write( 'A15', [\@array]              ); # write_col()
 
     # And if the keep_leading_zeros property is set:
-    $worksheet->write( 'A16', 2                      ); # write_number()
-    $worksheet->write( 'A17', 02                     ); # write_string()
-    $worksheet->write( 'A18', 00002                  ); # write_string()
+    $worksheet->write( 'A16', '2'                    ); # write_number()
+    $worksheet->write( 'A17', '02'                   ); # write_string()
+    $worksheet->write( 'A18', '00002'                ); # write_string()
 
     # Write an array formula. Not available in Spreadsheet::WriteExcel.
     $worksheet->write( 'A19', '{=SUM(A1:B1*A2:B2)}'  ); # write_formula()
@@ -1129,7 +1129,7 @@ See also the date_time.pl program in the C<examples> directory of the distro.
 
 Write a hyperlink to a URL in the cell specified by C<$row> and C<$column>. The hyperlink is comprised of two elements: the visible label and the invisible link. The visible label is the same as the link unless an alternative label is specified. The C<$label> parameter is optional. The label is written using the C<write()> method. Therefore it is possible to write strings, numbers or formulas as labels.
 
-The C<$format> parameter is also optional, however, without a format the link won't look like a format.
+The C<$format> parameter is also optional, however, without a format the link won't look like a link.
 
 The suggested format is:
 
@@ -1207,7 +1207,7 @@ If required, it is also possible to specify the calculated value of the formula.
 
     $worksheet->write( 'A1', '=2+2', $format, 4 );
 
-However, this probably isn't something that will ever need to do. If you do use this feature then do so with care.
+However, this probably isn't something that you will ever need to do. If you do use this feature then do so with care.
 
 
 
@@ -1540,8 +1540,6 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted ima
     # Scale the inserted image: width x 2.0, height x 0.8
     $worksheet->insert_image( 'A1', 'perl.bmp', 0, 0, 2, 0.8 );
 
-See also the C<images.pl> program in the C<examples> directory of the distro.
-
 Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
 
 BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid BMP images since they aren't compressed.
@@ -1569,7 +1567,7 @@ The parameters C<$x> and C<$y> can be used to specify an offset from the top lef
 
     $worksheet1->insert_chart( 'E2', $chart, 3, 3 );
 
-The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted image horizontally and vertically:
+The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted chart horizontally and vertically:
 
     # Scale the width by 120% and the height by 150%
     $worksheet->insert_chart( 'E2', $chart, 0, 0, 1.2, 1.5 );
@@ -1756,7 +1754,7 @@ Passing the empty string C<''> is the same as turning on protection without a pa
 
 Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data and is very easy to deactivate. Full workbook encryption is not supported by C<Excel::Writer::XLSX> since it requires a completely different file format and would take several man months to implement.
 
-You can specify which worksheet elements that you which to protect by passing a hash_ref with any or all of the following keys:
+You can specify which worksheet elements you wish to protect by passing a hash_ref with any or all of the following keys:
 
     # Default shown.
     %options = (
@@ -1922,7 +1920,7 @@ The C<$visible> parameter is used to control whether or not outlines are visible
 
 The C<$symbols_below> parameter is used to control whether the row outline symbol will appear above or below the outline level bar. The default setting is 1 for symbols to appear below the outline level bar.
 
-The C<symbols_right> parameter is used to control whether the column outline symbol will appear to the left or the right of the outline level bar. The default setting is 1 for symbols to appear to the right of the outline level bar.
+The C<$symbols_right> parameter is used to control whether the column outline symbol will appear to the left or the right of the outline level bar. The default setting is 1 for symbols to appear to the right of the outline level bar.
 
 The C<$auto_style> parameter is used to control whether the automatic outline generator in Excel uses automatic styles when creating an outline. This has no effect on a file generated by C<Excel::Writer::XLSX> but it does have an effect on how the worksheet behaves after it is created. The default setting is 0 for "Automatic Styles" to be turned off.
 
@@ -1987,7 +1985,7 @@ See also the C<freeze_panes()> method and the C<panes.pl> program in the C<examp
 
 =head2 merge_range( $first_row, $first_col, $last_row, $last_col, $token, $format )
 
-The C<merge_range()> method allows you merge cells that contain other types of alignment in addition to the merging:
+The C<merge_range()> method allows you to merge cells that contain other types of alignment in addition to the merging:
 
     my $format = $workbook->add_format(
         border => 6,
@@ -2051,7 +2049,7 @@ Note, C<set_zoom()> does not affect the scale of the printed page. For that you 
 
 =head2 right_to_left()
 
-The C<right_to_left()> method is used to change the default direction of the worksheet from left-to-right, with the A1 cell in the top left, to right-to-left, with the he A1 cell in the top right.
+The C<right_to_left()> method is used to change the default direction of the worksheet from left-to-right, with the A1 cell in the top left, to right-to-left, with the A1 cell in the top right.
 
     $worksheet->right_to_left();
 
@@ -2073,7 +2071,7 @@ In Excel this option is found under Tools->Options->View.
 
 =head2 set_tab_color()
 
-The C<set_tab_color()> method is used to change the colour of the worksheet tab. This feature is only available in Excel 2002 and later. You can use one of the standard colour names provided by the Format object or a colour index. See L</COLOURS IN EXCEL> and the C<set_custom_color()> method.
+The C<set_tab_color()> method is used to change the colour of the worksheet tab. You can use one of the standard colour names provided by the Format object or a colour index. See L</COLOURS IN EXCEL> and the C<set_custom_color()> method.
 
     $worksheet1->set_tab_color( 'red' );
     $worksheet2->set_tab_color( 0x0C );
@@ -2085,7 +2083,7 @@ See the C<tab_colors.pl> program in the examples directory of the distro.
 
 =head2 autofilter( $first_row, $first_col, $last_row, $last_col )
 
-This method allows an autofilter to be added to a worksheet. An autofilter is a way of adding drop down lists to the headers of a 2D range of worksheet data. This is turn allow users to filter the data based on simple criteria so that some data is shown and some is hidden.
+This method allows an autofilter to be added to a worksheet. An autofilter is a way of adding drop down lists to the headers of a 2D range of worksheet data. This allows users to filter the data based on simple criteria so that some data is shown and some is hidden.
 
 To add an autofilter to a worksheet:
 
@@ -2192,7 +2190,6 @@ One or more criteria can be selected:
     $worksheet->filter_column_list( 1, 100, 110, 120, 130 );
 
 B<NOTE:> It isn't sufficient to just specify the filter condition. You must also hide any rows that don't match the filter condition. Rows are hidden using the C<set_row()> C<visible> parameter. C<Excel::Writer::XLSX> cannot do this automatically since it isn't part of the file format. See the C<autofilter.pl> program in the examples directory of the distro for an example.
-e conditions for the filter are specified using simple expressions:
 
 
 
@@ -2502,7 +2499,7 @@ See, also the C<headers.pl> program in the C<examples> directory of the distribu
 
 
 
-=head2 set_footer()
+=head2 set_footer( $string, $margin )
 
 The syntax of the C<set_footer()> method is the same as C<set_header()>,  see above.
 
@@ -2797,7 +2794,7 @@ You can also store the properties in one or more named hashes and pass them to t
     my $format2 = $workbook->add_format( %font, %shading );  # Font and shading
 
 
-The provision of two ways of setting properties might lead you to wonder which is the best way. The method mechanism may be better is you prefer setting properties via method calls (which the author did when the code was first written) otherwise passing properties to the constructor has proved to be a little more flexible and self documenting in practice. An additional advantage of working with property hashes is that it allows you to share formatting between workbook objects as shown in the example above.
+The provision of two ways of setting properties might lead you to wonder which is the best way. The method mechanism may be better if you prefer setting properties via method calls (which the author did when the code was first written) otherwise passing properties to the constructor has proved to be a little more flexible and self documenting in practice. An additional advantage of working with property hashes is that it allows you to share formatting between workbook objects as shown in the example above.
 
 The Perl/Tk style of adding properties is also supported:
 
@@ -3169,7 +3166,7 @@ For examples of these formatting codes see the 'Numerical formats' worksheet cre
 
 Note 1. Numeric formats 23 to 36 are not documented by Microsoft and may differ in international versions.
 
-Note 2. In Excel 5 the dollar sign appears as a dollar sign. In Excel 97-2000 it appears as the defined local currency symbol.
+Note 2. The dollar sign appears as the defined local currency symbol.
 
 
 
@@ -3968,7 +3965,7 @@ The C<validate> parameter is used to set the type of data that you wish to valid
 
 Excel requires that range references are only to cells on the same worksheet.
 
-=item * B<date> restricts the cell to date values. Dates in Excel are expressed as integer values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's dates.
+=item * B<date> restricts the cell to date values. Dates in Excel are expressed as integer values but you can also pass an ISO8601 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's dates.
 
     validate => 'date',
     criteria => '>',
@@ -3976,7 +3973,7 @@ Excel requires that range references are only to cells on the same worksheet.
     # Or like this:
     value    => '2008-07-24T',
 
-=item * B<time> restricts the cell to time values. Times in Excel are expressed as decimal values but you can also pass an ISO860 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's times.
+=item * B<time> restricts the cell to time values. Times in Excel are expressed as decimal values but you can also pass an ISO8601 style string as used in C<write_date_time()>. See also L</DATES AND TIME IN EXCEL> for more information about working with Excel's times.
 
     validate => 'time',
     criteria => '>',
@@ -4275,7 +4272,7 @@ For example the following criteria is used to highlight cells >= 50 in red in th
 
 =head2 conditional_formatting( $row, $col, { parameter => 'value', ... } )
 
-The C<conditional_formatting()> method is used to apply formatting  based on used defined criteria to an Excel::Writer::XLSX file.
+The C<conditional_formatting()> method is used to apply formatting  based on user defined criteria to an Excel::Writer::XLSX file.
 
 It can be applied to a single cell or a range of cells. You can pass 3 parameters such as C<($row, $col, {...})> or 5 parameters such as C<($first_row, $first_col, $last_row, $last_col, {...})>. You can also use C<A1> style notation. For example:
 
@@ -4373,7 +4370,7 @@ All conditional formatting types have a C<format> parameter, see below. Other ty
 
 =head2 type => 'cell'
 
-This is the most common conditional formatting type. It is used when a format is applied to a cell based on a simple criteria. For example:
+This is the most common conditional formatting type. It is used when a format is applied to a cell based on a simple criterion. For example:
 
     $worksheet->conditional_formatting( 'A1',
         {
@@ -4434,7 +4431,7 @@ The C<value> property can also be an cell reference.
 
 =head2 format
 
-The C<format> parameter is used to specify the format that will be applied to the cell when the conditional formatting criteria is met. The format is created using the C<add_format()> method in the same way as cell formats:
+The C<format> parameter is used to specify the format that will be applied to the cell when the conditional formatting criterion is met. The format is created using the C<add_format()> method in the same way as cell formats:
 
     $format = $workbook->add_format( bold => 1, italic => 1 );
 
@@ -4490,7 +4487,7 @@ The C<maximum> parameter is used to set the upper limiting value when the C<crit
 
 =head2 type => 'date'
 
-The C<date> type is the same as C<cell> type and uses the same criteria and values. However it allows the C<value>, C<minimum> and C<maximum> properties to be specified in the ISO8601 C<yyyy-mm-ddThh:mm:ss.sss> date format which is detailed in the C<write_date_time()> method.
+The C<date> type is the same as the C<cell> type and uses the same criteria and values. However it allows the C<value>, C<minimum> and C<maximum> properties to be specified in the ISO8601 C<yyyy-mm-ddThh:mm:ss.sss> date format which is detailed in the C<write_date_time()> method.
 
     $worksheet->conditional_formatting( 'A1:A4',
         {
@@ -4777,12 +4774,12 @@ The C<min_color> and C<max_color> properties are available when the conditional 
         }
     );
 
-The color can be specifies as an Excel::Write::Excel color index or, more usefully, as a Html style RGB hex number, as shown above.
+The color can be specifies as an Excel::Writer::XLSX color index or, more usefully, as a HTML style RGB hex number, as shown above.
 
 
 =head2 Conditional Formatting Examples
 
-Example 1. Highlight cells greater than or equal to an integer value.
+Example 1. Highlight cells greater than an integer value.
 
     $worksheet->conditional_formatting( 'A1:F10',
         {
@@ -4793,7 +4790,7 @@ Example 1. Highlight cells greater than or equal to an integer value.
         }
     );
 
-Example 2. Highlight cells greater than or equal to a value in a reference cell.
+Example 2. Highlight cells greater than a value in a reference cell.
 
     $worksheet->conditional_formatting( 'A1:F10',
         {
@@ -5626,7 +5623,6 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     outline.pl              An example of outlines and grouping.
     outline_collapsed.pl    An example of collapsed outlines.
     protection.pl           Example of cell locking and formula hiding.
-    protection.pl           Example of cell locking and formula hiding.
     rich_strings.pl         Example of strings with multiple formats.
     right_to_left.pl        Change default sheet direction to right to left.
     sales.pl                An example of a simple sales spreadsheet.
@@ -5689,7 +5685,7 @@ The following limits are imposed by Excel 2007+:
 
 The C<Excel::Writer::XLSX> module is a drop-in replacement for C<Spreadsheet::WriteExcel>.
 
-It support all of the features of Spreadsheet::WriteExcel with some minor differences noted below.
+It supports all of the features of Spreadsheet::WriteExcel with some minor differences noted below.
 
     Workbook Methods            Support
     ================            ======

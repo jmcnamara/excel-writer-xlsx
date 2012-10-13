@@ -240,7 +240,7 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 There aren't currently any stock chart specific methods. See the TODO section of L<Excel::Writer::XLSX::Chart>.
 
-The default Stock chart is an High-Low-Close chart. A series must be added for each of these data sources.
+The default Stock chart is a High-Low-Close chart. A series must be added for each of these data sources.
 
 
 =head1 EXAMPLE

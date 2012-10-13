@@ -10,7 +10,7 @@
 # This script is a modification of the Excel::Writer::XLSX cgi.pl example.
 #
 # Change the name of this file to MP2Test.pm.
-# Change the package location to where ever you locate this package.
+# Change the package location to wherever you locate this package.
 # In the example below it is located in the Excel::Writer::XLSX directory.
 #
 # Your httpd.conf entry for this module, should you choose to use it
