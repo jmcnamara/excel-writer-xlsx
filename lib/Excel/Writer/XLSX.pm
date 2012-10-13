@@ -1746,7 +1746,7 @@ The C<protect()> method is used to protect a worksheet from modification:
 
 The C<protect()> method also has the effect of enabling a cell's C<locked> and C<hidden> properties if they have been set. A I<locked> cell cannot be edited and this property is on by default for all cells. A I<hidden> cell will display the results of a formula but not the formula itself.
 
-See the C<protection.pl> program in the examples directory of the distro for an illustrative example and the C<set_locked> and C<set_hidden> format methods in L<C/ELL FORMATTING>.
+See the C<protection.pl> program in the examples directory of the distro for an illustrative example and the C<set_locked> and C<set_hidden> format methods in L</CELL FORMATTING>.
 
 You can optionally add a password to the worksheet protection:
 
