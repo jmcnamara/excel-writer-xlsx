@@ -15,7 +15,7 @@
 #
 # See also hyperlink1.pl for web URL examples.
 #
-# reverse('©'), February 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), February 2002, John McNamara, jmcnamara@cpan.org
 #
 
 

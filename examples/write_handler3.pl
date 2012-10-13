@@ -10,7 +10,7 @@
 #
 # See write_handler4.pl for a more rigorous example with error handling.
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

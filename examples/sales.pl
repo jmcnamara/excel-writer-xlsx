@@ -5,7 +5,7 @@
 # Example of a sales worksheet to demonstrate several different features.
 # Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
 #
-# reverse('©'), October 2001, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), October 2001, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

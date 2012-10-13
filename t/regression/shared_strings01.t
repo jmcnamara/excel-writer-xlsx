@@ -2,7 +2,7 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse('©'), January 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), January 2012, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

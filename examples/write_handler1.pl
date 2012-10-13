@@ -8,7 +8,7 @@
 # The following example shows how to add a handler for a 7 digit ID number.
 #
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

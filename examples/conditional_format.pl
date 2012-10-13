@@ -7,7 +7,7 @@
 # Conditional formatting allows you to apply a format to a cell or a range of
 # cells based on certain criteria.
 #
-# reverse('�'), October 2011, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), October 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

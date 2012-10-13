@@ -5,7 +5,7 @@
 # Simple utility to convert the example programs listed in the README file into
 # a Pod doc for easier access via CPAN.
 #
-# reverse('©'), November 2009, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), November 2009, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

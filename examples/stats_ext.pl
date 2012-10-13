@@ -7,7 +7,7 @@
 # This is a simple example of how to use functions that reference cells in
 # other worksheets within the same workbook.
 #
-# reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

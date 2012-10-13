@@ -8,7 +8,7 @@
 # This example generates some Greek from a file with ISO-8859-7 encoded text.
 #
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

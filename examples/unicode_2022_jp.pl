@@ -8,7 +8,7 @@
 # This example generates some Japanese from a file with ISO-2022-JP
 # encoded text.
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -6,7 +6,7 @@
 #
 # See also hyperlink2.pl for worksheet URL examples.
 #
-# reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

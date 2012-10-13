@@ -5,7 +5,7 @@
 # Example of using Excel::Writer::XLSX to write Excel files to different
 # filehandles.
 #
-# reverse('©'), April 2003, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), April 2003, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -6,7 +6,7 @@
 # method with complex formatting and rotation.
 #
 #
-# reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

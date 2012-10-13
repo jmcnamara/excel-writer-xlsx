@@ -8,7 +8,7 @@
 # running this program and viewing the output Excel file if you are interested
 # in the various formatting possibilities.
 #
-# reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

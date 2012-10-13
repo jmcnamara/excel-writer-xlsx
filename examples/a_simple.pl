@@ -5,7 +5,7 @@
 # A simple example of how to use the Excel::Writer::XLSX module to
 # write text and numbers to an Excel xlsx file.
 #
-# reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# reverse('(c)'), October 2011, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), October 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

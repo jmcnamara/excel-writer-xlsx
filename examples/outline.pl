@@ -59,7 +59,7 @@
 #
 # See the main Excel::Writer::XLSX documentation for more information.
 #
-# reverse('©'), April 2003, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), April 2003, John McNamara, jmcnamara@cpan.org
 #
 
 

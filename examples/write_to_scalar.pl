@@ -4,7 +4,7 @@
 #
 # An example of writing an Excel::Writer::XLSX file to a perl scalar.
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

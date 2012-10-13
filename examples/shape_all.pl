@@ -11,7 +11,7 @@
 # The grouping by worksheet name is for illustration only. It isn't
 # part of the ECMA-376 standard.
 #
-# reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

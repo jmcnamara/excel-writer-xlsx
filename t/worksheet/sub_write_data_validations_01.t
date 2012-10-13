@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet data validation methods.
 #
-# reverse('(c)'), June 2011, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), June 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

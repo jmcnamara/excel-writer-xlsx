@@ -5,7 +5,7 @@
 # Example of how to use the Excel::Writer::XLSX module to write simple
 # array formulas.
 #
-# reverse('©'), August 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), August 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

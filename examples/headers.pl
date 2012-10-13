@@ -32,7 +32,7 @@
 #
 # See the main Excel::Writer::XLSX documentation for more information.
 #
-# reverse('©'), March 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2002, John McNamara, jmcnamara@cpan.org
 #
 
 

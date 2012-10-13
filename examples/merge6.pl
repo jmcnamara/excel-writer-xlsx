@@ -6,7 +6,7 @@
 # method with Unicode strings.
 #
 #
-# reverse('©'), December 2005, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), December 2005, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

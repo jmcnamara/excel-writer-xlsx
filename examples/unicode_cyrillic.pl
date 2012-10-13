@@ -8,7 +8,7 @@
 #
 #
 #
-# reverse('©'), March 2005, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2005, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

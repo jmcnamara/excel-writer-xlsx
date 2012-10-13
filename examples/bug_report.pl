@@ -6,7 +6,7 @@
 #
 # Run this program and read the output from the command line.
 #
-# reverse('�'), March 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2004, John McNamara, jmcnamara@cpan.org
 #
 
 

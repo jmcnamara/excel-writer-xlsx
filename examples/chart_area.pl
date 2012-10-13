@@ -4,7 +4,7 @@
 #
 # A demo of an Area chart in Excel::Writer::XLSX.
 #
-# reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

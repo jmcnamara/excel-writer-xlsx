@@ -7,7 +7,7 @@
 # This program is used to create the project screenshot for Freshmeat:
 # L<http://freshmeat.net/projects/writeexcel/>
 #
-# reverse('©'), October 2001, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), October 2001, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

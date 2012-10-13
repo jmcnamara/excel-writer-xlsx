@@ -6,7 +6,7 @@
 # left-to-right to right-to-left as required by some eastern verions
 # of Excel.
 #
-# reverse('©'), January 2006, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), January 2006, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

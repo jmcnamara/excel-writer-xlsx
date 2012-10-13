@@ -219,7 +219,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # write text and numbers to an Excel xlsx file.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -280,7 +280,7 @@ Run this program and read the output from the command line.
     #
     # Run this program and read the output from the command line.
     #
-    # reverse('©'), March 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2004, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -440,7 +440,7 @@ Source code for this example:
     # This program is used to create the project screenshot for Freshmeat:
     # L<http://freshmeat.net/projects/writeexcel/>
     #
-    # reverse('©'), October 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), October 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -584,7 +584,7 @@ Source code for this example:
     # running this program and viewing the output Excel file if you are interested
     # in the various formatting possibilities.
     #
-    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1116,7 +1116,7 @@ Source code for this example:
     # An example of how to use the Excel::Writer::XLSX module to write a basic
     # Excel workbook with multiple worksheets.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1183,7 +1183,7 @@ Source code for this example:
     # A simple example of how to use functions with the Excel::Writer::XLSX
     # module.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1280,7 +1280,7 @@ Source code for this example:
     # of worksheet data. This is turn allow users to filter the data based on
     # simple criteria so that some data is shown and some is hidden.
     #
-    # reverse('©'), September 2007, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2007, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1574,7 +1574,7 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX module to write simple
     # array formulas.
     #
-    # reverse('©'), August 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1637,7 +1637,7 @@ that line as shown below.
     # the file. If you want to stream the file to the browser instead, comment out
     # that line as shown below.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1702,7 +1702,7 @@ Source code for this example:
     #
     # A demo of an Area chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1852,7 +1852,7 @@ Source code for this example:
     #
     # A demo of an Bar chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2002,7 +2002,7 @@ Source code for this example:
     #
     # A demo of an Column chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2152,7 +2152,7 @@ Source code for this example:
     #
     # A demo of a Line chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2231,7 +2231,7 @@ Source code for this example:
     #
     # A demo of a Pie chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2305,7 +2305,7 @@ Source code for this example:
     # straight, smooth_with_markers and smooth. See the main documentation for
     # more details.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2527,7 +2527,7 @@ Source code for this example:
     #
     # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
     #
-    # reverse('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2603,7 +2603,7 @@ Source code for this example:
     #
     # A demo of a Stock chart in Excel::Writer::XLSX.
     #
-    # reverse('©'), March 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2700,7 +2700,7 @@ Source code for this example:
     # The set_custom_color() Worksheet method can be used to override one of the
     # built-in palette values with a more suitable colour. See the main docs.
     #
-    # reverse('©'), March 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2834,7 +2834,7 @@ Source code for this example:
     #
     # For more advanced comment options see comments2.pl.
     #
-    # reverse('©'), November 2005, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), November 2005, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2885,7 +2885,7 @@ Source code for this example:
     #
     # Each of the worksheets demonstrates different features of cell comments.
     #
-    # reverse('©'), November 2005, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), November 2005, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3253,7 +3253,7 @@ Source code for this example:
     # Conditional formatting allows you to apply a format to a cell or a range of
     # cells based on a certain criteria.
     #
-    # reverse('©'), October 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), October 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3600,7 +3600,7 @@ Source code for this example:
     # that a users enters in a cell and to display help and warning messages. It
     # also allows you to restrict input to values in a drop down list.
     #
-    # reverse('©'), August 2008, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2008, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3929,7 +3929,7 @@ Source code for this example:
     # Excel::Writer::XLSX example of writing dates and times using the
     # write_date_time() Worksheet method.
     #
-    # reverse('©'), August 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4045,7 +4045,7 @@ Source code for this example:
     # This method is used to define a user friendly name to represent a value,
     # a single cell or a range of cells in a workbook.
     #
-    # reverse('©'), September 2008, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2008, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4102,7 +4102,7 @@ Source code for this example:
     # A simple formatting example that demonstrates how to add a diagonal cell
     # border with Excel::Writer::XLSX
     #
-    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4162,7 +4162,7 @@ Source code for this example:
     # Example of using Excel::Writer::XLSX to write Excel files to different
     # filehandles.
     #
-    # reverse('©'), April 2003, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), April 2003, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4340,7 +4340,7 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # reverse('©'), March 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2002, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -4450,7 +4450,7 @@ Source code for this example:
     #
     # Example of how to hide a worksheet with Excel::Writer::XLSX.
     #
-    # reverse('©'), April 2005, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), April 2005, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4505,7 +4505,7 @@ Source code for this example:
     #
     # See also hyperlink2.pl for worksheet URL examples.
     #
-    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4594,7 +4594,7 @@ See also hyperlink1.pl for web URL examples.
     #
     # See also hyperlink1.pl for web URL examples.
     #
-    # reverse('©'), February 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), February 2002, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -4753,7 +4753,7 @@ Source code for this example:
     #
     # This program demonstrates the indentation cell format.
     #
-    # reverse('©'), May 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -4810,7 +4810,7 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # reverse('©'), August 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4872,7 +4872,7 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # reverse('©'), August 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4935,7 +4935,7 @@ Source code for this example:
     # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
     # merged cell.
     #
-    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5000,7 +5000,7 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX merge_range() workbook
     # method with complex formatting.
     #
-    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5111,7 +5111,7 @@ Source code for this example:
     # method with complex formatting and rotation.
     #
     #
-    # reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5208,7 +5208,7 @@ Source code for this example:
     # method with Unicode strings.
     #
     #
-    # reverse('©'), December 2005, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), December 2005, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5641,7 +5641,7 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # reverse('©'), April 2003, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), April 2003, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -5867,7 +5867,7 @@ Source code for this example:
     # These example focus mainly on collapsed outlines. See also the
     # outlines.pl example program for more general examples.
     #
-    # reverse('©'), March 2008, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2008, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6095,7 +6095,7 @@ Source code for this example:
     #
     # Example of using the Excel::Writer::XLSX module to create worksheet panes.
     #
-    # reverse('©'), May 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6248,7 +6248,7 @@ Source code for this example:
     #
     # An example of adding document properties to a Excel::Writer::XLSX file.
     #
-    # reverse('(c)'), August 2008, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2008, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6305,7 +6305,7 @@ Source code for this example:
     # Example of cell locking and formula hiding in an Excel worksheet via
     # the Excel::Writer::XLSX module.
     #
-    # reverse('©'), August 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), August 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6369,7 +6369,7 @@ Source code for this example:
     # An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
     # strings with multiple formatting.
     #
-    # reverse('©'), February 2011, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), February 2011, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6435,7 +6435,7 @@ Source code for this example:
     # left-to-right to right-to-left as required by some eastern verions
     # of Excel.
     #
-    # reverse('©'), January 2006, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), January 2006, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6480,7 +6480,7 @@ Source code for this example:
     # Example of a sales worksheet to demonstrate several different features.
     # Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
     #
-    # reverse('©'), October 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), October 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6603,7 +6603,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes to an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6656,7 +6656,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # modify shape properties in an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6729,7 +6729,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # scale shapes in an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6781,7 +6781,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # demonstrate stenciling in an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6858,7 +6858,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and top/bottom connectors) to an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6918,7 +6918,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and right/left connectors) to an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6978,7 +6978,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7067,7 +7067,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7167,7 +7167,7 @@ Source code for this example:
     # The grouping by worksheet name is for illustration only. It isn't
     # part of the ECMA-376 standard.
     #
-    # reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7422,7 +7422,7 @@ Source code for this example:
     # This is a simple example of how to use functions that reference cells in
     # other worksheets within the same workbook.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7521,7 +7521,7 @@ Source code for this example:
     # This example shows how to use a conditional numerical format
     # with colours to indicate if a share price has gone up or down.
     #
-    # reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7614,7 +7614,7 @@ Source code for this example:
     #
     # Example of how to set Excel worksheet tab colours.
     #
-    # reverse('©'), May 2006, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), May 2006, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7665,7 +7665,7 @@ Source code for this example:
     # Tables in Excel are use to group rows and columns of data into a single
     # structure that can be references in a formula or formatted collectively.
     #
-    # reverse('©'), September 2012, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2012, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8058,7 +8058,7 @@ Source code for this example:
     # The following example shows how to add a handler for a 7 digit ID number.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8150,7 +8150,7 @@ Source code for this example:
     # filters data that isn't in the third column.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8247,7 +8247,7 @@ Source code for this example:
     #
     # See write_handler4.pl for a more rigorous example with error handling.
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8336,7 +8336,7 @@ Source code for this example:
     #
     # This is a more rigorous version of write_handler3.pl.
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8445,7 +8445,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
     # An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8510,7 +8510,7 @@ Source code for this example:
     # This example generates some Japanese from a file with ISO-2022-JP
     # encoded text.
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8575,7 +8575,7 @@ Source code for this example:
     # This example generates some Thai from a file with ISO-8859-11 encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8640,7 +8640,7 @@ Source code for this example:
     # This example generates some Greek from a file with ISO-8859-7 encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8705,7 +8705,7 @@ Source code for this example:
     # This example generates some Chinese from a file with BIG5 encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8770,7 +8770,7 @@ Source code for this example:
     # This example generates some Russian from a file with CP1251 encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8835,7 +8835,7 @@ Source code for this example:
     # This example generates some Arabic text from a CP-1256 encoded file.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8900,7 +8900,7 @@ Source code for this example:
     #
     #
     #
-    # reverse('©'), March 2005, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), March 2005, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8970,7 +8970,7 @@ Source code for this example:
     # This example generates some Russian from a file with KOI8-R encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9035,7 +9035,7 @@ Source code for this example:
     # This example generates some Polish from a file with UTF8 encoded text.
     #
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9100,7 +9100,7 @@ Source code for this example:
     # This example generates some Japenese text from a file with Shift-JIS
     # encoded text.
     #
-    # reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+    # reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;

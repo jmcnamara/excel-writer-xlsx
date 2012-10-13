@@ -8,7 +8,7 @@
 # This example generates some Russian from a file with KOI8-R encoded text.
 #
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

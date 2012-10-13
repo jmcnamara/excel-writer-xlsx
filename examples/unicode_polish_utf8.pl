@@ -8,7 +8,7 @@
 # This example generates some Polish from a file with UTF8 encoded text.
 #
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet date and time handling.
 #
-# reverse('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

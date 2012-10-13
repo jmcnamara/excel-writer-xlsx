@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Utility.
 #
-# reverse('©'), September 2010, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2010, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

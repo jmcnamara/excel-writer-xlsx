@@ -5,7 +5,7 @@
 # Example of how to use the Excel::Writer::XLSX merge_range() workbook
 # method with complex formatting.
 #
-# reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Table methods.
 #
-# reverse('(c)'), September 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2012, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

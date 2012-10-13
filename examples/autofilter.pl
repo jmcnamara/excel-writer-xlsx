@@ -8,7 +8,7 @@
 # of worksheet data. This allows users to filter the data based on
 # simple criteria so that some data is shown and some is hidden.
 #
-# reverse('�'), September 2007, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2007, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

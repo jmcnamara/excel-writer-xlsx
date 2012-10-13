@@ -4,7 +4,7 @@
 #
 # Example of how to hide a worksheet with Excel::Writer::XLSX.
 #
-# reverse('©'), April 2005, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), April 2005, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

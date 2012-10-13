@@ -5,7 +5,7 @@
 # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
 # merged cell.
 #
-# reverse('©'), September 2002, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2002, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

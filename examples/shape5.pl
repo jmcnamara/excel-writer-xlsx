@@ -5,7 +5,7 @@
 # A simple example of how to use the Excel::Writer::XLSX module to
 # add shapes (objects and top/bottom connectors) to an Excel xlsx file.
 #
-# reverse('©'), May 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), May 2012, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

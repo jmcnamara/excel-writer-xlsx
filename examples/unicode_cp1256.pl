@@ -8,7 +8,7 @@
 # This example generates some Arabic text from a CP-1256 encoded file.
 #
 #
-# reverse('©'), September 2004, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

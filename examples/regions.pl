@@ -5,7 +5,7 @@
 # An example of how to use the Excel::Writer::XLSX module to write a basic
 # Excel workbook with multiple worksheets.
 #
-# reverse('©'), March 2001, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

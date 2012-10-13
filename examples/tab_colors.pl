@@ -4,7 +4,7 @@
 #
 # Example of how to set Excel worksheet tab colours.
 #
-# reverse('©'), May 2006, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), May 2006, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
