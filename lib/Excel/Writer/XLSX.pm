@@ -680,7 +680,7 @@ Excel makes a distinction between data types such as strings, numbers, blanks, f
 
 The general rule is that if the data looks like a I<something> then a I<something> is written. Here are some examples in both row-column and A1 notation:
 
-                                                       # Same as:
+                                                        # Same as:
     $worksheet->write( 0, 0, 'Hello'                 ); # write_string()
     $worksheet->write( 1, 0, 'One'                   ); # write_string()
     $worksheet->write( 2, 0,  2                      ); # write_number()
@@ -4719,13 +4719,13 @@ At the moment only the default colors and properties can be used. These will be 
 
 The C<formula> type is used to specify a conditional format based on a user defined formula:
 
-$worksheet->conditional_formatting( 'A1:A4',
-    {
-        type     => 'formula',
-        criteria => '=$A$1 > 5',
-        format   => $format,
-    }
-);
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'formula',
+            criteria => '=$A$1 > 5',
+            format   => $format,
+        }
+    );
 
 The formula is specified in the C<criteria>.
 
