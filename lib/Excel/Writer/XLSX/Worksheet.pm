@@ -7198,7 +7198,7 @@ sub _write_hyperlink_external {
     push @attributes, ( 'location' => $location ) if defined $location;
     push @attributes, ( 'tooltip'  => $tooltip )  if defined $tooltip;
 
-    $self->xml_empty_tag( 'hyperlink', @attributes );
+    $self->xml_encoded_empty_tag( 'hyperlink', @attributes );
 }
 
 
@@ -7224,7 +7224,7 @@ sub _write_hyperlink_internal {
     push @attributes, ( 'tooltip' => $tooltip ) if defined $tooltip;
     push @attributes, ( 'display' => $display );
 
-    $self->xml_empty_tag( 'hyperlink', @attributes );
+    $self->xml_encoded_empty_tag( 'hyperlink', @attributes );
 }
 
 
