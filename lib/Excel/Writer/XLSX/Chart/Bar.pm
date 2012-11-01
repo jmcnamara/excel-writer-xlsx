@@ -42,6 +42,12 @@ sub new {
     $self->{_horiz_cat_axis}    = 1;
     $self->{_show_crosses}      = 0;
 
+    # Override and reset the default axis values.
+    $self->{_x_axis_defaults} = { major_gridlines => { visible => 1 } };
+    $self->{_y_axis_defaults} = { major_gridlines => { visible => 0 } };
+    $self->set_x_axis();
+    $self->set_y_axis();
+
     bless $self, $class;
 
     return $self;
@@ -60,16 +66,11 @@ sub _write_chart_type {
     my %args = @_;
 
     if ( $args{primary_axes} ) {
-        ## Reverse X and Y axes for Bar charts.
-        my $old_y = $self->{_y_axis};
-        my $old_x = $self->{_x_axis};
 
-        $self->{_y_axis} = $old_x;
-        $self->{_x_axis} = $old_y;
-
-        if ( !$self->{_y_axis}->{_major_gridlines} ) {
-            $self->{_y_axis}->{_major_gridlines} = { show => 1 };
-        }
+        # Reverse X and Y axes for Bar charts.
+        my $tmp = $self->{_y_axis};
+        $self->{_y_axis} = $self->{_x_axis};
+        $self->{_x_axis} = $tmp;
 
         if ( $self->{_y2_axis}->{_position} eq 'r' ) {
             $self->{_y2_axis}->{_position} = 't';

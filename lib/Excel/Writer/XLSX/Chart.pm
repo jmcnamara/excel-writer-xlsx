@@ -94,6 +94,10 @@ sub new {
     $self->{_show_blanks}       = 'gap';
     $self->{_show_hidden_data}  = 0;
     $self->{_show_crosses}      = 1;
+    $self->{_x_axis_defaults}   = {};
+    $self->{_y_axis_defaults}   = {};
+    $self->{_x2_axis_defaults}  = {};
+    $self->{_y2_axis_defaults}  = {};
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -238,7 +242,8 @@ sub add_series {
 sub set_x_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args( @_ );
+
+    my $axis = $self->_convert_x_axis_args( @_ );
 
     $self->{_x_axis} = $axis;
 }
@@ -253,10 +258,8 @@ sub set_x_axis {
 sub set_y_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args(    #
-        major_gridlines => { visible => 1 },
-        @_
-    );
+
+    my $axis = $self->_convert_y_axis_args( @_ );
 
     $self->{_y_axis} = $axis;
 }
@@ -271,12 +274,8 @@ sub set_y_axis {
 sub set_x2_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args(
-        label_position => 'none',
-        crossing       => 'max',
-        visible        => 0,
-        @_
-    );
+
+    my $axis = $self->_convert_x2_axis_args( @_ );
 
     $self->{_x2_axis} = $axis;
 }
@@ -291,12 +290,8 @@ sub set_x2_axis {
 sub set_y2_axis {
 
     my $self = shift;
-    my $axis = $self->_convert_axis_args(
-        major_gridlines => { visible => 0 },
-        position        => 'r',
-        visible         => 1,
-        @_
-    );
+
+    my $axis = $self->_convert_y2_axis_args( @_ );
 
     $self->{_y2_axis} = $axis;
 }
@@ -542,6 +537,70 @@ sub show_hidden_data {
 
 ###############################################################################
 #
+# _convert_axis_x_args()
+#
+# Convert user X-axis values into private hash values, with defaults.
+#
+sub _convert_x_axis_args {
+
+    my $self = shift;
+
+    my $axis = $self->_convert_axis_args( %{ $self->{_x_axis_defaults} }, @_ );
+
+    return $axis;
+}
+
+
+###############################################################################
+#
+# _convert_axis_y_args()
+#
+# Convert user Y-axis values into private hash values, with defaults.
+#
+sub _convert_y_axis_args {
+
+    my $self = shift;
+
+    my $axis = $self->_convert_axis_args( %{ $self->{_y_axis_defaults} }, @_ );
+
+    return $axis;
+}
+
+
+###############################################################################
+#
+# _convert_axis_x2_args()
+#
+# Convert user X2-axis values into private hash values, with defaults.
+#
+sub _convert_x2_axis_args {
+
+    my $self = shift;
+
+    my $axis = $self->_convert_axis_args( %{ $self->{_x2_axis_defaults} }, @_ );
+
+    return $axis;
+}
+
+
+###############################################################################
+#
+# _convert_axis_y2_args()
+#
+# Convert user Y2-axis values into private hash values, with defaults.
+#
+sub _convert_y2_axis_args {
+
+    my $self = shift;
+
+    my $axis = $self->_convert_axis_args( %{ $self->{_y2_axis_defaults} }, @_ );
+
+    return $axis;
+}
+
+
+###############################################################################
+#
 # _convert_axis_args()
 #
 # Convert user defined axis values into private hash values.
@@ -572,9 +631,14 @@ sub _convert_axis_args {
         _crossing        => $arg{crossing},
         _position        => $arg{position},
         _label_position  => $arg{label_position},
-        _major_gridlines => $arg{major_gridlines} || { visible => 1 },
+        _major_gridlines => {},
         _visible         => defined $arg{visible} ? $arg{visible} : 1,
     };
+
+    # Map major_gridlines properties.
+    if ( $arg{major_gridlines} && $arg{major_gridlines}->{visible} ) {
+        $axis->{_major_gridlines}->{_visible} = $arg{major_gridlines}->{visible};
+    }
 
     # Only use the first letter of bottom, top, left or right.
     if ( defined $axis->{_position} ) {
@@ -1257,6 +1321,23 @@ sub _set_default_properties {
         _line_options     => 0x0000,
     };
 
+
+    # Set the default axis properties.
+    $self->{_x_axis_defaults} = { major_gridlines => { visible => 0 } };
+    $self->{_y_axis_defaults} = { major_gridlines => { visible => 1 } };
+
+    $self->{_x2_axis_defaults} = {
+        label_position => 'none',
+        crossing       => 'max',
+        visible        => 0
+    };
+
+    $self->{_y2_axis_defaults} = {
+        major_gridlines => { visible => 0 },
+        position        => 'right',
+        visible         => 1
+    };
+
     $self->set_x_axis();
     $self->set_y_axis();
 
@@ -1802,12 +1883,12 @@ sub _write_axis_ids {
     $self->_add_axis_ids( %args );
 
     if ( $args{primary_axes} ) {
-        ## Write the axis ids for the primary axes.
+        # Write the axis ids for the primary axes.
         $self->_write_axis_id( $self->{_axis_ids}->[0] );
         $self->_write_axis_id( $self->{_axis_ids}->[1] );
     }
     else {
-        ## Write the axis ids for the secondary axes.
+        # Write the axis ids for the secondary axes.
         $self->_write_axis_id( $self->{_axis2_ids}->[0] );
         $self->_write_axis_id( $self->{_axis2_ids}->[1] );
     }
@@ -1866,6 +1947,9 @@ sub _write_cat_axis {
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
+
+    # Write the c:majorGridlines element.
+    $self->_write_major_gridlines( $x_axis->{_major_gridlines} );
 
     # Write the axis title elements.
     my $title;
@@ -2476,10 +2560,11 @@ sub _write_label_offset {
 #
 sub _write_major_gridlines {
 
-    my $self    = shift;
-    my $options = shift;
+    my $self      = shift;
+    my $gridlines = shift;
 
-    return unless $options->{visible};
+    return unless $gridlines;
+    return unless $gridlines->{_visible};
 
     $self->xml_empty_tag( 'c:majorGridlines' );
 }
