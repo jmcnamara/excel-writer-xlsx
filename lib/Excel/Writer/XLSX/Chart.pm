@@ -1965,6 +1965,9 @@ sub _write_cat_axis {
     # Write the c:numFmt element.
     $self->_write_num_fmt();
 
+    # Write the c:majorTickMark element.
+    $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
@@ -2056,6 +2059,9 @@ sub _write_val_axis {
     # Write the c:numberFormat element.
     $self->_write_number_format();
 
+    # Write the c:majorTickMark element.
+    $self->_write_major_tick_mark( $y_axis->{_major_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
@@ -2140,6 +2146,9 @@ sub _write_cat_val_axis {
     # Write the c:numberFormat element.
     $self->_write_number_format();
 
+    # Write the c:majorTickMark element.
+    $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
@@ -2222,6 +2231,9 @@ sub _write_date_axis {
 
     # Write the c:numFmt element.
     $self->_write_num_fmt( 'dd/mm/yyyy' );
+
+    # Write the c:majorTickMark element.
+    $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
@@ -2426,6 +2438,25 @@ sub _write_num_fmt {
     );
 
     $self->xml_empty_tag( 'c:numFmt', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_major_tick_mark()
+#
+# Write the <c:majorTickMark> element.
+#
+sub _write_major_tick_mark {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:majorTickMark', @attributes );
 }
 
 
@@ -4232,6 +4263,10 @@ Creates a Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
 
 Creates a Stock style chart. See L<Excel::Writer::XLSX::Chart::Stock>.
 
+=item * C<radar>
+
+Creates a Radar style chart. See L<Excel::Writer::XLSX::Chart::Radar>.
+
 =back
 
 Chart subtypes are also supported in some cases:
@@ -4258,7 +4293,9 @@ The currently available subtypes are:
         smooth_with_markers
         smooth
 
-
+    radar
+        with_markers
+        filled
 
 More charts and sub-types will be supported in time. See the L</TODO> section.
 
