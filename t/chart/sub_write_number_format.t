@@ -33,7 +33,7 @@ $expected = '<c:numFmt formatCode="General" sourceLinked="1"/>';
 
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
-$chart->_write_number_format();
+$chart->_write_number_format( 'General' );
 
 is( $got, $expected, $caption );
 

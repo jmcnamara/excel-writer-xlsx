@@ -36,6 +36,12 @@ sub new {
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
     $self->{_show_crosses} = 0;
 
+    # Override and reset the default axis values.
+    $self->{_x_axis_defaults}->{num_format}  = 'dd/mm/yyyy';
+    $self->{_x2_axis_defaults}->{num_format} = 'dd/mm/yyyy';
+    $self->set_x_axis();
+    $self->set_x2_axis();
+
     bless $self, $class;
     return $self;
 }

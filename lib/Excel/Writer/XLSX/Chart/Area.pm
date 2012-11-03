@@ -39,6 +39,17 @@ sub new {
     $self->{_cross_between} = 'midCat';
     $self->{_show_crosses}  = 0;
 
+    # Override and reset the default axis values.
+    $self->{_x_axis_defaults}->{ num_format} = 'General';
+
+    if ( $self->{_subtype} eq 'percent_stacked' ) {
+        $self->{_y_axis_defaults}->{num_format} = '0%';
+    }
+
+    $self->set_y_axis();
+    $self->set_x_axis();
+
+
     bless $self, $class;
     return $self;
 }
@@ -99,34 +110,6 @@ sub _write_area_chart {
     $self->_write_axis_ids( %args );
 
     $self->xml_end_tag( 'c:areaChart' );
-}
-
-
-##############################################################################
-#
-# _write_num_fmt()
-#
-# Over-ridden to add % format. TODO. This will be refactored back up to the
-# SUPER class later.
-#
-# Write the <c:numFmt> element.
-#
-sub _write_number_format {
-
-    my $self          = shift;
-    my $format_code   = shift || 'General';
-    my $source_linked = 1;
-
-    if ( $self->{_subtype} eq 'percent_stacked' ) {
-        $format_code = '0%';
-    }
-
-    my @attributes = (
-        'formatCode'   => $format_code,
-        'sourceLinked' => $source_linked,
-    );
-
-    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 

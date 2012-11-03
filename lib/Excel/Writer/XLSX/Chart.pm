@@ -632,6 +632,7 @@ sub _convert_axis_args {
         _position        => $arg{position},
         _label_position  => $arg{label_position},
         _major_gridlines => {},
+        _num_format      => $arg{num_format},
         _visible         => defined $arg{visible} ? $arg{visible} : 1,
     };
 
@@ -1323,16 +1324,25 @@ sub _set_default_properties {
 
 
     # Set the default axis properties.
-    $self->{_x_axis_defaults} = { major_gridlines => { visible => 0 } };
-    $self->{_y_axis_defaults} = { major_gridlines => { visible => 1 } };
+    $self->{_x_axis_defaults} = {
+        num_format      => 'General',
+        major_gridlines => { visible => 0 }
+    };
+
+    $self->{_y_axis_defaults} = {
+        num_format      => 'General',
+        major_gridlines => { visible => 1 }
+    };
 
     $self->{_x2_axis_defaults} = {
+        num_format     => 'General',
         label_position => 'none',
         crossing       => 'max',
         visible        => 0
     };
 
     $self->{_y2_axis_defaults} = {
+        num_format      => 'General',
         major_gridlines => { visible => 0 },
         position        => 'right',
         visible         => 1
@@ -1963,7 +1973,7 @@ sub _write_cat_axis {
     }
 
     # Write the c:numFmt element.
-    $self->_write_num_fmt();
+    $self->_write_number_format2( $x_axis->{_num_format} );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2057,7 +2067,7 @@ sub _write_val_axis {
     }
 
     # Write the c:numberFormat element.
-    $self->_write_number_format();
+    $self->_write_number_format( $y_axis->{_num_format} );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $y_axis->{_major_tick_mark} );
@@ -2144,7 +2154,7 @@ sub _write_cat_val_axis {
     }
 
     # Write the c:numberFormat element.
-    $self->_write_number_format();
+    $self->_write_number_format( $x_axis->{_num_format} );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2230,7 +2240,7 @@ sub _write_date_axis {
     }
 
     # Write the c:numFmt element.
-    $self->_write_num_fmt( 'dd/mm/yyyy' );
+    $self->_write_number_format( $x_axis->{_num_format} );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2416,14 +2426,38 @@ sub _write_axis_pos {
     $self->xml_empty_tag( 'c:axPos', @attributes );
 }
 
+# TODO
 
 ##############################################################################
 #
-# _write_num_fmt()
+# _write_number_format()
+#
+# Write the <c:numberFormat> element.
+#
+sub _write_number_format {
+
+    my $self          = shift;
+    my $format_code   = shift;
+    my $source_linked = 1;
+
+    return if !defined $format_code;
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_number_format2()
 #
 # Write the <c:numFmt> element.
 #
-sub _write_num_fmt {
+sub _write_number_format2 {
 
     my $self          = shift;
     my $format_code   = shift || 'General';
@@ -2598,29 +2632,6 @@ sub _write_major_gridlines {
     return unless $gridlines->{_visible};
 
     $self->xml_empty_tag( 'c:majorGridlines' );
-}
-
-
-##############################################################################
-#
-# _write_number_format()
-#
-# Write the <c:numberFormat> element.
-#
-# TODO. Merge/replace with _write_num_fmt().
-#
-sub _write_number_format {
-
-    my $self          = shift;
-    my $format_code   = 'General';
-    my $source_linked = 1;
-
-    my @attributes = (
-        'formatCode'   => $format_code,
-        'sourceLinked' => $source_linked,
-    );
-
-    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 
@@ -4918,7 +4929,7 @@ Several of these properties can be set in one go:
         },
     );
 
-Trendlines cannot be added to series in a stacked chart or pie chart or (when implemented) to 3D, radar, surface, or doughnut charts.
+Trendlines cannot be added to series in a stacked chart or pie chart, radar chart or (when implemented) to 3D, surface, or doughnut charts.
 
 =head2 Data Labels
 
@@ -5120,7 +5131,7 @@ Features that are on the TODO list and will be added are:
 
 =item * 3D charts.
 
-=item * Additional chart types such as Bubble and Radar.
+=item * Additional chart types such as Bubble or Doughnut.
 
 =back
 

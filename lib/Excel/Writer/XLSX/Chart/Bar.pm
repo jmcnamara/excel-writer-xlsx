@@ -43,8 +43,14 @@ sub new {
     $self->{_show_crosses}      = 0;
 
     # Override and reset the default axis values.
-    $self->{_x_axis_defaults} = { major_gridlines => { visible => 1 } };
-    $self->{_y_axis_defaults} = { major_gridlines => { visible => 0 } };
+    $self->{_x_axis_defaults}->{ major_gridlines} = { visible => 1 };
+    $self->{_y_axis_defaults}->{ major_gridlines} = { visible => 0 };
+    $self->{_x_axis_defaults}->{ num_format} = 'General';
+
+    if ( $self->{_subtype} eq 'percent_stacked' ) {
+        $self->{_x_axis_defaults}->{num_format} = '0%';
+    }
+
     $self->set_x_axis();
     $self->set_y_axis();
 
@@ -144,34 +150,6 @@ sub _write_bar_dir {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:barDir', @attributes );
-}
-
-
-##############################################################################
-#
-# _write_num_fmt()
-#
-# Over-ridden to add % format. TODO. This will be refactored back up to the
-# SUPER class later.
-#
-# Write the <c:numFmt> element.
-#
-sub _write_number_format {
-
-    my $self          = shift;
-    my $format_code   = shift || 'General';
-    my $source_linked = 1;
-
-    if ( $self->{_subtype} eq 'percent_stacked' ) {
-        $format_code = '0%';
-    }
-
-    my @attributes = (
-        'formatCode'   => $format_code,
-        'sourceLinked' => $source_linked,
-    );
-
-    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 
