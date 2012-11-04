@@ -40,15 +40,11 @@ sub new {
     $self->{_show_crosses}  = 0;
 
     # Override and reset the default axis values.
-    $self->{_x_axis_defaults}->{ num_format} = 'General';
-
     if ( $self->{_subtype} eq 'percent_stacked' ) {
-        $self->{_y_axis_defaults}->{num_format} = '0%';
+        $self->{_y_axis}->{_defaults}->{num_format} = '0%';
     }
 
     $self->set_y_axis();
-    $self->set_x_axis();
-
 
     bless $self, $class;
     return $self;

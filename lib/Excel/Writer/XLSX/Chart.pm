@@ -76,7 +76,7 @@ sub new {
     $self->{_style_id}          = 2;
     $self->{_axis_ids}          = [];
     $self->{_axis2_ids}         = [];
-    $self->{_has_category}      = 0;
+    $self->{_cat_has_num_fmt}   = 0;
     $self->{_requires_category} = 0;
     $self->{_legend_position}   = 'right';
     $self->{_cat_axis_position} = 'b';
@@ -94,10 +94,6 @@ sub new {
     $self->{_show_blanks}       = 'gap';
     $self->{_show_hidden_data}  = 0;
     $self->{_show_crosses}      = 1;
-    $self->{_x_axis_defaults}   = {};
-    $self->{_y_axis_defaults}   = {};
-    $self->{_x2_axis_defaults}  = {};
-    $self->{_y2_axis_defaults}  = {};
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -243,7 +239,7 @@ sub set_x_axis {
 
     my $self = shift;
 
-    my $axis = $self->_convert_x_axis_args( @_ );
+    my $axis = $self->_convert_axis_args( $self->{_x_axis}, @_ );
 
     $self->{_x_axis} = $axis;
 }
@@ -259,7 +255,7 @@ sub set_y_axis {
 
     my $self = shift;
 
-    my $axis = $self->_convert_y_axis_args( @_ );
+    my $axis = $self->_convert_axis_args( $self->{_y_axis}, @_ );
 
     $self->{_y_axis} = $axis;
 }
@@ -275,7 +271,7 @@ sub set_x2_axis {
 
     my $self = shift;
 
-    my $axis = $self->_convert_x2_axis_args( @_ );
+    my $axis = $self->_convert_axis_args( $self->{_x2_axis}, @_ );
 
     $self->{_x2_axis} = $axis;
 }
@@ -291,7 +287,7 @@ sub set_y2_axis {
 
     my $self = shift;
 
-    my $axis = $self->_convert_y2_axis_args( @_ );
+    my $axis = $self->_convert_axis_args( $self->{_y2_axis}, @_ );
 
     $self->{_y2_axis} = $axis;
 }
@@ -537,70 +533,6 @@ sub show_hidden_data {
 
 ###############################################################################
 #
-# _convert_axis_x_args()
-#
-# Convert user X-axis values into private hash values, with defaults.
-#
-sub _convert_x_axis_args {
-
-    my $self = shift;
-
-    my $axis = $self->_convert_axis_args( %{ $self->{_x_axis_defaults} }, @_ );
-
-    return $axis;
-}
-
-
-###############################################################################
-#
-# _convert_axis_y_args()
-#
-# Convert user Y-axis values into private hash values, with defaults.
-#
-sub _convert_y_axis_args {
-
-    my $self = shift;
-
-    my $axis = $self->_convert_axis_args( %{ $self->{_y_axis_defaults} }, @_ );
-
-    return $axis;
-}
-
-
-###############################################################################
-#
-# _convert_axis_x2_args()
-#
-# Convert user X2-axis values into private hash values, with defaults.
-#
-sub _convert_x2_axis_args {
-
-    my $self = shift;
-
-    my $axis = $self->_convert_axis_args( %{ $self->{_x2_axis_defaults} }, @_ );
-
-    return $axis;
-}
-
-
-###############################################################################
-#
-# _convert_axis_y2_args()
-#
-# Convert user Y2-axis values into private hash values, with defaults.
-#
-sub _convert_y2_axis_args {
-
-    my $self = shift;
-
-    my $axis = $self->_convert_axis_args( %{ $self->{_y2_axis_defaults} }, @_ );
-
-    return $axis;
-}
-
-
-###############################################################################
-#
 # _convert_axis_args()
 #
 # Convert user defined axis values into private hash values.
@@ -608,8 +540,8 @@ sub _convert_y2_axis_args {
 sub _convert_axis_args {
 
     my $self = shift;
-    my %arg  = @_;
-    my $axis;
+    my $axis = shift;
+    my %arg  = ( %{ $axis->{_defaults} }, @_ );
 
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
@@ -617,6 +549,7 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
+        _defaults        => $axis->{_defaults},
         _name            => $name,
         _formula         => $name_formula,
         _data_id         => $data_id,
@@ -631,14 +564,14 @@ sub _convert_axis_args {
         _crossing        => $arg{crossing},
         _position        => $arg{position},
         _label_position  => $arg{label_position},
-        _major_gridlines => {},
         _num_format      => $arg{num_format},
         _visible         => defined $arg{visible} ? $arg{visible} : 1,
     };
 
     # Map major_gridlines properties.
     if ( $arg{major_gridlines} && $arg{major_gridlines}->{visible} ) {
-        $axis->{_major_gridlines}->{_visible} = $arg{major_gridlines}->{visible};
+        $axis->{_major_gridlines}->{_visible} =
+          $arg{major_gridlines}->{visible};
     }
 
     # Only use the first letter of bottom, top, left or right.
@@ -1324,24 +1257,24 @@ sub _set_default_properties {
 
 
     # Set the default axis properties.
-    $self->{_x_axis_defaults} = {
+    $self->{_x_axis}->{_defaults} = {
         num_format      => 'General',
         major_gridlines => { visible => 0 }
     };
 
-    $self->{_y_axis_defaults} = {
+    $self->{_y_axis}->{_defaults} = {
         num_format      => 'General',
         major_gridlines => { visible => 1 }
     };
 
-    $self->{_x2_axis_defaults} = {
+    $self->{_x2_axis}->{_defaults} = {
         num_format     => 'General',
         label_position => 'none',
         crossing       => 'max',
         visible        => 0
     };
 
-    $self->{_y2_axis_defaults} = {
+    $self->{_y2_axis}->{_defaults} = {
         num_format      => 'General',
         major_gridlines => { visible => 0 },
         position        => 'right',
@@ -1745,8 +1678,6 @@ sub _write_cat {
     # Ignore <c:cat> elements for charts without category values.
     return unless $formula;
 
-    $self->{_has_category} = 1;
-
     $self->xml_start_tag( 'c:cat' );
 
     # Check the type of cached data.
@@ -1754,12 +1685,14 @@ sub _write_cat {
 
     if ( $type eq 'str' ) {
 
-        $self->{_has_category} = 0;
+        $self->{_cat_has_num_fmt} = 0;
 
         # Write the c:numRef element.
         $self->_write_str_ref( $formula, $data, $type );
     }
     else {
+
+        $self->{_cat_has_num_fmt} = 1;
 
         # Write the c:numRef element.
         $self->_write_num_ref( $formula, $data, $type );
@@ -1973,7 +1906,7 @@ sub _write_cat_axis {
     }
 
     # Write the c:numFmt element.
-    $self->_write_number_format2( $x_axis->{_num_format} );
+    $self->_write_cat_number_format( $x_axis );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2067,7 +2000,7 @@ sub _write_val_axis {
     }
 
     # Write the c:numberFormat element.
-    $self->_write_number_format( $y_axis->{_num_format} );
+    $self->_write_number_format( $y_axis );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $y_axis->{_major_tick_mark} );
@@ -2154,7 +2087,7 @@ sub _write_cat_val_axis {
     }
 
     # Write the c:numberFormat element.
-    $self->_write_number_format( $x_axis->{_num_format} );
+    $self->_write_number_format( $x_axis );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2240,7 +2173,7 @@ sub _write_date_axis {
     }
 
     # Write the c:numFmt element.
-    $self->_write_number_format( $x_axis->{_num_format} );
+    $self->_write_number_format( $x_axis );
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
@@ -2426,52 +2359,69 @@ sub _write_axis_pos {
     $self->xml_empty_tag( 'c:axPos', @attributes );
 }
 
-# TODO
 
 ##############################################################################
 #
 # _write_number_format()
 #
-# Write the <c:numberFormat> element.
+# Write the <c:numberFormat> element. Note: It is assumed that if a user
+# defined number format is supplied (i.e., non-default) then the sourceLinked
+# attribute is 0. This isn't always true since in some cases the user can
+# choose to maintain the link. However, it will do for majority of cases.
 #
 sub _write_number_format {
 
-    my $self          = shift;
-    my $format_code   = shift;
-    my $source_linked = 1;
+    my $self           = shift;
+    my $axis           = shift;
+    my $format_code    = $axis->{_num_format};
+    my $source_linked  = 1;
 
-    return if !defined $format_code;
+    # Check if a user defined number format has been set.
+    if ( $format_code ne $axis->{_defaults}->{num_format} ) {
+        $source_linked  = 0;
+    }
 
     my @attributes = (
         'formatCode'   => $format_code,
         'sourceLinked' => $source_linked,
     );
 
-    $self->xml_empty_tag( 'c:numFmt', @attributes );
+    $self->xml_encoded_empty_tag( 'c:numFmt', @attributes );
 }
 
 
 ##############################################################################
 #
-# _write_number_format2()
+# _write_cat_number_format()
 #
-# Write the <c:numFmt> element.
+# Write the <c:numFmt> element. Special case handler for category axes which
+# don't always have a number format.
 #
-sub _write_number_format2 {
+sub _write_cat_number_format {
 
-    my $self          = shift;
-    my $format_code   = shift || 'General';
-    my $source_linked = 1;
+    my $self           = shift;
+    my $axis           = shift;
+    my $format_code    = $axis->{_num_format};
+    my $source_linked  = 1;
+    my $default_format = 1;
 
-    # These elements are only required for charts with categories.
-    return unless $self->{_has_category};
+    # Check if a user defined number format has been set.
+    if ( $format_code ne $axis->{_defaults}->{num_format} ) {
+        $source_linked  = 0;
+        $default_format = 0;
+    }
+
+    # Skip if cat doesn't have a num format (unless it is non-default).
+    if ( !$self->{_cat_has_num_fmt} && $default_format ) {
+        return;
+    }
 
     my @attributes = (
         'formatCode'   => $format_code,
         'sourceLinked' => $source_linked,
     );
 
-    $self->xml_empty_tag( 'c:numFmt', @attributes );
+    $self->xml_encoded_empty_tag( 'c:numFmt', @attributes );
 }
 
 

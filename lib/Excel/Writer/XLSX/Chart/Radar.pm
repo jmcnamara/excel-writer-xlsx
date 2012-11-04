@@ -42,7 +42,7 @@ sub new {
     }
 
     # Override and reset the default axis values.
-    $self->{_x_axis_defaults} = { major_gridlines => { visible => 1 } };
+    $self->{_x_axis}->{_defaults}->{major_gridlines} = { visible => 1 };
     $self->set_x_axis();
 
     # Hardcode major_tick_mark for now until there is an accessor.
@@ -98,16 +98,11 @@ sub _write_radar_chart {
     # Write the series elements.
     $self->_write_series( $_ ) for @series;
 
-    # TODO turn on for sub types
-    # Write the c:marker element.
-    #$self->_write_marker_value();
-
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 
     $self->xml_end_tag( 'c:radarChart' );
 }
-
 
 
 ##############################################################################

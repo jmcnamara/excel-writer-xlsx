@@ -43,19 +43,17 @@ sub new {
     $self->{_show_crosses}      = 0;
 
     # Override and reset the default axis values.
-    $self->{_x_axis_defaults}->{ major_gridlines} = { visible => 1 };
-    $self->{_y_axis_defaults}->{ major_gridlines} = { visible => 0 };
-    $self->{_x_axis_defaults}->{ num_format} = 'General';
+    $self->{_x_axis}->{_defaults}->{major_gridlines} = { visible => 1 };
+    $self->{_y_axis}->{_defaults}->{major_gridlines} = { visible => 0 };
 
     if ( $self->{_subtype} eq 'percent_stacked' ) {
-        $self->{_x_axis_defaults}->{num_format} = '0%';
+        $self->{_x_axis}->{_defaults}->{num_format} = '0%';
     }
 
     $self->set_x_axis();
     $self->set_y_axis();
 
     bless $self, $class;
-
     return $self;
 }
 

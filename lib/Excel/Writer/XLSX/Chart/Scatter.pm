@@ -40,10 +40,6 @@ sub new {
     $self->{_horiz_val_axis}   = 0;
     $self->{_val_axis_postion} = 'b';
 
-    # Override and reset the default axis values.
-    $self->{_x_axis_defaults}->{ num_format} = 'General';
-    $self->set_x_axis();
-
     bless $self, $class;
     return $self;
 }

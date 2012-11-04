@@ -40,7 +40,7 @@ sub new {
 
     # Override and reset the default axis values.
     if ( $self->{_subtype} eq 'percent_stacked' ) {
-        $self->{_y_axis_defaults}->{num_format} = '0%';
+        $self->{_y_axis}->{_defaults}->{num_format} = '0%';
     }
 
     $self->set_y_axis();
