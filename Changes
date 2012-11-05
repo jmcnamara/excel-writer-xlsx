@@ -5,6 +5,18 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.54 November 5 2012
+
+    + Added font manipulation to Charts.
+
+    + Added number formats to Chart axes.
+
+    + Added Radar Charts.
+
+    ! Fix for XML encoding in write_url() intenal/external 
+      links. Issue #37.
+
+
 0.53 October 10 2012
 
     ! Fix for broken MANIFEST file.

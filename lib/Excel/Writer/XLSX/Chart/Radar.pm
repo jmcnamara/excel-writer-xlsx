@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart);
-our $VERSION = '0.53';
+our $VERSION = '0.54';
 
 
 ###############################################################################
@@ -210,9 +210,9 @@ Here is a complete example that demonstrates most of the available features when
     # Add the worksheet data that the charts will refer to.
     my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
     my $data = [
-        [ 2, 3, 4, 5, 6, 7 ],
-        [ 10, 40, 50, 20, 10, 50 ],
+        [ 2,  3,  4,  5,  6,  7 ],
         [ 30, 60, 70, 50, 40, 30 ],
+        [ 25, 40, 50, 30, 50, 40 ],
 
     ];
 
@@ -255,7 +255,7 @@ Here is a complete example that demonstrates most of the available features when
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://homepage.eircom.net/~jmcnamara/perl/images/2007/radar1.jpg" width="483" height="291" alt="Chart example." /></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/radar1.jpg" width="483" height="291" alt="Chart example." /></center></p>
 
 =end html
 
@@ -269,4 +269,3 @@ John McNamara jmcnamara@cpan.org
 Copyright MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
-

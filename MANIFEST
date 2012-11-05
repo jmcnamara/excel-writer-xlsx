@@ -13,6 +13,7 @@ examples/chart_bar.pl
 examples/chart_column.pl
 examples/chart_line.pl
 examples/chart_pie.pl
+examples/chart_radar.pl
 examples/chart_scatter.pl
 examples/chart_secondary_axis.pl
 examples/chart_stock.pl
@@ -95,6 +96,7 @@ lib/Excel/Writer/XLSX/Chart/Bar.pm
 lib/Excel/Writer/XLSX/Chart/Column.pm
 lib/Excel/Writer/XLSX/Chart/Line.pm
 lib/Excel/Writer/XLSX/Chart/Pie.pm
+lib/Excel/Writer/XLSX/Chart/Radar.pm
 lib/Excel/Writer/XLSX/Chart/Scatter.pm
 lib/Excel/Writer/XLSX/Chart/Stock.pm
 lib/Excel/Writer/XLSX/Chartsheet.pm
@@ -149,7 +151,6 @@ t/chart/sub_write_marker.t
 t/chart/sub_write_marker_size.t
 t/chart/sub_write_marker_value.t
 t/chart/sub_write_num_cache.t
-t/chart/sub_write_num_fmt.t
 t/chart/sub_write_number_format.t
 t/chart/sub_write_order.t
 t/chart/sub_write_orientation.t
@@ -308,6 +309,10 @@ t/regression/chart_axis18.t
 t/regression/chart_axis19.t
 t/regression/chart_axis20.t
 t/regression/chart_axis21.t
+t/regression/chart_axis22.t
+t/regression/chart_axis23.t
+t/regression/chart_axis24.t
+t/regression/chart_axis25.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -378,6 +383,9 @@ t/regression/chart_name01.t
 t/regression/chart_name02.t
 t/regression/chart_name03.t
 t/regression/chart_pie01.t
+t/regression/chart_radar01.t
+t/regression/chart_radar02.t
+t/regression/chart_radar03.t
 t/regression/chart_scatter01.t
 t/regression/chart_scatter02.t
 t/regression/chart_scatter03.t
@@ -429,6 +437,7 @@ t/regression/escapes01.t
 t/regression/escapes02.t
 t/regression/escapes03.t
 t/regression/escapes04.t
+t/regression/escapes05.t
 t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
@@ -607,6 +616,10 @@ t/regression/xlsx_files/chart_axis18.xlsx
 t/regression/xlsx_files/chart_axis19.xlsx
 t/regression/xlsx_files/chart_axis20.xlsx
 t/regression/xlsx_files/chart_axis21.xlsx
+t/regression/xlsx_files/chart_axis22.xlsx
+t/regression/xlsx_files/chart_axis23.xlsx
+t/regression/xlsx_files/chart_axis24.xlsx
+t/regression/xlsx_files/chart_axis25.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -677,6 +690,9 @@ t/regression/xlsx_files/chart_name01.xlsx
 t/regression/xlsx_files/chart_name02.xlsx
 t/regression/xlsx_files/chart_name03.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
+t/regression/xlsx_files/chart_radar01.xlsx
+t/regression/xlsx_files/chart_radar02.xlsx
+t/regression/xlsx_files/chart_radar03.xlsx
 t/regression/xlsx_files/chart_scatter01.xlsx
 t/regression/xlsx_files/chart_scatter02.xlsx
 t/regression/xlsx_files/chart_scatter03.xlsx
@@ -727,6 +743,7 @@ t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
 t/regression/xlsx_files/escapes03.xlsx
 t/regression/xlsx_files/escapes04.xlsx
+t/regression/xlsx_files/escapes05.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx

@@ -23,6 +23,7 @@ chart_bar.pl            A demo of bar (vertical histogram) style charts.
 chart_column.pl         A demo of column (histogram) style charts.
 chart_line.pl           A demo of line style charts.
 chart_pie.pl            A demo of pie style charts.
+chart_radar.pl          A demo of radar style charts.
 chart_scatter.pl        A demo of scatter style charts.
 chart_secondary_axis.pl A demo of a line chart with a secondary axis.
 chart_stock.pl          A demo of stock style charts.

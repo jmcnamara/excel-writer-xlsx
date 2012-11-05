@@ -98,6 +98,8 @@ sub print_header {
 
     print "=pod\n\n";
 
+    print "=encoding ISO8859-1\n\n";
+
     print "=head1 NAME\n\n";
 
     print "Examples - Excel::Writer::XLSX example programs.\n\n";
@@ -288,6 +290,7 @@ chart_bar.jpg
 chart_column.jpg
 chart_line.jpg
 chart_pie.jpg
+chart_radar.jpg
 chart_scatter.jpg
 chart_secondary_axis.jpg
 chart_stock.jpg
