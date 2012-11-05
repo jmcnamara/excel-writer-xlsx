@@ -2,26 +2,25 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse ('(c)'), September 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), January 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
 use TestFunctions qw(_compare_xlsx_files _is_deep_diff);
 use strict;
 use warnings;
-
 use Test::More tests => 1;
 
 ###############################################################################
 #
 # Tests setup.
 #
-my $filename     = 'chart_font05.xlsx';
+my $filename     = 'chart_axis25.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members = [];
+my $ignore_members  = [];
 
 my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:pageMargins'] };
 
@@ -30,14 +29,15 @@ my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:pageMargins'] };
 #
 # Test the creation of a simple Excel::Writer::XLSX file.
 #
+use utf8;
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'bar', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 49407488, 53740288 ];
+$chart->{_axis_ids} = [ 47471232, 48509696 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -52,17 +52,8 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-$chart->set_title( name => 'Title' );
-
-$chart->set_x_axis(
-    name     => 'XXX',
-    num_font => { name => 'Arial', pitch_family => 34, charset => 0 }
-);
-
-$chart->set_y_axis(
-    name     => 'YYY',
-    num_font => { bold => 1, italic => 1, underline => 1, }
-);
+$chart->set_x_axis( num_format => '[$¥-411]#,##0.00' );
+$chart->set_y_axis( num_format => '0.00%' );
 
 $worksheet->insert_chart( 'E9', $chart );
 

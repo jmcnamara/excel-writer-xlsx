@@ -314,7 +314,7 @@ sub set_title {
     $self->{_title_data_id} = $data_id;
 
     # Set the font properties if present.
-    $self->{_title_font} = $self->_convert_font_args( $arg{font} );
+    $self->{_title_font} = $self->_convert_font_args( $arg{name_font} );
 }
 
 
@@ -549,23 +549,24 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
-        _defaults        => $axis->{_defaults},
-        _name            => $name,
-        _formula         => $name_formula,
-        _data_id         => $data_id,
-        _reverse         => $arg{reverse},
-        _min             => $arg{min},
-        _max             => $arg{max},
-        _minor_unit      => $arg{minor_unit},
-        _major_unit      => $arg{major_unit},
-        _minor_unit_type => $arg{minor_unit_type},
-        _major_unit_type => $arg{major_unit_type},
-        _log_base        => $arg{log_base},
-        _crossing        => $arg{crossing},
-        _position        => $arg{position},
-        _label_position  => $arg{label_position},
-        _num_format      => $arg{num_format},
-        _visible         => defined $arg{visible} ? $arg{visible} : 1,
+        _defaults          => $axis->{_defaults},
+        _name              => $name,
+        _formula           => $name_formula,
+        _data_id           => $data_id,
+        _reverse           => $arg{reverse},
+        _min               => $arg{min},
+        _max               => $arg{max},
+        _minor_unit        => $arg{minor_unit},
+        _major_unit        => $arg{major_unit},
+        _minor_unit_type   => $arg{minor_unit_type},
+        _major_unit_type   => $arg{major_unit_type},
+        _log_base          => $arg{log_base},
+        _crossing          => $arg{crossing},
+        _position          => $arg{position},
+        _label_position    => $arg{label_position},
+        _num_format        => $arg{num_format},
+        _num_format_linked => $arg{num_format_linked},
+        _visible           => defined $arg{visible} ? $arg{visible} : 1,
     };
 
     # Map major_gridlines properties.
@@ -580,8 +581,8 @@ sub _convert_axis_args {
     }
 
     # Set the font properties if present.
-    $axis->{_number_font} = $self->_convert_font_args( $arg{number_font} );
-    $axis->{_label_font}  = $self->_convert_font_args( $arg{label_font} );
+    $axis->{_num_font}  = $self->_convert_font_args( $arg{num_font} );
+    $axis->{_name_font} = $self->_convert_font_args( $arg{name_font} );
 
     return $axis;
 }
@@ -1899,10 +1900,10 @@ sub _write_cat_axis {
     if ( $title = $x_axis->{_formula} ) {
 
         $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz,
-            $x_axis->{_label_font} );
+            $x_axis->{_name_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $x_axis->{_label_font} );
+        $self->_write_title_rich( $title, $horiz, $x_axis->{_name_font} );
     }
 
     # Write the c:numFmt element.
@@ -1915,7 +1916,7 @@ sub _write_cat_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the axis font elements.
-    $self->_write_axis_font( $x_axis->{_number_font} );
+    $self->_write_axis_font( $x_axis->{_num_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -1993,10 +1994,10 @@ sub _write_val_axis {
     my $title;
     if ( $title = $y_axis->{_formula} ) {
         $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
-            $y_axis->{_label_font} );
+            $y_axis->{_name_font} );
     }
     elsif ( $title = $y_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $y_axis->{_label_font} );
+        $self->_write_title_rich( $title, $horiz, $y_axis->{_name_font} );
     }
 
     # Write the c:numberFormat element.
@@ -2009,7 +2010,7 @@ sub _write_val_axis {
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
     # Write the axis font elements.
-    $self->_write_axis_font( $y_axis->{_number_font} );
+    $self->_write_axis_font( $y_axis->{_num_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[0] );
@@ -2080,10 +2081,10 @@ sub _write_cat_val_axis {
     my $title;
     if ( $title = $x_axis->{_formula} ) {
         $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
-            $x_axis->{_label_font} );
+            $x_axis->{_name_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $x_axis->{_label_font} );
+        $self->_write_title_rich( $title, $horiz, $x_axis->{_name_font} );
     }
 
     # Write the c:numberFormat element.
@@ -2096,7 +2097,7 @@ sub _write_cat_val_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the axis font elements.
-    $self->_write_axis_font( $x_axis->{_number_font} );
+    $self->_write_axis_font( $x_axis->{_num_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -2166,10 +2167,10 @@ sub _write_date_axis {
     my $title;
     if ( $title = $x_axis->{_formula} ) {
         $self->_write_title_formula( $title, $x_axis->{_data_id}, undef,
-            $x_axis->{_label_font} );
+            $x_axis->{_name_font} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, undef, $x_axis->{_label_font} );
+        $self->_write_title_rich( $title, undef, $x_axis->{_name_font} );
     }
 
     # Write the c:numFmt element.
@@ -2182,7 +2183,7 @@ sub _write_date_axis {
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
     # Write the axis font elements.
-    $self->_write_axis_font( $x_axis->{_number_font} );
+    $self->_write_axis_font( $x_axis->{_num_font} );
 
     # Write the c:crossAx element.
     $self->_write_cross_axis( $axis_ids->[1] );
@@ -2366,8 +2367,7 @@ sub _write_axis_pos {
 #
 # Write the <c:numberFormat> element. Note: It is assumed that if a user
 # defined number format is supplied (i.e., non-default) then the sourceLinked
-# attribute is 0. This isn't always true since in some cases the user can
-# choose to maintain the link. However, it will do for majority of cases.
+# attribute is 0. The user can override this if required.
 #
 sub _write_number_format {
 
@@ -2379,6 +2379,11 @@ sub _write_number_format {
     # Check if a user defined number format has been set.
     if ( $format_code ne $axis->{_defaults}->{num_format} ) {
         $source_linked  = 0;
+    }
+
+    # User override of sourceLinked.
+    if ( $axis->{_num_format_linked} ) {
+        $source_linked = 1;
     }
 
     my @attributes = (
@@ -2409,6 +2414,11 @@ sub _write_cat_number_format {
     if ( $format_code ne $axis->{_defaults}->{num_format} ) {
         $source_linked  = 0;
         $default_format = 0;
+    }
+
+    # User override of linkedSource.
+    if ( $axis->{_num_format_linked} ) {
+        $source_linked = 1;
     }
 
     # Skip if cat doesn't have a num format (unless it is non-default).
@@ -2800,7 +2810,7 @@ sub _write_plot_vis_only {
     my $self = shift;
     my $val  = 1;
 
-    # Ignore this element if we are plitting hidden data.
+    # Ignore this element if we are plotting hidden data.
     return if $self->{_show_hidden_data};
 
     my @attributes = ( 'val' => $val );
@@ -4359,6 +4369,9 @@ The C<set_x_axis()> method is used to set properties of the X axis.
 The properties that can be set are:
 
     name
+    name_font
+    num_font
+    num_format
     min
     max
     minor_unit
@@ -4382,6 +4395,31 @@ Set the name (title or caption) for the axis. The name is displayed below the X 
     $chart->set_x_axis( name => 'Quarterly results' );
 
 The name can also be a formula such as C<=Sheet1!$A$1>.
+
+=item * C<name_font>
+
+Set the font properties for the axis title. (Applicable to category and value axes).
+
+    $chart->set_x_axis( name_font => { name => 'Arial', size => 10 } );
+
+See the L</CHART FONTS> section below.
+
+=item * C<num_font>
+
+Set the font properties for the axis numbers. (Applicable to category and value axes).
+
+    $chart->set_x_axis( num_font => { bold => 1, italic => 1 } );
+
+See the L</CHART FONTS> section below.
+
+=item * C<num_format>
+
+Set the number format for the axis. (Applicable to category and value axes).
+
+    $chart->set_x_axis( num_format => '#,##0.00' );
+    $chart->set_y_axis( num_format => '0.00%'    );
+
+The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as show above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
 
 =item * C<min>
 
@@ -4456,7 +4494,7 @@ Configure the visibility of the axis.
 
 =back
 
-More than one property can be set in a call to C<set_x_axis>:
+More than one property can be set in a call to C<set_x_axis()>:
 
     $chart->set_x_axis(
         name => 'Quarterly results',
@@ -4503,6 +4541,10 @@ The properties that can be set are:
 =item * C<name>
 
 Set the name (title) for the chart. The name is displayed above the chart. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no chart title.
+
+=item * C<name_font>
+
+Set the font properties for the chart title. See the L</CHART FONTS> section below.
 
 =back
 
@@ -4958,6 +5000,101 @@ Note: Even when leader lines are turned on they aren't automatically visible in 
 
 Other formatting options will be added in time. If there is a feature that you would like to see included drop me a line.
 
+
+=head1 CHART FONTS
+
+The following font properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart titles, axis labels and axis numbering. They correspond to the equivalent Worksheet cell Format object properties. See L<Excel::Writer::XLSX/FORMAT_METHODS> for more information.
+
+    name
+    size
+    bold
+    italic
+    underline
+    color
+
+The following explains the available font properties:
+
+=over
+
+=item * C<name>
+
+Set the font name:
+
+    $chart->set_x_axis( num_font => { name => 'Arial' } );
+
+=item * C<size>
+
+Set the font size:
+
+    $chart->set_x_axis( num_font => { name => 'Arial', size => 10 } );
+
+=item * C<bold>
+
+Set the font bold property, should be 0 or 1:
+
+    $chart->set_x_axis( num_font => { bold => 1 } );
+
+=item * C<italic>
+
+Set the font italic property, should be 0 or 1:
+
+    $chart->set_x_axis( num_font => { italic => 1 } );
+
+=item * C<underline>
+
+Set the font underline property, should be 0 or 1:
+
+    $chart->set_x_axis( num_font => { underline => 1 } );
+
+=item * C<color>
+
+Set the font color property. Can be a color index, a color name or HTML style RGB colour:
+
+    $chart->set_x_axis( num_font => { color => 'red' } );
+    $chart->set_y_axis( num_font => { color => '#92D050' } );
+
+=back
+
+Here is an example of Font formatting in a Chart program:
+
+    # Format the chart title.
+    $chart->set_title(
+        name      => 'Sales Results Chart',
+        name_font => {
+            name  => 'Calibri',
+            color => 'yellow',
+        },
+    );
+
+    # Format the X-axis.
+    $chart->set_x_axis(
+        name      => 'Month',
+        name_font => {
+            name  => 'Arial',
+            color => '#92D050'
+        },
+        num_font => {
+            name  => 'Courier New',
+            color => '#00B0F0',
+        },
+    );
+
+    # Format the Y-axis.
+    $chart->set_y_axis(
+        name      => 'Sales (1000 units)',
+        name_font => {
+            name      => 'Century',
+            underline => 1,
+            color     => 'red'
+        },
+        num_font => {
+            bold   => 1,
+            italic => 1,
+            color  => '#7030A0',
+        },
+    );
+
+
 =head1 WORKSHEET METHODS
 
 In Excel a chartsheet (i.e, a chart that isn't embedded) shares properties with data worksheets such as tab selection, headers, footers, margins, and print properties.
@@ -5097,4 +5234,3 @@ John McNamara jmcnamara@cpan.org
 Copyright MM-MMXII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
-

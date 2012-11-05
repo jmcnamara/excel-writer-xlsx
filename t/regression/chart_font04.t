@@ -53,18 +53,18 @@ $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
 $chart->set_title(
-    name => '=Sheet1!$A$1',
-    font => { bold => 0, italic => 1 },
+    name      => '=Sheet1!$A$1',
+    name_font => { bold => 0, italic => 1 },
 );
 
 $chart->set_x_axis(
-    name        => '=Sheet1!$A$2',
-    label_font => { bold => 0, italic => 1 },
+    name      => '=Sheet1!$A$2',
+    name_font => { bold => 0, italic => 1 },
 );
 
 $chart->set_y_axis(
-    name        => '=Sheet1!$A$3',
-    label_font => { bold => 1, italic => 1 },
+    name      => '=Sheet1!$A$3',
+    name_font => { bold => 1, italic => 1 },
 );
 
 $worksheet->insert_chart( 'E9', $chart );
