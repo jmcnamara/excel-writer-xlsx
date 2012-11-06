@@ -65,8 +65,9 @@ sub new {
     $self->{_optimization} = $_[10] || 0;
     $self->{_tempdir}      = $_[11];
 
-    $self->{_ext_sheets} = [];
-    $self->{_fileclosed} = 0;
+    $self->{_ext_sheets}    = [];
+    $self->{_fileclosed}    = 0;
+    $self->{_excel_version} = 2007;
 
     $self->{_xls_rowmax} = $rowmax;
     $self->{_xls_colmax} = $colmax;
@@ -186,6 +187,7 @@ sub new {
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
     $self->{_tables}                 = [];
+    $self->{_sparklines}             = [];
     $self->{_shapes}                 = [];
     $self->{_shape_hash}             = {};
     $self->{_drawing}                = 0;
@@ -321,8 +323,8 @@ sub _assemble_xml_file {
     # Write the tableParts element.
     $self->_write_table_parts();
 
-    # Write the worksheet extension storage.
-    #$self->_write_ext_lst();
+    # Write the estLst and sparklines.
+    $self->_write_ext_sparklines();
 
     # Close the worksheet tag.
     $self->xml_end_tag( 'worksheet' );
@@ -5607,6 +5609,18 @@ sub _write_worksheet {
         'xmlns:r' => $xmlns_r,
     );
 
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes,
+          ( 'xmlns:mc' => $schema . 'markup-compatibility/2006' );
+
+        push @attributes,
+          (     'xmlns:x14ac' => 'http://schemas.microsoft.com/'
+              . 'office/spreadsheetml/2009/9/ac' );
+
+        push @attributes, ( 'mc:Ignorable' => 'x14ac' );
+
+    }
+
     $self->xml_start_tag( 'worksheet', @attributes );
 }
 
@@ -5888,6 +5902,10 @@ sub _write_sheet_format_pr {
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
     push @attributes, ( 'outlineLevelRow' => $row_level ) if $row_level;
     push @attributes, ( 'outlineLevelCol' => $col_level ) if $col_level;
+
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes, ( 'x14ac:dyDescent' => '0.25' );
+    }
 
     $self->xml_empty_tag( 'sheetFormatPr', @attributes );
 }
@@ -6277,6 +6295,9 @@ sub _write_row {
     push @attributes, ( 'outlineLevel' => $level )    if $level;
     push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
 
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes, ( 'x14ac:dyDescent' => '0.25' );
+    }
 
     if ( $empty_row ) {
         $self->xml_empty_tag( 'row', @attributes );
@@ -6630,67 +6651,6 @@ sub _write_page_setup {
 
 
     $self->xml_empty_tag( 'pageSetup', @attributes );
-}
-
-
-##############################################################################
-#
-# _write_ext_lst()
-#
-# Write the <extLst> element.
-#
-sub _write_ext_lst {
-
-    my $self = shift;
-
-    $self->xml_start_tag( 'extLst' );
-    $self->_write_ext();
-    $self->xml_end_tag( 'extLst' );
-}
-
-
-###############################################################################
-#
-# _write_ext()
-#
-# Write the <ext> element.
-#
-sub _write_ext {
-
-    my $self    = shift;
-    my $xmlnsmx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
-    my $uri     = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
-
-    my @attributes = (
-        'xmlns:mx' => $xmlnsmx,
-        'uri'      => $uri,
-    );
-
-    $self->xml_start_tag( 'ext', @attributes );
-    $self->_write_mx_plv();
-    $self->xml_end_tag( 'ext' );
-}
-
-###############################################################################
-#
-# _write_mx_plv()
-#
-# Write the <mx:PLV> element.
-#
-sub _write_mx_plv {
-
-    my $self     = shift;
-    my $mode     = 1;
-    my $one_page = 0;
-    my $w_scale  = 0;
-
-    my @attributes = (
-        'Mode'    => $mode,
-        'OnePage' => $one_page,
-        'WScale'  => $w_scale,
-    );
-
-    $self->xml_empty_tag( 'mx:PLV', @attributes );
 }
 
 
@@ -7631,11 +7591,13 @@ sub _write_font {
         $self->_write_rstring_color( 'theme' => 1 );
     }
 
-    $self->{_rstring}->xml_empty_tag( 'rFont',  'val', $format->{_font} );
-    $self->{_rstring}->xml_empty_tag( 'family', 'val', $format->{_font_family} );
+    $self->{_rstring}->xml_empty_tag( 'rFont', 'val', $format->{_font} );
+    $self->{_rstring}
+      ->xml_empty_tag( 'family', 'val', $format->{_font_family} );
 
     if ( $format->{_font} eq 'Calibri' && !$format->{_hyperlink} ) {
-        $self->{_rstring}->xml_empty_tag( 'scheme', 'val', $format->{_font_scheme} );
+        $self->{_rstring}
+          ->xml_empty_tag( 'scheme', 'val', $format->{_font_scheme} );
     }
 
     $self->{_rstring}->xml_end_tag( 'rPr' );
@@ -8185,6 +8147,301 @@ sub _write_table_part {
     my @attributes = ( 'r:id' => $r_id, );
 
     $self->xml_empty_tag( 'tablePart', @attributes );
+}
+
+
+# TODO Sparklines. Work in progress.
+
+
+##############################################################################
+#
+# _write_ext_sparklines()
+#
+# Write the <extLst> element and sparkline subelements.
+#
+sub _write_ext_sparklines {
+
+    my $self       = shift;
+    my @sparklines = @{ $self->{_sparklines} };
+    my $count      = scalar @sparklines;
+
+    # Return if worksheet doesn't contain any sparklines.
+    return unless $count;
+
+
+    # Write the extLst element.
+    $self->xml_start_tag( 'extLst' );
+
+    # Write the ext element.
+    $self->_write_ext();
+
+    # Write the x14:sparklineGroups element.
+    $self->_write_sparkline_groups();
+
+    # Write the sparkline elements.
+    for my $sparkline ( reverse @sparklines ) {
+
+        # Write the x14:sparklineGroup element.
+        $self->_write_sparkline_group( $sparkline->{_type} );
+
+        # Write the x14:colorSeries element.
+        $self->_write_color_series();
+
+        # Write the x14:colorNegative element.
+        $self->_write_color_negative();
+
+        # Write the x14:colorAxis element.
+        $self->_write_color_axis();
+
+        # Write the x14:colorMarkers element.
+        $self->_write_color_markers();
+
+        # Write the x14:colorFirst element.
+        $self->_write_color_first();
+
+        # Write the x14:colorLast element.
+        $self->_write_color_last();
+
+        # Write the x14:colorHigh element.
+        $self->_write_color_high();
+
+        # Write the x14:colorLow element.
+        $self->_write_color_low();
+
+        $self->xml_start_tag( 'x14:sparklines' );
+        $self->xml_start_tag( 'x14:sparkline' );
+
+        $self->xml_encoded_data_element( 'xm:f',     $sparkline->{_formula} );
+        $self->xml_encoded_data_element( 'xm:sqref', $sparkline->{_range} );
+
+        $self->xml_end_tag( 'x14:sparkline' );
+        $self->xml_end_tag( 'x14:sparklines' );
+
+        $self->xml_end_tag( 'x14:sparklineGroup' );
+    }
+
+
+    $self->xml_end_tag( 'x14:sparklineGroups' );
+    $self->xml_end_tag( 'ext' );
+    $self->xml_end_tag( 'extLst' );
+
+
+}
+
+
+##############################################################################
+#
+# _write_ext()
+#
+# Write the <ext> element.
+#
+sub _write_ext {
+
+    my $self       = shift;
+    my $schema     = 'http://schemas.microsoft.com/office/';
+    my $xmlns_x_14 = $schema . 'spreadsheetml/2009/9/main';
+    my $uri        = '{05C60535-1F16-4fd2-B633-F4F36F0B64E0}';
+
+    my @attributes = (
+        'xmlns:x14' => $xmlns_x_14,
+        'uri'       => $uri,
+    );
+
+    $self->xml_start_tag( 'ext', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_sparkline_groups()
+#
+# Write the <x14:sparklineGroups> element.
+#
+sub _write_sparkline_groups {
+
+    my $self     = shift;
+    my $xmlns_xm = 'http://schemas.microsoft.com/office/excel/2006/main';
+
+    my @attributes = ( 'xmlns:xm' => $xmlns_xm );
+
+    $self->xml_start_tag( 'x14:sparklineGroups', @attributes );
+
+}
+
+
+##############################################################################
+#
+# _write_sparkline_group()
+#
+# Write the <x14:sparklineGroup> element.
+#
+sub _write_sparkline_group {
+
+    my $self        = shift;
+    my $type        = shift || 'line';
+    my $empty_cells = 'gap';
+    my @attributes;
+
+    # Ignore the default type attribute (line).
+    if ( $type ne 'line' ) {
+        push @attributes, ( 'type' => $type );
+    }
+
+    push @attributes, ( 'displayEmptyCellsAs' => $empty_cells );
+
+    $self->xml_start_tag( 'x14:sparklineGroup', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_series()
+#
+# Write the <x14:colorSeries> element.
+#
+sub _write_color_series {
+
+    my $self  = shift;
+    my $theme = 4;
+    my $tint  = "-0.499984740745262";
+
+    my @attributes = (
+        'theme' => $theme,
+        'tint'  => $tint,
+    );
+
+    $self->xml_empty_tag( 'x14:colorSeries', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_negative()
+#
+# Write the <x14:colorNegative> element.
+#
+sub _write_color_negative {
+
+    my $self  = shift;
+    my $theme = 5;
+
+    my @attributes = ( 'theme' => $theme );
+
+    $self->xml_empty_tag( 'x14:colorNegative', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_axis()
+#
+# Write the <x14:colorAxis> element.
+#
+sub _write_color_axis {
+
+    my $self = shift;
+    my $rgb  = 'FF000000';
+
+    my @attributes = ( 'rgb' => $rgb );
+
+    $self->xml_empty_tag( 'x14:colorAxis', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_markers()
+#
+# Write the <x14:colorMarkers> element.
+#
+sub _write_color_markers {
+
+    my $self  = shift;
+    my $theme = 4;
+    my $tint  = "-0.499984740745262";
+
+    my @attributes = (
+        'theme' => $theme,
+        'tint'  => $tint,
+    );
+
+    $self->xml_empty_tag( 'x14:colorMarkers', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_first()
+#
+# Write the <x14:colorFirst> element.
+#
+sub _write_color_first {
+
+    my $self  = shift;
+    my $theme = 4;
+    my $tint  = "0.39997558519241921";
+
+    my @attributes = (
+        'theme' => $theme,
+        'tint'  => $tint,
+    );
+
+    $self->xml_empty_tag( 'x14:colorFirst', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_last()
+#
+# Write the <x14:colorLast> element.
+#
+sub _write_color_last {
+
+    my $self  = shift;
+    my $theme = 4;
+    my $tint  = "0.39997558519241921";
+
+    my @attributes = (
+        'theme' => $theme,
+        'tint'  => $tint,
+    );
+
+    $self->xml_empty_tag( 'x14:colorLast', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_high()
+#
+# Write the <x14:colorHigh> element.
+#
+sub _write_color_high {
+
+    my $self  = shift;
+    my $theme = 4;
+
+    my @attributes = ( 'theme' => $theme );
+
+    $self->xml_empty_tag( 'x14:colorHigh', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_color_low()
+#
+# Write the <x14:colorLow> element.
+#
+sub _write_color_low {
+
+    my $self  = shift;
+    my $theme = 4;
+
+    my @attributes = ( 'theme' => $theme );
+
+    $self->xml_empty_tag( 'x14:colorLow', @attributes );
 }
 
 

@@ -933,8 +933,6 @@ t/worksheet/sub_write_custom_filters.t
 t/worksheet/sub_write_data_validations_01.t
 t/worksheet/sub_write_data_validations_02.t
 t/worksheet/sub_write_dimension.t
-t/worksheet/sub_write_ext.t
-t/worksheet/sub_write_ext_lst.t
 t/worksheet/sub_write_filter.t
 t/worksheet/sub_write_filter_column.t
 t/worksheet/sub_write_filters.t
@@ -944,7 +942,6 @@ t/worksheet/sub_write_hyperlinks.t
 t/worksheet/sub_write_legacy_drawing.t
 t/worksheet/sub_write_merge_cell.t
 t/worksheet/sub_write_merge_cells.t
-t/worksheet/sub_write_mx_plv.t
 t/worksheet/sub_write_page_margins.t
 t/worksheet/sub_write_page_set_up_pr.t
 t/worksheet/sub_write_page_setup.t
