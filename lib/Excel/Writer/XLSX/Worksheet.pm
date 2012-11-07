@@ -3547,13 +3547,13 @@ sub conditional_formatting {
         }
         elsif ( $param->{criteria} eq 'beginsWith' ) {
             $param->{type}    = 'beginsWith';
-            $param->{formula} = sprintf 'LEFT(%s,1)="%s"',
-              $start_cell, $param->{value};
+            $param->{formula} = sprintf 'LEFT(%s,%d)="%s"',
+              $start_cell, length( $param->{value} ), $param->{value};
         }
         elsif ( $param->{criteria} eq 'endsWith' ) {
             $param->{type}    = 'endsWith';
-            $param->{formula} = sprintf 'RIGHT(%s,1)="%s"',
-              $start_cell, $param->{value};
+            $param->{formula} = sprintf 'RIGHT(%s,%d)="%s"',
+              $start_cell, length( $param->{value} ), $param->{value};
         }
         else {
             carp "Invalid text criteria '$param->{criteria}' "
