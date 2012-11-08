@@ -30,17 +30,18 @@ $caption = " \tWorksheet: _assemble_xml_file()";
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->{_excel_version} = 2010;
+$worksheet->{_name}          = 'Sheet1';
 $worksheet->select();
 
 my $data = [ -2, 2, 3, -1, 0 ];
 
 $worksheet->write('A1', $data);
 
-# Set up sparkline
+# Set up sparklines
 
 # No sparkline in the first testcase.
 
-# End sparkline
+# End sparklines
 
 $worksheet->_assemble_xml_file();
 

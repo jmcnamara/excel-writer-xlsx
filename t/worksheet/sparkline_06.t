@@ -36,18 +36,18 @@ $worksheet->select();
 my $data = [ -2, 2, 3, -1, 0 ];
 
 $worksheet->write('A1', $data);
+$worksheet->write('A2', $data);
 
 # Set up sparklines
 
 $worksheet->add_sparkline(
     {
-        location => ['$F$1'],
-        range    => ['$A$1:$E$1'],
-        type     => 'win_loss',
+        location => [ 'F1',    'F2' ],
+        range    => [ 'A1:E1', 'A2:E2' ],
     }
 );
 
-# End sparklines
+# End sparkline
 
 $worksheet->_assemble_xml_file();
 
@@ -59,7 +59,7 @@ _is_deep_diff( $got, $expected, $caption );
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" mc:Ignorable="x14ac">
-  <dimension ref="A1:E1"/>
+  <dimension ref="A1:E2"/>
   <sheetViews>
     <sheetView tabSelected="1" workbookViewId="0"/>
   </sheetViews>
@@ -82,12 +82,29 @@ __DATA__
         <v>0</v>
       </c>
     </row>
+    <row r="2" spans="1:5" x14ac:dyDescent="0.25">
+      <c r="A2">
+        <v>-2</v>
+      </c>
+      <c r="B2">
+        <v>2</v>
+      </c>
+      <c r="C2">
+        <v>3</v>
+      </c>
+      <c r="D2">
+        <v>-1</v>
+      </c>
+      <c r="E2">
+        <v>0</v>
+      </c>
+    </row>
   </sheetData>
   <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
   <extLst>
     <ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}">
       <x14:sparklineGroups xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
-        <x14:sparklineGroup type="stacked" displayEmptyCellsAs="gap">
+        <x14:sparklineGroup displayEmptyCellsAs="gap">
           <x14:colorSeries theme="4" tint="-0.499984740745262"/>
           <x14:colorNegative theme="5"/>
           <x14:colorAxis rgb="FF000000"/>
@@ -100,6 +117,10 @@ __DATA__
             <x14:sparkline>
               <xm:f>Sheet1!A1:E1</xm:f>
               <xm:sqref>F1</xm:sqref>
+            </x14:sparkline>
+            <x14:sparkline>
+              <xm:f>Sheet1!A2:E2</xm:f>
+              <xm:sqref>F2</xm:sqref>
             </x14:sparkline>
           </x14:sparklines>
         </x14:sparklineGroup>

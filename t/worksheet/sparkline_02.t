@@ -30,17 +30,21 @@ $caption = " \tWorksheet: _assemble_xml_file()";
 
 $worksheet = _new_worksheet(\$got);
 $worksheet->{_excel_version} = 2010;
+$worksheet->{_name}          = 'Sheet1';
 $worksheet->select();
 
 my $data = [ -2, 2, 3, -1, 0 ];
 
 $worksheet->write('A1', $data);
 
-# Set up sparkline
+# Set up sparklines
 
-my $sparklines = [ { _formula => 'Sheet1!A1:E1', _range => 'F1' } ];
-
-$worksheet->{_sparklines} = $sparklines;
+$worksheet->add_sparkline(
+    {
+        location => 'F1',
+        range    => 'Sheet1!A1:E1',
+    }
+);
 
 # End sparkline
 

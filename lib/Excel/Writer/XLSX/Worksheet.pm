@@ -8153,6 +8153,127 @@ sub _write_table_part {
 # TODO Sparklines. Work in progress.
 
 
+###############################################################################
+#
+# add_sparkline()
+#
+# TODO
+#
+sub add_sparkline {
+
+    my $self      = shift;
+    my $param     = shift;
+    my $sparkline = {};
+
+    # Check that the last parameter is a hash list.
+    if ( ref $param ne 'HASH' ) {
+        carp "Parameter list in add_sparkline() must be a hash ref";
+        return -1;
+    }
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        location        => 1,
+        range           => 1,
+        type            => 1,
+        high_point      => 1,
+        low_point       => 1,
+        negative_points => 1,
+        first_point     => 1,
+        last_point      => 1,
+        markers         => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $param_key ( keys %$param ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in add_sparkline()";
+            return -2;
+        }
+    }
+
+    # 'location' is a required parameter.
+    if ( not exists $param->{location} ) {
+        carp "Parameter 'location' is required in add_sparkline()";
+        return -3;
+    }
+
+    # 'range' is a required parameter.
+    if ( not exists $param->{range} ) {
+        carp "Parameter 'range' is required in add_sparkline()";
+        return -3;
+    }
+
+
+    # Handle the sparkline type.
+    my $type = $param->{type} || 'line';
+
+    if ( $type ne 'line' && $type ne 'column' && $type ne 'win_loss' ) {
+        carp "Parameter 'type' must be 'line', 'column' "
+          . "or 'win_loss' in add_sparkline()";
+        return -4;
+    }
+
+    $type = 'stacked' if $type eq 'win_loss';
+    $sparkline->{_type} = $type;
+
+
+    # We handle single location/range values or array refs of values.
+    if ( ref $param->{location} ) {
+        $sparkline->{_locations} = $param->{location};
+        $sparkline->{_ranges}    = $param->{range};
+    }
+    else {
+        $sparkline->{_locations} = [ $param->{location} ];
+        $sparkline->{_ranges}    = [ $param->{range} ];
+    }
+
+    my $range_count    = @{ $sparkline->{_ranges} };
+    my $location_count = @{ $sparkline->{_locations} };
+
+    # The ranges and locations must match.
+    if ( $range_count != $location_count ) {
+        carp "Must have the same number of location and range "
+          . "parameters in add_sparkline()";
+        return -5;
+    }
+
+    # Store the count.
+    $sparkline->{_count} = @{ $sparkline->{_locations} };
+
+
+    # Get the worksheet name for the range conversion below.
+    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+
+    # Cleanup the input ranges.
+    for my $range ( @{ $sparkline->{_ranges} } ) {
+
+        # Remove the absolute reference $ symbols.
+        $range =~ s{\$}{}g;
+
+        # Convert a simiple range into a full Sheet1!A1:D1 range.
+        if ( $range !~ /!/ ) {
+            $range = $sheetname . "!" . $range;
+        }
+    }
+
+    # Cleanup the input locations.
+    for my $location ( @{ $sparkline->{_locations} } ) {
+        $location =~ s{\$}{}g;
+    }
+
+    # Map options.
+    $sparkline->{_high}     = $param->{high_point};
+    $sparkline->{_low}      = $param->{low_point};
+    $sparkline->{_negative} = $param->{negative_points};
+    $sparkline->{_first}    = $param->{first_point};
+    $sparkline->{_last}     = $param->{last_point};
+    $sparkline->{_markers}  = $param->{markers};
+
+    push @{ $self->{_sparklines} }, $sparkline;
+}
+
+
 ##############################################################################
 #
 # _write_ext_sparklines()
@@ -8182,7 +8303,7 @@ sub _write_ext_sparklines {
     for my $sparkline ( reverse @sparklines ) {
 
         # Write the x14:sparklineGroup element.
-        $self->_write_sparkline_group( $sparkline->{_type} );
+        $self->_write_sparkline_group( $sparkline );
 
         # Write the x14:colorSeries element.
         $self->_write_color_series();
@@ -8208,14 +8329,7 @@ sub _write_ext_sparklines {
         # Write the x14:colorLow element.
         $self->_write_color_low();
 
-        $self->xml_start_tag( 'x14:sparklines' );
-        $self->xml_start_tag( 'x14:sparkline' );
-
-        $self->xml_encoded_data_element( 'xm:f',     $sparkline->{_formula} );
-        $self->xml_encoded_data_element( 'xm:sqref', $sparkline->{_range} );
-
-        $self->xml_end_tag( 'x14:sparkline' );
-        $self->xml_end_tag( 'x14:sparklines' );
+        $self->_write_sparklines($sparkline);
 
         $self->xml_end_tag( 'x14:sparklineGroup' );
     }
@@ -8224,8 +8338,34 @@ sub _write_ext_sparklines {
     $self->xml_end_tag( 'x14:sparklineGroups' );
     $self->xml_end_tag( 'ext' );
     $self->xml_end_tag( 'extLst' );
+}
 
 
+##############################################################################
+#
+# _write_sparklines()
+#
+# Write the <x14:sparklines> element and <x14:sparkline> subelements.
+#
+sub _write_sparklines {
+
+    my $self      = shift;
+    my $sparkline = shift;
+
+    # Write the sparkline elements.
+    $self->xml_start_tag( 'x14:sparklines' );
+
+    for my $i ( 0 .. $sparkline->{_count} - 1 ) {
+        my $range    = $sparkline->{_ranges}->[$i];
+        my $location = $sparkline->{_locations}->[$i];
+
+        $self->xml_start_tag( 'x14:sparkline' );
+        $self->xml_encoded_data_element( 'xm:f',     $range );
+        $self->xml_encoded_data_element( 'xm:sqref', $location );
+        $self->xml_end_tag( 'x14:sparkline' );
+    }
+
+    $self->xml_end_tag( 'x14:sparklines' );
 }
 
 
@@ -8275,19 +8415,46 @@ sub _write_sparkline_groups {
 #
 # Write the <x14:sparklineGroup> element.
 #
+# Example for order.
+#
+# <x14:sparklineGroup
+#     manualMax="0"
+#     manualMin="0"
+#     dateAxis="1"
+#     displayEmptyCellsAs="span"
+#     markers="1"
+#     high="1"
+#     low="1"
+#     first="1"
+#     last="1"
+#     negative="1"
+#     displayXAxis="1"
+#     displayHidden="1"
+#     minAxisType="custom"
+#     maxAxisType="custom"
+#     rightToLeft="1">
+#
 sub _write_sparkline_group {
 
     my $self        = shift;
-    my $type        = shift || 'line';
+    my $opts   = shift;
     my $empty_cells = 'gap';
     my @attributes;
 
+
     # Ignore the default type attribute (line).
-    if ( $type ne 'line' ) {
-        push @attributes, ( 'type' => $type );
+    if ( $opts->{_type} ne 'line' ) {
+        push @attributes, ( 'type' => $opts->{_type} );
     }
 
     push @attributes, ( 'displayEmptyCellsAs' => $empty_cells );
+
+    push @attributes, ( 'markers'  => 1 ) if $opts->{_markers};
+    push @attributes, ( 'high'     => 1 ) if $opts->{_high};
+    push @attributes, ( 'low'      => 1 ) if $opts->{_low};
+    push @attributes, ( 'first'    => 1 ) if $opts->{_first};
+    push @attributes, ( 'last'     => 1 ) if $opts->{_last};
+    push @attributes, ( 'negative' => 1 ) if $opts->{_negative};
 
     $self->xml_start_tag( 'x14:sparklineGroup', @attributes );
 }
