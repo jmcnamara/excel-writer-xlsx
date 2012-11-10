@@ -65,8 +65,9 @@ sub new {
     $self->{_optimization} = $_[10] || 0;
     $self->{_tempdir}      = $_[11];
 
-    $self->{_ext_sheets} = [];
-    $self->{_fileclosed} = 0;
+    $self->{_ext_sheets}    = [];
+    $self->{_fileclosed}    = 0;
+    $self->{_excel_version} = 2007;
 
     $self->{_xls_rowmax} = $rowmax;
     $self->{_xls_colmax} = $colmax;
@@ -186,6 +187,7 @@ sub new {
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
     $self->{_tables}                 = [];
+    $self->{_sparklines}             = [];
     $self->{_shapes}                 = [];
     $self->{_shape_hash}             = {};
     $self->{_drawing}                = 0;
@@ -321,8 +323,8 @@ sub _assemble_xml_file {
     # Write the tableParts element.
     $self->_write_table_parts();
 
-    # Write the worksheet extension storage.
-    #$self->_write_ext_lst();
+    # Write the estLst and sparklines.
+    $self->_write_ext_sparklines();
 
     # Close the worksheet tag.
     $self->xml_end_tag( 'worksheet' );
@@ -5607,6 +5609,18 @@ sub _write_worksheet {
         'xmlns:r' => $xmlns_r,
     );
 
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes,
+          ( 'xmlns:mc' => $schema . 'markup-compatibility/2006' );
+
+        push @attributes,
+          (     'xmlns:x14ac' => 'http://schemas.microsoft.com/'
+              . 'office/spreadsheetml/2009/9/ac' );
+
+        push @attributes, ( 'mc:Ignorable' => 'x14ac' );
+
+    }
+
     $self->xml_start_tag( 'worksheet', @attributes );
 }
 
@@ -5888,6 +5902,10 @@ sub _write_sheet_format_pr {
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
     push @attributes, ( 'outlineLevelRow' => $row_level ) if $row_level;
     push @attributes, ( 'outlineLevelCol' => $col_level ) if $col_level;
+
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes, ( 'x14ac:dyDescent' => '0.25' );
+    }
 
     $self->xml_empty_tag( 'sheetFormatPr', @attributes );
 }
@@ -6277,6 +6295,9 @@ sub _write_row {
     push @attributes, ( 'outlineLevel' => $level )    if $level;
     push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
 
+    if ( $self->{_excel_version} == 2010 ) {
+        push @attributes, ( 'x14ac:dyDescent' => '0.25' );
+    }
 
     if ( $empty_row ) {
         $self->xml_empty_tag( 'row', @attributes );
@@ -6630,67 +6651,6 @@ sub _write_page_setup {
 
 
     $self->xml_empty_tag( 'pageSetup', @attributes );
-}
-
-
-##############################################################################
-#
-# _write_ext_lst()
-#
-# Write the <extLst> element.
-#
-sub _write_ext_lst {
-
-    my $self = shift;
-
-    $self->xml_start_tag( 'extLst' );
-    $self->_write_ext();
-    $self->xml_end_tag( 'extLst' );
-}
-
-
-###############################################################################
-#
-# _write_ext()
-#
-# Write the <ext> element.
-#
-sub _write_ext {
-
-    my $self    = shift;
-    my $xmlnsmx = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
-    my $uri     = 'http://schemas.microsoft.com/office/mac/excel/2008/main';
-
-    my @attributes = (
-        'xmlns:mx' => $xmlnsmx,
-        'uri'      => $uri,
-    );
-
-    $self->xml_start_tag( 'ext', @attributes );
-    $self->_write_mx_plv();
-    $self->xml_end_tag( 'ext' );
-}
-
-###############################################################################
-#
-# _write_mx_plv()
-#
-# Write the <mx:PLV> element.
-#
-sub _write_mx_plv {
-
-    my $self     = shift;
-    my $mode     = 1;
-    my $one_page = 0;
-    my $w_scale  = 0;
-
-    my @attributes = (
-        'Mode'    => $mode,
-        'OnePage' => $one_page,
-        'WScale'  => $w_scale,
-    );
-
-    $self->xml_empty_tag( 'mx:PLV', @attributes );
 }
 
 
@@ -7631,11 +7591,13 @@ sub _write_font {
         $self->_write_rstring_color( 'theme' => 1 );
     }
 
-    $self->{_rstring}->xml_empty_tag( 'rFont',  'val', $format->{_font} );
-    $self->{_rstring}->xml_empty_tag( 'family', 'val', $format->{_font_family} );
+    $self->{_rstring}->xml_empty_tag( 'rFont', 'val', $format->{_font} );
+    $self->{_rstring}
+      ->xml_empty_tag( 'family', 'val', $format->{_font_family} );
 
     if ( $format->{_font} eq 'Calibri' && !$format->{_hyperlink} ) {
-        $self->{_rstring}->xml_empty_tag( 'scheme', 'val', $format->{_font_scheme} );
+        $self->{_rstring}
+          ->xml_empty_tag( 'scheme', 'val', $format->{_font_scheme} );
     }
 
     $self->{_rstring}->xml_end_tag( 'rPr' );
@@ -8185,6 +8147,912 @@ sub _write_table_part {
     my @attributes = ( 'r:id' => $r_id, );
 
     $self->xml_empty_tag( 'tablePart', @attributes );
+}
+
+
+# TODO Sparklines. Work in progress.
+
+# TODO move this struct out of this module.
+my @spark_styles = (
+    {   # 0
+        series   => { _theme => "4", _tint => "-0.499984740745262" },
+        negative => { _theme => "5" },
+        markers  => { _theme => "4", _tint => "-0.499984740745262" },
+        first    => { _theme => "4", _tint => "0.39997558519241921" },
+        last     => { _theme => "4", _tint => "0.39997558519241921" },
+        high     => { _theme => "4" },
+        low      => { _theme => "4" },
+    },
+    {   # 1
+        series   => { _theme => "4", _tint => "-0.499984740745262" },
+        negative => { _theme => "5" },
+        markers  => { _theme => "4", _tint => "-0.499984740745262" },
+        first    => { _theme => "4", _tint => "0.39997558519241921" },
+        last     => { _theme => "4", _tint => "0.39997558519241921" },
+        high     => { _theme => "4" },
+        low      => { _theme => "4" },
+    },
+    {   # 2
+        series   => { _theme => "5", _tint => "-0.499984740745262" },
+        negative => { _theme => "6" },
+        markers  => { _theme => "5", _tint => "-0.499984740745262" },
+        first    => { _theme => "5", _tint => "0.39997558519241921" },
+        last     => { _theme => "5", _tint => "0.39997558519241921" },
+        high     => { _theme => "5" },
+        low      => { _theme => "5" },
+    },
+    {   # 3
+        series   => { _theme => "6", _tint => "-0.499984740745262" },
+        negative => { _theme => "7" },
+        markers  => { _theme => "6", _tint => "-0.499984740745262" },
+        first    => { _theme => "6", _tint => "0.39997558519241921" },
+        last     => { _theme => "6", _tint => "0.39997558519241921" },
+        high     => { _theme => "6" },
+        low      => { _theme => "6" },
+    },
+    {   # 4
+        series   => { _theme => "7", _tint => "-0.499984740745262" },
+        negative => { _theme => "8" },
+        markers  => { _theme => "7", _tint => "-0.499984740745262" },
+        first    => { _theme => "7", _tint => "0.39997558519241921" },
+        last     => { _theme => "7", _tint => "0.39997558519241921" },
+        high     => { _theme => "7" },
+        low      => { _theme => "7" },
+    },
+    {   # 5
+        series   => { _theme => "8", _tint => "-0.499984740745262" },
+        negative => { _theme => "9" },
+        markers  => { _theme => "8", _tint => "-0.499984740745262" },
+        first    => { _theme => "8", _tint => "0.39997558519241921" },
+        last     => { _theme => "8", _tint => "0.39997558519241921" },
+        high     => { _theme => "8" },
+        low      => { _theme => "8" },
+    },
+    {   # 6
+        series   => { _theme => "9", _tint => "-0.499984740745262" },
+        negative => { _theme => "4" },
+        markers  => { _theme => "9", _tint => "-0.499984740745262" },
+        first    => { _theme => "9", _tint => "0.39997558519241921" },
+        last     => { _theme => "9", _tint => "0.39997558519241921" },
+        high     => { _theme => "9" },
+        low      => { _theme => "9" },
+    },
+    {   # 7
+        series   => { _theme => "4", _tint => "-0.249977111117893" },
+        negative => { _theme => "5" },
+        markers  => { _theme => "5", _tint => "-0.249977111117893" },
+        first    => { _theme => "5", _tint => "-0.249977111117893" },
+        last     => { _theme => "5", _tint => "-0.249977111117893" },
+        high     => { _theme => "5", _tint => "-0.249977111117893" },
+        low      => { _theme => "5", _tint => "-0.249977111117893" },
+    },
+    {   # 8
+        series   => { _theme => "5", _tint => "-0.249977111117893" },
+        negative => { _theme => "6" },
+        markers  => { _theme => "6", _tint => "-0.249977111117893" },
+        first    => { _theme => "6", _tint => "-0.249977111117893" },
+        last     => { _theme => "6", _tint => "-0.249977111117893" },
+        high     => { _theme => "6", _tint => "-0.249977111117893" },
+        low      => { _theme => "6", _tint => "-0.249977111117893" },
+    },
+    {   # 9
+        series   => { _theme => "6", _tint => "-0.249977111117893" },
+        negative => { _theme => "7" },
+        markers  => { _theme => "7", _tint => "-0.249977111117893" },
+        first    => { _theme => "7", _tint => "-0.249977111117893" },
+        last     => { _theme => "7", _tint => "-0.249977111117893" },
+        high     => { _theme => "7", _tint => "-0.249977111117893" },
+        low      => { _theme => "7", _tint => "-0.249977111117893" },
+    },
+    {   # 10
+        series   => { _theme => "7", _tint => "-0.249977111117893" },
+        negative => { _theme => "8" },
+        markers  => { _theme => "8", _tint => "-0.249977111117893" },
+        first    => { _theme => "8", _tint => "-0.249977111117893" },
+        last     => { _theme => "8", _tint => "-0.249977111117893" },
+        high     => { _theme => "8", _tint => "-0.249977111117893" },
+        low      => { _theme => "8", _tint => "-0.249977111117893" },
+    },
+    {   # 11
+        series   => { _theme => "8", _tint => "-0.249977111117893" },
+        negative => { _theme => "9" },
+        markers  => { _theme => "9", _tint => "-0.249977111117893" },
+        first    => { _theme => "9", _tint => "-0.249977111117893" },
+        last     => { _theme => "9", _tint => "-0.249977111117893" },
+        high     => { _theme => "9", _tint => "-0.249977111117893" },
+        low      => { _theme => "9", _tint => "-0.249977111117893" },
+    },
+    {   # 12
+        series   => { _theme => "9", _tint => "-0.249977111117893" },
+        negative => { _theme => "4" },
+        markers  => { _theme => "4", _tint => "-0.249977111117893" },
+        first    => { _theme => "4", _tint => "-0.249977111117893" },
+        last     => { _theme => "4", _tint => "-0.249977111117893" },
+        high     => { _theme => "4", _tint => "-0.249977111117893" },
+        low      => { _theme => "4", _tint => "-0.249977111117893" },
+    },
+    {   # 13
+        series   => { _theme => "4" },
+        negative => { _theme => "5" },
+        markers  => { _theme => "4", _tint => "-0.249977111117893" },
+        first    => { _theme => "4", _tint => "-0.249977111117893" },
+        last     => { _theme => "4", _tint => "-0.249977111117893" },
+        high     => { _theme => "4", _tint => "-0.249977111117893" },
+        low      => { _theme => "4", _tint => "-0.249977111117893" },
+    },
+    {   # 14
+        series   => { _theme => "5" },
+        negative => { _theme => "6" },
+        markers  => { _theme => "5", _tint => "-0.249977111117893" },
+        first    => { _theme => "5", _tint => "-0.249977111117893" },
+        last     => { _theme => "5", _tint => "-0.249977111117893" },
+        high     => { _theme => "5", _tint => "-0.249977111117893" },
+        low      => { _theme => "5", _tint => "-0.249977111117893" },
+    },
+    {   # 15
+        series   => { _theme => "6" },
+        negative => { _theme => "7" },
+        markers  => { _theme => "6", _tint => "-0.249977111117893" },
+        first    => { _theme => "6", _tint => "-0.249977111117893" },
+        last     => { _theme => "6", _tint => "-0.249977111117893" },
+        high     => { _theme => "6", _tint => "-0.249977111117893" },
+        low      => { _theme => "6", _tint => "-0.249977111117893" },
+    },
+    {   # 16
+        series   => { _theme => "7" },
+        negative => { _theme => "8" },
+        markers  => { _theme => "7", _tint => "-0.249977111117893" },
+        first    => { _theme => "7", _tint => "-0.249977111117893" },
+        last     => { _theme => "7", _tint => "-0.249977111117893" },
+        high     => { _theme => "7", _tint => "-0.249977111117893" },
+        low      => { _theme => "7", _tint => "-0.249977111117893" },
+    },
+    {   # 17
+        series   => { _theme => "8" },
+        negative => { _theme => "9" },
+        markers  => { _theme => "8", _tint => "-0.249977111117893" },
+        first    => { _theme => "8", _tint => "-0.249977111117893" },
+        last     => { _theme => "8", _tint => "-0.249977111117893" },
+        high     => { _theme => "8", _tint => "-0.249977111117893" },
+        low      => { _theme => "8", _tint => "-0.249977111117893" },
+    },
+    {   # 18
+        series   => { _theme => "9" },
+        negative => { _theme => "4" },
+        markers  => { _theme => "9", _tint => "-0.249977111117893" },
+        first    => { _theme => "9", _tint => "-0.249977111117893" },
+        last     => { _theme => "9", _tint => "-0.249977111117893" },
+        high     => { _theme => "9", _tint => "-0.249977111117893" },
+        low      => { _theme => "9", _tint => "-0.249977111117893" },
+    },
+    {   # 19
+        series   => { _theme => "4", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "4", _tint => "0.79998168889431442" },
+        first    => { _theme => "4", _tint => "-0.249977111117893" },
+        last     => { _theme => "4", _tint => "-0.249977111117893" },
+        high     => { _theme => "4", _tint => "-0.499984740745262" },
+        low      => { _theme => "4", _tint => "-0.499984740745262" },
+    },
+    {   # 20
+        series   => { _theme => "5", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "5", _tint => "0.79998168889431442" },
+        first    => { _theme => "5", _tint => "-0.249977111117893" },
+        last     => { _theme => "5", _tint => "-0.249977111117893" },
+        high     => { _theme => "5", _tint => "-0.499984740745262" },
+        low      => { _theme => "5", _tint => "-0.499984740745262" },
+    },
+    {   # 21
+        series   => { _theme => "6", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "6", _tint => "0.79998168889431442" },
+        first    => { _theme => "6", _tint => "-0.249977111117893" },
+        last     => { _theme => "6", _tint => "-0.249977111117893" },
+        high     => { _theme => "6", _tint => "-0.499984740745262" },
+        low      => { _theme => "6", _tint => "-0.499984740745262" },
+    },
+    {   # 22
+        series   => { _theme => "7", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "7", _tint => "0.79998168889431442" },
+        first    => { _theme => "7", _tint => "-0.249977111117893" },
+        last     => { _theme => "7", _tint => "-0.249977111117893" },
+        high     => { _theme => "7", _tint => "-0.499984740745262" },
+        low      => { _theme => "7", _tint => "-0.499984740745262" },
+    },
+    {   # 23
+        series   => { _theme => "8", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "8", _tint => "0.79998168889431442" },
+        first    => { _theme => "8", _tint => "-0.249977111117893" },
+        last     => { _theme => "8", _tint => "-0.249977111117893" },
+        high     => { _theme => "8", _tint => "-0.499984740745262" },
+        low      => { _theme => "8", _tint => "-0.499984740745262" },
+    },
+    {   # 24
+        series   => { _theme => "9", _tint => "0.39997558519241921" },
+        negative => { _theme => "0", _tint => "-0.499984740745262" },
+        markers  => { _theme => "9", _tint => "0.79998168889431442" },
+        first    => { _theme => "9", _tint => "-0.249977111117893" },
+        last     => { _theme => "9", _tint => "-0.249977111117893" },
+        high     => { _theme => "9", _tint => "-0.499984740745262" },
+        low      => { _theme => "9", _tint => "-0.499984740745262" },
+    },
+    {   # 25
+        series   => { _theme => "1", _tint => "0.499984740745262" },
+        negative => { _theme => "1", _tint => "0.249977111117893" },
+        markers  => { _theme => "1", _tint => "0.249977111117893" },
+        first    => { _theme => "1", _tint => "0.249977111117893" },
+        last     => { _theme => "1", _tint => "0.249977111117893" },
+        high     => { _theme => "1", _tint => "0.249977111117893" },
+        low      => { _theme => "1", _tint => "0.249977111117893" },
+    },
+    {   # 26
+        series   => { _theme => "1", _tint => "0.34998626667073579" },
+        negative => { _theme => "0", _tint => "-0.249977111117893" },
+        markers  => { _theme => "0", _tint => "-0.249977111117893" },
+        first    => { _theme => "0", _tint => "-0.249977111117893" },
+        last     => { _theme => "0", _tint => "-0.249977111117893" },
+        high     => { _theme => "0", _tint => "-0.249977111117893" },
+        low      => { _theme => "0", _tint => "-0.249977111117893" },
+    },
+    {   # 27
+        series   => { _rgb => "FF323232" },
+        negative => { _rgb => "FFD00000" },
+        markers  => { _rgb => "FFD00000" },
+        first    => { _rgb => "FFD00000" },
+        last     => { _rgb => "FFD00000" },
+        high     => { _rgb => "FFD00000" },
+        low      => { _rgb => "FFD00000" },
+    },
+    {   # 28
+        series   => { _rgb => "FF000000" },
+        negative => { _rgb => "FF0070C0" },
+        markers  => { _rgb => "FF0070C0" },
+        first    => { _rgb => "FF0070C0" },
+        last     => { _rgb => "FF0070C0" },
+        high     => { _rgb => "FF0070C0" },
+        low      => { _rgb => "FF0070C0" },
+    },
+    {   # 29
+        series   => { _rgb => "FF376092" },
+        negative => { _rgb => "FFD00000" },
+        markers  => { _rgb => "FFD00000" },
+        first    => { _rgb => "FFD00000" },
+        last     => { _rgb => "FFD00000" },
+        high     => { _rgb => "FFD00000" },
+        low      => { _rgb => "FFD00000" },
+    },
+    {   # 30
+        series   => { _rgb => "FF0070C0" },
+        negative => { _rgb => "FF000000" },
+        markers  => { _rgb => "FF000000" },
+        first    => { _rgb => "FF000000" },
+        last     => { _rgb => "FF000000" },
+        high     => { _rgb => "FF000000" },
+        low      => { _rgb => "FF000000" },
+    },
+    {   # 31
+        series   => { _rgb => "FF5F5F5F" },
+        negative => { _rgb => "FFFFB620" },
+        markers  => { _rgb => "FFD70077" },
+        first    => { _rgb => "FF5687C2" },
+        last     => { _rgb => "FF359CEB" },
+        high     => { _rgb => "FF56BE79" },
+        low      => { _rgb => "FFFF5055" },
+    },
+    {   # 32
+        series   => { _rgb => "FF5687C2" },
+        negative => { _rgb => "FFFFB620" },
+        markers  => { _rgb => "FFD70077" },
+        first    => { _rgb => "FF777777" },
+        last     => { _rgb => "FF359CEB" },
+        high     => { _rgb => "FF56BE79" },
+        low      => { _rgb => "FFFF5055" },
+    },
+    {   # 33
+        series   => { _rgb => "FFC6EFCE" },
+        negative => { _rgb => "FFFFC7CE" },
+        markers  => { _rgb => "FF8CADD6" },
+        first    => { _rgb => "FFFFDC47" },
+        last     => { _rgb => "FFFFEB9C" },
+        high     => { _rgb => "FF60D276" },
+        low      => { _rgb => "FFFF5367" },
+    },
+    {   # 34
+        series   => { _rgb => "FF00B050" },
+        negative => { _rgb => "FFFF0000" },
+        markers  => { _rgb => "FF0070C0" },
+        first    => { _rgb => "FFFFC000" },
+        last     => { _rgb => "FFFFC000" },
+        high     => { _rgb => "FF00B050" },
+        low      => { _rgb => "FFFF0000" },
+    },
+    {   # 35
+        series   => { _theme => "3" },
+        negative => { _theme => "9" },
+        markers  => { _theme => "8" },
+        first    => { _theme => "4" },
+        last     => { _theme => "5" },
+        high     => { _theme => "6" },
+        low      => { _theme => "7" },
+    },
+    {   # 36
+        series   => { _theme => "1" },
+        negative => { _theme => "9" },
+        markers  => { _theme => "8" },
+        first    => { _theme => "4" },
+        last     => { _theme => "5" },
+        high     => { _theme => "6" },
+        low      => { _theme => "7" },
+    },
+);
+
+
+###############################################################################
+#
+# add_sparkline()
+#
+# TODO
+#
+sub add_sparkline {
+
+    my $self      = shift;
+    my $param     = shift;
+    my $sparkline = {};
+
+    # Check that the last parameter is a hash list.
+    if ( ref $param ne 'HASH' ) {
+        carp "Parameter list in add_sparkline() must be a hash ref";
+        return -1;
+    }
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        location        => 1,
+        range           => 1,
+        type            => 1,
+        high_point      => 1,
+        low_point       => 1,
+        negative_points => 1,
+        first_point     => 1,
+        last_point      => 1,
+        markers         => 1,
+        style           => 1,
+        series_color    => 1,
+        negative_color  => 1,
+        markers_color   => 1,
+        first_color     => 1,
+        last_color      => 1,
+        high_color      => 1,
+        low_color       => 1,
+        max             => 1,
+        min             => 1,
+        axis            => 1,
+        reverse         => 1,
+        empty_cells     => 1,
+        show_hidden     => 1,
+        date_axis       => 1,
+        weight          => 1,
+    );
+
+    # Check for valid input parameters.
+    for my $param_key ( keys %$param ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in add_sparkline()";
+            return -2;
+        }
+    }
+
+    # 'location' is a required parameter.
+    if ( not exists $param->{location} ) {
+        carp "Parameter 'location' is required in add_sparkline()";
+        return -3;
+    }
+
+    # 'range' is a required parameter.
+    if ( not exists $param->{range} ) {
+        carp "Parameter 'range' is required in add_sparkline()";
+        return -3;
+    }
+
+
+    # Handle the sparkline type.
+    my $type = $param->{type} || 'line';
+
+    if ( $type ne 'line' && $type ne 'column' && $type ne 'win_loss' ) {
+        carp "Parameter 'type' must be 'line', 'column' "
+          . "or 'win_loss' in add_sparkline()";
+        return -4;
+    }
+
+    $type = 'stacked' if $type eq 'win_loss';
+    $sparkline->{_type} = $type;
+
+
+    # We handle single location/range values or array refs of values.
+    if ( ref $param->{location} ) {
+        $sparkline->{_locations} = $param->{location};
+        $sparkline->{_ranges}    = $param->{range};
+    }
+    else {
+        $sparkline->{_locations} = [ $param->{location} ];
+        $sparkline->{_ranges}    = [ $param->{range} ];
+    }
+
+    my $range_count    = @{ $sparkline->{_ranges} };
+    my $location_count = @{ $sparkline->{_locations} };
+
+    # The ranges and locations must match.
+    if ( $range_count != $location_count ) {
+        carp "Must have the same number of location and range "
+          . "parameters in add_sparkline()";
+        return -5;
+    }
+
+    # Store the count.
+    $sparkline->{_count} = @{ $sparkline->{_locations} };
+
+
+    # Get the worksheet name for the range conversion below.
+    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+
+    # Cleanup the input ranges.
+    for my $range ( @{ $sparkline->{_ranges} } ) {
+
+        # Remove the absolute reference $ symbols.
+        $range =~ s{\$}{}g;
+
+        # Convert a simiple range into a full Sheet1!A1:D1 range.
+        if ( $range !~ /!/ ) {
+            $range = $sheetname . "!" . $range;
+        }
+    }
+
+    # Cleanup the input locations.
+    for my $location ( @{ $sparkline->{_locations} } ) {
+        $location =~ s{\$}{}g;
+    }
+
+    # Map options.
+    $sparkline->{_high}      = $param->{high_point};
+    $sparkline->{_low}       = $param->{low_point};
+    $sparkline->{_negative}  = $param->{negative_points};
+    $sparkline->{_first}     = $param->{first_point};
+    $sparkline->{_last}      = $param->{last_point};
+    $sparkline->{_markers}   = $param->{markers};
+    $sparkline->{_min}       = $param->{min};
+    $sparkline->{_max}       = $param->{max};
+    $sparkline->{_axis}      = $param->{axis};
+    $sparkline->{_reverse}   = $param->{reverse};
+    $sparkline->{_hidden}    = $param->{show_hidden};
+    $sparkline->{_weight}    = $param->{weight};
+
+    # Map empty cells options.
+    my $empty = $param->{empty_cells} || '';
+
+    if ( $empty eq 'zero' ) {
+        $sparkline->{_empty} = 0;
+    }
+    elsif ( $empty eq 'connect' ) {
+        $sparkline->{_empty} = 'span';
+    }
+    else {
+        $sparkline->{_empty} = 'gap';
+    }
+
+
+    # Map the date axis range.
+    my $date_range = $param->{date_axis};
+
+    if ( $date_range && $date_range !~ /!/ ) {
+        $date_range = $sheetname . "!" . $date_range;
+    }
+    $sparkline->{_date_axis} = $date_range;
+
+
+
+    # Set the sparkline styles.
+    my $style_id = $param->{style} || 0;
+    my $style = $spark_styles[$style_id];
+
+    $sparkline->{_series_color}   = $style->{series};
+    $sparkline->{_negative_color} = $style->{negative};
+    $sparkline->{_markers_color}  = $style->{markers};
+    $sparkline->{_first_color}    = $style->{first};
+    $sparkline->{_last_color}     = $style->{last};
+    $sparkline->{_high_color}     = $style->{high};
+    $sparkline->{_low_color}      = $style->{low};
+
+    # Override the style colours with user defined colors.
+    $self->_set_spark_color( $sparkline, $param, 'series_color' );
+    $self->_set_spark_color( $sparkline, $param, 'negative_color' );
+    $self->_set_spark_color( $sparkline, $param, 'markers_color' );
+    $self->_set_spark_color( $sparkline, $param, 'first_color' );
+    $self->_set_spark_color( $sparkline, $param, 'last_color' );
+    $self->_set_spark_color( $sparkline, $param, 'high_color' );
+    $self->_set_spark_color( $sparkline, $param, 'low_color' );
+
+    push @{ $self->{_sparklines} }, $sparkline;
+}
+
+
+###############################################################################
+#
+# _set_spark_color()
+#
+# TODO
+#
+sub _set_spark_color {
+
+    my $self        = shift;
+    my $sparkline   = shift;
+    my $param       = shift;
+    my $user_color  = shift;
+    my $spark_color = '_' . $user_color;
+
+    return unless $param->{$user_color};
+
+    $sparkline->{$spark_color} =
+      { _rgb => $self->_get_palette_color( $param->{$user_color} ) };
+}
+
+
+##############################################################################
+#
+# _write_ext_sparklines()
+#
+# Write the <extLst> element and sparkline subelements.
+#
+sub _write_ext_sparklines {
+
+    my $self       = shift;
+    my @sparklines = @{ $self->{_sparklines} };
+    my $count      = scalar @sparklines;
+
+    # Return if worksheet doesn't contain any sparklines.
+    return unless $count;
+
+
+    # Write the extLst element.
+    $self->xml_start_tag( 'extLst' );
+
+    # Write the ext element.
+    $self->_write_ext();
+
+    # Write the x14:sparklineGroups element.
+    $self->_write_sparkline_groups();
+
+    # Write the sparkline elements.
+    for my $sparkline ( reverse @sparklines ) {
+
+        # Write the x14:sparklineGroup element.
+        $self->_write_sparkline_group( $sparkline );
+
+        # Write the x14:colorSeries element.
+        $self->_write_color_series( $sparkline->{_series_color} );
+
+        # Write the x14:colorNegative element.
+        $self->_write_color_negative( $sparkline->{_negative_color} );
+
+        # Write the x14:colorAxis element.
+        $self->_write_color_axis();
+
+        # Write the x14:colorMarkers element.
+        $self->_write_color_markers( $sparkline->{_markers_color} );
+
+        # Write the x14:colorFirst element.
+        $self->_write_color_first( $sparkline->{_first_color} );
+
+        # Write the x14:colorLast element.
+        $self->_write_color_last( $sparkline->{_last_color} );
+
+        # Write the x14:colorHigh element.
+        $self->_write_color_high( $sparkline->{_high_color} );
+
+        # Write the x14:colorLow element.
+        $self->_write_color_low( $sparkline->{_low_color} );
+
+        if ( $sparkline->{_date_axis} ) {
+            $self->xml_encoded_data_element( 'xm:f', $sparkline->{_date_axis} );
+        }
+
+        $self->_write_sparklines( $sparkline );
+
+        $self->xml_end_tag( 'x14:sparklineGroup' );
+    }
+
+
+    $self->xml_end_tag( 'x14:sparklineGroups' );
+    $self->xml_end_tag( 'ext' );
+    $self->xml_end_tag( 'extLst' );
+}
+
+
+##############################################################################
+#
+# _write_sparklines()
+#
+# Write the <x14:sparklines> element and <x14:sparkline> subelements.
+#
+sub _write_sparklines {
+
+    my $self      = shift;
+    my $sparkline = shift;
+
+    # Write the sparkline elements.
+    $self->xml_start_tag( 'x14:sparklines' );
+
+    for my $i ( 0 .. $sparkline->{_count} - 1 ) {
+        my $range    = $sparkline->{_ranges}->[$i];
+        my $location = $sparkline->{_locations}->[$i];
+
+        $self->xml_start_tag( 'x14:sparkline' );
+        $self->xml_encoded_data_element( 'xm:f',     $range );
+        $self->xml_encoded_data_element( 'xm:sqref', $location );
+        $self->xml_end_tag( 'x14:sparkline' );
+    }
+
+
+    $self->xml_end_tag( 'x14:sparklines' );
+}
+
+
+##############################################################################
+#
+# _write_ext()
+#
+# Write the <ext> element.
+#
+sub _write_ext {
+
+    my $self       = shift;
+    my $schema     = 'http://schemas.microsoft.com/office/';
+    my $xmlns_x_14 = $schema . 'spreadsheetml/2009/9/main';
+    my $uri        = '{05C60535-1F16-4fd2-B633-F4F36F0B64E0}';
+
+    my @attributes = (
+        'xmlns:x14' => $xmlns_x_14,
+        'uri'       => $uri,
+    );
+
+    $self->xml_start_tag( 'ext', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_sparkline_groups()
+#
+# Write the <x14:sparklineGroups> element.
+#
+sub _write_sparkline_groups {
+
+    my $self     = shift;
+    my $xmlns_xm = 'http://schemas.microsoft.com/office/excel/2006/main';
+
+    my @attributes = ( 'xmlns:xm' => $xmlns_xm );
+
+    $self->xml_start_tag( 'x14:sparklineGroups', @attributes );
+
+}
+
+
+##############################################################################
+#
+# _write_sparkline_group()
+#
+# Write the <x14:sparklineGroup> element.
+#
+# Example for order.
+#
+# <x14:sparklineGroup
+#     manualMax="0"
+#     manualMin="0"
+#     lineWeight="2.25"
+#     type="column"
+#     dateAxis="1"
+#     displayEmptyCellsAs="span"
+#     markers="1"
+#     high="1"
+#     low="1"
+#     first="1"
+#     last="1"
+#     negative="1"
+#     displayXAxis="1"
+#     displayHidden="1"
+#     minAxisType="custom"
+#     maxAxisType="custom"
+#     rightToLeft="1">
+#
+sub _write_sparkline_group {
+
+    my $self     = shift;
+    my $opts     = shift;
+    my $empty    = $opts->{_empty};
+    my $user_max = 0;
+    my $user_min = 0;
+    my @a;
+
+    if ( defined $opts->{_max} ) {
+
+        if ( $opts->{_max} eq 'group' ) {
+            $opts->{_cust_max} = 'group';
+        }
+        else {
+            push @a, ( 'manualMax' => $opts->{_max} );
+            $opts->{_cust_max} = 'custom';
+        }
+    }
+
+    if ( defined $opts->{_min} ) {
+
+        if ( $opts->{_min} eq 'group' ) {
+            $opts->{_cust_min} = 'group';
+        }
+        else {
+            push @a, ( 'manualMin' => $opts->{_min} );
+            $opts->{_cust_min} = 'custom';
+        }
+    }
+
+
+    # Ignore the default type attribute (line).
+    if ( $opts->{_type} ne 'line' ) {
+        push @a, ( 'type' => $opts->{_type} );
+    }
+
+    push @a, ( 'lineWeight' => $opts->{_weight} ) if $opts->{_weight};
+    push @a, ( 'dateAxis' => 1 ) if $opts->{_date_axis};
+    push @a, ( 'displayEmptyCellsAs' => $empty ) if $empty;
+
+    push @a, ( 'markers'       => 1 )                  if $opts->{_markers};
+    push @a, ( 'high'          => 1 )                  if $opts->{_high};
+    push @a, ( 'low'           => 1 )                  if $opts->{_low};
+    push @a, ( 'first'         => 1 )                  if $opts->{_first};
+    push @a, ( 'last'          => 1 )                  if $opts->{_last};
+    push @a, ( 'negative'      => 1 )                  if $opts->{_negative};
+    push @a, ( 'displayXAxis'  => 1 )                  if $opts->{_axis};
+    push @a, ( 'displayHidden' => 1 )                  if $opts->{_hidden};
+    push @a, ( 'minAxisType'   => $opts->{_cust_min} ) if $opts->{_cust_min};
+    push @a, ( 'maxAxisType'   => $opts->{_cust_max} ) if $opts->{_cust_max};
+    push @a, ( 'rightToLeft'   => 1 )                  if $opts->{_reverse};
+
+    $self->xml_start_tag( 'x14:sparklineGroup', @a );
+}
+
+
+##############################################################################
+#
+# _write_spark_color()
+#
+# Helper function for the sparkline color functions below.
+#
+sub _write_spark_color {
+
+    my $self    = shift;
+    my $element = shift;
+    my $color   = shift;
+    my @attr;
+
+    push @attr, ( 'rgb'   => $color->{_rgb} )   if defined $color->{_rgb};
+    push @attr, ( 'theme' => $color->{_theme} ) if defined $color->{_theme};
+    push @attr, ( 'tint'  => $color->{_tint} )  if defined $color->{_tint};
+
+    $self->xml_empty_tag( $element, @attr );
+}
+
+
+##############################################################################
+#
+# _write_color_series()
+#
+# Write the <x14:colorSeries> element.
+#
+sub _write_color_series {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorSeries', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_negative()
+#
+# Write the <x14:colorNegative> element.
+#
+sub _write_color_negative {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorNegative', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_axis()
+#
+# Write the <x14:colorAxis> element.
+#
+sub _write_color_axis {
+
+    my $self = shift;
+
+    $self->_write_spark_color( 'x14:colorAxis', { _rgb => 'FF000000'} );
+}
+
+
+##############################################################################
+#
+# _write_color_markers()
+#
+# Write the <x14:colorMarkers> element.
+#
+sub _write_color_markers {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorMarkers', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_first()
+#
+# Write the <x14:colorFirst> element.
+#
+sub _write_color_first {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorFirst', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_last()
+#
+# Write the <x14:colorLast> element.
+#
+sub _write_color_last {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorLast', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_high()
+#
+# Write the <x14:colorHigh> element.
+#
+sub _write_color_high {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorHigh', @_ );
+}
+
+
+##############################################################################
+#
+# _write_color_low()
+#
+# Write the <x14:colorLow> element.
+#
+sub _write_color_low {
+
+    my $self  = shift;
+
+    $self->_write_spark_color( 'x14:colorLow', @_ );
 }
 
 
