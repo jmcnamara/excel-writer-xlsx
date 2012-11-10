@@ -5636,6 +5636,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     shape7.pl               Insert shapes in worksheet. One to many connections.
     shape8.pl               Insert shapes in worksheet. One to many connections.
     shape_all.pl            Demo of all the available shape and connector types.
+    sparklines1.pl          Simple sparklines demo.
+    sparklines2.pl          Sparklines demo showing formatting options.
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
     tab_colors.pl           Example of how to set worksheet tab colours.
