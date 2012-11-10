@@ -8527,6 +8527,14 @@ sub add_sparkline {
         last_color      => 1,
         high_color      => 1,
         low_color       => 1,
+        max             => 1,
+        min             => 1,
+        axis            => 1,
+        reverse         => 1,
+        empty_cells     => 1,
+        show_hidden     => 1,
+        date_axis       => 1,
+        weight          => 1,
     );
 
     # Check for valid input parameters.
@@ -8608,12 +8616,41 @@ sub add_sparkline {
     }
 
     # Map options.
-    $sparkline->{_high}     = $param->{high_point};
-    $sparkline->{_low}      = $param->{low_point};
-    $sparkline->{_negative} = $param->{negative_points};
-    $sparkline->{_first}    = $param->{first_point};
-    $sparkline->{_last}     = $param->{last_point};
-    $sparkline->{_markers}  = $param->{markers};
+    $sparkline->{_high}      = $param->{high_point};
+    $sparkline->{_low}       = $param->{low_point};
+    $sparkline->{_negative}  = $param->{negative_points};
+    $sparkline->{_first}     = $param->{first_point};
+    $sparkline->{_last}      = $param->{last_point};
+    $sparkline->{_markers}   = $param->{markers};
+    $sparkline->{_min}       = $param->{min};
+    $sparkline->{_max}       = $param->{max};
+    $sparkline->{_axis}      = $param->{axis};
+    $sparkline->{_reverse}   = $param->{reverse};
+    $sparkline->{_hidden}    = $param->{show_hidden};
+    $sparkline->{_weight}    = $param->{weight};
+
+    # Map empty cells options.
+    my $empty = $param->{empty_cells} || '';
+
+    if ( $empty eq 'zero' ) {
+        $sparkline->{_empty} = 0;
+    }
+    elsif ( $empty eq 'connect' ) {
+        $sparkline->{_empty} = 'span';
+    }
+    else {
+        $sparkline->{_empty} = 'gap';
+    }
+
+
+    # Map the date axis range.
+    my $date_range = $param->{date_axis};
+
+    if ( $date_range && $date_range !~ /!/ ) {
+        $date_range = $sheetname . "!" . $date_range;
+    }
+    $sparkline->{_date_axis} = $date_range;
+
 
 
     # Set the sparkline styles.
@@ -8629,13 +8666,13 @@ sub add_sparkline {
     $sparkline->{_low_color}      = $style->{low};
 
     # Override the style colours with user defined colors.
-    $self->_set_spark_color( $sparkline, $param, 'series_color');
-    $self->_set_spark_color( $sparkline, $param, 'negative_color');
-    $self->_set_spark_color( $sparkline, $param, 'markers_color');
-    $self->_set_spark_color( $sparkline, $param, 'first_color');
-    $self->_set_spark_color( $sparkline, $param, 'last_color');
-    $self->_set_spark_color( $sparkline, $param, 'high_color');
-    $self->_set_spark_color( $sparkline, $param, 'low_color');
+    $self->_set_spark_color( $sparkline, $param, 'series_color' );
+    $self->_set_spark_color( $sparkline, $param, 'negative_color' );
+    $self->_set_spark_color( $sparkline, $param, 'markers_color' );
+    $self->_set_spark_color( $sparkline, $param, 'first_color' );
+    $self->_set_spark_color( $sparkline, $param, 'last_color' );
+    $self->_set_spark_color( $sparkline, $param, 'high_color' );
+    $self->_set_spark_color( $sparkline, $param, 'low_color' );
 
     push @{ $self->{_sparklines} }, $sparkline;
 }
@@ -8717,6 +8754,10 @@ sub _write_ext_sparklines {
         # Write the x14:colorLow element.
         $self->_write_color_low( $sparkline->{_low_color} );
 
+        if ( $sparkline->{_date_axis} ) {
+            $self->xml_encoded_data_element( 'xm:f', $sparkline->{_date_axis} );
+        }
+
         $self->_write_sparklines( $sparkline );
 
         $self->xml_end_tag( 'x14:sparklineGroup' );
@@ -8752,6 +8793,7 @@ sub _write_sparklines {
         $self->xml_encoded_data_element( 'xm:sqref', $location );
         $self->xml_end_tag( 'x14:sparkline' );
     }
+
 
     $self->xml_end_tag( 'x14:sparklines' );
 }
@@ -8826,26 +8868,58 @@ sub _write_sparkline_groups {
 #
 sub _write_sparkline_group {
 
-    my $self        = shift;
-    my $opts   = shift;
-    my $empty_cells = 'gap';
-    my @attributes;
+    my $self     = shift;
+    my $opts     = shift;
+    my $empty    = $opts->{_empty};
+    my $user_max = 0;
+    my $user_min = 0;
+    my @a;
+
+    if ( defined $opts->{_max} ) {
+
+        if ( $opts->{_max} eq 'group' ) {
+            $opts->{_cust_max} = 'group';
+        }
+        else {
+            push @a, ( 'manualMax' => $opts->{_max} );
+            $opts->{_cust_max} = 'custom';
+        }
+    }
+
+    if ( defined $opts->{_min} ) {
+
+        if ( $opts->{_min} eq 'group' ) {
+            $opts->{_cust_min} = 'group';
+        }
+        else {
+            push @a, ( 'manualMin' => $opts->{_min} );
+            $opts->{_cust_min} = 'custom';
+        }
+    }
+
 
     # Ignore the default type attribute (line).
     if ( $opts->{_type} ne 'line' ) {
-        push @attributes, ( 'type' => $opts->{_type} );
+        push @a, ( 'type' => $opts->{_type} );
     }
 
-    push @attributes, ( 'displayEmptyCellsAs' => $empty_cells );
+    push @a, ( 'lineWeight' => $opts->{_weight} ) if $opts->{_weight};
+    push @a, ( 'dateAxis' => 1 ) if $opts->{_date_axis};
+    push @a, ( 'displayEmptyCellsAs' => $empty ) if $empty;
 
-    push @attributes, ( 'markers'  => 1 ) if $opts->{_markers};
-    push @attributes, ( 'high'     => 1 ) if $opts->{_high};
-    push @attributes, ( 'low'      => 1 ) if $opts->{_low};
-    push @attributes, ( 'first'    => 1 ) if $opts->{_first};
-    push @attributes, ( 'last'     => 1 ) if $opts->{_last};
-    push @attributes, ( 'negative' => 1 ) if $opts->{_negative};
+    push @a, ( 'markers'       => 1 )                  if $opts->{_markers};
+    push @a, ( 'high'          => 1 )                  if $opts->{_high};
+    push @a, ( 'low'           => 1 )                  if $opts->{_low};
+    push @a, ( 'first'         => 1 )                  if $opts->{_first};
+    push @a, ( 'last'          => 1 )                  if $opts->{_last};
+    push @a, ( 'negative'      => 1 )                  if $opts->{_negative};
+    push @a, ( 'displayXAxis'  => 1 )                  if $opts->{_axis};
+    push @a, ( 'displayHidden' => 1 )                  if $opts->{_hidden};
+    push @a, ( 'minAxisType'   => $opts->{_cust_min} ) if $opts->{_cust_min};
+    push @a, ( 'maxAxisType'   => $opts->{_cust_max} ) if $opts->{_cust_max};
+    push @a, ( 'rightToLeft'   => 1 )                  if $opts->{_reverse};
 
-    $self->xml_start_tag( 'x14:sparklineGroup', @attributes );
+    $self->xml_start_tag( 'x14:sparklineGroup', @a );
 }
 
 
