@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.54';
+our $VERSION = '0.55';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.54 of Excel::Writer::XLSX, released November 5, 2012.
+This document refers to version 0.55 of Excel::Writer::XLSX, released November 10, 2012.
 
 
 
@@ -1664,7 +1664,7 @@ This method contains a lot of parameters and is described in detail in a separat
 
 See also the C<sparklines1.pl> and C<sparklines2.pl> example programs in the C<examples> directory of the distro.
 
-B<Note:> Sparklines are a feature of Excel 2010+ only. You can write them to an XLSX file that will be read by Excel 2007 but they won't be displayed.
+B<Note:> Sparklines are a feature of Excel 2010+ only. You can write them to an XLSX file that can be read by Excel 2007 but they won't be displayed.
 
 
 
@@ -4926,11 +4926,11 @@ In Excel::Writer::XLSX Sparklines can be added to cells using the C<add_sparklin
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/sparklines2.jpg" alt="Sparklines example."/></center></p>
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/sparklines1.jpg" alt="Sparklines example."/></center></p>
 
 =end html
 
-B<Note:> Sparklines are a feature of Excel 2010+ only. You can write them to an XLSX file that will be read by Excel 2007 but they won't be displayed.
+B<Note:> Sparklines are a feature of Excel 2010+ only. You can write them to an XLSX file that can be read by Excel 2007 but they won't be displayed.
 
 
 =head2 add_sparkline( { parameter => 'value', ... } )

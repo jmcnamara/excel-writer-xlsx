@@ -6,7 +6,7 @@
 #
 # Sparklines are small charts that fit in a single cell and are
 # used to show trends in data. See sparklines2.pl for examples
-# or more complex sparkline formatting.
+# of more complex sparkline formatting.
 #
 # reverse ('(c)'), November 2011, John McNamara, jmcnamara@cpan.org
 #

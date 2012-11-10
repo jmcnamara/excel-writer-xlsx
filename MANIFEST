@@ -60,6 +60,8 @@ examples/shape6.pl
 examples/shape7.pl
 examples/shape8.pl
 examples/shape_all.pl
+examples/sparklines1.pl
+examples/sparklines2.pl
 examples/stats.pl
 examples/stats_ext.pl
 examples/stocks.pl
@@ -913,6 +915,17 @@ t/workbook/sub_write_xml_declaration.t
 t/workbook/workbook_01.t
 t/workbook/workbook_02.t
 t/workbook/workbook_03.t
+t/worksheet/sparkline_01.t
+t/worksheet/sparkline_02.t
+t/worksheet/sparkline_03.t
+t/worksheet/sparkline_04.t
+t/worksheet/sparkline_05.t
+t/worksheet/sparkline_06.t
+t/worksheet/sparkline_07.t
+t/worksheet/sparkline_08.t
+t/worksheet/sparkline_09.t
+t/worksheet/sparkline_10.t
+t/worksheet/sparkline_11.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_convert_date_time_01.t
 t/worksheet/sub_convert_date_time_02.t
@@ -993,6 +1006,7 @@ t/worksheet/worksheet_cond_format_16.t
 t/worksheet/worksheet_cond_format_17.t
 t/worksheet/worksheet_cond_format_18.t
 t/worksheet/worksheet_cond_format_19.t
+t/worksheet/worksheet_cond_format_20.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t

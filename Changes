@@ -5,6 +5,14 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.55 November 10 2012
+
+    + Added Sparklines.
+
+    ! Fix for issue with "begins with" and "ends with" Conditional
+      Formatting. Issue #40.
+
+
 0.54 November 5 2012
 
     + Added font manipulation to Charts.

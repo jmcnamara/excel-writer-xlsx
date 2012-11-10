@@ -339,6 +339,8 @@ shape6.jpg
 shape7.jpg
 shape8.jpg
 shape_all.jpg
+sparklines1.jpg
+sparklines2.jpg
 stats.jpg
 stats_ext.jpg
 stocks.jpg
