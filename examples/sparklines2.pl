@@ -18,7 +18,6 @@ use Excel::Writer::XLSX;
 my $workbook    = Excel::Writer::XLSX->new( 'sparklines2.xlsx' );
 my $worksheet1  = $workbook->add_worksheet();
 my $worksheet2  = $workbook->add_worksheet();
-my $date_format = $workbook->add_format( num_format => 'd mmm yyyy' );
 my $bold        = $workbook->add_format( bold => 1 );
 my $str;
 my $row = 1;
@@ -348,6 +347,24 @@ $worksheet1->add_sparkline(
 
 $worksheet1->write( $row,   0, 'Growth' );
 $worksheet1->write( $row++, 1, $str );
+$row++;
+
+
+###############################################################################
+#
+$str = 'A grouped sparkline. Changes are applied to all three.';
+
+$worksheet1->add_sparkline(
+    {
+        location => [ 'A27',          'A28',          'A29' ],
+        range    => [ 'Sheet2!A5:J5', 'Sheet2!A6:J6', 'Sheet2!A7:J7' ],
+        markers  => 1,
+    }
+);
+
+$worksheet1->write( $row++, 1, $str );
+
+
 
 
 ###############################################################################
@@ -370,6 +387,13 @@ my $data = [
 
     # Unbalanced histogram.
     [ 5, 6, 7, 10, 15, 20, 30, 50, 70, 100 ],
+
+    # Data for the grouped sparkline example.
+    [ -2, 2,  3, -1, 0, -2, 3, 2, 1, 0 ],
+    [ 3,  -1, 0, -2, 3, 2,  1, 0, 2, 1 ],
+    [ 0,  -2, 3, 2,  1, 0,  1, 2, 3, 1 ],
+
+
 ];
 
 # Write the sample data to the worksheet.
