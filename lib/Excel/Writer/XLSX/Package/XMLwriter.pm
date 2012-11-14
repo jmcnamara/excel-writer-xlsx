@@ -131,7 +131,7 @@ sub xml_start_tag_encoded {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_xml_chars( $value );
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -171,6 +171,7 @@ sub xml_empty_tag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -195,7 +196,7 @@ sub xml_encoded_empty_tag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_xml_chars( $value );
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -227,7 +228,7 @@ sub xml_data_element {
         $tag .= qq( $key="$value");
     }
 
-    $data = _escape_xml_chars( $data );
+    $data = _escape_data( $data );
 
     local $\ = undef;
     print { $self->{_fh} } "<$tag>$data</$end_tag>";
@@ -251,12 +252,12 @@ sub xml_encoded_data_element {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_xml_chars( $value );
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
 
-    $data = _escape_xml_chars( $data );
+    $data = _escape_data( $data );
 
     local $\ = undef;
     print { $self->{_fh} } "<$tag>$data</$end_tag>";
@@ -305,7 +306,7 @@ sub xml_si_element {
         $attr .= qq( $key="$value");
     }
 
-    $string = _escape_xml_chars( $string );
+    $string = _escape_data( $string );
 
     local $\ = undef;
     print { $self->{_fh} } "<si><t$attr>$string</t></si>";
@@ -371,7 +372,7 @@ sub xml_formula_element {
         $attr .= qq( $key="$value");
     }
 
-    $formula = _escape_xml_chars( $formula );
+    $formula = _escape_data( $formula );
 
     local $\ = undef;
     print { $self->{_fh} } "<c$attr><f>$formula</f><v>$value</v></c>";
@@ -401,7 +402,7 @@ sub xml_inline_string {
         $attr .= qq( $key="$value");
     }
 
-    $string = _escape_xml_chars( $string );
+    $string = _escape_data( $string );
 
     local $\ = undef;
     print { $self->{_fh} }
@@ -448,11 +449,37 @@ sub xml_get_fh {
 
 ###############################################################################
 #
-# _escape_xml_chars()
+# _escape_attributes()
 #
-# Escape XML characters.
+# Escape XML characters in attributes.
 #
-sub _escape_xml_chars {
+sub _escape_attributes {
+
+    my $str = $_[0];
+
+    return $str if $str !~ m/["&<>]/;
+
+    for ( $str ) {
+        s/&/&amp;/g;
+        s/"/&quot;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+    }
+
+    return $str;
+}
+
+
+
+
+###############################################################################
+#
+# _escape_data()
+#
+# Escape XML characters in data sections. Note, this is different from
+# _escape_attributes() in that double quotes are not escaped by Excel.
+#
+sub _escape_data {
 
     my $str = $_[0];
 
@@ -466,6 +493,8 @@ sub _escape_xml_chars {
 
     return $str;
 }
+
+
 
 
 1;

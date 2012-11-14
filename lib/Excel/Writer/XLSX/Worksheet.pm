@@ -6425,7 +6425,7 @@ sub _write_cell {
         {
             push @attributes, ( 't' => 'str' );
             $value =
-              Excel::Writer::XLSX::Package::XMLwriter::_escape_xml_chars(
+              Excel::Writer::XLSX::Package::XMLwriter::_escape_data(
                 $value );
         }
 
