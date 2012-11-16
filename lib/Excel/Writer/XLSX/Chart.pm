@@ -2077,6 +2077,9 @@ sub _write_cat_val_axis {
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
 
+    # Write the c:majorGridlines element.
+    $self->_write_major_gridlines( $x_axis->{_major_gridlines} );
+
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
@@ -2162,6 +2165,9 @@ sub _write_date_axis {
 
     # Write the c:axPos element.
     $self->_write_axis_pos( $position, $y_axis->{_reverse} );
+
+    # Write the c:majorGridlines element.
+    $self->_write_major_gridlines( $x_axis->{_major_gridlines} );
 
     # Write the axis title elements.
     my $title;
