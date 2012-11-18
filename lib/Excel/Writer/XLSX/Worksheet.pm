@@ -6277,10 +6277,10 @@ sub _write_row {
     }
 
     if ( $empty_row ) {
-        $self->xml_empty_tag( 'row', @attributes );
+        $self->xml_empty_tag_unencoded( 'row', @attributes );
     }
     else {
-        $self->xml_start_tag( 'row', @attributes );
+        $self->xml_start_tag_unencoded( 'row', @attributes );
     }
 }
 
@@ -7135,7 +7135,7 @@ sub _write_hyperlink_external {
     push @attributes, ( 'location' => $location ) if defined $location;
     push @attributes, ( 'tooltip'  => $tooltip )  if defined $tooltip;
 
-    $self->xml_encoded_empty_tag( 'hyperlink', @attributes );
+    $self->xml_empty_tag( 'hyperlink', @attributes );
 }
 
 
@@ -7161,7 +7161,7 @@ sub _write_hyperlink_internal {
     push @attributes, ( 'tooltip' => $tooltip ) if defined $tooltip;
     push @attributes, ( 'display' => $display );
 
-    $self->xml_encoded_empty_tag( 'hyperlink', @attributes );
+    $self->xml_empty_tag( 'hyperlink', @attributes );
 }
 
 
@@ -8732,7 +8732,7 @@ sub _write_ext_sparklines {
         $self->_write_color_low( $sparkline->{_low_color} );
 
         if ( $sparkline->{_date_axis} ) {
-            $self->xml_encoded_data_element( 'xm:f', $sparkline->{_date_axis} );
+            $self->xml_data_element( 'xm:f', $sparkline->{_date_axis} );
         }
 
         $self->_write_sparklines( $sparkline );
@@ -8766,8 +8766,8 @@ sub _write_sparklines {
         my $location = $sparkline->{_locations}->[$i];
 
         $self->xml_start_tag( 'x14:sparkline' );
-        $self->xml_encoded_data_element( 'xm:f',     $range );
-        $self->xml_encoded_data_element( 'xm:sqref', $location );
+        $self->xml_data_element( 'xm:f',     $range );
+        $self->xml_data_element( 'xm:sqref', $location );
         $self->xml_end_tag( 'x14:sparkline' );
     }
 

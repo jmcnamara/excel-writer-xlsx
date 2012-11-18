@@ -1383,7 +1383,7 @@ sub _write_txBody {
 
     $self->xml_end_tag( 'a:rPr' );
 
-    $self->xml_encoded_data_element( 'a:t', $shape->{_text} );
+    $self->xml_data_element( 'a:t', $shape->{_text} );
 
     $self->xml_end_tag( 'a:r' );
     $self->xml_end_tag( 'a:p' );

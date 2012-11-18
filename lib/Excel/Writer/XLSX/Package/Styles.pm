@@ -286,7 +286,7 @@ sub _write_num_fmt {
         'formatCode' => $format_code,
     );
 
-    $self->xml_encoded_empty_tag( 'numFmt', @attributes );
+    $self->xml_empty_tag( 'numFmt', @attributes );
 }
 
 

@@ -26,7 +26,7 @@ our $VERSION = '0.55';
 #
 # NOTE: this module is a light weight re-implementation of XML::Writer. See
 # the Pod docs below for a full explanation. The methods  are implemented
-# for speed rather than readibility since they are used heavily in tight
+# for speed rather than readability since they are used heavily in tight
 # loops by Excel::Writer::XLSX.
 #
 
@@ -59,7 +59,7 @@ sub new {
 # _set_xml_writer()
 #
 # Set the XML writer filehandle for the object. This can either be done
-# in the constuctor (usually for testing since the file name isn't generally
+# in the constructor (usually for testing since the file name isn't generally
 # known at that stage) or later via this method.
 #
 sub _set_xml_writer {
@@ -97,8 +97,7 @@ sub xml_declaration {
 #
 # xml_start_tag()
 #
-# Write an XML start tag with optional attributes. As an optimisation the
-# attributes aren't encoded by default: the most common case.
+# Write an XML start tag with optional attributes.
 #
 sub xml_start_tag {
 
@@ -108,6 +107,7 @@ sub xml_start_tag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -119,11 +119,12 @@ sub xml_start_tag {
 
 ###############################################################################
 #
-# xml_start_tag()
+# xml_start_tag_unencoded()
 #
-# Write an XML start tag with optional, encoded, attributes.
+# Write an XML start tag with optional, unencoded, attributes.
+# This is a minor speed optimisation for elements that don't need encoding.
 #
-sub xml_start_tag_encoded {
+sub xml_start_tag_unencoded {
 
     my $self = shift;
     my $tag  = shift;
@@ -131,7 +132,6 @@ sub xml_start_tag_encoded {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -184,11 +184,12 @@ sub xml_empty_tag {
 
 ###############################################################################
 #
-# xml_encoded_empty_tag()
+# xml_empty_tag_unencoded()
 #
-# Write an empty XML tag with optional encoded attributes.
+# Write an empty XML tag with optional, unencoded, attributes.
+# This is a minor speed optimisation for elements that don't need encoding.
 #
-sub xml_encoded_empty_tag {
+sub xml_empty_tag_unencoded {
 
     my $self = shift;
     my $tag  = shift;
@@ -196,7 +197,6 @@ sub xml_encoded_empty_tag {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -224,6 +224,7 @@ sub xml_data_element {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
+        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
@@ -237,12 +238,12 @@ sub xml_data_element {
 
 ###############################################################################
 #
-# xml_encoded_data_element()
+# xml_data_element_unencoded()
 #
-# Write an XML element containing data with optional, encoded, attributes.
-# XML characters in the data are encoded.
+# Write an XML unencoded element containing data with optional attributes.
+# This is a minor speed optimisation for elements that don't need encoding.
 #
-sub xml_encoded_data_element {
+sub xml_data_element_unencoded {
 
     my $self    = shift;
     my $tag     = shift;
@@ -252,12 +253,9 @@ sub xml_encoded_data_element {
     while ( @_ ) {
         my $key   = shift @_;
         my $value = shift @_;
-        $value = _escape_attributes( $value );
 
         $tag .= qq( $key="$value");
     }
-
-    $data = _escape_data( $data );
 
     local $\ = undef;
     print { $self->{_fh} } "<$tag>$data</$end_tag>";
@@ -470,8 +468,6 @@ sub _escape_attributes {
 }
 
 
-
-
 ###############################################################################
 #
 # _escape_data()
@@ -493,8 +489,6 @@ sub _escape_data {
 
     return $str;
 }
-
-
 
 
 1;

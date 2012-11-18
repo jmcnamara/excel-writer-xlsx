@@ -2127,7 +2127,7 @@ sub _write_sheet {
     push @attributes, ( 'r:id' => $r_id );
 
 
-    $self->xml_encoded_empty_tag( 'sheet', @attributes );
+    $self->xml_empty_tag( 'sheet', @attributes );
 }
 
 

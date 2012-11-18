@@ -2397,7 +2397,7 @@ sub _write_number_format {
         'sourceLinked' => $source_linked,
     );
 
-    $self->xml_encoded_empty_tag( 'c:numFmt', @attributes );
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 
@@ -2437,7 +2437,7 @@ sub _write_cat_number_format {
         'sourceLinked' => $source_linked,
     );
 
-    $self->xml_encoded_empty_tag( 'c:numFmt', @attributes );
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
 }
 
 
