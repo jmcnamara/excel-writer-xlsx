@@ -4980,6 +4980,13 @@ This is the cell where the sparkline will be displayed:
 
 The C<location> should be a single cell. (For multiple cells see L<Grouped Sparklines> below).
 
+To specify the location in row-column notation use the C<xl_rowcol_to_cell()> function from the L<Excel::Writer::XLSX::Utility> module.
+
+    use Excel::Writer::XLSX::Utility ':rowcol';
+    ...
+    location => xl_rowcol_to_cell( 0, 5 ), # F1
+
+
 =head2 range
 
 This specifies the cell data range that the sparkline will plot:
@@ -5000,6 +5007,13 @@ If C<range> is not on the same worksheet you can specify its location using the 
 If the worksheet contains spaces or special characters you should quote the worksheet name in the same way that Excel does:
 
             range => q('Monthly Data'!A1:E1),
+
+To specify the location in row-column notation use the C<xl_range()> or C<xl_range_formula()> functions from the L<Excel::Writer::XLSX::Utility> module.
+
+    use Excel::Writer::XLSX::Utility ':rowcol';
+    ...
+    range => xl_range( 1, 1,  0, 4 ),                   # 'A1:E1'
+    range => xl_range_formula( 'Sheet1', 0, 0,  0, 4 ), # 'Sheet1!A2:E2'
 
 =head2 type
 

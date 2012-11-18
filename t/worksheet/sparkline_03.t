@@ -9,6 +9,7 @@ use lib 't/lib';
 use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
+use Excel::Writer::XLSX::Utility ':rowcol';
 
 use Test::More tests => 1;
 
@@ -42,8 +43,8 @@ $worksheet->write('A2', $data);
 
 $worksheet->add_sparkline(
     {
-        location => 'F1',
-        range    => 'Sheet1!A1:E1',
+        location => xl_rowcol_to_cell( 0, 5 ),
+        range    => xl_range_formula( 'Sheet1', 0, 0,  0, 4 ),
     }
 );
 
@@ -52,6 +53,7 @@ $worksheet->add_sparkline(
     {
         location => 'F2',
         range    => 'Sheet1!A2:E2',
+        range    => xl_range( 1, 1,  0, 4 ),
     }
 );
 
