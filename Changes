@@ -5,6 +5,19 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.56 November 18 2012
+
+    ! Fix for issue where chart creation order had to be the same
+      as the insertion order or charts would be out of sync.
+      Frederic Claude Sievert and Hurricup. Issue #42.
+
+    ! Fixed issue where gridlines didn't work in Scatter and Stock
+      charts. Issue #41.
+
+    ! Fixed default XML encoding to avoid/solve various issues with XML
+      encoding created by the XML changes in version 0.51. Issue #43.
+
+
 0.55 November 10 2012
 
     + Added Sparklines.
@@ -21,7 +34,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added Radar Charts.
 
-    ! Fix for XML encoding in write_url() intenal/external 
+    ! Fix for XML encoding in write_url() internal/external 
       links. Issue #37.
 
 

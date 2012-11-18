@@ -52,7 +52,6 @@ $worksheet->add_sparkline(
 $worksheet->add_sparkline(
     {
         location => 'F2',
-        range    => 'Sheet1!A2:E2',
         range    => xl_range( 1, 1,  0, 4 ),
     }
 );
