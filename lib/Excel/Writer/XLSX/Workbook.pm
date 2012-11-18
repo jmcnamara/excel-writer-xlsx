@@ -381,10 +381,6 @@ sub add_chart {
 
     my $chart = Excel::Writer::XLSX::Chart->factory( $type, $arg{subtype} );
 
-    # Get an incremental id to use for axes ids.
-    my $chart_index = scalar @{ $self->{_charts} };
-    $chart->{_id} = $chart_index;
-
     # If the chart isn't embedded let the workbook control it.
     if ( !$embedded ) {
 
@@ -1424,8 +1420,6 @@ sub _prepare_drawings {
         my $shape_count = scalar @{ $sheet->{_shapes} };
         next unless ( $chart_count + $image_count + $shape_count );
 
-        $sheet->_sort_charts();
-
         $drawing_id++;
 
         for my $index ( 0 .. $chart_count - 1 ) {
@@ -1453,6 +1447,15 @@ sub _prepare_drawings {
         my $drawing = $sheet->{_drawing};
         push @{ $self->{_drawings} }, $drawing;
     }
+
+    # Sort the workbook charts references into the order that the were
+    # written from the worksheets above.
+    my @chart_data = @{ $self->{_charts} };
+
+    @chart_data = sort { $a->{_id} <=> $b->{_id} } @chart_data;
+
+    $self->{_charts} = \@chart_data;
+
 
     $self->{_drawing_count} = $drawing_id;
 }
