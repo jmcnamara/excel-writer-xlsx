@@ -383,6 +383,11 @@ t/regression/chart_gridlines01.t
 t/regression/chart_gridlines02.t
 t/regression/chart_gridlines03.t
 t/regression/chart_gridlines04.t
+t/regression/chart_gridlines05.t
+t/regression/chart_gridlines06.t
+t/regression/chart_gridlines07.t
+t/regression/chart_gridlines08.t
+t/regression/chart_gridlines09.t
 t/regression/chart_line01.t
 t/regression/chart_line02.t
 t/regression/chart_name01.t
@@ -698,6 +703,11 @@ t/regression/xlsx_files/chart_gridlines01.xlsx
 t/regression/xlsx_files/chart_gridlines02.xlsx
 t/regression/xlsx_files/chart_gridlines03.xlsx
 t/regression/xlsx_files/chart_gridlines04.xlsx
+t/regression/xlsx_files/chart_gridlines05.xlsx
+t/regression/xlsx_files/chart_gridlines06.xlsx
+t/regression/xlsx_files/chart_gridlines07.xlsx
+t/regression/xlsx_files/chart_gridlines08.xlsx
+t/regression/xlsx_files/chart_gridlines09.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
 t/regression/xlsx_files/chart_name01.xlsx

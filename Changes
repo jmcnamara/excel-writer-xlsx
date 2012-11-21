@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.57 November 21 2012
+
+    + Add major and minor axis chart gridline formatting.
+
+
 0.56 November 18 2012
 
     ! Fix for issue where chart creation order had to be the same
