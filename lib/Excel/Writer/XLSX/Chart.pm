@@ -344,53 +344,6 @@ sub set_plotarea {
 
     # TODO. Need to refactor for XLSX format.
     return;
-
-    my $self = shift;
-    my %arg  = @_;
-    return unless keys %arg;
-
-    my $area = $self->{_plotarea};
-
-    # Set the plotarea visibility.
-    if ( defined $arg{visible} ) {
-        $area->{_visible} = $arg{visible};
-        return if !$area->{_visible};
-    }
-
-    # TODO. could move this out of if statement.
-    $area->{_bg_color_index} = 0x08;
-
-    # Set the chart background colour.
-    if ( defined $arg{color} ) {
-        my ( $index, $rgb ) = $self->_get_color_indices( $arg{color} );
-        if ( defined $index ) {
-            $area->{_fg_color_index} = $index;
-            $area->{_fg_color_rgb}   = $rgb;
-            $area->{_bg_color_index} = 0x08;
-            $area->{_bg_color_rgb}   = 0x000000;
-        }
-    }
-
-    # Set the border line colour.
-    if ( defined $arg{line_color} ) {
-        my ( $index, $rgb ) = $self->_get_color_indices( $arg{line_color} );
-        if ( defined $index ) {
-            $area->{_line_color_index} = $index;
-            $area->{_line_color_rgb}   = $rgb;
-        }
-    }
-
-    # Set the border line pattern.
-    if ( defined $arg{line_pattern} ) {
-        my $pattern = $self->_get_line_pattern( $arg{line_pattern} );
-        $area->{_line_pattern} = $pattern;
-    }
-
-    # Set the border line weight.
-    if ( defined $arg{line_weight} ) {
-        my $weight = $self->_get_line_weight( $arg{line_weight} );
-        $area->{_line_weight} = $weight;
-    }
 }
 
 
@@ -404,60 +357,6 @@ sub set_chartarea {
 
     # TODO. Need to refactor for XLSX format.
     return;
-
-    my $self = shift;
-    my %arg  = @_;
-    return unless keys %arg;
-
-    my $area = $self->{_chartarea};
-
-    # Embedded automatic line weight has a different default value.
-    $area->{_line_weight} = 0xFFFF if $self->{_embedded};
-
-    # Set the chart background colour.
-    if ( defined $arg{color} ) {
-        my ( $index, $rgb ) = $self->_get_color_indices( $arg{color} );
-        if ( defined $index ) {
-            $area->{_fg_color_index} = $index;
-            $area->{_fg_color_rgb}   = $rgb;
-            $area->{_bg_color_index} = 0x08;
-            $area->{_bg_color_rgb}   = 0x000000;
-            $area->{_area_pattern}   = 1;
-            $area->{_area_options}   = 0x0000 if $self->{_embedded};
-            $area->{_visible}        = 1;
-        }
-    }
-
-    # Set the border line colour.
-    if ( defined $arg{line_color} ) {
-        my ( $index, $rgb ) = $self->_get_color_indices( $arg{line_color} );
-        if ( defined $index ) {
-            $area->{_line_color_index} = $index;
-            $area->{_line_color_rgb}   = $rgb;
-            $area->{_line_pattern}     = 0x00;
-            $area->{_line_options}     = 0x0000;
-            $area->{_visible}          = 1;
-        }
-    }
-
-    # Set the border line pattern.
-    if ( defined $arg{line_pattern} ) {
-        my $pattern = $self->_get_line_pattern( $arg{line_pattern} );
-        $area->{_line_pattern}     = $pattern;
-        $area->{_line_options}     = 0x0000;
-        $area->{_line_color_index} = 0x4F if !defined $arg{line_color};
-        $area->{_visible}          = 1;
-    }
-
-    # Set the border line weight.
-    if ( defined $arg{line_weight} ) {
-        my $weight = $self->_get_line_weight( $arg{line_weight} );
-        $area->{_line_weight}      = $weight;
-        $area->{_line_options}     = 0x0000;
-        $area->{_line_pattern}     = 0x00 if !defined $arg{line_pattern};
-        $area->{_line_color_index} = 0x4F if !defined $arg{line_color};
-        $area->{_visible}          = 1;
-    }
 }
 
 
@@ -792,88 +691,6 @@ sub _get_palette_color {
     my @rgb = @{ $palette->[$index] };
 
     return sprintf "%02X%02X%02X", @rgb;
-}
-
-
-###############################################################################
-#
-# _get_line_pattern()
-#
-# Get the Excel chart index for line pattern that corresponds to the user
-# defined value.
-#
-sub _get_line_pattern {
-
-    my $self    = shift;
-    my $value   = lc shift;
-    my $default = 0;
-    my $pattern;
-
-    my %patterns = (
-        0              => 5,
-        1              => 0,
-        2              => 1,
-        3              => 2,
-        4              => 3,
-        5              => 4,
-        6              => 7,
-        7              => 6,
-        8              => 8,
-        'solid'        => 0,
-        'dash'         => 1,
-        'dot'          => 2,
-        'dash-dot'     => 3,
-        'dash-dot-dot' => 4,
-        'none'         => 5,
-        'dark-gray'    => 6,
-        'medium-gray'  => 7,
-        'light-gray'   => 8,
-    );
-
-    if ( exists $patterns{$value} ) {
-        $pattern = $patterns{$value};
-    }
-    else {
-        $pattern = $default;
-    }
-
-    return $pattern;
-}
-
-
-###############################################################################
-#
-# _get_line_weight()
-#
-# Get the Excel chart index for line weight that corresponds to the user
-# defined value.
-#
-sub _get_line_weight {
-
-    my $self    = shift;
-    my $value   = lc shift;
-    my $default = 0;
-    my $weight;
-
-    my %weights = (
-        1          => -1,
-        2          => 0,
-        3          => 1,
-        4          => 2,
-        'hairline' => -1,
-        'narrow'   => 0,
-        'medium'   => 1,
-        'wide'     => 2,
-    );
-
-    if ( exists $weights{$value} ) {
-        $weight = $weights{$value};
-    }
-    else {
-        $weight = $default;
-    }
-
-    return $weight;
 }
 
 
@@ -1226,37 +1043,6 @@ sub _set_default_properties {
 
     my $self = shift;
 
-    $self->{_chartarea} = {
-        _visible          => 0,
-        _fg_color_index   => 0x4E,
-        _fg_color_rgb     => 0xFFFFFF,
-        _bg_color_index   => 0x4D,
-        _bg_color_rgb     => 0x000000,
-        _area_pattern     => 0x0000,
-        _area_options     => 0x0000,
-        _line_pattern     => 0x0005,
-        _line_weight      => 0xFFFF,
-        _line_color_index => 0x4D,
-        _line_color_rgb   => 0x000000,
-        _line_options     => 0x0008,
-    };
-
-    $self->{_plotarea} = {
-        _visible          => 1,
-        _fg_color_index   => 0x16,
-        _fg_color_rgb     => 0xC0C0C0,
-        _bg_color_index   => 0x4F,
-        _bg_color_rgb     => 0x000000,
-        _area_pattern     => 0x0001,
-        _area_options     => 0x0000,
-        _line_pattern     => 0x0000,
-        _line_weight      => 0x0000,
-        _line_color_index => 0x17,
-        _line_color_rgb   => 0x808080,
-        _line_options     => 0x0000,
-    };
-
-
     # Set the default axis properties.
     $self->{_x_axis}->{_defaults} = {
         num_format      => 'General',
@@ -1301,24 +1087,6 @@ sub _set_embedded_config_data {
     my $self = shift;
 
     $self->{_embedded} = 1;
-
-    # TODO. We may be able to remove this after refactoring.
-
-    $self->{_chartarea} = {
-        _visible          => 1,
-        _fg_color_index   => 0x4E,
-        _fg_color_rgb     => 0xFFFFFF,
-        _bg_color_index   => 0x4D,
-        _bg_color_rgb     => 0x000000,
-        _area_pattern     => 0x0001,
-        _area_options     => 0x0001,
-        _line_pattern     => 0x0000,
-        _line_weight      => 0x0000,
-        _line_color_index => 0x4D,
-        _line_color_rgb   => 0x000000,
-        _line_options     => 0x0009,
-    };
-
 }
 
 
