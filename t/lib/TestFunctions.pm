@@ -239,6 +239,12 @@ sub _compare_xlsx_files {
             $exp_xml_str =~ s/(<pageSetup.*) r:id="rId1"/$1/;
         }
 
+        # Remove Chart pageMargin dimensions which are almost always different.
+        if ( $filename =~ m(xl/charts/chart\d.xml) ) {
+            $exp_xml_str =~ s{<c:pageMargins[^>]*>}{<c:pageMargins/>};
+            $got_xml_str =~ s{<c:pageMargins[^>]*>}{<c:pageMargins/>};
+        }
+
         if ( $filename =~ /.vml$/ ) {
             @got_xml = _xml_str_to_array( $got_xml_str );
             @exp_xml = _vml_str_to_array( $exp_xml_str );
