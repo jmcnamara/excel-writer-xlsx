@@ -86,6 +86,8 @@ sub new {
     $self->{_horiz_cat_axis}    = 0;
     $self->{_horiz_val_axis}    = 1;
     $self->{_protection}        = 0;
+    $self->{_chartarea}         = {};
+    $self->{_plotarea}          = {};
     $self->{_x_axis}            = {};
     $self->{_y_axis}            = {};
     $self->{_y2_axis}           = {};
@@ -127,6 +129,9 @@ sub _assemble_xml_file {
 
     # Write the c:chart element.
     $self->_write_chart();
+
+    # Write the c:spPr element for the chartarea formatting.
+    $self->_write_sp_pr( $self->{_chartarea} );
 
     # Write the c:printSettings element.
     $self->_write_print_settings() if $self->{_embedded};
@@ -342,8 +347,10 @@ sub set_legend {
 #
 sub set_plotarea {
 
-    # TODO. Need to refactor for XLSX format.
-    return;
+    my $self = shift;
+
+    # Convert the user defined properties to internal properties.
+    $self->{_plotarea} = $self->_get_area_properties( @_ );
 }
 
 
@@ -355,8 +362,10 @@ sub set_plotarea {
 #
 sub set_chartarea {
 
-    # TODO. Need to refactor for XLSX format.
-    return;
+    my $self = shift;
+
+    # Convert the user defined properties to internal properties.
+    $self->{_chartarea} = $self->_get_area_properties( @_ );
 }
 
 
@@ -703,6 +712,86 @@ sub _get_palette_color {
 
 ###############################################################################
 #
+# _get_swe_line_pattern()
+#
+# Get the Spreadsheet::WriteExcel line pattern for backward compatibility.
+#
+sub _get_swe_line_pattern {
+
+    my $self    = shift;
+    my $value   = lc shift;
+    my $default = 'solid';
+    my $pattern;
+
+    my %patterns = (
+        0              => 'solid',
+        1              => 'dash',
+        2              => 'dot',
+        3              => 'dash_dot',
+        4              => 'long_dash_dot_dot',
+        5              => 'none',
+        6              => 'solid',
+        7              => 'solid',
+        8              => 'solid',
+        'solid'        => 'solid',
+        'dash'         => 'dash',
+        'dot'          => 'dot',
+        'dash-dot'     => 'dash_dot',
+        'dash-dot-dot' => 'long_dash_dot_dot',
+        'none'         => 'none',
+        'dark-gray'    => 'solid',
+        'medium-gray'  => 'solid',
+        'light-gray'   => 'solid',
+    );
+
+    if ( exists $patterns{$value} ) {
+        $pattern = $patterns{$value};
+    }
+    else {
+        $pattern = $default;
+    }
+
+    return $pattern;
+}
+
+
+###############################################################################
+#
+# _get_swe_line_weight()
+#
+# Get the Spreadsheet::WriteExcel line weight for backward compatibility.
+#
+sub _get_swe_line_weight {
+
+    my $self    = shift;
+    my $value   = lc shift;
+    my $default = 1;
+    my $weight;
+
+    my %weights = (
+        1          => 0.25,
+        2          => 1,
+        3          => 2,
+        4          => 3,
+        'hairline' => 0.25,
+        'narrow'   => 1,
+        'medium'   => 2,
+        'wide'     => 3,
+    );
+
+    if ( exists $weights{$value} ) {
+        $weight = $weights{$value};
+    }
+    else {
+        $weight = $default;
+    }
+
+    return $weight;
+}
+
+
+###############################################################################
+#
 # _get_line_properties()
 #
 # Convert user defined line properties to the structure required internally.
@@ -943,6 +1032,69 @@ sub _get_labels_properties {
     }
 
     return $labels;
+}
+
+
+###############################################################################
+#
+# _get_area_properties()
+#
+# Convert user defined area properties to the structure required internally.
+#
+sub _get_area_properties {
+
+    my $self = shift;
+    my %arg  = @_;
+    my $area = {};
+
+
+    # Map deprecated Spreadsheet::WriteExcel fill colour.
+    if ( $arg{color} ) {
+        $arg{fill}->{color} = $arg{color};
+    }
+
+    # Map deprecated Spreadsheet::WriteExcel line_weight.
+    if ( $arg{line_weight} ) {
+        my $width = $self->_get_swe_line_weight( $arg{line_weight} );
+        $arg{border}->{width} = $width;
+    }
+
+    # Map deprecated Spreadsheet::WriteExcel line_pattern.
+    if ( $arg{line_pattern} ) {
+        my $pattern = $self->_get_swe_line_pattern( $arg{line_pattern} );
+
+        if ( $pattern eq 'none' ) {
+            $arg{border}->{none} = 1;
+        }
+        else {
+            $arg{border}->{dash_type} = $pattern;
+        }
+    }
+
+    # Map deprecated Spreadsheet::WriteExcel line colour.
+    if ( $arg{line_color} ) {
+        $arg{border}->{color} = $arg{line_color};
+    }
+
+
+    # Handle Excel::Writer::XLSX style properties.
+
+    # Set the line properties for the chartarea.
+    my $line = $self->_get_line_properties( $arg{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $arg{border} ) {
+        $line = $self->_get_line_properties( $arg{border} );
+    }
+
+    # Set the fill properties for the chartarea.
+    my $fill = $self->_get_fill_properties( $arg{fill} );
+
+
+    $area->{_line} = $line;
+    $area->{_fill} = $fill;
+
+    return $area;
 }
 
 
@@ -1287,6 +1439,9 @@ sub _write_plot_area {
         y_axis   => $self->{_y2_axis},
         axis_ids => $self->{_axis2_ids}
     );
+
+    # Write the c:spPr element for the plotarea formatting.
+    $self->_write_sp_pr( $self->{_plotarea} );
 
     $self->xml_end_tag( 'c:plotArea' );
 }
@@ -4463,13 +4618,48 @@ This allows you to remove 1 or more series from the the legend (the series will 
 
 The C<set_chartarea()> method is used to set the properties of the chart area.
 
-This method isn't implemented yet and is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
+    $chart->set_chartarea(
+        border => { none  => 1 },
+        fill   => { color => 'red' }
+    );
+
+The properties that can be set are:
+
+=over
+
+=item * C<border>
+
+Set the border properties of the chartarea such as colour and style. See the L</CHART FORMATTING> section below.
+
+=item * C<fill>
+
+Set the fill properties of the chartarea such as colour. See the L</CHART FORMATTING> section below.
+
+=back
 
 =head2 set_plotarea()
 
 The C<set_plotarea()> method is used to set properties of the plot area of a chart.
 
-This method isn't implemented yet and is only available in L<Spreadsheet::WriteExcel>. However, it can be simulated using the C<set_style()> method, see below.
+    $chart->set_plotarea(
+        border => { color => 'yellow', width => 1, dash_type => 'dash' },
+        fill   => { color => '#92D050' }
+    );
+
+The properties that can be set are:
+
+=over
+
+=item * C<border>
+
+Set the border properties of the plotarea such as colour and style. See the L</CHART FORMATTING> section below.
+
+=item * C<fill>
+
+Set the fill properties of the plotarea such as colour. See the L</CHART FORMATTING> section below.
+
+=back
+
 
 =head2 set_style()
 
@@ -5086,7 +5276,7 @@ Features that are on the TODO list and will be added are:
 
 =item * Add more chart sub-types.
 
-=item * Additional formatting options. For now try the C<set_style()> method.
+=item * Additional formatting options.
 
 =item * More axis controls.
 

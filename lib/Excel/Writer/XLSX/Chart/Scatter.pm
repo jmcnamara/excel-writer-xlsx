@@ -216,6 +216,9 @@ sub _write_plot_area {
         position => 'l',
     );
 
+    # Write the c:spPr element for the plotarea formatting.
+    $self->_write_sp_pr( $self->{_plotarea} );
+
     $self->xml_end_tag( 'c:plotArea' );
 }
 
