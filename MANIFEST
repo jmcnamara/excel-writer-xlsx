@@ -345,6 +345,11 @@ t/regression/chart_blank03.t
 t/regression/chart_blank04.t
 t/regression/chart_blank05.t
 t/regression/chart_blank06.t
+t/regression/chart_chartarea01.t
+t/regression/chart_chartarea02.t
+t/regression/chart_chartarea03.t
+t/regression/chart_chartarea04.t
+t/regression/chart_chartarea05.t
 t/regression/chart_column01.t
 t/regression/chart_column02.t
 t/regression/chart_column03.t
@@ -665,6 +670,10 @@ t/regression/xlsx_files/chart_blank03.xlsx
 t/regression/xlsx_files/chart_blank04.xlsx
 t/regression/xlsx_files/chart_blank05.xlsx
 t/regression/xlsx_files/chart_blank06.xlsx
+t/regression/xlsx_files/chart_chartarea01.xlsx
+t/regression/xlsx_files/chart_chartarea03.xlsx
+t/regression/xlsx_files/chart_chartarea04.xlsx
+t/regression/xlsx_files/chart_chartarea05.xlsx
 t/regression/xlsx_files/chart_column01.xlsx
 t/regression/xlsx_files/chart_column02.xlsx
 t/regression/xlsx_files/chart_column03.xlsx

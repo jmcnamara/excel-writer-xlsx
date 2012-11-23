@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.57';
+our $VERSION = '0.58';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.57 of Excel::Writer::XLSX, released November 21, 2012.
+This document refers to version 0.58 of Excel::Writer::XLSX, released November 23, 2012.
 
 
 
@@ -931,7 +931,7 @@ It should be noted that if the user edits the data in examples C<A3> and C<A4> t
 
 The C<keep_leading_zeros()> property is off by default. The C<keep_leading_zeros()> method takes 0 or 1 as an argument. It defaults to 1 if an argument isn't specified:
 
-    $worksheet->keep_leading_zeros(   )     # Set on
+    $worksheet->keep_leading_zeros();       # Set on
     $worksheet->keep_leading_zeros( 1 );    # Set on
     $worksheet->keep_leading_zeros( 0 );    # Set off
 
