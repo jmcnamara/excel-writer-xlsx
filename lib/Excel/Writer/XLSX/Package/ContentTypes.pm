@@ -298,6 +298,27 @@ sub _add_table_name {
 
 ###############################################################################
 #
+# _add_vba_project()
+#
+# Add a vbaProject to the ContentTypes defaults.
+#
+sub _add_vba_project {
+
+    my $self = shift;
+
+    # Change the workbook.xml content-type from xlsx to xlsm.
+    for my $aref ( @{ $self->{_overrides} } ) {
+        if ( $aref->[0] eq '/xl/workbook.xml' ) {
+            $aref->[1] = 'application/vnd.ms-excel.sheet.macroEnabled.main+xml';
+        }
+    }
+
+    $self->_add_default( 'bin', 'application/vnd.ms-office.vbaProject' );
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################

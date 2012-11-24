@@ -791,6 +791,27 @@ sub set_properties {
 
 ###############################################################################
 #
+# add_vba_project()
+#
+# Add a vbaProject binary to the XLSX file.
+#
+sub add_vba_project {
+
+    my $self = shift;
+    my $vba_project = shift;
+
+    croak "No vbaProject.bin specified in add_vba_project()"
+      if not $vba_project;
+
+    croak "Couldn't locate $vba_project in add_vba_project(): $!"
+      unless -e $vba_project;
+
+    $self->{_vba_project} = $vba_project;
+}
+
+
+###############################################################################
+#
 # _store_workbook()
 #
 # Assemble worksheets into a workbook.
@@ -2004,6 +2025,10 @@ sub _write_file_version {
         'lowestEdited' => $lowest_edited,
         'rupBuild'     => $rup_build,
     );
+
+    if ( $self->{_vba_project} ) {
+        push @attributes, codeName => '{37E998C4-C9E5-D4B9-71C8-EB1FF731991C}';
+    }
 
     $self->xml_empty_tag( 'fileVersion', @attributes );
 }

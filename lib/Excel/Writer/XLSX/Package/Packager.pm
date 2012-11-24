@@ -144,6 +144,7 @@ sub _create_package {
     $self->_write_chartsheet_rels_files();
     $self->_write_drawing_rels_files();
     $self->_add_image_files();
+    $self->_add_vba_project();
 }
 
 
@@ -476,6 +477,11 @@ sub _write_content_types_file {
         $content->_add_shared_strings();
     }
 
+    # Add vbaProject if present.
+    if ( $self->{_workbook}->{_vba_project} ) {
+        $content->_add_vba_project();
+    }
+
     $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
     $content->_assemble_xml_file();
 }
@@ -594,7 +600,7 @@ sub _write_root_rels_file {
 
     $rels->_add_document_relationship( '/officeDocument', 'xl/workbook.xml' );
     $rels->_add_package_relationship( '/metadata/core-properties',
-        'docProps/core' );
+        'docProps/core.xml' );
     $rels->_add_document_relationship( '/extended-properties',
         'docProps/app.xml' );
 
@@ -639,6 +645,11 @@ sub _write_workbook_rels_file {
     if ( $self->{_workbook}->{_str_total} ) {
         $rels->_add_document_relationship( '/sharedStrings',
             'sharedStrings.xml' );
+    }
+
+    # Add vbaProject if present.
+    if ( $self->{_workbook}->{_vba_project} ) {
+        $rels->_add_ms_package_relationship( '/vbaProject', 'vbaProject.bin' );
     }
 
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
@@ -776,7 +787,7 @@ sub _write_drawing_rels_files {
 #
 # _add_image_files()
 #
-# Write the workbook.xml file.
+# Write the /xl/media/image?.xml files.
 #
 sub _add_image_files {
 
@@ -794,6 +805,26 @@ sub _add_image_files {
 
         copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
     }
+}
+
+
+###############################################################################
+#
+# _add_vba_project()
+#
+# Write the vbaProject.bin file.
+#
+sub _add_vba_project {
+
+    my $self        = shift;
+    my $dir         = $self->{_package_dir};
+    my $vba_project = $self->{_workbook}->{_vba_project};
+
+    return unless $vba_project;
+
+    _mkdir( $dir . '/xl' );
+
+    copy( $vba_project, $dir . '/xl/vbaProject.bin' );
 }
 
 
