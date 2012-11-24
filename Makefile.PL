@@ -28,6 +28,7 @@ my %params = (
     'NEEDS_LINKING' => 0,
     'dist'          => { COMPRESS => 'gzip --best', SUFFIX => 'gz' },
     'PREREQ_PM'     => \%deps,
+    'EXE_FILES'     => ['bin/extract_vba'],
     'test'          => { TESTS => 't/*/*.t t/*/*/*.t' }
 
 );

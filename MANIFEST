@@ -2,8 +2,10 @@ Changes
 MANIFEST
 Makefile.PL
 README
+bin/extract_vba
 examples/README
 examples/a_simple.pl  
+examples/add_vba_project.pl
 examples/array_formula.pl
 examples/autofilter.pl  
 examples/bug_report.pl
@@ -86,6 +88,7 @@ examples/unicode_polish_utf8.pl
 examples/unicode_polish_utf8.txt
 examples/unicode_shift_jis.pl
 examples/unicode_shift_jis.txt
+examples/vbaProject.bin
 examples/write_handler1.pl
 examples/write_handler2.pl
 examples/write_handler3.pl
@@ -503,6 +506,7 @@ t/regression/images/red.jpg
 t/regression/images/red.png
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
+t/regression/macro01.t
 t/regression/optimize01.t
 t/regression/optimize02.t
 t/regression/optimize03.t
@@ -816,6 +820,7 @@ t/regression/xlsx_files/image04.xlsx
 t/regression/xlsx_files/image05.xlsx
 t/regression/xlsx_files/image06.xlsx
 t/regression/xlsx_files/image07.xlsx
+t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
 t/regression/xlsx_files/optimize03.xlsx
@@ -914,6 +919,7 @@ t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/utf8_01.xlsx
 t/regression/xlsx_files/utf8_02.xlsx
+t/regression/xlsx_files/vbaProject01.bin
 t/utility/xl_cell_to_rowcol.t
 t/utility/xl_col_to_name.t
 t/utility/xl_date_1904.t
