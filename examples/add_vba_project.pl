@@ -19,12 +19,19 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( 'add_vba_project.xlsm' );
 my $worksheet = $workbook->add_worksheet();
 
+$worksheet->set_column( 'A:A', 50 );
+
 # Add the VBA project binary.
 $workbook->add_vba_project( './vbaProject.bin' );
 
 # Show text for the end user.
 $worksheet->write( 'A1', 'Run the SampleMacro embedded in this file.' );
 $worksheet->write( 'A2', 'You may have to turn on the Excel Developer option first.' );
+
+# Call a user defined function from the VBA project.
+$worksheet->write( 'A6', 'Result from a user defined function:' );
+$worksheet->write( 'B6', '=MyFunction(7)' );
+
 
 
 __END__
