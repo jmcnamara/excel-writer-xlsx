@@ -4,10 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
-0.59 November XX 2012
+0.59 November 26 2012
 
     + Added macro support via VBA projects extracted from existing Excel
-      xlsm files. Experimental.
+      xlsm files. User defined functions can be called from worksheets
+      and macros can be called by the user but they cannot, currently,
+      be linked to form elements such as buttons.
 
 
 0.58 November 23 2012
