@@ -2570,8 +2570,14 @@ sub write_url {
     # different characteristics that we have to account for.
     if ( $link_type == 1 ) {
 
-        # Substiture white space in url.
-        $url =~ s/[\s\x00]/%20/;
+        # Escape the URL escape symbol.
+        $url =~ s/%/%25/g;
+
+        # Escape whitespace in URL.
+        $url =~ s/[\s\x00]/%20/g;
+
+        # Escape other special characters in URL.
+        $url =~ s/(["<>[\]`^{}])/sprintf '%%%x', ord $1/eg;
 
         # Ordinary URL style external links don't have a "location" string.
         $str = undef;
