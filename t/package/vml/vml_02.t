@@ -29,7 +29,7 @@ my $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 #
 $caption = " \tVML: _assemble_xml_file()";
 
-$vml->_assemble_xml_file( 1, 1024, undef, [ [ 1, 1, 'Some text', '', undef, '#ffffe1', [ 2, 0, 15, 10, 4, 4, 15, 4, 143, 10, 128, 74 ] ] ] );
+$vml->_assemble_xml_file( 1, 1024, undef, [ [ 1, 2, 'Some text', '', undef, 'buttonFace [67]', [ 2, 1, 0, 0, 3, 2, 0, 0, 128, 20, 64, 20 ] ] ] );
 
 $expected = _expected_vml_to_aref();
 $got      = _got_to_aref( $got );
@@ -37,7 +37,6 @@ $got      = _got_to_aref( $got );
 _is_deep_diff( $got, $expected, $caption );
 
 __DATA__
-<?xml version="1.0"?>
 <xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
   <o:shapelayout v:ext="edit">
     <o:idmap v:ext="edit" data="1"/>
