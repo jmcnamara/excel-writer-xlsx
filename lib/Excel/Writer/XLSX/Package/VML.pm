@@ -61,7 +61,7 @@ sub _assemble_xml_file {
     my $vml_shape_id  = shift;
     my $comments_data = shift;
     my $buttons_data  = shift;
-
+    my $z_index       = 1;
 
     $self->_write_xml_namespace;
 
@@ -73,7 +73,6 @@ sub _assemble_xml_file {
         # Write the v:shapetype element.
         $self->_write_button_shapetype();
 
-        my $z_index = 1;
         for my $button ( @$buttons_data ) {
 
             # Write the v:shape element.
@@ -87,7 +86,6 @@ sub _assemble_xml_file {
         # Write the v:shapetype element.
         $self->_write_comment_shapetype();
 
-        my $z_index = 1;
         for my $comment ( @$comments_data ) {
 
             # Write the v:shape element.
