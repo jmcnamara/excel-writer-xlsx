@@ -29,7 +29,19 @@ my $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 #
 $caption = " \tVML: _assemble_xml_file()";
 
-$vml->_assemble_xml_file( 1, 1024, undef, [ [ 1, 2, 'Some text', '', undef, 'buttonFace [67]', [ 2, 1, 0, 0, 3, 2, 0, 0, 128, 20, 64, 20 ] ] ] );
+$vml->_assemble_xml_file(
+    1, 1024, undef,
+    [
+        {
+            _row       => 1,
+            _col       => 2,
+            _fillcolor => 'buttonFace [67]',
+            _vertices  => [ 2, 1, 0, 0, 3, 2, 0, 0, 128, 20, 64, 20 ],
+            _font      => {_caption => 'Button 1'},
+            _macro     => '[0]!Button1_Click',
+        }
+    ]
+);
 
 $expected = _expected_vml_to_aref();
 $got      = _got_to_aref( $got );

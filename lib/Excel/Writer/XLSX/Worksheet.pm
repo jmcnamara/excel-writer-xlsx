@@ -156,12 +156,14 @@ sub new {
     $self->{_table} = {};
     $self->{_merge} = [];
 
+    $self->{_has_vml}          = 0;
     $self->{_has_comments}     = 0;
     $self->{_comments}         = {};
     $self->{_comments_array}   = [];
     $self->{_comments_author}  = '';
     $self->{_comments_visible} = 0;
     $self->{_vml_shape_id}     = 1024;
+    $self->{_buttons_array}    = [];
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -2019,6 +2021,7 @@ sub write_comment {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
+    $self->{_has_vml}     = 1;
     $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
@@ -4181,6 +4184,30 @@ sub add_sparkline {
 
 ###############################################################################
 #
+# insert_button()
+#
+sub insert_button {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    if ( @_ < 3 ) { return -1 }    # Check the number of args
+
+
+    my $button = $self->_button_params( @_ );
+
+    push @{ $self->{_buttons_array} }, $button;
+
+    $self->{_has_vml} = 1;
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
@@ -5454,6 +5481,7 @@ sub _prepare_comments {
     my $comment_id   = shift;
     my @comments;
 
+
     # We sort the comments by row and column but that isn't strictly required.
     my @rows = sort { $a <=> $b } keys %{ $self->{_comments} };
 
@@ -5479,13 +5507,18 @@ sub _prepare_comments {
         }
     }
 
-    $self->{_comments_array} = \@comments;
 
     push @{ $self->{_external_vml_links} },
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ];
 
-    push @{ $self->{_external_comment_links} },
-      [ '/comments', '../comments' . $comment_id . '.xml' ];
+
+    if ( $self->{_has_comments} ) {
+
+        $self->{_comments_array} = \@comments;
+
+        push @{ $self->{_external_comment_links} },
+          [ '/comments', '../comments' . $comment_id . '.xml' ];
+    }
 
     my $count         = scalar @comments;
     my $start_data_id = $vml_data_id;
@@ -5660,6 +5693,79 @@ sub _comment_params {
 
         [@vertices]
     );
+}
+
+
+###############################################################################
+#
+# _button_params()
+#
+# This method handles the parameters passed to insert_button() as well as
+# calculating the comment object position and vertices.
+#
+sub _button_params {
+
+    my $self = shift;
+    my $row    = shift;
+    my $col    = shift;
+    my $params = shift;
+    my $button = { _row => $row, _col => $col, _fillcolor => 'buttonFace [67]' };
+
+    my $button_number = 1 + @{ $self->{_buttons_array} };
+
+    # Set the button caption.
+    my $caption = $params->{caption};
+
+    # Set a default caption if none was specified by user.
+    if ( !defined $caption ) {
+        $caption = 'Button ' . $button_number;
+    }
+
+    $button->{_font}->{_caption} = $caption;
+
+
+    # Set the macro name.
+    $button->{_macro} = '[0]!Button' . $button_number . '_Click';
+
+
+    # Ensure that a width and height have been set.
+    my $default_width  = 64;
+    my $default_height = 20;
+    $params->{width}  = $default_width  if !$params->{width};
+    $params->{height} = $default_height if !$params->{height};
+
+    # Set the x/y offsets.
+    $params->{x_offset}  = 0  if !$params->{x_offset};
+    $params->{y_offset}  = 0  if !$params->{y_offset};
+
+    # Scale the size of the comment box if required.
+    if ( $params->{x_scale} ) {
+        $params->{width} = $params->{width} * $params->{x_scale};
+    }
+
+    if ( $params->{y_scale} ) {
+        $params->{height} = $params->{height} * $params->{y_scale};
+    }
+
+    # Round the dimensions to the nearest pixel.
+    $params->{width}  = int( 0.5 + $params->{width} );
+    $params->{height} = int( 0.5 + $params->{height} );
+
+    $params->{start_row} = $row;
+    $params->{start_col} = $col;
+
+    # Calculate the positions of comment object.
+    my @vertices = $self->_position_object_pixels(
+        $params->{start_col}, $params->{start_row}, $params->{x_offset},
+        $params->{y_offset},  $params->{width},     $params->{height}
+    );
+
+    # Add the width and height for VML.
+    push @vertices, ( $params->{width}, $params->{height} );
+
+    $button->{_vertices} = \@vertices;
+
+    return $button;
 }
 
 
@@ -7722,7 +7828,7 @@ sub _write_legacy_drawing {
     my $self = shift;
     my $id;
 
-    return unless $self->{_has_comments};
+    return unless $self->{_has_vml};
 
     # Increment the relationship id for any drawings or comments.
     $id = ++$self->{_rel_count};

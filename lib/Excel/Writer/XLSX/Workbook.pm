@@ -84,6 +84,7 @@ sub new {
     $self->{_custom_colors}      = [];
     $self->{_doc_properties}     = {};
     $self->{_localtime}          = [ localtime() ];
+    $self->{_num_vml_files}      = 0;
     $self->{_num_comment_files}  = 0;
     $self->{_optimization}       = 0;
     $self->{_x_window}           = 240;
@@ -1490,14 +1491,19 @@ sub _prepare_drawings {
 #
 sub _prepare_comments {
 
-    my $self         = shift;
-    my $comment_id   = 0;
-    my $vml_data_id  = 1;
-    my $vml_shape_id = 1024;
+    my $self          = shift;
+    my $comment_id    = 0;
+    my $vml_data_id   = 1;
+    my $vml_shape_id  = 1024;
+    my $vml_files     = 0;
+    my $comment_files = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
-        next unless $sheet->{_has_comments};
+        next unless $sheet->{_has_vml};
+        $vml_files++;
+        $comment_files++ if $sheet->{_has_comments};
+
 
         my $count = $sheet->_prepare_comments( $vml_data_id, $vml_shape_id,
             ++$comment_id );
@@ -1507,10 +1513,11 @@ sub _prepare_comments {
         $vml_shape_id += 1024 * int( ( 1024 + $count ) / 1024 );
     }
 
-    $self->{_num_comment_files} = $comment_id;
+    $self->{_num_vml_files}     = $vml_files;
+    $self->{_num_comment_files} = $comment_files;
 
     # Add a font format for cell comments.
-    if ( $comment_id > 0 ) {
+    if ( $comment_files > 0 ) {
         my $format = Excel::Writer::XLSX::Format->new(
             \$self->{_xf_format_indices},
             \$self->{_dxf_format_indices},

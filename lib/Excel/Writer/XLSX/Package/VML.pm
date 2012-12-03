@@ -62,12 +62,13 @@ sub _assemble_xml_file {
     my $comments_data = shift;
     my $buttons_data  = shift;
 
+
     $self->_write_xml_namespace;
 
     # Write the o:shapelayout element.
     $self->_write_shapelayout( $data_id );
 
-    if ( defined $buttons_data ) {
+    if ( defined $buttons_data && @$buttons_data) {
 
         # Write the v:shapetype element.
         $self->_write_button_shapetype();
@@ -81,7 +82,7 @@ sub _assemble_xml_file {
         }
     }
 
-    if ( defined $comments_data ) {
+    if ( defined $comments_data && @$comments_data ) {
 
         # Write the v:shapetype element.
         $self->_write_comment_shapetype();
@@ -474,25 +475,17 @@ sub _write_button_shape {
     my $z_index    = shift;
     my $button     = shift;
     my $type       = '#_x0000_t201';
-    my $insetmode  = 'auto';
-    my $visibility = 'hidden';
 
     # Set the shape index.
     $id = '_x0000_s' . $id;
 
     # Get the button parameters
-    my $row       = $button->[0];
-    my $col       = $button->[1];
-    my $string    = $button->[2];
-    my $author    = $button->[3];
-    my $visible   = $button->[4];
-    my $fillcolor = $button->[5];
-    my $vertices  = $button->[6];
+    my $row       = $button->{_row};
+    my $col       = $button->{_col};
+    my $fillcolor = $button->{_fillcolor};
+    my $vertices  = $button->{_vertices};
 
     my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
-
-    # Set the visibility.
-    $visibility = 'visible' if $visible;
 
     my $style =
         'position:absolute;'
@@ -516,7 +509,7 @@ sub _write_button_shape {
         'o:button'    => 't',
         'fillcolor'   => $fillcolor,
         'strokecolor' => 'windowText [64]',
-        'o:insetmode' => $insetmode,
+        'o:insetmode' => 'auto',
     );
 
     $self->xml_start_tag( 'v:shape', @attributes );
@@ -528,10 +521,10 @@ sub _write_button_shape {
     $self->_write_rotation_lock();
 
     # Write the v:textbox element.
-    $self->_write_button_textbox();
+    $self->_write_button_textbox( $button->{_font} );
 
     # Write the x:ClientData element.
-    $self->_write_button_client_data( $row, $col, $visible, $vertices );
+    $self->_write_button_client_data( $button );
 
     $self->xml_end_tag( 'v:shape' );
 }
@@ -629,7 +622,7 @@ sub _write_comment_textbox {
 sub _write_button_textbox {
 
     my $self  = shift;
-    my $font  = {};
+    my $font  = shift;
     my $style = 'mso-direction-alt:auto';
 
     my @attributes = ( 'style' => $style, 'o:singleclick' => 'f' );
@@ -678,12 +671,12 @@ sub _write_div {
 #
 sub _write_font {
 
-    my $self  = shift;
-    my $font  = shift;
-    my $caption = 'Button 1';
-    my $face  = 'Calibri';
-    my $size  = 220;
-    my $color = '#000000';
+    my $self    = shift;
+    my $font    = shift;
+    my $caption = $font->{_caption};
+    my $face    = 'Calibri';
+    my $size    = 220;
+    my $color   = '#000000';
 
     my @attributes = (
         'face'  => $face,
@@ -747,11 +740,14 @@ sub _write_comment_client_data {
 #
 sub _write_button_client_data {
 
-    my $self        = shift;
-    my $row         = shift;
-    my $col         = shift;
-    my $visible     = shift; # TODO
-    my $vertices    = shift;
+    my $self      = shift;
+    my $button    = shift;
+    my $row       = $button->{_row};
+    my $col       = $button->{_col};
+    my $macro     = $button->{_macro};
+    my $vertices  = $button->{_vertices};
+
+
     my $object_type = 'Button';
 
     my @attributes = ( 'ObjectType' => $object_type );
@@ -768,7 +764,7 @@ sub _write_button_client_data {
     $self->_write_auto_fill();
 
     # Write the x:FmlaMacro element.
-    $self->_write_fmla_macro('[0]!Button1_Click');
+    $self->_write_fmla_macro( $macro );
 
     # Write the x:TextHAlign element.
     $self->_write_text_halign();
