@@ -842,8 +842,8 @@ sub _store_workbook {
     # Convert the SST strings data structure.
     $self->_prepare_sst_string_data();
 
-    # Prepare the worksheet cell comments.
-    $self->_prepare_comments();
+    # Prepare the worksheet VML elements such as comments and buttons.
+    $self->_prepare_vml_objects();
 
     # Set the defined names for the worksheets such as Print Titles.
     $self->_prepare_defined_names();
@@ -1485,11 +1485,11 @@ sub _prepare_drawings {
 
 ###############################################################################
 #
-# _prepare_comments()
+# _prepare_vml_objects()
 #
-# Iterate through the worksheets and set up the comment data.
+# Iterate through the worksheets and set up the VML objects.
 #
-sub _prepare_comments {
+sub _prepare_vml_objects {
 
     my $self          = shift;
     my $comment_id    = 0;
@@ -1505,7 +1505,7 @@ sub _prepare_comments {
         $comment_files++ if $sheet->{_has_comments};
 
 
-        my $count = $sheet->_prepare_comments( $vml_data_id, $vml_shape_id,
+        my $count = $sheet->_prepare_vml_objects( $vml_data_id, $vml_shape_id,
             ++$comment_id );
 
         # Each VML file should start with a shape id incremented by 1024.
@@ -2054,9 +2054,11 @@ sub _write_workbook_pr {
     my $show_ink_annotation    = 0;
     my $auto_compress_pictures = 0;
     my $default_theme_version  = 124226;
+    my $codename               = $self->{_vba_codename};
     my @attributes;
 
-    push @attributes, ( 'date1904' => 1 ) if $date_1904;
+    push @attributes, ( 'codeName' => $codename ) if $codename;
+    push @attributes, ( 'date1904' => 1 )         if $date_1904;
     push @attributes, ( 'defaultThemeVersion' => $default_theme_version );
 
     $self->xml_empty_tag( 'workbookPr', @attributes );

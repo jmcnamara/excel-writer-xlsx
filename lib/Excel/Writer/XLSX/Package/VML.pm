@@ -480,7 +480,6 @@ sub _write_button_shape {
     # Get the button parameters
     my $row       = $button->{_row};
     my $col       = $button->{_col};
-    my $fillcolor = $button->{_fillcolor};
     my $vertices  = $button->{_vertices};
 
     my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
@@ -505,7 +504,7 @@ sub _write_button_shape {
         'type'        => $type,
         'style'       => $style,
         'o:button'    => 't',
-        'fillcolor'   => $fillcolor,
+        'fillcolor'   => 'buttonFace [67]',
         'strokecolor' => 'windowText [64]',
         'o:insetmode' => 'auto',
     );

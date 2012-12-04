@@ -4186,6 +4186,8 @@ sub add_sparkline {
 #
 # insert_button()
 #
+# Insert a button form object into the worksheet.
+#
 sub insert_button {
 
     my $self = shift;
@@ -4195,8 +4197,8 @@ sub insert_button {
         @_ = $self->_substitute_cellref( @_ );
     }
 
-    if ( @_ < 3 ) { return -1 }    # Check the number of args
-
+    # Check the number of args.
+    if ( @_ < 3 ) { return -1 }
 
     my $button = $self->_button_params( @_ );
 
@@ -5468,12 +5470,12 @@ sub _validate_shape {
 
 ###############################################################################
 #
-# _prepare_comments()
+# _prepare_vml_objects()
 #
 # Turn the HoH that stores the comments into an array for easier handling
-# and set the external links.
+# and set the external links for comments and buttons.
 #
-sub _prepare_comments {
+sub _prepare_vml_objects {
 
     my $self         = shift;
     my $vml_data_id  = shift;
@@ -5709,7 +5711,7 @@ sub _button_params {
     my $row    = shift;
     my $col    = shift;
     my $params = shift;
-    my $button = { _row => $row, _col => $col, _fillcolor => 'buttonFace [67]' };
+    my $button = { _row => $row, _col => $col };
 
     my $button_number = 1 + @{ $self->{_buttons_array} };
 
@@ -5725,7 +5727,12 @@ sub _button_params {
 
 
     # Set the macro name.
-    $button->{_macro} = '[0]!Button' . $button_number . '_Click';
+    if ( $params->{macro} ) {
+        $button->{_macro} = '[0]!' . $params->{macro};
+    }
+    else {
+        $button->{_macro} = '[0]!Button' . $button_number . '_Click';
+    }
 
 
     # Ensure that a width and height have been set.
@@ -5934,12 +5941,16 @@ sub _write_sheet_pr {
     if (   !$self->{_fit_page}
         && !$self->{_filter_on}
         && !$self->{_tab_color}
-        && !$self->{_outline_changed} )
+        && !$self->{_outline_changed}
+        && !$self->{_vba_codename} )
     {
         return;
     }
 
-    push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
+
+    my $codename = $self->{_vba_codename};
+    push @attributes, ( 'codeName'   => $codename ) if $codename;
+    push @attributes, ( 'filterMode' => 1 )         if $self->{_filter_on};
 
     if (   $self->{_fit_page}
         || $self->{_tab_color}
