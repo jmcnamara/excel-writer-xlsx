@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Package::VML;
 
-use Test::More tests => 1;
+use Test::More tests => 2;
 
 
 ###############################################################################
@@ -33,7 +33,21 @@ $expected = '<v:fill color2="#ffffe1"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_fill();
+$vml->_write_comment_fill();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_fill() method.
+#
+$caption  = " \tVML: _write_fill()";
+$expected = '<v:fill color2="buttonFace [67]" o:detectmouseclick="t"/>';
+
+$vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
+
+$vml->_write_button_fill();
 
 is( $got, $expected, $caption );
 

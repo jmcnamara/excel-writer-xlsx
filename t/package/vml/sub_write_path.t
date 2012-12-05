@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Package::VML;
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 
 ###############################################################################
@@ -33,7 +33,7 @@ $expected = '<v:path gradientshapeok="t" o:connecttype="rect"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_path( 't', 'rect');
+$vml->_write_comment_path( 't', 'rect');
 
 is( $got, $expected, $caption );
 
@@ -47,7 +47,21 @@ $expected = '<v:path o:connecttype="none"/>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_path( undef, 'none');
+$vml->_write_comment_path( undef, 'none');
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_path() method.
+#
+$caption  = " \tVML: _write_path()";
+$expected = '<v:path shadowok="f" o:extrusionok="f" strokeok="f" fillok="f" o:connecttype="rect"/>';
+
+$vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
+
+$vml->_write_button_path();
 
 is( $got, $expected, $caption );
 

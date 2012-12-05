@@ -156,12 +156,14 @@ sub new {
     $self->{_table} = {};
     $self->{_merge} = [];
 
+    $self->{_has_vml}          = 0;
     $self->{_has_comments}     = 0;
     $self->{_comments}         = {};
     $self->{_comments_array}   = [];
     $self->{_comments_author}  = '';
     $self->{_comments_visible} = 0;
     $self->{_vml_shape_id}     = 1024;
+    $self->{_buttons_array}    = [];
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -2019,6 +2021,7 @@ sub write_comment {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
+    $self->{_has_vml}     = 1;
     $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
@@ -4187,6 +4190,32 @@ sub add_sparkline {
 
 ###############################################################################
 #
+# insert_button()
+#
+# Insert a button form object into the worksheet.
+#
+sub insert_button {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    # Check the number of args.
+    if ( @_ < 3 ) { return -1 }
+
+    my $button = $self->_button_params( @_ );
+
+    push @{ $self->{_buttons_array} }, $button;
+
+    $self->{_has_vml} = 1;
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
@@ -5447,18 +5476,19 @@ sub _validate_shape {
 
 ###############################################################################
 #
-# _prepare_comments()
+# _prepare_vml_objects()
 #
 # Turn the HoH that stores the comments into an array for easier handling
-# and set the external links.
+# and set the external links for comments and buttons.
 #
-sub _prepare_comments {
+sub _prepare_vml_objects {
 
     my $self         = shift;
     my $vml_data_id  = shift;
     my $vml_shape_id = shift;
     my $comment_id   = shift;
     my @comments;
+
 
     # We sort the comments by row and column but that isn't strictly required.
     my @rows = sort { $a <=> $b } keys %{ $self->{_comments} };
@@ -5485,13 +5515,18 @@ sub _prepare_comments {
         }
     }
 
-    $self->{_comments_array} = \@comments;
 
     push @{ $self->{_external_vml_links} },
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ];
 
-    push @{ $self->{_external_comment_links} },
-      [ '/comments', '../comments' . $comment_id . '.xml' ];
+
+    if ( $self->{_has_comments} ) {
+
+        $self->{_comments_array} = \@comments;
+
+        push @{ $self->{_external_comment_links} },
+          [ '/comments', '../comments' . $comment_id . '.xml' ];
+    }
 
     my $count         = scalar @comments;
     my $start_data_id = $vml_data_id;
@@ -5671,6 +5706,84 @@ sub _comment_params {
 
 ###############################################################################
 #
+# _button_params()
+#
+# This method handles the parameters passed to insert_button() as well as
+# calculating the comment object position and vertices.
+#
+sub _button_params {
+
+    my $self = shift;
+    my $row    = shift;
+    my $col    = shift;
+    my $params = shift;
+    my $button = { _row => $row, _col => $col };
+
+    my $button_number = 1 + @{ $self->{_buttons_array} };
+
+    # Set the button caption.
+    my $caption = $params->{caption};
+
+    # Set a default caption if none was specified by user.
+    if ( !defined $caption ) {
+        $caption = 'Button ' . $button_number;
+    }
+
+    $button->{_font}->{_caption} = $caption;
+
+
+    # Set the macro name.
+    if ( $params->{macro} ) {
+        $button->{_macro} = '[0]!' . $params->{macro};
+    }
+    else {
+        $button->{_macro} = '[0]!Button' . $button_number . '_Click';
+    }
+
+
+    # Ensure that a width and height have been set.
+    my $default_width  = 64;
+    my $default_height = 20;
+    $params->{width}  = $default_width  if !$params->{width};
+    $params->{height} = $default_height if !$params->{height};
+
+    # Set the x/y offsets.
+    $params->{x_offset}  = 0  if !$params->{x_offset};
+    $params->{y_offset}  = 0  if !$params->{y_offset};
+
+    # Scale the size of the comment box if required.
+    if ( $params->{x_scale} ) {
+        $params->{width} = $params->{width} * $params->{x_scale};
+    }
+
+    if ( $params->{y_scale} ) {
+        $params->{height} = $params->{height} * $params->{y_scale};
+    }
+
+    # Round the dimensions to the nearest pixel.
+    $params->{width}  = int( 0.5 + $params->{width} );
+    $params->{height} = int( 0.5 + $params->{height} );
+
+    $params->{start_row} = $row;
+    $params->{start_col} = $col;
+
+    # Calculate the positions of comment object.
+    my @vertices = $self->_position_object_pixels(
+        $params->{start_col}, $params->{start_row}, $params->{x_offset},
+        $params->{y_offset},  $params->{width},     $params->{height}
+    );
+
+    # Add the width and height for VML.
+    push @vertices, ( $params->{width}, $params->{height} );
+
+    $button->{_vertices} = \@vertices;
+
+    return $button;
+}
+
+
+###############################################################################
+#
 # Deprecated methods for backwards compatibility.
 #
 ###############################################################################
@@ -5834,12 +5947,16 @@ sub _write_sheet_pr {
     if (   !$self->{_fit_page}
         && !$self->{_filter_on}
         && !$self->{_tab_color}
-        && !$self->{_outline_changed} )
+        && !$self->{_outline_changed}
+        && !$self->{_vba_codename} )
     {
         return;
     }
 
-    push @attributes, ( 'filterMode' => 1 ) if $self->{_filter_on};
+
+    my $codename = $self->{_vba_codename};
+    push @attributes, ( 'codeName'   => $codename ) if $codename;
+    push @attributes, ( 'filterMode' => 1 )         if $self->{_filter_on};
 
     if (   $self->{_fit_page}
         || $self->{_tab_color}
@@ -7728,7 +7845,7 @@ sub _write_legacy_drawing {
     my $self = shift;
     my $id;
 
-    return unless $self->{_has_comments};
+    return unless $self->{_has_vml};
 
     # Increment the relationship id for any drawings or comments.
     $id = ++$self->{_rel_count};

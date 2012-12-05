@@ -33,7 +33,7 @@ $expected = '<div style="text-align:left"></div>';
 
 $vml = _new_object( \$got, 'Excel::Writer::XLSX::Package::VML' );
 
-$vml->_write_div();
+$vml->_write_div( 'left' );
 
 is( $got, $expected, $caption );
 

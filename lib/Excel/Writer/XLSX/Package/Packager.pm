@@ -100,6 +100,7 @@ sub _add_workbook {
     $self->{_sheet_names}       = \@sheet_names;
     $self->{_chart_count}       = scalar @{ $workbook->{_charts} };
     $self->{_drawing_count}     = scalar @{ $workbook->{_drawings} };
+    $self->{_num_vml_files}     = $workbook->{_num_vml_files};
     $self->{_num_comment_files} = $workbook->{_num_comment_files};
     $self->{_named_ranges}      = $workbook->{_named_ranges};
 
@@ -283,7 +284,7 @@ sub _write_vml_files {
 
     my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next unless $worksheet->{_has_comments};
+        next unless $worksheet->{_has_vml};
 
         my $vml = Excel::Writer::XLSX::Package::VML->new();
 
@@ -295,7 +296,8 @@ sub _write_vml_files {
         $vml->_assemble_xml_file(
             $worksheet->{_vml_data_id},
             $worksheet->{_vml_shape_id},
-            $worksheet->{_comments_array}
+            $worksheet->{_comments_array},
+            $worksheet->{_buttons_array},
         );
     }
 }
@@ -460,7 +462,7 @@ sub _write_content_types_file {
         $content->_add_drawing_name( 'drawing' . $i );
     }
 
-    if ( $self->{_num_comment_files} ) {
+    if ( $self->{_num_vml_files} ) {
         $content->_add_vml_name();
     }
 
