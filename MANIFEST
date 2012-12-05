@@ -5,7 +5,6 @@ README
 bin/extract_vba
 examples/README
 examples/a_simple.pl  
-examples/macros.pl
 examples/array_formula.pl
 examples/autofilter.pl  
 examples/bug_report.pl
@@ -36,6 +35,7 @@ examples/hide_sheet.pl
 examples/hyperlink1.pl
 examples/hyperlink2.pl
 examples/indent.pl
+examples/macros.pl
 examples/merge1.pl
 examples/merge2.pl
 examples/merge3.pl
@@ -278,6 +278,7 @@ t/package/vml/sub_write_size_with_cells.t
 t/package/vml/sub_write_stroke.t
 t/package/vml/sub_write_textbox.t
 t/package/vml/vml_01.t
+t/package/vml/vml_02.t
 t/package/xml_writer/sub_write_xml_declaration.t
 t/regression/array_formula01.t
 t/regression/array_formula02.t
@@ -289,6 +290,13 @@ t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
 t/regression/autofilter07.t
+t/regression/button01.t
+t/regression/button02.t
+t/regression/button03.t
+t/regression/button04.t
+t/regression/button05.t
+t/regression/button06.t
+t/regression/button07.t
 t/regression/chart_area01.t
 t/regression/chart_area02.t
 t/regression/chart_area03.t
@@ -461,6 +469,8 @@ t/regression/escapes03.t
 t/regression/escapes04.t
 t/regression/escapes05.t
 t/regression/escapes06.t
+t/regression/escapes07.t
+t/regression/escapes08.t
 t/regression/filehandle01.t
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
@@ -605,6 +615,10 @@ t/regression/taint01.t
 t/regression/taint02.t
 t/regression/utf8_01.t
 t/regression/utf8_02.t
+t/regression/vml01.t
+t/regression/vml02.t
+t/regression/vml03.t
+t/regression/vml04.t
 t/regression/xlsx_files/array_formula01.xlsx
 t/regression/xlsx_files/array_formula02.xlsx
 t/regression/xlsx_files/autofilter00.xlsx
@@ -615,6 +629,12 @@ t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
 t/regression/xlsx_files/autofilter07.xlsx
+t/regression/xlsx_files/button01.xlsx
+t/regression/xlsx_files/button02.xlsx
+t/regression/xlsx_files/button03.xlsx
+t/regression/xlsx_files/button04.xlsx
+t/regression/xlsx_files/button05.xlsx
+t/regression/xlsx_files/button07.xlsm
 t/regression/xlsx_files/chart_area01.xlsx
 t/regression/xlsx_files/chart_area02.xlsx
 t/regression/xlsx_files/chart_area03.xlsx
@@ -784,6 +804,8 @@ t/regression/xlsx_files/escapes03.xlsx
 t/regression/xlsx_files/escapes04.xlsx
 t/regression/xlsx_files/escapes05.xlsx
 t/regression/xlsx_files/escapes06.xlsx
+t/regression/xlsx_files/escapes07.xlsx
+t/regression/xlsx_files/escapes08.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
@@ -920,6 +942,11 @@ t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/utf8_01.xlsx
 t/regression/xlsx_files/utf8_02.xlsx
 t/regression/xlsx_files/vbaProject01.bin
+t/regression/xlsx_files/vbaProject02.bin
+t/regression/xlsx_files/vml01.xlsx
+t/regression/xlsx_files/vml02.xlsx
+t/regression/xlsx_files/vml03.xlsx
+t/regression/xlsx_files/vml04.xlsx
 t/utility/xl_cell_to_rowcol.t
 t/utility/xl_col_to_name.t
 t/utility/xl_date_1904.t
