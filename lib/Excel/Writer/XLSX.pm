@@ -1208,7 +1208,7 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
     $worksheet->write_url( 'A14', "external:c:/temp/foo.xlsx" );
     $worksheet->write_url( 'A15', 'external://NETWORK/share/foo.xlsx' );
 
-Note, Excel doesn't allow white space in hyperlink urls. Urls with whitespace will generate a warning and be ignored.
+Note: Excel::Writer::XLSX will escape the following charaters in URLs as requird by Excel: C<< \s " < > \ [  ] ` ^ { } >> unless the URL already contains C<%xx> style escapes. In which case it is assumed that the URL was escaped correctly by the user and will by passed directly to Excel.
 
 See also, the note about L</Cell notation>.
 
