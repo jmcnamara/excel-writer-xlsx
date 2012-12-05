@@ -372,11 +372,13 @@ The supplied C<extract_vba> utility can be used to extract the required C<vbaPro
     $ extract_vba file.xlsm
     Extracted 'vbaProject.bin' successfully
 
+Macros can be tied to buttons using the worksheet C<insert_button()> method (see the L</WORKSHEET METHODS> section for details):
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro' } );
+
 Note, Excel uses the file extension C<xlsm> instead of C<xlsx> for files that contain macros. It is advisable to follow the same convention.
 
-It isn't currently possible to link the embedded macros to worksheet form elements but macro enabled buttons may be added in time. User defined functions in the VBA project can be called from a worksheet.
-
-See also the C<add_vba_project.pl> example file.
+See also the C<macros.pl> example file.
 
 
 
@@ -624,6 +626,7 @@ The following methods are available through a new worksheet:
     insert_image()
     insert_chart()
     insert_shape()
+    insert_button()
     data_validation()
     conditional_formatting()
     add_sparkline()
@@ -1549,7 +1552,7 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 =head2 insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
 
-Partially supported. Currently only works for 96 dpi images. This will be fixed in an upcoming release.
+Partially supported. Currently only works for 96 dpi images.
 
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
 
@@ -1627,6 +1630,96 @@ The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted sha
     $worksheet->insert_shape( 'E2', $shape, 0, 0, 1.2, 1.5 );
 
 See also the C<shape*.pl> programs in the examples directory of the distro.
+
+
+
+
+=head2 insert_button( $row, $col, { %properties })
+
+The C<insert_button()> method can be used to insert an Excel form button into a worksheet.
+
+This method is generally only useful when used in conjunction with the Workbook C<add_vba_project()> method to tie the button to a macro from an embedded VBA project:
+
+    my $workbook  = Excel::Writer::XLSX->new( 'file.xlsm' );
+    ...
+    $workbook->add_vba_project( './vbaProject.bin' );
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro' } );
+
+The properties of the button that can be set are:
+
+    macro
+    caption
+    width
+    height
+    x_scale
+    y_scale
+    x_offset
+    y_offset
+
+
+=over
+
+=item Option: macro
+
+This option is used to set the macro that the button will invoke when the user clicks on it. The macro should be included using the Workbook C<add_vba_project()> method shown above.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro' } );
+
+The default macro is C<ButtonX_Click> where X is the button number.
+
+=item Option: caption
+
+This option is used to set the caption on the button. The default is C<Button X> where X is the button number.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', caption => 'Hello' } );
+
+=item Option: width
+
+This option is used to set the width of the button in pixels.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', width => 128 } );
+
+The default button width is 64 pixels which is the width of a default cell.
+
+=item Option: height
+
+This option is used to set the height of the button in pixels.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', height => 40 } );
+
+The default button height is 20 pixels which is the height of a default cell.
+
+=item Option: x_scale
+
+This option is used to set the width of the button as a factor of the default width.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', x_scale => 2.0 );
+
+=item Option: y_scale
+
+This option is used to set the height of the button as a factor of the default height.
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', y_scale => 2.0 );
+
+
+=item Option: x_offset
+
+This option is used to change the x offset, in pixels, of a button within a cell:
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro', x_offset => 2 );
+
+=item Option: y_offset
+
+This option is used to change the y offset, in pixels, of a comment within a cell.
+
+=back
+
+
+Note: Button is the only Excel form element that is available in Excel::Writer::XLSX. Form elements represent a lot of work to implement and the underlying VML syntax isn't very much fun.
+
+
+
 
 =head2 data_validation()
 
@@ -5929,7 +6022,6 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
 
     Intermediate
     ============
-    add_vba_project.pl      An example of adding macros from an existing file.
     autofilter.pl           Examples of worksheet autofilters.
     array_formula.pl        Examples of how to write array formulas.
     cgi.pl                  A simple CGI program.
@@ -5956,6 +6048,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     hyperlink1.pl           Shows how to create web hyperlinks.
     hyperlink2.pl           Examples of internal and external hyperlinks.
     indent.pl               An example of cell indentation.
+    macros.pl               An example of adding macros from an existing file.
     merge1.pl               A simple example of cell merging.
     merge2.pl               A simple example of cell merging with formatting.
     merge3.pl               Add hyperlinks to merged cells.
@@ -6076,6 +6169,7 @@ It supports all of the features of Spreadsheet::WriteExcel with some minor diffe
     insert_image()              Yes/Partial, see docs.
     insert_chart()              Yes
     insert_shape()              Yes. Not in Spreadsheet::WriteExcel.
+    insert_button()             Yes. Not in Spreadsheet::WriteExcel.
     data_validation()           Yes
     conditional_formatting()    Yes. Not in Spreadsheet::WriteExcel.
     add_sparkline()             Yes. Not in Spreadsheet::WriteExcel.

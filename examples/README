@@ -15,7 +15,6 @@ stats.pl                Basic formulas and functions.
 
 Intermediate
 ============
-add_vba_project.pl      An example of adding macros from an existing file.
 autofilter.pl           Examples of worksheet autofilters.
 array_formula.pl        Examples of how to write array formulas.
 cgi.pl                  A simple CGI program.
@@ -42,6 +41,7 @@ hide_sheet.pl           Simple example of hiding a worksheet.
 hyperlink1.pl           Shows how to create web hyperlinks.
 hyperlink2.pl           Examples of internal and external hyperlinks.
 indent.pl               An example of cell indentation.
+macros.pl               An example of adding macros from an existing file.
 merge1.pl               A simple example of cell merging.
 merge2.pl               A simple example of cell merging with formatting.
 merge3.pl               Add hyperlinks to merged cells.

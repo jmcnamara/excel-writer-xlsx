@@ -5,7 +5,7 @@ README
 bin/extract_vba
 examples/README
 examples/a_simple.pl  
-examples/add_vba_project.pl
+examples/macros.pl
 examples/array_formula.pl
 examples/autofilter.pl  
 examples/bug_report.pl
