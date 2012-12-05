@@ -57,6 +57,12 @@ else {
 }
 
 
+# The mod data on vbaProject.bin isn't generally set correctly in the xlsm/zip
+# file. This can cause issues on Windows so reset it to the current data.
+my $mtime = time;
+utime $mtime, $mtime, $vba_project;
+
+
 __END__
 
 
