@@ -313,6 +313,7 @@ hide_sheet.jpg
 hyperlink1.jpg
 images.jpg
 indent.jpg
+macros.jpg
 merge1.jpg
 merge2.jpg
 merge3.jpg
