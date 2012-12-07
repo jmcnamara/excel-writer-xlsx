@@ -1018,7 +1018,6 @@ t/worksheet/sub_write_filter_column.t
 t/worksheet/sub_write_filters.t
 t/worksheet/sub_write_header_footer.t
 t/worksheet/sub_write_hyperlink.t
-t/worksheet/sub_write_hyperlinks.t
 t/worksheet/sub_write_legacy_drawing.t
 t/worksheet/sub_write_merge_cell.t
 t/worksheet/sub_write_merge_cells.t

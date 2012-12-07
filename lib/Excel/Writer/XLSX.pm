@@ -1170,10 +1170,20 @@ B<Note>, this behaviour is different from Spreadsheet::WriteExcel which provides
 
 There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and C<mailto:>:
 
-    $worksheet->write_url( 0, 0, 'ftp://www.perl.org/', $format );
-    $worksheet->write_url( 1, 0, 'http://www.perl.com/', $format, 'Perl' );
+    $worksheet->write_url( 0, 0, 'ftp://www.perl.org/',       $format );
     $worksheet->write_url( 'A3', 'http://www.perl.com/',      $format );
     $worksheet->write_url( 'A4', 'mailto:jmcnamara@cpan.org', $format );
+
+You can display an alternative string using the C<$label> paramter:
+
+    $worksheet->write_url( 1, 0, 'http://www.perl.com/', $format, 'Perl' );
+
+If you wish to have some other cell data such as a number or a formula you can overwrite the cell using another call to C<write_*()>:
+
+    $worksheet->write_url    ( 'A1', 'http://www.perl.com/' );
+
+    # Overwrite the URL string with a formula. The cell is still a link.
+    $worksheet->write_formula( 'A1', '=1+1', $format );
 
 There are two local URIs supported: C<internal:> and C<external:>. These are used for hyperlinks to internal worksheet references or external workbook and worksheet references:
 
