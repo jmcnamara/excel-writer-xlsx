@@ -2002,15 +2002,6 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 
-=head2 set_default_row( $height, $hide_unused_rows )
-
-The C<set_default_row()> method is used to set properties for every row in a worksheet.
-
-TODO.
-
-
-
-
 =head2 set_column( $first_col, $last_col, $width, $format, $hidden, $level, $collapsed )
 
 This method can be used to change the default properties of a single column or a range of columns. All parameters apart from C<$first_col> and C<$last_col> are optional.
@@ -2069,6 +2060,21 @@ For collapsed outlines you should also indicate which row has the collapsed C<+>
 For a more complete example see the C<outline.pl> and C<outline_collapsed.pl> programs in the examples directory of the distro.
 
 Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be in the range C<0 E<lt>= $level E<lt>= 7>.
+
+
+
+
+=head2 set_default_row( $height, $hide_unused_rows )
+
+The C<set_default_row()> method is used to set the limited number of default row properties allowed by Excel. These are the default height and the option to hide unused rows.
+
+    $worksheet->set_default_row( 24 );  # Set the default row height to 24.
+
+The option to hide unused rows is used by Excel as an optimisation so that the user can hide a large number of rows without generating a very large file with an entry for each hidden row.
+
+    $worksheet->set_default_row( undef, 1 );
+
+See the C<hide_row_col.pl> example program.
 
 
 
@@ -6064,6 +6070,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     diag_border.pl          A simple example of diagonal cell borders.
     filehandle.pl           Examples of working with filehandles.
     headers.pl              Examples of worksheet headers and footers.
+    hide_row_col.pl         Example of hiding rows and columns.
     hide_sheet.pl           Simple example of hiding a worksheet.
     hyperlink1.pl           Shows how to create web hyperlinks.
     hyperlink2.pl           Examples of internal and external hyperlinks.
@@ -6203,6 +6210,7 @@ It supports all of the features of Spreadsheet::WriteExcel with some minor diffe
     set_selection()             Yes
     set_row()                   Yes.
     set_column()                Yes.
+    set_default_row()           Yes. Not in Spreadsheet::WriteExcel.
     outline_settings()          Yes
     freeze_panes()              Yes
     split_panes()               Yes

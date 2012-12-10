@@ -37,6 +37,7 @@ defined_name.pl         Example of how to create defined names.
 diag_border.pl          A simple example of diagonal cell borders.
 filehandle.pl           Examples of working with filehandles.
 headers.pl              Examples of worksheet headers and footers.
+hide_row_col.pl         Example of hiding rows and columns.
 hide_sheet.pl           Simple example of hiding a worksheet.
 hyperlink1.pl           Shows how to create web hyperlinks.
 hyperlink2.pl           Examples of internal and external hyperlinks.

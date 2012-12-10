@@ -34,7 +34,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->set_default_row( 15, 1 );
+$worksheet->set_default_row( undef, 1 );
 
 $worksheet->write( 'A1',  'Foo' );
 $worksheet->write( 'A10', 'Bar' );

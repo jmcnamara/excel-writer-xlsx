@@ -309,6 +309,7 @@ filehandle.jpg
 formats.jpg
 formula_result.jpg
 headers.jpg
+hide_row_col.jpg
 hide_sheet.jpg
 hyperlink1.jpg
 images.jpg
