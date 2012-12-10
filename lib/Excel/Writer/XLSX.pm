@@ -639,6 +639,7 @@ The following methods are available through a new worksheet:
     protect()
     set_selection()
     set_row()
+    set_default_row()
     set_column()
     outline_settings()
     freeze_panes()
@@ -1997,6 +1998,15 @@ For collapsed outlines you should also indicate which row has the collapsed C<+>
 For a more complete example see the C<outline.pl> and C<outline_collapsed.pl> programs in the examples directory of the distro.
 
 Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be in the range C<0 E<lt>= $level E<lt>= 7>.
+
+
+
+
+=head2 set_default_row( $height, $hide_unused_rows )
+
+The C<set_default_row()> method is used to set properties for every row in a worksheet.
+
+TODO.
 
 
 

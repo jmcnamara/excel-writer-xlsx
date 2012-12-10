@@ -10,6 +10,9 @@ Revision history for Perl module Excel::Writer::XLSX.
       using a second write() call to the same cell. The url remains intact.
       Issue #48.
 
+    + Added set_default_row() method to set worksheet default values for
+      rows.
+
 
 0.60 December 5 2012
 

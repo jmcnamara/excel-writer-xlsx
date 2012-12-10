@@ -147,6 +147,9 @@ sub new {
     $self->{_outline_on}        = 1;
     $self->{_outline_changed}   = 0;
 
+    $self->{_default_row_height} = 15;
+    $self->{_default_row_zeroed} = 0;
+
     $self->{_names} = {};
 
     $self->{_write_match} = [];
@@ -2863,6 +2866,9 @@ sub set_row {
 
     return unless defined $row;    # Ensure at least $row is specified.
 
+    # Get the default row height.
+    my $default_height = $self->{_default_row_height};
+
     # Use min col in _check_dimensions(). Default to 0 if undefined.
     if ( defined $self->{_dim_colmin} ) {
         $min_col = $self->{_dim_colmin};
@@ -2871,12 +2877,12 @@ sub set_row {
     # Check that row is valid.
     return -2 if $self->_check_dimensions( $row, $min_col );
 
-    $height = 15 if !defined $height;
+    $height = $default_height if !defined $height;
 
     # If the height is 0 the row is hidden and the height is the default.
     if ( $height == 0 ) {
         $hidden = 1;
-        $height = 15;
+        $height = $default_height;
     }
 
     # Set the limits for the outline levels (0 <= x <= 7).
@@ -2895,6 +2901,31 @@ sub set_row {
 
     # Store the row sizes for use when calculating image vertices.
     $self->{_row_sizes}->{$row} = $height;
+}
+
+
+###############################################################################
+#
+# set_default_row()
+#
+# Set the default row properties
+#
+sub set_default_row {
+
+    my $self        = shift;
+    my $height      = shift || 15;
+    my $zero_height = shift || 0;
+
+    if ( $height != 15 ) {
+        $self->{_default_row_height} = $height;
+
+        # Store the row change to allow optimisations.
+        $self->{_row_size_changed} = 1;
+    }
+
+    if ( $zero_height ) {
+        $self->{_default_row_zeroed} = 1;
+    }
 }
 
 
@@ -4830,7 +4861,7 @@ sub _size_row {
         }
     }
     else {
-        $pixels = 20;
+        $pixels = int( 4 / 3 * $self->{_default_row_height} );
     }
 
     return $pixels;
@@ -6212,11 +6243,21 @@ sub _write_sheet_format_pr {
 
     my $self               = shift;
     my $base_col_width     = 10;
-    my $default_row_height = 15;
+    my $default_row_height = $self->{_default_row_height};
     my $row_level          = $self->{_outline_row_level};
     my $col_level          = $self->{_outline_col_level};
+    my $zero_height        = $self->{_default_row_zeroed};
 
     my @attributes = ( 'defaultRowHeight' => $default_row_height );
+
+    if ( $self->{_default_row_height} != 15 ) {
+        push @attributes, ( 'customHeight' => 1 );
+    }
+
+    if ( $self->{_default_row_zeroed} ) {
+        push @attributes, ( 'zeroHeight' => 1 );
+    }
+
     push @attributes, ( 'outlineLevelRow' => $row_level ) if $row_level;
     push @attributes, ( 'outlineLevelCol' => $col_level ) if $col_level;
 
@@ -6437,7 +6478,7 @@ sub _write_rows {
         else {
 
             # Row attributes only.
-            $self->_write_empty_row( $row_num, undef,
+            $self->_write_empty_row( $row_num, $span,
                 @{ $self->{_set_rows}->{$row_num} } );
         }
     }
@@ -6595,7 +6636,7 @@ sub _write_row {
     my $empty_row = shift || 0;
     my $xf_index  = 0;
 
-    $height = 15 if !defined $height;
+    $height = $self->{_default_row_height} if !defined $height;
 
     my @attributes = ( 'r' => $r + 1 );
 
