@@ -96,6 +96,12 @@ sub new {
     $self->{_show_blanks}       = 'gap';
     $self->{_show_hidden_data}  = 0;
     $self->{_show_crosses}      = 1;
+    $self->{_width}             = 480;
+    $self->{_height}            = 288;
+    $self->{_x_scale}           = 1;
+    $self->{_y_scale}           = 1;
+    $self->{_x_offset}          = 0;
+    $self->{_y_offset}          = 0;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -428,6 +434,27 @@ sub show_hidden_data {
     my $self = shift;
 
     $self->{_show_hidden_data} = 1;
+}
+
+
+###############################################################################
+#
+# size()
+#
+# Set dimensions or scale for the chart.
+#
+sub size {
+
+    my $self = shift;
+    my %args = @_;
+
+    $self->{_width}    = $args{width}    if $args{width};
+    $self->{_height}   = $args{height}   if $args{height};
+    $self->{_x_scale}  = $args{x_scale}  if $args{x_scale};
+    $self->{_y_scale}  = $args{y_scale}  if $args{y_scale};
+    $self->{_x_offset} = $args{x_offset} if $args{x_offset};
+    $self->{_x_offset} = $args{y_offset} if $args{y_offset};
+
 }
 
 

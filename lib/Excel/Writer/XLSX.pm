@@ -1561,11 +1561,11 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 
 
-=head2 insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
+=head2 insert_image( $row, $col, $filename, $x, $y, $x_scale, $y_scale )
 
 Partially supported. Currently only works for 96 dpi images.
 
-This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
+This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
 
     $worksheet1->insert_image( 'A1', 'perl.bmp' );
     $worksheet2->insert_image( 'A1', '../images/perl.bmp' );
@@ -1577,7 +1577,7 @@ The parameters C<$x> and C<$y> can be used to specify an offset from the top lef
 
 The offsets can be greater than the width or height of the underlying cell. This can be occasionally useful if you wish to align two or more images relative to the same cell.
 
-The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted image horizontally and vertically:
+The parameters C<$x_scale> and C<$y_scale> can be used to scale the inserted image horizontally and vertically:
 
     # Scale the inserted image: width x 2.0, height x 0.8
     $worksheet->insert_image( 'A1', 'perl.bmp', 0, 0, 2, 0.8 );
@@ -1589,7 +1589,7 @@ BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid 
 
 
 
-=head2 insert_chart( $row, $col, $chart, $x, $y, $scale_x, $scale_y )
+=head2 insert_chart( $row, $col, $chart, $x, $y, $x_scale, $y_scale )
 
 This method can be used to insert a Chart object into a worksheet. The Chart must be created by the C<add_chart()> Workbook method and it must have the C<embedded> option set.
 
@@ -1603,18 +1603,18 @@ This method can be used to insert a Chart object into a worksheet. The Chart mus
 
 See C<add_chart()> for details on how to create the Chart object and L<Excel::Writer::XLSX::Chart> for details on how to configure it. See also the C<chart_*.pl> programs in the examples directory of the distro.
 
-The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
+The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
 
 The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
     $worksheet1->insert_chart( 'E2', $chart, 3, 3 );
 
-The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted chart horizontally and vertically:
+The parameters C<$x_scale> and C<$y_scale> can be used to scale the inserted chart horizontally and vertically:
 
     # Scale the width by 120% and the height by 150%
     $worksheet->insert_chart( 'E2', $chart, 0, 0, 1.2, 1.5 );
 
-=head2 insert_shape( $row, $col, $shape, $x, $y, $scale_x, $scale_y )
+=head2 insert_shape( $row, $col, $shape, $x, $y, $x_scale, $y_scale )
 
 This method can be used to insert a Shape object into a worksheet. The Shape must be created by the C<add_shape()> Workbook method.
 
@@ -1629,13 +1629,13 @@ This method can be used to insert a Shape object into a worksheet. The Shape mus
 
 See C<add_shape()> for details on how to create the Shape object and L<Excel::Writer::XLSX::Shape> for details on how to configure it.
 
-The C<$x>, C<$y>, C<$scale_x> and C<$scale_y> parameters are optional.
+The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
 
 The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
     $worksheet1->insert_shape( 'E2', $chart, 3, 3 );
 
-The parameters C<$scale_x> and C<$scale_y> can be used to scale the inserted shape horizontally and vertically:
+The parameters C<$x_scale> and C<$y_scale> can be used to scale the inserted shape horizontally and vertically:
 
     # Scale the width by 120% and the height by 150%
     $worksheet->insert_shape( 'E2', $shape, 0, 0, 1.2, 1.5 );

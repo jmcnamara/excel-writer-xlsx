@@ -4964,7 +4964,7 @@ sub _get_shared_string_index {
 
 ###############################################################################
 #
-# insert_chart( $row, $col, $chart, $x, $y, $scale_x, $scale_y )
+# insert_chart( $row, $col, $chart, $x, $y, $x_scale, $y_scale )
 #
 # Insert a chart into a worksheet. The $chart argument should be a Chart
 # object or else it is assumed to be a filename of an external binary file.
@@ -4984,8 +4984,8 @@ sub insert_chart {
     my $chart    = $_[2];
     my $x_offset = $_[3] || 0;
     my $y_offset = $_[4] || 0;
-    my $scale_x  = $_[5] || 1;
-    my $scale_y  = $_[6] || 1;
+    my $x_scale  = $_[5] || 1;
+    my $y_scale  = $_[6] || 1;
 
     croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
 
@@ -5001,8 +5001,14 @@ sub insert_chart {
 
     }
 
+    # Use the values set with $chart->size(), if any.
+    $x_scale  = $chart->{_x_scale}  if $chart->{_x_scale} != 1;
+    $y_scale  = $chart->{_y_scale}  if $chart->{_y_scale} != 1;
+    $x_offset = $chart->{_x_offset} if $chart->{_x_offset};
+    $x_offset = $chart->{_y_offset} if $chart->{_y_offset};
+
     push @{ $self->{_charts} },
-      [ $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ];
+      [ $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ];
 }
 
 
@@ -5019,19 +5025,24 @@ sub _prepare_chart {
     my $chart_id     = shift;
     my $drawing_id   = shift;
     my $drawing_type = 1;
+    # my $width        = 480;
+    # my $height       = 288;
 
-    my ( $row, $col, $chart, $x_offset, $y_offset, $scale_x, $scale_y ) =
+    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ) =
       @{ $self->{_charts}->[$index] };
 
     $chart->{_id} = $chart_id - 1;
 
+    # Use user specified dimensions, if any.
+    my $width  = $chart->{_width}  if $chart->{_width};
+    my $height = $chart->{_height} if $chart->{_height};
 
-    my $width  = int( 0.5 + ( 480 * $scale_x ) );
-    my $height = int( 0.5 + ( 288 * $scale_y ) );
+    $width  = int( 0.5 + ( $width  * $x_scale ) );
+    $height = int( 0.5 + ( $height * $y_scale ) );
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height );
+        $height, 0 );
 
     # Set the chart name for the embedded object if it has been specified.
     my $name = $chart->{_chart_name};
@@ -5143,7 +5154,7 @@ sub _get_range_data {
 
 ###############################################################################
 #
-# insert_image( $row, $col, $filename, $x, $y, $scale_x, $scale_y )
+# insert_image( $row, $col, $filename, $x, $y, $x_scale, $y_scale )
 #
 # Insert an image into the worksheet.
 #
@@ -5161,14 +5172,14 @@ sub insert_image {
     my $image    = $_[2];
     my $x_offset = $_[3] || 0;
     my $y_offset = $_[4] || 0;
-    my $scale_x  = $_[5] || 1;
-    my $scale_y  = $_[6] || 1;
+    my $x_scale  = $_[5] || 1;
+    my $y_scale  = $_[6] || 1;
 
     croak "Insufficient arguments in insert_image()" unless @_ >= 3;
     croak "Couldn't locate $image: $!" unless -e $image;
 
     push @{ $self->{_images} },
-      [ $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ];
+      [ $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale ];
 }
 
 
@@ -5191,11 +5202,11 @@ sub _prepare_image {
     my $drawing_type = 2;
     my $drawing;
 
-    my ( $row, $col, $image, $x_offset, $y_offset, $scale_x, $scale_y ) =
+    my ( $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale ) =
       @{ $self->{_images}->[$index] };
 
-    $width  *= $scale_x;
-    $height *= $scale_y;
+    $width  *= $x_scale;
+    $height *= $y_scale;
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
@@ -5231,7 +5242,7 @@ sub _prepare_image {
 
 ###############################################################################
 #
-# insert_shape( $row, $col, $shape, $x, $y, $scale_x, $scale_y )
+# insert_shape( $row, $col, $shape, $x, $y, $x_scale, $y_scale )
 #
 # Insert a shape into the worksheet.
 #
