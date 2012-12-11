@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.60';
+our $VERSION = '0.61';
 
 
 ###############################################################################
@@ -328,7 +328,7 @@ sub _assemble_xml_file {
     # Write the tableParts element.
     $self->_write_table_parts();
 
-    # Write the estLst and sparklines.
+    # Write the extLst and sparklines.
     $self->_write_ext_sparklines();
 
     # Close the worksheet tag.
@@ -2643,7 +2643,7 @@ sub write_url {
     # Write the hyperlink string.
     $self->write_string( $row, $col, $str, $xf );
 
-    # Store the hyperlink data in a separate stucture.
+    # Store the hyperlink data in a separate structure.
     $self->{_hyperlinks}->{$row}->{$col} = {
         _link_type => $link_type,
         _url       => $url,
@@ -4156,7 +4156,7 @@ sub add_sparkline {
         # Remove the = from xl_range_formula(.
         $range =~ s{^=}{};
 
-        # Convert a simiple range into a full Sheet1!A1:D1 range.
+        # Convert a simple range into a full Sheet1!A1:D1 range.
         if ( $range !~ /!/ ) {
             $range = $sheetname . "!" . $range;
         }
@@ -5025,8 +5025,6 @@ sub _prepare_chart {
     my $chart_id     = shift;
     my $drawing_id   = shift;
     my $drawing_type = 1;
-    # my $width        = 480;
-    # my $height       = 288;
 
     my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ) =
       @{ $self->{_charts}->[$index] };

@@ -4,7 +4,7 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
-0.61 December XX 2012
+0.61 December 11 2012
 
     + Allow a cell url string to be over written with a number or formula
       using a second write() call to the same cell. The url remains intact.
@@ -12,6 +12,8 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added set_default_row() method to set worksheet default values for
       rows.
+
+    + Added Chart size() method to set the chart dimensions.
 
 
 0.60 December 5 2012

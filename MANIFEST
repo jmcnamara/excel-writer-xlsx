@@ -31,6 +31,7 @@ examples/filehandle.pl
 examples/formats.pl
 examples/gen_examples_pod.pl
 examples/headers.pl
+examples/hide_row_col.pl
 examples/hide_sheet.pl
 examples/hyperlink1.pl
 examples/hyperlink2.pl
@@ -423,6 +424,9 @@ t/regression/chart_scatter04.t
 t/regression/chart_scatter05.t
 t/regression/chart_scatter06.t
 t/regression/chart_scatter07.t
+t/regression/chart_size01.t
+t/regression/chart_size02.t
+t/regression/chart_size03.t
 t/regression/chart_sparse01.t
 t/regression/chart_stock01.t
 t/regression/chart_stock02.t
@@ -462,6 +466,10 @@ t/regression/cond_format12.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
+t/regression/default_row01.t
+t/regression/default_row02.t
+t/regression/default_row03.t
+t/regression/default_row04.t
 t/regression/defined_name01.t
 t/regression/escapes01.t
 t/regression/escapes02.t
@@ -500,6 +508,7 @@ t/regression/hyperlink15.t
 t/regression/hyperlink16.t
 t/regression/hyperlink17.t
 t/regression/hyperlink18.t
+t/regression/hyperlink19.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -759,6 +768,7 @@ t/regression/xlsx_files/chart_scatter04.xlsx
 t/regression/xlsx_files/chart_scatter05.xlsx
 t/regression/xlsx_files/chart_scatter06.xlsx
 t/regression/xlsx_files/chart_scatter07.xlsx
+t/regression/xlsx_files/chart_size01.xlsx
 t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
 t/regression/xlsx_files/chart_stock02.xlsx
@@ -797,6 +807,10 @@ t/regression/xlsx_files/cond_format12.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
+t/regression/xlsx_files/default_row01.xlsx
+t/regression/xlsx_files/default_row02.xlsx
+t/regression/xlsx_files/default_row03.xlsx
+t/regression/xlsx_files/default_row04.xlsx
 t/regression/xlsx_files/defined_name01.xlsx
 t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
@@ -835,6 +849,7 @@ t/regression/xlsx_files/hyperlink15.xlsx
 t/regression/xlsx_files/hyperlink16.xlsx
 t/regression/xlsx_files/hyperlink17.xlsx
 t/regression/xlsx_files/hyperlink18.xlsx
+t/regression/xlsx_files/hyperlink19.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx

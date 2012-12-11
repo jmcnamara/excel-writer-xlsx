@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.60';
+our $VERSION = '0.61';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.60 of Excel::Writer::XLSX, released December 5, 2012.
+This document refers to version 0.61 of Excel::Writer::XLSX, released December 11, 2012.
 
 
 
@@ -1219,7 +1219,7 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
     $worksheet->write_url( 'A14', "external:c:/temp/foo.xlsx" );
     $worksheet->write_url( 'A15', 'external://NETWORK/share/foo.xlsx' );
 
-Note: Excel::Writer::XLSX will escape the following charaters in URLs as requird by Excel: C<< \s " < > \ [  ] ` ^ { } >> unless the URL already contains C<%xx> style escapes. In which case it is assumed that the URL was escaped correctly by the user and will by passed directly to Excel.
+Note: Excel::Writer::XLSX will escape the following characters in URLs as required by Excel: C<< \s " < > \ [  ] ` ^ { } >> unless the URL already contains C<%xx> style escapes. In which case it is assumed that the URL was escaped correctly by the user and will by passed directly to Excel.
 
 See also, the note about L</Cell notation>.
 
