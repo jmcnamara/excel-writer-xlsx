@@ -5001,7 +5001,7 @@ sub insert_chart {
 
     }
 
-    # Use the values set with $chart->size(), if any.
+    # Use the values set with $chart->set_size(), if any.
     $x_scale  = $chart->{_x_scale}  if $chart->{_x_scale} != 1;
     $y_scale  = $chart->{_y_scale}  if $chart->{_y_scale} != 1;
     $x_offset = $chart->{_x_offset} if $chart->{_x_offset};

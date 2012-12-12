@@ -440,11 +440,11 @@ sub show_hidden_data {
 
 ###############################################################################
 #
-# size()
+# set_size()
 #
 # Set dimensions or scale for the chart.
 #
-sub size {
+sub set_size {
 
     my $self = shift;
     my %args = @_;
@@ -457,6 +457,9 @@ sub size {
     $self->{_x_offset} = $args{y_offset} if $args{y_offset};
 
 }
+
+# Backward compatibility with poorly chosen method name.
+*size = *set_size;
 
 
 ###############################################################################
@@ -4719,9 +4722,9 @@ The default properties for this axis are:
     major_gridlines => { visible => 0 }
 
 
-=head2 size()
+=head2 set_size()
 
-The C<size()> method is used to set the dimensions of the chart. The size properties that can be set are:
+The C<set_size()> method is used to set the dimensions of the chart. The size properties that can be set are:
 
      width
      height
@@ -4732,11 +4735,11 @@ The C<size()> method is used to set the dimensions of the chart. The size proper
 
 The C<width> and C<height> are in pixels. The default chart width is 480 pixels and the default height is 288 pixels. The size of the chart can be modified by setting the C<width> and C<height> or by setting the C<x_scale> and C<y_scale>:
 
-    $chart->size( width => 720, height => 576 );
+    $chart->set_size( width => 720, height => 576 );
 
     # Same as:
 
-    $chart->size( x_scale => 1.5, y_scale => 2 );
+    $chart->set_size( x_scale => 1.5, y_scale => 2 );
 
 The C<x_offset> and C<y_offset> position the top left corner of the chart in the cell that it is inserted into.
 

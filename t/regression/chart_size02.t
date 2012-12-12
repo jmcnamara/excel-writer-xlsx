@@ -52,7 +52,7 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-$chart->size( x_scale => 1.066666666, y_scale => 1.11111111 );
+$chart->set_size( x_scale => 1.066666666, y_scale => 1.11111111 );
 
 $worksheet->insert_chart( 'E9', $chart );
 
