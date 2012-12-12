@@ -102,6 +102,7 @@ sub new {
     $self->{_y_scale}           = 1;
     $self->{_x_offset}          = 0;
     $self->{_y_offset}          = 0;
+    $self->{_table}             = undef;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -455,6 +456,33 @@ sub size {
     $self->{_x_offset} = $args{x_offset} if $args{x_offset};
     $self->{_x_offset} = $args{y_offset} if $args{y_offset};
 
+}
+
+
+###############################################################################
+#
+# set_table()
+#
+# Set properties for an axis data table.
+#
+sub set_table {
+
+    my $self = shift;
+    my %args = @_;
+
+    my %table = (
+        _horizontal => 1,
+        _vertical   => 1,
+        _outline    => 1,
+        _show_keys  => 0,
+    );
+
+    $table{_horizontal} = $args{horizontal} if defined $args{horizontal};
+    $table{_vertical}   = $args{vertical}   if defined $args{vertical};
+    $table{_outline}    = $args{outline}    if defined $args{outline};
+    $table{_show_keys}  = $args{show_keys}  if defined $args{show_keys};
+
+    $self->{_table} = \%table;
 }
 
 
@@ -1466,6 +1494,9 @@ sub _write_plot_area {
         y_axis   => $self->{_y2_axis},
         axis_ids => $self->{_axis2_ids}
     );
+
+    # Write the c:dTable element.
+    $self->_write_d_table();
 
     # Write the c:spPr element for the plotarea formatting.
     $self->_write_sp_pr( $self->{_plotarea} );
@@ -4144,7 +4175,6 @@ sub _write_c_invert_if_negative {
 }
 
 
-
 ##############################################################################
 #
 # _write_axis_font()
@@ -4185,6 +4215,111 @@ sub _write_a_latin {
     $self->xml_empty_tag( 'a:latin', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_d_table()
+#
+# Write the <c:dTable> element.
+#
+sub _write_d_table {
+
+    my $self  = shift;
+    my $table = $self->{_table};
+
+    return if !$table;
+
+    $self->xml_start_tag( 'c:dTable' );
+
+    if ( $table->{_horizontal} ) {
+
+        # Write the c:showHorzBorder element.
+        $self->_write_show_horz_border();
+    }
+
+    if ( $table->{_vertical} ) {
+
+        # Write the c:showVertBorder element.
+        $self->_write_show_vert_border();
+    }
+
+    if ( $table->{_outline} ) {
+
+        # Write the c:showOutline element.
+        $self->_write_show_outline();
+    }
+
+    if ( $table->{_show_keys} ) {
+
+        # Write the c:showKeys element.
+        $self->_write_show_keys();
+    }
+
+    $self->xml_end_tag( 'c:dTable' );
+}
+
+
+##############################################################################
+#
+# _write_show_horz_border()
+#
+# Write the <c:showHorzBorder> element.
+#
+sub _write_show_horz_border {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:showHorzBorder', @attributes );
+}
+
+##############################################################################
+#
+# _write_show_vert_border()
+#
+# Write the <c:showVertBorder> element.
+#
+sub _write_show_vert_border {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:showVertBorder', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_outline()
+#
+# Write the <c:showOutline> element.
+#
+sub _write_show_outline {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:showOutline', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_show_keys()
+#
+# Write the <c:showKeys> element.
+#
+sub _write_show_keys {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:showKeys', @attributes );
+}
 
 1;
 
@@ -4722,6 +4857,23 @@ The C<set_style()> method is used to set the style of the chart to one of the 42
     $chart->set_style( 4 );
 
 The default style is 2.
+
+
+=head2 set_table()
+
+The C<set_table()> method adds a data table below the horizontal axis with the data used to plot the chart.
+
+    $chart->set_table();
+
+The available options, with default values are:
+
+    vertical   => 1,    # Display vertical lines in the table.
+    horizontal => 1,    # Display horizontal lines in the table.
+    outline    => 1,    # Display an outline in the table.
+    show_keys  => 0     # Show the legend keys with the tabl data.
+
+The data table can only be shown with Bar, Column, Line, Area, TODO.
+
 
 =head2 show_blanks_as()
 
