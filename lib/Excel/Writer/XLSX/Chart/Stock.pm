@@ -151,6 +151,9 @@ sub _write_plot_area {
         axis_ids => $self->{_axis2_ids}
     );
 
+    # Write the c:dTable element.
+    $self->_write_d_table();
+
     # Write the c:spPr element for the plotarea formatting.
     $self->_write_sp_pr( $self->{_plotarea} );
 

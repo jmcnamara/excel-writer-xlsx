@@ -6060,6 +6060,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_scatter.pl        A demo of scatter style charts.
     chart_secondary_axis.pl A demo of a line chart with a secondary axis.
     chart_stock.pl          A demo of stock style charts.
+    chart_data_table.pl     A demo of a chart with a data data on the axis.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
     comments2.pl            Add comments with advanced options.

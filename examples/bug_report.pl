@@ -30,7 +30,7 @@ REPORTING A BUG OR ASKING A QUESTION
 
     Look at the example programs:
 
-        There are over 70 example programs shipped with the standard
+        There are over 80 example programs shipped with the standard
         Excel::Writer::XLSX distribution. Many of these were created
         in response to user questions. Try to identify an example program
         that corresponds to your query and adapt it to your needs.

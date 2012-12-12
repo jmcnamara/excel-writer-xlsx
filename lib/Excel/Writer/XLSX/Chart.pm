@@ -4872,7 +4872,7 @@ The available options, with default values are:
     outline    => 1,    # Display an outline in the table.
     show_keys  => 0     # Show the legend keys with the tabl data.
 
-The data table can only be shown with Bar, Column, Line, Area, TODO.
+The data table can only be shown with Bar, Column, Line, Area and stock charts.
 
 
 =head2 show_blanks_as()

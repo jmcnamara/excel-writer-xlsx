@@ -4,6 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+0.62 December 12 2012
+
+    + Added option of adding a data table to Chart X-axis.
+
+
 0.61 December 11 2012
 
     + Allow a cell url string to be over written with a number or formula
@@ -13,7 +19,7 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Added set_default_row() method to set worksheet default values for
       rows.
 
-    + Added Chart size() method to set the chart dimensions.
+    + Added Chart set_size() method to set the chart dimensions.
 
 
 0.60 December 5 2012

@@ -294,6 +294,7 @@ chart_radar.jpg
 chart_scatter.jpg
 chart_secondary_axis.jpg
 chart_stock.jpg
+chart_data_table.jpg
 chess.jpg
 colors.jpg
 comments1.jpg
