@@ -12,6 +12,7 @@ examples/cgi.pl
 examples/chart_area.pl
 examples/chart_bar.pl
 examples/chart_column.pl
+examples/chart_data_table.pl
 examples/chart_line.pl
 examples/chart_pie.pl
 examples/chart_radar.pl
@@ -432,6 +433,8 @@ t/regression/chart_stock01.t
 t/regression/chart_stock02.t
 t/regression/chart_str01.t
 t/regression/chart_str02.t
+t/regression/chart_table01.t
+t/regression/chart_table02.t
 t/regression/chartsheet01.t
 t/regression/chartsheet02.t
 t/regression/chartsheet03.t
@@ -774,6 +777,8 @@ t/regression/xlsx_files/chart_stock01.xlsx
 t/regression/xlsx_files/chart_stock02.xlsx
 t/regression/xlsx_files/chart_str01.xlsx
 t/regression/xlsx_files/chart_str02.xlsx
+t/regression/xlsx_files/chart_table01.xlsx
+t/regression/xlsx_files/chart_table02.xlsx
 t/regression/xlsx_files/chartsheet01.xlsx
 t/regression/xlsx_files/chartsheet02.xlsx
 t/regression/xlsx_files/chartsheet03.xlsx
