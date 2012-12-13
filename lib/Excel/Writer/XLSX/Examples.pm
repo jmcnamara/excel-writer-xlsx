@@ -8817,7 +8817,7 @@ Source code for this example:
                 { header => 'Quarter 4' },
                 {
                     header  => 'Year',
-                    formula => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])'
+                    formula => '=SUM(Table9[@[Quarter 1]:[Quarter 4]])'
                 },
             ]
         }
@@ -8850,7 +8850,7 @@ Source code for this example:
                 { header => 'Quarter 4', total_function => 'sum' },
                 {
                     header         => 'Year',
-                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    formula        => '=SUM(Table10[@[Quarter 1]:[Quarter 4]])',
                     total_function => 'sum'
                 },
             ]
@@ -8885,7 +8885,7 @@ Source code for this example:
                 { header => 'Quarter 4', total_function => 'sum' },
                 {
                     header         => 'Year',
-                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    formula        => '=SUM(Table11[@[Quarter 1]:[Quarter 4]])',
                     total_function => 'sum'
                 },
             ]
@@ -8935,7 +8935,7 @@ Source code for this example:
                 },
                 {
                     header         => 'Year',
-                    formula        => '=SUM(Table8[@[Quarter 1]:[Quarter 4]])',
+                    formula        => '=SUM(Table12[@[Quarter 1]:[Quarter 4]])',
                     total_function => 'sum',
                     format         => $currency_format,
                 },
