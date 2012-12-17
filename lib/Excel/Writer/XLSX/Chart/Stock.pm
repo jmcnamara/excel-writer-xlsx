@@ -219,12 +219,23 @@ To create a simple Excel file with a Stock chart using Excel::Writer::XLSX:
     my $workbook  = Excel::Writer::XLSX->new( 'chart.xlsx' );
     my $worksheet = $workbook->add_worksheet();
 
-    my $chart     = $workbook->add_chart( type => 'stock' );
+    my $chart = $workbook->add_chart( type => 'stock' );
 
     # Add a series for each High-Low-Close.
-    $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$B$2:$B$6' );
-    $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$C$2:$C$6' );
-    $chart->add_series( categories => '=Sheet1!$A$2:$A$6', values => '=Sheet1!$D$2:$D$6' );
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$B$2:$B$6'
+    );
+
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$C$2:$C$6'
+    );
+
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$6',
+        values     => '=Sheet1!$D$2:$D$6'
+    );
 
     # Add the worksheet data the chart refers to.
     # ... See the full example below.
