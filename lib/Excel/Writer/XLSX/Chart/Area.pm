@@ -99,6 +99,9 @@ sub _write_area_chart {
     # Write the series elements.
     $self->_write_series( $_ ) for @series;
 
+    # Write the c:dropLines element.
+    $self->_write_drop_lines();
+
     # Write the c:marker element.
     $self->_write_marker_value();
 

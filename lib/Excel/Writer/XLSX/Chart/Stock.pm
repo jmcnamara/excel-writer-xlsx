@@ -92,6 +92,9 @@ sub _write_stock_chart {
     # Write the series elements.
     $self->_write_ser( $_ ) for @series;
 
+    # Write the c:dropLines element.
+    $self->_write_drop_lines();
+
     # Write the c:hiLowLines element.
     $self->_write_hi_low_lines() if $args{primary_axes};
 

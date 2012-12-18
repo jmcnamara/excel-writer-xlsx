@@ -86,6 +86,9 @@ sub _write_line_chart {
     # Write the series elements.
     $self->_write_series( $_ ) for @series;
 
+    # Write the c:dropLines element.
+    $self->_write_drop_lines();
+
     # Write the c:upDownBars element.
     $self->_write_up_down_bars();
 
