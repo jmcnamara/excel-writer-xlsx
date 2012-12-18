@@ -495,6 +495,44 @@ sub set_table {
 
 ###############################################################################
 #
+# set_up_down_bars()
+#
+# Set properties for the chart up-down bars.
+#
+sub set_up_down_bars {
+
+    my $self = shift;
+    my %args = @_;
+
+    # Map border to line.
+    if (defined $args{up}->{border}) {
+        $args{up}->{line} = $args{up}->{border};
+    }
+    if (defined $args{down}->{border}) {
+        $args{down}->{line} = $args{down}->{border};
+    }
+
+    # Set the up and down bar properties.
+    my $up_line   = $self->_get_line_properties( $args{up}->{line} );
+    my $down_line = $self->_get_line_properties( $args{down}->{line} );
+    my $up_fill   = $self->_get_fill_properties( $args{up}->{fill} );
+    my $down_fill = $self->_get_fill_properties( $args{down}->{fill} );
+
+    $self->{_up_down_bars} = {
+        _up => {
+            _line => $up_line,
+            _fill => $up_fill,
+        },
+        _down => {
+            _line => $down_line,
+            _fill => $down_fill,
+        },
+    };
+}
+
+
+###############################################################################
+#
 # Internal methods. The following section of methods are used for the internal
 # structuring of the Chart object and file format.
 #
@@ -4527,6 +4565,102 @@ sub _write_error_val {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:val', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_up_down_bars()
+#
+# Write the <c:upDownBars> element.
+#
+sub _write_up_down_bars {
+
+    my $self         = shift;
+    my $up_down_bars = $self->{_up_down_bars};
+
+    return unless $up_down_bars;
+
+    $self->xml_start_tag( 'c:upDownBars' );
+
+    # Write the c:gapWidth element.
+    $self->_write_gap_width();
+
+    # Write the c:upBars element.
+    $self->_write_up_bars( $up_down_bars->{_up} );
+
+    # Write the c:downBars element.
+    $self->_write_down_bars( $up_down_bars->{_down} );
+
+    $self->xml_end_tag( 'c:upDownBars' );
+}
+
+
+##############################################################################
+#
+# _write_gap_width()
+#
+# Write the <c:gapWidth> element.
+#
+sub _write_gap_width {
+
+    my $self = shift;
+    my $val  = 150;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:gapWidth', @attributes );
+}
+
+##############################################################################
+#
+# _write_up_bars()
+#
+# Write the <c:upBars> element.
+#
+sub _write_up_bars {
+
+    my $self   = shift;
+    my $format = shift;
+
+    if ( $format->{_line}->{_defined} || $format->{_fill}->{_defined} ) {
+
+        $self->xml_start_tag( 'c:upBars' );
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $format );
+
+        $self->xml_end_tag( 'c:upBars' );
+    }
+    else {
+        $self->xml_empty_tag( 'c:upBars' );
+    }
+}
+
+
+##############################################################################
+#
+# _write_down_bars()
+#
+# Write the <c:downBars> element.
+#
+sub _write_down_bars {
+
+    my $self   = shift;
+    my $format = shift;
+
+    if ( $format->{_line}->{_defined} || $format->{_fill}->{_defined} ) {
+
+        $self->xml_start_tag( 'c:downBars' );
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $format );
+
+        $self->xml_end_tag( 'c:downBars' );
+    }
+    else {
+        $self->xml_empty_tag( 'c:downBars' );
+    }
 }
 
 
