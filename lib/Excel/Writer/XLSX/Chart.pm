@@ -530,6 +530,7 @@ sub set_up_down_bars {
     };
 }
 
+
 ###############################################################################
 #
 # set_drop_lines()
@@ -545,6 +546,24 @@ sub set_drop_lines {
     my $line = $self->_get_line_properties( $args{line} );
 
     $self->{_drop_lines} = { _line => $line };
+}
+
+
+###############################################################################
+#
+# set_high_low_lines()
+#
+# Set properties for the chart high-low lines.
+#
+sub set_high_low_lines {
+
+    my $self = shift;
+    my %args = @_;
+
+    # Set the drop line properties.
+    my $line = $self->_get_line_properties( $args{line} );
+
+    $self->{_hi_low_lines} = { _line => $line };
 }
 
 
@@ -3960,7 +3979,22 @@ sub _write_hi_low_lines {
 
     my $self = shift;
 
-    $self->xml_empty_tag( 'c:hiLowLines' );
+    my $hi_low_lines = $self->{_hi_low_lines};
+
+    return unless $hi_low_lines;
+
+    if ( $hi_low_lines->{_line}->{_defined} ) {
+
+        $self->xml_start_tag( 'c:hiLowLines' );
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $hi_low_lines );
+
+        $self->xml_end_tag( 'c:hiLowLines' );
+    }
+    else {
+        $self->xml_empty_tag( 'c:hiLowLines' );
+    }
 }
 
 

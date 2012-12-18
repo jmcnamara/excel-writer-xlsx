@@ -35,6 +35,7 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
     $self->{_show_crosses} = 0;
+    $self->{_hi_low_lines} = {};
 
     # Override and reset the default axis values.
     $self->{_x_axis}->{_defaults}->{num_format}  = 'dd/mm/yyyy';

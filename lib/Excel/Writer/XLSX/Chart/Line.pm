@@ -89,6 +89,9 @@ sub _write_line_chart {
     # Write the c:dropLines element.
     $self->_write_drop_lines();
 
+    # Write the c:hiLowLines element.
+    $self->_write_hi_low_lines();
+
     # Write the c:upDownBars element.
     $self->_write_up_down_bars();
 
