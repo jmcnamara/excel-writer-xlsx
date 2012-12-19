@@ -208,9 +208,9 @@ sub add_series {
     # Set the trendline properties for the series.
     my $trendline = $self->_get_trendline_properties( $arg{trendline} );
 
-    # Set the errorbars properties for the series.
-    my $y_errorbars = $self->_get_errorbars_properties( $arg{y_errorbars} );
-    my $x_errorbars = $self->_get_errorbars_properties( $arg{x_errorbars} );
+    # Set the error bars properties for the series.
+    my $y_error_bars = $self->_get_error_bars_properties( $arg{y_error_bars} );
+    my $x_error_bars = $self->_get_error_bars_properties( $arg{x_error_bars} );
 
     # Set the labels properties for the series.
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
@@ -239,8 +239,8 @@ sub add_series {
         _invert_if_neg => $invert_if_neg,
         _x2_axis       => $x2_axis,
         _y2_axis       => $y2_axis,
-        _errorbars =>
-          { _x_errorbars => $x_errorbars, _y_errorbars => $y_errorbars },
+        _error_bars =>
+          { _x_error_bars => $x_error_bars, _y_error_bars => $y_error_bars },
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -507,10 +507,10 @@ sub set_up_down_bars {
     my %args = @_;
 
     # Map border to line.
-    if (defined $args{up}->{border}) {
+    if ( defined $args{up}->{border} ) {
         $args{up}->{line} = $args{up}->{border};
     }
-    if (defined $args{down}->{border}) {
+    if ( defined $args{down}->{border} ) {
         $args{down}->{line} = $args{down}->{border};
     }
 
@@ -639,7 +639,6 @@ sub _convert_axis_args {
 
     return $axis;
 }
-
 
 
 ###############################################################################
@@ -1111,11 +1110,11 @@ sub _get_trendline_properties {
 
 ###############################################################################
 #
-# _get_errorbars_properties()
+# _get_error_bars_properties()
 #
-# Convert user defined errorbars properties to the structure required internally.
+# Convert user defined error bars properties to structure required internally.
 #
-sub _get_errorbars_properties {
+sub _get_error_bars_properties {
 
     my $self = shift;
     my $args = shift;
@@ -1123,7 +1122,7 @@ sub _get_errorbars_properties {
     return unless $args;
 
     # Default values.
-    my $errorbars = {
+    my $error_bars = {
         _type      => 'fixedVal',
         _value     => 1,
         _endcap    => 1,
@@ -1137,46 +1136,45 @@ sub _get_errorbars_properties {
         standard_error     => 'stdErr',
     );
 
-    # Check the errorbars type.
+    # Check the error bars type.
     my $error_type = $args->{type};
 
     if ( exists $types{$error_type} ) {
-        $errorbars->{_type} = $types{$error_type};
+        $error_bars->{_type} = $types{$error_type};
     }
     else {
-        warn "Unknown errorbars type '$error_type'\n";
+        warn "Unknown error bars type '$error_type'\n";
         return;
     }
 
     # Set the value for error types that require it.
     if ( defined $args->{value} ) {
-        $errorbars->{_value} = $args->{value};
+        $error_bars->{_value} = $args->{value};
     }
 
     # Set the end-cap style.
     if ( defined $args->{end_style} ) {
-        $errorbars->{_endcap} = $args->{end_style};
+        $error_bars->{_endcap} = $args->{end_style};
     }
 
-    # Set the errorbar direction.
+    # Set the error bar direction.
     if ( defined $args->{direction} ) {
         if ( $args->{direction} eq 'minus' ) {
-            $errorbars->{_direction} = 'minus';
+            $error_bars->{_direction} = 'minus';
         }
         elsif ( $args->{direction} eq 'plus' ) {
-            $errorbars->{_direction} = 'plus';
+            $error_bars->{_direction} = 'plus';
         }
         else {
             # Default to 'both'.
         }
     }
 
-    # Set the line properties for the errorbars.
-    $errorbars->{_line} = $self->_get_line_properties( $args->{line} );
+    # Set the line properties for the error bars.
+    $error_bars->{_line} = $self->_get_line_properties( $args->{line} );
 
-    return $errorbars;
+    return $error_bars;
 }
-
 
 
 ###############################################################################
@@ -1756,7 +1754,7 @@ sub _write_ser {
     $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:errBars element.
-    $self->_write_error_bars( $series->{_errorbars} );
+    $self->_write_error_bars( $series->{_error_bars} );
 
     # Write the c:cat element.
     $self->_write_cat( $series );
@@ -1993,6 +1991,7 @@ sub _write_axis_ids {
     $self->_add_axis_ids( %args );
 
     if ( $args{primary_axes} ) {
+
         # Write the axis ids for the primary axes.
         $self->_write_axis_id( $self->{_axis_ids}->[0] );
         $self->_write_axis_id( $self->{_axis_ids}->[1] );
@@ -2555,14 +2554,14 @@ sub _write_axis_pos {
 #
 sub _write_number_format {
 
-    my $self           = shift;
-    my $axis           = shift;
-    my $format_code    = $axis->{_num_format};
-    my $source_linked  = 1;
+    my $self          = shift;
+    my $axis          = shift;
+    my $format_code   = $axis->{_num_format};
+    my $source_linked = 1;
 
     # Check if a user defined number format has been set.
     if ( $format_code ne $axis->{_defaults}->{num_format} ) {
-        $source_linked  = 0;
+        $source_linked = 0;
     }
 
     # User override of sourceLinked.
@@ -3343,8 +3342,8 @@ sub _write_a_p_rich {
 #
 sub _write_a_p_formula {
 
-    my $self  = shift;
-    my $font  = shift;
+    my $self = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'a:p' );
 
@@ -3528,7 +3527,6 @@ sub _write_a_r_pr {
     else {
         $self->xml_empty_tag( 'a:rPr', @style_attributes );
     }
-
 
 
 }
@@ -4530,17 +4528,17 @@ sub _write_show_keys {
 #
 sub _write_error_bars {
 
-    my $self      = shift;
-    my $errorbars = shift;
+    my $self       = shift;
+    my $error_bars = shift;
 
-    return unless $errorbars;
+    return unless $error_bars;
 
-    if ( $errorbars->{_x_errorbars} ) {
-        $self->_write_err_bars( 'x', $errorbars->{_x_errorbars} );
+    if ( $error_bars->{_x_error_bars} ) {
+        $self->_write_err_bars( 'x', $error_bars->{_x_error_bars} );
     }
 
-    if ( $errorbars->{_y_errorbars} ) {
-        $self->_write_err_bars( 'y', $errorbars->{_y_errorbars} );
+    if ( $error_bars->{_y_error_bars} ) {
+        $self->_write_err_bars( 'y', $error_bars->{_y_error_bars} );
     }
 
 }
@@ -4554,11 +4552,11 @@ sub _write_error_bars {
 #
 sub _write_err_bars {
 
-    my $self      = shift;
-    my $direction = shift;
-    my $errorbars = shift;
+    my $self       = shift;
+    my $direction  = shift;
+    my $error_bars = shift;
 
-    return unless $errorbars;
+    return unless $error_bars;
 
     $self->xml_start_tag( 'c:errBars' );
 
@@ -4566,25 +4564,25 @@ sub _write_err_bars {
     $self->_write_err_dir( $direction );
 
     # Write the c:errBarType element.
-    $self->_write_err_bar_type( $errorbars->{_direction} );
+    $self->_write_err_bar_type( $error_bars->{_direction} );
 
     # Write the c:errValType element.
-    $self->_write_err_val_type( $errorbars->{_type} );
+    $self->_write_err_val_type( $error_bars->{_type} );
 
-    if ( !$errorbars->{_endcap} ) {
+    if ( !$error_bars->{_endcap} ) {
 
         # Write the c:noEndCap element.
         $self->_write_no_end_cap();
     }
 
-    if ( $errorbars->{_type} ne 'stdErr' ) {
+    if ( $error_bars->{_type} ne 'stdErr' ) {
 
         # Write the c:val element.
-        $self->_write_error_val( $errorbars->{_value} );
+        $self->_write_error_val( $error_bars->{_value} );
     }
 
     # Write the c:spPr element.
-    $self->_write_sp_pr( $errorbars );
+    $self->_write_sp_pr( $error_bars );
 
     $self->xml_end_tag( 'c:errBars' );
 }
@@ -4942,9 +4940,13 @@ Set the properties of the series marker such as style and colour. See the L</CHA
 
 Set the properties of the series trendline such as linear, polynomial and moving average types.
 
-=item * C<errorbars>
+=item * C<y_error_bars>
 
-Set the properties of the series error bounds such as fixed, percentage, standard deviation or standard error.
+Set vertical error bounds for a chart series.
+
+=item * C<x_error_bars>
+
+Set horizontal error bounds for a chart series.
 
 =item * C<data_labels>
 
@@ -5357,7 +5359,8 @@ The following chart formatting properties can be set for any chart object that t
     fill
     marker
     trendline
-    errorbars
+    y_error_bars
+    x_error_bars
     data_labels
 
 Chart formatting properties are generally set using hash refs.
@@ -5647,11 +5650,11 @@ Several of these properties can be set in one go:
 
 Trendlines cannot be added to series in a stacked chart or pie chart, radar chart or (when implemented) to 3D, surface, or doughnut charts.
 
-=head2 Errorbars
+=head2 Error Bars
 
-Errorbars can be added to a chart series to indicate error bounds in the data.
+Error bars can be added to a chart series to indicate error bounds in the data. The error bars can be vertical C<y_error_bars> (the most common type) or horizontal C<x_error_bars> (for Bar and Scatter charts only).
 
-The following properties can be set for C<errorbars> in a chart series.
+The following properties can be set for error bars in a chart series.
 
     type
     value       (for all types except standard error)
@@ -5659,29 +5662,29 @@ The following properties can be set for C<errorbars> in a chart series.
     end_style
     line
 
-The C<type> property sets the type of errorbars in the series.
+The C<type> property sets the type of error bars in the series.
 
     $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        errorbars  => { type => 'standard_error' },
+        values       => '=Sheet1!$B$1:$B$5',
+        y_error_bars => { type => 'standard_error' },
     );
 
-The available C<errorbars> types are available:
+The available error bars types are available:
 
     fixed
     percentage
     standard_deviation
     standard_error
 
-Note, the "custom" errorbars type is not supported.
+Note, the "custom" error bars type is not supported.
 
-All errorbar types, except for C<standard_error> must also have a value associated with it for the error bounds:
+All error bar types, except for C<standard_error> must also have a value associated with it for the error bounds:
 
     $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        errorbars  => {
-            type      => 'percentage',
-            value     => 5,
+        values       => '=Sheet1!$B$1:$B$5',
+        y_error_bars => {
+            type  => 'percentage',
+            value => 5,
         },
     );
 
@@ -5694,8 +5697,8 @@ The C<direction> property sets the direction of the error bars. It should be one
 The C<end_style> property sets the style of the error bar end cap. The options are 1 (the default) or 0 (for no end cap):
 
     $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        errorbars  => {
+        values       => '=Sheet1!$B$1:$B$5',
+        y_error_bars => {
             type      => 'fixed',
             value     => 2,
             end_style => 0,

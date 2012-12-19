@@ -49,9 +49,9 @@ my $data = [
 $worksheet->write( 'A1', $data );
 
 $chart->add_series(
-    categories  => '=Sheet1!$A$1:$A$5',
-    values      => '=Sheet1!$B$1:$B$5',
-    y_errorbars => {
+    categories   => '=Sheet1!$A$1:$A$5',
+    values       => '=Sheet1!$B$1:$B$5',
+    y_error_bars => {
         type      => 'fixed',
         value     => 2,
         end_style => 0,
@@ -60,9 +60,9 @@ $chart->add_series(
 );
 
 $chart->add_series(
-    categories  => '=Sheet1!$A$1:$A$5',
-    values      => '=Sheet1!$C$1:$C$5',
-    y_errorbars => {
+    categories   => '=Sheet1!$A$1:$A$5',
+    values       => '=Sheet1!$C$1:$C$5',
+    y_error_bars => {
         type      => 'percentage',
         value     => 5,
         direction => 'plus'

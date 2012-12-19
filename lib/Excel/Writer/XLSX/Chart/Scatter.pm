@@ -150,7 +150,7 @@ sub _write_ser {
     $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:errBars element.
-    $self->_write_error_bars( $series->{_errorbars} );
+    $self->_write_error_bars( $series->{_error_bars} );
 
     # Write the c:xVal element.
     $self->_write_x_val( $series );
@@ -369,23 +369,6 @@ sub _modify_series_formatting {
         }
     }
 
-}
-
-
-##############################################################################
-#
-# _write_err_dir()
-#
-# Write the <c:errDir> element. Overridden from Chart class.
-#
-sub _write_err_dir {
-
-    my $self = shift;
-    my $val  = shift;
-
-    my @attributes = ( 'val' => $val );
-
-    $self->xml_empty_tag( 'c:errDir', @attributes );
 }
 
 
