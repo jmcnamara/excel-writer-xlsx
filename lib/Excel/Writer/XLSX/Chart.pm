@@ -4934,23 +4934,23 @@ Set the fill properties of the series such as colour. See the L</CHART FORMATTIN
 
 =item * C<marker>
 
-Set the properties of the series marker such as style and colour. See the L</CHART FORMATTING> section below.
+Set the properties of the series marker such as style and colour. See the L</SERIES OPTIONS> section below.
 
 =item * C<trendline>
 
-Set the properties of the series trendline such as linear, polynomial and moving average types.
+Set the properties of the series trendline such as linear, polynomial and moving average types. See the L</SERIES OPTIONS> section below.
 
 =item * C<y_error_bars>
 
-Set vertical error bounds for a chart series.
+Set vertical error bounds for a chart series. See the L</SERIES OPTIONS> section below.
 
 =item * C<x_error_bars>
 
-Set horizontal error bounds for a chart series.
+Set horizontal error bounds for a chart series. See the L</SERIES OPTIONS> section below.
 
 =item * C<data_labels>
 
-Set data labels for the series. See the L</CHART FORMATTING> section below.
+Set data labels for the series. See the L</SERIES OPTIONS> section below.
 
 =item * C<invert_if_negative>
 
@@ -5330,6 +5330,48 @@ The available options, with default values are:
 The data table can only be shown with Bar, Column, Line, Area and stock charts.
 
 
+=head2 set_up_down_bars
+
+The C<set_up_down_bars()> method adds Up-Down bars to Line charts to indicate the difference between the first and last data series.
+
+    $chart->set_up_down_bars();
+
+It is possible to format the up and down bars to add C<fill> and C<border> properties if required. See the L</CHART FORMATTING> section below.
+
+    $chart->set_up_down_bars(
+        up   => { fill => { color => 'green' } },
+        down => { fill => { color => 'red' } },
+    );
+
+Up-down bars can only be applied to Line charts and to Stock charts (by default).
+
+
+=head2 set_drop_lines
+
+The C<set_drop_lines()> method adds Drop Lines to charts to show the Category value of points in the data.
+
+    $chart->set_drop_lines();
+
+It is possible to format the Drop Line C<line> properties if required. See the L</CHART FORMATTING> section below.
+
+    $chart->set_drop_lines( line => { color => 'red', dash_type => 'square_dot' } );
+
+Drop Lines are only available in Line, Area and Stock charts.
+
+
+=head2 set_high_low_lines
+
+The C<set_high_low_lines()> method adds High-Low lines to charts to show the maximum and minimum values of points in a Category.
+
+    $chart->set_high_low_lines();
+
+It is possible to format the High-Low Line C<line> properties if required. See the L</CHART FORMATTING> section below.
+
+    $chart->set_high_low_lines( line => { color => 'red' } );
+
+High-Low Lines are only available in Line and Stock charts.
+
+
 =head2 show_blanks_as()
 
 The C<show_blanks_as()> method controls how blank data is displayed in a chart.
@@ -5350,155 +5392,15 @@ Display data in hidden rows or columns on the chart.
     $chart->show_hidden_data();
 
 
-=head1 CHART FORMATTING
+=head1 SERIES OPTIONS
 
-The following chart formatting properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart lines, column fill areas, plot area borders, markers, gridlines and other chart elements documented above.
+This section details the following properties of C<add_series()> in more detail:
 
-    line
-    border
-    fill
     marker
     trendline
     y_error_bars
     x_error_bars
     data_labels
-
-Chart formatting properties are generally set using hash refs.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { color => 'blue' },
-    );
-
-In some cases the format properties can be nested. For example a C<marker> may contain C<border> and C<fill> sub-properties.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { color => 'blue' },
-        marker     => {
-            type    => 'square',
-            size    => 5,
-            border  => { color => 'red' },
-            fill    => { color => 'yellow' },
-        },
-    );
-
-=head2 Line
-
-The line format is used to specify properties of line objects that appear in a chart such as a plotted line on a chart or a border.
-
-The following properties can be set for C<line> formats in a chart.
-
-    none
-    color
-    width
-    dash_type
-
-
-The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { none => 1 },
-    );
-
-
-The C<color> property sets the color of the C<line>.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { color => 'red' },
-    );
-
-The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a line with a HTML style RGB colour:
-
-    $chart->add_series(
-        line       => { color => '#FF0000' },
-    );
-
-
-The C<width> property sets the width of the C<line>. It should be specified in increments of 0.25 of a point as in Excel.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { width => 3.25 },
-    );
-
-The C<dash_type> property sets the dash style of the line.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => { dash_type => 'dash_dot' },
-    );
-
-The following C<dash_type> values are available. They are shown in the order that they appear in the Excel dialog.
-
-    solid
-    round_dot
-    square_dot
-    dash
-    dash_dot
-    long_dash
-    long_dash_dot
-    long_dash_dot_dot
-
-The default line style is C<solid>.
-
-More than one C<line> property can be specified at a time:
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        line       => {
-            color     => 'red',
-            width     => 1.25,
-            dash_type => 'square_dot',
-        },
-    );
-
-=head2 Border
-
-The C<border> property is a synonym for C<line>.
-
-It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
-
-
-=head2 Fill
-
-The fill format is used to specify filled areas of chart objects such as the interior of a column or the background of the chart itself.
-
-The following properties can be set for C<fill> formats in a chart.
-
-    none
-    color
-
-The C<none> property is used to turn the C<fill> property off (it is generally on by default).
-
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        fill       => { none => 1 },
-    );
-
-The C<color> property sets the colour of the C<fill> area.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        fill       => { color => 'red' },
-    );
-
-The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a fill with a HTML style RGB colour:
-
-    $chart->add_series(
-        fill       => { color => '#FF0000' },
-    );
-
-The C<fill> format is generally used in conjunction with a C<border> format which has the same properties as a C<line> format.
-
-    $chart->add_series(
-        values     => '=Sheet1!$B$1:$B$5',
-        border     => { color => 'red' },
-        fill       => { color => 'yellow' },
-    );
 
 =head2 Marker
 
@@ -5548,7 +5450,7 @@ The C<size> property sets the size of the marker and is generally used in conjun
         marker     => { type => 'diamond', size => 7 },
     );
 
-Nested C<border> and C<fill> properties can also be set for a marker. These have the same sub-properties as shown above.
+Nested C<border> and C<fill> properties can also be set for a marker. See the L</CHART FORMATTING> section below.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -5559,6 +5461,7 @@ Nested C<border> and C<fill> properties can also be set for a marker. These have
             fill    => { color => 'yellow' },
         },
     );
+
 
 =head2 Trendline
 
@@ -5781,9 +5684,150 @@ The C<leader_lines> property is used to turn on  I<Leader Lines> for the data la
 Note: Even when leader lines are turned on they aren't automatically visible in Excel or Excel::Writer::XLSX. Due to an Excel limitation (or design) leader lines only appear if the data label is moved manually or if the data labels are very close and need to be adjusted automatically.
 
 
-=head2 Other formatting options
+=head1 CHART FORMATTING
 
-Other formatting options will be added in time. If there is a feature that you would like to see included drop me a line.
+The following chart formatting properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart lines, column fill areas, plot area borders, markers, gridlines and other chart elements documented above.
+
+    line
+    border
+    fill
+
+Chart formatting properties are generally set using hash refs.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'blue' },
+    );
+
+In some cases the format properties can be nested. For example a C<marker> may contain C<border> and C<fill> sub-properties.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'blue' },
+        marker     => {
+            type    => 'square',
+            size    => 5,
+            border  => { color => 'red' },
+            fill    => { color => 'yellow' },
+        },
+    );
+
+=head2 Line
+
+The line format is used to specify properties of line objects that appear in a chart such as a plotted line on a chart or a border.
+
+The following properties can be set for C<line> formats in a chart.
+
+    none
+    color
+    width
+    dash_type
+
+
+The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { none => 1 },
+    );
+
+
+The C<color> property sets the color of the C<line>.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'red' },
+    );
+
+The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a line with a HTML style RGB colour:
+
+    $chart->add_series(
+        line       => { color => '#FF0000' },
+    );
+
+
+The C<width> property sets the width of the C<line>. It should be specified in increments of 0.25 of a point as in Excel.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { width => 3.25 },
+    );
+
+The C<dash_type> property sets the dash style of the line.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { dash_type => 'dash_dot' },
+    );
+
+The following C<dash_type> values are available. They are shown in the order that they appear in the Excel dialog.
+
+    solid
+    round_dot
+    square_dot
+    dash
+    dash_dot
+    long_dash
+    long_dash_dot
+    long_dash_dot_dot
+
+The default line style is C<solid>.
+
+More than one C<line> property can be specified at a time:
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => {
+            color     => 'red',
+            width     => 1.25,
+            dash_type => 'square_dot',
+        },
+    );
+
+=head2 Border
+
+The C<border> property is a synonym for C<line>.
+
+It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
+
+
+=head2 Fill
+
+The fill format is used to specify filled areas of chart objects such as the interior of a column or the background of the chart itself.
+
+The following properties can be set for C<fill> formats in a chart.
+
+    none
+    color
+
+The C<none> property is used to turn the C<fill> property off (it is generally on by default).
+
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        fill       => { none => 1 },
+    );
+
+The C<color> property sets the colour of the C<fill> area.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        fill       => { color => 'red' },
+    );
+
+The available colours are shown in the main L<Excel::Writer::XLSX> documentation. It is also possible to set the colour of a fill with a HTML style RGB colour:
+
+    $chart->add_series(
+        fill       => { color => '#FF0000' },
+    );
+
+The C<fill> format is generally used in conjunction with a C<border> format which has the same properties as a C<line> format.
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        border     => { color => 'red' },
+        fill       => { color => 'yellow' },
+    );
 
 
 =head1 CHART FONTS
