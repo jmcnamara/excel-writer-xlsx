@@ -132,6 +132,16 @@ sub _write_bar_dir {
 }
 
 
+##############################################################################
+#
+# _write_err_dir()
+#
+# Write the <c:errDir> element. Overridden from Chart class since it is not
+# used in Bar charts.
+#
+sub _write_err_dir {}
+
+
 1;
 
 
