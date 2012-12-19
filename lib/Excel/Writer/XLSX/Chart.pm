@@ -209,7 +209,8 @@ sub add_series {
     my $trendline = $self->_get_trendline_properties( $arg{trendline} );
 
     # Set the errorbars properties for the series.
-    my $errorbars = $self->_get_errorbars_properties( $arg{errorbars} );
+    my $y_errorbars = $self->_get_errorbars_properties( $arg{y_errorbars} );
+    my $x_errorbars = $self->_get_errorbars_properties( $arg{x_errorbars} );
 
     # Set the labels properties for the series.
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
@@ -234,11 +235,12 @@ sub add_series {
         _fill          => $fill,
         _marker        => $marker,
         _trendline     => $trendline,
-        _errorbars     => $errorbars,
         _labels        => $labels,
         _invert_if_neg => $invert_if_neg,
         _x2_axis       => $x2_axis,
         _y2_axis       => $y2_axis,
+        _errorbars =>
+          { _x_errorbars => $x_errorbars, _y_errorbars => $y_errorbars },
     );
 
     push @{ $self->{_series} }, \%arg;
@@ -1754,7 +1756,7 @@ sub _write_ser {
     $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:errBars element.
-    $self->_write_err_bars( $series->{_errorbars} );
+    $self->_write_error_bars( $series->{_errorbars} );
 
     # Write the c:cat element.
     $self->_write_cat( $series );
@@ -4520,6 +4522,29 @@ sub _write_show_keys {
 }
 
 
+##############################################################################
+#
+# _write_error_bars()
+#
+# Write the X and Y error bars.
+#
+sub _write_error_bars {
+
+    my $self      = shift;
+    my $errorbars = shift;
+
+    return unless $errorbars;
+
+    if ( $errorbars->{_x_errorbars} ) {
+        $self->_write_err_bars( 'x', $errorbars->{_x_errorbars} );
+    }
+
+    if ( $errorbars->{_y_errorbars} ) {
+        $self->_write_err_bars( 'y', $errorbars->{_y_errorbars} );
+    }
+
+}
+
 
 ##############################################################################
 #
@@ -4530,6 +4555,7 @@ sub _write_show_keys {
 sub _write_err_bars {
 
     my $self      = shift;
+    my $direction = shift;
     my $errorbars = shift;
 
     return unless $errorbars;
@@ -4537,7 +4563,7 @@ sub _write_err_bars {
     $self->xml_start_tag( 'c:errBars' );
 
     # Write the c:errDir element.
-    $self->_write_err_dir();
+    $self->_write_err_dir( $direction );
 
     # Write the c:errBarType element.
     $self->_write_err_bar_type( $errorbars->{_direction} );
@@ -4573,7 +4599,7 @@ sub _write_err_bars {
 sub _write_err_dir {
 
     my $self = shift;
-    my $val  = 'y';
+    my $val  = shift;
 
     my @attributes = ( 'val' => $val );
 

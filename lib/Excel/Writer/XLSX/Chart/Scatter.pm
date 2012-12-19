@@ -150,7 +150,7 @@ sub _write_ser {
     $self->_write_trendline( $series->{_trendline} );
 
     # Write the c:errBars element.
-    $self->_write_err_bars( $series->{_errorbars} );
+    $self->_write_error_bars( $series->{_errorbars} );
 
     # Write the c:xVal element.
     $self->_write_x_val( $series );

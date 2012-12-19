@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_errorbars01.xlsx';
+my $filename     = 'chart_errorbars04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . $filename;
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,10 +34,10 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'line', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'scatter', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 63386752, 63388288 ];
+$chart->{_axis_ids} = [ 61626624, 69664128 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -49,18 +49,16 @@ my $data = [
 $worksheet->write( 'A1', $data );
 
 $chart->add_series(
-    categories  => '=Sheet1!$A$1:$A$5',
-    values      => '=Sheet1!$B$1:$B$5',
+    categories => '=Sheet1!$A$1:$A$5',
+    values     => '=Sheet1!$B$1:$B$5',
     y_errorbars => { type => 'standard_error' },
+    x_errorbars => { type => 'standard_deviation', value => 1 },
 );
-
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
-
-
 $worksheet->insert_chart( 'E9', $chart );
 
 $workbook->close();

@@ -49,9 +49,9 @@ my $data = [
 $worksheet->write( 'A1', $data );
 
 $chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$B$1:$B$5',
-    errorbars  => {
+    categories  => '=Sheet1!$A$1:$A$5',
+    values      => '=Sheet1!$B$1:$B$5',
+    y_errorbars => {
         type => 'standard_error',
         line => { color => 'red', dash_type => 'round_dot' }
     },
