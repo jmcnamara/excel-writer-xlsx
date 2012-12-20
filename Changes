@@ -5,6 +5,16 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.63 December 19 2012
+
+    + Added Chart data tools such as:
+          Error Bars
+          Up-Down Bars
+          High-Low Lines
+          Drop Lines.
+      See the chart_data_tool.pl example.
+
+
 0.62 December 12 2012
 
     + Added option for adding a data table to a Chart X-axis.

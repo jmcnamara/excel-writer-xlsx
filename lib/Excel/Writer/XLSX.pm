@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.62';
+our $VERSION = '0.63';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.62 of Excel::Writer::XLSX, released December 12, 2012.
+This document refers to version 0.63 of Excel::Writer::XLSX, released December 19, 2012.
 
 
 
@@ -6060,7 +6060,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_scatter.pl        A demo of scatter style charts.
     chart_secondary_axis.pl A demo of a line chart with a secondary axis.
     chart_stock.pl          A demo of stock style charts.
-    chart_data_table.pl     A demo of a chart with a data data on the axis.
+    chart_data_table.pl     A demo of a chart with a data table on the axis.
+    chart_data_tools.pl     A demo of charts with data highlighting options.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
     comments2.pl            Add comments with advanced options.
@@ -6600,17 +6601,17 @@ Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> o
 
 John McNamara jmcnamara@cpan.org
 
-    The ashtray says
-    You were up all night.
-    When you went to bed
-    With your darkest mind.
-    Your pillow wept
-    And covered your eyes.
-    And you finally slept
-    While the sun caught fire.
+    Wilderness for miles, eyes so mild and wise
+    Oasis child, born and so wild
+    Don't I know you better than the rest
+    All deception, all deception from you
 
-    You've changed.
-      -- Jeff Tweedy
+    Any way you run, you run before us
+    Black and white horse arching among us
+    Any way you run, you run before us
+    Black and white horse arching among us
+
+      -- Beach House
 
 
 
