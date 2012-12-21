@@ -295,6 +295,7 @@ chart_scatter.jpg
 chart_secondary_axis.jpg
 chart_stock.jpg
 chart_data_table.jpg
+chart_data_tools.jpg
 chess.jpg
 colors.jpg
 comments1.jpg

@@ -2964,6 +2964,14 @@ High-Low Lines and Up-Down Bars.
 
 
 
+=begin html
+
+<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/chart_data_tools.jpg" width="640" height="420" alt="Output from chart_data_tools.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
     #!/usr/bin/perl
     
     #######################################################################
