@@ -212,6 +212,9 @@ sub add_series {
     my $y_error_bars = $self->_get_error_bars_properties( $arg{y_error_bars} );
     my $x_error_bars = $self->_get_error_bars_properties( $arg{x_error_bars} );
 
+    # Set the point properties for the series.
+    my $points = $self->_get_points_properties($arg{points});
+
     # Set the labels properties for the series.
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
 
@@ -239,6 +242,7 @@ sub add_series {
         _invert_if_neg => $invert_if_neg,
         _x2_axis       => $x2_axis,
         _y2_axis       => $y2_axis,
+        _points        => $points,
         _error_bars =>
           { _x_error_bars => $x_error_bars, _y_error_bars => $y_error_bars },
     );
@@ -1304,6 +1308,50 @@ sub _get_area_properties {
 }
 
 
+
+
+###############################################################################
+#
+# _get_points_properties()
+#
+# Convert user defined points properties to structure required internally.
+#
+sub _get_points_properties {
+
+    my $self        = shift;
+    my $user_points = shift;
+    my @points;
+
+    return unless $user_points;
+
+    for my $user_point ( @$user_points ) {
+
+        my $point;
+
+        if ( defined $user_point ) {
+
+            # Set the line properties for the point.
+            my $line = $self->_get_line_properties( $user_point->{line} );
+
+            # Allow 'border' as a synonym for 'line'.
+            if ( $user_point->{border} ) {
+                $line = $self->_get_line_properties( $user_point->{border} );
+            }
+
+            # Set the fill properties for the chartarea.
+            my $fill = $self->_get_fill_properties( $user_point->{fill} );
+
+            $point->{_line} = $line;
+            $point->{_fill} = $fill;
+        }
+
+        push @points, $point;
+    }
+
+    return \@points;
+}
+
+
 ###############################################################################
 #
 # _get_primary_axes_series()
@@ -1746,6 +1794,9 @@ sub _write_ser {
 
     # Write the c:invertIfNegative element.
     $self->_write_c_invert_if_negative( $series->{_invert_if_neg} );
+
+    # Write the c:dPt element.
+    $self->_write_d_pt( $series->{_points} );
 
     # Write the c:dLbls element.
     $self->_write_d_lbls( $series->{_labels} );
@@ -4199,6 +4250,38 @@ sub _write_protection {
 
 ##############################################################################
 #
+# _write_d_pt()
+#
+# Write the <c:dPt> element.
+#
+sub _write_d_pt {
+
+    my $self   = shift;
+    my $points = shift;
+    my $index  = -1;
+
+    return unless $points;
+
+    for my $point ( @$points ) {
+
+        $index++;
+        next unless $point;
+
+        $self->xml_start_tag( 'c:dPt' );
+
+        # Write the c:idx element.
+        $self->_write_idx( $index );
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $point );
+
+        $self->xml_end_tag( 'c:dPt' );
+    }
+}
+
+
+##############################################################################
+#
 # _write_d_lbls()
 #
 # Write the <c:dLbls> element.
@@ -4952,6 +5035,10 @@ Set horizontal error bounds for a chart series. See the L</SERIES OPTIONS> secti
 
 Set data labels for the series. See the L</SERIES OPTIONS> section below.
 
+=item * C<points>
+
+Set properties for individual points in a series. See the L</SERIES OPTIONS> section below.
+
 =item * C<invert_if_negative>
 
 Invert the fill colour for negative values. Usually only applicable to column and bar charts.
@@ -5401,6 +5488,7 @@ This section details the following properties of C<add_series()> in more detail:
     y_error_bars
     x_error_bars
     data_labels
+    points
 
 =head2 Marker
 
@@ -5682,6 +5770,39 @@ The C<leader_lines> property is used to turn on  I<Leader Lines> for the data la
     );
 
 Note: Even when leader lines are turned on they aren't automatically visible in Excel or Excel::Writer::XLSX. Due to an Excel limitation (or design) leader lines only appear if the data label is moved manually or if the data labels are very close and need to be adjusted automatically.
+
+=head2 Points
+
+In general formatting is applied to an entire series in a chart. However, it is occasionally required to format individual points in a series. In particular this is required for Pie charts where each segment is represented by a point.
+
+In these cases it is possible to use the C<points> property of C<add_series()>:
+
+    $chart->add_series(
+        values => '=Sheet1!$A$1:$A$3',
+        points => [
+            { fill => { color => '#FF0000' } },
+            { fill => { color => '#CC0000' } },
+            { fill => { color => '#990000' } },
+        ],
+    );
+
+The C<points> property takes an array ref of format options (see the L</CHART FORMATTING> section below). To assign default properties to points in a series pass C<undef> values in the array ref:
+
+    # Format point 3 of 3 only.
+    $chart->add_series(
+        values => '=Sheet1!$A$1:$A$3',
+        points => [
+            undef,
+            undef,
+            { fill => { color => '#990000' } },
+        ],
+    );
+
+    # Format the first point only.
+    $chart->add_series(
+        values => '=Sheet1!$A$1:$A$3',
+        points => [ { fill => { color => '#FF0000' } } ],
+    );
 
 
 =head1 CHART FORMATTING

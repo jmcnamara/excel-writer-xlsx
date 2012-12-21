@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.64 December XX 2012
+
+    + Add the option to format individual points in a chart series.
+      This allows Pie chart segments to be formatted.
+
+
 0.63 December 19 2012
 
     + Added Chart data tools such as:

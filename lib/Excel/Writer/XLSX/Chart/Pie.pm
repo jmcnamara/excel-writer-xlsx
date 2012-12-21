@@ -316,9 +316,18 @@ These methods are explained in detail in L<Excel::Writer::XLSX::Chart>. Class sp
 
 =head1 Pie Chart Methods
 
-It is possible to define chart colors for most types of Excel::Writer::XLSX charts via the add_series() method.
+It is possible to define chart colors for most types of Excel::Writer::XLSX charts via the add_series() method. However, Pie charts are a special case since each segment is represented as a point so it is necessary to assign formatting to each points in the series:
 
-However, Pie charts are a special case since each segment is a actually a point and there isn't, currently, any way to define colors for individual points in Excel::Writer::XLSX.
+    $chart->add_series(
+        values => '=Sheet1!$A$1:$A$3',
+        points => [
+            { fill => { color => '#FF0000' } },
+            { fill => { color => '#CC0000' } },
+            { fill => { color => '#990000' } },
+        ],
+    );
+
+See the main L<Excel::Writer::XLSX::Chart> documentation for more details.
 
 Pie charts support leader lines:
 
