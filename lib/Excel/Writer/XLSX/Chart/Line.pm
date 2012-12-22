@@ -105,6 +105,35 @@ sub _write_line_chart {
 }
 
 
+##############################################################################
+#
+# _write_d_pt_point()
+#
+# Write an individual <c:dPt> element. Override the parent method to add
+# markers.
+#
+sub _write_d_pt_point {
+
+    my $self   = shift;
+    my $index = shift;
+    my $point = shift;
+
+        $self->xml_start_tag( 'c:dPt' );
+
+        # Write the c:idx element.
+        $self->_write_idx( $index );
+
+        $self->xml_start_tag( 'c:marker' );
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $point );
+
+        $self->xml_end_tag( 'c:marker' );
+
+        $self->xml_end_tag( 'c:dPt' );
+}
+
+
 1;
 
 

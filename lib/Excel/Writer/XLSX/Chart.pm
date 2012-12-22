@@ -4252,7 +4252,7 @@ sub _write_protection {
 #
 # _write_d_pt()
 #
-# Write the <c:dPt> element.
+# Write the <c:dPt> elements.
 #
 sub _write_d_pt {
 
@@ -4267,6 +4267,23 @@ sub _write_d_pt {
         $index++;
         next unless $point;
 
+        $self->_write_d_pt_point( $index, $point );
+    }
+}
+
+
+##############################################################################
+#
+# _write_d_pt_point()
+#
+# Write an individual <c:dPt> element.
+#
+sub _write_d_pt_point {
+
+    my $self   = shift;
+    my $index = shift;
+    my $point = shift;
+
         $self->xml_start_tag( 'c:dPt' );
 
         # Write the c:idx element.
@@ -4276,7 +4293,7 @@ sub _write_d_pt {
         $self->_write_sp_pr( $point );
 
         $self->xml_end_tag( 'c:dPt' );
-    }
+
 }
 
 
