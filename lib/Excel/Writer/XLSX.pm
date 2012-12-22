@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.63';
+our $VERSION = '0.64';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.63 of Excel::Writer::XLSX, released December 19, 2012.
+This document refers to version 0.64 of Excel::Writer::XLSX, released December 22, 2012.
 
 
 
@@ -6576,7 +6576,7 @@ Bariatric Advantage (L<http://www.bariatricadvantage.com>) sponsored work on cha
 
 Eric Johnson provided the ability to use secondary axes with charts.  Thanks to Foxtons (L<http://foxtons.co.uk>) for sponsoring this work.
 
-BuildFax (L<http://www.buildfax.com>) sponsored the Tables feature.
+BuildFax (L<http://www.buildfax.com>) sponsored the Tables feature and the Chart point formatting feature.
 
 
 

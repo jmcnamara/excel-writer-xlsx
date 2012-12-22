@@ -432,6 +432,9 @@ t/regression/chart_pie01.t
 t/regression/chart_points01.t
 t/regression/chart_points02.t
 t/regression/chart_points03.t
+t/regression/chart_points04.t
+t/regression/chart_points05.t
+t/regression/chart_points06.t
 t/regression/chart_radar01.t
 t/regression/chart_radar02.t
 t/regression/chart_radar03.t
@@ -797,6 +800,9 @@ t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_points01.xlsx
 t/regression/xlsx_files/chart_points02.xlsx
 t/regression/xlsx_files/chart_points03.xlsx
+t/regression/xlsx_files/chart_points04.xlsx
+t/regression/xlsx_files/chart_points05.xlsx
+t/regression/xlsx_files/chart_points06.xlsx
 t/regression/xlsx_files/chart_radar01.xlsx
 t/regression/xlsx_files/chart_radar02.xlsx
 t/regression/xlsx_files/chart_radar03.xlsx
