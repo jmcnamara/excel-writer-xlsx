@@ -4,6 +4,10 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.65 December XX 2012
+
+   + Added options to format series Gap/Overlap for Bar/Column charts.
+
 
 0.64 December 22 2012
 

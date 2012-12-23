@@ -221,6 +221,17 @@ sub add_series {
     # Set the "invert if negative" fill property.
     my $invert_if_neg = $arg{invert_if_negative};
 
+    # Set the gap for Bar/Column charts.
+    if ( defined $arg{gap} ) {
+        $self->{_series_gap} = $arg{gap};
+    }
+
+    # Set the overlap for Bar/Column charts.
+    if ( defined $arg{overlap} ) {
+        $self->{_series_overlap} = $arg{overlap};
+    }
+
+
     # Set the secondary axis properties.
     my $x2_axis = $arg{x2_axis};
     my $y2_axis = $arg{y2_axis};
@@ -4087,7 +4098,9 @@ sub _write_drop_lines {
 sub _write_overlap {
 
     my $self = shift;
-    my $val  = 100;
+    my $val  = shift;
+
+    return if !defined $val;
 
     my @attributes = ( 'val' => $val );
 
@@ -4788,7 +4801,7 @@ sub _write_up_down_bars {
     $self->xml_start_tag( 'c:upDownBars' );
 
     # Write the c:gapWidth element.
-    $self->_write_gap_width();
+    $self->_write_gap_width( 150 );
 
     # Write the c:upBars element.
     $self->_write_up_bars( $up_down_bars->{_up} );
@@ -4809,7 +4822,9 @@ sub _write_up_down_bars {
 sub _write_gap_width {
 
     my $self = shift;
-    my $val  = 150;
+    my $val  = shift;
+
+    return if !defined $val;
 
     my @attributes = ( 'val' => $val );
 
@@ -5059,6 +5074,22 @@ Set properties for individual points in a series. See the L</SERIES OPTIONS> sec
 =item * C<invert_if_negative>
 
 Invert the fill colour for negative values. Usually only applicable to column and bar charts.
+
+=item * C<overlap>
+
+Set the overlap between series in a Bar/Column chart. Range is -100 to +100. Default is 0.
+
+    overlap => 20,
+
+Note, it is only necessary to apply this property to one series of the chart.
+
+=item * C<gap>
+
+Set the gap between series in a Bar/Column chart. Range is 0 - 500. Default is 150.
+
+    gap => 200,
+
+Note, it is only necessary to apply this property to one series of the chart.
 
 =back
 

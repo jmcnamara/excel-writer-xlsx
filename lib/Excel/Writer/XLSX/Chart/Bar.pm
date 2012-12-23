@@ -110,6 +110,13 @@ sub _write_bar_chart {
     my $subtype = $self->{_subtype};
     $subtype = 'percentStacked' if $subtype eq 'percent_stacked';
 
+    # Set a default overlap for stacked charts.
+    if ($self->{_subtype} =~ /stacked/) {
+        if (!defined $self->{_series_overlap}) {
+            $self->{_series_overlap} = 100;
+        }
+    }
+
     $self->xml_start_tag( 'c:barChart' );
 
     # Write the c:barDir element.
@@ -124,8 +131,11 @@ sub _write_bar_chart {
     # Write the c:marker element.
     $self->_write_marker_value();
 
+    # Write the c:gapWidth element.
+    $self->_write_gap_width( $self->{_series_gap} );
+
     # Write the c:overlap element.
-    $self->_write_overlap() if $self->{_subtype} =~ /stacked/;
+    $self->_write_overlap( $self->{_series_overlap} );
 
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
