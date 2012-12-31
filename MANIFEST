@@ -174,6 +174,7 @@ t/chart/sub_write_tick_lbl_pos.t
 t/chart/sub_write_v.t
 t/chart/sub_write_xml_declaration.t
 t/chartsheet/chartsheet01.t
+t/chartsheet/chartsheet_subs.t
 t/chartsheet/sub_write_xml_declaration.t
 t/drawing/drawing_chart_01.t
 t/drawing/drawing_image_01.t
@@ -409,6 +410,9 @@ t/regression/chart_format15.t
 t/regression/chart_format16.t
 t/regression/chart_format17.t
 t/regression/chart_format18.t
+t/regression/chart_gap01.t
+t/regression/chart_gap02.t
+t/regression/chart_gap03.t
 t/regression/chart_gridlines01.t
 t/regression/chart_gridlines02.t
 t/regression/chart_gridlines03.t
@@ -515,6 +519,7 @@ t/regression/format01.t
 t/regression/format02.t
 t/regression/format03.t
 t/regression/format04.t
+t/regression/format05.t
 t/regression/gridlines01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
@@ -607,6 +612,7 @@ t/regression/rich_string08.t
 t/regression/rich_string09.t
 t/regression/rich_string10.t
 t/regression/rich_string11.t
+t/regression/rich_string12.t
 t/regression/row_col_format01.t
 t/regression/row_col_format02.t
 t/regression/row_col_format03.t
@@ -778,6 +784,9 @@ t/regression/xlsx_files/chart_format15.xlsx
 t/regression/xlsx_files/chart_format16.xlsx
 t/regression/xlsx_files/chart_format17.xlsx
 t/regression/xlsx_files/chart_format18.xlsx
+t/regression/xlsx_files/chart_gap01.xlsx
+t/regression/xlsx_files/chart_gap02.xlsx
+t/regression/xlsx_files/chart_gap03.xlsx
 t/regression/xlsx_files/chart_gridlines01.xlsx
 t/regression/xlsx_files/chart_gridlines02.xlsx
 t/regression/xlsx_files/chart_gridlines03.xlsx
@@ -880,6 +889,7 @@ t/regression/xlsx_files/format01.xlsx
 t/regression/xlsx_files/format02.xlsx
 t/regression/xlsx_files/format03.xlsx
 t/regression/xlsx_files/format04.xlsx
+t/regression/xlsx_files/format05.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
@@ -963,6 +973,7 @@ t/regression/xlsx_files/rich_string08.xlsx
 t/regression/xlsx_files/rich_string09.xlsx
 t/regression/xlsx_files/rich_string10.xlsx
 t/regression/xlsx_files/rich_string11.xlsx
+t/regression/xlsx_files/rich_string12.xlsx
 t/regression/xlsx_files/row_col_format01.xlsx
 t/regression/xlsx_files/row_col_format02.xlsx
 t/regression/xlsx_files/row_col_format03.xlsx

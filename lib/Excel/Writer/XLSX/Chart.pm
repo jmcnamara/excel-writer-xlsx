@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.64';
+our $VERSION = '0.65';
 
 
 ###############################################################################
@@ -5077,7 +5077,7 @@ Invert the fill colour for negative values. Usually only applicable to column an
 
 =item * C<overlap>
 
-Set the overlap between series in a Bar/Column chart. Range is -100 to +100. Default is 0.
+Set the overlap between series in a Bar/Column chart. The range is +/- 100. Default is 0.
 
     overlap => 20,
 
@@ -5085,7 +5085,7 @@ Note, it is only necessary to apply this property to one series of the chart.
 
 =item * C<gap>
 
-Set the gap between series in a Bar/Column chart. Range is 0 - 500. Default is 150.
+Set the gap between series in a Bar/Column chart. The range is 0 to 500. Default is 150.
 
     gap => 200,
 
