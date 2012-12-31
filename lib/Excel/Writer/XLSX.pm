@@ -872,7 +872,7 @@ String fragments that don't have a format are given a default format. So for exa
     $worksheet->write_rich_string( 'A1',
         $default, 'Some ', $bold, 'bold', $default, ' text' );
 
-As with Excel, only the font properties of the format such as font name, style, size, underline, color and effects are applied to the string fragments. Other features such as border, background and alignment must be applied to the cell.
+As with Excel, only the font properties of the format such as font name, style, size, underline, color and effects are applied to the string fragments. Other features such as border, background, text wrap and alignment must be applied to the cell.
 
 The C<write_rich_string()> method allows you to do this by using the last argument as a cell format (if it is a format object). The following example centers a rich string in the cell:
 
