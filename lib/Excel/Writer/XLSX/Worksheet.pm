@@ -154,7 +154,6 @@ sub new {
 
     $self->{_write_match} = [];
 
-    $self->{prev_col} = -1;
 
     $self->{_table} = {};
     $self->{_merge} = [];
@@ -5953,9 +5952,6 @@ sub _write_worksheet {
     my $xmlns                  = $schema . 'spreadsheetml/2006/main';
     my $xmlns_r                = $schema . 'officeDocument/2006/relationships';
     my $xmlns_mc               = $schema . 'markup-compatibility/2006';
-    my $xmlns_mv               = 'urn:schemas-microsoft-com:mac:vml';
-    my $mc_ignorable           = 'mv';
-    my $mc_preserve_attributes = 'mv:*';
 
     my @attributes = (
         'xmlns'   => $xmlns,
@@ -5963,8 +5959,7 @@ sub _write_worksheet {
     );
 
     if ( $self->{_excel_version} == 2010 ) {
-        push @attributes,
-          ( 'xmlns:mc' => $schema . 'markup-compatibility/2006' );
+        push @attributes, ( 'xmlns:mc' => $xmlns_mc );
 
         push @attributes,
           (     'xmlns:x14ac' => 'http://schemas.microsoft.com/'

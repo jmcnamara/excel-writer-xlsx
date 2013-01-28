@@ -336,9 +336,9 @@ sub xml_rich_si_element {
 #
 sub xml_number_element {
 
-    my $self  = shift;
-    my $index = shift;
-    my $attr  = '';
+    my $self   = shift;
+    my $number = shift;
+    my $attr   = '';
 
     while ( @_ ) {
         my $key   = shift;
@@ -347,7 +347,7 @@ sub xml_number_element {
     }
 
     local $\ = undef;
-    print { $self->{_fh} } "<c$attr><v>$index</v></c>";
+    print { $self->{_fh} } "<c$attr><v>$number</v></c>";
 }
 
 
@@ -361,7 +361,7 @@ sub xml_formula_element {
 
     my $self    = shift;
     my $formula = shift;
-    my $value   = shift;
+    my $result  = shift;
     my $attr    = '';
 
     while ( @_ ) {
@@ -373,7 +373,7 @@ sub xml_formula_element {
     $formula = _escape_data( $formula );
 
     local $\ = undef;
-    print { $self->{_fh} } "<c$attr><f>$formula</f><v>$value</v></c>";
+    print { $self->{_fh} } "<c$attr><f>$formula</f><v>$result</v></c>";
 }
 
 
