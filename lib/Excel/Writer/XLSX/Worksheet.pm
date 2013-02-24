@@ -6981,6 +6981,10 @@ sub _write_page_setup {
         push @attributes, ( 'orientation' => 'portrait' );
     }
 
+    # Set start page.
+    if ( $self->{_page_start} != 0 ) {
+        push @attributes, ( 'useFirstPageNumber' => $self->{_page_start} );
+    }
 
     $self->xml_empty_tag( 'pageSetup', @attributes );
 }
