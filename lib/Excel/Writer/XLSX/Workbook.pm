@@ -2108,7 +2108,7 @@ sub _write_workbook_view {
     push @attributes, ( tabRatio => $tab_ratio ) if $tab_ratio != 500;
 
     # Store the firstSheet attribute when it isn't the default.
-    push @attributes, ( firstSheet => $first_sheet ) if $first_sheet > 0;
+    push @attributes, ( firstSheet => $first_sheet +1 ) if $first_sheet > 0;
 
     # Store the activeTab attribute when it isn't the first sheet.
     push @attributes, ( activeTab => $active_tab ) if $active_tab > 0;

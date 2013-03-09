@@ -55,7 +55,7 @@ is( $got, $expected, $caption );
 # Test the _write_workbook_view() method. Second tab selected. First sheet set.
 #
 $caption  = " \tWorkbook: _write_workbook_view()";
-$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" firstSheet="1" activeTab="1"/>';
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" firstSheet="2" activeTab="1"/>';
 
 $workbook = _new_workbook(\$got);
 $workbook->{_firstsheet} = 1;
