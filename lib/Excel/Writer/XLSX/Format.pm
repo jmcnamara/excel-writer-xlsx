@@ -258,8 +258,9 @@ sub get_format_key {
     my $key = join ':',
       (
         $self->get_font_key(), $self->get_border_key,
-        $self->get_fill_key(), $self->{_num_format},
-        $self->get_alignment_key(),
+        $self->get_fill_key(), $self->get_alignment_key(),
+        $self->{_num_format},  $self->{_locked},
+        $self->{_hidden}
       );
 
     return $key;

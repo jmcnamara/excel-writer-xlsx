@@ -203,8 +203,6 @@ sub new {
         my $fh = tempfile( DIR => $self->{_tempdir} );
         binmode $fh, ':utf8';
 
-        my $writer = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
-
         $self->{_cell_data_fh} = $fh;
         $self->{_fh}           = $fh;
     }
