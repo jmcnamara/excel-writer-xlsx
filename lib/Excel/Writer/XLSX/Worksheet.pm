@@ -4728,12 +4728,12 @@ sub _position_object_emus {
     ) = $self->_position_object_pixels( @_, $is_drawing );
 
     # Convert the pixel values to EMUs. See above.
-    $x1    *= 9_525;
-    $y1    *= 9_525;
-    $x2    *= 9_525;
-    $y2    *= 9_525;
-    $x_abs *= 9_525;
-    $y_abs *= 9_525;
+    $x1    = int( 0.5 + 9_525 * $x1 );
+    $y1    = int( 0.5 + 9_525 * $y1 );
+    $x2    = int( 0.5 + 9_525 * $x2 );
+    $y2    = int( 0.5 + 9_525 * $y2 );
+    $x_abs = int( 0.5 + 9_525 * $x_abs );
+    $y_abs = int( 0.5 + 9_525 * $y_abs );
 
     return (
         $col_start, $row_start, $x1, $y1,
