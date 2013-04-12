@@ -69,7 +69,7 @@ INSTALLATION
 
         Unzip and untar the module as follows:
 
-            tar -zxvf Excel-Writer-XLSX-0.65.tar.gz
+            tar -zxvf Excel-Writer-XLSX-0.66.tar.gz
 
         The module can be installed using the standard Perl procedure:
 

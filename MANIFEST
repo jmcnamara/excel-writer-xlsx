@@ -496,11 +496,14 @@ t/regression/cond_format12.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
+t/regression/date_examples01.t
 t/regression/default_row01.t
 t/regression/default_row02.t
 t/regression/default_row03.t
 t/regression/default_row04.t
 t/regression/defined_name01.t
+t/regression/defined_name02.t
+t/regression/defined_name03.t
 t/regression/escapes01.t
 t/regression/escapes02.t
 t/regression/escapes03.t
@@ -510,6 +513,8 @@ t/regression/escapes06.t
 t/regression/escapes07.t
 t/regression/escapes08.t
 t/regression/filehandle01.t
+t/regression/firstsheet01.t
+t/regression/firstsheet01.xlsx
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
@@ -521,6 +526,7 @@ t/regression/format03.t
 t/regression/format04.t
 t/regression/format05.t
 t/regression/gridlines01.t
+t/regression/hide01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
 t/regression/hyperlink03.t
@@ -547,6 +553,7 @@ t/regression/image04.t
 t/regression/image05.t
 t/regression/image06.t
 t/regression/image07.t
+t/regression/image08.t
 t/regression/images/blue.jpg
 t/regression/images/blue.png
 t/regression/images/grey.jpg
@@ -596,6 +603,9 @@ t/regression/print_options06.t
 t/regression/print_scale01.t
 t/regression/print_scale02.t
 t/regression/properties01.t
+t/regression/protect01.t
+t/regression/protect02.t
+t/regression/protect03.t
 t/regression/repeat01.t
 t/regression/repeat02.t
 t/regression/repeat03.t
@@ -627,6 +637,8 @@ t/regression/row_col_format11.t
 t/regression/row_col_format12.t
 t/regression/row_col_format13.t
 t/regression/row_col_format14.t
+t/regression/set_print_scale01.t
+t/regression/set_start_page01.t
 t/regression/shape_connect01.t
 t/regression/shape_connect02.t
 t/regression/shape_connect03.t
@@ -637,6 +649,9 @@ t/regression/shared_strings01.t
 t/regression/shared_strings02.t
 t/regression/simple01.t
 t/regression/simple02.t
+t/regression/simple03.t
+t/regression/simple04.t
+t/regression/simple05.t
 t/regression/tab_color01.t
 t/regression/table01.t
 t/regression/table02.t
@@ -654,8 +669,13 @@ t/regression/table13.t
 t/regression/table14.t
 t/regression/taint01.t
 t/regression/taint02.t
+t/regression/tutorial01.t
+t/regression/tutorial02.t
+t/regression/tutorial03.t
 t/regression/utf8_01.t
 t/regression/utf8_02.t
+t/regression/utf8_03.t
+t/regression/utf8_04.t
 t/regression/vml01.t
 t/regression/vml02.t
 t/regression/vml03.t
@@ -866,11 +886,14 @@ t/regression/xlsx_files/cond_format12.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
+t/regression/xlsx_files/date_examples01.xlsx
 t/regression/xlsx_files/default_row01.xlsx
 t/regression/xlsx_files/default_row02.xlsx
 t/regression/xlsx_files/default_row03.xlsx
 t/regression/xlsx_files/default_row04.xlsx
 t/regression/xlsx_files/defined_name01.xlsx
+t/regression/xlsx_files/defined_name02.xlsx
+t/regression/xlsx_files/defined_name03.xlsx
 t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
 t/regression/xlsx_files/escapes03.xlsx
@@ -880,6 +903,7 @@ t/regression/xlsx_files/escapes06.xlsx
 t/regression/xlsx_files/escapes07.xlsx
 t/regression/xlsx_files/escapes08.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
+t/regression/xlsx_files/firstsheet01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx
 t/regression/xlsx_files/fit_to_pages02.xlsx
 t/regression/xlsx_files/fit_to_pages03.xlsx
@@ -891,6 +915,7 @@ t/regression/xlsx_files/format03.xlsx
 t/regression/xlsx_files/format04.xlsx
 t/regression/xlsx_files/format05.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
+t/regression/xlsx_files/hide01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
 t/regression/xlsx_files/hyperlink03.xlsx
@@ -917,6 +942,7 @@ t/regression/xlsx_files/image04.xlsx
 t/regression/xlsx_files/image05.xlsx
 t/regression/xlsx_files/image06.xlsx
 t/regression/xlsx_files/image07.xlsx
+t/regression/xlsx_files/image08.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
@@ -957,6 +983,9 @@ t/regression/xlsx_files/print_options06.xlsx
 t/regression/xlsx_files/print_scale01.xlsx
 t/regression/xlsx_files/print_scale02.xlsx
 t/regression/xlsx_files/properties01.xlsx
+t/regression/xlsx_files/protect01.xlsx
+t/regression/xlsx_files/protect02.xlsx
+t/regression/xlsx_files/protect03.xlsx
 t/regression/xlsx_files/repeat01.xlsx
 t/regression/xlsx_files/repeat02.xlsx
 t/regression/xlsx_files/repeat03.xlsx
@@ -988,6 +1017,8 @@ t/regression/xlsx_files/row_col_format11.xlsx
 t/regression/xlsx_files/row_col_format12.xlsx
 t/regression/xlsx_files/row_col_format13.xlsx
 t/regression/xlsx_files/row_col_format14.xlsx
+t/regression/xlsx_files/set_print_scale01.xlsx
+t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/shape_connect01.xlsx
 t/regression/xlsx_files/shape_connect02.xlsx
 t/regression/xlsx_files/shape_connect03.xlsx
@@ -998,6 +1029,9 @@ t/regression/xlsx_files/shared_strings01.xlsx
 t/regression/xlsx_files/shared_strings02.xlsx
 t/regression/xlsx_files/simple01.xlsx
 t/regression/xlsx_files/simple02.xlsx
+t/regression/xlsx_files/simple03.xlsx
+t/regression/xlsx_files/simple04.xlsx
+t/regression/xlsx_files/simple05.xlsx
 t/regression/xlsx_files/tab_color01.xlsx
 t/regression/xlsx_files/table01.xlsx
 t/regression/xlsx_files/table02.xlsx
@@ -1015,8 +1049,13 @@ t/regression/xlsx_files/table13.xlsx
 t/regression/xlsx_files/table14.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
+t/regression/xlsx_files/tutorial01.xlsx
+t/regression/xlsx_files/tutorial02.xlsx
+t/regression/xlsx_files/tutorial03.xlsx
 t/regression/xlsx_files/utf8_01.xlsx
 t/regression/xlsx_files/utf8_02.xlsx
+t/regression/xlsx_files/utf8_03.xlsx
+t/regression/xlsx_files/utf8_04.xlsx
 t/regression/xlsx_files/vbaProject01.bin
 t/regression/xlsx_files/vbaProject02.bin
 t/regression/xlsx_files/vml01.xlsx
