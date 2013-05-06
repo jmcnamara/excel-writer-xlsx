@@ -637,6 +637,8 @@ t/regression/row_col_format11.t
 t/regression/row_col_format12.t
 t/regression/row_col_format13.t
 t/regression/row_col_format14.t
+t/regression/selection01.t
+t/regression/selection02.t
 t/regression/set_print_scale01.t
 t/regression/set_start_page01.t
 t/regression/shape_connect01.t
@@ -676,6 +678,12 @@ t/regression/utf8_01.t
 t/regression/utf8_02.t
 t/regression/utf8_03.t
 t/regression/utf8_04.t
+t/regression/utf8_05.t
+t/regression/utf8_06.t
+t/regression/utf8_07.t
+t/regression/utf8_08.t
+t/regression/utf8_09.t
+t/regression/utf8_10.t
 t/regression/vml01.t
 t/regression/vml02.t
 t/regression/vml03.t
@@ -1017,6 +1025,8 @@ t/regression/xlsx_files/row_col_format11.xlsx
 t/regression/xlsx_files/row_col_format12.xlsx
 t/regression/xlsx_files/row_col_format13.xlsx
 t/regression/xlsx_files/row_col_format14.xlsx
+t/regression/xlsx_files/selection01.xlsx
+t/regression/xlsx_files/selection02.xlsx
 t/regression/xlsx_files/set_print_scale01.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/shape_connect01.xlsx
@@ -1056,6 +1066,12 @@ t/regression/xlsx_files/utf8_01.xlsx
 t/regression/xlsx_files/utf8_02.xlsx
 t/regression/xlsx_files/utf8_03.xlsx
 t/regression/xlsx_files/utf8_04.xlsx
+t/regression/xlsx_files/utf8_05.xlsx
+t/regression/xlsx_files/utf8_06.xlsx
+t/regression/xlsx_files/utf8_07.xlsx
+t/regression/xlsx_files/utf8_08.xlsx
+t/regression/xlsx_files/utf8_09.xlsx
+t/regression/xlsx_files/utf8_10.xlsx
 t/regression/xlsx_files/vbaProject01.bin
 t/regression/xlsx_files/vbaProject02.bin
 t/regression/xlsx_files/vml01.xlsx

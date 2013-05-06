@@ -4,6 +4,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.67 May 6 2013
+
+   ! Fix for set_selection() with cell range.
+
+
 0.66 April 12 2013
 
    ! Fix for issue with image scaling.
