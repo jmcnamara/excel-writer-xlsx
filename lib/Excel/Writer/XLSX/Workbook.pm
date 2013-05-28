@@ -1491,22 +1491,25 @@ sub _prepare_drawings {
 #
 sub _prepare_vml_objects {
 
-    my $self          = shift;
-    my $comment_id    = 0;
-    my $vml_data_id   = 1;
-    my $vml_shape_id  = 1024;
-    my $vml_files     = 0;
-    my $comment_files = 0;
+    my $self           = shift;
+    my $comment_id     = 0;
+    my $vml_drawing_id = 0;
+    my $vml_data_id    = 1;
+    my $vml_shape_id   = 1024;
+    my $vml_files      = 0;
+    my $comment_files  = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
         next unless $sheet->{_has_vml};
         $vml_files++;
         $comment_files++ if $sheet->{_has_comments};
+        $comment_id++    if $sheet->{_has_comments};
+        $vml_drawing_id++;
 
-
-        my $count = $sheet->_prepare_vml_objects( $vml_data_id, $vml_shape_id,
-            ++$comment_id );
+        my $count =
+          $sheet->_prepare_vml_objects( $vml_data_id, $vml_shape_id,
+            $vml_drawing_id, $comment_id );
 
         # Each VML file should start with a shape id incremented by 1024.
         $vml_data_id  += 1 * int(    ( 1024 + $count ) / 1024 );

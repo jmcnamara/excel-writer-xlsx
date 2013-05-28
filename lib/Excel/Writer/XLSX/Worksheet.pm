@@ -5525,10 +5525,11 @@ sub _validate_shape {
 #
 sub _prepare_vml_objects {
 
-    my $self         = shift;
-    my $vml_data_id  = shift;
-    my $vml_shape_id = shift;
-    my $comment_id   = shift;
+    my $self           = shift;
+    my $vml_data_id    = shift;
+    my $vml_shape_id   = shift;
+    my $vml_drawing_id = shift;
+    my $comment_id     = shift;
     my @comments;
 
 
@@ -5559,7 +5560,7 @@ sub _prepare_vml_objects {
 
 
     push @{ $self->{_external_vml_links} },
-      [ '/vmlDrawing', '../drawings/vmlDrawing' . $comment_id . '.vml' ];
+      [ '/vmlDrawing', '../drawings/vmlDrawing' . $vml_drawing_id . '.vml' ];
 
 
     if ( $self->{_has_comments} ) {
