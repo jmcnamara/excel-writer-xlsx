@@ -81,7 +81,7 @@ _is_deep_diff( $got, $expected, $caption );
 #
 # Cleanup.
 #
-#unlink $got_filename;
+unlink $got_filename;
 
 __END__
 
