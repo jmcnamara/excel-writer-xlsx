@@ -194,6 +194,7 @@ sub new {
     $self->{_sparklines}             = [];
     $self->{_shapes}                 = [];
     $self->{_shape_hash}             = {};
+    $self->{_has_shapes}             = 0;
     $self->{_drawing}                = 0;
 
     $self->{_rstring}      = '';
@@ -5347,6 +5348,8 @@ sub _prepare_shape {
 
         push @{ $self->{_external_drawing_links} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
+
+        $self->{_has_shapes} = 1;
     }
     else {
         $drawing = $self->{_drawing};
