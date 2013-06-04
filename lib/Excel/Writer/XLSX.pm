@@ -4856,7 +4856,7 @@ The C<2_color_scale> type is used to specify Excel's "2 Color Scale" style condi
         }
     );
 
-At the moment only the default colors and properties can be used. These will be extended in time.
+This conditional type can be modified with C<min_type>, C<max_type>, C<min_value>, C<max_value>, C<min_color> and C<max_color>, see below.
 
 
 =head2 type => '3_color_scale'
@@ -4869,7 +4869,8 @@ The C<3_color_scale> type is used to specify Excel's "3 Color Scale" style condi
         }
     );
 
-At the moment only the default colors and properties can be used. These will be extended in time.
+This conditional type can be modified with C<min_type>, C<mid_type>, C<max_type>, C<min_value>, C<mid_value>, C<max_value>, C<min_color>, C<mid_color> and C<max_color>, see below.
+
 
 =head2 type => 'data_bar'
 
@@ -4881,7 +4882,8 @@ The C<data_bar> type is used to specify Excel's "Data Bar" style conditional for
         }
     );
 
-At the moment only the default colors and properties can be used. These will be extended in time.
+This conditional type can be modified with C<min_type>, C<max_type>, C<min_value>, C<max_value> and C<bar_color>, see below.
+
 
 
 =head2 type => 'formula'
