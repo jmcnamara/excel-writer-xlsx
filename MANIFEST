@@ -19,6 +19,7 @@ examples/chart_pie.pl
 examples/chart_radar.pl
 examples/chart_scatter.pl
 examples/chart_secondary_axis.pl
+examples/chart_secondary_axis2.pl
 examples/chart_stock.pl
 examples/colors.pl
 examples/comments1.pl
@@ -301,6 +302,11 @@ t/regression/button04.t
 t/regression/button05.t
 t/regression/button06.t
 t/regression/button07.t
+t/regression/button08.t
+t/regression/button09.t
+t/regression/button10.t
+t/regression/button11.t
+t/regression/button12.t
 t/regression/chart_area01.t
 t/regression/chart_area02.t
 t/regression/chart_area03.t
@@ -449,6 +455,7 @@ t/regression/chart_scatter04.t
 t/regression/chart_scatter05.t
 t/regression/chart_scatter06.t
 t/regression/chart_scatter07.t
+t/regression/chart_scatter08.t
 t/regression/chart_size01.t
 t/regression/chart_size02.t
 t/regression/chart_size03.t
@@ -481,6 +488,7 @@ t/regression/comment07.t
 t/regression/comment08.t
 t/regression/comment09.t
 t/regression/comment10.t
+t/regression/comment11.t
 t/regression/cond_format01.t
 t/regression/cond_format02.t
 t/regression/cond_format03.t
@@ -514,7 +522,6 @@ t/regression/escapes07.t
 t/regression/escapes08.t
 t/regression/filehandle01.t
 t/regression/firstsheet01.t
-t/regression/firstsheet01.xlsx
 t/regression/fit_to_page01.t
 t/regression/fit_to_page02.t
 t/regression/fit_to_page03.t
@@ -641,6 +648,10 @@ t/regression/selection01.t
 t/regression/selection02.t
 t/regression/set_print_scale01.t
 t/regression/set_start_page01.t
+t/regression/shape01.t
+t/regression/shape02.t
+t/regression/shape03.t
+t/regression/shape04.t
 t/regression/shape_connect01.t
 t/regression/shape_connect02.t
 t/regression/shape_connect03.t
@@ -704,6 +715,11 @@ t/regression/xlsx_files/button03.xlsx
 t/regression/xlsx_files/button04.xlsx
 t/regression/xlsx_files/button05.xlsx
 t/regression/xlsx_files/button07.xlsm
+t/regression/xlsx_files/button08.xlsx
+t/regression/xlsx_files/button09.xlsx
+t/regression/xlsx_files/button10.xlsx
+t/regression/xlsx_files/button11.xlsx
+t/regression/xlsx_files/button12.xlsx
 t/regression/xlsx_files/chart_area01.xlsx
 t/regression/xlsx_files/chart_area02.xlsx
 t/regression/xlsx_files/chart_area03.xlsx
@@ -850,6 +866,7 @@ t/regression/xlsx_files/chart_scatter04.xlsx
 t/regression/xlsx_files/chart_scatter05.xlsx
 t/regression/xlsx_files/chart_scatter06.xlsx
 t/regression/xlsx_files/chart_scatter07.xlsx
+t/regression/xlsx_files/chart_scatter08.xlsx
 t/regression/xlsx_files/chart_size01.xlsx
 t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
@@ -880,6 +897,7 @@ t/regression/xlsx_files/comment07.xlsx
 t/regression/xlsx_files/comment08.xlsx
 t/regression/xlsx_files/comment09.xlsx
 t/regression/xlsx_files/comment10.xlsx
+t/regression/xlsx_files/comment11.xlsx
 t/regression/xlsx_files/cond_format01.xlsx
 t/regression/xlsx_files/cond_format02.xlsx
 t/regression/xlsx_files/cond_format03.xlsx
@@ -1029,6 +1047,10 @@ t/regression/xlsx_files/selection01.xlsx
 t/regression/xlsx_files/selection02.xlsx
 t/regression/xlsx_files/set_print_scale01.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
+t/regression/xlsx_files/shape01.xlsx
+t/regression/xlsx_files/shape02.xlsx
+t/regression/xlsx_files/shape03.xlsx
+t/regression/xlsx_files/shape04.xlsx
 t/regression/xlsx_files/shape_connect01.xlsx
 t/regression/xlsx_files/shape_connect02.xlsx
 t/regression/xlsx_files/shape_connect03.xlsx

@@ -4,6 +4,17 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+0.68 June 6 2013
+
+   ! Fix for issue where shapes on one worksheet corrupted charts on a
+     subsequent worksheet. #52.
+
+   ! Fix for issue where add_button() invalidated cell comments in the
+     same workbook. #64.
+
+
+
 0.67 May 6 2013
 
    ! Fix for set_selection() with cell range.
@@ -57,10 +68,10 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added Excel form buttons via the worksheet insert_button() method.
       This allows the user to tie the button to an embedded macro imported
-      using add_vba_project(). 
+      using add_vba_project().
       The portal to the dungeon dimensions is now fully open.
 
-    ! Fix escaping of special character in URLs to write_url(). 
+    ! Fix escaping of special character in URLs to write_url().
       Issue #45.
 
     ! Fix for 0 access/modification date on vbaProject.bin files extracted
@@ -115,7 +126,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added Radar Charts.
 
-    ! Fix for XML encoding in write_url() internal/external 
+    ! Fix for XML encoding in write_url() internal/external
       links. Issue #37.
 
 
