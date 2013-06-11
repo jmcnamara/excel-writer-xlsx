@@ -3360,6 +3360,7 @@ sub conditional_formatting {
         # Check for a user defined multiple range like B3:K6,B8:K11.
         if ( $_[0] =~ /,/ ) {
             $user_range = $_[0];
+            $user_range =~ s/^=//;
             $user_range =~ s/\s*,\s*/ /g;
             $user_range =~ s/\$//g;
         }
