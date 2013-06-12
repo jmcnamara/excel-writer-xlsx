@@ -4015,7 +4015,7 @@ sub add_table {
 
                 my $token = $data->[$i]->[$j];
 
-                if ( $token ) {
+                if (defined $token ) {
                     $self->write( $row, $col, $token, $col_formats[$j] );
                 }
 
