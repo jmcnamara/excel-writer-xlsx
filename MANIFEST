@@ -19,7 +19,6 @@ examples/chart_pie.pl
 examples/chart_radar.pl
 examples/chart_scatter.pl
 examples/chart_secondary_axis.pl
-examples/chart_secondary_axis2.pl
 examples/chart_stock.pl
 examples/colors.pl
 examples/comments1.pl
@@ -336,6 +335,10 @@ t/regression/chart_axis22.t
 t/regression/chart_axis23.t
 t/regression/chart_axis24.t
 t/regression/chart_axis25.t
+t/regression/chart_axis26.t
+t/regression/chart_axis27.t
+t/regression/chart_axis28.t
+t/regression/chart_axis29.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -680,6 +683,7 @@ t/regression/table11.t
 t/regression/table12.t
 t/regression/table13.t
 t/regression/table14.t
+t/regression/table15.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/tutorial01.t
@@ -749,6 +753,10 @@ t/regression/xlsx_files/chart_axis22.xlsx
 t/regression/xlsx_files/chart_axis23.xlsx
 t/regression/xlsx_files/chart_axis24.xlsx
 t/regression/xlsx_files/chart_axis25.xlsx
+t/regression/xlsx_files/chart_axis26.xlsx
+t/regression/xlsx_files/chart_axis27.xlsx
+t/regression/xlsx_files/chart_axis28.xlsx
+t/regression/xlsx_files/chart_axis29.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -1079,6 +1087,7 @@ t/regression/xlsx_files/table11.xlsx
 t/regression/xlsx_files/table12.xlsx
 t/regression/xlsx_files/table13.xlsx
 t/regression/xlsx_files/table14.xlsx
+t/regression/xlsx_files/table15.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
