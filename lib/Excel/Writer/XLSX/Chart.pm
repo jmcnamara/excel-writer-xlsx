@@ -679,10 +679,16 @@ sub _convert_font_args {
         _pitch_family => $args->{pitch_family},
         _charset      => $args->{charset},
         _baseline     => $args->{baseline} || 0,
+        _rotation     => $args->{rotation},
     };
 
     # Convert font size units.
     $font->{_size} *= 100 if $font->{_size};
+
+    # Convert rotation into 60,000ths of a degree.
+    if ( $font->{_rotation} ) {
+        $font->{_rotation} = 60_000 * int( $font->{_rotation} );
+    }
 
     return $font;
 }
@@ -3360,6 +3366,27 @@ sub _write_a_body_pr {
 
 ##############################################################################
 #
+# _write_axis_body_pr()
+#
+# Write the <a:bodyPr> element for axis fonts.
+#
+sub _write_axis_body_pr {
+
+    my $self = shift;
+    my $rot  = shift;
+    my $vert = shift;
+
+    my @attributes = ();
+
+    push @attributes, ( 'rot'  => $rot )  if defined $rot;
+    push @attributes, ( 'vert' => $vert ) if defined $vert;
+
+    $self->xml_empty_tag( 'a:bodyPr', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_a_lst_style()
 #
 # Write the <a:lstStyle> element.
@@ -4500,7 +4527,7 @@ sub _write_axis_font {
     return unless $font;
 
     $self->xml_start_tag( 'c:txPr' );
-    $self->xml_empty_tag( 'a:bodyPr' );
+    $self->_write_axis_body_pr($font->{_rotation});
     $self->_write_a_lst_style();
     $self->xml_start_tag( 'a:p' );
 
@@ -6009,6 +6036,7 @@ The following font properties can be set for any chart object that they apply to
     italic
     underline
     color
+    rotation
 
 The following explains the available font properties:
 
@@ -6043,6 +6071,14 @@ Set the font italic property, should be 0 or 1:
 Set the font underline property, should be 0 or 1:
 
     $chart->set_x_axis( num_font => { underline => 1 } );
+
+=item * C<rotation>
+
+Set the font rotation in the range -90 to 90:
+
+    $chart->set_x_axis( num_font => { rotation => 45 } );
+
+This is useful for displaying large axis data such as dates in a more compact format.
 
 =item * C<color>
 

@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.69 July XX 2013
+
+   + Added chart font rotation property. Mainly for use with date axes
+     to make the display more compact.
+
+
 0.68 June 6 2013
 
    ! Fix for issue where shapes on one worksheet corrupted charts on a
@@ -12,7 +18,6 @@ Revision history for Perl module Excel::Writer::XLSX.
 
    ! Fix for issue where add_button() invalidated cell comments in the
      same workbook. #64.
-
 
 
 0.67 May 6 2013
