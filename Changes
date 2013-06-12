@@ -10,6 +10,9 @@ Revision history for Perl module Excel::Writer::XLSX.
    + Added chart font rotation property. Mainly for use with date axes
      to make the display more compact.
 
+   ! Fix for 0 data in Worksheet Tables. #65.
+     Reported by David Gang.
+
 
 0.68 June 6 2013
 
