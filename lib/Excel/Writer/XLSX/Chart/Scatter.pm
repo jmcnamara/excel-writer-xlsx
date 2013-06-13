@@ -39,6 +39,7 @@ sub new {
     $self->{_cross_between}    = 'midCat';
     $self->{_horiz_val_axis}   = 0;
     $self->{_val_axis_postion} = 'b';
+    $self->{_smooth_allowed}   = 1;
 
     bless $self, $class;
     return $self;
@@ -90,11 +91,6 @@ sub _write_scatter_chart {
     $style = 'lineMarker'   if $subtype eq 'straight';
     $style = 'smoothMarker' if $subtype eq 'smooth_with_markers';
     $style = 'smoothMarker' if $subtype eq 'smooth';
-
-    # Allow the smooth property to be set for a chart.
-    if ($subtype =~ /smooth/) {
-        $self->{_smooth_allowed} = 1;
-    }
 
     # Add default formatting to the series data.
     $self->_modify_series_formatting();
@@ -167,14 +163,12 @@ sub _write_ser {
     $self->_write_y_val( $series );
 
     # Write the c:smooth element.
-    if ( $self->{_smooth_allowed} ) {
+    if ( $self->{_subtype} =~ /smooth/ && !defined $series->{_smooth} ) {
         # Default is on for smooth scatter charts.
-        if ( !defined $series->{_smooth} ) {
-            $self->_write_c_smooth( 1 );
-        }
-        else {
-            $self->_write_c_smooth( $series->{_smooth} );
-        }
+        $self->_write_c_smooth( 1 );
+    }
+    else {
+        $self->_write_c_smooth( $series->{_smooth} );
     }
 
     $self->xml_end_tag( 'c:ser' );
