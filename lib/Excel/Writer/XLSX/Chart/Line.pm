@@ -36,6 +36,7 @@ sub new {
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
     $self->{_default_marker} = { type => 'none' };
+    $self->{_smooth_allowed} = 1;
 
     bless $self, $class;
     return $self;
