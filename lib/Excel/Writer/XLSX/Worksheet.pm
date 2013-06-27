@@ -4820,7 +4820,7 @@ sub _size_col {
             $pixels = 0;
         }
         elsif ( $width < 1 ) {
-            $pixels = int( $width * 12 + 0.5 );
+            $pixels = int( $width * ($max_digit_width + $padding) + 0.5 );
         }
         else {
             $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
@@ -6345,10 +6345,20 @@ sub _write_col_info {
     # Convert column width from user units to character width.
     my $max_digit_width = 7;    # For Calabri 11.
     my $padding         = 5;
+
     if ( $width > 0 ) {
-        $width = int(
-            ( $width * $max_digit_width + $padding ) / $max_digit_width * 256 )
-          / 256;
+        if ( $width < 1 ) {
+            $width =
+              int( ( int( $width * ($max_digit_width + $padding) + 0.5 ) ) /
+                  $max_digit_width *
+                  256 ) / 256;
+        }
+        else {
+            $width =
+              int( ( int( $width * $max_digit_width + 0.5 ) + $padding ) /
+                  $max_digit_width *
+                  256 ) / 256;
+        }
     }
 
     my @attributes = (
@@ -7783,10 +7793,10 @@ sub _calculate_x_split_width {
 
     # Convert to pixels.
     if ( $width < 1 ) {
-        $pixels = int( $width * 12 + 0.5 );
+        $pixels = int( $width * ( $max_digit_width + $padding ) + 0.5 );
     }
     else {
-        $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
+          $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
     }
 
     # Convert to points.
