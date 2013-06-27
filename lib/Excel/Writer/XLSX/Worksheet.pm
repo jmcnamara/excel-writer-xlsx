@@ -5207,7 +5207,7 @@ sub _prepare_image {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height );
+        $height, 0 );
 
     # Convert from pixels to emus.
     $width  = int( 0.5 + ( $width * 9_525 ) );
