@@ -5111,6 +5111,10 @@ Set the properties of the series marker such as style and colour. See the L</SER
 
 Set the properties of the series trendline such as linear, polynomial and moving average types. See the L</SERIES OPTIONS> section below.
 
+=item * C<smooth>
+
+The C<smooth> option is used to set the smooth property of a line series. See the L</SERIES OPTIONS> section below.
+
 =item * C<y_error_bars>
 
 Set vertical error bounds for a chart series. See the L</SERIES OPTIONS> section below.
@@ -5593,6 +5597,7 @@ This section details the following properties of C<add_series()> in more detail:
     x_error_bars
     data_labels
     points
+    smooth
 
 =head2 Marker
 
@@ -5907,6 +5912,13 @@ The C<points> property takes an array ref of format options (see the L</CHART FO
         values => '=Sheet1!$A$1:$A$3',
         points => [ { fill => { color => '#FF0000' } } ],
     );
+
+=head2 Smooth
+
+The C<smooth> option is used to set the smooth property of a line series. It is only applicable to the C<Line> and C<Scatter> chart types.
+
+    $chart->add_series( values => '=Sheet1!$C$1:$C$5',
+                        smooth => 1 );
 
 
 =head1 CHART FORMATTING
