@@ -5,7 +5,17 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
-0.69 July 12 2013
+0.70 July 30 2013
+
+   ! Fix for rendering images that are the same size as cell boundaries.
+     GitHub issue #70.
+
+   ! Added fix for inaccurate column width calculation.
+
+   + Added Chart line smoothing option. 
+
+
+0.69 Junw 12 2013
 
    + Added chart font rotation property. Mainly for use with date axes
      to make the display more compact.

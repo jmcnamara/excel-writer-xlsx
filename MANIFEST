@@ -435,6 +435,8 @@ t/regression/chart_high_low_lines01.t
 t/regression/chart_high_low_lines02.t
 t/regression/chart_line01.t
 t/regression/chart_line02.t
+t/regression/chart_line03.t
+t/regression/chart_line04.t
 t/regression/chart_name01.t
 t/regression/chart_name02.t
 t/regression/chart_name03.t
@@ -459,6 +461,9 @@ t/regression/chart_scatter05.t
 t/regression/chart_scatter06.t
 t/regression/chart_scatter07.t
 t/regression/chart_scatter08.t
+t/regression/chart_scatter09.t
+t/regression/chart_scatter10.t
+t/regression/chart_scatter11.t
 t/regression/chart_size01.t
 t/regression/chart_size02.t
 t/regression/chart_size03.t
@@ -564,6 +569,7 @@ t/regression/image05.t
 t/regression/image06.t
 t/regression/image07.t
 t/regression/image08.t
+t/regression/image09.t
 t/regression/images/blue.jpg
 t/regression/images/blue.png
 t/regression/images/grey.jpg
@@ -571,6 +577,7 @@ t/regression/images/grey.png
 t/regression/images/red.bmp
 t/regression/images/red.jpg
 t/regression/images/red.png
+t/regression/images/red_64x20.png
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
 t/regression/macro01.t
@@ -649,6 +656,8 @@ t/regression/row_col_format13.t
 t/regression/row_col_format14.t
 t/regression/selection01.t
 t/regression/selection02.t
+t/regression/set_column01.t
+t/regression/set_column02.t
 t/regression/set_print_scale01.t
 t/regression/set_start_page01.t
 t/regression/shape01.t
@@ -852,6 +861,8 @@ t/regression/xlsx_files/chart_high_low_lines01.xlsx
 t/regression/xlsx_files/chart_high_low_lines02.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
+t/regression/xlsx_files/chart_line03.xlsx
+t/regression/xlsx_files/chart_line04.xlsx
 t/regression/xlsx_files/chart_name01.xlsx
 t/regression/xlsx_files/chart_name02.xlsx
 t/regression/xlsx_files/chart_name03.xlsx
@@ -875,6 +886,9 @@ t/regression/xlsx_files/chart_scatter05.xlsx
 t/regression/xlsx_files/chart_scatter06.xlsx
 t/regression/xlsx_files/chart_scatter07.xlsx
 t/regression/xlsx_files/chart_scatter08.xlsx
+t/regression/xlsx_files/chart_scatter09.xlsx
+t/regression/xlsx_files/chart_scatter10.xlsx
+t/regression/xlsx_files/chart_scatter11.xlsx
 t/regression/xlsx_files/chart_size01.xlsx
 t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
@@ -977,6 +991,7 @@ t/regression/xlsx_files/image05.xlsx
 t/regression/xlsx_files/image06.xlsx
 t/regression/xlsx_files/image07.xlsx
 t/regression/xlsx_files/image08.xlsx
+t/regression/xlsx_files/image09.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
@@ -1053,6 +1068,7 @@ t/regression/xlsx_files/row_col_format13.xlsx
 t/regression/xlsx_files/row_col_format14.xlsx
 t/regression/xlsx_files/selection01.xlsx
 t/regression/xlsx_files/selection02.xlsx
+t/regression/xlsx_files/set_column01.xlsx
 t/regression/xlsx_files/set_print_scale01.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/shape01.xlsx
