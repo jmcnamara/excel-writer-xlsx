@@ -45,7 +45,7 @@ _is_deep_diff( \@got, \@expected, $caption );
 # 2. Test _position_object_emus() for chart vertices.
 #
 $caption = " \tWorksheet: _position_object_emus()";
-@expected = ( 4, 8, 0, 0, 11, 22, 0, 76200, 2438400, 1524000 );
+@expected = ( 4, 8, 0, 0, 12, 22, 0, 76200, 2438400, 1524000 );
 
 $worksheet = _new_worksheet( \$tmp );
 $worksheet->set_column( 'L:L', 3.86 );
@@ -60,7 +60,7 @@ _is_deep_diff( \@got, \@expected, $caption );
 # 3. Test _position_object_emus() for chart vertices.
 #
 $caption = " \tWorksheet: _position_object_emus()";
-@expected = ( 4, 8, 0, 0, 11, 22, 0, 0, 2438400, 1524000 );
+@expected = ( 4, 8, 0, 0, 12, 23, 0, 0, 2438400, 1524000 );
 
 $worksheet = _new_worksheet( \$tmp );
 $worksheet->set_column( 'L:L', 3.86 );

@@ -4621,9 +4621,7 @@ sub _position_object_pixels {
     my $x_abs = 0;    # Absolute distance to left side of object.
     my $y_abs = 0;    # Absolute distance to top  side of object.
 
-    my $is_drawing = 0;
-
-    ( $col_start, $row_start, $x1, $y1, $width, $height, $is_drawing ) = @_;
+    ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
 
     # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
@@ -4687,13 +4685,6 @@ sub _position_object_pixels {
         $row_end++;
     }
 
-    # The following is only required for positioning drawing/chart objects
-    # and not comments. It is probably the result of a bug.
-    if ( $is_drawing ) {
-        $col_end-- if $width == 0;
-        $row_end-- if $height == 0;
-    }
-
     # The end vertices are whatever is left from the width and height.
     $x2 = $width;
     $y2 = $height;
@@ -4720,14 +4711,13 @@ sub _position_object_pixels {
 sub _position_object_emus {
 
     my $self       = shift;
-    my $is_drawing = 1;
 
     my (
         $col_start, $row_start, $x1, $y1,
         $col_end,   $row_end,   $x2, $y2,
         $x_abs,     $y_abs
 
-    ) = $self->_position_object_pixels( @_, $is_drawing );
+    ) = $self->_position_object_pixels( @_ );
 
     # Convert the pixel values to EMUs. See above.
     $x1    = int( 0.5 + 9_525 * $x1 );
@@ -5039,7 +5029,7 @@ sub _prepare_chart {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height, 0 );
+        $height );
 
     # Set the chart name for the embedded object if it has been specified.
     my $name = $chart->{_chart_name};
@@ -5207,7 +5197,7 @@ sub _prepare_image {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height, 0 );
+        $height );
 
     # Convert from pixels to emus.
     $width  = int( 0.5 + ( $width * 9_525 ) );
