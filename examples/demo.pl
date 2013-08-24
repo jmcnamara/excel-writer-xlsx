@@ -104,9 +104,8 @@ $worksheet->write( 'B9', 'http://www.perl.com/', $hyperlink_format );
 #
 # Images
 #
-# Not implemented yet.
-#$worksheet->write( 'A10', "Images" );
-#$worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
+$worksheet->write( 'A10', "Images" );
+$worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
 
 
 #######################################################################

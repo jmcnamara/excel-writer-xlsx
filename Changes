@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.71 Aug XX 2013
+
+   ! Fixed issue in image handling.
+
+
 0.70 July 30 2013
 
    ! Fix for rendering images that are the same size as cell boundaries.

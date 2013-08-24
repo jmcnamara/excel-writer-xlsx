@@ -1563,8 +1563,6 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 =head2 insert_image( $row, $col, $filename, $x, $y, $x_scale, $y_scale )
 
-Partially supported. Currently only works for 96 dpi images.
-
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
 
     $worksheet1->insert_image( 'A1', 'perl.bmp' );
@@ -6197,7 +6195,7 @@ It supports all of the features of Spreadsheet::WriteExcel with some minor diffe
     show_comments()             Yes
     set_comments_author()       Yes
     add_write_handler()         Yes
-    insert_image()              Yes/Partial, see docs.
+    insert_image()              Yes.
     insert_chart()              Yes
     insert_shape()              Yes. Not in Spreadsheet::WriteExcel.
     insert_button()             Yes. Not in Spreadsheet::WriteExcel.
