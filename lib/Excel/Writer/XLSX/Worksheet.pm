@@ -4625,7 +4625,7 @@ sub _position_object_pixels {
 
     # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
-        for my $col_id ( 1 .. $col_start ) {
+        for my $col_id ( 0 .. $col_start -1 ) {
             $x_abs += $self->_size_col( $col_id );
         }
     }
@@ -4639,7 +4639,7 @@ sub _position_object_pixels {
     # Calculate the absolute y offset of the top-left vertex.
     # Store the column change to allow optimisations.
     if ( $self->{_row_size_changed} ) {
-        for my $row_id ( 1 .. $row_start ) {
+        for my $row_id ( 0 .. $row_start -1 ) {
             $y_abs += $self->_size_row( $row_id );
         }
     }
