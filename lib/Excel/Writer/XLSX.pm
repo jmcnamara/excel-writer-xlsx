@@ -6484,12 +6484,6 @@ For other Perl-Excel modules try the following search: L<http://search.cpan.org/
 
 =over
 
-=item * Zero values for formulas results.
-
-Some versions of Excel 2007 do not display the calculated values of formulas written by Excel::Writer::XLSX. This is a bug in Excel since Excel::Writer::XLSX sets the required flag for recalculating formulas on opening.
-
-Applying all available Service Packs to Excel should fix this. Alternatively you can supply calculated values for all formulas that you write.
-
 =item * Memory usage is very high for large worksheets.
 
 If you run out of memory creating large worksheets use the C<set_optimization()> method. See L</SPEED AND MEMORY USAGE> for more information.

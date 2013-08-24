@@ -24,7 +24,7 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 my $ignore_members = [];
 my $ignore_elements = {
     'xl/charts/chart1.xml' => ['<c:pageMargins'],
-    'xl/workbook.xml'      => [ '<fileVersion', '<calcPr' ],
+    'xl/workbook.xml'      => [ '<fileVersion' ],
 };
 
 

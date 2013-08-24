@@ -51,5 +51,5 @@ __DATA__
     <sheet name="Sheet1" sheetId="1" r:id="rId1"/>
     <sheet name="Sheet2" sheetId="2" r:id="rId2"/>
   </sheets>
-  <calcPr calcId="124519"/>
+  <calcPr calcId="124519" fullCalcOnLoad="1"/>
 </workbook>

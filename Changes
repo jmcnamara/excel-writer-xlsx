@@ -9,6 +9,9 @@ Revision history for Perl module Excel::Writer::XLSX.
 
    ! Fixed issue in image handling.
 
+   ! Added fix to ensure formula calculation in load regardless of
+     Excel version.
+
 
 0.70 July 30 2013
 

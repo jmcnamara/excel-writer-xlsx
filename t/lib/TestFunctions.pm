@@ -232,6 +232,12 @@ sub _compare_xlsx_files {
             $got_xml_str =~ s{<workbookView[^>]*>}{<workbookView/>};
         }
 
+        # Remove the calcPr elements which may have different Excel version ids.
+        if ( $filename eq 'xl/workbook.xml' ) {
+            $exp_xml_str =~ s{<calcPr[^>]*>}{<calcPr/>};
+            $got_xml_str =~ s{<calcPr[^>]*>}{<calcPr/>};
+        }
+
         # Remove printer specific settings from Worksheet pageSetup elements.
         if ( $filename =~ m(xl/worksheets/sheet\d.xml) ) {
             $exp_xml_str =~ s/horizontalDpi="200" //;
