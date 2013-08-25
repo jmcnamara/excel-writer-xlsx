@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 my $filename     = 'button05.xlsx';
 my $dir          = 't/regression/';
-my $got_filename = $dir . "ewx_$filename";
+my $got_filename = $dir . "ewx6_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];

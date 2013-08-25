@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 my $filename     = 'set_column01.xlsx';
 my $dir          = 't/regression/';
-my $got_filename = $dir . "ewx_$filename";
+my $got_filename = $dir . "ewx2_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
