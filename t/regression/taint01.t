@@ -20,7 +20,7 @@ use Test::More tests => 1;
 #
 my $filename     = 'taint01.xlsx';
 my $dir          = 't/regression/';
-my $got_filename = $dir . $filename;
+my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];

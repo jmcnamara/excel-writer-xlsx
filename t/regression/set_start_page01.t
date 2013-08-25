@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 my $filename     = 'set_start_page01.xlsx';
 my $dir          = 't/regression/';
-my $got_filename = $dir . $filename;
+my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members = [
