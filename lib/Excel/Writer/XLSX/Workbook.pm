@@ -1764,14 +1764,9 @@ sub _get_image_properties {
             ( $type, $width, $height ) = $self->_process_png( $data );
             $self->{_image_types}->{png} = 1;
         }
-        elsif (
-            ( unpack( 'n', $data ) == 0xFFD8 )
-            && (   ( unpack( 'x6 A4', $data ) eq 'JFIF' )
-                || ( unpack( 'x6 A4', $data ) eq 'Exif' ) )
-          )
-        {
+        elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
 
-            # Test for JFIF and Exif JPEGs.
+            # Test for JPEG files.
             ( $type, $width, $height ) =
               $self->_process_jpg( $data, $filename );
 
