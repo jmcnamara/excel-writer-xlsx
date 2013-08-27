@@ -593,8 +593,7 @@ sub set_column {
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
-    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if col is hidden
-    $width ||= 0;                           # Ensure width isn't undef.
+    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if hidden.
     my $format = $data[3];
 
     my ( $firstcol, $lastcol ) = @data;
@@ -2897,6 +2896,10 @@ sub set_row {
     # Store the row change to allow optimisations.
     $self->{_row_size_changed} = 1;
 
+    if ($hidden) {
+        $height = 0;
+    }
+
     # Store the row sizes for use when calculating image vertices.
     $self->{_row_sizes}->{$row} = $height;
 }
@@ -4802,7 +4805,9 @@ sub _size_col {
     my $pixels;
 
     # Look up the cell value to see if it has been changed.
-    if ( exists $self->{_col_sizes}->{$col} ) {
+    if ( exists $self->{_col_sizes}->{$col}
+        and defined $self->{_col_sizes}->{$col} )
+    {
         my $width = $self->{_col_sizes}->{$col};
 
         # Convert to pixels.
@@ -4810,7 +4815,7 @@ sub _size_col {
             $pixels = 0;
         }
         elsif ( $width < 1 ) {
-            $pixels = int( $width * ($max_digit_width + $padding) + 0.5 );
+            $pixels = int( $width * ( $max_digit_width + $padding ) + 0.5 );
         }
         else {
             $pixels = int( $width * $max_digit_width + 0.5 ) + $padding;
