@@ -4,6 +4,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.72 Aug 28 2013
+
+   ! Fix for charts and images that cross rows and columns that are
+     hidden or formatted but which don’t have size changes.
+
 
 0.71 Aug 24 2013
 
@@ -20,7 +25,7 @@ Revision history for Perl module Excel::Writer::XLSX.
 
    ! Added fix for inaccurate column width calculation.
 
-   + Added Chart line smoothing option. 
+   + Added Chart line smoothing option.
 
 
 0.69 Junw 12 2013

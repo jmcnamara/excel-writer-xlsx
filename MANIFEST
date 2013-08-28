@@ -563,6 +563,7 @@ t/regression/hyperlink16.t
 t/regression/hyperlink17.t
 t/regression/hyperlink18.t
 t/regression/hyperlink19.t
+t/regression/hyperlink20.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -581,11 +582,11 @@ t/regression/image15.t
 t/regression/image16.t
 t/regression/image17.t
 t/regression/image18.t
+t/regression/image19.t
 t/regression/images/blue.jpg
 t/regression/images/blue.png
 t/regression/images/grey.jpg
 t/regression/images/grey.png
-t/regression/images/issue32.jpg
 t/regression/images/issue32.png
 t/regression/images/logo.png
 t/regression/images/mylogo.png
@@ -593,6 +594,7 @@ t/regression/images/red.bmp
 t/regression/images/red.jpg
 t/regression/images/red.png
 t/regression/images/red_64x20.png
+t/regression/images/train.jpg
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
 t/regression/macro01.t
@@ -673,6 +675,12 @@ t/regression/selection01.t
 t/regression/selection02.t
 t/regression/set_column01.t
 t/regression/set_column02.t
+t/regression/set_column03.t
+t/regression/set_column04.t
+t/regression/set_column05.t
+t/regression/set_column06.t
+t/regression/set_column07.t
+t/regression/set_column08.t
 t/regression/set_print_scale01.t
 t/regression/set_start_page01.t
 t/regression/shape01.t
@@ -998,6 +1006,7 @@ t/regression/xlsx_files/hyperlink16.xlsx
 t/regression/xlsx_files/hyperlink17.xlsx
 t/regression/xlsx_files/hyperlink18.xlsx
 t/regression/xlsx_files/hyperlink19.xlsx
+t/regression/xlsx_files/hyperlink20.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1016,6 +1025,7 @@ t/regression/xlsx_files/image15.xlsx
 t/regression/xlsx_files/image16.xlsx
 t/regression/xlsx_files/image17.xlsx
 t/regression/xlsx_files/image18.xlsx
+t/regression/xlsx_files/image19.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
@@ -1093,6 +1103,12 @@ t/regression/xlsx_files/row_col_format14.xlsx
 t/regression/xlsx_files/selection01.xlsx
 t/regression/xlsx_files/selection02.xlsx
 t/regression/xlsx_files/set_column01.xlsx
+t/regression/xlsx_files/set_column03.xlsx
+t/regression/xlsx_files/set_column04.xlsx
+t/regression/xlsx_files/set_column05.xlsx
+t/regression/xlsx_files/set_column06.xlsx
+t/regression/xlsx_files/set_column07.xlsx
+t/regression/xlsx_files/set_column08.xlsx
 t/regression/xlsx_files/set_print_scale01.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/shape01.xlsx
