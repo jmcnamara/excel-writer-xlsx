@@ -1824,6 +1824,7 @@ sub write {
     }
 
     my $token = $_[2];
+    my $format = $_[3];
 
     # Handle undefs as blanks
     $token = '' unless defined $token;
@@ -1852,7 +1853,9 @@ sub write {
     }
 
     # Match number
-    elsif ( $token =~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ ) {
+    elsif ( $token =~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/
+            and ($token + 0) !~ /inf/
+            and (not defined ${$format}{_num_format} or ${$format}{_num_format} ne "@") ) {
         return $self->write_number( @_ );
     }
 
