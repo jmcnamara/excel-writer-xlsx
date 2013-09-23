@@ -59,11 +59,10 @@ sub new {
     $self->{_str_total}    = $_[4];
     $self->{_str_unique}   = $_[5];
     $self->{_str_table}    = $_[6];
-    $self->{_table_count}  = $_[7];
-    $self->{_1904}         = $_[8];
-    $self->{_palette}      = $_[9];
-    $self->{_optimization} = $_[10] || 0;
-    $self->{_tempdir}      = $_[11];
+    $self->{_1904}         = $_[7];
+    $self->{_palette}      = $_[8];
+    $self->{_optimization} = $_[9] || 0;
+    $self->{_tempdir}      = $_[10];
 
     $self->{_ext_sheets}    = [];
     $self->{_fileclosed}    = 0;
@@ -3833,10 +3832,6 @@ sub add_table {
         }
     }
 
-    # Table count is a member of Workbook, global to all Worksheet.
-    ${ $self->{_table_count} }++;
-    $table{_id} = ${ $self->{_table_count} };
-
     # Turn on Excel's defaults.
     $param->{banded_rows} = 1 if !defined $param->{banded_rows};
     $param->{header_row}  = 1 if !defined $param->{header_row};
@@ -3855,12 +3850,6 @@ sub add_table {
     if ( defined $param->{name} ) {
         $table{_name} = $param->{name};
     }
-    else {
-
-        # Set a default name.
-        $table{_name} = 'Table' . $table{_id};
-    }
-
 
     # Set the table style.
     if ( defined $param->{style} ) {
@@ -4031,10 +4020,6 @@ sub add_table {
 
     # Store the table data.
     push @{ $self->{_tables} }, \%table;
-
-    # Store the link used for the rels file.
-    push @{ $self->{_external_table_links} },
-      [ '/table', '../tables/table' . $table{_id} . '.xml' ];
 
     return \%table;
 }
@@ -5583,6 +5568,37 @@ sub _prepare_vml_objects {
     $self->{_vml_shape_id} = $vml_shape_id;
 
     return $count;
+}
+
+###############################################################################
+#
+# _prepare_tables()
+#
+# Set the table ids for the worksheet tables.
+#
+sub _prepare_tables {
+
+    my $self     = shift;
+    my $table_id = shift;
+
+
+    for my $table ( @{ $self->{_tables} } ) {
+
+        $table-> {_id} = $table_id;
+
+        # Set the table name unless defined by the user.
+        if ( !defined $table->{_name} ) {
+
+            # Set a default name.
+            $table->{_name} = 'Table' . $table_id;
+        }
+
+        # Store the link used for the rels file.
+        my $link = [ '/table', '../tables/table' . $table_id . '.xml' ];
+
+        push @{ $self->{_external_table_links} }, $link;
+        $table_id++;
+    }
 }
 
 

@@ -92,7 +92,6 @@ sub new {
     $self->{_window_width}       = 16095;
     $self->{_window_height}      = 9660;
     $self->{_tab_ratio}          = 500;
-    $self->{_table_count}        = 0;
 
 
     # Structures for the shared strings data.
@@ -313,8 +312,6 @@ sub add_worksheet {
         \$self->{_str_unique},
         \$self->{_str_table},
 
-        \$self->{_table_count},
-
         $self->{_1904},
         $self->{_palette},
         $self->{_optimization},
@@ -371,8 +368,6 @@ sub add_chart {
         \$self->{_str_total},
         \$self->{_str_unique},
         \$self->{_str_table},
-
-        \$self->{_table_count},
 
         $self->{_1904},
         $self->{_palette},
@@ -853,6 +848,9 @@ sub _store_workbook {
 
     # Add cached data to charts.
     $self->_add_chart_data();
+
+    # Prepare the worksheet tables.
+    $self->_prepare_tables();
 
     # Package the workbook.
     $packager->_add_workbook( $self );
@@ -1533,6 +1531,30 @@ sub _prepare_vml_objects {
         $format->get_xf_index();
 
         push @{ $self->{_formats} }, $format;
+    }
+}
+
+
+###############################################################################
+#
+# _prepare_tables()
+#
+# Set the table ids for the worksheet tables.
+#
+sub _prepare_tables {
+
+    my $self     = shift;
+    my $table_id = 0;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+
+        my $table_count = scalar @{ $sheet->{_tables} };
+
+        next unless $table_count;
+
+        $sheet->_prepare_tables( $table_id + 1 );
+
+        $table_id += $table_count;
     }
 }
 

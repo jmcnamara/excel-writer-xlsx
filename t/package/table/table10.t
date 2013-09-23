@@ -27,6 +27,8 @@ my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 # Set the table properties.
 $worksheet->add_table( 'C2:F13', { name => 'MyTable' });
 
+$worksheet->_prepare_tables( 1 );
+
 
 ###############################################################################
 #

@@ -27,6 +27,8 @@ my $worksheet = Excel::Writer::XLSX::Worksheet->new();
 # Set the table properties.
 $worksheet->add_table( 'D4:I15', { style => 'Table Style Light 17' } );
 
+$worksheet->_prepare_tables( 1 );
+
 
 ###############################################################################
 #
