@@ -104,6 +104,7 @@ sub new {
     $self->{_y_offset}          = 0;
     $self->{_table}             = undef;
     $self->{_smooth_allowed}    = 0;
+    $self->{_cross_between}     = 'between';
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -628,6 +629,7 @@ sub _convert_axis_args {
         _major_unit_type   => $arg{major_unit_type},
         _log_base          => $arg{log_base},
         _crossing          => $arg{crossing},
+        _crossing_position => $arg{crossing_position},
         _position          => $arg{position},
         _label_position    => $arg{label_position},
         _num_format        => $arg{num_format},
@@ -651,6 +653,21 @@ sub _convert_axis_args {
     # Only use the first letter of bottom, top, left or right.
     if ( defined $axis->{_position} ) {
         $axis->{_position} = substr lc $axis->{_position}, 0, 1;
+    }
+
+    # Set the position for a category axis on or between the tick marks.
+    if ( defined $axis->{_crossing_position} ) {
+        if ( $axis->{_crossing_position} eq 'on_tick' ) {
+            $axis->{_crossing_position} = 'midCat';
+        }
+        elsif ( $axis->{_crossing_position} eq 'between' ) {
+
+            # Doesn't need to be modified.
+        }
+        else {
+            # Otherwise use the default value.
+            $axis->{_crossing_position} = undef;
+        }
     }
 
     # Set the font properties if present.
@@ -2277,7 +2294,7 @@ sub _write_val_axis {
     }
 
     # Write the c:crossBetween element.
-    $self->_write_cross_between();
+    $self->_write_cross_between( $x_axis->{_crossing_position} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $y_axis->{_major_unit} );
@@ -2370,7 +2387,7 @@ sub _write_cat_val_axis {
     }
 
     # Write the c:crossBetween element.
-    $self->_write_cross_between();
+    $self->_write_cross_between( $y_axis->{_crossing_position} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $x_axis->{_major_unit} );
@@ -2904,7 +2921,7 @@ sub _write_cross_between {
 
     my $self = shift;
 
-    my $val = $self->{_cross_between} || 'between';
+    my $val = shift || $self->{_cross_between};
 
     my @attributes = ( 'val' => $val );
 
