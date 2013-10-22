@@ -46,7 +46,7 @@ my $data = [
 
 ];
 
-$chart->set_x_axis( crossing_position => 'between' );
+$chart->set_x_axis( position_axis => 'between' );
 
 
 $worksheet->write( 'A1', $data );

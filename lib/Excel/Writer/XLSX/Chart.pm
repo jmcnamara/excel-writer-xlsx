@@ -629,7 +629,7 @@ sub _convert_axis_args {
         _major_unit_type   => $arg{major_unit_type},
         _log_base          => $arg{log_base},
         _crossing          => $arg{crossing},
-        _crossing_position => $arg{crossing_position},
+        _position_axis     => $arg{position_axis},
         _position          => $arg{position},
         _label_position    => $arg{label_position},
         _num_format        => $arg{num_format},
@@ -656,17 +656,17 @@ sub _convert_axis_args {
     }
 
     # Set the position for a category axis on or between the tick marks.
-    if ( defined $axis->{_crossing_position} ) {
-        if ( $axis->{_crossing_position} eq 'on_tick' ) {
-            $axis->{_crossing_position} = 'midCat';
+    if ( defined $axis->{_position_axis} ) {
+        if ( $axis->{_position_axis} eq 'on_tick' ) {
+            $axis->{_position_axis} = 'midCat';
         }
-        elsif ( $axis->{_crossing_position} eq 'between' ) {
+        elsif ( $axis->{_position_axis} eq 'between' ) {
 
             # Doesn't need to be modified.
         }
         else {
             # Otherwise use the default value.
-            $axis->{_crossing_position} = undef;
+            $axis->{_position_axis} = undef;
         }
     }
 
@@ -2294,7 +2294,7 @@ sub _write_val_axis {
     }
 
     # Write the c:crossBetween element.
-    $self->_write_cross_between( $x_axis->{_crossing_position} );
+    $self->_write_cross_between( $x_axis->{_position_axis} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $y_axis->{_major_unit} );
@@ -2387,7 +2387,7 @@ sub _write_cat_val_axis {
     }
 
     # Write the c:crossBetween element.
-    $self->_write_cross_between( $y_axis->{_crossing_position} );
+    $self->_write_cross_between( $y_axis->{_position_axis} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $x_axis->{_major_unit} );
@@ -5215,6 +5215,7 @@ The properties that can be set are:
     major_unit
     crossing
     reverse
+    position_axis
     log_base
     label_position
     major_gridlines
@@ -5296,6 +5297,15 @@ The C<crossing> value can either be the string C<'max'> to set the crossing at t
 B<For category axes the numeric value must be an integer> to represent the category number that the axis crosses at. For value axes it can have any value associated with the axis.
 
 If crossing is omitted (the default) the crossing will be set automatically by Excel based on the chart data.
+
+=item * C<position_axis>
+
+Position the axis on or between the axis tick marks. (Applicable to category axes only.)
+
+There are two allowable values C<on_tick> and C<between>:
+
+    $chart->set_x_axis( position_axis => 'on_tick' );
+    $chart->set_x_axis( position_axis => 'between' );
 
 =item * C<reverse>
 
@@ -6336,7 +6346,7 @@ It is possible to add a secondary axis of the same type to a chart by setting th
     __END__
 
 
-Note, it isn’t currently possible to add a secondary axis of a different chart type (for example line and column).
+Note, it isn't currently possible to add a secondary axis of a different chart type (for example line and column).
 
 
 =head1 TODO

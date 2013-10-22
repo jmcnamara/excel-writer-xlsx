@@ -46,7 +46,7 @@ my $data = [
 
 ];
 
-$chart->set_x_axis( crossing_position => 'on_tick' );
+$chart->set_x_axis( position_axis => 'on_tick' );
 
 
 $worksheet->write( 'A1', $data );
