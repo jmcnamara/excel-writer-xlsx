@@ -368,8 +368,9 @@ sub set_legend {
     my $self = shift;
     my %arg  = @_;
 
-    $self->{_legend_position} = $arg{position} || 'right';
+    $self->{_legend_position}      = $arg{position} || 'right';
     $self->{_legend_delete_series} = $arg{delete_series};
+    $self->{_legend_font}          = $self->_convert_font_args( $arg{font} );
 }
 
 
@@ -1469,7 +1470,10 @@ sub _get_font_style_attributes {
     push @attributes, ( 'i'  => $font->{_italic} ) if defined $font->{_italic};
     push @attributes, ( 'u' => 'sng' ) if defined $font->{_underline};
 
-    push @attributes, ( 'baseline' => $font->{_baseline} );
+    # Turn off baseline when testing fonts that don't have it.
+    if ($font->{_baseline} != -1) {
+        push @attributes, ( 'baseline' => $font->{_baseline} );
+    }
 
     return @attributes;
 }
@@ -3011,6 +3015,7 @@ sub _write_legend {
 
     my $self          = shift;
     my $position      = $self->{_legend_position};
+    my $font          = $self->{_legend_font};
     my @delete_series = ();
     my $overlay       = 0;
 
@@ -3050,6 +3055,11 @@ sub _write_legend {
 
     # Write the c:layout element.
     $self->_write_layout();
+
+    # Write the c:txPr element.
+    if ($font) {
+        $self->_write_tx_pr( undef, $font );
+    }
 
     # Write the c:overlay element.
     $self->_write_overlay() if $overlay;
@@ -5470,12 +5480,21 @@ The default legend position is C<right>. The available positions are:
     overlay_left
     overlay_right
 
-=item * delete_series
+=item * C<delete_series>
 
 This allows you to remove 1 or more series from the the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
 
     # Delete/hide series index 0 and 2 from the legend.
     $chart->set_legend( delete_series => [0, 2] );
+
+=item * C<font>
+
+Set the font properties of the chart legend:
+
+    $chart->set_legend( font => { bold => 1, italic => 1 } );
+
+See the L</CHART FONTS> section below.
+
 
 =back
 
