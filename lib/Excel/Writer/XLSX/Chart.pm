@@ -1167,10 +1167,14 @@ sub _get_error_bars_properties {
 
     # Default values.
     my $error_bars = {
-        _type      => 'fixedVal',
-        _value     => 1,
-        _endcap    => 1,
-        _direction => 'both'
+        _type         => 'fixedVal',
+        _value        => 1,
+        _endcap       => 1,
+        _direction    => 'both',
+        _plus_values  => [1],
+        _minus_values => [1],
+        _plus_data    => [],
+        _minus_data   => [],
     };
 
     my %types = (
@@ -1178,6 +1182,7 @@ sub _get_error_bars_properties {
         percentage         => 'percentage',
         standard_deviation => 'stdDev',
         standard_error     => 'stdErr',
+        custom             => 'cust',
     );
 
     # Check the error bars type.
@@ -1212,6 +1217,20 @@ sub _get_error_bars_properties {
         else {
             # Default to 'both'.
         }
+    }
+
+    # Set any custom values.
+    if ( defined $args->{plus_values} ) {
+        $error_bars->{_plus_values} = $args->{plus_values};
+    }
+    if ( defined $args->{minus_values} ) {
+        $error_bars->{_minus_values} = $args->{minus_values};
+    }
+    if ( defined $args->{plus_data} ) {
+        $error_bars->{_plus_data} = $args->{plus_data};
+    }
+    if ( defined $args->{minus_data} ) {
+        $error_bars->{_minus_data} = $args->{minus_data};
     }
 
     # Set the line properties for the error bars.
@@ -4752,8 +4771,16 @@ sub _write_err_bars {
         $self->_write_no_end_cap();
     }
 
-    if ( $error_bars->{_type} ne 'stdErr' ) {
+    if ( $error_bars->{_type} eq 'stdErr' ) {
 
+        # Don't need to write a c:errValType tag.
+    }
+    elsif ( $error_bars->{_type} eq 'cust' ) {
+
+        # Write the custom error tags.
+        $self->_write_custom_error( $error_bars );
+    }
+    else {
         # Write the c:val element.
         $self->_write_error_val( $error_bars->{_value} );
     }
@@ -4846,6 +4873,94 @@ sub _write_error_val {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:val', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_custom_error()
+#
+# Write the custom error bars tags.
+#
+sub _write_custom_error {
+
+    my $self       = shift;
+    my $error_bars = shift;
+
+    if ( $error_bars->{_plus_values} ) {
+
+        # Write the c:plus element.
+        $self->xml_start_tag( 'c:plus' );
+
+        if ( ref $error_bars->{_plus_values} eq 'ARRAY' ) {
+            $self->_write_num_lit( $error_bars->{_plus_values} );
+        }
+        else {
+            $self->_write_num_ref( $error_bars->{_plus_values},
+                $error_bars->{_plus_data}, 'num' );
+        }
+
+        $self->xml_end_tag( 'c:plus' );
+    }
+
+    if ( $error_bars->{_minus_values} ) {
+
+        # Write the c:minus element.
+        $self->xml_start_tag( 'c:minus' );
+
+        if ( ref $error_bars->{_minus_values} eq 'ARRAY' ) {
+            $self->_write_num_lit( $error_bars->{_minus_values} );
+        }
+        else {
+            $self->_write_num_ref( $error_bars->{_minus_values},
+                $error_bars->{_minus_data}, 'num' );
+        }
+
+        $self->xml_end_tag( 'c:minus' );
+    }
+}
+
+
+
+##############################################################################
+#
+# _write_num_lit()
+#
+# Write the <c:numLit> element for literal number list elements.
+#
+sub _write_num_lit {
+
+    my $self = shift;
+    my $data  = shift;
+    my $count = @$data;
+
+
+    # Write the c:numLit element.
+    $self->xml_start_tag( 'c:numLit' );
+
+    # Write the c:formatCode element.
+    $self->_write_format_code( 'General' );
+
+    # Write the c:ptCount element.
+    $self->_write_pt_count( $count );
+
+    for my $i ( 0 .. $count - 1 ) {
+        my $token = $data->[$i];
+
+        # Write non-numeric data as 0.
+        if ( defined $token
+            && $token !~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ )
+        {
+            $token = 0;
+        }
+
+        # Write the c:pt element.
+        $self->_write_pt( $i, $token );
+    }
+
+    $self->xml_end_tag( 'c:numLit' );
+
+
 }
 
 
@@ -5803,7 +5918,9 @@ Error bars can be added to a chart series to indicate error bounds in the data. 
 The following properties can be set for error bars in a chart series.
 
     type
-    value       (for all types except standard error)
+    value        (for all types except standard error and custom)
+    plus_values  (for custom only)
+    minus_values (for custom only)
     direction
     end_style
     line
@@ -5821,10 +5938,9 @@ The available error bars types are available:
     percentage
     standard_deviation
     standard_error
+    custom
 
-Note, the "custom" error bars type is not supported.
-
-All error bar types, except for C<standard_error> must also have a value associated with it for the error bounds:
+All error bar types, except for C<standard_error> and C<custom> must also have a value associated with it for the error bounds:
 
     $chart->add_series(
         values       => '=Sheet1!$B$1:$B$5',
@@ -5833,6 +5949,34 @@ All error bar types, except for C<standard_error> must also have a value associa
             value => 5,
         },
     );
+
+The C<custom> error bar type must specify C<plus_values> and C<minus_values> which should either by a C<Sheet1!$A$1:$A$5> type range formula or an arrayref of
+values:
+
+    $chart->add_series(
+        categories   => '=Sheet1!$A$1:$A$5',
+        values       => '=Sheet1!$B$1:$B$5',
+        y_error_bars => {
+            type         => 'custom',
+            plus_values  => '=Sheet1!$C$1:$C$5',
+            minus_values => '=Sheet1!$D$1:$D$5',
+        },
+    );
+
+    # or
+
+
+    $chart->add_series(
+        categories   => '=Sheet1!$A$1:$A$5',
+        values       => '=Sheet1!$B$1:$B$5',
+        y_error_bars => {
+            type         => 'custom',
+            plus_values  => [1, 1, 1, 1, 1],
+            minus_values => [2, 2, 2, 2, 2],
+        },
+    );
+
+Note, as in Excel the items in the C<minus_values> do not need to be negative.
 
 The C<direction> property sets the direction of the error bars. It should be one of the following:
 
