@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart);
-our $VERSION = '0.72';
+our $VERSION = '0.73';
 
 
 ###############################################################################
