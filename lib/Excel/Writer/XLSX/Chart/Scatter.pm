@@ -350,7 +350,7 @@ sub _modify_series_formatting {
         for my $series ( @{ $self->{_series} } ) {
 
             # Set a marker type unless there is already a user defined type.
-            if ( !$series->{_marker}->{_defined} ) {
+            if ( !$series->{_marker} ) {
                 $series->{_marker} = {
                     type     => 'none',
                     _defined => 1,
