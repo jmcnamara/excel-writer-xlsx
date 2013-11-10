@@ -1056,7 +1056,7 @@ sub _get_marker_properties {
         diamond    => 'diamond',
         triangle   => 'triangle',
         x          => 'x',
-        star       => 'start',
+        star       => 'star',
         dot        => 'dot',
         short_dash => 'dot',
         dash       => 'dash',
