@@ -125,10 +125,7 @@ sub _write_plot_area {
     $self->xml_start_tag( 'c:plotArea' );
 
     # Write the c:layout element.
-    $self->_write_layout();
-
-    # TODO: (for JMCNAMARA todo :)
-    # foreach my $chart_type (@chart_types)
+    $self->_write_layout( $self->{_plotarea}->{_layout}, 'plot' );
 
     # Write the subclass chart type elements for primary and secondary axes
     $self->_write_chart_type( primary_axes => 1 );

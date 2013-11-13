@@ -99,7 +99,7 @@ sub _write_plot_area {
     $self->xml_start_tag( 'c:plotArea' );
 
     # Write the c:layout element.
-    $self->_write_layout();
+    $self->_write_layout( $self->{_plotarea}->{_layout}, 'plot' );
 
     # Write the subclass chart type element.
     $self->_write_chart_type();
@@ -144,7 +144,7 @@ sub _write_legend {
     $self->_write_legend_pos( $position );
 
     # Write the c:layout element.
-    $self->_write_layout();
+    $self->_write_layout( $self->{_legend_layout}, 'legend' );
 
     # Write the c:overlay element.
     $self->_write_overlay() if $overlay;
