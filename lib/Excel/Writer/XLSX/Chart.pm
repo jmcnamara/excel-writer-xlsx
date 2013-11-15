@@ -1901,7 +1901,7 @@ sub _write_manual_layout {
         $self->xml_empty_tag( 'c:layoutTarget', ( 'val' => 'inner' ) );
     }
 
-    # Set the x, y postions.
+    # Set the x, y positions.
     $self->xml_empty_tag( 'c:xMode', ( 'val' => 'edge' ) );
     $self->xml_empty_tag( 'c:yMode', ( 'val' => 'edge' ) );
     $self->xml_empty_tag( 'c:x', ( 'val' => $layout->{x} ) );
@@ -5519,7 +5519,7 @@ Set the font properties for the axis title. (Applicable to category and value ax
 
 =item * C<name_layout>
 
-Set the C<(x, y)> postion of the axis title in chart relative units. (Applicable to category and value axes).
+Set the C<(x, y)> position of the axis caption in chart relative units. (Applicable to category and value axes).
 
     $chart->set_x_axis(
         name        => 'X axis',
@@ -5735,7 +5735,7 @@ Allow the title to be overlaid on the chart. Generally used with the layout prop
 
 =item * C<layout>
 
-Set the C<(x, y)> postion of the title in chart relative units:
+Set the C<(x, y)> position of the title in chart relative units:
 
     $chart->set_title(
         name    => 'Title',
@@ -5779,7 +5779,7 @@ The default legend position is C<right>. The available positions are:
 
 =item * C<layout>
 
-Set the C<(x, y)> postion of the legend in chart relative units:
+Set the C<(x, y)> position of the legend in chart relative units:
 
     $chart->set_legend(
         layout => {
@@ -5858,7 +5858,7 @@ Set the fill properties of the plotarea such as colour. See the L</CHART FORMATT
 
 =item * C<layout>
 
-Set the C<(x, y)> postion of the plotarea in chart relative units:
+Set the C<(x, y)> position of the plotarea in chart relative units:
 
     $chart->set_plotarea(
         layout => {
