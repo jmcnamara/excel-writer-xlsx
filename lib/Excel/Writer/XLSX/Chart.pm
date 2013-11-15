@@ -360,6 +360,9 @@ sub set_title {
 
     # Set the title overlay option.
     $self->{_title_overlay} = $arg{overlay};
+
+    # Set the no automatic title option.
+    $self->{_title_none} = $arg{none};
 }
 
 
@@ -1746,27 +1749,35 @@ sub _write_chart {
     $self->xml_start_tag( 'c:chart' );
 
     # Write the chart title elements.
-    my $title;
-    if ( $title = $self->{_title_formula} ) {
-        $self->_write_title_formula(
 
-            $title,
-            $self->{_title_data_id},
-            undef,
-            $self->{_title_font},
-            $self->{_title_layout},
-            $self->{_title_overlay}
-        );
+    if ( $self->{_title_none} ) {
+
+        # Turn off the title.
+        $self->_write_auto_title_deleted();
     }
-    elsif ( $title = $self->{_title_name} ) {
-        $self->_write_title_rich(
+    else {
+        my $title;
+        if ( $title = $self->{_title_formula} ) {
+            $self->_write_title_formula(
 
-            $title,
-            undef,
-            $self->{_title_font},
-            $self->{_title_layout},
-            $self->{_title_overlay}
-        );
+                $title,
+                $self->{_title_data_id},
+                undef,
+                $self->{_title_font},
+                $self->{_title_layout},
+                $self->{_title_overlay}
+            );
+        }
+        elsif ( $title = $self->{_title_name} ) {
+            $self->_write_title_rich(
+
+                $title,
+                undef,
+                $self->{_title_font},
+                $self->{_title_layout},
+                $self->{_title_overlay}
+            );
+        }
     }
 
     # Write the c:plotArea element.
@@ -3388,6 +3399,22 @@ sub _write_page_setup {
 
 ##############################################################################
 #
+# _write_auto_title_deleted()
+#
+# Write the <c:autoTitleDeleted> element.
+#
+sub _write_auto_title_deleted {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:autoTitleDeleted', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_title_rich()
 #
 # Write the <c:title> element for a rich string.
@@ -3777,19 +3804,6 @@ sub _write_a_r {
 # Write the <a:rPr> element.
 #
 sub _write_a_r_pr {
-
-    # my $self = shift;
-    # my $font  = shift;
-    # my $lang = 'en-US';
-
-    # my @attributes = ( 'lang' => $lang, );
-
-    # my @font_attrs = $self->_get_font_style_attributes($font);
-
-    # push @attributes, @font_attrs;
-
-    # $self->xml_empty_tag( 'a:rPr', @attributes );
-
 
     my $self      = shift;
     my $font      = shift;
@@ -5747,6 +5761,12 @@ Set the C<(x, y)> position of the title in chart relative units:
     );
 
 See the L</CHART LAYOUT> section below.
+
+=item * C<none>
+
+By default Excel adds an automatic chart title to charts with a single series and a user defined series name. The C<none> option turns this default title off. It also turns off all other C<set_title()> options.
+
+    $chart->set_title( none => 1 );
 
 =back
 
