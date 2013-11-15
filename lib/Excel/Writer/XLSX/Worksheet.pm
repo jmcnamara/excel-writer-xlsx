@@ -3374,7 +3374,7 @@ sub conditional_formatting {
     if ( @_ != 5 && @_ != 3 ) { return -1 }
 
     # The final hashref contains the validation parameters.
-    my $param = pop;
+    my $options = pop;
 
     # Make the last row/col the same as the first if not defined.
     my ( $row1, $col1, $row2, $col2 ) = @_;
@@ -3389,11 +3389,14 @@ sub conditional_formatting {
 
 
     # Check that the last parameter is a hash list.
-    if ( ref $param ne 'HASH' ) {
-        carp "Last parameter '$param' in conditional_formatting() "
+    if ( ref $options ne 'HASH' ) {
+        carp "Last parameter in conditional_formatting() "
           . "must be a hash ref";
         return -3;
     }
+
+    # Copy the user params.
+    my $param = {%$options};
 
     # List of valid input parameters.
     my %valid_parameter = (
