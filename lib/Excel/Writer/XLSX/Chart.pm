@@ -383,6 +383,11 @@ sub set_legend {
 
     # Set the legend layout.
     $self->{_legend_layout} = $self->_get_layout_properties( $arg{layout} );
+
+    # Turn off the legend.
+    if ( $arg{none} ) {
+        $self->{_legend_position} = 'none';
+    }
 }
 
 
@@ -5775,11 +5780,20 @@ By default Excel adds an automatic chart title to charts with a single series an
 
 The C<set_legend()> method is used to set properties of the chart legend.
 
-    $chart->set_legend( position => 'none' );
 
 The properties that can be set are:
 
 =over
+
+=item * C<none>
+
+The C<none> option turns off the chart legend. In Excel chart legends are on by default:
+
+    $chart->set_legend( none => 1 );
+
+Note, for backward compatibility, it is also possible to turn off the legend via the C<position> property:
+
+    $chart->set_legend( position => 'none' );
 
 =item * C<position>
 
@@ -5789,13 +5803,13 @@ Set the position of the chart legend.
 
 The default legend position is C<right>. The available positions are:
 
-    none
     top
     bottom
     left
     right
     overlay_left
     overlay_right
+    none
 
 =item * C<layout>
 
