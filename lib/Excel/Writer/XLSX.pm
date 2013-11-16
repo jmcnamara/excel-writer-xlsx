@@ -466,6 +466,8 @@ If the sheet name contains spaces or special characters you must enclose it in s
 
 See the defined_name.pl program in the examples dir of the distro.
 
+Refer to the following to see Excel's syntax rules for defined names: L<http://office.microsoft.com/en-001/excel-help/define-and-use-names-in-formulas-HA010147120.aspx#BMsyntax_rules_for_names>
+
 
 
 
