@@ -443,6 +443,16 @@ t/regression/chart_gridlines08.t
 t/regression/chart_gridlines09.t
 t/regression/chart_high_low_lines01.t
 t/regression/chart_high_low_lines02.t
+t/regression/chart_layout01.t
+t/regression/chart_layout02.t
+t/regression/chart_layout03.t
+t/regression/chart_layout04.t
+t/regression/chart_layout05.t
+t/regression/chart_layout06.t
+t/regression/chart_layout07.t
+t/regression/chart_layout08.t
+t/regression/chart_legend01.t
+t/regression/chart_legend02.t
 t/regression/chart_line01.t
 t/regression/chart_line02.t
 t/regression/chart_line03.t
@@ -474,6 +484,9 @@ t/regression/chart_scatter08.t
 t/regression/chart_scatter09.t
 t/regression/chart_scatter10.t
 t/regression/chart_scatter11.t
+t/regression/chart_scatter12.t
+t/regression/chart_scatter13.t
+t/regression/chart_scatter14.t
 t/regression/chart_size01.t
 t/regression/chart_size02.t
 t/regression/chart_size03.t
@@ -484,6 +497,7 @@ t/regression/chart_str01.t
 t/regression/chart_str02.t
 t/regression/chart_table01.t
 t/regression/chart_table02.t
+t/regression/chart_title01.t
 t/regression/chart_up_down_bars01.t
 t/regression/chart_up_down_bars02.t
 t/regression/chart_up_down_bars03.t
@@ -520,6 +534,7 @@ t/regression/cond_format09.t
 t/regression/cond_format10.t
 t/regression/cond_format11.t
 t/regression/cond_format12.t
+t/regression/cond_format13.t
 t/regression/custom_colors01.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
@@ -531,6 +546,7 @@ t/regression/default_row04.t
 t/regression/defined_name01.t
 t/regression/defined_name02.t
 t/regression/defined_name03.t
+t/regression/defined_name04.t
 t/regression/escapes01.t
 t/regression/escapes02.t
 t/regression/escapes03.t
@@ -900,6 +916,15 @@ t/regression/xlsx_files/chart_gridlines08.xlsx
 t/regression/xlsx_files/chart_gridlines09.xlsx
 t/regression/xlsx_files/chart_high_low_lines01.xlsx
 t/regression/xlsx_files/chart_high_low_lines02.xlsx
+t/regression/xlsx_files/chart_layout01.xlsx
+t/regression/xlsx_files/chart_layout02.xlsx
+t/regression/xlsx_files/chart_layout03.xlsx
+t/regression/xlsx_files/chart_layout04.xlsx
+t/regression/xlsx_files/chart_layout05.xlsx
+t/regression/xlsx_files/chart_layout06.xlsx
+t/regression/xlsx_files/chart_layout07.xlsx
+t/regression/xlsx_files/chart_layout08.xlsx
+t/regression/xlsx_files/chart_legend01.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
 t/regression/xlsx_files/chart_line03.xlsx
@@ -930,6 +955,8 @@ t/regression/xlsx_files/chart_scatter08.xlsx
 t/regression/xlsx_files/chart_scatter09.xlsx
 t/regression/xlsx_files/chart_scatter10.xlsx
 t/regression/xlsx_files/chart_scatter11.xlsx
+t/regression/xlsx_files/chart_scatter12.xlsx
+t/regression/xlsx_files/chart_scatter14.xlsx
 t/regression/xlsx_files/chart_size01.xlsx
 t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
@@ -938,6 +965,7 @@ t/regression/xlsx_files/chart_str01.xlsx
 t/regression/xlsx_files/chart_str02.xlsx
 t/regression/xlsx_files/chart_table01.xlsx
 t/regression/xlsx_files/chart_table02.xlsx
+t/regression/xlsx_files/chart_title01.xlsx
 t/regression/xlsx_files/chart_up_down_bars01.xlsx
 t/regression/xlsx_files/chart_up_down_bars02.xlsx
 t/regression/xlsx_files/chart_up_down_bars03.xlsx
@@ -973,6 +1001,7 @@ t/regression/xlsx_files/cond_format08.xlsx
 t/regression/xlsx_files/cond_format10.xlsx
 t/regression/xlsx_files/cond_format11.xlsx
 t/regression/xlsx_files/cond_format12.xlsx
+t/regression/xlsx_files/cond_format13.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
@@ -984,6 +1013,7 @@ t/regression/xlsx_files/default_row04.xlsx
 t/regression/xlsx_files/defined_name01.xlsx
 t/regression/xlsx_files/defined_name02.xlsx
 t/regression/xlsx_files/defined_name03.xlsx
+t/regression/xlsx_files/defined_name04.xlsx
 t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
 t/regression/xlsx_files/escapes03.xlsx

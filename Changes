@@ -4,6 +4,23 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.74 2013-11-17
+
+   ! Improved defined name validation.
+     Issue #82.
+
+   + Added set_title() option to turn off automatic title.
+     Issue #81.
+
+   + Allow positioning of plotarea, legend, title and axis names.
+     Issue #80.
+
+   ! Fix for modification of user params in condtional_formatting().
+     Issue #79.
+
+   ! Fix for star style markers.
+
+
 0.73 2013-11-08
 
    + Added custom error bar option to charts.
