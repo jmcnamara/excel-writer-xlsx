@@ -3558,15 +3558,20 @@ sub _write_tx_formula {
 #
 sub _write_rich {
 
-    my $self  = shift;
-    my $title = shift;
-    my $horiz = shift;
-    my $font  = shift;
+    my $self     = shift;
+    my $title    = shift;
+    my $horiz    = shift;
+    my $rotation = undef;
+    my $font     = shift;
+
+    if ( $font && exists $font->{_rotation} ) {
+        $rotation = $font->{_rotation};
+    }
 
     $self->xml_start_tag( 'c:rich' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( $horiz );
+    $self->_write_a_body_pr( $rotation, $horiz );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
@@ -3583,41 +3588,20 @@ sub _write_rich {
 # _write_a_body_pr()
 #
 # Write the <a:bodyPr> element.
-#
 sub _write_a_body_pr {
 
     my $self  = shift;
+    my $rot   = shift;
     my $horiz = shift;
-    my $rot   = -5400000;
-    my $vert  = 'horz';
-
-    my @attributes = (
-        'rot'  => $rot,
-        'vert' => $vert,
-    );
-
-    @attributes = () if !$horiz;
-
-    $self->xml_empty_tag( 'a:bodyPr', @attributes );
-}
-
-
-##############################################################################
-#
-# _write_axis_body_pr()
-#
-# Write the <a:bodyPr> element for axis fonts.
-#
-sub _write_axis_body_pr {
-
-    my $self = shift;
-    my $rot  = shift;
-    my $vert = shift;
 
     my @attributes = ();
 
-    push @attributes, ( 'rot'  => $rot )  if defined $rot;
-    push @attributes, ( 'vert' => $vert ) if defined $vert;
+    if ( !defined $rot && $horiz ) {
+        $rot = -5400000;
+    }
+
+    push @attributes, ( 'rot' => $rot ) if defined $rot;
+    push @attributes, ( 'vert' => 'horz' ) if $horiz;
 
     $self->xml_empty_tag( 'a:bodyPr', @attributes );
 }
@@ -3869,14 +3853,19 @@ sub _write_a_t {
 #
 sub _write_tx_pr {
 
-    my $self  = shift;
-    my $horiz = shift;
-    my $font  = shift;
+    my $self     = shift;
+    my $horiz    = shift;
+    my $font     = shift;
+    my $rotation = undef;
+
+    if ( $font && exists $font->{_rotation} ) {
+        $rotation = $font->{_rotation};
+    }
 
     $self->xml_start_tag( 'c:txPr' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( $horiz );
+    $self->_write_a_body_pr( $rotation, $horiz );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
@@ -4752,7 +4741,7 @@ sub _write_axis_font {
     return unless $font;
 
     $self->xml_start_tag( 'c:txPr' );
-    $self->_write_axis_body_pr($font->{_rotation});
+    $self->_write_a_body_pr($font->{_rotation});
     $self->_write_a_lst_style();
     $self->xml_start_tag( 'a:p' );
 

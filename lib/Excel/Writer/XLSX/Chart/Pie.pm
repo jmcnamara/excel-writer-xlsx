@@ -170,7 +170,7 @@ sub _write_tx_pr_legend {
     $self->xml_start_tag( 'c:txPr' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( $horiz );
+    $self->_write_a_body_pr( undef, $horiz );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
