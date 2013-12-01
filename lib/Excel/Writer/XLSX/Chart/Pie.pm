@@ -118,10 +118,17 @@ sub _write_plot_area {
 #
 sub _write_legend {
 
-    my $self     = shift;
-    my $position = $self->{_legend_position};
-    my $font     = $self->{_legend_font};
-    my $overlay  = 0;
+    my $self          = shift;
+    my $position      = $self->{_legend_position};
+    my $font          = $self->{_legend_font};
+    my @delete_series = ();
+    my $overlay       = 0;
+
+    if ( defined $self->{_legend_delete_series}
+        && ref $self->{_legend_delete_series} eq 'ARRAY' )
+    {
+        @delete_series = @{ $self->{_legend_delete_series} };
+    }
 
     if ( $position =~ s/^overlay_// ) {
         $overlay = 1;
@@ -143,6 +150,13 @@ sub _write_legend {
 
     # Write the c:legendPos element.
     $self->_write_legend_pos( $position );
+
+    # Remove series labels from the legend.
+    for my $index ( @delete_series ) {
+
+        # Write the c:legendEntry element.
+        $self->_write_legend_entry( $index );
+    }
 
     # Write the c:layout element.
     $self->_write_layout( $self->{_legend_layout}, 'legend' );

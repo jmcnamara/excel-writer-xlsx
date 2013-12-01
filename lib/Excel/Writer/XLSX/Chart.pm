@@ -3232,7 +3232,7 @@ sub _write_legend {
     $self->_write_layout( $self->{_legend_layout}, 'legend' );
 
     # Write the c:txPr element.
-    if ($font) {
+    if ( $font ) {
         $self->_write_tx_pr( undef, $font );
     }
 
