@@ -120,6 +120,7 @@ sub _write_legend {
 
     my $self     = shift;
     my $position = $self->{_legend_position};
+    my $font     = $self->{_legend_font};
     my $overlay  = 0;
 
     if ( $position =~ s/^overlay_// ) {
@@ -150,7 +151,7 @@ sub _write_legend {
     $self->_write_overlay() if $overlay;
 
     # Write the c:txPr element. Over-ridden.
-    $self->_write_tx_pr_legend();
+    $self->_write_tx_pr_legend( 0, $font );
 
     $self->xml_end_tag( 'c:legend' );
 }
@@ -164,19 +165,25 @@ sub _write_legend {
 #
 sub _write_tx_pr_legend {
 
-    my $self  = shift;
-    my $horiz = 0;
+    my $self     = shift;
+    my $horiz    = shift;
+    my $font     = shift;
+    my $rotation = undef;
+
+    if ( $font && exists $font->{_rotation} ) {
+        $rotation = $font->{_rotation};
+    }
 
     $self->xml_start_tag( 'c:txPr' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( undef, $horiz );
+    $self->_write_a_body_pr( $rotation, $horiz );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p_legend();
+    $self->_write_a_p_legend( $font );
 
     $self->xml_end_tag( 'c:txPr' );
 }
@@ -190,13 +197,13 @@ sub _write_tx_pr_legend {
 #
 sub _write_a_p_legend {
 
-    my $self  = shift;
-    my $title = shift;
+    my $self = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
-    $self->_write_a_p_pr_legend();
+    $self->_write_a_p_pr_legend( $font );
 
     # Write the a:endParaRPr element.
     $self->_write_a_end_para_rpr();
@@ -214,6 +221,7 @@ sub _write_a_p_legend {
 sub _write_a_p_pr_legend {
 
     my $self = shift;
+    my $font = shift;
     my $rtl  = 0;
 
     my @attributes = ( 'rtl' => $rtl );
@@ -221,7 +229,7 @@ sub _write_a_p_pr_legend {
     $self->xml_start_tag( 'a:pPr', @attributes );
 
     # Write the a:defRPr element.
-    $self->_write_a_def_rpr();
+    $self->_write_a_def_rpr( $font );
 
     $self->xml_end_tag( 'a:pPr' );
 }
