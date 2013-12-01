@@ -652,6 +652,7 @@ sub _convert_axis_args {
         _label_position    => $arg{label_position},
         _num_format        => $arg{num_format},
         _num_format_linked => $arg{num_format_linked},
+        _interval_unit     => $arg{interval_unit},
         _visible           => defined $arg{visible} ? $arg{visible} : 1,
     };
 
@@ -2384,6 +2385,9 @@ sub _write_cat_axis {
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
 
+    # Write the c:tickLblSkip element.
+    $self->_write_tick_lbl_skip( $x_axis->{_interval_unit} );
+
     $self->xml_end_tag( 'c:catAx' );
 }
 
@@ -2665,6 +2669,9 @@ sub _write_date_axis {
 
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
+
+    # Write the c:tickLblSkip element.
+    $self->_write_tick_lbl_skip( $x_axis->{_interval_unit} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $x_axis->{_major_unit} );
@@ -3031,6 +3038,25 @@ sub _write_label_offset {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:lblOffset', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_tick_lbl_skip()
+#
+# Write the <c:tickLblSkip> element.
+#
+sub _write_tick_lbl_skip {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:tickLblSkip', @attributes );
 }
 
 
