@@ -344,6 +344,8 @@ t/regression/chart_axis29.t
 t/regression/chart_axis30.t
 t/regression/chart_axis31.t
 t/regression/chart_axis32.t
+t/regression/chart_axis33.t
+t/regression/chart_axis34.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -411,6 +413,7 @@ t/regression/chart_font05.t
 t/regression/chart_font06.t
 t/regression/chart_font07.t
 t/regression/chart_font08.t
+t/regression/chart_font09.t
 t/regression/chart_format01.t
 t/regression/chart_format02.t
 t/regression/chart_format03.t
@@ -464,6 +467,9 @@ t/regression/chart_order01.t
 t/regression/chart_order02.t
 t/regression/chart_order03.t
 t/regression/chart_pie01.t
+t/regression/chart_pie02.t
+t/regression/chart_pie03.t
+t/regression/chart_pie04.t
 t/regression/chart_points01.t
 t/regression/chart_points02.t
 t/regression/chart_points03.t
@@ -818,6 +824,8 @@ t/regression/xlsx_files/chart_axis29.xlsx
 t/regression/xlsx_files/chart_axis30.xlsx
 t/regression/xlsx_files/chart_axis31.xlsx
 t/regression/xlsx_files/chart_axis32.xlsx
+t/regression/xlsx_files/chart_axis33.xlsx
+t/regression/xlsx_files/chart_axis34.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -884,6 +892,7 @@ t/regression/xlsx_files/chart_font05.xlsx
 t/regression/xlsx_files/chart_font06.xlsx
 t/regression/xlsx_files/chart_font07.xlsx
 t/regression/xlsx_files/chart_font08.xlsx
+t/regression/xlsx_files/chart_font09.xlsx
 t/regression/xlsx_files/chart_format01.xlsx
 t/regression/xlsx_files/chart_format02.xlsx
 t/regression/xlsx_files/chart_format03.xlsx
@@ -935,6 +944,9 @@ t/regression/xlsx_files/chart_name03.xlsx
 t/regression/xlsx_files/chart_order01.xlsx
 t/regression/xlsx_files/chart_order03.xlsx
 t/regression/xlsx_files/chart_pie01.xlsx
+t/regression/xlsx_files/chart_pie02.xlsx
+t/regression/xlsx_files/chart_pie03.xlsx
+t/regression/xlsx_files/chart_pie04.xlsx
 t/regression/xlsx_files/chart_points01.xlsx
 t/regression/xlsx_files/chart_points02.xlsx
 t/regression/xlsx_files/chart_points03.xlsx

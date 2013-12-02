@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.74';
+our $VERSION = '0.75';
 
 
 ###############################################################################
@@ -5523,6 +5523,7 @@ The properties that can be set are:
     max
     minor_unit
     major_unit
+    interval_unit
     crossing
     reverse
     position_axis
@@ -5605,6 +5606,12 @@ Set the increment of the minor units in the axis range. (Applicable to value axe
 Set the increment of the major units in the axis range. (Applicable to value axes only.)
 
     $chart->set_x_axis( major_unit => 2 );
+
+=item * C<interval_unit>
+
+Set the interval unit for a category axis. (Applicable to category axes only.)
+
+    $chart->set_x_axis( interval_unit => 2 );
 
 =item * C<crossing>
 

@@ -4,6 +4,15 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.75 2013-12-02
+
+   + Added interval unit option for category axes.
+
+   ! Fix for axis name font rotation. Issue #83.
+
+   ! Fix for several minor issues with Pie chart legends.
+
+
 0.74 2013-11-17
 
    ! Improved defined name validation.
