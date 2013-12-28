@@ -76,7 +76,7 @@ sub new {
     $self->{_dim_colmin} = undef;
     $self->{_dim_colmax} = undef;
 
-    $self->{_colinfo}    = [];
+    $self->{_colinfo}    = {};
     $self->{_selections} = [];
     $self->{_hidden}     = 0;
     $self->{_active}     = 0;
@@ -584,8 +584,8 @@ sub set_column {
         $self->{_outline_col_level} = $data[5];
     }
 
-    # Store the column data.
-    push @{ $self->{_colinfo} }, [@data];
+    # Store the column data based on the first column. Padded for sorting.
+    $self->{_colinfo}->{ sprintf "%05d", $data[0] } = [@data];
 
     # Store the column change to allow optimisations.
     $self->{_col_size_changed} = 1;
@@ -6301,12 +6301,12 @@ sub _write_cols {
     my $self = shift;
 
     # Exit unless some column have been formatted.
-    return unless @{ $self->{_colinfo} };
+    return unless %{ $self->{_colinfo} };
 
     $self->xml_start_tag( 'cols' );
 
-    for my $col_info ( @{ $self->{_colinfo} } ) {
-        $self->_write_col_info( @$col_info );
+    for my $col ( sort keys %{ $self->{_colinfo} } ) {
+        $self->_write_col_info( @{ $self->{_colinfo}->{$col} } );
     }
 
     $self->xml_end_tag( 'cols' );
