@@ -5504,6 +5504,12 @@ You can add more than one series to a chart. In fact, some chart types such as C
         name       => 'Test data series 2',
     );
 
+It is also possible to specify non-contiguous ranges:
+
+    $chart->add_series(
+        categories      => '=(Sheet1!$A$1:$A$9,Sheet1!$A$14:$A$25)',
+        values          => '=(Sheet1!$B$1:$B$9,Sheet1!$B$14:$B$25)',
+    );
 
 
 =head2 set_x_axis()
