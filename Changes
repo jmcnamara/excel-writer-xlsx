@@ -4,81 +4,91 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+0.75 2013-12-31
+
+    + Added date axis handling to charts.
+
+    + Added support for non-contiguous chart ranges.
+
+    ! Fix to remove duplicate set_column() entries.
+
+
 0.75 2013-12-02
 
-   + Added interval unit option for category axes.
+    + Added interval unit option for category axes.
 
-   ! Fix for axis name font rotation. Issue #83.
+    ! Fix for axis name font rotation. Issue #83.
 
-   ! Fix for several minor issues with Pie chart legends.
+    ! Fix for several minor issues with Pie chart legends.
 
 
 0.74 2013-11-17
 
-   ! Improved defined name validation.
-     Issue #82.
+    ! Improved defined name validation.
+      Issue #82.
 
-   + Added set_title() option to turn off automatic title.
-     Issue #81.
+    + Added set_title() option to turn off automatic title.
+      Issue #81.
 
-   + Allow positioning of plotarea, legend, title and axis names.
-     Issue #80.
+    + Allow positioning of plotarea, legend, title and axis names.
+      Issue #80.
 
-   ! Fix for modification of user params in condtional_formatting().
-     Issue #79.
+    ! Fix for modification of user params in condtional_formatting().
+      Issue #79.
 
-   ! Fix for star style markers.
+    ! Fix for star style markers.
 
 
 0.73 2013-11-08
 
-   + Added custom error bar option to charts.
+    + Added custom error bar option to charts.
 
-   ! Fix for tables added in non-sequential order.
+    ! Fix for tables added in non-sequential order.
 
-   ! Fix for scatter charts with markers on non-marker series.
+    ! Fix for scatter charts with markers on non-marker series.
 
 
 0.72 2013-08-28
 
-   ! Fix for charts and images that cross rows and columns that are
-     hidden or formatted but which don’t have size changes.
+    ! Fix for charts and images that cross rows and columns that are
+      hidden or formatted but which don’t have size changes.
 
 
 0.71 2013-08-24
 
-   ! Fixed issue in image handling.
+    ! Fixed issue in image handling.
 
-   ! Added fix to ensure formula calculation on load regardless of
+    ! Added fix to ensure formula calculation on load regardless of
      Excel version.
 
 
 0.70 2013-07-30
 
-   ! Fix for rendering images that are the same size as cell boundaries.
-     GitHub issue #70.
+    ! Fix for rendering images that are the same size as cell boundaries.
+      GitHub issue #70.
 
-   ! Added fix for inaccurate column width calculation.
+    ! Added fix for inaccurate column width calculation.
 
-   + Added Chart line smoothing option.
+    + Added Chart line smoothing option.
 
 
 0.69 2013-06-12
 
-   + Added chart font rotation property. Mainly for use with date axes
-     to make the display more compact.
+    + Added chart font rotation property. Mainly for use with date axes
+      to make the display more compact.
 
-   ! Fix for 0 data in Worksheet Tables. #65.
-     Reported by David Gang.
+    ! Fix for 0 data in Worksheet Tables. #65.
+      Reported by David Gang.
 
 
 0.68 2013-06-06
 
-   ! Fix for issue where shapes on one worksheet corrupted charts on a
-     subsequent worksheet. #52.
+    ! Fix for issue where shapes on one worksheet corrupted charts on a
+      subsequent worksheet. #52.
 
-   ! Fix for issue where add_button() invalidated cell comments in the
-     same workbook. #64.
+    ! Fix for issue where add_button() invalidated cell comments in the
+      same workbook. #64.
 
 
 0.67 2013-05-06
@@ -88,12 +98,12 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 0.66 2013-04-12
 
-   ! Fix for issue with image scaling.
+    ! Fix for issue with image scaling.
 
 
 0.65 2012-12-31
 
-   + Added options to format series Gap/Overlap for Bar/Column charts.
+    + Added options to format series Gap/Overlap for Bar/Column charts.
 
 
 0.64 2012-12-22

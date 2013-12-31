@@ -387,10 +387,16 @@ t/regression/chart_column03.t
 t/regression/chart_column04.t
 t/regression/chart_column05.t
 t/regression/chart_column06.t
+t/regression/chart_column07.t
+t/regression/chart_column08.t
 t/regression/chart_crossing01.t
 t/regression/chart_crossing02.t
 t/regression/chart_crossing03.t
 t/regression/chart_crossing04.t
+t/regression/chart_date01.t
+t/regression/chart_date02.t
+t/regression/chart_date03.t
+t/regression/chart_date04.t
 t/regression/chart_drop_lines01.t
 t/regression/chart_drop_lines02.t
 t/regression/chart_drop_lines03.t
@@ -504,6 +510,7 @@ t/regression/chart_str02.t
 t/regression/chart_table01.t
 t/regression/chart_table02.t
 t/regression/chart_title01.t
+t/regression/chart_title02.t
 t/regression/chart_up_down_bars01.t
 t/regression/chart_up_down_bars02.t
 t/regression/chart_up_down_bars03.t
@@ -712,6 +719,7 @@ t/regression/set_column05.t
 t/regression/set_column06.t
 t/regression/set_column07.t
 t/regression/set_column08.t
+t/regression/set_column09.t
 t/regression/set_print_scale01.t
 t/regression/set_start_page01.t
 t/regression/shape01.t
@@ -866,10 +874,16 @@ t/regression/xlsx_files/chart_column03.xlsx
 t/regression/xlsx_files/chart_column04.xlsx
 t/regression/xlsx_files/chart_column05.xlsx
 t/regression/xlsx_files/chart_column06.xlsx
+t/regression/xlsx_files/chart_column07.xlsx
+t/regression/xlsx_files/chart_column08.xlsx
 t/regression/xlsx_files/chart_crossing01.xlsx
 t/regression/xlsx_files/chart_crossing02.xlsx
 t/regression/xlsx_files/chart_crossing03.xlsx
 t/regression/xlsx_files/chart_crossing04.xlsx
+t/regression/xlsx_files/chart_date01.xlsx
+t/regression/xlsx_files/chart_date02.xlsx
+t/regression/xlsx_files/chart_date03.xlsx
+t/regression/xlsx_files/chart_date04.xlsx
 t/regression/xlsx_files/chart_drop_lines01.xlsx
 t/regression/xlsx_files/chart_drop_lines02.xlsx
 t/regression/xlsx_files/chart_drop_lines03.xlsx
@@ -978,6 +992,7 @@ t/regression/xlsx_files/chart_str02.xlsx
 t/regression/xlsx_files/chart_table01.xlsx
 t/regression/xlsx_files/chart_table02.xlsx
 t/regression/xlsx_files/chart_title01.xlsx
+t/regression/xlsx_files/chart_title02.xlsx
 t/regression/xlsx_files/chart_up_down_bars01.xlsx
 t/regression/xlsx_files/chart_up_down_bars02.xlsx
 t/regression/xlsx_files/chart_up_down_bars03.xlsx
@@ -1170,6 +1185,7 @@ t/regression/xlsx_files/set_column05.xlsx
 t/regression/xlsx_files/set_column06.xlsx
 t/regression/xlsx_files/set_column07.xlsx
 t/regression/xlsx_files/set_column08.xlsx
+t/regression/xlsx_files/set_column09.xlsx
 t/regression/xlsx_files/set_print_scale01.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/shape01.xlsx
