@@ -34,8 +34,9 @@ sub new {
 
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
-    $self->{_show_crosses} = 0;
-    $self->{_hi_low_lines} = {};
+    $self->{_show_crosses}  = 0;
+    $self->{_hi_low_lines}  = {};
+    $self->{_date_category} = 1;
 
     # Override and reset the default axis values.
     $self->{_x_axis}->{_defaults}->{num_format}  = 'dd/mm/yyyy';
@@ -109,59 +110,6 @@ sub _write_stock_chart {
     $self->_write_axis_ids( %args );
 
     $self->xml_end_tag( 'c:stockChart' );
-}
-
-
-##############################################################################
-#
-# _write_plot_area()
-#
-# Overridden to use _write_date_axis() instead of _write_cat_axis().
-#
-sub _write_plot_area {
-
-    my $self = shift;
-
-    $self->xml_start_tag( 'c:plotArea' );
-
-    # Write the c:layout element.
-    $self->_write_layout( $self->{_plotarea}->{_layout}, 'plot' );
-
-    # Write the subclass chart type elements for primary and secondary axes
-    $self->_write_chart_type( primary_axes => 1 );
-    $self->_write_chart_type( primary_axes => 0 );
-
-    # Write c:catAx and c:valAx elements for series using primary axes
-    $self->_write_date_axis(
-        x_axis   => $self->{_x_axis},
-        y_axis   => $self->{_y_axis},
-        axis_ids => $self->{_axis_ids}
-    );
-    $self->_write_val_axis(
-        x_axis   => $self->{_x_axis},
-        y_axis   => $self->{_y_axis},
-        axis_ids => $self->{_axis_ids}
-    );
-
-    # Write c:valAx and c:catAx elements for series using secondary axes
-    $self->_write_val_axis(
-        x_axis   => $self->{_x2_axis},
-        y_axis   => $self->{_y2_axis},
-        axis_ids => $self->{_axis2_ids}
-    );
-    $self->_write_date_axis(
-        x_axis   => $self->{_x2_axis},
-        y_axis   => $self->{_y2_axis},
-        axis_ids => $self->{_axis2_ids}
-    );
-
-    # Write the c:dTable element.
-    $self->_write_d_table();
-
-    # Write the c:spPr element for the plotarea formatting.
-    $self->_write_sp_pr( $self->{_plotarea} );
-
-    $self->xml_end_tag( 'c:plotArea' );
 }
 
 

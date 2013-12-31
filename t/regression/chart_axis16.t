@@ -23,13 +23,7 @@ my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
-my $ignore_elements = {
-
-    'xl/charts/chart1.xml' => [ '<c:formatCode', '<c:pageMargins' ],
-
-    # Ignore the workbookView.
-    'xl/workbook.xml' => ['<workbookView'],
-};
+my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:formatCode'] };
 
 
 ###############################################################################

@@ -105,6 +105,7 @@ sub new {
     $self->{_table}             = undef;
     $self->{_smooth_allowed}    = 0;
     $self->{_cross_between}     = 'between';
+    $self->{_date_category}     = 0;
 
     bless $self, $class;
     $self->_set_default_properties();
@@ -687,6 +688,11 @@ sub _convert_axis_args {
             # Otherwise use the default value.
             $axis->{_position_axis} = undef;
         }
+    }
+
+    # Set the category axis as a date axis.
+    if ( $arg{date_axis} ) {
+        $self->{_date_category} = 1;
     }
 
     # Set the font properties if present.
@@ -1841,29 +1847,37 @@ sub _write_plot_area {
     $self->_write_chart_type( primary_axes => 1 );
     $self->_write_chart_type( primary_axes => 0 );
 
-    # Write c:catAx and c:valAx elements for series using primary axes.
-    $self->_write_cat_axis(
-        x_axis   => $self->{_x_axis},
-        y_axis   => $self->{_y_axis},
-        axis_ids => $self->{_axis_ids}
-    );
-    $self->_write_val_axis(
+    # Write the category and value elements for the primary axes.
+    my @args = (
         x_axis   => $self->{_x_axis},
         y_axis   => $self->{_y_axis},
         axis_ids => $self->{_axis_ids}
     );
 
-    # Write c:valAx and c:catAx elements for series using secondary axes.
-    $self->_write_val_axis(
+    if ( $self->{_date_category} ) {
+        $self->_write_date_axis( @args );
+    }
+    else {
+        $self->_write_cat_axis( @args );
+    }
+
+    $self->_write_val_axis( @args );
+
+    # Write the category and value elements for the secondary axes.
+    @args = (
         x_axis   => $self->{_x2_axis},
         y_axis   => $self->{_y2_axis},
         axis_ids => $self->{_axis2_ids}
     );
-    $self->_write_cat_axis(
-        x_axis   => $self->{_x2_axis},
-        y_axis   => $self->{_y2_axis},
-        axis_ids => $self->{_axis2_ids}
-    );
+
+    $self->_write_val_axis( @args );
+
+    if ( $self->{_date_category} ) {
+        $self->_write_date_axis( @args );
+    }
+    else {
+        $self->_write_cat_axis( @args );
+    }
 
     # Write the c:dTable element.
     $self->_write_d_table();
@@ -5538,6 +5552,9 @@ The properties that can be set are:
     major_gridlines
     minor_gridlines
     visible
+    date_axis
+    minor_unit_type
+    major_unit_type
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -5694,6 +5711,33 @@ The minor gridline C<visible> property is off by default for all chart types.
 Configure the visibility of the axis.
 
     $chart->set_x_axis( visible => 0 );
+
+
+=item * C<date_axis>
+
+This option is used to treat a category axis with date or time data as a Date Axis. (Applicable to category axes only.)
+
+    $chart->set_x_axis( date_axis => 1 );
+
+This option also allows you to set C<max> and C<min> values for a category axis which isn't allowed by Excel for non-date category axes.
+
+See L<Date Category Axes> for more details.
+
+=item * C<minor_unit_type>
+
+For C<date_axis> axes, see above, this option is used to set the type of the minor units. (Applicable to date category axes only.)
+
+    $chart->set_x_axis(
+        date_axis         => 1,
+        minor_unit        => 4,
+        minor_unit_type   => 'months',
+    );
+
+The allowable values for this option are C<days>, C<months> and C<years>.
+
+=item * C<major_unit_type>
+
+Same as C<minor_unit_type>, see above, but for major axes unit types.
 
 =back
 
@@ -6812,6 +6856,41 @@ As such some of C<Excel::Writer::XLSX> axis properties can be set for a value ax
 For example the C<min> and C<max> properties can only be set for value axes and C<reverse> can be set for both. The type of axis that a property applies to is shown in the C<set_x_axis()> section of the documentation above.
 
 Some charts such as C<Scatter> and C<Stock> have two value axes.
+
+Date Axes are a special type of category axis which are explained below.
+
+=head1 Date Category Axes
+
+Date Category Axes are category axes that display time or date information. In Excel::Writer::XLSX Date Category Axes are set using the C<date_axis> option:
+
+    $chart->set_x_axis( date_axis => 1 );
+
+In general you should also specify a number format for a date axis although Excel will usually default to the same format as the data being plotted:
+
+    $chart->set_x_axis(
+        date_axis         => 1,
+        num_format        => 'dd/mm/yyyy',
+    );
+
+Excel doesn't normally allow minimum and maximum values to be set for category axes. However, date axes are an exception. The C<min> and C<max> values should be set as Excel times or dates:
+
+    $chart->set_x_axis(
+        date_axis         => 1,
+        min               => $worksheet->convert_date_time('2013-01-02T'),
+        max               => $worksheet->convert_date_time('2013-01-09T'),
+        num_format        => 'dd/mm/yyyy',
+    );
+
+For date axes it is also possible to set the type of the major and minor units:
+
+    $chart->set_x_axis(
+        date_axis         => 1,
+        minor_unit        => 4,
+        minor_unit_type   => 'months',
+        major_unit        => 1,
+        major_unit_type   => 'years',
+        num_format        => 'dd/mm/yyyy',
+    );
 
 
 =head1 Secondary Axes

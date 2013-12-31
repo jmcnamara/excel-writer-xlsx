@@ -2,7 +2,7 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse ('(c)'), January 2011, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), December 2013, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -16,13 +16,14 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_stock01.xlsx';
+my $filename     = 'chart_date04.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
+# Ignore the default format code for now.
 my $ignore_elements = { 'xl/charts/chart1.xml' => [ '<c:formatCode' ] };
 
 
@@ -34,46 +35,42 @@ use Excel::Writer::XLSX;
 
 my $workbook    = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet   = $workbook->add_worksheet();
-my $chart       = $workbook->add_chart( type => 'stock', embedded => 1 );
+my $chart       = $workbook->add_chart( type => 'line', embedded => 1 );
 my $date_format = $workbook->add_format( num_format => 14 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 40522880, 40524416 ];
+$chart->{_axis_ids} = [ 51761152, 51762688 ];
 
-my $data = [
+$worksheet->set_column('A:A', 12);
 
-    [ '2007-01-01T', '2007-01-02T', '2007-01-03T', '2007-01-04T', '2007-01-05T' ],
-    [ 27.2,  25.03, 19.05, 20.34, 18.5 ],
-    [ 23.49, 19.55, 15.12, 17.84, 16.34 ],
-    [ 25.45, 23.05, 17.32, 20.45, 17.34 ],
+my @dates = (
+    '2013-01-01T', '2013-01-02T', '2013-01-03T', '2013-01-04T',
+    '2013-01-05T', '2013-01-06T', '2013-01-07T', '2013-01-08T',
+    '2013-01-09T', '2013-01-10T'
+);
 
-];
+my @data = ( 10, 30, 20, 40, 20, 60, 50, 40, 30, 30 );
 
-for my $row ( 0 .. 4 ) {
-    $worksheet->write_date_time( $row, 0, $data->[0]->[$row], $date_format );
-    $worksheet->write( $row, 1, $data->[1]->[$row] );
-    $worksheet->write( $row, 2, $data->[2]->[$row] );
-    $worksheet->write( $row, 3, $data->[3]->[$row] );
-
+for my $row ( 0 .. @dates -1 ) {
+    $worksheet->write_date_time( $row, 0, $dates[$row], $date_format );
+    $worksheet->write( $row, 1, $data[$row] );
 }
 
-$worksheet->set_column( 'A:D', 11 );
-
-
 $chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$B$1:$B$5',
+    categories      => '=Sheet1!$A$1:$A$10',
+    values          => '=Sheet1!$B$1:$B$10',
 );
 
-$chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$C$1:$C$5',
+$chart->set_x_axis(
+    date_axis         => 1,
+    minor_unit        => 1,
+    minor_unit_type   => 'months',
+    major_unit        => 1,
+    major_unit_type   => 'years',
+    num_format        => 'dd/mm/yyyy',
+    num_format_linked => 1,
 );
 
-$chart->add_series(
-    categories => '=Sheet1!$A$1:$A$5',
-    values     => '=Sheet1!$D$1:$D$5',
-);
 
 $worksheet->insert_chart( 'E9', $chart );
 
