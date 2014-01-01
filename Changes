@@ -5,7 +5,7 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
-0.75 2013-12-31
+0.76 2013-12-31
 
     + Added date axis handling to charts.
 
