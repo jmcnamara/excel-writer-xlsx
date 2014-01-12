@@ -5757,9 +5757,9 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 
     # Write some numbers
-    $worksheet->write( 2, 0, 1 );
-    $worksheet->write( 3, 0, 1.00000 );
-    $worksheet->write( 4, 0, 2.00001 );
+    $worksheet->write( 2, 0, 3 );
+    $worksheet->write( 3, 0, 3.00000 );
+    $worksheet->write( 4, 0, 3.00001 );
     $worksheet->write( 5, 0, 3.14159 );
 
 
@@ -5769,7 +5769,12 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 
     # Write a hyperlink
-    $worksheet->write( 10, 0, 'http://www.perl.com/' );
+    my $hyperlink_format = $workbook->add_format(
+        color     => 'blue',
+        underline => 1,
+    );
+
+    $worksheet->write( 10, 0, 'http://www.perl.com/', $hyperlink_format );
 
 
 =begin html
