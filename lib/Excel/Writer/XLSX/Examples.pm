@@ -7105,7 +7105,7 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 
 Example of how to change the default worksheet direction from
-left-to-right to right-to-left as required by some eastern verions
+left-to-right to right-to-left as required by some eastern versions
 of Excel.
 
 

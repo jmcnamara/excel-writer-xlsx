@@ -4455,7 +4455,7 @@ It can be applied to a single cell or a range of cells. You can pass 3 parameter
 
 See also the note about L</Cell notation> for more information.
 
-Using C<A1> style notation is is also possible to specify non-contiguous ranges, separated by a comma. For example:
+Using C<A1> style notation is also possible to specify non-contiguous ranges, separated by a comma. For example:
 
     $worksheet->conditional_formatting( 'A1:D5,A8:D12', {...} );
 
