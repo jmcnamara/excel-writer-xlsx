@@ -5901,7 +5901,7 @@ See the L</CHART LAYOUT> section below.
 
 =item * C<delete_series>
 
-This allows you to remove 1 or more series from the the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
+This allows you to remove 1 or more series from the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
 
     # Delete/hide series index 0 and 2 from the legend.
     $chart->set_legend( delete_series => [0, 2] );

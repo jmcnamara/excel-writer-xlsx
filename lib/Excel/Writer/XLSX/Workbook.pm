@@ -331,7 +331,7 @@ sub add_worksheet {
 #
 # add_chart( %args )
 #
-# Create a chart for embedding or as as new sheet.
+# Create a chart for embedding or as a new sheet.
 #
 sub add_chart {
 
@@ -1333,7 +1333,7 @@ sub _prepare_defined_names {
 #
 # Sort internal and user defined names in the same order as used by Excel.
 # This may not be strictly necessary but unsorted elements caused a lot of
-# issues in the the Spreadsheet::WriteExcel binary version. Also makes
+# issues in the Spreadsheet::WriteExcel binary version. Also makes
 # comparison testing easier.
 #
 sub _sort_defined_names {
