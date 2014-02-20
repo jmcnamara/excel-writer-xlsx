@@ -3313,6 +3313,47 @@ sub data_validation {
         }
     }
 
+    # Check that the input title doesn't exceed the maximum length.
+    if ( $param->{input_title} and length $param->{input_title} > 32 ) {
+        carp "Length of input title '$param->{input_title}'"
+          . " exceeds Excel's limit of 32";
+        return -3;
+    }
+
+    # Check that the error title don't exceed the maximum length.
+    if ( $param->{error_title} and length $param->{error_title} > 32 ) {
+        carp "Length of error title '$param->{error_title}'"
+          . " exceeds Excel's limit of 32";
+        return -3;
+    }
+
+    # Check that the input message don't exceed the maximum length.
+    if ( $param->{input_message} and length $param->{input_message} > 255 ) {
+        carp "Length of input message '$param->{input_message}'"
+          . " exceeds Excel's limit of 255";
+        return -3;
+    }
+
+    # Check that the error message don't exceed the maximum length.
+    if ( $param->{error_message} and length $param->{error_message} > 255 ) {
+        carp "Length of error message '$param->{error_message}'"
+          . " exceeds Excel's limit of 255";
+        return -3;
+    }
+
+    # Check that the input list don't exceed the maximum length.
+    if ( $param->{validate} eq 'list' ) {
+
+        if ( ref $param->{value} eq 'ARRAY' ) {
+
+            my $formula = join ',', @{ $param->{value} };
+            if ( length $formula > 255 ) {
+                carp "Length of list items '$formula' exceeds Excel's "
+                  . "limit of 255, use a formula range instead";
+                return -3;
+            }
+        }
+    }
 
     # Set some defaults if they haven't been defined by the user.
     $param->{ignore_blank} = 1 if !defined $param->{ignore_blank};
