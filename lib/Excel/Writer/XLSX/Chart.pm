@@ -1313,6 +1313,7 @@ sub _get_labels_properties {
             above       => 't',
             bottom      => 'b',
             below       => 'b',
+            inside_base => 'inBase',
             inside_end  => 'inEnd',
             outside_end => 'outEnd',
             best_fit    => 'bestFit',
@@ -6369,6 +6370,7 @@ Valid positions are:
     bottom
     above           # Same as top
     below           # Same as bottom
+    inside_base     # Mainly for Column/Bar charts.
     inside_end      # Pie chart mainly.
     outside_end     # Pie chart mainly.
     best_fit        # Pie chart mainly.
