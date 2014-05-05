@@ -7,7 +7,7 @@ package Excel::Writer::XLSX::Worksheet;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility
   qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################
@@ -5028,7 +5028,7 @@ sub insert_chart {
     $x_scale  = $chart->{_x_scale}  if $chart->{_x_scale} != 1;
     $y_scale  = $chart->{_y_scale}  if $chart->{_y_scale} != 1;
     $x_offset = $chart->{_x_offset} if $chart->{_x_offset};
-    $x_offset = $chart->{_y_offset} if $chart->{_y_offset};
+    $y_offset = $chart->{_y_offset} if $chart->{_y_offset};
 
     push @{ $self->{_charts} },
       [ $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ];

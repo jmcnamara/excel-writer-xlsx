@@ -8,7 +8,7 @@ package Excel::Writer::XLSX::Chart::Line;
 #
 # See formatting note in Excel::Writer::XLSX::Chart.
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################

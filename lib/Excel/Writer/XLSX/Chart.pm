@@ -7,7 +7,7 @@ package Excel::Writer::XLSX::Chart;
 #
 # Used in conjunction with Excel::Writer::XLSX.
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################
@@ -500,7 +500,7 @@ sub set_size {
     $self->{_x_scale}  = $args{x_scale}  if $args{x_scale};
     $self->{_y_scale}  = $args{y_scale}  if $args{y_scale};
     $self->{_x_offset} = $args{x_offset} if $args{x_offset};
-    $self->{_x_offset} = $args{y_offset} if $args{y_offset};
+    $self->{_y_offset} = $args{y_offset} if $args{y_offset};
 
 }
 

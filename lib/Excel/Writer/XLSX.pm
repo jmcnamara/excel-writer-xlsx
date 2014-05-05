@@ -4,7 +4,7 @@ package Excel::Writer::XLSX;
 #
 # Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.76 of Excel::Writer::XLSX, released December 31, 2013.
+This document refers to version 0.77 of Excel::Writer::XLSX, released May 6, 2014.
 
 
 

@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::SharedStrings;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -21,7 +21,7 @@ use Encode;
 use Excel::Writer::XLSX::Package::XMLwriter;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################

@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Chartsheet;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -20,7 +20,7 @@ use Exporter;
 use Excel::Writer::XLSX::Worksheet;
 
 our @ISA     = qw(Excel::Writer::XLSX::Worksheet);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################

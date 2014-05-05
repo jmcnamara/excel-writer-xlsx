@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::Packager;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2013, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -31,7 +31,7 @@ use Excel::Writer::XLSX::Package::Theme;
 use Excel::Writer::XLSX::Package::VML;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.76';
+our $VERSION = '0.77';
 
 
 ###############################################################################

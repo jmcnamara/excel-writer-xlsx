@@ -438,6 +438,7 @@ t/regression/chart_format15.t
 t/regression/chart_format16.t
 t/regression/chart_format17.t
 t/regression/chart_format18.t
+t/regression/chart_format19.t
 t/regression/chart_gap01.t
 t/regression/chart_gap02.t
 t/regression/chart_gap03.t
@@ -502,6 +503,8 @@ t/regression/chart_scatter14.t
 t/regression/chart_size01.t
 t/regression/chart_size02.t
 t/regression/chart_size03.t
+t/regression/chart_size04.t
+t/regression/chart_size05.t
 t/regression/chart_sparse01.t
 t/regression/chart_stock01.t
 t/regression/chart_stock02.t
@@ -549,6 +552,12 @@ t/regression/cond_format11.t
 t/regression/cond_format12.t
 t/regression/cond_format13.t
 t/regression/custom_colors01.t
+t/regression/data_validation01.t
+t/regression/data_validation02.t
+t/regression/data_validation03.t
+t/regression/data_validation04.t
+t/regression/data_validation05.t
+t/regression/data_validation06.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
 t/regression/date_examples01.t
@@ -636,6 +645,7 @@ t/regression/images/train.jpg
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
 t/regression/macro01.t
+t/regression/merge_cells01.t
 t/regression/optimize01.t
 t/regression/optimize02.t
 t/regression/optimize03.t
@@ -925,6 +935,7 @@ t/regression/xlsx_files/chart_format15.xlsx
 t/regression/xlsx_files/chart_format16.xlsx
 t/regression/xlsx_files/chart_format17.xlsx
 t/regression/xlsx_files/chart_format18.xlsx
+t/regression/xlsx_files/chart_format19.xlsx
 t/regression/xlsx_files/chart_gap01.xlsx
 t/regression/xlsx_files/chart_gap02.xlsx
 t/regression/xlsx_files/chart_gap03.xlsx
@@ -984,6 +995,7 @@ t/regression/xlsx_files/chart_scatter11.xlsx
 t/regression/xlsx_files/chart_scatter12.xlsx
 t/regression/xlsx_files/chart_scatter14.xlsx
 t/regression/xlsx_files/chart_size01.xlsx
+t/regression/xlsx_files/chart_size04.xlsx
 t/regression/xlsx_files/chart_sparse01.xlsx
 t/regression/xlsx_files/chart_stock01.xlsx
 t/regression/xlsx_files/chart_stock02.xlsx
@@ -1030,6 +1042,9 @@ t/regression/xlsx_files/cond_format11.xlsx
 t/regression/xlsx_files/cond_format12.xlsx
 t/regression/xlsx_files/cond_format13.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
+t/regression/xlsx_files/data_validation01.xlsx
+t/regression/xlsx_files/data_validation02.xlsx
+t/regression/xlsx_files/data_validation03.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
 t/regression/xlsx_files/date_examples01.xlsx
@@ -1103,6 +1118,7 @@ t/regression/xlsx_files/image17.xlsx
 t/regression/xlsx_files/image18.xlsx
 t/regression/xlsx_files/image19.xlsx
 t/regression/xlsx_files/macro01.xlsm
+t/regression/xlsx_files/merge_cells01.xlsx
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
 t/regression/xlsx_files/optimize03.xlsx
