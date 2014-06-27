@@ -2208,12 +2208,11 @@ sub _write_sheet {
 sub _write_calc_pr {
 
     my $self            = shift;
-    my $calc_id         = 124519;
+    my $calc_id         = 125725;
     my $concurrent_calc = 0;
 
     my @attributes = (
         'calcId'         => $calc_id,
-        'fullCalcOnLoad' => 1
     );
 
     $self->xml_empty_tag( 'calcPr', @attributes );
