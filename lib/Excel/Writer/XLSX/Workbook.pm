@@ -100,6 +100,10 @@ sub new {
     $self->{_str_table}  = {};
     $self->{_str_array}  = [];
 
+    # formula calculation default settings
+    $self->{_calc_id}   = 124519;
+    $self->{_calc_mode} = 0;
+
 
     bless $self, $class;
 
@@ -2201,6 +2205,25 @@ sub _write_sheet {
 
 ###############################################################################
 #
+# set_calc_mode()
+#
+# Set calculation mode and optionally calcId.
+# Args:
+#       mode: String containing one of:
+#           * auto
+#           * autoNoTable
+#           * manual
+#       calc_id: calcId known to Excel
+#
+sub set_calc_mode {
+    my($self, $mode, $calc_id) = @_;
+
+    $self->{_calc_mode} = $mode;
+    $self->{_calc_id}   = $calc_id if defined($calc_id);
+}
+
+###############################################################################
+#
 # _write_calc_pr()
 #
 # Write <calcPr> element.
@@ -2208,13 +2231,18 @@ sub _write_sheet {
 sub _write_calc_pr {
 
     my $self            = shift;
-    my $calc_id         = 124519;
-    my $concurrent_calc = 0;
 
     my @attributes = (
-        'calcId'         => $calc_id,
-        'fullCalcOnLoad' => 1
+        calcId         => $self->{_calc_id},
+        calcOnSave     => 0
     );
+
+    if ($self->{_calc_mode} eq 'manual') {
+        push @attributes, calcMode => 'manual';
+    }
+    elsif ($self->{_calc_mode} eq 'autoNoTable') {
+        push @attributes, calcMode => 'autoNoTable';
+    }
 
     $self->xml_empty_tag( 'calcPr', @attributes );
 }
