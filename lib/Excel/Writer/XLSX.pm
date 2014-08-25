@@ -152,6 +152,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     sheets()
     set_1904()
     set_optimization()
+    set_calc_mode()
 
 If you are unfamiliar with object oriented interfaces or the way that they are implemented in Perl have a look at C<perlobj> and C<perltoot> in the main Perl documentation.
 
@@ -599,6 +600,29 @@ Note, that with this optimization turned on a row of data is written and then di
 
 This method must be called before any calls to C<add_worksheet()>.
 
+
+
+=head2 set_calc_mode( $mode )
+
+Set the calculation mode for formulas in the workbook. This is mainly of use for workbooks with slow formulas where you want to allow the user to calculate them manually.
+
+The mode parameter can be one of the following strings:
+
+=over
+
+=item C<auto>
+
+The default. Excel will re-calculate formulas when a formula or a value affecting the formula changes.
+
+=item C<manual>
+
+Only re-calculate formulas when the user requires it. Generally by pressing F9.
+
+=item C<auto_except_tables>
+
+Excel will automatically re-calculate formulas except for tables.
+
+=back
 
 =head1 WORKSHEET METHODS
 

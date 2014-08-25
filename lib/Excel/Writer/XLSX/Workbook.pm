@@ -100,6 +100,11 @@ sub new {
     $self->{_str_table}  = {};
     $self->{_str_array}  = [];
 
+    # Formula calculation default settings.
+    $self->{_calc_id}      = 124519;
+    $self->{_calc_mode}    = 'auto';
+    $self->{_calc_on_load} = 1;
+
 
     bless $self, $class;
 
@@ -809,6 +814,32 @@ sub add_vba_project {
       unless -e $vba_project;
 
     $self->{_vba_project} = $vba_project;
+}
+
+
+###############################################################################
+#
+# set_calc_mode()
+#
+# Set the Excel caclcuation mode for the workbook.
+#
+sub set_calc_mode {
+
+    my $self    = shift;
+    my $mode    = shift || 'auto';
+    my $calc_id = shift;
+
+    $self->{_calc_mode} = $mode;
+
+    if ( $mode eq 'manual' ) {
+        $self->{_calc_mode}    = 'manual';
+        $self->{_calc_on_load} = 0;
+    }
+    elsif ( $mode eq 'auto_except_tables' ) {
+        $self->{_calc_mode} = 'autoNoTable';
+    }
+
+    $self->{_calc_id} = $calc_id if defined $calc_id;
 }
 
 
@@ -2208,13 +2239,23 @@ sub _write_sheet {
 sub _write_calc_pr {
 
     my $self            = shift;
-    my $calc_id         = 124519;
+    my $calc_id         = $self->{_calc_id};
     my $concurrent_calc = 0;
 
-    my @attributes = (
-        'calcId'         => $calc_id,
-        'fullCalcOnLoad' => 1
-    );
+    my @attributes = ( calcId => $calc_id );
+
+    if ( $self->{_calc_mode} eq 'manual' ) {
+        push @attributes, 'calcMode'   => 'manual';
+        push @attributes, 'calcOnSave' => 0;
+    }
+    elsif ( $self->{_calc_mode} eq 'autoNoTable' ) {
+        push @attributes, calcMode => 'autoNoTable';
+    }
+
+    if ( $self->{_calc_on_load} ) {
+        push @attributes, 'fullCalcOnLoad' => 1;
+    }
+
 
     $self->xml_empty_tag( 'calcPr', @attributes );
 }
