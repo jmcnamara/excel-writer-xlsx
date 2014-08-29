@@ -28,7 +28,7 @@ my $worksheet;
 # Test the _write_phonetic_pr() method.
 #
 $caption  = " \tWorksheet: _write_phonetic_pr()";
-$expected = '<phoneticPr fontId="1" type="noConversion"/>';
+$expected = '<phoneticPr fontId="0" type="noConversion"/>';
 
 $worksheet = _new_worksheet(\$got);
 

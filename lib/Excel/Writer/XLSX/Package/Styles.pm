@@ -348,7 +348,13 @@ sub _write_font {
         $self->xml_empty_tag( 'sz', 'val', $format->{_size} );
     }
 
-    if ( my $theme = $format->{_theme} ) {
+    my $theme = $format->{_theme};
+
+
+    if ( $theme == -1 ) {
+        # Ignore for excel2003_style.
+    }
+    elsif ( $theme ) {
         $self->_write_color( 'theme' => $theme );
     }
     elsif ( my $index = $format->{_color_indexed} ) {
@@ -365,7 +371,10 @@ sub _write_font {
 
     if ( !$dxf_format ) {
         $self->xml_empty_tag( 'name',   'val', $format->{_font} );
-        $self->xml_empty_tag( 'family', 'val', $format->{_font_family} );
+
+        if ($format->{_font_family}) {
+            $self->xml_empty_tag( 'family', 'val', $format->{_font_family} );
+        }
 
         if ( $format->{_font} eq 'Calibri' && !$format->{_hyperlink} ) {
             $self->xml_empty_tag(

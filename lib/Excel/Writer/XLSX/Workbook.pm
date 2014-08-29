@@ -55,6 +55,7 @@ sub new {
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_filename}           = $_[0] || '';
+    $self->{_options}            = $_[1] || {};
     $self->{_tempdir}            = undef;
     $self->{_1904}               = 0;
     $self->{_activesheet}        = 0;
@@ -92,6 +93,12 @@ sub new {
     $self->{_window_width}       = 16095;
     $self->{_window_height}      = 9660;
     $self->{_tab_ratio}          = 500;
+    $self->{_excel2003_style}    = 0;
+
+
+    if (exists $self->{_options}->{excel2003_style}) {
+        $self->{_excel2003_style} = 1;
+    }
 
 
     # Structures for the shared strings data.
@@ -109,8 +116,12 @@ sub new {
     bless $self, $class;
 
     # Add the default cell format.
-    $self->add_format( xf_index => 0 );
-
+    if ( $self->{_excel2003_style} ) {
+        $self->add_format( xf_index => 0, font_family => 0 );
+    }
+    else {
+        $self->add_format( xf_index => 0 );
+    }
 
     # Check for a filename unless it is an existing filehandle
     if ( not ref $self->{_filename} and $self->{_filename} eq '' ) {
@@ -321,6 +332,7 @@ sub add_worksheet {
         $self->{_palette},
         $self->{_optimization},
         $self->{_tempdir},
+        $self->{_excel2003_style},
 
     );
 
@@ -486,6 +498,11 @@ sub add_format {
 
     my @init_data =
       ( \$self->{_xf_format_indices}, \$self->{_dxf_format_indices}, @_ );
+
+    if ( $self->{_excel2003_style} ) {
+        # Change default format style for Excel2003/XLS format.
+        push @init_data, ( font => 'Arial', size => 10, theme => -1 );
+    }
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
 
