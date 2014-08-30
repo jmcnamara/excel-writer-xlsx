@@ -497,12 +497,15 @@ sub add_format {
     my $self = shift;
 
     my @init_data =
-      ( \$self->{_xf_format_indices}, \$self->{_dxf_format_indices}, @_ );
+      ( \$self->{_xf_format_indices}, \$self->{_dxf_format_indices} );
 
+    # Change default format style for Excel2003/XLS format.
     if ( $self->{_excel2003_style} ) {
-        # Change default format style for Excel2003/XLS format.
         push @init_data, ( font => 'Arial', size => 10, theme => -1 );
     }
+
+    # Add the user defined properties.
+    push @init_data, @_;
 
     my $format = Excel::Writer::XLSX::Format->new( @init_data );
 

@@ -148,8 +148,10 @@ sub new {
     $self->{_outline_on}        = 1;
     $self->{_outline_changed}   = 0;
 
-    $self->{_default_row_height}  = 15;
     $self->{_original_row_height} = 15;
+    $self->{_default_row_height}  = 15;
+    $self->{_default_row_pixels}  = 20;
+    $self->{_default_col_pixels}  = 64;
     $self->{_default_row_zeroed}  = 0;
 
     $self->{_names} = {};
@@ -215,8 +217,9 @@ sub new {
     $self->{_dxf_priority} = 1;
 
     if ( $self->{_excel2003_style} ) {
-        $self->{_default_row_height}   = 12.75;
         $self->{_original_row_height}  = 12.75;
+        $self->{_default_row_height}   = 12.75;
+        $self->{_default_row_pixels}   = 17;
         $self->{_margin_left}          = 0.75;
         $self->{_margin_right}         = 0.75;
         $self->{_margin_top}           = 1;
@@ -4679,7 +4682,7 @@ sub _position_object_pixels {
     }
     else {
         # Optimisation for when the column widths haven't changed.
-        $x_abs += 64 * $col_start;
+        $x_abs += $self->{_default_col_pixels} * $col_start;
     }
 
     $x_abs += $x1;
@@ -4693,7 +4696,7 @@ sub _position_object_pixels {
     }
     else {
         # Optimisation for when the row heights haven't changed.
-        $y_abs += 20 * $row_start;
+        $y_abs += $self->{_default_row_pixels} * $row_start;
     }
 
     $y_abs += $y1;
@@ -4867,7 +4870,7 @@ sub _size_col {
         }
     }
     else {
-        $pixels = 64;
+        $pixels = $self->{_default_col_pixels};
     }
 
     return $pixels;
@@ -5831,7 +5834,7 @@ sub _comment_params {
 #
 sub _button_params {
 
-    my $self = shift;
+    my $self   = shift;
     my $row    = shift;
     my $col    = shift;
     my $params = shift;
@@ -5860,8 +5863,8 @@ sub _button_params {
 
 
     # Ensure that a width and height have been set.
-    my $default_width  = 64;
-    my $default_height = 20;
+    my $default_width  = $self->{_default_col_pixels};
+    my $default_height = $self->{_default_row_pixels};
     $params->{width}  = $default_width  if !$params->{width};
     $params->{height} = $default_height if !$params->{height};
 
