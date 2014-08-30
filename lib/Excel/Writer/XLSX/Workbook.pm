@@ -55,9 +55,10 @@ sub new {
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
     $self->{_filename}           = $_[0] || '';
-    $self->{_options}            = $_[1] || {};
+    my $options                  = $_[1] || {};
+
     $self->{_tempdir}            = undef;
-    $self->{_1904}               = 0;
+    $self->{_date_1904}          = 0;
     $self->{_activesheet}        = 0;
     $self->{_firstsheet}         = 0;
     $self->{_selected}           = 0;
@@ -95,11 +96,28 @@ sub new {
     $self->{_tab_ratio}          = 500;
     $self->{_excel2003_style}    = 0;
 
+    $self->{_default_format_properties} = {};
 
-    if (exists $self->{_options}->{excel2003_style}) {
-        $self->{_excel2003_style} = 1;
+    if ( exists $options->{tempdir} ) {
+        $self->{_tempdir} = $options->{tempdir};
     }
 
+    if ( exists $options->{date_1904} ) {
+        $self->{_date_1904} = $options->{date_1904};
+    }
+
+    if ( exists $options->{optimization} ) {
+        $self->{_optimization} = $options->{optimization};
+    }
+
+    if ( exists $options->{default_format_properties} ) {
+        $self->{_default_format_properties} =
+          $options->{default_format_properties};
+    }
+
+    if ( exists $options->{excel2003_style} ) {
+        $self->{_excel2003_style} = 1;
+    }
 
     # Structures for the shared strings data.
     $self->{_str_total}  = 0;
@@ -328,7 +346,7 @@ sub add_worksheet {
         \$self->{_str_unique},
         \$self->{_str_table},
 
-        $self->{_1904},
+        $self->{_date_1904},
         $self->{_palette},
         $self->{_optimization},
         $self->{_tempdir},
@@ -386,7 +404,7 @@ sub add_chart {
         \$self->{_str_unique},
         \$self->{_str_table},
 
-        $self->{_1904},
+        $self->{_date_1904},
         $self->{_palette},
         $self->{_optimization},
     );
@@ -504,6 +522,9 @@ sub add_format {
         push @init_data, ( font => 'Arial', size => 10, theme => -1 );
     }
 
+    # Add the default format properties.
+    push @init_data, %{$self->{_default_format_properties}};
+
     # Add the user defined properties.
     push @init_data, @_;
 
@@ -546,10 +567,10 @@ sub set_1904 {
     my $self = shift;
 
     if ( defined( $_[0] ) ) {
-        $self->{_1904} = $_[0];
+        $self->{_date_1904} = $_[0];
     }
     else {
-        $self->{_1904} = 1;
+        $self->{_date_1904} = 1;
     }
 }
 
@@ -564,7 +585,7 @@ sub get_1904 {
 
     my $self = shift;
 
-    return $self->{_1904};
+    return $self->{_date_1904};
 }
 
 
@@ -2135,7 +2156,7 @@ sub _write_file_version {
 sub _write_workbook_pr {
 
     my $self                   = shift;
-    my $date_1904              = $self->{_1904};
+    my $date_1904              = $self->{_date_1904};
     my $show_ink_annotation    = 0;
     my $auto_compress_pictures = 0;
     my $default_theme_version  = 124226;

@@ -32,7 +32,7 @@ $caption = " \tWorksheet: _assemble_xml_file()";
 
 $worksheet = _new_worksheet(\$got);
 
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->select();
 

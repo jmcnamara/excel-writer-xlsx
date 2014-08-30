@@ -27,8 +27,8 @@ my $worksheet = _new_worksheet( \$got );
 while (<DATA>) {
     last if /^# stop/; # For debugging
 
-    $worksheet->{_1904} = 0 if /Excel 1900/; # Change date system
-    $worksheet->{_1904} = 1 if /Excel 1904/; # Change date system
+    $worksheet->{_date_1904} = 0 if /Excel 1900/; # Change date system
+    $worksheet->{_date_1904} = 1 if /Excel 1904/; # Change date system
 
     next unless /\S/;  # Ignore blank lines
     next if /^#/;      # Ignore comments

@@ -36,7 +36,7 @@ my $format3 = Excel::Writer::XLSX::Format->new( {}, {}, xf_index => 3 );
 $worksheet = _new_worksheet(\$got);
 
 $worksheet->set_column('B:C', 12);
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->select();
 $worksheet->merge_range_type( 'formula',     'B14:C14', '=1+2',                 $format1, 3 );

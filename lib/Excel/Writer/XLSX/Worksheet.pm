@@ -59,7 +59,7 @@ sub new {
     $self->{_str_total}       = $_[4];
     $self->{_str_unique}      = $_[5];
     $self->{_str_table}       = $_[6];
-    $self->{_1904}            = $_[7];
+    $self->{_date_1904}       = $_[7];
     $self->{_palette}         = $_[8];
     $self->{_optimization}    = $_[9] || 0;
     $self->{_tempdir}         = $_[10];
@@ -2811,7 +2811,7 @@ sub convert_date_time {
     }
 
     # Set the epoch as 1900 or 1904. Defaults to 1900.
-    my $date_1904 = $self->{_1904};
+    my $date_1904 = $self->{_date_1904};
 
 
     # Special cases for Excel.
