@@ -4018,7 +4018,7 @@ sub _write_sp_pr {
 
     $self->xml_start_tag( 'c:spPr' );
 
-    # Write the fill elements for solid charts such as pie and bar.
+    # Write the fill elements for solid charts such as pie/doughnut and bar.
     if ( $series->{_fill}->{_defined} ) {
 
         if ( $series->{_fill}->{none} ) {
@@ -5355,6 +5355,10 @@ Creates a Line style chart. See L<Excel::Writer::XLSX::Chart::Line>.
 
 Creates a Pie style chart. See L<Excel::Writer::XLSX::Chart::Pie>.
 
+=item * C<doughnut>
+
+Creates a Doughnut style chart. See L<Excel::Writer::XLSX::Chart::Doughnut>.
+
 =item * C<scatter>
 
 Creates a Scatter style chart. See L<Excel::Writer::XLSX::Chart::Scatter>.
@@ -6229,7 +6233,7 @@ Several of these properties can be set in one go:
         },
     );
 
-Trendlines cannot be added to series in a stacked chart or pie chart, radar chart or (when implemented) to 3D, surface, or doughnut charts.
+Trendlines cannot be added to series in a stacked chart or pie chart, radar chart, doughtnut or (when implemented) to 3D, or surface charts.
 
 =head2 Error Bars
 
@@ -6375,7 +6379,7 @@ Valid positions are:
     outside_end     # Pie chart mainly.
     best_fit        # Pie chart mainly.
 
-The C<percentage> property is used to turn on the display of data labels as a I<Percentage> for a series. It is mainly used for pie charts.
+The C<percentage> property is used to turn on the display of data labels as a I<Percentage> for a series. It is mainly used for pie and doughnut charts.
 
     $chart->add_series(
         values      => '=Sheet1!$B$1:$B$5',
@@ -6393,7 +6397,7 @@ Note: Even when leader lines are turned on they aren't automatically visible in 
 
 =head2 Points
 
-In general formatting is applied to an entire series in a chart. However, it is occasionally required to format individual points in a series. In particular this is required for Pie charts where each segment is represented by a point.
+In general formatting is applied to an entire series in a chart. However, it is occasionally required to format individual points in a series. In particular this is required for Pie and Doughnut charts where each segment is represented by a point.
 
 In these cases it is possible to use the C<points> property of C<add_series()>:
 
@@ -6956,7 +6960,7 @@ Features that are on the TODO list and will be added are:
 
 =item * 3D charts.
 
-=item * Additional chart types such as Bubble or Doughnut.
+=item * Additional chart types.
 
 =back
 
