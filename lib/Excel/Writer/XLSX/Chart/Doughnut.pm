@@ -22,7 +22,7 @@ use Carp;
 use Excel::Writer::XLSX::Chart::Pie;
 
 our @ISA     = qw(Excel::Writer::XLSX::Chart::Pie);
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 
 ###############################################################################
@@ -289,7 +289,7 @@ Here is a complete example that demonstrates most of the available features when
 
 <p>This will produce a chart that looks like this:</p>
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/doughnut1.jpg" width="483" height="291" alt="Chart example." /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/doughnut1.jpg" width="483" height="291" alt="Chart example." /></center></p>
 
 =end html
 

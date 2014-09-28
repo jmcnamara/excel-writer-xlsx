@@ -1,4 +1,4 @@
-The following is a description of the example files that are provided with 
+The following is a description of the example files that are provided with
 Excel::Writer::XLSX. They are intended to demonstrate the different features
 and options of the module.
 
@@ -23,6 +23,7 @@ chart_bar.pl            A demo of bar (vertical histogram) style charts.
 chart_column.pl         A demo of column (histogram) style charts.
 chart_line.pl           A demo of line style charts.
 chart_pie.pl            A demo of pie style charts.
+chart_doughnut.pl       A demo of dougnut style charts.
 chart_radar.pl          A demo of radar style charts.
 chart_scatter.pl        A demo of scatter style charts.
 chart_secondary_axis.pl A demo of a line chart with a secondary axis.
@@ -95,6 +96,3 @@ unicode_cyrillic.pl     Russian:  Cyrillic.
 unicode_koi8r.pl        Russian:  KOI8-R.
 unicode_polish_utf8.pl  Polish :  UTF8.
 unicode_shift_jis.pl    Japanese: Shift JIS.
-
-
-

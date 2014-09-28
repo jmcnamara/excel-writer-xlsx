@@ -15,6 +15,7 @@ examples/chart_bar.pl
 examples/chart_column.pl
 examples/chart_data_table.pl
 examples/chart_data_tools.pl
+examples/chart_doughnut.pl
 examples/chart_line.pl
 examples/chart_pie.pl
 examples/chart_radar.pl
@@ -104,6 +105,7 @@ lib/Excel/Writer/XLSX/Chart.pm
 lib/Excel/Writer/XLSX/Chart/Area.pm
 lib/Excel/Writer/XLSX/Chart/Bar.pm
 lib/Excel/Writer/XLSX/Chart/Column.pm
+lib/Excel/Writer/XLSX/Chart/Doughnut.pm
 lib/Excel/Writer/XLSX/Chart/Line.pm
 lib/Excel/Writer/XLSX/Chart/Pie.pm
 lib/Excel/Writer/XLSX/Chart/Radar.pm
@@ -389,6 +391,8 @@ t/regression/chart_column05.t
 t/regression/chart_column06.t
 t/regression/chart_column07.t
 t/regression/chart_column08.t
+t/regression/chart_column09.t
+t/regression/chart_column10.t
 t/regression/chart_crossing01.t
 t/regression/chart_crossing02.t
 t/regression/chart_crossing03.t
@@ -397,6 +401,12 @@ t/regression/chart_date01.t
 t/regression/chart_date02.t
 t/regression/chart_date03.t
 t/regression/chart_date04.t
+t/regression/chart_doughnut01.t
+t/regression/chart_doughnut02.t
+t/regression/chart_doughnut03.t
+t/regression/chart_doughnut04.t
+t/regression/chart_doughnut05.t
+t/regression/chart_doughnut06.t
 t/regression/chart_drop_lines01.t
 t/regression/chart_drop_lines02.t
 t/regression/chart_drop_lines03.t
@@ -477,6 +487,7 @@ t/regression/chart_pie01.t
 t/regression/chart_pie02.t
 t/regression/chart_pie03.t
 t/regression/chart_pie04.t
+t/regression/chart_pie05.t
 t/regression/chart_points01.t
 t/regression/chart_points02.t
 t/regression/chart_points03.t
@@ -561,6 +572,7 @@ t/regression/data_validation06.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
 t/regression/date_examples01.t
+t/regression/default_format01.t
 t/regression/default_row01.t
 t/regression/default_row02.t
 t/regression/default_row03.t
@@ -577,6 +589,14 @@ t/regression/escapes05.t
 t/regression/escapes06.t
 t/regression/escapes07.t
 t/regression/escapes08.t
+t/regression/excel2003_style01.t
+t/regression/excel2003_style02.t
+t/regression/excel2003_style03.t
+t/regression/excel2003_style04.t
+t/regression/excel2003_style05.t
+t/regression/excel2003_style06.t
+t/regression/excel2003_style07.t
+t/regression/excel2003_style08.t
 t/regression/filehandle01.t
 t/regression/firstsheet01.t
 t/regression/fit_to_page01.t
@@ -886,6 +906,8 @@ t/regression/xlsx_files/chart_column05.xlsx
 t/regression/xlsx_files/chart_column06.xlsx
 t/regression/xlsx_files/chart_column07.xlsx
 t/regression/xlsx_files/chart_column08.xlsx
+t/regression/xlsx_files/chart_column09.xlsx
+t/regression/xlsx_files/chart_column10.xlsx
 t/regression/xlsx_files/chart_crossing01.xlsx
 t/regression/xlsx_files/chart_crossing02.xlsx
 t/regression/xlsx_files/chart_crossing03.xlsx
@@ -894,6 +916,12 @@ t/regression/xlsx_files/chart_date01.xlsx
 t/regression/xlsx_files/chart_date02.xlsx
 t/regression/xlsx_files/chart_date03.xlsx
 t/regression/xlsx_files/chart_date04.xlsx
+t/regression/xlsx_files/chart_doughnut01.xlsx
+t/regression/xlsx_files/chart_doughnut02.xlsx
+t/regression/xlsx_files/chart_doughnut03.xlsx
+t/regression/xlsx_files/chart_doughnut04.xlsx
+t/regression/xlsx_files/chart_doughnut05.xlsx
+t/regression/xlsx_files/chart_doughnut06.xlsx
 t/regression/xlsx_files/chart_drop_lines01.xlsx
 t/regression/xlsx_files/chart_drop_lines02.xlsx
 t/regression/xlsx_files/chart_drop_lines03.xlsx
@@ -972,6 +1000,7 @@ t/regression/xlsx_files/chart_pie01.xlsx
 t/regression/xlsx_files/chart_pie02.xlsx
 t/regression/xlsx_files/chart_pie03.xlsx
 t/regression/xlsx_files/chart_pie04.xlsx
+t/regression/xlsx_files/chart_pie05.xlsx
 t/regression/xlsx_files/chart_points01.xlsx
 t/regression/xlsx_files/chart_points02.xlsx
 t/regression/xlsx_files/chart_points03.xlsx
@@ -1048,6 +1077,7 @@ t/regression/xlsx_files/data_validation03.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
 t/regression/xlsx_files/date_examples01.xlsx
+t/regression/xlsx_files/default_format01.xlsx
 t/regression/xlsx_files/default_row01.xlsx
 t/regression/xlsx_files/default_row02.xlsx
 t/regression/xlsx_files/default_row03.xlsx
@@ -1064,6 +1094,14 @@ t/regression/xlsx_files/escapes05.xlsx
 t/regression/xlsx_files/escapes06.xlsx
 t/regression/xlsx_files/escapes07.xlsx
 t/regression/xlsx_files/escapes08.xlsx
+t/regression/xlsx_files/excel2003_style01.xlsx
+t/regression/xlsx_files/excel2003_style02.xlsx
+t/regression/xlsx_files/excel2003_style03.xlsx
+t/regression/xlsx_files/excel2003_style04.xlsx
+t/regression/xlsx_files/excel2003_style05.xlsx
+t/regression/xlsx_files/excel2003_style06.xlsx
+t/regression/xlsx_files/excel2003_style07.xlsx
+t/regression/xlsx_files/excel2003_style08.xlsx
 t/regression/xlsx_files/filehandle01.xlsx
 t/regression/xlsx_files/firstsheet01.xlsx
 t/regression/xlsx_files/fit_to_pages01.xlsx

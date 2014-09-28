@@ -5,7 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
-0.78 2014-XX-XX
+0.78 2014-09-28
+
+    + Added Doughnut chart with set_rotation() and set_hole_size()
+      methods.
+
+    + Added set_rotation() method to Pie charts.
 
     + Added set_calc_mode() method to control automatic calculation of
       formulas when worksheet is opened.

@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.77 of Excel::Writer::XLSX, released May 6, 2014.
+This document refers to version 0.78 of Excel::Writer::XLSX, released September 28, 2014.
 
 
 
@@ -301,6 +301,7 @@ The available types are:
     column
     line
     pie
+    doughnut
     scatter
     stock
 
@@ -933,7 +934,7 @@ See the C<rich_strings.pl> example in the distro for more examples.
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/rich_strings.jpg" width="640" height="420" alt="Output from rich_strings.pl" /></center></p>
 
 =end html
 
@@ -4057,7 +4058,7 @@ A typical use case might be to restrict data in a cell to integer values in a ce
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/validation_example.jpg" alt="The output from the above example"/></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/validation_example.jpg" alt="The output from the above example"/></center></p>
 
 =end html
 
@@ -4457,7 +4458,7 @@ For example the following criteria is used to highlight cells >= 50 in red in th
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_example.jpg" alt="The output from the above example"/></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/conditional_example.jpg" alt="The output from the above example"/></center></p>
 
 =end html
 
@@ -5098,7 +5099,7 @@ In Excel::Writer::XLSX Sparklines can be added to cells using the C<add_sparklin
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/sparklines1.jpg" alt="Sparklines example."/></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/sparklines1.jpg" alt="Sparklines example."/></center></p>
 
 =end html
 
@@ -5379,7 +5380,7 @@ Tables in Excel are a way of grouping a range of cells into a single entity that
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/tables.jpg" width="640" height="420" alt="Output from tables.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/tables.jpg" width="640" height="420" alt="Output from tables.pl" /></center></p>
 
 =end html
 
@@ -5803,7 +5804,7 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/a_simple.jpg" width="640" height="420" alt="Output from a_simple.pl" /></center></p>
 
 =end html
 
@@ -5856,7 +5857,7 @@ The following is a general example which demonstrates some features of working w
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/regions.jpg" width="640" height="420" alt="Output from regions.pl" /></center></p>
 
 =end html
 
@@ -5939,7 +5940,7 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
 =begin html
 
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/conditional_format.jpg" width="640" height="420" alt="Output from conditional_format.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/conditional_format.jpg" width="640" height="420" alt="Output from conditional_format.pl" /></center></p>
 
 
 =end html
@@ -6015,7 +6016,7 @@ The following is a simple example of using functions.
 
 =begin html
 
-<p><center><img src="http://jmcnamara.github.com/excel-writer-xlsx/images/examples/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/stats.jpg" width="640" height="420" alt="Output from stats.pl" /></center></p>
 
 =end html
 
@@ -6087,6 +6088,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_column.pl         A demo of column (histogram) style charts.
     chart_line.pl           A demo of line style charts.
     chart_pie.pl            A demo of pie style charts.
+    chart_doughnut.pl       A demo of dougnut style charts.
     chart_radar.pl          A demo of radar style charts.
     chart_scatter.pl        A demo of scatter style charts.
     chart_secondary_axis.pl A demo of a line chart with a secondary axis.

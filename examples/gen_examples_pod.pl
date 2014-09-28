@@ -260,7 +260,7 @@ sub print_image_html {
 
     return unless exists $images{$image};
 
-    my $url    = 'http://jmcnamara.github.com/excel-writer-xlsx/images/examples';
+    my $url    = 'http://jmcnamara.github.io/excel-writer-xlsx/images/examples';
     my $width  = 640;
     my $height = 420;
 
@@ -290,6 +290,7 @@ chart_bar.jpg
 chart_column.jpg
 chart_line.jpg
 chart_pie.jpg
+chart_doughnut.jpg
 chart_radar.jpg
 chart_scatter.jpg
 chart_secondary_axis.jpg
