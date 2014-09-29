@@ -87,7 +87,7 @@ $worksheet->insert_chart( 'C18', $chart2, 25, 10 );
 # Create an example Pie chart like above.
 my $chart3 = $workbook->add_chart( type => 'pie', embedded => 1 );
 
-# Configure the series and add user defined segment colours.
+# Configure the series.
 $chart3->add_series(
     name       => 'Pie sales data',
     categories => '=Sheet1!$A$2:$A$4',

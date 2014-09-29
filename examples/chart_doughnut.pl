@@ -87,7 +87,7 @@ $worksheet->insert_chart( 'C18', $chart2, 25, 10 );
 # Create an example Doughnut chart like above.
 my $chart3 = $workbook->add_chart( type => 'doughnut', embedded => 1 );
 
-# Configure the series and add user defined segment colours.
+# Configure the series.
 $chart3->add_series(
     name       => 'Doughnut sales data',
     categories => '=Sheet1!$A$2:$A$4',
@@ -111,7 +111,7 @@ $worksheet->insert_chart( 'C34', $chart3, 25, 10 );
 # Create an example Doughnut chart like above.
 my $chart4 = $workbook->add_chart( type => 'doughnut', embedded => 1 );
 
-# Configure the series and add user defined segment colours.
+# Configure the series.
 $chart4->add_series(
     name       => 'Doughnut sales data',
     categories => '=Sheet1!$A$2:$A$4',
@@ -121,7 +121,7 @@ $chart4->add_series(
 # Add a title.
 $chart4->set_title( name => 'Doughnut Chart with user defined hole size' );
 
-# Change the angle/rotation of the first segment.
+# Change the hole size.
 $chart4->set_hole_size(33);
 
 # Insert the chart into the worksheet (with an offset).
