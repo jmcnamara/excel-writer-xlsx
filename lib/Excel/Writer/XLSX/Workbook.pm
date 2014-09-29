@@ -1516,15 +1516,35 @@ sub _prepare_drawings {
         my $chart_count = scalar @{ $sheet->{_charts} };
         my $image_count = scalar @{ $sheet->{_images} };
         my $shape_count = scalar @{ $sheet->{_shapes} };
-        next unless ( $chart_count + $image_count + $shape_count );
 
-        $drawing_id++;
+        my $header_image_count = scalar @{ $sheet->{_header_images} };
+        my $footer_image_count = scalar @{ $sheet->{_footer_images} };
+        my $has_drawing = 0;
 
+
+        # Check that some image or drawing needs to be processed.
+        if (   !$chart_count
+            && !$image_count
+            && !$shape_count
+            && !$header_image_count
+            && !$footer_image_count )
+        {
+            next;
+        }
+
+        # Don't increase the drawing_id header/footer images.
+        if ( $chart_count || $image_count || $shape_count ) {
+            $drawing_id++;
+            $has_drawing = 1;
+        }
+
+        # Prepare the worksheet charts.
         for my $index ( 0 .. $chart_count - 1 ) {
             $chart_ref_id++;
             $sheet->_prepare_chart( $index, $chart_ref_id, $drawing_id );
         }
 
+        # Prepare the worksheet images.
         for my $index ( 0 .. $image_count - 1 ) {
 
             my $filename = $sheet->{_images}->[$index]->[2];
@@ -1538,12 +1558,46 @@ sub _prepare_drawings {
                 $height, $name, $type );
         }
 
+        # Prepare the worksheet shapes.
         for my $index ( 0 .. $shape_count - 1 ) {
             $sheet->_prepare_shape( $index, $drawing_id );
         }
 
-        my $drawing = $sheet->{_drawing};
-        push @{ $self->{_drawings} }, $drawing;
+        # Prepare the header images.
+        for my $index ( 0 .. $header_image_count - 1 ) {
+
+            my $filename = $sheet->{_header_images}->[$index]->[0];
+            my $position = $sheet->{_header_images}->[$index]->[1];
+
+            my ( $image_id, $type, $width, $height, $name ) =
+              $self->_get_image_properties( $filename );
+
+            $image_ref_id++;
+
+            $sheet->_prepare_header_image( $image_ref_id, $width, $height,
+                $name, $type, $position );
+        }
+
+        # Prepare the footer images.
+        for my $index ( 0 .. $footer_image_count - 1 ) {
+
+            my $filename = $sheet->{_footer_images}->[$index]->[0];
+            my $position = $sheet->{_footer_images}->[$index]->[1];
+
+            my ( $image_id, $type, $width, $height, $name ) =
+              $self->_get_image_properties( $filename );
+
+            $image_ref_id++;
+
+            $sheet->_prepare_header_image( $image_ref_id, $width, $height,
+                $name, $type, $position );
+        }
+
+
+        if ($has_drawing) {
+            my $drawing = $sheet->{_drawing};
+            push @{ $self->{_drawings} }, $drawing;
+        }
     }
 
     # Sort the workbook charts references into the order that the were
@@ -1571,25 +1625,39 @@ sub _prepare_vml_objects {
     my $comment_id     = 0;
     my $vml_drawing_id = 0;
     my $vml_data_id    = 1;
+    my $vml_header_id  = 0;
     my $vml_shape_id   = 1024;
     my $vml_files      = 0;
     my $comment_files  = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
-        next unless $sheet->{_has_vml};
-        $vml_files++;
-        $comment_files++ if $sheet->{_has_comments};
-        $comment_id++    if $sheet->{_has_comments};
-        $vml_drawing_id++;
+        next if !$sheet->{_has_vml} and !$sheet->{_has_header_vml};
+        $vml_files = 1;
 
-        my $count =
-          $sheet->_prepare_vml_objects( $vml_data_id, $vml_shape_id,
-            $vml_drawing_id, $comment_id );
 
-        # Each VML file should start with a shape id incremented by 1024.
-        $vml_data_id  += 1 * int(    ( 1024 + $count ) / 1024 );
-        $vml_shape_id += 1024 * int( ( 1024 + $count ) / 1024 );
+        if ( $sheet->{_has_vml} ) {
+
+            $comment_files++ if $sheet->{_has_comments};
+            $comment_id++    if $sheet->{_has_comments};
+            $vml_drawing_id++;
+
+            my $count =
+              $sheet->_prepare_vml_objects( $vml_data_id, $vml_shape_id,
+                $vml_drawing_id, $comment_id );
+
+            # Each VML file should start with a shape id incremented by 1024.
+            $vml_data_id  += 1 * int(    ( 1024 + $count ) / 1024 );
+            $vml_shape_id += 1024 * int( ( 1024 + $count ) / 1024 );
+
+        }
+
+        if ( $sheet->{_has_header_vml} ) {
+            $vml_header_id++;
+            $vml_drawing_id++;
+            $sheet->_prepare_header_vml_objects( $vml_header_id,
+                $vml_drawing_id );
+        }
     }
 
     $self->{_num_vml_files}     = $vml_files;
@@ -1840,20 +1908,21 @@ sub _get_image_properties {
     my $self     = shift;
     my $filename = shift;
 
+    # Note the $image_id, and @previous_images mechanism isn't currently used.
     my %images_seen;
     my @image_data;
     my @previous_images;
     my $image_id = 1;
+
     my $type;
     my $width;
     my $height;
     my $image_name;
 
+
     if ( not exists $images_seen{$filename} ) {
 
         ( $image_name ) = fileparse( $filename );
-
-        # TODO should also match seen images based on checksum.
 
         # Open the image file and import the data.
         my $fh = FileHandle->new( $filename );
@@ -1864,7 +1933,6 @@ sub _get_image_properties {
         my $data = do { local $/; <$fh> };
         my $size = length $data;
 
-        #my $checksum   = TODO.
 
         if ( unpack( 'x A3', $data ) eq 'PNG' ) {
 

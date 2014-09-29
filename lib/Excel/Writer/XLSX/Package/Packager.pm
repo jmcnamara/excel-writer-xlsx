@@ -284,21 +284,41 @@ sub _write_vml_files {
 
     my $index = 1;
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next unless $worksheet->{_has_vml};
 
-        my $vml = Excel::Writer::XLSX::Package::VML->new();
+        next if !$worksheet->{_has_vml} and !$worksheet->{_has_header_vml};
 
         _mkdir( $dir . '/xl' );
         _mkdir( $dir . '/xl/drawings' );
 
-        $vml->_set_xml_writer(
-            $dir . '/xl/drawings/vmlDrawing' . $index++ . '.vml' );
-        $vml->_assemble_xml_file(
-            $worksheet->{_vml_data_id},
-            $worksheet->{_vml_shape_id},
-            $worksheet->{_comments_array},
-            $worksheet->{_buttons_array},
-        );
+        if ( $worksheet->{_has_vml} ) {
+            my $vml = Excel::Writer::XLSX::Package::VML->new();
+
+            $vml->_set_xml_writer(
+                $dir . '/xl/drawings/vmlDrawing' . $index . '.vml' );
+            $vml->_assemble_xml_file(
+                $worksheet->{_vml_data_id},    $worksheet->{_vml_shape_id},
+                $worksheet->{_comments_array}, $worksheet->{_buttons_array},
+                undef
+            );
+
+            $index++;
+        }
+
+        if ( $worksheet->{_has_header_vml} ) {
+            my $vml = Excel::Writer::XLSX::Package::VML->new();
+
+            $vml->_set_xml_writer(
+                $dir . '/xl/drawings/vmlDrawing' . $index . '.vml' );
+            $vml->_assemble_xml_file(
+                $worksheet->{_vml_header_id},
+                $worksheet->{_vml_header_id} * 1024,
+                undef, undef, $worksheet->{_header_images_array}
+            );
+
+            $self->_write_vml_drawing_rels_file($worksheet, $index);
+
+            $index++;
+        }
     }
 }
 
@@ -786,6 +806,40 @@ sub _write_drawing_rels_files {
             $dir . '/xl/drawings/_rels/drawing' . $index . '.xml.rels' );
         $rels->_assemble_xml_file();
     }
+}
+
+
+###############################################################################
+#
+# _write_vml_drawing_rels_files()
+#
+# Write the vmlDdrawing .rels files for worksheets with images in header or
+# footers.
+#
+sub _write_vml_drawing_rels_file {
+
+    my $self      = shift;
+    my $worksheet = shift;
+    my $index     = shift;
+    my $dir       = $self->{_package_dir};
+
+
+    # Create the drawing .rels dir.
+    _mkdir( $dir . '/xl' );
+    _mkdir( $dir . '/xl/drawings' );
+    _mkdir( $dir . '/xl/drawings/_rels' );
+
+    my $rels = Excel::Writer::XLSX::Package::Relationships->new();
+
+    for my $drawing_data ( @{ $worksheet->{_vml_drawing_links} } ) {
+        $rels->_add_document_relationship( @$drawing_data );
+    }
+
+    # Create the .rels file such as /xl/drawings/_rels/vmlDrawing1.vml.rels.
+    $rels->_set_xml_writer(
+        $dir . '/xl/drawings/_rels/vmlDrawing' . $index . '.vml.rels' );
+    $rels->_assemble_xml_file();
+
 }
 
 

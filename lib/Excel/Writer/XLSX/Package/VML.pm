@@ -56,19 +56,21 @@ sub new {
 #
 sub _assemble_xml_file {
 
-    my $self          = shift;
-    my $data_id       = shift;
-    my $vml_shape_id  = shift;
-    my $comments_data = shift;
-    my $buttons_data  = shift;
-    my $z_index       = 1;
+    my $self               = shift;
+    my $data_id            = shift;
+    my $vml_shape_id       = shift;
+    my $comments_data      = shift;
+    my $buttons_data       = shift;
+    my $header_images_data = shift;
+    my $z_index            = 1;
+
 
     $self->_write_xml_namespace;
 
     # Write the o:shapelayout element.
     $self->_write_shapelayout( $data_id );
 
-    if ( defined $buttons_data && @$buttons_data) {
+    if ( defined $buttons_data && @$buttons_data ) {
 
         # Write the v:shapetype element.
         $self->_write_button_shapetype();
@@ -76,8 +78,7 @@ sub _assemble_xml_file {
         for my $button ( @$buttons_data ) {
 
             # Write the v:shape element.
-            $self->_write_button_shape( ++$vml_shape_id, $z_index++,
-                $button );
+            $self->_write_button_shape( ++$vml_shape_id, $z_index++, $button );
         }
     }
 
@@ -91,6 +92,19 @@ sub _assemble_xml_file {
             # Write the v:shape element.
             $self->_write_comment_shape( ++$vml_shape_id, $z_index++,
                 $comment );
+        }
+    }
+
+    if ( defined $header_images_data && @$header_images_data ) {
+
+        # Write the v:shapetype element.
+        $self->_write_image_shapetype();
+
+        my $index = 1;
+        for my $image ( @$header_images_data ) {
+
+            # Write the v:shape element.
+            $self->_write_image_shape( ++$vml_shape_id, $index++, $image );
         }
     }
 
@@ -139,6 +153,7 @@ sub _pixels_to_points {
 # XML writing methods.
 #
 ###############################################################################
+
 
 ###############################################################################
 #
@@ -279,6 +294,51 @@ sub _write_button_shapetype {
 
 ##############################################################################
 #
+# _write_image_shapetype()
+#
+# Write the <v:shapetype> element.
+#
+sub _write_image_shapetype {
+
+    my $self             = shift;
+    my $id               = '_x0000_t75';
+    my $coordsize        = '21600,21600';
+    my $spt              = 75;
+    my $o_preferrelative = 't';
+    my $path             = 'm@4@5l@4@11@9@11@9@5xe';
+    my $filled           = 'f';
+    my $stroked          = 'f';
+
+    my @attributes = (
+        'id'               => $id,
+        'coordsize'        => $coordsize,
+        'o:spt'            => $spt,
+        'o:preferrelative' => $o_preferrelative,
+        'path'             => $path,
+        'filled'           => $filled,
+        'stroked'          => $stroked,
+    );
+
+    $self->xml_start_tag( 'v:shapetype', @attributes );
+
+    # Write the v:stroke element.
+    $self->_write_stroke();
+
+    # Write the v:formulas element.
+    $self->_write_formulas();
+
+    # Write the v:path element.
+    $self->_write_image_path();
+
+    # Write the o:lock element.
+    $self->_write_aspect_ratio_lock();
+
+    $self->xml_end_tag( 'v:shapetype' );
+}
+
+
+##############################################################################
+#
 # _write_stroke()
 #
 # Write the <v:stroke> element.
@@ -340,6 +400,30 @@ sub _write_button_path {
     $self->xml_empty_tag( 'v:path', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_image_path()
+#
+# Write the <v:path> element.
+#
+sub _write_image_path {
+
+    my $self            = shift;
+    my $extrusionok     = 'f';
+    my $gradientshapeok = 't';
+    my $connecttype     = 'rect';
+
+    my @attributes = (
+        'o:extrusionok'   => $extrusionok,
+        'gradientshapeok' => $gradientshapeok,
+        'o:connecttype'   => $connecttype,
+    );
+
+    $self->xml_empty_tag( 'v:path', @attributes );
+}
+
+
 ##############################################################################
 #
 # _write_shapetype_lock()
@@ -381,6 +465,26 @@ sub _write_rotation_lock {
     $self->xml_empty_tag( 'o:lock', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_aspect_ratio_lock()
+#
+# Write the <o:lock> element.
+#
+sub _write_aspect_ratio_lock {
+
+    my $self        = shift;
+    my $ext         = 'edit';
+    my $aspectratio = 't';
+
+    my @attributes = (
+        'v:ext'       => $ext,
+        'aspectratio' => $aspectratio,
+    );
+
+    $self->xml_empty_tag( 'o:lock', @attributes );
+}
 
 ##############################################################################
 #
@@ -526,6 +630,61 @@ sub _write_button_shape {
     $self->xml_end_tag( 'v:shape' );
 }
 
+
+##############################################################################
+#
+# _write_image_shape()
+#
+# Write the <v:shape> element.
+#
+sub _write_image_shape {
+
+    my $self       = shift;
+    my $id         = shift;
+    my $index      = shift;
+    my $image_data = shift;
+    my $type       = '#_x0000_t75';
+
+    # Set the shape index.
+    $id = '_x0000_s' . $id;
+
+    # Get the image parameters
+    my $width    = $image_data->[0];
+    my $height   = $image_data->[1];
+    my $name     = $image_data->[2];
+    my $position = $image_data->[3];
+
+    $width  *= 0.75;
+    $height *= 0.75;
+
+    my $style =
+        'position:absolute;'
+      . 'margin-left:0;'
+      . 'margin-top:0;'
+      . 'width:'
+      . $width . 'pt;'
+      . 'height:'
+      . $height . 'pt;'
+      . 'z-index:'
+      . $index;
+
+    my @attributes = (
+        'id'     => $position,
+        'o:spid' => $id,
+        'type'   => $type,
+        'style'  => $style,
+    );
+
+    $self->xml_start_tag( 'v:shape', @attributes );
+
+    # Write the v:imagedata element.
+    $self->_write_imagedata( $index, $name );
+
+    # Write the o:lock element.
+    $self->_write_rotation_lock();
+
+    $self->xml_end_tag( 'v:shape' );
+}
 
 ##############################################################################
 #
@@ -940,6 +1099,73 @@ sub _write_fmla_macro {
     $self->xml_data_element( 'x:FmlaMacro', $data );
 }
 
+##############################################################################
+#
+# _write_imagedata()
+#
+# Write the <v:imagedata> element.
+#
+sub _write_imagedata {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $o_title = shift;
+
+    my @attributes = (
+        'o:relid' => 'rId' . $index,
+        'o:title' => $o_title,
+    );
+
+    $self->xml_empty_tag( 'v:imagedata', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_formulas()
+#
+# Write the <v:formulas> element.
+#
+sub _write_formulas {
+
+    my $self                 = shift;
+
+    $self->xml_start_tag( 'v:formulas' );
+
+    # Write the v:f elements.
+    $self->_write_f('if lineDrawn pixelLineWidth 0');
+    $self->_write_f('sum @0 1 0');
+    $self->_write_f('sum 0 0 @1');
+    $self->_write_f('prod @2 1 2');
+    $self->_write_f('prod @3 21600 pixelWidth');
+    $self->_write_f('prod @3 21600 pixelHeight');
+    $self->_write_f('sum @0 0 1');
+    $self->_write_f('prod @6 1 2');
+    $self->_write_f('prod @7 21600 pixelWidth');
+    $self->_write_f('sum @8 21600 0');
+    $self->_write_f('prod @7 21600 pixelHeight');
+    $self->_write_f('sum @10 21600 0');
+
+    $self->xml_end_tag( 'v:formulas' );
+}
+
+
+##############################################################################
+#
+# _write_f()
+#
+# Write the <v:f> element.
+#
+sub _write_f {
+
+    my $self = shift;
+    my $eqn  = shift;
+
+    my @attributes = ( 'eqn' => $eqn );
+
+    $self->xml_empty_tag( 'v:f', @attributes );
+}
 
 1;
 

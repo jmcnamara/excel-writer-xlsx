@@ -102,6 +102,8 @@ sub new {
     $self->{_header}                = '';
     $self->{_footer}                = '';
     $self->{_header_footer_aligns}  = 0;
+    $self->{_header_images}         = [];
+    $self->{_footer_images}         = [];
 
     $self->{_margin_left}   = 0.7;
     $self->{_margin_right}  = 0.7;
@@ -162,14 +164,16 @@ sub new {
     $self->{_table} = {};
     $self->{_merge} = [];
 
-    $self->{_has_vml}          = 0;
-    $self->{_has_comments}     = 0;
-    $self->{_comments}         = {};
-    $self->{_comments_array}   = [];
-    $self->{_comments_author}  = '';
-    $self->{_comments_visible} = 0;
-    $self->{_vml_shape_id}     = 1024;
-    $self->{_buttons_array}    = [];
+    $self->{_has_vml}             = 0;
+    $self->{_has_header_vml}      = 0;
+    $self->{_has_comments}        = 0;
+    $self->{_comments}            = {};
+    $self->{_comments_array}      = [];
+    $self->{_comments_author}     = '';
+    $self->{_comments_visible}    = 0;
+    $self->{_vml_shape_id}        = 1024;
+    $self->{_buttons_array}       = [];
+    $self->{_header_images_array} = [];
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -192,6 +196,7 @@ sub new {
     $self->{_external_vml_links}     = [];
     $self->{_external_table_links}   = [];
     $self->{_drawing_links}          = [];
+    $self->{_vml_drawing_links}      = [];
     $self->{_charts}                 = [];
     $self->{_images}                 = [];
     $self->{_tables}                 = [];
@@ -340,6 +345,9 @@ sub _assemble_xml_file {
 
     # Write the legacyDrawing element.
     $self->_write_legacy_drawing();
+
+    # Write the legacyDrawingHF element.
+    $self->_write_legacy_drawing_hf();
 
     # Write the tableParts element.
     $self->_write_table_parts();
@@ -827,8 +835,10 @@ sub set_paper {
 #
 sub set_header {
 
-    my $self = shift;
-    my $string = $_[0] || '';
+    my $self    = shift;
+    my $string  = $_[0] || '';
+    my $margin  = $_[1] || 0.3;
+    my $options = $_[2] || {};
 
     if ( length $string >= 255 ) {
         carp 'Header string must be less than 255 characters';
@@ -836,8 +846,26 @@ sub set_header {
     }
 
     $self->{_header}                = $string;
-    $self->{_margin_header}         = $_[1] || 0.3;
+    $self->{_margin_header}         = $margin;
     $self->{_header_footer_changed} = 1;
+
+    # Reset the array in case the function is called more than once.
+    $self->{_header_images} = [];
+
+    if ( $options->{image_left} ) {
+        push @{ $self->{_header_images} }, [$options->{image_left}, 'LH'];
+        $self->{_has_header_vml} = 1;
+    }
+
+    if ( $options->{image_center} ) {
+        push @{ $self->{_header_images} }, [$options->{image_center}, 'CH'];
+        $self->{_has_header_vml} = 1;
+    }
+
+    if ( $options->{image_right} ) {
+        push @{ $self->{_header_images} }, [$options->{image_right}, 'RH'];
+        $self->{_has_header_vml} = 1;
+    }
 }
 
 
@@ -849,8 +877,10 @@ sub set_header {
 #
 sub set_footer {
 
-    my $self = shift;
-    my $string = $_[0] || '';
+    my $self    = shift;
+    my $string  = $_[0] || '';
+    my $margin  = $_[1] || 0.3;
+    my $options = $_[2] || {};
 
     if ( length $string >= 255 ) {
         carp 'Footer string must be less than 255 characters';
@@ -858,8 +888,26 @@ sub set_footer {
     }
 
     $self->{_footer}                = $string;
-    $self->{_margin_footer}         = $_[1] || 0.3;
+    $self->{_margin_footer}         = $margin;
     $self->{_header_footer_changed} = 1;
+
+    # Reset the array in case the function is called more than once.
+    $self->{_footer_images} = [];
+
+    if ( $options->{image_left} ) {
+        push @{ $self->{_footer_images} }, [$options->{image_left}, 'LF'];
+        $self->{_has_header_vml} = 1;
+    }
+
+    if ( $options->{image_center} ) {
+        push @{ $self->{_footer_images} }, [$options->{image_center}, 'CF'];
+        $self->{_has_header_vml} = 1;
+    }
+
+    if ( $options->{image_right} ) {
+        push @{ $self->{_footer_images} }, [$options->{image_right}, 'RF'];
+        $self->{_has_header_vml} = 1;
+    }
 }
 
 
@@ -2039,7 +2087,7 @@ sub write_comment {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    $self->{_has_vml}     = 1;
+    $self->{_has_vml}      = 1;
     $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
@@ -5282,6 +5330,33 @@ sub _prepare_image {
 
 ###############################################################################
 #
+# _prepare_header_image()
+#
+# Set up an image without a drawing object for header/footer images.
+#
+sub _prepare_header_image {
+
+    my $self         = shift;
+    my $image_id     = shift;
+    my $width        = shift;
+    my $height       = shift;
+    my $name         = shift;
+    my $image_type   = shift;
+    my $position     = shift;
+
+    # Strip the extension from the filename.
+    $name =~ s/\.[^\.]+$//;
+
+    push @{ $self->{_header_images_array} },
+      [ $width, $height, $name, $position ];
+
+    push @{ $self->{_vml_drawing_links} },
+      [ '/image', '../media/image' . $image_id . '.' . $image_type ];
+}
+
+
+###############################################################################
+#
 # insert_shape( $row, $col, $shape, $x, $y, $x_scale, $y_scale )
 #
 # Insert a shape into the worksheet.
@@ -5605,10 +5680,8 @@ sub _prepare_vml_objects {
         }
     }
 
-
     push @{ $self->{_external_vml_links} },
       [ '/vmlDrawing', '../drawings/vmlDrawing' . $vml_drawing_id . '.vml' ];
-
 
     if ( $self->{_has_comments} ) {
 
@@ -5632,6 +5705,26 @@ sub _prepare_vml_objects {
 
     return $count;
 }
+
+
+###############################################################################
+#
+# _prepare_header_vml_objects()
+#
+# Set up external linkage for VML header/footer images.
+#
+sub _prepare_header_vml_objects {
+
+    my $self           = shift;
+    my $vml_header_id  = shift;
+    my $vml_drawing_id = shift;
+
+    $self->{_vml_header_id} = $vml_header_id;
+
+    push @{ $self->{_external_vml_links} },
+      [ '/vmlDrawing', '../drawings/vmlDrawing' . $vml_drawing_id . '.vml' ];
+}
+
 
 ###############################################################################
 #
@@ -8043,6 +8136,29 @@ sub _write_legacy_drawing {
     my @attributes = ( 'r:id' => 'rId' . $id );
 
     $self->xml_empty_tag( 'legacyDrawing', @attributes );
+}
+
+
+
+##############################################################################
+#
+# _write_legacy_drawing_hf()
+#
+# Write the <legacyDrawingHF> element.
+#
+sub _write_legacy_drawing_hf {
+
+    my $self = shift;
+    my $id;
+
+    return unless $self->{_has_header_vml};
+
+    # Increment the relationship id for any drawings or comments.
+    $id = ++$self->{_rel_count};
+
+    my @attributes = ( 'r:id' => 'rId' . $id );
+
+    $self->xml_empty_tag( 'legacyDrawingHF', @attributes );
 }
 
 

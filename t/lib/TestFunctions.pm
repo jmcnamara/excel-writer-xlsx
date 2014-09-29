@@ -242,7 +242,7 @@ sub _compare_xlsx_files {
         if ( $filename =~ m(xl/worksheets/sheet\d.xml) ) {
             $exp_xml_str =~ s/horizontalDpi="200" //;
             $exp_xml_str =~ s/verticalDpi="200" //;
-            $exp_xml_str =~ s/(<pageSetup.*) r:id="rId1"/$1/;
+            $exp_xml_str =~ s/(<pageSetup[^>]*) r:id="rId1"/$1/;
         }
 
         # Remove Chart pageMargin dimensions which are almost always different.
