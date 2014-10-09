@@ -2548,7 +2548,7 @@ sub _write_cat_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz,
             $x_axis->{_name_font}, $x_axis->{_layout} );
     }
     elsif ( $title = $x_axis->{_name} ) {
