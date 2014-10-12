@@ -54,8 +54,8 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new();
 
-    $self->{_filename}           = $_[0] || '';
-    my $options                  = $_[1] || {};
+    $self->{_filename} = $_[0] || '';
+    my $options = $_[1] || {};
 
     $self->{_tempdir}            = undef;
     $self->{_date_1904}          = 0;
@@ -523,7 +523,7 @@ sub add_format {
     }
 
     # Add the default format properties.
-    push @init_data, %{$self->{_default_format_properties}};
+    push @init_data, %{ $self->{_default_format_properties} };
 
     # Add the user defined properties.
     push @init_data, @_;
@@ -845,7 +845,7 @@ sub set_properties {
 #
 sub add_vba_project {
 
-    my $self = shift;
+    my $self        = shift;
     my $vba_project = shift;
 
     croak "No vbaProject.bin specified in add_vba_project()"
@@ -1519,7 +1519,7 @@ sub _prepare_drawings {
 
         my $header_image_count = scalar @{ $sheet->{_header_images} };
         my $footer_image_count = scalar @{ $sheet->{_footer_images} };
-        my $has_drawing = 0;
+        my $has_drawing        = 0;
 
 
         # Check that some image or drawing needs to be processed.
@@ -1549,13 +1549,16 @@ sub _prepare_drawings {
 
             my $filename = $sheet->{_images}->[$index]->[2];
 
-            my ( $image_id, $type, $width, $height, $name ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
               $self->_get_image_properties( $filename );
 
             $image_ref_id++;
 
-            $sheet->_prepare_image( $index, $image_ref_id, $drawing_id, $width,
-                $height, $name, $type );
+            $sheet->_prepare_image(
+                $index, $image_ref_id, $drawing_id,
+                $width, $height,       $name,
+                $type,  $x_dpi,        $y_dpi
+            );
         }
 
         # Prepare the worksheet shapes.
@@ -1569,7 +1572,7 @@ sub _prepare_drawings {
             my $filename = $sheet->{_header_images}->[$index]->[0];
             my $position = $sheet->{_header_images}->[$index]->[1];
 
-            my ( $image_id, $type, $width, $height, $name ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
               $self->_get_image_properties( $filename );
 
             $image_ref_id++;
@@ -1584,7 +1587,7 @@ sub _prepare_drawings {
             my $filename = $sheet->{_footer_images}->[$index]->[0];
             my $position = $sheet->{_footer_images}->[$index]->[1];
 
-            my ( $image_id, $type, $width, $height, $name ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
               $self->_get_image_properties( $filename );
 
             $image_ref_id++;
@@ -1594,7 +1597,7 @@ sub _prepare_drawings {
         }
 
 
-        if ($has_drawing) {
+        if ( $has_drawing ) {
             my $drawing = $sheet->{_drawing};
             push @{ $self->{_drawings} }, $drawing;
         }
@@ -1908,80 +1911,59 @@ sub _get_image_properties {
     my $self     = shift;
     my $filename = shift;
 
-    # Note the $image_id, and @previous_images mechanism isn't currently used.
-    my %images_seen;
-    my @image_data;
-    my @previous_images;
-    my $image_id = 1;
-
     my $type;
     my $width;
     my $height;
+    my $x_dpi = 96;
+    my $y_dpi = 96;
     my $image_name;
 
 
-    if ( not exists $images_seen{$filename} ) {
+    ( $image_name ) = fileparse( $filename );
 
-        ( $image_name ) = fileparse( $filename );
+    # Open the image file and import the data.
+    my $fh = FileHandle->new( $filename );
+    croak "Couldn't import $filename: $!" unless defined $fh;
+    binmode $fh;
 
-        # Open the image file and import the data.
-        my $fh = FileHandle->new( $filename );
-        croak "Couldn't import $filename: $!" unless defined $fh;
-        binmode $fh;
-
-        # Slurp the file into a string and do some size calcs.
-        my $data = do { local $/; <$fh> };
-        my $size = length $data;
+    # Slurp the file into a string and do some size calcs.
+    my $data = do { local $/; <$fh> };
+    my $size = length $data;
 
 
-        if ( unpack( 'x A3', $data ) eq 'PNG' ) {
+    if ( unpack( 'x A3', $data ) eq 'PNG' ) {
 
-            # Test for PNGs.
-            ( $type, $width, $height ) = $self->_process_png( $data );
-            $self->{_image_types}->{png} = 1;
-        }
-        elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
+        # Test for PNGs.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          $self->_process_png( $data, $filename );
 
-            # Test for JPEG files.
-            ( $type, $width, $height ) =
-              $self->_process_jpg( $data, $filename );
+        $self->{_image_types}->{png} = 1;
+    }
+    elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
 
-            $self->{_image_types}->{jpeg} = 1;
+        # Test for JPEG files.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          $self->_process_jpg( $data, $filename );
 
-        }
-        elsif ( unpack( 'A2', $data ) eq 'BM' ) {
+        $self->{_image_types}->{jpeg} = 1;
+    }
+    elsif ( unpack( 'A2', $data ) eq 'BM' ) {
 
-            # Test for BMPs.
-            ( $type, $width, $height ) =
-              $self->_process_bmp( $data, $filename );
+        # Test for BMPs.
+        ( $type, $width, $height ) = $self->_process_bmp( $data, $filename );
 
-            $self->{_image_types}->{bmp} = 1;
-        }
-        else {
-
-            # TODO. Add Image::Size to support other types.
-            croak "Unsupported image format for file: $filename\n";
-        }
-
-        push @{ $self->{_images} }, [ $filename, $type ];
-
-        # Also store new data for use in duplicate images.
-        push @previous_images, [ $image_id, $type, $width, $height ];
-        $images_seen{$filename} = $image_id++;
-
-        $fh->close;
+        $self->{_image_types}->{bmp} = 1;
     }
     else {
-
-        # We've processed this file already.
-        my $index = $images_seen{$filename} - 1;
-
-        # Increase image reference count.
-        $image_data[$index]->[0]++;
-
+        croak "Unsupported image format for file: $filename\n";
     }
 
-    return ( $image_id, $type, $width, $height, $image_name );
+    push @{ $self->{_images} }, [ $filename, $type ];
+
+
+    $fh->close;
+
+    return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi );
 }
 
 
@@ -1993,13 +1975,52 @@ sub _get_image_properties {
 #
 sub _process_png {
 
-    my $self = shift;
+    my $self     = shift;
+    my $data     = $_[0];
+    my $filename = $_[1];
 
     my $type   = 'png';
-    my $width  = unpack "N", substr $_[0], 16, 4;
-    my $height = unpack "N", substr $_[0], 20, 4;
+    my $width  = 0;
+    my $height = 0;
+    my $x_dpi  = 96;
+    my $y_dpi  = 96;
 
-    return ( $type, $width, $height );
+    my $offset      = 8;
+    my $data_length = length $data;
+
+    # Search through the image data to read the height and width in th the
+    # IHDR element. Also read the DPI in the pHYs element.
+    while ( $offset < $data_length ) {
+
+        my $length = unpack "N",  substr $data, $offset + 0, 4;
+        my $type   = unpack "A4", substr $data, $offset + 4, 4;
+
+        if ( $type eq "IHDR" ) {
+            $width  = unpack "N", substr $data, $offset + 8,  4;
+            $height = unpack "N", substr $data, $offset + 12, 4;
+        }
+
+        if ( $type eq "pHYs" ) {
+            my $x_ppu = unpack "N", substr $data, $offset + 8,  4;
+            my $y_ppu = unpack "N", substr $data, $offset + 12, 4;
+            my $units = unpack "C", substr $data, $offset + 16, 1;
+
+            if ( $units == 1 ) {
+                $x_dpi = $x_ppu * 0.0254;
+                $y_dpi = $y_ppu * 0.0254;
+            }
+        }
+
+        $offset = $offset + $length + 12;
+
+        last if $type eq "IEND";
+    }
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in png image.\n";
+    }
+
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
 }
 
 
@@ -2071,23 +2092,40 @@ sub _process_jpg {
     my $data     = $_[0];
     my $filename = $_[1];
     my $type     = 'jpeg';
+    my $x_dpi    = 96;
+    my $y_dpi    = 96;
     my $width;
     my $height;
 
     my $offset      = 2;
     my $data_length = length $data;
 
-    # Search through the image data to find the 0xFFC0 marker. The height and
-    # width are contained in the data for that sub element.
+    # Search through the image data to read the height and width in th the
+    # 0xFFC0/C2 element. Also read the DPI in the 0xFFE0 element.
     while ( $offset < $data_length ) {
 
-        my $marker = unpack "n", substr $data, $offset, 2;
+        my $marker = unpack "n", substr $data, $offset + 0, 2;
         my $length = unpack "n", substr $data, $offset + 2, 2;
 
         if ( $marker == 0xFFC0 || $marker == 0xFFC2 ) {
             $height = unpack "n", substr $data, $offset + 5, 2;
             $width  = unpack "n", substr $data, $offset + 7, 2;
-            last;
+        }
+
+        if ( $marker == 0xFFE0 ) {
+            my $units     = unpack "C", substr $data, $offset + 11, 1;
+            my $x_density = unpack "n", substr $data, $offset + 12, 2;
+            my $y_density = unpack "n", substr $data, $offset + 14, 2;
+
+            if ( $units == 1 ) {
+                $x_dpi = $x_density;
+                $y_dpi = $y_density;
+            }
+
+            if ( $units == 2 ) {
+                $x_dpi = $x_density * 2.54;
+                $y_dpi = $y_density * 2.54;
+            }
         }
 
         $offset = $offset + $length + 2;
@@ -2098,7 +2136,7 @@ sub _process_jpg {
         croak "$filename: no size data found in jpeg image.\n";
     }
 
-    return ( $type, $width, $height );
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
 }
 
 
@@ -2282,7 +2320,7 @@ sub _write_workbook_view {
     push @attributes, ( tabRatio => $tab_ratio ) if $tab_ratio != 500;
 
     # Store the firstSheet attribute when it isn't the default.
-    push @attributes, ( firstSheet => $first_sheet +1 ) if $first_sheet > 0;
+    push @attributes, ( firstSheet => $first_sheet + 1 ) if $first_sheet > 0;
 
     # Store the activeTab attribute when it isn't the first sheet.
     push @attributes, ( activeTab => $active_tab ) if $active_tab > 0;

@@ -4672,7 +4672,7 @@ sub _check_dimensions {
 #   |  1  |(A1)._______|______      |
 #   |     |    |              |     |
 #   |     |    |              |     |
-#   +-----+----|    BITMAP    |-----+
+#   +-----+----|    Object    |-----+
 #   |     |    |              |     |
 #   |  2  |    |______________.     |
 #   |     |            |        (B2)|
@@ -4810,6 +4810,8 @@ sub _position_object_pixels {
 sub _position_object_emus {
 
     my $self       = shift;
+    my $x_dpi      = $_[6];
+    my $y_dpi      = $_[7];
 
     my (
         $col_start, $row_start, $x1, $y1,
@@ -5130,7 +5132,7 @@ sub _prepare_chart {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height );
+        $height, 96, 96 );
 
     # Set the chart name for the embedded object if it has been specified.
     my $name = $chart->{_chart_name};
@@ -5287,6 +5289,8 @@ sub _prepare_image {
     my $height       = shift;
     my $name         = shift;
     my $image_type   = shift;
+    my $x_dpi        = shift;
+    my $y_dpi        = shift;
     my $drawing_type = 2;
     my $drawing;
 
@@ -5296,9 +5300,12 @@ sub _prepare_image {
     $width  *= $x_scale;
     $height *= $y_scale;
 
+    $width  *= 96 / $x_dpi;
+    $height *= 96 / $y_dpi;
+
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height );
+        $height, $x_dpi, $y_dpi );
 
     # Convert from pixels to emus.
     $width  = int( 0.5 + ( $width * 9_525 ) );
