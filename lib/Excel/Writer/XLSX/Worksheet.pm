@@ -4810,8 +4810,6 @@ sub _position_object_pixels {
 sub _position_object_emus {
 
     my $self       = shift;
-    my $x_dpi      = $_[6];
-    my $y_dpi      = $_[7];
 
     my (
         $col_start, $row_start, $x1, $y1,
@@ -5132,7 +5130,7 @@ sub _prepare_chart {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height, 96, 96 );
+        $height);
 
     # Set the chart name for the embedded object if it has been specified.
     my $name = $chart->{_chart_name};
@@ -5305,7 +5303,7 @@ sub _prepare_image {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height, $x_dpi, $y_dpi );
+        $height);
 
     # Convert from pixels to emus.
     $width  = int( 0.5 + ( $width * 9_525 ) );
@@ -5343,19 +5341,21 @@ sub _prepare_image {
 #
 sub _prepare_header_image {
 
-    my $self         = shift;
-    my $image_id     = shift;
-    my $width        = shift;
-    my $height       = shift;
-    my $name         = shift;
-    my $image_type   = shift;
-    my $position     = shift;
+    my $self       = shift;
+    my $image_id   = shift;
+    my $width      = shift;
+    my $height     = shift;
+    my $name       = shift;
+    my $image_type = shift;
+    my $position   = shift;
+    my $x_dpi      = shift;
+    my $y_dpi      = shift;
 
     # Strip the extension from the filename.
     $name =~ s/\.[^\.]+$//;
 
     push @{ $self->{_header_images_array} },
-      [ $width, $height, $name, $position ];
+      [ $width, $height, $name, $position, $x_dpi, $y_dpi ];
 
     push @{ $self->{_vml_drawing_links} },
       [ '/image', '../media/image' . $image_id . '.' . $image_type ];

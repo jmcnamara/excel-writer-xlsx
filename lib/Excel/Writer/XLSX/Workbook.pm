@@ -1578,7 +1578,7 @@ sub _prepare_drawings {
             $image_ref_id++;
 
             $sheet->_prepare_header_image( $image_ref_id, $width, $height,
-                $name, $type, $position );
+                $name, $type, $position, $x_dpi, $y_dpi );
         }
 
         # Prepare the footer images.
@@ -1593,7 +1593,7 @@ sub _prepare_drawings {
             $image_ref_id++;
 
             $sheet->_prepare_header_image( $image_ref_id, $width, $height,
-                $name, $type, $position );
+                $name, $type, $position, $x_dpi, $y_dpi );
         }
 
 
@@ -1988,7 +1988,7 @@ sub _process_png {
     my $offset      = 8;
     my $data_length = length $data;
 
-    # Search through the image data to read the height and width in th the
+    # Search through the image data to read the height and width in the
     # IHDR element. Also read the DPI in the pHYs element.
     while ( $offset < $data_length ) {
 
@@ -2100,7 +2100,7 @@ sub _process_jpg {
     my $offset      = 2;
     my $data_length = length $data;
 
-    # Search through the image data to read the height and width in th the
+    # Search through the image data to read the height and width in the
     # 0xFFC0/C2 element. Also read the DPI in the 0xFFE0 element.
     while ( $offset < $data_length ) {
 

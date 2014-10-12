@@ -653,9 +653,16 @@ sub _write_image_shape {
     my $height   = $image_data->[1];
     my $name     = $image_data->[2];
     my $position = $image_data->[3];
+    my $x_dpi    = $image_data->[4];
+    my $y_dpi    = $image_data->[5];
 
-    $width  *= 0.75;
-    $height *= 0.75;
+    # Scale the height/width by the resolution, relative to 72dpi.
+    $width  = $width  * 72 / $x_dpi;
+    $height = $height * 72 / $y_dpi;
+
+    # Excel uses a rounding based around 72 and 96 dpi.
+    $width  = 72/96 * int($width  * 96/72 + 0.25);
+    $height = 72/96 * int($height * 96/72 + 0.25);
 
     my $style =
         'position:absolute;'
