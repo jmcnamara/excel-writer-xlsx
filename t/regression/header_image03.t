@@ -36,7 +36,7 @@ my $worksheet = $workbook->add_worksheet();
 
 
 $worksheet->set_header(
-    '&L&G&C&G&R&G',
+    '&L&[Picture]&C&G&R&[Picture]',
     undef,
     {
         image_left   => $dir . 'images/red.jpg',

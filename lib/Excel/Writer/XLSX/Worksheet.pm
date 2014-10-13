@@ -840,32 +840,48 @@ sub set_header {
     my $margin  = $_[1] || 0.3;
     my $options = $_[2] || {};
 
+
+    # Replace the Excel placeholder &[Picture] with the internal &G.
+    $string =~ s/&\[Picture\]/&G/g;
+
     if ( length $string >= 255 ) {
         carp 'Header string must be less than 255 characters';
         return;
     }
 
-    $self->{_header}                = $string;
-    $self->{_margin_header}         = $margin;
-    $self->{_header_footer_changed} = 1;
 
     # Reset the array in case the function is called more than once.
     $self->{_header_images} = [];
 
     if ( $options->{image_left} ) {
-        push @{ $self->{_header_images} }, [$options->{image_left}, 'LH'];
-        $self->{_has_header_vml} = 1;
+        push @{ $self->{_header_images} }, [ $options->{image_left}, 'LH' ];
     }
 
     if ( $options->{image_center} ) {
-        push @{ $self->{_header_images} }, [$options->{image_center}, 'CH'];
-        $self->{_has_header_vml} = 1;
+        push @{ $self->{_header_images} }, [ $options->{image_center}, 'CH' ];
     }
 
     if ( $options->{image_right} ) {
-        push @{ $self->{_header_images} }, [$options->{image_right}, 'RH'];
+        push @{ $self->{_header_images} }, [ $options->{image_right}, 'RH' ];
+    }
+
+    my $placeholder_count = () = $string =~ /&G/g;
+    my $image_count = @{ $self->{_header_images} };
+
+    if ( $image_count != $placeholder_count ) {
+        warn "Number of header images ($image_count) doesn't match placeholder "
+          . "count ($placeholder_count) in string: $string\n";
+        $self->{_header_images} = [];
+        return;
+    }
+
+    if ( $image_count ) {
         $self->{_has_header_vml} = 1;
     }
+
+    $self->{_header}                = $string;
+    $self->{_margin_header}         = $margin;
+    $self->{_header_footer_changed} = 1;
 }
 
 
@@ -882,32 +898,48 @@ sub set_footer {
     my $margin  = $_[1] || 0.3;
     my $options = $_[2] || {};
 
+
+    # Replace the Excel placeholder &[Picture] with the internal &G.
+    $string =~ s/&\[Picture\]/&G/g;
+
     if ( length $string >= 255 ) {
         carp 'Footer string must be less than 255 characters';
         return;
     }
 
-    $self->{_footer}                = $string;
-    $self->{_margin_footer}         = $margin;
-    $self->{_header_footer_changed} = 1;
 
     # Reset the array in case the function is called more than once.
     $self->{_footer_images} = [];
 
     if ( $options->{image_left} ) {
-        push @{ $self->{_footer_images} }, [$options->{image_left}, 'LF'];
-        $self->{_has_header_vml} = 1;
+        push @{ $self->{_footer_images} }, [ $options->{image_left}, 'LF' ];
     }
 
     if ( $options->{image_center} ) {
-        push @{ $self->{_footer_images} }, [$options->{image_center}, 'CF'];
-        $self->{_has_header_vml} = 1;
+        push @{ $self->{_footer_images} }, [ $options->{image_center}, 'CF' ];
     }
 
     if ( $options->{image_right} ) {
-        push @{ $self->{_footer_images} }, [$options->{image_right}, 'RF'];
+        push @{ $self->{_footer_images} }, [ $options->{image_right}, 'RF' ];
+    }
+
+    my $placeholder_count = () = $string =~ /&G/g;
+    my $image_count = @{ $self->{_footer_images} };
+
+    if ( $image_count != $placeholder_count ) {
+        warn "Number of footer images ($image_count) doesn't match placeholder "
+          . "count ($placeholder_count) in string: $string\n";
+        $self->{_footer_images} = [];
+        return;
+    }
+
+    if ( $image_count ) {
         $self->{_has_header_vml} = 1;
     }
+
+    $self->{_footer}                = $string;
+    $self->{_margin_footer}         = $margin;
+    $self->{_header_footer_changed} = 1;
 }
 
 
