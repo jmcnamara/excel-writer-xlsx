@@ -101,7 +101,8 @@ sub new {
     $self->{_header_footer_changed} = 0;
     $self->{_header}                = '';
     $self->{_footer}                = '';
-    $self->{_header_footer_aligns}  = 0;
+    $self->{_header_footer_aligns}  = 1;
+    $self->{_header_footer_scales}  = 1;
     $self->{_header_images}         = [];
     $self->{_footer_images}         = [];
 
@@ -231,7 +232,7 @@ sub new {
         $self->{_margin_bottom}        = 1;
         $self->{_margin_header}        = 0.5;
         $self->{_margin_footer}        = 0.5;
-        $self->{_header_footer_aligns} = 1;
+        $self->{_header_footer_aligns} = 0;
     }
 
     bless $self, $class;
@@ -849,6 +850,13 @@ sub set_header {
         return;
     }
 
+    if ( defined $options->{align_with_margins} ) {
+        $self->{_header_footer_aligns} = $options->{align_with_margins};
+    }
+
+    if ( defined $options->{scale_with_doc} ) {
+        $self->{_header_footer_scales} = $options->{scale_with_doc};
+    }
 
     # Reset the array in case the function is called more than once.
     $self->{_header_images} = [];
@@ -907,6 +915,13 @@ sub set_footer {
         return;
     }
 
+    if ( defined $options->{align_with_margins} ) {
+        $self->{_header_footer_aligns} = $options->{align_with_margins};
+    }
+
+    if ( defined $options->{scale_with_doc} ) {
+        $self->{_header_footer_scales} = $options->{scale_with_doc};
+    }
 
     # Reset the array in case the function is called more than once.
     $self->{_footer_images} = [];
@@ -7315,13 +7330,16 @@ sub _write_print_options {
 #
 sub _write_header_footer {
 
-    my $self = shift;
+    my $self       = shift;
     my @attributes = ();
 
-    if ($self->{_header_footer_aligns}) {
-        push @attributes,( 'alignWithMargins' => 0 );
+    if ( !$self->{_header_footer_scales} ) {
+        push @attributes, ( 'scaleWithDoc' => 0 );
     }
 
+    if ( !$self->{_header_footer_aligns} ) {
+        push @attributes, ( 'alignWithMargins' => 0 );
+    }
 
     if ( $self->{_header_footer_changed} ) {
         $self->xml_start_tag( 'headerFooter', @attributes );
