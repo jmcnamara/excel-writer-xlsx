@@ -5,6 +5,18 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.79 2014-10-16
+
+    + Added option to add images to headers and footers.
+
+    + Added option to not scale heaader/footer with page.
+
+    ! Fixed issue where non 96dpi images weren’t scaled properly in Excel.
+
+    ! Fix for issue where X axis title formula was overwritten by the
+      Y axis title.
+
+
 0.78 2014-09-28
 
     + Added Doughnut chart with set_rotation() and set_hole_size()

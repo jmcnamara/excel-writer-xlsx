@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.78';
+our $VERSION = '0.79';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.78 of Excel::Writer::XLSX, released September 28, 2014.
+This document refers to version 0.79 of Excel::Writer::XLSX, released October 16, 2014.
 
 
 
@@ -2583,6 +2583,9 @@ The available control character are:
     &X                                      Superscript
     &Y                                      Subscript
 
+    &[Picture]          Images              Image placeholder
+    &G                                      Same as &[Picture]
+
     &&                  Miscellaneous       Literal ampersand &
 
 
@@ -2652,6 +2655,11 @@ The information control characters act as variables that Excel will update as th
     |                                                               |
 
 
+Images can be inserted using the options shown below. Each image must have a placeholder in header string using the C<&[Picture]> or C<&G> control characters:
+
+    $worksheet->set_header( '&L&G', 0.3, { image_left => 'logo.jpg' });
+
+
 
 You can specify the font size of a section of the text by prefixing it with the control character C<&n> where C<n> is the font size:
 
@@ -2680,6 +2688,36 @@ As stated above the margin parameter is optional. As with the other margins the 
     $worksheet->set_header( '&CHello', 0.75 );
 
 The header and footer margins are independent of the top and bottom margins.
+
+The available optons are:
+
+=over
+
+=item * C<image_left> The path to the image. Requires a C<&G> or C<&[Picture]> placeholder.
+
+=item * C<image_center> Same as above.
+
+=item * C<image_right> Same as above.
+
+=item * C<scale_with_doc> Scale header with document. Defaults to true.
+
+=item * C<align_with_margins> Align header to margins. Defaults to true.
+
+=back
+
+The image options must have an accompanying C<&[Picture]> or C<&G> control
+character in the header string:
+
+    $worksheet->set_header(
+        '&L&[Picture]&C&[Picture]&R&[Picture]',
+        undef, # If you don't want to change the margin.
+        {
+            image_left   => 'red.jpg',
+            image_center => 'blue.jpg',
+            image_right  => 'yellow.jpg'
+        }
+      );
+
 
 Note, the header or footer string must be less than 255 characters. Strings longer than this will not be written and a warning will be generated.
 
