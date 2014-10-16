@@ -678,7 +678,7 @@ _is_deep_diff( $got, $expected, $caption );
 # Test 32 Date = 2008-07-24T
 #
 $worksheet = _new_worksheet( \$got );
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->data_validation(
     'B5',
@@ -705,7 +705,7 @@ _is_deep_diff( $got, $expected, $caption );
 # Test 33 Date between ranges.
 #
 $worksheet = _new_worksheet( \$got );
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->data_validation(
     'B5',
@@ -757,7 +757,7 @@ _is_deep_diff( $got, $expected, $caption );
 # Test 35 Time = T12:00:00
 #
 $worksheet = _new_worksheet( \$got );
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->data_validation(
     'B5',

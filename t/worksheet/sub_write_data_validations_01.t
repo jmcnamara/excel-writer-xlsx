@@ -189,7 +189,7 @@ $caption  = " \tWorksheet: _write_sheet_views()";
 $expected = '<dataValidations count="1"><dataValidation type="date" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="A6"><formula1>39448</formula1><formula2>39794</formula2></dataValidation></dataValidations>';
 
 $worksheet = _new_worksheet(\$got);
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 $worksheet->data_validation(
     'A6',

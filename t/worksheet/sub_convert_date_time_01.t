@@ -18,7 +18,7 @@ my $number;
 my $result;
 my $worksheet = _new_worksheet( \$got );
 
-$worksheet->{_1904} = 0;
+$worksheet->{_date_1904} = 0;
 
 # Set float difference limit to half of an Excel millisecond
 my $flt_delta = 0.5 / ( 24 * 60 * 60 * 1000 );
