@@ -4624,6 +4624,9 @@ sub _write_d_lbls {
     # Write the c:dLblPos element.
     $self->_write_d_lbl_pos( $labels->{position} ) if $labels->{position};
 
+    # Write the c:showLegendKey element.
+    $self->_write_show_legend_key() if $labels->{legend_key};
+
     # Write the c:showVal element.
     $self->_write_show_val() if $labels->{value};
 
@@ -4645,6 +4648,21 @@ sub _write_d_lbls {
     $self->xml_end_tag( 'c:dLbls' );
 }
 
+##############################################################################
+#
+# _write_show_legend_key()
+#
+# Write the <c:showLegendKey> element.
+#
+sub _write_show_legend_key {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:showLegendKey', @attributes );
+}
 
 ##############################################################################
 #
