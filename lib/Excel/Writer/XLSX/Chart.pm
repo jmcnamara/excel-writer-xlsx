@@ -107,6 +107,9 @@ sub new {
     $self->{_cross_between}     = 'between';
     $self->{_date_category}     = 0;
 
+    $self->{_label_positions}          = {};
+    $self->{_label_position_default}   = '';
+
     bless $self, $class;
     $self->_set_default_properties();
     return $self;
@@ -1305,26 +1308,17 @@ sub _get_labels_properties {
     # Map user defined label positions to Excel positions.
     if ( my $position = $labels->{position} ) {
 
-        my %positions = (
-            center      => 'ctr',
-            right       => 'r',
-            left        => 'l',
-            top         => 't',
-            above       => 't',
-            bottom      => 'b',
-            below       => 'b',
-            inside_base => 'inBase',
-            inside_end  => 'inEnd',
-            outside_end => 'outEnd',
-            best_fit    => 'bestFit',
-        );
-
-        if ( exists $positions{$position} ) {
-            $labels->{position} = $positions{$position};
+        if ( exists $self->{_label_positions}->{$position} ) {
+            if ($position eq $self->{_label_position_default}) {
+                $labels->{position} = undef;
+            }
+            else {
+                $labels->{position} = $self->{_label_positions}->{$position};
+            }
         }
         else {
-            carp "Unknown label position '$position'";
-            $labels->{position} = $positions{$position};
+            carp "Unsupported label position '$position' for this chart type";
+            return undef
         }
     }
 
@@ -6365,19 +6359,23 @@ The C<position> property is used to position the data label for a series.
         data_labels => { value => 1, position => 'center' },
     );
 
-Valid positions are:
+In Excel the data label positions vary for different chart types. The allowable positions are:
 
-    center
-    right
-    left
-    top
-    bottom
-    above           # Same as top
-    below           # Same as bottom
-    inside_base     # Mainly for Column/Bar charts.
-    inside_end      # Pie chart mainly.
-    outside_end     # Pie chart mainly.
-    best_fit        # Pie chart mainly.
+    |  Position     |  Line     |  Bar      |  Pie      |  Area     |
+    |               |  Scatter  |  Column   |  Doughnut |  Radar    |
+    |               |  Stock    |           |           |           |
+    |---------------|-----------|-----------|-----------|-----------|
+    |  center       |  Yes      |  Yes      |  Yes      |  Yes*     |
+    |  right        |  Yes*     |           |           |           |
+    |  left         |  Yes      |           |           |           |
+    |  above        |  Yes      |           |           |           |
+    |  below        |  Yes      |           |           |           |
+    |  inside_base  |           |  Yes      |           |           |
+    |  inside_end   |           |  Yes      |  Yes      |           |
+    |  outside_end  |           |  Yes*     |  Yes      |           |
+    |  best_fit     |           |           |  Yes*     |           |
+
+Note: The * indicates the default position for each chart type in Excel, if a position isn't specified.
 
 The C<percentage> property is used to turn on the display of data labels as a I<Percentage> for a series. It is mainly used for pie and doughnut charts.
 

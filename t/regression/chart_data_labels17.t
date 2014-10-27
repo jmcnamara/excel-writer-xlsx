@@ -73,7 +73,7 @@ $chart->add_series(
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$D$1:$D$5',
-    data_labels => { value => 1 },
+    data_labels => { value => 1, position => 'right' },
 );
 
 $worksheet->insert_chart( 'E9', $chart );

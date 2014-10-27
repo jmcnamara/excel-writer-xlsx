@@ -44,6 +44,19 @@ sub new {
     $self->set_x_axis();
     $self->set_x2_axis();
 
+    # Sset the available data label positions for this chart type.
+    $self->{_label_position_default} = 'right';
+    $self->{_label_positions} = {
+        center      => 'ctr',
+        right       => 'r',
+        left        => 'l',
+        above       => 't',
+        below       => 'b',
+        # For backward compatibility.
+        top         => 't',
+        bottom      => 'b',
+    };
+
     bless $self, $class;
     return $self;
 }
