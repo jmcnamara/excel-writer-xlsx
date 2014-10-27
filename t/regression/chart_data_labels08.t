@@ -51,7 +51,7 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
-    data_labels => { value => 1, postion => 'right' },
+    data_labels => { value => 1, position => 'right' },
 );
 
 $chart->add_series(

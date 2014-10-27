@@ -38,11 +38,10 @@ sub new {
     $self->{_vary_data_color} = 1;
     $self->{_rotation}        = 0;
 
-    # Sset the available data label positions for this chart type.
+    # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'best_fit';
     $self->{_label_positions} = {
         center      => 'ctr',
-        inside_base => 'inBase',
         inside_end  => 'inEnd',
         outside_end => 'outEnd',
         best_fit    => 'bestFit',

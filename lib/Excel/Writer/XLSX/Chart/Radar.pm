@@ -48,7 +48,7 @@ sub new {
     # Hardcode major_tick_mark for now until there is an accessor.
     $self->{_y_axis}->{_major_tick_mark} = 'cross';
 
-    # Sset the available data label positions for this chart type.
+    # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'center';
     $self->{_label_positions} = { center => 'ctr' };
 

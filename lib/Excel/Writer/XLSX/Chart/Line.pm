@@ -38,7 +38,7 @@ sub new {
     $self->{_default_marker} = { type => 'none' };
     $self->{_smooth_allowed} = 1;
 
-    # Sset the available data label positions for this chart type.
+    # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'right';
     $self->{_label_positions} = {
         center      => 'ctr',

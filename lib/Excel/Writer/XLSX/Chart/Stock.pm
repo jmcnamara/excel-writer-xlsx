@@ -44,7 +44,7 @@ sub new {
     $self->set_x_axis();
     $self->set_x2_axis();
 
-    # Sset the available data label positions for this chart type.
+    # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'right';
     $self->{_label_positions} = {
         center      => 'ctr',

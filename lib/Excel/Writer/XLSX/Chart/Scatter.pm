@@ -41,7 +41,7 @@ sub new {
     $self->{_val_axis_postion} = 'b';
     $self->{_smooth_allowed}   = 1;
 
-    # Sset the available data label positions for this chart type.
+    # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'right';
     $self->{_label_positions} = {
         center      => 'ctr',

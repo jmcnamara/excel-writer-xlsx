@@ -50,7 +50,7 @@ $worksheet->write( 'A1', $data );
 
 $chart->add_series(
     values      => '=Sheet1!$A$1:$A$5',
-    data_labels => { value => 1, postion => 'outside_end' },
+    data_labels => { value => 1, position => 'outside_end' },
 );
 
 $chart->add_series(
