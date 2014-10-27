@@ -2930,6 +2930,27 @@ sub _write_cat_number_format {
 
 ##############################################################################
 #
+# _write_number_format()
+#
+# Write the <c:numberFormat> element for data labels.
+#
+sub _write_data_label_number_format {
+
+    my $self          = shift;
+    my $format_code   = shift;
+    my $source_linked = 0;
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
+}
+
+
+##############################################################################
+#
 # _write_major_tick_mark()
 #
 # Write the <c:majorTickMark> element.
@@ -4621,6 +4642,11 @@ sub _write_d_lbls {
 
     $self->xml_start_tag( 'c:dLbls' );
 
+    # Write the c:numFmt element.
+    if ( $labels->{num_format} ) {
+        $self->_write_data_label_number_format( $labels->{num_format} );
+    }
+
     # Write the c:dLblPos element.
     $self->_write_d_lbl_pos( $labels->{position} ) if $labels->{position};
 
@@ -5657,7 +5683,7 @@ Set the number format for the axis. (Applicable to category and value axes).
     $chart->set_x_axis( num_format => '#,##0.00' );
     $chart->set_y_axis( num_format => '0.00%'    );
 
-The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as show above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
+The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as shown above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
 
 =item * C<min>
 
@@ -6384,6 +6410,7 @@ The following properties can be set for C<data_labels> formats in a chart.
     leader_lines
     separator
     legend_key
+    num_format
 
 The C<value> property turns on the I<Value> data label for a series.
 
@@ -6470,6 +6497,17 @@ The C<legend_key> property is used to turn on  I<Legend Key> for the data label 
         values      => '=Sheet1!$B$1:$B$5',
         data_labels => { value => 1, legend_key => 1 },
     );
+
+
+The C<num_format> property is used to set the number format for the data labels.
+
+    $chart->add_series(
+        values      => '=Sheet1!$A$1:$A$5',
+        data_labels => { value => 1, num_format => '#,##0.00' },
+    );
+
+The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as shown above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
+
 
 =head2 Points
 
