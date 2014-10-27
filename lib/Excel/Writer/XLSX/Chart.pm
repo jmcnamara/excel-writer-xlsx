@@ -1326,15 +1326,15 @@ sub _get_labels_properties {
     if ( my $separator = $labels->{separator} ) {
 
         my %separators = (
-            ","  => ", ",
-            ";"  => "; ",
-            "."  => ". ",
+            ','  => ', ',
+            ';'  => '; ',
+            '.'  => '. ',
             "\n" => "\n",
-            " "  => " "
+            ' '  => ' '
         );
 
         if ( exists $separators{$separator} ) {
-                $labels->{separator} = $separators{$separator};
+            $labels->{separator} = $separators{$separator};
         }
         else {
             carp "Unsupported label separator";
@@ -6281,7 +6281,7 @@ Several of these properties can be set in one go:
         },
     );
 
-Trendlines cannot be added to series in a stacked chart or pie chart, radar chart, doughtnut or (when implemented) to 3D, or surface charts.
+Trendlines cannot be added to series in a stacked chart or pie chart, radar chart, doughnut or (when implemented) to 3D, or surface charts.
 
 =head2 Error Bars
 
@@ -6380,9 +6380,10 @@ The following properties can be set for C<data_labels> formats in a chart.
     category
     series_name
     position
-    leader_lines
     percentage
-
+    leader_lines
+    separator
+    legend_key
 
 The C<value> property turns on the I<Value> data label for a series.
 
@@ -6446,6 +6447,29 @@ The C<leader_lines> property is used to turn on  I<Leader Lines> for the data la
     );
 
 Note: Even when leader lines are turned on they aren't automatically visible in Excel or Excel::Writer::XLSX. Due to an Excel limitation (or design) leader lines only appear if the data label is moved manually or if the data labels are very close and need to be adjusted automatically.
+
+The C<separator> property is used to change the separator between multiple data label items:
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { percentage => 1 },
+        data_labels => { value => 1, category => 1, separator => "\n" },
+    );
+
+The separator value must be one of the following strings:
+
+            ','
+            ';'
+            '.'
+            "\n"
+            ' '
+
+The C<legend_key> property is used to turn on  I<Legend Key> for the data label for a series:
+
+    $chart->add_series(
+        values      => '=Sheet1!$B$1:$B$5',
+        data_labels => { value => 1, legend_key => 1 },
+    );
 
 =head2 Points
 
