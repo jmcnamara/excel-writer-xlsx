@@ -1322,6 +1322,26 @@ sub _get_labels_properties {
         }
     }
 
+    # Map the user defined label separator to the Excel separator.
+    if ( my $separator = $labels->{separator} ) {
+
+        my %separators = (
+            ","  => ", ",
+            ";"  => "; ",
+            "."  => ". ",
+            "\n" => "\n",
+            " "  => " "
+        );
+
+        if ( exists $separators{$separator} ) {
+                $labels->{separator} = $separators{$separator};
+        }
+        else {
+            carp "Unsupported label separator";
+            return undef
+        }
+    }
+
     return $labels;
 }
 
@@ -4616,6 +4636,9 @@ sub _write_d_lbls {
     # Write the c:showPercent element.
     $self->_write_show_percent() if $labels->{percentage};
 
+    # Write the c:separator element.
+    $self->_write_separator($labels->{separator}) if $labels->{separator};
+
     # Write the c:showLeaderLines element.
     $self->_write_show_leader_lines() if $labels->{leader_lines};
 
@@ -4690,6 +4713,19 @@ sub _write_show_percent {
     $self->xml_empty_tag( 'c:showPercent', @attributes );
 }
 
+##############################################################################
+#
+# _write_separator()
+#
+# Write the <c:separator> element.
+#
+sub _write_separator {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->xml_data_element( 'c:separator', $data );
+}
 
 ##############################################################################
 #
