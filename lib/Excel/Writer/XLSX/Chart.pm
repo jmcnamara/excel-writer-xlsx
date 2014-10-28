@@ -1342,6 +1342,10 @@ sub _get_labels_properties {
         }
     }
 
+    if ($labels->{font}) {
+        $labels->{font} = $self->_convert_font_args( $labels->{font} );
+    }
+
     return $labels;
 }
 
@@ -4647,6 +4651,11 @@ sub _write_d_lbls {
         $self->_write_data_label_number_format( $labels->{num_format} );
     }
 
+    # Write the data label font elements.
+    if ($labels->{font} ) {
+        $self->_write_axis_font( $labels->{font} );
+    }
+
     # Write the c:dLblPos element.
     $self->_write_d_lbl_pos( $labels->{position} ) if $labels->{position};
 
@@ -6411,6 +6420,7 @@ The following properties can be set for C<data_labels> formats in a chart.
     separator
     legend_key
     num_format
+    font
 
 The C<value> property turns on the I<Value> data label for a series.
 
@@ -6507,6 +6517,18 @@ The C<num_format> property is used to set the number format for the data labels.
     );
 
 The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as shown above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
+
+The C<font> property is used to set the font properties of the data labels in a series:
+
+    $chart->add_series(
+        values      => '=Sheet1!$A$1:$A$5',
+        data_labels => {
+            value => 1,
+            font  => { name => 'Consolas' }
+        },
+    );
+
+See the L</CHART FONTS> section below.
 
 
 =head2 Points
@@ -6698,7 +6720,7 @@ The C<fill> format is generally used in conjunction with a C<border> format whic
 
 =head1 CHART FONTS
 
-The following font properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart titles, axis labels and axis numbering. They correspond to the equivalent Worksheet cell Format object properties. See L<Excel::Writer::XLSX/FORMAT_METHODS> for more information.
+The following font properties can be set for any chart object that they apply to (and that are supported by Excel::Writer::XLSX) such as chart titles, axis labels, axis numbering and data labels. They correspond to the equivalent Worksheet cell Format object properties. See L<Excel::Writer::XLSX/FORMAT_METHODS> for more information.
 
     name
     size

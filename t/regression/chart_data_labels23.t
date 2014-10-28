@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_data_labels21.xlsx';
+my $filename     = 'chart_data_labels23.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,7 +34,10 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'pie', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
+
+# For testing, copy the randomly generated axis ids in the target xlsx file.
+$chart->{_axis_ids} = [ 45705856, 45740416 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -48,18 +51,17 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     values      => '=Sheet1!$A$1:$A$5',
     data_labels => {
-        value        => 1,
-        category     => 1,
-        series_name  => 1,
-        percentage   => 1,
-        separator    => ';',
-        leader_lines => 1,
-        position     => 'inside_end',
-        legend_key   => 1,
-        num_format   => '#,##0.00',
-        font         => { name => 'Consolas', baseline => -1, pitch_family => 49, charset => 0 }
+        value => 1,
+        font  => { name => 'Consolas', baseline => -1, pitch_family => 49, charset => 0 }
     },
 );
+
+$chart->add_series(
+    values      => '=Sheet1!$B$1:$B$5',
+    data_labels => { value => 1, position => 'inside_base' },
+);
+
+$chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
 $worksheet->insert_chart( 'E9', $chart );
 
