@@ -49,7 +49,7 @@ my @dates = qw(
 
 our @ISA         = qw(Exporter);
 our @EXPORT_OK   = ();
-our @EXPORT      = ( @rowcol, @dates );
+our @EXPORT      = ( @rowcol, @dates, 'quote_sheetname' );
 our %EXPORT_TAGS = (
     rowcol => \@rowcol,
     dates  => \@dates
@@ -172,16 +172,35 @@ sub xl_range_formula {
 
     my ( $sheetname, $row_1, $row_2, $col_1, $col_2 ) = @_;
 
-    # Use Excel's conventions and quote the sheet name if it contains any
-    # non-word character or if it isn't already quoted.
-    if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
-        $sheetname = q(') . $sheetname . q(');
-    }
+    $sheetname = quote_sheetname( $sheetname );
 
     my $range1 = xl_rowcol_to_cell( $row_1, $col_1, 1, 1 );
     my $range2 = xl_rowcol_to_cell( $row_2, $col_2, 1, 1 );
 
     return '=' . $sheetname . '!' . $range1 . ':' . $range2;
+}
+
+
+###############################################################################
+#
+# quote_sheetname()
+#
+# Sheetnames used in references should be quoted if they contain any spaces,
+# special characters or if the look like something that isn't a sheet name.
+#
+sub quote_sheetname {
+
+    my $sheetname = $_[0];
+
+    # Use Excel's conventions and quote the sheet name if it contains any
+    # non-word character or if it isn't already quoted.
+    if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
+        # Double quote and single quoted strings.
+        $sheetname =~ s/'/''/g;
+        $sheetname = q(') . $sheetname . q(');
+    }
+
+    return $sheetname;
 }
 
 

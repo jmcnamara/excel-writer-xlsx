@@ -23,8 +23,11 @@ use List::Util qw(max min);
 use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Drawing;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility
-  qw(xl_cell_to_rowcol xl_rowcol_to_cell xl_col_to_name xl_range);
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
+                                    xl_rowcol_to_cell
+                                    xl_col_to_name
+                                    xl_range
+                                    quote_sheetname);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.79';
@@ -1137,7 +1140,7 @@ sub repeat_rows {
     my $area = '$' . $row_min . ':' . '$' . $row_max;
 
     # Build up the print titles "Sheet1!$1:$2"
-    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+    my $sheetname = quote_sheetname( $self->{_name} );
     $area = $sheetname . "!" . $area;
 
     $self->{_repeat_rows} = $area;
@@ -1174,7 +1177,7 @@ sub repeat_columns {
     my $area = $col_min . ':' . $col_max;
 
     # Build up the print area range "=Sheet2!C1:C2"
-    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+    my $sheetname = quote_sheetname( $self->{_name} );
     $area = $sheetname . "!" . $area;
 
     $self->{_repeat_cols} = $area;
@@ -1614,7 +1617,7 @@ sub _convert_name_area {
     }
 
     # Build up the print area range "Sheet1!$A$1:$C$13".
-    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+    my $sheetname = quote_sheetname( $self->{_name} );
     $area = $sheetname . "!" . $area;
 
     return $area;
@@ -4290,7 +4293,7 @@ sub add_sparkline {
 
 
     # Get the worksheet name for the range conversion below.
-    my $sheetname = $self->_quote_sheetname( $self->{_name} );
+    my $sheetname = quote_sheetname( $self->{_name} );
 
     # Cleanup the input ranges.
     for my $range ( @{ $sparkline->{_ranges} } ) {
@@ -4488,28 +4491,6 @@ sub _get_palette_color {
     my @rgb = @{ $palette->[$index] };
 
     return sprintf "FF%02X%02X%02X", @rgb;
-}
-
-
-###############################################################################
-#
-# _quote_sheetname()
-#
-# Sheetnames used in references should be quoted if they contain any spaces,
-# special characters or if the look like something that isn't a sheet name.
-# TODO. We need to handle more special cases.
-#
-sub _quote_sheetname {
-
-    my $self      = shift;
-    my $sheetname = $_[0];
-
-    if ( $sheetname =~ /^Sheet\d+$/ ) {
-        return $sheetname;
-    }
-    else {
-        return qq('$sheetname');
-    }
 }
 
 
