@@ -5,6 +5,15 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.80 2014-10-29
+
+    + Chart Data Label enhancements. Added number formatting, font handling
+      (issue #106), separator (issue #107) and legend key.
+
+    + Added chart specific handling of data label positions since not all
+      positions are available for all chart types. Issue #110.
+
+
 0.79 2014-10-16
 
     + Added option to add images to headers and footers.
