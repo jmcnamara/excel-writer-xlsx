@@ -174,10 +174,9 @@ sub xl_range_formula {
 
     $sheetname = quote_sheetname( $sheetname );
 
-    my $range1 = xl_rowcol_to_cell( $row_1, $col_1, 1, 1 );
-    my $range2 = xl_rowcol_to_cell( $row_2, $col_2, 1, 1 );
+    my $range = xl_range( $row_1, $row_2, $col_1, $col_2, 1, 1,1, 1 );
 
-    return '=' . $sheetname . '!' . $range1 . ':' . $range2;
+    return '=' . $sheetname . '!' . $range
 }
 
 
@@ -186,7 +185,7 @@ sub xl_range_formula {
 # quote_sheetname()
 #
 # Sheetnames used in references should be quoted if they contain any spaces,
-# special characters or if the look like something that isn't a sheet name.
+# special characters or if they look like something that isn't a sheet name.
 #
 sub quote_sheetname {
 
@@ -195,7 +194,7 @@ sub quote_sheetname {
     # Use Excel's conventions and quote the sheet name if it contains any
     # non-word character or if it isn't already quoted.
     if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
-        # Double quote and single quoted strings.
+        # Double quote any single quotes.
         $sheetname =~ s/'/''/g;
         $sheetname = q(') . $sheetname . q(');
     }
