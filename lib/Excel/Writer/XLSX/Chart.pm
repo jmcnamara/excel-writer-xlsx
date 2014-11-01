@@ -705,6 +705,12 @@ sub _convert_axis_args {
     # Set the axis name layout.
     $axis->{_layout} = $self->_get_layout_properties( $arg{name_layout}, 1 );
 
+    # Set the line properties for the axis.
+    $axis->{_line} = $self->_get_line_properties( $arg{line} );
+
+    # Set the fill properties for the axis.
+    $axis->{_fill} = $self->_get_fill_properties( $arg{fill} );
+
     return $axis;
 }
 
@@ -2388,6 +2394,9 @@ sub _write_cat_axis {
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
+    # Write the c:spPr element for the axis line.
+    $self->_write_sp_pr( $x_axis );
+
     # Write the axis font elements.
     $self->_write_axis_font( $x_axis->{_num_font} );
 
@@ -2489,6 +2498,9 @@ sub _write_val_axis {
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
+    # Write the c:spPr element for the axis line.
+    $self->_write_sp_pr( $y_axis );
+
     # Write the axis font elements.
     $self->_write_axis_font( $y_axis->{_num_font} );
 
@@ -2583,6 +2595,9 @@ sub _write_cat_val_axis {
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
+    # Write the c:spPr element for the axis line.
+    $self->_write_sp_pr( $x_axis );
+
     # Write the axis font elements.
     $self->_write_axis_font( $x_axis->{_num_font} );
 
@@ -2675,6 +2690,9 @@ sub _write_date_axis {
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
+
+    # Write the c:spPr element for the axis line.
+    $self->_write_sp_pr( $x_axis );
 
     # Write the axis font elements.
     $self->_write_axis_font( $x_axis->{_num_font} );
@@ -5627,6 +5645,8 @@ The properties that can be set are:
     name_layout
     num_font
     num_format
+    line
+    fill
     min
     max
     minor_unit
@@ -5693,6 +5713,15 @@ Set the number format for the axis. (Applicable to category and value axes).
     $chart->set_y_axis( num_format => '0.00%'    );
 
 The number format is similar to the Worksheet Cell Format C<num_format> apart from the fact that a format index cannot be used. The explicit format string must be used as shown above. See L<Excel::Writer::XLSX/set_num_format()> for more information.
+
+=item * C<line>
+
+Set the properties of the axis line type such as colour and width. See the L</CHART FORMATTING> section below.
+
+=item * C<fill>
+
+Set the fill properties of the axis such as colour. See the L</CHART FORMATTING> section below. Note, in Excel the axis fill is applied to the area of the numbers of the axis and not to the area of the axis bounding box. That background is set from the chartarea fill.
+
 
 =item * C<min>
 
