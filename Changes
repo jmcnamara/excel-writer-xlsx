@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.81 2014-11-01
+
+    + Added chart axis line and fill properties.
+
+
 0.80 2014-10-29
 
     + Chart Data Label enhancements. Added number formatting, font handling

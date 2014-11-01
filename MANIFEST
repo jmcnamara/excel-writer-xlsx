@@ -349,6 +349,11 @@ t/regression/chart_axis31.t
 t/regression/chart_axis32.t
 t/regression/chart_axis33.t
 t/regression/chart_axis34.t
+t/regression/chart_axis35.t
+t/regression/chart_axis36.t
+t/regression/chart_axis37.t
+t/regression/chart_axis38.t
+t/regression/chart_axis39.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -926,6 +931,11 @@ t/regression/xlsx_files/chart_axis31.xlsx
 t/regression/xlsx_files/chart_axis32.xlsx
 t/regression/xlsx_files/chart_axis33.xlsx
 t/regression/xlsx_files/chart_axis34.xlsx
+t/regression/xlsx_files/chart_axis35.xlsx
+t/regression/xlsx_files/chart_axis36.xlsx
+t/regression/xlsx_files/chart_axis37.xlsx
+t/regression/xlsx_files/chart_axis38.xlsx
+t/regression/xlsx_files/chart_axis39.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx

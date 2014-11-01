@@ -26,7 +26,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_range_formula );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.80';
+our $VERSION = '0.81';
 
 
 ###############################################################################
@@ -5717,6 +5717,9 @@ The number format is similar to the Worksheet Cell Format C<num_format> apart fr
 =item * C<line>
 
 Set the properties of the axis line type such as colour and width. See the L</CHART FORMATTING> section below.
+
+    $chart->set_x_axis( line => { none => 1 });
+
 
 =item * C<fill>
 
