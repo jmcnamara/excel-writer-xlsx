@@ -230,20 +230,29 @@ sub add_series {
     # Set the "invert if negative" fill property.
     my $invert_if_neg = $arg{invert_if_negative};
 
+    # Set the secondary axis properties.
+    my $x2_axis = $arg{x2_axis};
+    my $y2_axis = $arg{y2_axis};
+
     # Set the gap for Bar/Column charts.
     if ( defined $arg{gap} ) {
-        $self->{_series_gap} = $arg{gap};
+        if ($y2_axis) {
+            $self->{_series_gap_2} = $arg{gap};
+        }
+        else {
+            $self->{_series_gap_1} = $arg{gap};
+        }
     }
 
     # Set the overlap for Bar/Column charts.
     if ( defined $arg{overlap} ) {
-        $self->{_series_overlap} = $arg{overlap};
+        if ($y2_axis) {
+            $self->{_series_overlap_2} = $arg{overlap};
+        }
+        else {
+            $self->{_series_overlap_1} = $arg{overlap};
+        }
     }
-
-
-    # Set the secondary axis properties.
-    my $x2_axis = $arg{x2_axis};
-    my $y2_axis = $arg{y2_axis};
 
     # Add the user supplied data to the internal structures.
     %arg = (

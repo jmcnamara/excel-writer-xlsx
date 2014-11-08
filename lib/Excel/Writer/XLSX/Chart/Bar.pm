@@ -121,8 +121,8 @@ sub _write_bar_chart {
 
     # Set a default overlap for stacked charts.
     if ($self->{_subtype} =~ /stacked/) {
-        if (!defined $self->{_series_overlap}) {
-            $self->{_series_overlap} = 100;
+        if (!defined $self->{_series_overlap_1}) {
+            $self->{_series_overlap_1} = 100;
         }
     }
 
@@ -140,11 +140,20 @@ sub _write_bar_chart {
     # Write the c:marker element.
     $self->_write_marker_value();
 
-    # Write the c:gapWidth element.
-    $self->_write_gap_width( $self->{_series_gap} );
+    if ( $args{primary_axes} ) {
+        # Write the c:gapWidth element.
+        $self->_write_gap_width( $self->{_series_gap_1} );
 
-    # Write the c:overlap element.
-    $self->_write_overlap( $self->{_series_overlap} );
+        # Write the c:overlap element.
+        $self->_write_overlap( $self->{_series_overlap_1} );
+    }
+    else {
+        # Write the c:gapWidth element.
+        $self->_write_gap_width( $self->{_series_gap_2} );
+
+        # Write the c:overlap element.
+        $self->_write_overlap( $self->{_series_overlap_2} );
+    }
 
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
