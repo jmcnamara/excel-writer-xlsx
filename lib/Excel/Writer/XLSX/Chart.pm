@@ -667,6 +667,7 @@ sub _convert_axis_args {
         _num_format_linked => $arg{num_format_linked},
         _interval_unit     => $arg{interval_unit},
         _visible           => defined $arg{visible} ? $arg{visible} : 1,
+        _text_axis         => 0,
     };
 
     # Map major_gridlines properties.
@@ -706,6 +707,13 @@ sub _convert_axis_args {
     if ( $arg{date_axis} ) {
         $self->{_date_category} = 1;
     }
+
+    # Set the category axis as a text axis.
+    if ( $arg{text_axis} ) {
+        $self->{_date_category} = 0;
+        $axis->{_text_axis} = 1;
+    }
+
 
     # Set the font properties if present.
     $axis->{_num_font}  = $self->_convert_font_args( $arg{num_font} );
@@ -2428,7 +2436,9 @@ sub _write_cat_axis {
     }
 
     # Write the c:auto element.
-    $self->_write_auto( 1 );
+    if (!$x_axis->{_text_axis}) {
+        $self->_write_auto( 1 );
+    }
 
     # Write the c:labelAlign element.
     $self->_write_label_align( 'ctr' );
@@ -5670,6 +5680,7 @@ The properties that can be set are:
     minor_gridlines
     visible
     date_axis
+    text_axis
     minor_unit_type
     major_unit_type
 
@@ -5851,6 +5862,13 @@ This option is used to treat a category axis with date or time data as a Date Ax
 This option also allows you to set C<max> and C<min> values for a category axis which isn't allowed by Excel for non-date category axes.
 
 See L<Date Category Axes> for more details.
+
+=item * C<text_axis>
+
+This option is used to treat a category axis explicitly as a Text Axis. (Applicable to category axes only.)
+
+    $chart->set_x_axis( text_axis => 1 );
+
 
 =item * C<minor_unit_type>
 
