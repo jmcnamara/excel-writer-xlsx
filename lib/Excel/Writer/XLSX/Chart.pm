@@ -438,14 +438,14 @@ sub set_chartarea {
 #
 # set_style()
 #
-# Set on of the 42 built-in Excel chart styles. The default style is 2.
+# Set on of the 48 built-in Excel chart styles. The default style is 2.
 #
 sub set_style {
 
     my $self = shift;
     my $style_id = defined $_[0] ? $_[0] : 2;
 
-    if ( $style_id < 0 || $style_id > 42 ) {
+    if ( $style_id < 0 || $style_id > 48 ) {
         $style_id = 2;
     }
 

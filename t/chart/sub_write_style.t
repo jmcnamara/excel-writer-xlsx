@@ -84,7 +84,7 @@ $expected = '';
 $chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
 
 # Outside style range.
-$chart->set_style( 43 );
+$chart->set_style( 49 );
 
 $chart->_write_style();
 
