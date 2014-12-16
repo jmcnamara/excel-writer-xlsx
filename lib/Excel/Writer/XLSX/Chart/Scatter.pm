@@ -35,11 +35,12 @@ sub new {
     my $class = shift;
     my $self  = Excel::Writer::XLSX::Chart->new( @_ );
 
-    $self->{_subtype}          = $self->{_subtype} || 'marker_only';
-    $self->{_cross_between}    = 'midCat';
-    $self->{_horiz_val_axis}   = 0;
-    $self->{_val_axis_postion} = 'b';
-    $self->{_smooth_allowed}   = 1;
+    $self->{_subtype}           = $self->{_subtype} || 'marker_only';
+    $self->{_cross_between}     = 'midCat';
+    $self->{_horiz_val_axis}    = 0;
+    $self->{_val_axis_postion}  = 'b';
+    $self->{_smooth_allowed}    = 1;
+    $self->{_requires_category} = 1;
 
     # Set the available data label positions for this chart type.
     $self->{_label_position_default} = 'right';
