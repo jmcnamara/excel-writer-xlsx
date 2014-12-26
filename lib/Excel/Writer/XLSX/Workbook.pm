@@ -1603,15 +1603,21 @@ sub _prepare_drawings {
         }
     }
 
+
+    # Remove charts that were created but not inserted into worksheets.
+    my @chart_data;
+
+    for my $chart ( @{ $self->{_charts} } ) {
+        if ( $chart->{_id} != -1 ) {
+            push @chart_data, $chart;
+        }
+    }
+
     # Sort the workbook charts references into the order that the were
     # written from the worksheets above.
-    my @chart_data = @{ $self->{_charts} };
-
     @chart_data = sort { $a->{_id} <=> $b->{_id} } @chart_data;
 
     $self->{_charts} = \@chart_data;
-
-
     $self->{_drawing_count} = $drawing_id;
 }
 

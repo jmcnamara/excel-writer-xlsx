@@ -71,7 +71,7 @@ sub new {
     $self->{_orientation}       = 0x0;
     $self->{_series}            = [];
     $self->{_embedded}          = 0;
-    $self->{_id}                = '';
+    $self->{_id}                = -1;
     $self->{_series_index}      = 0;
     $self->{_style_id}          = 2;
     $self->{_axis_ids}          = [];
