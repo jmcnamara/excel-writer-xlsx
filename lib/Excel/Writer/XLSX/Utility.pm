@@ -174,7 +174,7 @@ sub xl_range_formula {
 
     $sheetname = quote_sheetname( $sheetname );
 
-    my $range = xl_range( $row_1, $row_2, $col_1, $col_2, 1, 1,1, 1 );
+    my $range = xl_range( $row_1, $row_2, $col_1, $col_2, 1, 1, 1, 1 );
 
     return '=' . $sheetname . '!' . $range
 }

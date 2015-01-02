@@ -45,6 +45,9 @@ sub _get_module_subs {
 
     # Ignore xl_ imported functions.
     @subs = grep { /^[^x][^l]/ } @subs;
+
+    # Ignore quote_sheetname imported functions.
+    @subs = grep { ! /quote_sheetname/ } @subs;
 }
 
 

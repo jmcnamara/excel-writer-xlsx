@@ -23,7 +23,8 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_rowcol_to_cell
   xl_col_to_name xl_range
-  xl_range_formula );
+  xl_range_formula
+  quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '0.81';
@@ -802,10 +803,19 @@ sub _process_names {
     my $name         = shift;
     my $name_formula = shift;
 
-    # Name looks like a formula, use it to set name_formula.
-    if ( defined $name && $name =~ m/^=[^!]+!\$/ ) {
-        $name_formula = $name;
-        $name         = '';
+    if ( defined $name ) {
+
+        if ( ref $name eq 'ARRAY' ) {
+            my $cell = xl_rowcol_to_cell( $name->[1], $name->[2], 1, 1 );
+            $name_formula = quote_sheetname( $name->[0] ) . '!' . $cell;
+            $name         = '';
+        }
+        elsif ( $name =~ m/^=[^!]+!\$/ ) {
+
+            # Name looks like a formula, use it to set name_formula.
+            $name_formula = $name;
+            $name         = '';
+        }
     }
 
     return ( $name, $name_formula );
