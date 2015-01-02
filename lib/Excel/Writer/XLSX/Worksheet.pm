@@ -5119,6 +5119,15 @@ sub insert_chart {
 
     }
 
+    # Ensure a chart isn't inserted more than once.
+    if ( $chart->{_already_inserted} ) {
+        carp "Chart cannot be inserted in a worksheet more than once";
+        return;
+    }
+    else {
+        $chart->{_already_inserted} = 1;
+    }
+
     # Use the values set with $chart->set_size(), if any.
     $x_scale  = $chart->{_x_scale}  if $chart->{_x_scale} != 1;
     $y_scale  = $chart->{_y_scale}  if $chart->{_y_scale} != 1;

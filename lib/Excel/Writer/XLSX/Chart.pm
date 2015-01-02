@@ -107,6 +107,7 @@ sub new {
     $self->{_smooth_allowed}    = 0;
     $self->{_cross_between}     = 'between';
     $self->{_date_category}     = 0;
+    $self->{_already_inserted}  = 0;
 
     $self->{_label_positions}          = {};
     $self->{_label_position_default}   = '';
