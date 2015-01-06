@@ -210,6 +210,9 @@ sub new {
     $self->{_has_shapes}             = 0;
     $self->{_drawing}                = 0;
 
+    $self->{_horizontal_dpi} = 0;
+    $self->{_vertical_dpi}   = 0;
+
     $self->{_rstring}      = '';
     $self->{_previous_row} = 0;
 
@@ -7217,6 +7220,16 @@ sub _write_page_setup {
     if ( $self->{_page_start} != 0 ) {
         push @attributes, ( 'useFirstPageNumber' => $self->{_page_start} );
     }
+
+    # Set the DPI. Mainly only for testing.
+    if ( $self->{_horizontal_dpi} ) {
+        push @attributes, ( 'horizontalDpi' => $self->{_horizontal_dpi} );
+    }
+
+    if ( $self->{_vertical_dpi} ) {
+        push @attributes, ( 'verticalDpi' => $self->{_vertical_dpi} );
+    }
+
 
     $self->xml_empty_tag( 'pageSetup', @attributes );
 }
