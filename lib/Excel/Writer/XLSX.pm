@@ -2991,6 +2991,9 @@ The following table shows the Excel format categories, the formatting properties
                Top color         top_color       set_top_color()
                Left color        left_color      set_left_color()
                Right color       right_color     set_right_color()
+               Diagional type    diag_type       set_diag_type()
+               Diagional border  diag_border     set_diag_border()
+               Diagional color   diag_color      set_diag_color()
 
 There are two ways of setting Format properties: by using the object method interface or by setting the property directly. For example, a typical use of the method interface would be as follows:
 
@@ -3104,6 +3107,9 @@ The following Format methods are available:
     set_top_color()
     set_left_color()
     set_right_color()
+    set_diag_type()
+    set_diag_border()
+    set_diag_color()
 
 
 The above methods can also be applied directly as properties. For example C<< $format->set_bold() >> is equivalent to C<< $workbook->add_format(bold => 1) >>.
@@ -3727,6 +3733,47 @@ Examples of the available border styles are shown in the 'Borders' worksheet cre
 Set the colour of the cell borders. A cell border is comprised of a border on the bottom, top, left and right. These can be set to the same colour using C<set_border_color()> or individually using the relevant method calls shown above. Examples of the border styles and colours are shown in the 'Borders' worksheet created by formats.pl.
 
 
+=head2 set_diag_type()
+
+    Default state:      Diagonal border is off.
+    Default action:     None.
+    Valid args:         1-3, See below.
+
+Set the diagonal border type for the cell. Three types of diagonal borders are available in Excel:
+
+   1: From bottom left to top right.
+   2: From top left to bottom right.
+   3: Same as 1 and 2 combined.
+
+For example:
+
+    $format->set_diag_type( 3 );
+
+
+
+=head2 set_diag_border()
+
+    Default state:      Border is off
+    Default action:     Set border type 1
+    Valid args:         0-13, See below.
+
+Set the diagonal border style. Same as the parmater to C<set_border()> above.
+
+
+
+
+=head2 set_diag_color()
+
+    Default state:      Color is off
+    Default action:     Undefined
+    Valid args:         See set_color()
+
+
+Set the colour of the diagonal cell border:
+
+    $format->set_diag_type( 3 );
+    $format->set_diag_border( 7 );
+    $format->set_diag_color( 'red' );
 
 
 

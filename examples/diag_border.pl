@@ -16,15 +16,15 @@ my $workbook  = Excel::Writer::XLSX->new( 'diag_border.xlsx' );
 my $worksheet = $workbook->add_worksheet();
 
 
-my $format1 = $workbook->add_format( diag_type => '1' );
+my $format1 = $workbook->add_format( diag_type => 1 );
 
-my $format2 = $workbook->add_format( diag_type => '2' );
+my $format2 = $workbook->add_format( diag_type => 2 );
 
-my $format3 = $workbook->add_format( diag_type => '3' );
+my $format3 = $workbook->add_format( diag_type => 3 );
 
 my $format4 = $workbook->add_format(
-    diag_type   => '3',
-    diag_border => '7',
+    diag_type   => 3,
+    diag_border => 7,
     diag_color  => 'red',
 );
 
