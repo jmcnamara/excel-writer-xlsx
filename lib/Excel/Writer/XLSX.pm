@@ -5623,6 +5623,7 @@ The sub-properties that can be set are:
     formula
     total_string
     total_function
+    total_value
     format
 
 The column data must be specified as an array ref of hash refs. For example to override the default 'Column n' style table headers:
@@ -5676,7 +5677,7 @@ Column formulas can by applied using the C<formula> column property:
 
 The Excel 2007 C<[#This Row]> and Excel 2010 C<@> structural references are supported within the formula.
 
-As stated above the C<total_row> table parameter turns on the "Total" row in the table but it doesn't populate it with any defaults. Total captions and functions must be specified via the C<columns> property and the C<total_string> and C<total_function> sub properties:
+As stated above the C<total_row> table parameter turns on the "Total" row in the table but it doesn't populate it with any defaults. Total captions and functions must be specified via the C<columns> property and the C<total_string>, C<total_function> and C<total_value> sub properties:
 
     $worksheet10->add_table(
         'B3:F8',
@@ -5705,6 +5706,26 @@ The supported totals row C<SUBTOTAL> functions are:
         var
 
 User defined functions or formulas aren't supported.
+
+It is also possible to set a calculated value for the C<total_function> using the C<total_value> sub property. This is only necessary when creating workbooks for applications that cannot calculate the value of formulas automatically. This is similar to setting the C<value> optional property in C<write_formula()>:
+
+    $worksheet10->add_table(
+        'B3:F8',
+        {
+            data      => $data,
+            total_row => 1,
+            columns   => [
+                { total_string   => 'Totals' },
+                { total_function => 'sum', total_value => 100 },
+                { total_function => 'sum', total_value => 200 },
+                { total_function => 'sum', total_value => 100 },
+                { total_function => 'sum', total_value => 400 },
+            ]
+        }
+    );
+
+
+
 
 Format can also be applied to columns:
 

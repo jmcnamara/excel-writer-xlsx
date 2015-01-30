@@ -4121,8 +4121,10 @@ sub add_table {
 
                     );
 
+                    my $value = $user_data->{total_value} || 0;
+
                     $self->write_formula( $row2, $col_num, $formula,
-                        $user_data->{format} );
+                        $user_data->{format}, $value );
 
                 }
                 elsif ( $user_data->{total_string} ) {
