@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2012, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2015, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -376,7 +376,7 @@ Run this program and read the output from the command line.
         use Excel::Writer::XLSX;
     
         my $workbook  = Excel::Writer::XLSX->new("reload.xls");
-        my $worksheet = $workbook->addworksheet();
+        my $worksheet = $workbook->add_worksheet();
     
         $worksheet->write(0, 0, "Hi Excel!");
     
@@ -4857,15 +4857,15 @@ Source code for this example:
     my $worksheet = $workbook->add_worksheet();
     
     
-    my $format1 = $workbook->add_format( diag_type => '1' );
+    my $format1 = $workbook->add_format( diag_type => 1 );
     
-    my $format2 = $workbook->add_format( diag_type => '2' );
+    my $format2 = $workbook->add_format( diag_type => 2 );
     
-    my $format3 = $workbook->add_format( diag_type => '3' );
+    my $format3 = $workbook->add_format( diag_type => 3 );
     
     my $format4 = $workbook->add_format(
-        diag_type   => '3',
-        diag_border => '7',
+        diag_type   => 3,
+        diag_border => 7,
         diag_color  => 'red',
     );
     
@@ -10553,7 +10553,7 @@ Contributed examples contain the original author's name.
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXII, John McNamara.
+Copyright MM-MMXV, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

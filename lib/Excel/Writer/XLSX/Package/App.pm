@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::App;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2014, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2015, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -421,7 +421,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXIIII, John McNamara.
+(c) MM-MMXV, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
