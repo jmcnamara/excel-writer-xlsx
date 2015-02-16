@@ -18,6 +18,7 @@ use 5.008002;
 use strict;
 use warnings;
 use Carp;
+use Data::GUID;
 use File::Temp 'tempfile';
 use List::Util qw(max min);
 use Excel::Writer::XLSX::Format;
@@ -3577,6 +3578,7 @@ sub conditional_formatting {
         mid_color => 1,
         max_color => 1,
         bar_color => 1,
+		bar_type  => 1,
     );
 
     # Check for valid input parameters.
@@ -8545,11 +8547,22 @@ sub _write_conditional_formatting {
 
     for my $param ( @$params ) {
 
+        if($param->{type} and defined($param->{bar_type}) and $param->{bar_type} eq 'negpos') {
+            my $this_negpos_databar = {
+                range => $range,
+                guid => '{' . Data::GUID->new . '}',
+            };
+
+            defined($self->{negpos_databars}) or $self->{negpos_databars} = [];
+            push(@{ $self->{negpos_databars} }, $this_negpos_databar);
+        }
+
         # Write the cfRule element.
         $self->_write_cf_rule( $param );
     }
 
     $self->xml_end_tag( 'conditionalFormatting' );
+	
 }
 
 ##############################################################################
@@ -8731,14 +8744,29 @@ sub _write_data_bar {
     my $self  = shift;
     my $param = shift;
 
-    $self->xml_start_tag( 'dataBar' );
+    if(defined($param->{bar_type}) and $param->{bar_type} eq 'negpos') {
+        defined($self->{negpos_databars}) or die;
+        my $this_negpos_databar = (@{ $self->{negpos_databars} })[-1];
 
-    $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
-    $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
+        $self->xml_start_tag( 'dataBar' );
+        $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
+        $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
+        $self->xml_empty_tag( 'color', theme => '6', tint => '-0.249977111117893' );
+        $self->xml_end_tag( 'dataBar' );
 
-    $self->_write_color( 'rgb' => $param->{bar_color} );
+        $self->xml_start_tag( 'extLst' );
+        $self->xml_start_tag( 'ext', uri => '{B025F937-C7B1-47D3-B67F-A62EFF666E3E}', 'xmlns:x14'=> 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/main' );
+        $self->xml_data_element( 'x14:id', $this_negpos_databar->{guid} );
+        $self->xml_end_tag( 'ext' );
+        $self->xml_end_tag( 'extLst' );
 
-    $self->xml_end_tag( 'dataBar' );
+    } else {
+        $self->xml_start_tag( 'dataBar' );
+        $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
+        $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
+        $self->_write_color( 'rgb' => $param->{bar_color} );
+        $self->xml_end_tag( 'dataBar' );
+    }
 }
 
 
@@ -8842,60 +8870,83 @@ sub _write_ext_sparklines {
     my $count      = scalar @sparklines;
 
     # Return if worksheet doesn't contain any sparklines.
-    return unless $count;
-
+    return unless $count or $self->{negpos_databars};
+	
+#	return unless $self->{_name} eq 'Genelist_1 exons';
 
     # Write the extLst element.
     $self->xml_start_tag( 'extLst' );
 
-    # Write the ext element.
-    $self->_write_ext();
+	if($count) {
+        # Write the ext element.
+        $self->_write_ext();
 
-    # Write the x14:sparklineGroups element.
-    $self->_write_sparkline_groups();
+        # Write the x14:sparklineGroups element.
+        $self->_write_sparkline_groups();
 
-    # Write the sparkline elements.
-    for my $sparkline ( reverse @sparklines ) {
+		# Write the sparkline elements.
+		for my $sparkline ( reverse @sparklines ) {
 
-        # Write the x14:sparklineGroup element.
-        $self->_write_sparkline_group( $sparkline );
+            # Write the x14:sparklineGroup element.
+            $self->_write_sparkline_group( $sparkline );
 
-        # Write the x14:colorSeries element.
-        $self->_write_color_series( $sparkline->{_series_color} );
+            # Write the x14:colorSeries element.
+			$self->_write_color_series( $sparkline->{_series_color} );
 
-        # Write the x14:colorNegative element.
-        $self->_write_color_negative( $sparkline->{_negative_color} );
+            # Write the x14:colorNegative element.
+            $self->_write_color_negative( $sparkline->{_negative_color} );
 
-        # Write the x14:colorAxis element.
-        $self->_write_color_axis();
+            # Write the x14:colorAxis element.
+            $self->_write_color_axis();
 
-        # Write the x14:colorMarkers element.
-        $self->_write_color_markers( $sparkline->{_markers_color} );
+            # Write the x14:colorMarkers element.
+            $self->_write_color_markers( $sparkline->{_markers_color} );
 
-        # Write the x14:colorFirst element.
-        $self->_write_color_first( $sparkline->{_first_color} );
+            # Write the x14:colorFirst element.
+            $self->_write_color_first( $sparkline->{_first_color} );
 
-        # Write the x14:colorLast element.
-        $self->_write_color_last( $sparkline->{_last_color} );
+            # Write the x14:colorLast element.
+            $self->_write_color_last( $sparkline->{_last_color} );
 
-        # Write the x14:colorHigh element.
-        $self->_write_color_high( $sparkline->{_high_color} );
+            # Write the x14:colorHigh element.
+            $self->_write_color_high( $sparkline->{_high_color} );
 
-        # Write the x14:colorLow element.
-        $self->_write_color_low( $sparkline->{_low_color} );
+            # Write the x14:colorLow element.
+            $self->_write_color_low( $sparkline->{_low_color} );
 
-        if ( $sparkline->{_date_axis} ) {
-            $self->xml_data_element( 'xm:f', $sparkline->{_date_axis} );
+            if ( $sparkline->{_date_axis} ) {
+                $self->xml_data_element( 'xm:f', $sparkline->{_date_axis} );
+            }
+
+            $self->_write_sparklines( $sparkline );
+
+            $self->xml_end_tag( 'x14:sparklineGroup' );
+		}
+
+		$self->xml_end_tag( 'x14:sparklineGroups' );
+		$self->xml_end_tag( 'ext' );
+	}
+
+    if($self->{negpos_databars}) {
+        foreach my $negpos_databar (@{ $self->{negpos_databars} }) {
+            $self->xml_start_tag( 'ext', uri => '{78C0D931-6437-407d-A8EE-F0AAD7539E65}', 'xmlns:x14' => 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/main' );
+            $self->xml_start_tag( 'x14:conditionalFormattings' );
+            $self->xml_start_tag( 'x14:conditionalFormatting', 'xmlns:xm' => 'http://schemas.microsoft.com/office/excel/2006/main' );
+            $self->xml_start_tag( 'x14:cfRule', type => 'dataBar', id => $negpos_databar->{guid} );
+            $self->xml_start_tag( 'x14:dataBar', axisPosition => 'middle' );
+            $self->xml_empty_tag( 'x14:cfvo', type => 'min' );
+            $self->xml_empty_tag( 'x14:cfvo', type => 'max' );
+            $self->xml_empty_tag( 'x14:negativeFillColor', theme => '5', tint => '-0.249977111117893' );
+            $self->xml_empty_tag( 'x14:axisColor', rgb => 'FF000000' );
+            $self->xml_end_tag( 'x14:dataBar' );
+            $self->xml_end_tag( 'x14:cfRule' );
+            $self->xml_data_element( 'xm:sqref', $negpos_databar->{range} );
+            $self->xml_end_tag( 'x14:conditionalFormatting' );
+            $self->xml_end_tag( 'x14:conditionalFormattings' );
+            $self->xml_end_tag( 'ext' );
         }
-
-        $self->_write_sparklines( $sparkline );
-
-        $self->xml_end_tag( 'x14:sparklineGroup' );
     }
-
-
-    $self->xml_end_tag( 'x14:sparklineGroups' );
-    $self->xml_end_tag( 'ext' );
+	
     $self->xml_end_tag( 'extLst' );
 }
 
