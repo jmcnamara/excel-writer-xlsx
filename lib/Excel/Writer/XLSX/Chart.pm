@@ -1048,6 +1048,9 @@ sub _get_line_properties {
 
     return { _defined => 0 } unless $line;
 
+    # Copy the user supplied properties.
+    $line = { %$line };
+
     my %dash_types = (
         solid               => 'solid',
         round_dot           => 'sysDot',
@@ -1111,7 +1114,10 @@ sub _get_marker_properties {
     my $self   = shift;
     my $marker = shift;
 
-    return unless $marker;
+    return if !$marker && ref $marker ne 'HASH';
+
+    # Copy the user supplied properties.
+    $marker = { %$marker };
 
     my %types = (
         automatic  => 'automatic',
@@ -1176,7 +1182,10 @@ sub _get_trendline_properties {
     my $self      = shift;
     my $trendline = shift;
 
-    return unless $trendline;
+    return if !$trendline && ref $trendline ne 'HASH';
+
+    # Copy the user supplied properties.
+    $trendline = { %$trendline };
 
     my %types = (
         exponential    => 'exp',
@@ -1227,7 +1236,11 @@ sub _get_error_bars_properties {
     my $self = shift;
     my $args = shift;
 
-    return unless $args;
+    return if !$args && ref $args ne 'HASH';
+
+    # Copy the user supplied properties.
+    $args = { %$args };
+
 
     # Default values.
     my $error_bars = {
@@ -1316,7 +1329,7 @@ sub _get_gridline_properties {
     my $args = shift;
     my $gridline;
 
-    # Set the visible property for the gridline..
+    # Set the visible property for the gridline.
     $gridline->{_visible} = $args->{visible};
 
     # Set the line properties for the gridline..
@@ -1337,7 +1350,10 @@ sub _get_labels_properties {
     my $self   = shift;
     my $labels = shift;
 
-    return undef unless $labels;
+    return if !$labels && ref $labels ne 'HASH';
+
+    # Copy the user supplied properties.
+    $labels = { %$labels };
 
     # Map user defined label positions to Excel positions.
     if ( my $position = $labels->{position} ) {
