@@ -860,6 +860,26 @@ sub add_vba_project {
 
 ###############################################################################
 #
+# set_vba_name()
+#
+# Set the VBA name for the workbook.
+#
+sub set_vba_name {
+
+    my $self         = shift;
+    my $vba_codemame = shift;
+
+    if ( $vba_codemame ) {
+        $self->{_vba_codename} = $vba_codemame;
+    }
+    else {
+        $self->{_vba_codename} = 'ThisWorkbook';
+    }
+}
+
+
+###############################################################################
+#
 # set_calc_mode()
 #
 # Set the Excel caclcuation mode for the workbook.
@@ -1638,6 +1658,7 @@ sub _prepare_vml_objects {
     my $vml_shape_id   = 1024;
     my $vml_files      = 0;
     my $comment_files  = 0;
+    my $has_button     = 0;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1667,6 +1688,17 @@ sub _prepare_vml_objects {
             $sheet->_prepare_header_vml_objects( $vml_header_id,
                 $vml_drawing_id );
         }
+
+        # Set the sheet vba_codename if it has a button and the workbook
+        # has a vbaProject binary.
+        if ( $sheet->{_buttons_array} ) {
+            $has_button = 1;
+
+            if ( $self->{_vba_project} && !$sheet->{_vba_codename} ) {
+                $sheet->set_vba_name();
+            }
+        }
+
     }
 
     $self->{_num_vml_files}     = $vml_files;
@@ -1686,6 +1718,12 @@ sub _prepare_vml_objects {
         $format->get_xf_index();
 
         push @{ $self->{_formats} }, $format;
+    }
+
+    # Set the workbook vba_codename if one of the sheets has a button and
+    # the workbook has a vbaProject binary.
+    if ( $has_button && $self->{_vba_project} && !$self->{_vba_codename} ) {
+        $self->set_vba_name();
     }
 }
 

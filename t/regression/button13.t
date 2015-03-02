@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 my $filename     = 'button07.xlsm';
 my $dir          = 't/regression/';
-my $got_filename = $dir . "ewx_$filename";
+my $got_filename = $dir . "ewx_button13.xlsm";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
@@ -33,9 +33,6 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-
-$workbook->set_vba_name('ThisWorkbook');
-$worksheet->set_vba_name('Sheet1');
 
 $workbook->set_vba_name();
 $worksheet->set_vba_name();

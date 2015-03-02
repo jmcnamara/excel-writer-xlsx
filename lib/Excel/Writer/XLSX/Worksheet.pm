@@ -4410,6 +4410,26 @@ sub insert_button {
 
 ###############################################################################
 #
+# set_vba_name()
+#
+# Set the VBA name for the worksheet.
+#
+sub set_vba_name {
+
+    my $self         = shift;
+    my $vba_codemame = shift;
+
+    if ( $vba_codemame ) {
+        $self->{_vba_codename} = $vba_codemame;
+    }
+    else {
+        $self->{_vba_codename} = $self->{_name};
+    }
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################
