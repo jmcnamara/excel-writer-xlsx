@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'set_start_page01.xlsx';
+my $filename     = 'set_start_page03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -35,7 +35,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->set_start_page(1);
+$worksheet->set_start_page(101);
 $worksheet->set_paper(9);
 
 $worksheet->{_vertical_dpi} = 200;

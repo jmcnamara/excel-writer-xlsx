@@ -7230,6 +7230,11 @@ sub _write_page_setup {
         push @attributes, ( 'pageOrder' => "overThenDown" );
     }
 
+    # Set start page.
+    if ( $self->{_page_start} > 1 ) {
+        push @attributes, ( 'firstPageNumber' => $self->{_page_start} );
+    }
+
     # Set page orientation.
     if ( $self->{_orientation} == 0 ) {
         push @attributes, ( 'orientation' => 'landscape' );
@@ -7240,7 +7245,7 @@ sub _write_page_setup {
 
     # Set start page.
     if ( $self->{_page_start} != 0 ) {
-        push @attributes, ( 'useFirstPageNumber' => $self->{_page_start} );
+        push @attributes, ( 'useFirstPageNumber' => 1 );
     }
 
     # Set the DPI. Mainly only for testing.
