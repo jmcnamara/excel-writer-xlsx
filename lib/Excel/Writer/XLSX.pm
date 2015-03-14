@@ -144,6 +144,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     add_chart()
     add_shape()
     add_vba_project()
+    set_vba_name()
     close()
     set_properties()
     define_name()
@@ -380,9 +381,13 @@ Macros can be tied to buttons using the worksheet C<insert_button()> method (see
 
 Note, Excel uses the file extension C<xlsm> instead of C<xlsx> for files that contain macros. It is advisable to follow the same convention.
 
-See also the C<macros.pl> example file.
+See also the C<macros.pl> example file and the L<WORKING WITH VBA MACROS>.
 
 
+
+=head2 set_vba_name()
+
+The C<set_vba_name()> method can be used to set the VBA codename for the workbook. This is sometimes required when a C<vbaProject macro> included via C<add_vba_project()> refers to the workbook. The default Excel VBA name of C<ThisWorkbook> is used if a user defined name isn't specified. See also L<WORKING WITH VBA MACROS>.
 
 
 =head2 close()
@@ -680,7 +685,7 @@ The following methods are available through a new worksheet:
     autofilter()
     filter_column()
     filter_column_list()
-
+    set_vba_name()
 
 
 
@@ -2396,6 +2401,12 @@ It is exposed as a public method for utility purposes.
 
 The C<$date_string> format is detailed in the C<write_date_time()> method.
 
+=head2 Worksheet set_vba_name()
+
+The Worksheet C<set_vba_name()> method can be used to set the VBA codename for the
+worksheet (there is a similar method for the workbook VBA name). This is sometimes required when a C<vbaProject> macro included via C<add_vba_project()> refers to the worksheet. The default Excel VBA name of C<Sheet1>, etc., is used if a user defined name isn't specified.
+
+See also L<WORKING WITH VBA MACROS>.
 
 
 
@@ -5859,6 +5870,101 @@ If your formula doesn't work in Excel::Writer::XLSX try the following:
        applications are more flexible than Excel with formula syntax.
 
 
+
+=head1 WORKING WITH VBA MACROS
+
+An Excel C<xlsm> file is exactly the same as a C<xlsx> file except that is includes an additional C<vbaProject.bin> file which contains functions and/or macros. Excel uses a different extension to differentiate between the two file formats since files containing macros are usually subject to additional security checks.
+
+The C<vbaProject.bin> file is a binary OLE COM container. This was the format used in older C<xls> versions of Excel prior to Excel 2007. Unlike all of the other components of an xlsx/xlsm file the data isn't stored in XML format. Instead the functions and macros as stored as pre-parsed binary format. As such it wouldn't be feasible to define macros and create a C<vbaProject.bin> file from scratch (at least not in the remaining lifespan and interest levels of the author).
+
+Instead a workaround is used to extract C<vbaProject.bin> files from existing xlsm files and then add these to Excel::Writer::XLSX files.
+
+
+=head2 The extract_vba utility
+
+The C<extract_vba> utility is used to extract the C<vbaProject.bin> binary from an Excel 2007+ xlsm file. The utility is included in the Excel::Writer::XLSX bin directory and is also installed as a standalone executable file:
+
+    $ extract_vba macro_file.xlsm
+    Extracted: vbaProject.bin
+
+
+=head2 Adding the VBA macros to a Excel::Writer::XLSX file
+
+Once the C<vbaProject.bin> file has been extracted it can be added to the Excel::Writer::XLSX workbook using the C<add_vba_project()> method:
+
+    $workbook->add_vba_project( './vbaProject.bin' );
+
+If the VBA file contains functions you can then refer to them in calculations using C<write_formula>:
+
+    $worksheet->write_formula( 'A1', '=MyMortgageCalc(200000, 25)' );
+
+Excel files that contain functions and macros should use an C<xlsm> extension or else Excel will complain and possibly not open the file:
+
+    my $workbook  = Excel::Writer::XLSX->new( 'file.xlsm' );
+
+It is also possible to assign a macro to a button that is inserted into a
+worksheet using the C<insert_button()> method:
+
+    my $workbook  = Excel::Writer::XLSX->new( 'file.xlsm' );
+    ...
+    $workbook->add_vba_project( './vbaProject.bin' );
+
+    $worksheet->insert_button( 'C2', { macro => 'my_macro' } );
+
+
+It may be necessary to specify a more explicit macro name prefixed by the workbook VBA name as follows:
+
+    $worksheet->insert_button( 'C2', { macro => 'ThisWorkbook.my_macro' } );
+
+See the C<macros.pl> from the examples directory for a working example.
+
+Note: Button is the only VBA Control supported by Excel::Writer::XLSX. Due to the large effort in implementation (1+ man months) it is unlikely that any other form elements will be added in the future.
+
+
+=head2 Setting the VBA codenames
+
+VBA macros generally refer to workbook and worksheet objects. If the VBA codenames aren't specified then Excel::Writer::XLSX will use the Excel defaults of C<ThisWorkbook> and C<Sheet1>, C<Sheet2> etc.
+
+If the macro uses other codenames you can set them using the workbook and worksheet C<set_vba_name()> methods as follows:
+
+      $workbook->set_vba_name( 'MyWorkbook' );
+      $worksheet->set_vba_name( 'MySheet' );
+
+You can find the names that are used in the VBA editor or by unzipping the C<xlsm> file and grepping the files. The following shows how to do that using libxml's xmllint L<http://xmlsoft.org/xmllint.html> to format the XML for clarity:
+
+    $ unzip myfile.xlsm -d myfile
+    $ xmllint --format `find myfile -name "*.xml" | xargs` | grep "Pr.*codeName"
+
+      <workbookPr codeName="MyWorkbook" defaultThemeVersion="124226"/>
+      <sheetPr codeName="MySheet"/>
+
+
+Note: This step is particularly important for macros created with non-English versions of Excel.
+
+
+
+=head2 What to do if it doesn't work
+
+This feature should be considered experimental and there is no guarantee that it will work in all cases. Some effort may be required and some knowledge of VBA will certainly help. If things don't work out here are some things to try:
+
+=over
+
+=item *
+
+Start with a simple macro file, ensure that it works and then add complexity.
+
+=item *
+
+Try to extract the macros from an Excel 2007 file. The method should work with macros from later versions (it was also tested with Excel 2010 macros). However there may be features in the macro files of more recent version of Excel that aren't backward compatible.
+
+=item *
+
+Check the code names that macros use to refer to the workbook and worksheets (see the previous section above). In general VBA uses a code name of C<ThisWorkbook> to refer to the current workbook and the sheet name (such as C<Sheet1>) to refer to the worksheets. These are the defaults used by Excel::Writer::XLSX. If the macro uses other names then you can specify these using the workbook and worksheet C<set_vba_name()> methods:
+
+      $workbook>set_vba_name( 'MyWorkbook' );
+      $worksheet->set_vba_name( 'MySheet' );
+
+=back
 
 
 =head1 EXAMPLES
