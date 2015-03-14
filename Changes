@@ -4,6 +4,27 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+0.82 2015-3-14
+
+   + Added extra documentation on how to handle VBA macros and added
+     automatic and manual setting of workbook and worksheet VBA codenames.
+     Issue #60.
+
+   + Fix for set_start_page() for values > 1.
+
+   + Fix to copy user defined chart properties, such as trendlines,
+     so that they aren't overwritten.
+     Issue #121.
+
+   + Added column funtion_value option to add_table to allow
+     function value to be set.
+
+   + Allow explicit text categories in charts.
+     Issue #102
+
+   + Fix for column/bar gap/overlap on y2 axis.
+     Issue #113.
+
 
 0.81 2014-11-01
 
