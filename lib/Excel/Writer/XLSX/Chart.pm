@@ -108,6 +108,7 @@ sub new {
     $self->{_cross_between}     = 'between';
     $self->{_date_category}     = 0;
     $self->{_already_inserted}  = 0;
+    $self->{_combined}          = undef;
 
     $self->{_label_positions}          = {};
     $self->{_label_position_default}   = '';
@@ -620,6 +621,21 @@ sub set_high_low_lines {
     my $line = $self->_get_line_properties( $args{line} );
 
     $self->{_hi_low_lines} = { _line => $line };
+}
+
+
+###############################################################################
+#
+# combine()
+#
+# Add another chart to create a combined chart.
+#
+sub combine {
+
+    my $self = shift;
+    my $chart = shift;
+
+    $self->{_combined} = $chart;
 }
 
 
@@ -1916,6 +1932,13 @@ sub _write_plot_area {
     $self->_write_chart_type( primary_axes => 1 );
     $self->_write_chart_type( primary_axes => 0 );
 
+    if ($self->{_combined}) {
+        $self->{_combined}->{_fh} = $self->{_fh};
+        $self->{_combined}->{_series_index} = $self->{_series_index};
+        $self->{_combined}->_write_chart_type( primary_axes => 1 );
+        $self->{_combined}->_write_chart_type( primary_axes => 0 );
+    }
+
     # Write the category and value elements for the primary axes.
     my @args = (
         x_axis   => $self->{_x_axis},
@@ -1938,6 +1961,11 @@ sub _write_plot_area {
         y_axis   => $self->{_y2_axis},
         axis_ids => $self->{_axis2_ids}
     );
+
+    # Check for secondary axis in the combined chart.
+    if ( $self->{_combined} && !@{ $self->{_axis2_ids} } ) {
+        $args[5] = $self->{_combined}->{_axis2_ids};
+    }
 
     $self->_write_val_axis( @args );
 

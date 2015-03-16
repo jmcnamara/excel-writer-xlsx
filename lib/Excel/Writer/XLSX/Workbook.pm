@@ -1764,14 +1764,25 @@ sub _add_chart_data {
     my $self = shift;
     my %worksheets;
     my %seen_ranges;
+    my @charts;
 
     # Map worksheet names to worksheet objects.
     for my $worksheet ( @{ $self->{_worksheets} } ) {
         $worksheets{ $worksheet->{_name} } = $worksheet;
     }
 
-    CHART:
+    # Build an array of the worksheet charts including any combined charts.
     for my $chart ( @{ $self->{_charts} } ) {
+        push @charts, $chart;
+
+        if ($chart->{_combined}) {
+            push @charts, $chart->{_combined};
+        }
+    }
+
+
+    CHART:
+    for my $chart ( @charts ) {
 
         RANGE:
         while ( my ( $range, $id ) = each %{ $chart->{_formula_ids} } ) {
