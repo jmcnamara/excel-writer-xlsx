@@ -38,8 +38,7 @@ my $chart1    = $workbook->add_chart( type => 'column', embedded => 1 );
 my $chart2    = $workbook->add_chart( type => 'line',   embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart1->{_axis_ids} = [ 88034688, 88850432 ];
-$chart2->{_axis_ids} = [ 88034688, 88850432 ];
+# For this test the ids match the generated ids.
 
 my $data = [
     [ 2,   7,  3,  6,   2 ],

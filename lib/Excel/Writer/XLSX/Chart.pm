@@ -109,6 +109,7 @@ sub new {
     $self->{_date_category}     = 0;
     $self->{_already_inserted}  = 0;
     $self->{_combined}          = undef;
+    $self->{_is_secondary}      = 0;
 
     $self->{_label_positions}          = {};
     $self->{_label_position_default}   = '';
@@ -236,6 +237,12 @@ sub add_series {
     # Set the secondary axis properties.
     my $x2_axis = $arg{x2_axis};
     my $y2_axis = $arg{y2_axis};
+
+
+    # Store secondary status for combined charts.
+    if ($x2_axis || $y2_axis) {
+        $self->{_is_secondary} = 1;
+    }
 
     # Set the gap for Bar/Column charts.
     if ( defined $arg{gap} ) {
@@ -1637,11 +1644,11 @@ sub _add_axis_ids {
 
     my $self       = shift;
     my %args       = @_;
-    my $chart_id   = 1 + $self->{_id};
+    my $chart_id   = 5001 + $self->{_id};
     my $axis_count = 1 + @{ $self->{_axis2_ids} } + @{ $self->{_axis_ids} };
 
-    my $id1 = sprintf '5%03d%04d', $chart_id, $axis_count;
-    my $id2 = sprintf '5%03d%04d', $chart_id, $axis_count + 1;
+    my $id1 = sprintf '%04d%04d', $chart_id, $axis_count;
+    my $id2 = sprintf '%04d%04d', $chart_id, $axis_count + 1;
 
     push @{ $self->{_axis_ids} },  $id1, $id2 if $args{primary_axes};
     push @{ $self->{_axis2_ids} }, $id1, $id2 if !$args{primary_axes};
@@ -1932,9 +1939,24 @@ sub _write_plot_area {
     $self->_write_chart_type( primary_axes => 1 );
     $self->_write_chart_type( primary_axes => 0 );
 
-    if ($self->{_combined}) {
+    # Configure a combined chart if present.
+    if ( $self->{_combined} ) {
+
+        # Secondary axis has unique id otherwise use same as primary.
+        if ( $self->{_combined}->{_is_secondary} ) {
+            $self->{_combined}->{_id} = 1000 + $self->{_id};
+        }
+        else {
+            $self->{_combined}->{_id} = $self->{_id};
+        }
+
+        # Shart the same filehandle for writing.
         $self->{_combined}->{_fh} = $self->{_fh};
+
+        # Share series index with primary chart.
         $self->{_combined}->{_series_index} = $self->{_series_index};
+
+        # Write the subclass chart type elements for combined chart.
         $self->{_combined}->_write_chart_type( primary_axes => 1 );
         $self->{_combined}->_write_chart_type( primary_axes => 0 );
     }
@@ -1962,8 +1984,8 @@ sub _write_plot_area {
         axis_ids => $self->{_axis2_ids}
     );
 
-    # Check for secondary axis in the combined chart.
-    if ( $self->{_combined} && !@{ $self->{_axis2_ids} } ) {
+    # Check for secondary axis in the combined chart and adjust axis args.
+    if ( $self->{_combined} && $self->{_combined}->{_is_secondary} ) {
         $args[5] = $self->{_combined}->{_axis2_ids};
     }
 
