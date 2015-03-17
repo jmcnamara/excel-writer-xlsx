@@ -238,7 +238,6 @@ sub add_series {
     my $x2_axis = $arg{x2_axis};
     my $y2_axis = $arg{y2_axis};
 
-
     # Store secondary status for combined charts.
     if ($x2_axis || $y2_axis) {
         $self->{_is_secondary} = 1;
@@ -639,7 +638,7 @@ sub set_high_low_lines {
 #
 sub combine {
 
-    my $self = shift;
+    my $self  = shift;
     my $chart = shift;
 
     $self->{_combined} = $chart;
