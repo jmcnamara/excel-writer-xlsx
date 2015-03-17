@@ -1928,6 +1928,7 @@ sub _write_disp_blanks_as {
 sub _write_plot_area {
 
     my $self = shift;
+    my $second_chart = $self->{_combined};
 
     $self->xml_start_tag( 'c:plotArea' );
 
@@ -1938,26 +1939,27 @@ sub _write_plot_area {
     $self->_write_chart_type( primary_axes => 1 );
     $self->_write_chart_type( primary_axes => 0 );
 
+
     # Configure a combined chart if present.
-    if ( $self->{_combined} ) {
+    if ( $second_chart ) {
 
         # Secondary axis has unique id otherwise use same as primary.
-        if ( $self->{_combined}->{_is_secondary} ) {
-            $self->{_combined}->{_id} = 1000 + $self->{_id};
+        if ( $second_chart->{_is_secondary} ) {
+            $second_chart->{_id} = 1000 + $self->{_id};
         }
         else {
-            $self->{_combined}->{_id} = $self->{_id};
+            $second_chart->{_id} = $self->{_id};
         }
 
         # Shart the same filehandle for writing.
-        $self->{_combined}->{_fh} = $self->{_fh};
+        $second_chart->{_fh} = $self->{_fh};
 
         # Share series index with primary chart.
-        $self->{_combined}->{_series_index} = $self->{_series_index};
+        $second_chart->{_series_index} = $self->{_series_index};
 
         # Write the subclass chart type elements for combined chart.
-        $self->{_combined}->_write_chart_type( primary_axes => 1 );
-        $self->{_combined}->_write_chart_type( primary_axes => 0 );
+        $second_chart->_write_chart_type( primary_axes => 1 );
+        $second_chart->_write_chart_type( primary_axes => 0 );
     }
 
     # Write the category and value elements for the primary axes.
@@ -1983,12 +1985,20 @@ sub _write_plot_area {
         axis_ids => $self->{_axis2_ids}
     );
 
-    # Check for secondary axis in the combined chart and adjust axis args.
-    if ( $self->{_combined} && $self->{_combined}->{_is_secondary} ) {
-        $args[5] = $self->{_combined}->{_axis2_ids};
+    $self->_write_val_axis( @args );
+
+    # Write the secondary axis for the secondary chart.
+    if ( $second_chart && $second_chart->{_is_secondary} ) {
+
+        @args = (
+             x_axis   => $second_chart->{_x2_axis},
+             y_axis   => $second_chart->{_y2_axis},
+             axis_ids => $second_chart->{_axis2_ids}
+            );
+
+        $second_chart->_write_val_axis( @args );
     }
 
-    $self->_write_val_axis( @args );
 
     if ( $self->{_date_category} ) {
         $self->_write_date_axis( @args );

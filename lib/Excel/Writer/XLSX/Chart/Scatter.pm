@@ -60,6 +60,23 @@ sub new {
 }
 
 
+###############################################################################
+#
+# combine()
+#
+# Override parent method to add a warning.
+#
+sub combine {
+
+    my $self  = shift;
+    my $chart = shift;
+
+    carp 'Combined chart not currently supported with scatter chart ' .
+      'as the primary chart';
+    return;
+}
+
+
 ##############################################################################
 #
 # _write_chart_type()
@@ -207,17 +224,18 @@ sub _write_plot_area {
     # Write the c:layout element.
     $self->_write_layout( $self->{_plotarea}->{_layout}, 'plot' );
 
-    # Write the subclass chart type elements for primary and secondary axes
+    # Write the subclass chart type elements for primary and secondary axes.
     $self->_write_chart_type( primary_axes => 1 );
     $self->_write_chart_type( primary_axes => 0 );
 
-    # Write c:catAx and c:valAx elements for series using primary axes
+    # Write c:catAx and c:valAx elements for series using primary axes.
     $self->_write_cat_val_axis(
         x_axis   => $self->{_x_axis},
         y_axis   => $self->{_y_axis},
         axis_ids => $self->{_axis_ids},
         position => 'b',
     );
+
     my $tmp = $self->{_horiz_val_axis};
     $self->{_horiz_val_axis} = 1;
     $self->_write_val_axis(
@@ -228,7 +246,7 @@ sub _write_plot_area {
     );
     $self->{_horiz_val_axis} = $tmp;
 
-    # Write c:valAx and c:catAx elements for series using secondary axes
+    # Write c:valAx and c:catAx elements for series using secondary axes.
     $self->_write_cat_val_axis(
         x_axis   => $self->{_x2_axis},
         y_axis   => $self->{_y2_axis},

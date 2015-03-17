@@ -115,6 +115,22 @@ sub _write_pie_chart {
 }
 
 
+###############################################################################
+#
+# combine()
+#
+# Override parent method to add a warning.
+#
+sub combine {
+
+    my $self  = shift;
+    my $chart = shift;
+
+    carp "Combined chart not currently supported for Pie charts";
+    return;
+}
+
+
 ##############################################################################
 #
 # _write_plot_area().

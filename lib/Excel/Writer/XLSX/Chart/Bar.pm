@@ -67,6 +67,27 @@ sub new {
 }
 
 
+###############################################################################
+#
+# combine()
+#
+# Override parent method to add an extra check that is required for Bar
+# charts to ensure that their combined chart is on a secondary axis.
+#
+sub combine {
+
+    my $self  = shift;
+    my $chart = shift;
+
+    if (!$chart->{_is_secondary}) {
+        carp 'Charts combined with Bar charts must be on a secondary axis';
+        return;
+    }
+
+    $self->{_combined} = $chart;
+}
+
+
 ##############################################################################
 #
 # _write_chart_type()
