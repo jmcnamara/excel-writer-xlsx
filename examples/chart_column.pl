@@ -2,7 +2,7 @@
 
 #######################################################################
 #
-# A demo of an Column chart in Excel::Writer::XLSX.
+# A demo of a Column chart in Excel::Writer::XLSX.
 #
 # reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
 #
