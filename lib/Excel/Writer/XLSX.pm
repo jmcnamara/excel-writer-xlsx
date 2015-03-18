@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.82';
+our $VERSION = '0.83';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.82 of Excel::Writer::XLSX, released March 14, 2015.
+This document refers to version 0.83 of Excel::Writer::XLSX, released March 17, 2015.
 
 
 
@@ -6304,6 +6304,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_radar.pl          A demo of radar style charts.
     chart_scatter.pl        A demo of scatter style charts.
     chart_secondary_axis.pl A demo of a line chart with a secondary axis.
+    chart_combined.pl       A demo of a combined column and line chart.
+    chart_pareto.pl         A demo of a combined Pareto chart.
     chart_stock.pl          A demo of stock style charts.
     chart_data_table.pl     A demo of a chart with a data table on the axis.
     chart_data_tools.pl     A demo of charts with data highlighting options.

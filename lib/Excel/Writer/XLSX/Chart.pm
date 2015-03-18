@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.82';
+our $VERSION = '0.83';
 
 
 ###############################################################################
@@ -6008,6 +6008,28 @@ The default properties for this axis are:
     major_gridlines => { visible => 0 }
 
 
+=head2 combine()
+
+The chart C<combine()> method is used to combine two charts of different
+types, for example a column and line chart:
+
+    my $column_chart = $workbook->add_chart( type => 'column', embedded => 1 );
+
+    # Configure the data series for the primary chart.
+    $column_chart->add_series(...);
+
+    # Create a new column chart. This will use this as the secondary chart.
+    my $line_chart = $workbook->add_chart( type => 'line', embedded => 1 );
+
+    # Configure the data series for the secondary chart.
+    $line_chart->add_series(...);
+
+    # Combine the charts.
+    $column_chart->combine( $line_chart );
+
+See L<Combined Charts> for more details.
+
+
 =head2 set_size()
 
 The C<set_size()> method is used to set the dimensions of the chart. The size properties that can be set are:
@@ -7221,15 +7243,135 @@ It is possible to add a secondary axis of the same type to a chart by setting th
 
     __END__
 
+It is also possible to have a secondary, combined, chart either with a shared or secondary axis, see below.
 
-Note, it isn't currently possible to add a secondary axis of a different chart type (for example line and column).
+=head1 Combined Charts
+
+It is also possible to combine two different chart types, for example a column and line chart to create a Pareto chart using the Chart C<combine()> method:
+
+
+=begin html
+
+<p><center><img src="https://raw.githubusercontent.com/jmcnamara/XlsxWriter/master/dev/docs/source/_images/chart_pareto.png" alt="Chart image." /></center></p>
+
+=end html
+
+
+Here is a simpler example:
+
+    use strict;
+    use warnings;
+    use Excel::Writer::XLSX;
+
+    my $workbook  = Excel::Writer::XLSX->new( 'chart_combined.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    my $bold      = $workbook->add_format( bold => 1 );
+
+    # Add the worksheet data that the charts will refer to.
+    my $headings = [ 'Number', 'Batch 1', 'Batch 2' ];
+    my $data = [
+        [ 2,  3,  4,  5,  6,  7 ],
+        [ 10, 40, 50, 20, 10, 50 ],
+        [ 30, 60, 70, 50, 40, 30 ],
+
+    ];
+
+    $worksheet->write( 'A1', $headings, $bold );
+    $worksheet->write( 'A2', $data );
+
+    #
+    # In the first example we will create a combined column and line chart.
+    # They will share the same X and Y axes.
+    #
+
+    # Create a new column chart. This will use this as the primary chart.
+    my $column_chart = $workbook->add_chart( type => 'column', embedded => 1 );
+
+    # Configure the data series for the primary chart.
+    $column_chart->add_series(
+        name       => '=Sheet1!$B$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+    );
+
+    # Create a new column chart. This will use this as the secondary chart.
+    my $line_chart = $workbook->add_chart( type => 'line', embedded => 1 );
+
+    # Configure the data series for the secondary chart.
+    $line_chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$C$2:$C$7',
+    );
+
+    # Combine the charts.
+    $column_chart->combine( $line_chart );
+
+    # Add a chart title and some axis labels. Note, this is done via the
+    # primary chart.
+    $column_chart->set_title( name => 'Combined chart - same Y axis' );
+    $column_chart->set_x_axis( name => 'Test number' );
+    $column_chart->set_y_axis( name => 'Sample length (mm)' );
+
+
+    # Insert the chart into the worksheet
+    $worksheet->insert_chart( 'E2', $column_chart );
+
+=begin html
+
+<p><center><img src="https://raw.githubusercontent.com/jmcnamara/XlsxWriter/master/dev/docs/source/_images/chart_combined1.png" alt="Chart image." /></center></p>
+
+=end html
+
+
+
+The secondary chart can also be placed on a secondary axis using the methods shown in the previous section.
+
+In this case it is just necessary to add a C<y2_axis> parameter to the series and, if required, add a title using C<set_y2_axis()>. The following are the additions to the previous example to place the secondary chart on the secondary axis:
+
+    ...
+
+    $line_chart->add_series(
+        name       => '=Sheet1!$C$1',
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$C$2:$C$7',
+        y2_axis    => 1,
+    );
+
+    ...
+
+    $column_chart->set_y2_axis( name => 'Target length (mm)' );
+
+
+=begin html
+
+<p><center><img src="https://raw.githubusercontent.com/jmcnamara/XlsxWriter/master/dev/docs/source/_images/chart_combined2.png" alt="Chart image." /></center></p>
+
+=end html
+
+
+The examples above use the concept of a I<primary> and I<secondary> chart. The primary chart is the chart that defines the primary X and Y axis. It is also used for setting all chart properties apart from the secondary data series. For example the chart title and axes properties should be set via the primary chart.
+
+See also C<chart_combined.pl> and C<chart_pareto.pl> examples in the distro for more detailed
+examples.
+
+There are some limitations on combined charts:
+
+=over
+
+=item * Pie charts cannot currently be combined.
+
+=item * Scatter charts cannot currently be used as a primary chart but they can be used as a secondary chart.
+
+=item * Bar charts can only combined secondary charts on a secondary axis. This is an Excel limitation.
+
+=back
+
 
 
 =head1 TODO
 
-The chart feature in Excel::Writer::XLSX is under active development. More chart types and features will be added in time.
-
-Features that are on the TODO list and will be added are:
+Chart features that are on the TODO list and will hopefully be added are:
 
 =over
 

@@ -4,6 +4,13 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+0.83 2015-3-17
+
+   + Added option to combine two different chart types. For example to
+     create a Pareto chart.
+
+
 0.82 2015-3-14
 
    + Added extra documentation on how to handle VBA macros and added
