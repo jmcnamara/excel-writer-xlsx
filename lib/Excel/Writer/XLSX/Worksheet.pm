@@ -5145,12 +5145,18 @@ sub insert_chart {
     }
 
     # Ensure a chart isn't inserted more than once.
-    if ( $chart->{_already_inserted} ) {
+    if (   $chart->{_already_inserted}
+        || $chart->{_combined} && $chart->{_combined}->{_already_inserted} )
+    {
         carp "Chart cannot be inserted in a worksheet more than once";
         return;
     }
     else {
         $chart->{_already_inserted} = 1;
+
+        if ( $chart->{_combined} ) {
+            $chart->{_combined}->{_already_inserted} = 1;
+        }
     }
 
     # Use the values set with $chart->set_size(), if any.
