@@ -6981,6 +6981,18 @@ sub _write_cell {
     my $xf       = $cell->[2];
     my $xf_index = 0;
 
+    my %error_codes = (
+        '#DIV/0!' => 1,
+        '#N/A'    => 1,
+        '#NAME?'  => 1,
+        '#NULL!'  => 1,
+        '#NUM!'   => 1,
+        '#REF!'   => 1,
+        '#VALUE!' => 1,
+    );
+
+    my %boolean = ( 'TRUE' => 1, 'FALSE' => 0 );
+
     # Get the format index.
     if ( ref( $xf ) ) {
         $xf_index = $xf->get_xf_index();
@@ -7049,11 +7061,19 @@ sub _write_cell {
         if (   $value
             && $value !~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ )
         {
-            push @attributes, ( 't' => 'str' );
-            $value =
-              Excel::Writer::XLSX::Package::XMLwriter::_escape_data( $value );
+            if ( exists $boolean{$value} ) {
+                push @attributes, ( 't' => 'b' );
+                $value = $boolean{$value};
+            }
+            elsif ( exists $error_codes{$value} ) {
+                push @attributes, ( 't' => 'e' );
+            }
+            else {
+                push @attributes, ( 't' => 'str' );
+                $value = Excel::Writer::XLSX::Package::XMLwriter::_escape_data(
+                    $value );
+            }
         }
-
 
         $self->xml_formula_element( $token, $value, @attributes );
 
