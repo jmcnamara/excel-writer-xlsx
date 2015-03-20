@@ -862,6 +862,10 @@ sub _get_data_type {
     return 'none' if !defined $data;
     return 'none' if @$data == 0;
 
+    if (ref $data->[0] eq 'ARRAY') {
+        return 'multi_str'
+    }
+
     # If the token isn't a number assume it is a string.
     for my $token ( @$data ) {
         next if !defined $token;
@@ -2268,6 +2272,13 @@ sub _write_cat {
         # Write the c:numRef element.
         $self->_write_str_ref( $formula, $data, $type );
     }
+    elsif ( $type eq 'multi_str') {
+
+        $self->{_cat_has_num_fmt} = 0;
+
+        # Write the c:multiLvLStrRef element.
+        $self->_write_multi_lvl_str_ref( $formula, $data );
+    }
     else {
 
         $self->{_cat_has_num_fmt} = 1;
@@ -2275,6 +2286,7 @@ sub _write_cat {
         # Write the c:numRef element.
         $self->_write_num_ref( $formula, $data, $type );
     }
+
 
     $self->xml_end_tag( 'c:cat' );
 }
@@ -2368,6 +2380,50 @@ sub _write_str_ref {
     }
 
     $self->xml_end_tag( 'c:strRef' );
+}
+
+
+##############################################################################
+#
+# _write_multi_lvl_str_ref()
+#
+# Write the <c:multiLvLStrRef> element.
+#
+sub _write_multi_lvl_str_ref {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $data    = shift;
+    my $count   = @$data;
+
+    return if !$count;
+
+    $self->xml_start_tag( 'c:multiLvlStrRef' );
+
+    # Write the c:f element.
+    $self->_write_series_formula( $formula );
+
+    $self->xml_start_tag( 'c:multiLvlStrCache' );
+
+    # Write the c:ptCount element.
+    $count = @{ $data->[-1] };
+    $self->_write_pt_count( $count );
+
+    # Write the data arrays in reverse order.
+    for my $aref ( reverse @$data ) {
+        $self->xml_start_tag( 'c:lvl' );
+
+        for my $i ( 0 .. @$aref - 1 ) {
+            # Write the c:pt element.
+            $self->_write_pt( $i, $aref->[$i] );
+        }
+
+        $self->xml_end_tag( 'c:lvl' );
+    }
+
+    $self->xml_end_tag( 'c:multiLvlStrCache' );
+
+    $self->xml_end_tag( 'c:multiLvlStrRef' );
 }
 
 
