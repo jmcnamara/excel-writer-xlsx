@@ -671,27 +671,28 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
-        _defaults          => $axis->{_defaults},
-        _name              => $name,
-        _formula           => $name_formula,
-        _data_id           => $data_id,
-        _reverse           => $arg{reverse},
-        _min               => $arg{min},
-        _max               => $arg{max},
-        _minor_unit        => $arg{minor_unit},
-        _major_unit        => $arg{major_unit},
-        _minor_unit_type   => $arg{minor_unit_type},
-        _major_unit_type   => $arg{major_unit_type},
-        _log_base          => $arg{log_base},
-        _crossing          => $arg{crossing},
-        _position_axis     => $arg{position_axis},
-        _position          => $arg{position},
-        _label_position    => $arg{label_position},
-        _num_format        => $arg{num_format},
-        _num_format_linked => $arg{num_format_linked},
-        _interval_unit     => $arg{interval_unit},
-        _visible           => defined $arg{visible} ? $arg{visible} : 1,
-        _text_axis         => 0,
+        _defaults              => $axis->{_defaults},
+        _name                  => $name,
+        _formula               => $name_formula,
+        _data_id               => $data_id,
+        _reverse               => $arg{reverse},
+        _min                   => $arg{min},
+        _max                   => $arg{max},
+        _minor_unit            => $arg{minor_unit},
+        _major_unit            => $arg{major_unit},
+        _minor_unit_type       => $arg{minor_unit_type},
+        _major_unit_type       => $arg{major_unit_type},
+        _display_units_visible => $arg{display_units_visible},
+        _log_base              => $arg{log_base},
+        _crossing              => $arg{crossing},
+        _position_axis         => $arg{position_axis},
+        _position              => $arg{position},
+        _label_position        => $arg{label_position},
+        _num_format            => $arg{num_format},
+        _num_format_linked     => $arg{num_format_linked},
+        _interval_unit         => $arg{interval_unit},
+        _visible               => defined $arg{visible} ? $arg{visible} : 1,
+        _text_axis             => 0,
     };
 
     # Map major_gridlines properties.
@@ -706,6 +707,9 @@ sub _convert_axis_args {
           $self->_get_gridline_properties( $arg{minor_gridlines} );
     }
 
+
+    # Convert the display units.
+    $axis->{_display_units} = $self->_get_display_units( $arg{display_units} );
 
     # Only use the first letter of bottom, top, left or right.
     if ( defined $axis->{_position} ) {
@@ -1201,7 +1205,8 @@ sub _get_marker_properties {
 #
 # _get_trendline_properties()
 #
-# Convert user defined trendline properties to the structure required internally.
+# Convert user defined trendline properties to the structure required
+# internally.
 #
 sub _get_trendline_properties {
 
@@ -1596,6 +1601,44 @@ sub _get_points_properties {
     }
 
     return \@points;
+}
+
+
+
+###############################################################################
+#
+# _get_display_units()
+#
+# Convert user defined display units to internal units.
+#
+sub _get_display_units {
+
+    my $self          = shift;
+    my $display_units = shift;
+
+    return if !$display_units;
+
+    my %types = (
+        'hundreds'          => 'hundreds',
+        'thousands'         => 'thousands',
+        'ten_thousands'     => 'tenThousands',
+        'hundred_thousands' => 'hundredThousands',
+        'millions'          => 'millions',
+        'ten_millions'      => 'tenMillions',
+        'hundred_millions'  => 'hundredMillions',
+        'billions'          => 'billions',
+        'trillions'         => 'trillions',
+    );
+
+    if ( exists $types{$display_units} ) {
+        $display_units = $types{$display_units};
+    }
+    else {
+        warn "Unknown display_units type '$display_units'\n";
+        return;
+    }
+
+    return $display_units;
 }
 
 
@@ -2689,6 +2732,10 @@ sub _write_val_axis {
     # Write the c:minorUnit element.
     $self->_write_c_minor_unit( $y_axis->{_minor_unit} );
 
+    # Write the c:dispUnits element.
+    $self->_write_disp_units( $y_axis->{_display_units},
+        $y_axis->{_display_units_visible} );
+
     $self->xml_end_tag( 'c:valAx' );
 }
 
@@ -2785,6 +2832,10 @@ sub _write_cat_val_axis {
 
     # Write the c:minorUnit element.
     $self->_write_c_minor_unit( $x_axis->{_minor_unit} );
+
+    # Write the c:dispUnits element.
+    $self->_write_disp_units( $x_axis->{_display_units},
+        $x_axis->{_display_units_visible} );
 
     $self->xml_end_tag( 'c:valAx' );
 }
@@ -5539,6 +5590,35 @@ sub _write_c_smooth {
     my @attributes = ( 'val' => 1 );
 
     $self->xml_empty_tag( 'c:smooth', @attributes );
+}
+
+##############################################################################
+#
+# _write_disp_units()
+#
+# Write the <c:dispUnits> element.
+#
+sub _write_disp_units {
+
+    my $self    = shift;
+    my $units   = shift;
+    my $display = shift;
+
+    return if not $units;
+
+    my @attributes = ( 'val' => $units );
+
+    $self->xml_start_tag( 'c:dispUnits' );
+
+    $self->xml_empty_tag( 'c:builtInUnit', @attributes );
+
+    if ( $display ) {
+        $self->xml_start_tag( 'c:dispUnitsLbl' );
+        $self->xml_empty_tag( 'c:layout' );
+        $self->xml_end_tag( 'c:dispUnitsLbl' );
+    }
+
+    $self->xml_end_tag( 'c:dispUnits' );
 }
 
 
