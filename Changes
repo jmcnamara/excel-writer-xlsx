@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.84 2015-X-X
+
+   + Added support for chart axis display units (thousands, million, etc.).
+
+
 0.83 2015-3-17
 
    + Added option to combine two different chart types. For example to

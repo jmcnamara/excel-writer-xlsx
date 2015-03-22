@@ -671,28 +671,27 @@ sub _convert_axis_args {
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
     $axis = {
-        _defaults              => $axis->{_defaults},
-        _name                  => $name,
-        _formula               => $name_formula,
-        _data_id               => $data_id,
-        _reverse               => $arg{reverse},
-        _min                   => $arg{min},
-        _max                   => $arg{max},
-        _minor_unit            => $arg{minor_unit},
-        _major_unit            => $arg{major_unit},
-        _minor_unit_type       => $arg{minor_unit_type},
-        _major_unit_type       => $arg{major_unit_type},
-        _display_units_visible => $arg{display_units_visible},
-        _log_base              => $arg{log_base},
-        _crossing              => $arg{crossing},
-        _position_axis         => $arg{position_axis},
-        _position              => $arg{position},
-        _label_position        => $arg{label_position},
-        _num_format            => $arg{num_format},
-        _num_format_linked     => $arg{num_format_linked},
-        _interval_unit         => $arg{interval_unit},
-        _visible               => defined $arg{visible} ? $arg{visible} : 1,
-        _text_axis             => 0,
+        _defaults          => $axis->{_defaults},
+        _name              => $name,
+        _formula           => $name_formula,
+        _data_id           => $data_id,
+        _reverse           => $arg{reverse},
+        _min               => $arg{min},
+        _max               => $arg{max},
+        _minor_unit        => $arg{minor_unit},
+        _major_unit        => $arg{major_unit},
+        _minor_unit_type   => $arg{minor_unit_type},
+        _major_unit_type   => $arg{major_unit_type},
+        _log_base          => $arg{log_base},
+        _crossing          => $arg{crossing},
+        _position_axis     => $arg{position_axis},
+        _position          => $arg{position},
+        _label_position    => $arg{label_position},
+        _num_format        => $arg{num_format},
+        _num_format_linked => $arg{num_format_linked},
+        _interval_unit     => $arg{interval_unit},
+        _visible           => defined $arg{visible} ? $arg{visible} : 1,
+        _text_axis         => 0,
     };
 
     # Map major_gridlines properties.
@@ -707,9 +706,14 @@ sub _convert_axis_args {
           $self->_get_gridline_properties( $arg{minor_gridlines} );
     }
 
-
     # Convert the display units.
     $axis->{_display_units} = $self->_get_display_units( $arg{display_units} );
+    if ( defined $arg{display_units_visible} ) {
+        $axis->{_display_units_visible} = $arg{display_units_visible};
+    }
+    else {
+        $axis->{_display_units_visible} = 1;
+    }
 
     # Only use the first letter of bottom, top, left or right.
     if ( defined $axis->{_position} ) {
@@ -1602,7 +1606,6 @@ sub _get_points_properties {
 
     return \@points;
 }
-
 
 
 ###############################################################################
@@ -5905,6 +5908,8 @@ The properties that can be set are:
     text_axis
     minor_unit_type
     major_unit_type
+    display_units
+    display_units_visible
 
 These are explained below. Some properties are only applicable to value or category axes, as indicated. See L<Value and Category Axes> for an explanation of Excel's distinction between the axis types.
 
@@ -6108,8 +6113,6 @@ The allowable values for this option are C<days>, C<months> and C<years>.
 
 Same as C<minor_unit_type>, see above, but for major axes unit types.
 
-=back
-
 More than one property can be set in a call to C<set_x_axis()>:
 
     $chart->set_x_axis(
@@ -6118,6 +6121,34 @@ More than one property can be set in a call to C<set_x_axis()>:
         max  => 80,
     );
 
+=item * C<display_units>
+
+Set the display units for the axis. This can be useful if the axis numbers are very large but you don't want to represent them in scientific notation. (Applicable to value axes only.) The available display units are:
+
+    hundreds
+    thousands
+    ten_thousands
+    hundred_thousands
+    millions
+    ten_millions
+    hundred_millions
+    billions
+    trillions
+
+Example:
+
+    $chart->set_x_axis( display_units => 'thousands' )
+    $chart->set_y_axis( display_units => 'millions' )
+
+
+* C<display_units_visible>
+
+Control the visibility of the display units turned on by the previous option. This option is on by default. (Applicable to value axes only.)::
+
+    $chart->set_x_axis( display_units         => 'thousands',
+                        display_units_visible => 0 )
+
+=back
 
 =head2 set_y_axis()
 

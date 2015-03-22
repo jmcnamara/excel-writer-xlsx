@@ -51,8 +51,8 @@ $chart->add_series(
     values     => '=Sheet1!$B$1:$B$5'
 );
 
-$chart->set_y_axis( display_units => 'hundreds');
-$chart->set_x_axis( display_units => 'thousands');
+$chart->set_y_axis( display_units => 'hundreds', display_units_visible => 0 );
+$chart->set_x_axis( display_units => 'thousands', display_units_visible => 0 );
 
 $worksheet->insert_chart( 'E9', $chart );
 
