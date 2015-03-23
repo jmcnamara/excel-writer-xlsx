@@ -212,6 +212,14 @@ sub add_series {
     # Set the fill properties for the series.
     my $fill = $self->_get_fill_properties( $arg{fill} );
 
+    # Set the gradient fill properties for the series.
+    my $gradient = $self->_get_gradient_properties( $arg{gradient} );
+
+    # Gradient fill overrides solid fill.
+    if ( $gradient ) {
+        $fill = undef;
+    }
+
     # Set the marker properties for the series.
     my $marker = $self->_get_marker_properties( $arg{marker} );
 
@@ -274,6 +282,7 @@ sub add_series {
         _cat_data_id   => $cat_id,
         _line          => $line,
         _fill          => $fill,
+        _gradient      => $gradient,
         _marker        => $marker,
         _trendline     => $trendline,
         _smooth        => $smooth,
@@ -285,6 +294,7 @@ sub add_series {
         _error_bars =>
           { _x_error_bars => $x_error_bars, _y_error_bars => $y_error_bars },
     );
+
 
     push @{ $self->{_series} }, \%arg;
 }
@@ -1139,6 +1149,97 @@ sub _get_fill_properties {
 
 ###############################################################################
 #
+# _get_gradient_properties()
+#
+# Convert user defined gradient to the structure required internally.
+#
+sub _get_gradient_properties {
+
+    my $self     = shift;
+    my $args     = shift;
+    my $gradient = {};
+    my %types    = (
+        linear      => 'linear',
+        radial      => 'circle',
+        rectangular => 'rect',
+        path        => 'shape'
+    );
+
+    return unless $args;
+
+    # Check the colors array exists and is valid.
+    if ( !$args->{colors} || ref $args->{colors} ne 'ARRAY' ) {
+        carp "Gradient must include colors array";
+        return;
+    }
+
+    # Check the colors array has the right number of entries.
+    if ( @{ $args->{colors} } != 3 ) {
+        carp "Gradient colors array must include 3 values";
+        return;
+    }
+
+    $gradient->{_colors} = $args->{colors};
+
+    if ( $args->{positions} ) {
+
+        # Check the positions array has the right number of entries.
+        if ( @{ $args->{positions} } != 3 ) {
+            carp "Gradient positions array must include 3 values";
+            return;
+        }
+
+        # Check the positions are in the correct range.
+        for my $pos ( @{ $args->{positions} } ) {
+            if ( $pos < 0 || $pos > 100 ) {
+                carp "Gradient position '", $pos,
+                  "' must be in range 0 < pos < 100";
+                return;
+            }
+        }
+
+        $gradient->{_positions} = $args->{positions};
+    }
+    else {
+        # Use the default gradient positions.
+        $gradient->{_positions} = [ 0, 50, 100 ];
+
+    }
+
+    # Set the gradient angle.
+    if ( defined $args->{angle} ) {
+        my $angle = $args->{angle};
+
+        if ( $angle < 0 || $angle > 100 ) {
+            carp "Gradient angle '", $angle, "' must be in range 0 < pos < 100";
+            return;
+        }
+        $gradient->{_angle} = $angle;
+    }
+    else {
+        $gradient->{_angle} = 90;
+    }
+
+    # Set the gradient type.
+    if ( defined $args->{type} ) {
+        my $type = $args->{type};
+
+        if ( !exists $types{$type} ) {
+            carp "Unknow gradient type '", $type, "'";
+            return;
+        }
+        $gradient->{_type} = $types{$type};
+    }
+    else {
+        $gradient->{_type} = 'linear';
+    }
+
+    return $gradient;
+}
+
+
+###############################################################################
+#
 # _get_marker_properties()
 #
 # Convert user defined marker properties to the structure required internally.
@@ -1198,8 +1299,17 @@ sub _get_marker_properties {
     # Set the fill properties for the marker.
     my $fill = $self->_get_fill_properties( $marker->{fill} );
 
-    $marker->{_line} = $line;
-    $marker->{_fill} = $fill;
+    # Set the gradient fill properties for the series.
+    my $gradient = $self->_get_gradient_properties( $marker->{gradient} );
+
+    # Gradient fill overrides solid fill.
+    if ( $gradient ) {
+        $fill = undef;
+    }
+
+    $marker->{_line}     = $line;
+    $marker->{_fill}     = $fill;
+    $marker->{_gradient} = $gradient;
 
     return $marker;
 }
@@ -1253,8 +1363,17 @@ sub _get_trendline_properties {
     # Set the fill properties for the trendline.
     my $fill = $self->_get_fill_properties( $trendline->{fill} );
 
-    $trendline->{_line} = $line;
-    $trendline->{_fill} = $fill;
+    # Set the gradient fill properties for the series.
+    my $gradient = $self->_get_gradient_properties( $trendline->{gradient} );
+
+    # Gradient fill overrides solid fill.
+    if ( $gradient ) {
+        $fill = undef;
+    }
+
+    $trendline->{_line}     = $line;
+    $trendline->{_fill}     = $fill;
+    $trendline->{_gradient} = $gradient;
 
     return $trendline;
 }
@@ -1490,12 +1609,21 @@ sub _get_area_properties {
     # Set the fill properties for the chartarea.
     my $fill = $self->_get_fill_properties( $arg{fill} );
 
+    # Set the gradient fill properties for the series.
+    my $gradient = $self->_get_gradient_properties( $arg{gradient} );
+
+    # Gradient fill overrides solid fill.
+    if ( $gradient ) {
+        $fill = undef;
+    }
+
     # Set the plotarea layout.
     my $layout = $self->_get_layout_properties( $arg{layout} );
 
-    $area->{_line}   = $line;
-    $area->{_fill}   = $fill;
-    $area->{_layout} = $layout;
+    $area->{_line}     = $line;
+    $area->{_fill}     = $fill;
+    $area->{_gradient} = $gradient;
+    $area->{_layout}   = $layout;
 
     return $area;
 }
@@ -1597,8 +1725,18 @@ sub _get_points_properties {
             # Set the fill properties for the chartarea.
             my $fill = $self->_get_fill_properties( $user_point->{fill} );
 
-            $point->{_line} = $line;
-            $point->{_fill} = $fill;
+            # Set the gradient fill properties for the series.
+            my $gradient =
+              $self->_get_gradient_properties( $user_point->{gradient} );
+
+            # Gradient fill overrides solid fill.
+            if ( $gradient ) {
+                $fill = undef;
+            }
+
+            $point->{_line}     = $line;
+            $point->{_fill}     = $fill;
+            $point->{_gradient} = $gradient;
         }
 
         push @points, $point;
@@ -4284,7 +4422,10 @@ sub _write_sp_pr {
     my $self   = shift;
     my $series = shift;
 
-    if ( !$series->{_line}->{_defined} and !$series->{_fill}->{_defined} ) {
+    if (    !$series->{_line}->{_defined}
+        and !$series->{_fill}->{_defined}
+        and !$series->{_gradient} )
+    {
         return;
     }
 
@@ -4302,6 +4443,12 @@ sub _write_sp_pr {
             # Write the a:solidFill element.
             $self->_write_a_solid_fill( $series->{_fill} );
         }
+    }
+
+    if ( $series->{_gradient} ) {
+
+        # Write the a:gradFill element.
+        $self->_write_a_grad_fill( $series->{_gradient} );
     }
 
     # Write the a:ln element.
@@ -5622,6 +5769,188 @@ sub _write_disp_units {
     }
 
     $self->xml_end_tag( 'c:dispUnits' );
+}
+
+
+##############################################################################
+#
+# _write_a_grad_fill()
+#
+# Write the <a:gradFill> element.
+#
+sub _write_a_grad_fill {
+
+    my $self     = shift;
+    my $gradient = shift;
+
+
+    my @attributes = (
+        'flip'         => 'none',
+        'rotWithShape' => 1,
+    );
+
+
+    if ( $gradient->{_type} eq 'linear' ) {
+        @attributes = ();
+    }
+
+    $self->xml_start_tag( 'a:gradFill', @attributes );
+
+    # Write the a:gsLst element.
+    $self->_write_a_gs_lst( $gradient );
+
+    if ( $gradient->{_type} eq 'linear' ) {
+        # Write the a:lin element.
+        $self->_write_a_lin( $gradient->{_angle} );
+    }
+    else {
+        # Write the a:path element.
+        $self->_write_a_path( $gradient->{_type} );
+
+        # Write the a:tileRect element.
+        $self->_write_a_tile_rect( $gradient->{_type} );
+    }
+
+    $self->xml_end_tag( 'a:gradFill' );
+}
+
+
+##############################################################################
+#
+# _write_a_gs_lst()
+#
+# Write the <a:gsLst> element.
+#
+sub _write_a_gs_lst {
+
+    my $self      = shift;
+    my $gradient  = shift;
+    my $positions = $gradient->{_positions};
+    my $colors    = $gradient->{_colors};
+
+    $self->xml_start_tag( 'a:gsLst' );
+
+    for my $i ( 0 .. 2 ) {
+
+        my $pos = int($positions->[$i] * 1000);
+
+        my @attributes = ( 'pos' => $pos );
+        $self->xml_start_tag( 'a:gs', @attributes );
+
+        my $color = $self->_get_color( $colors->[$i] );
+
+        # Write the a:srgbClr element.
+        # TODO: Wait for a feature request to support transparency.
+        $self->_write_a_srgb_clr( $color );
+
+        $self->xml_end_tag( 'a:gs' );
+    }
+
+    $self->xml_end_tag( 'a:gsLst' );
+}
+
+
+##############################################################################
+#
+# _write_a_lin()
+#
+# Write the <a:lin> element.
+#
+sub _write_a_lin {
+
+    my $self   = shift;
+    my $angle  = shift;
+    my $scaled = 0;
+
+    $angle = int( 60000 * $angle );
+
+    my @attributes = (
+        'ang'    => $angle,
+        'scaled' => $scaled,
+    );
+
+    $self->xml_empty_tag( 'a:lin', @attributes );
+}
+
+##############################################################################
+#
+# _write_a_path()
+#
+# Write the <a:path> element.
+#
+sub _write_a_path {
+
+    my $self = shift;
+    my $type = shift;
+
+
+    my @attributes = ( 'path' => $type );
+
+    $self->xml_start_tag( 'a:path', @attributes );
+
+    # Write the a:fillToRect element.
+    $self->_write_a_fill_to_rect( $type );
+
+    $self->xml_end_tag( 'a:path' );
+}
+
+
+##############################################################################
+#
+# _write_a_fill_to_rect()
+#
+# Write the <a:fillToRect> element.
+#
+sub _write_a_fill_to_rect {
+
+    my $self       = shift;
+    my $type       = shift;
+    my @attributes = ();
+
+    if ( $type eq 'shape' ) {
+        @attributes = (
+            'l' => 50000,
+            't' => 50000,
+            'r' => 50000,
+            'b' => 50000,
+        );
+
+    }
+    else {
+        @attributes = (
+            'l' => 100000,
+            't' => 100000,
+        );
+    }
+
+
+    $self->xml_empty_tag( 'a:fillToRect', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_tile_rect()
+#
+# Write the <a:tileRect> element.
+#
+sub _write_a_tile_rect {
+
+    my $self       = shift;
+    my $type       = shift;
+    my @attributes = ();
+
+    if ( $type eq 'shape' ) {
+        @attributes = ();
+    }
+    else {
+        @attributes = (
+            'r' => -100000,
+            'b' => -100000,
+        );
+    }
+
+    $self->xml_empty_tag( 'a:tileRect', @attributes );
 }
 
 
