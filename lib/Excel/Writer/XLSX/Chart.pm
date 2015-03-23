@@ -1173,9 +1173,9 @@ sub _get_gradient_properties {
         return;
     }
 
-    # Check the colors array has the right number of entries.
-    if ( @{ $args->{colors} } != 3 ) {
-        carp "Gradient colors array must include 3 values";
+    # Check the colors array has the required number of entries.
+    if ( @{ $args->{colors} } < 2 ) {
+        carp "Gradient colors array must at least 2 values";
         return;
     }
 
@@ -1184,8 +1184,8 @@ sub _get_gradient_properties {
     if ( $args->{positions} ) {
 
         # Check the positions array has the right number of entries.
-        if ( @{ $args->{positions} } != 3 ) {
-            carp "Gradient positions array must include 3 values";
+        if ( @{ $args->{positions} } != @{ $args->{colors} } ) {
+            carp "Gradient positions not equal to number of colors";
             return;
         }
 
@@ -1202,8 +1202,19 @@ sub _get_gradient_properties {
     }
     else {
         # Use the default gradient positions.
-        $gradient->{_positions} = [ 0, 50, 100 ];
-
+        if ( @{ $args->{colors} } == 2 ) {
+            $gradient->{_positions} = [ 0, 100 ];
+        }
+        elsif ( @{ $args->{colors} } == 3 ) {
+            $gradient->{_positions} = [ 0, 50, 100 ];
+        }
+        elsif ( @{ $args->{colors} } == 4 ) {
+            $gradient->{_positions} = [ 0, 33, 66, 100 ];
+        }
+        else {
+            carp "Must specify gradient positions";
+            return;
+        }
     }
 
     # Set the gradient angle.
@@ -5830,7 +5841,7 @@ sub _write_a_gs_lst {
 
     $self->xml_start_tag( 'a:gsLst' );
 
-    for my $i ( 0 .. 2 ) {
+    for my $i ( 0 .. @$colors -1 ) {
 
         my $pos = int($positions->[$i] * 1000);
 
