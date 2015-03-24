@@ -1193,7 +1193,7 @@ sub _get_gradient_properties {
         for my $pos ( @{ $args->{positions} } ) {
             if ( $pos < 0 || $pos > 100 ) {
                 carp "Gradient position '", $pos,
-                  "' must be in range 0 < pos < 100";
+                  "' must be in range 0 <= pos <= 100";
                 return;
             }
         }
@@ -1221,8 +1221,9 @@ sub _get_gradient_properties {
     if ( defined $args->{angle} ) {
         my $angle = $args->{angle};
 
-        if ( $angle < 0 || $angle > 100 ) {
-            carp "Gradient angle '", $angle, "' must be in range 0 < pos < 100";
+        if ( $angle < 0 || $angle > 359.9 ) {
+            carp "Gradient angle '", $angle,
+              "' must be in range 0 <= pos < 360";
             return;
         }
         $gradient->{_angle} = $angle;
