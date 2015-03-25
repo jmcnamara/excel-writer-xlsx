@@ -2434,9 +2434,9 @@ The following methods are available for page set-up:
     fit_to_pages()
     set_start_page()
     set_print_scale()
+    print_black_and_white()
     set_h_pagebreaks()
     set_v_pagebreaks()
-
 
 A common requirement when working with Excel::Writer::XLSX is to apply the same page set-up features to all of the worksheets in a workbook. To do this you can use the C<sheets()> method of the C<workbook> class to access the array of worksheets in a workbook:
 
@@ -2889,6 +2889,15 @@ Set the scale factor of the printed page. Scale factors in the range C<10 E<lt>=
 The default scale factor is 100. Note, C<set_print_scale()> does not affect the scale of the visible page in Excel. For that you should use C<set_zoom()>.
 
 Note also that although it is valid to use both C<fit_to_pages()> and C<set_print_scale()> on the same worksheet only one of these options can be active at a time. The last method call made will set the active option.
+
+
+
+
+=head2 print_black_and_white()
+
+Set the option to print the worksheet in black and white:
+
+    $worksheet->print_black_and_white();
 
 
 

@@ -1774,6 +1774,20 @@ sub set_print_scale {
 
 ###############################################################################
 #
+# print_black_and_white()
+#
+# Set the option to print the worksheet in black and white.
+#
+sub print_black_and_white {
+
+    my $self = shift;
+
+    $self->{_black_white} = 1;
+}
+
+
+###############################################################################
+#
 # keep_leading_zeros()
 #
 # Causes the write() method to treat integers with a leading zero as a string.
@@ -7267,6 +7281,11 @@ sub _write_page_setup {
     }
     else {
         push @attributes, ( 'orientation' => 'portrait' );
+    }
+
+    # Set print in black and white option.
+    if ( $self->{_black_white} ) {
+        push @attributes, ( 'blackAndWhite' => 1 );
     }
 
     # Set start page.
