@@ -1895,7 +1895,6 @@ sub set_start_page {
     return unless defined $_[0];
 
     $self->{_page_start}   = $_[0];
-    $self->{_custom_start} = 1;
 }
 
 
