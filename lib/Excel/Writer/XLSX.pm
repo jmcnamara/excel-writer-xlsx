@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.83';
+our $VERSION = '0.84';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.83 of Excel::Writer::XLSX, released March 17, 2015.
+This document refers to version 0.84 of Excel::Writer::XLSX, released April 21, 2015.
 
 
 
@@ -6318,6 +6318,8 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_stock.pl          A demo of stock style charts.
     chart_data_table.pl     A demo of a chart with a data table on the axis.
     chart_data_tools.pl     A demo of charts with data highlighting options.
+    chart_clustered.pl      A demo of a chart with a clustered axis.
+    chart_styles.pl         A demo of the available chart styles.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
     comments2.pl            Add comments with advanced options.

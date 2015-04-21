@@ -5,9 +5,19 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
-0.84 2015-X-X
+0.84 2015-04-21
 
    + Added support for chart axis display units (thousands, million, etc.).
+
+   + Added option to set printing in black and white. Issue #125.
+
+   + Added chart styles example.
+
+   + Added gradient fill support.
+
+   + Added support for clustered charts.
+
+   + Added support for boolean error codes.
 
 
 0.83 2015-3-17
