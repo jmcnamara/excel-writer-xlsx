@@ -1467,8 +1467,6 @@ t/regression/xlsx_files/vml01.xlsx
 t/regression/xlsx_files/vml02.xlsx
 t/regression/xlsx_files/vml03.xlsx
 t/regression/xlsx_files/vml04.xlsx
-t/regression/~$ewx_chart_combined05.xlsx
-t/regression/~$ewx_chart_combined08.xlsx
 t/utility/xl_cell_to_rowcol.t
 t/utility/xl_col_to_name.t
 t/utility/xl_date_1904.t
