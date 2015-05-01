@@ -3850,6 +3850,15 @@ Alternatively you can read data from an encoded file and convert it to C<UTF-8> 
 
 These methodologies are explained in more detail in L<perlunitut>, L<perluniintro> and L<perlunicode>.
 
+If the program contains UTF-8 text then you will also need to add C<use utf8> to the includes:
+
+    use utf8;
+
+    ...
+
+    $worksheet->write( 'A1', 'Some UTF-8 string' );
+
+
 See also the C<unicode_*.pl> programs in the examples directory of the distro.
 
 
