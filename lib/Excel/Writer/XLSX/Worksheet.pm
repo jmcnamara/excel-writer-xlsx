@@ -2703,7 +2703,7 @@ sub write_url {
 
     # External links to URLs and to other Excel workbooks have slightly
     # different characteristics that we have to account for.
-    if ( $link_type == 1 ) {
+    if ( $link_type == 1 || $link_type == 3) {
 
         # Escape URL unless it looks already escaped.
         if ( $url !~ /%[0-9a-fA-F]{2}/ ) {
@@ -2721,7 +2721,8 @@ sub write_url {
         # Ordinary URL style external links don't have a "location" string.
         $url_str = undef;
     }
-    elsif ( $link_type == 3 ) {
+
+    if ( $link_type == 3 ) {
 
         # External Workbook links need to be modified into the right format.
         # The URL will look something like 'c:\temp\file.xlsx#Sheet!A1'.
