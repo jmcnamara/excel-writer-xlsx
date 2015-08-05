@@ -3837,7 +3837,7 @@ sub conditional_formatting {
         elsif ( $param->{criteria} eq 'thisMonth' ) {
             $param->{formula} =
               sprintf 'AND(MONTH(%s)=MONTH(TODAY()),YEAR(%s)=YEAR(TODAY()))',
-              $start_cell, $start_cell, $start_cell;
+              $start_cell, $start_cell;
         }
         elsif ( $param->{criteria} eq 'nextMonth' ) {
             $param->{formula} =
@@ -4529,7 +4529,7 @@ sub _get_palette_color {
     # Palette is passed in from the Workbook class.
     my @rgb = @{ $palette->[$index] };
 
-    return sprintf "FF%02X%02X%02X", @rgb;
+    return sprintf "FF%02X%02X%02X", @rgb[0, 1, 2];
 }
 
 
@@ -5841,7 +5841,7 @@ sub _comment_params {
 
         # Get the RGB color from the palette.
         my @rgb = @{ $palette->[ $color_id - 8 ] };
-        my $rgb_color = sprintf "%02x%02x%02x", @rgb;
+        my $rgb_color = sprintf "%02x%02x%02x", @rgb[0, 1, 2];
 
         # Minor modification to allow comparison testing. Change RGB colors
         # from long format, ffcc00 to short format fc0 used by VML.

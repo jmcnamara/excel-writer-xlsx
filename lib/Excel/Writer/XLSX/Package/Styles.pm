@@ -162,7 +162,7 @@ sub _get_palette_color {
     # Palette is passed in from the Workbook class.
     my @rgb = @{ $palette->[$index] };
 
-    return sprintf "FF%02X%02X%02X", @rgb;
+    return sprintf "FF%02X%02X%02X", @rgb[0, 1, 2];
 }
 
 
