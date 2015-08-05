@@ -662,7 +662,7 @@ sub set_rotation {
     if ( $rotation == 270 ) {
         $rotation = 255;
     }
-    elsif ( $rotation >= -90 or $rotation <= 90 ) {
+    elsif ( $rotation >= -90 and $rotation <= 90 ) {
         $rotation = -$rotation + 90 if $rotation < 0;
     }
     else {
