@@ -729,6 +729,7 @@ t/regression/hyperlink17.t
 t/regression/hyperlink18.t
 t/regression/hyperlink19.t
 t/regression/hyperlink20.t
+t/regression/hyperlink21.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -1355,6 +1356,7 @@ t/regression/xlsx_files/hyperlink17.xlsx
 t/regression/xlsx_files/hyperlink18.xlsx
 t/regression/xlsx_files/hyperlink19.xlsx
 t/regression/xlsx_files/hyperlink20.xlsx
+t/regression/xlsx_files/hyperlink21.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
