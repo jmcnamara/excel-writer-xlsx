@@ -3581,6 +3581,7 @@ sub conditional_formatting {
         value     => 1,
         minimum   => 1,
         maximum   => 1,
+		stopIfTrue => 1,
         min_type  => 1,
         mid_type  => 1,
         max_type  => 1,
@@ -8563,7 +8564,7 @@ sub _write_cf_rule {
     my $self  = shift;
     my $param = shift;
 
-    my @attributes = ( 'type' => $param->{type} );
+    my @attributes = ( 'type' => $param->{type}, $param->{stopIfTrue} ? ( stopIfTrue => 1 ) : () );
 
     push @attributes, ( 'dxfId' => $param->{format} )
       if defined $param->{format};
