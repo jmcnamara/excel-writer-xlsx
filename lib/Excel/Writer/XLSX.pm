@@ -4619,6 +4619,7 @@ Other, less commonly used parameters are:
     mid_color
     max_color
     bar_color
+    stop_if_true
 
 Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
 
@@ -5085,6 +5086,11 @@ The C<min_color> and C<max_color> properties are available when the conditional 
     );
 
 The color can be specifies as an Excel::Writer::XLSX color index or, more usefully, as a HTML style RGB hex number, as shown above.
+
+
+=head2 stop_if_true
+
+The C<stop_if_true> parameter, if set to a true value, will enable the "stop if true" feature on the conditional formatting rule, so that subsequent rules are not examined for any cell on which the conditions for this rule are met.
 
 
 =head2 Conditional Formatting Examples
