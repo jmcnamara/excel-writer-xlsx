@@ -23,6 +23,7 @@ my $worksheet5 = $workbook->add_worksheet();
 my $worksheet6 = $workbook->add_worksheet();
 my $worksheet7 = $workbook->add_worksheet();
 my $worksheet8 = $workbook->add_worksheet();
+my $worksheet9 = $workbook->add_worksheet();
 
 
 # Light red fill with dark red text.
@@ -36,6 +37,13 @@ my $format1 = $workbook->add_format(
 my $format2 = $workbook->add_format(
     bg_color => '#C6EFCE',
     color    => '#006100',
+
+);
+
+# Blue fill with dark blue text.
+my $format3 = $workbook->add_format(
+    bg_color => '#C6CEFF',
+    color    => '#0000FF',
 
 );
 
@@ -234,18 +242,19 @@ $worksheet6->conditional_formatting( 'B3:K6,B9:K12',
 #
 $caption = 'Examples of color scales and data bars. Default colors.';
 
-$data = [ 1 .. 12 ];
+# Use different sample data for examples 7 and 8
+my $data7 = [ 1 .. 12 ];
 
 $worksheet7->write( 'A1', $caption );
 
 $worksheet7->write    ( 'B2', "2 Color Scale" );
-$worksheet7->write_col( 'B3', $data );
+$worksheet7->write_col( 'B3', $data7 );
 
 $worksheet7->write    ( 'D2', "3 Color Scale" );
-$worksheet7->write_col( 'D3', $data );
+$worksheet7->write_col( 'D3', $data7 );
 
 $worksheet7->write    ( 'F2', "Data Bars" );
-$worksheet7->write_col( 'F3', $data );
+$worksheet7->write_col( 'F3', $data7 );
 
 
 $worksheet7->conditional_formatting( 'B3:B14',
@@ -273,18 +282,16 @@ $worksheet7->conditional_formatting( 'F3:F14',
 #
 $caption = 'Examples of color scales and data bars. Modified colors.';
 
-$data = [ 1 .. 12 ];
-
 $worksheet8->write( 'A1', $caption );
 
 $worksheet8->write    ( 'B2', "2 Color Scale" );
-$worksheet8->write_col( 'B3', $data );
+$worksheet8->write_col( 'B3', $data7 );
 
 $worksheet8->write    ( 'D2', "3 Color Scale" );
-$worksheet8->write_col( 'D3', $data );
+$worksheet8->write_col( 'D3', $data7 );
 
 $worksheet8->write    ( 'F2', "Data Bars" );
-$worksheet8->write_col( 'F3', $data );
+$worksheet8->write_col( 'F3', $data7 );
 
 
 $worksheet8->conditional_formatting( 'B3:B14',
@@ -312,6 +319,51 @@ $worksheet8->conditional_formatting( 'F3:F14',
     }
 );
 
+
+###############################################################################
+#
+# Example 9
+#
+$caption = 'Cells with values >= 100 are always in blue. '
+  . 'Otherwise, cells with values >= 50 are in light red '
+  . 'and values < 50 are in light green.';
+
+# Write the data.
+$worksheet9->write( 'A1', $caption );
+$worksheet9->write_col( 'B3', $data );
+
+# Write a conditional format over a range.
+# Use stopIfTrue to prevent previous formats from being used
+# if the conditions of this format are met.
+$worksheet9->conditional_formatting( 'B3:K12',
+    {
+        type         => 'cell',
+        criteria     => '>=',
+        value        => 100,
+        format       => $format3,
+        stop_if_true => 1,
+    }
+);
+
+# Write another conditional format over the same range.
+$worksheet9->conditional_formatting( 'B3:K12',
+    {
+        type     => 'cell',
+        criteria => '>=',
+        value    => 50,
+        format   => $format1,
+    }
+);
+
+# Write another conditional format over the same range.
+$worksheet9->conditional_formatting( 'B3:K12',
+    {
+        type     => 'cell',
+        criteria => '<',
+        value    => 50,
+        format   => $format2,
+    }
+);
 
 
 __END__
