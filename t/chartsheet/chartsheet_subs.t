@@ -43,6 +43,9 @@ sub _get_module_subs {
     # Only return the set_ type functions.
     @subs = grep { /^[a-z]+_/ } @subs;
 
+    # Add any other methods shared with charts.
+    push @subs, ('combine');
+
     # Ignore xl_ imported functions.
     @subs = grep { /^[^x][^l]/ } @subs;
 

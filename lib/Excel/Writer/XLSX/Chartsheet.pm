@@ -131,6 +131,7 @@ sub protect {
 ###############################################################################
 
 sub add_series         { return shift->{_chart}->add_series( @_ ) }
+sub combine            { return shift->{_chart}->combine( @_ ) }
 sub set_x_axis         { return shift->{_chart}->set_x_axis( @_ ) }
 sub set_y_axis         { return shift->{_chart}->set_y_axis( @_ ) }
 sub set_x2_axis        { return shift->{_chart}->set_x2_axis( @_ ) }
