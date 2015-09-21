@@ -10,7 +10,7 @@ use TestFunctions qw(_got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
 
-use Test::More tests => 44;
+use Test::More tests => 45;
 
 
 ###############################################################################
@@ -532,7 +532,7 @@ _is_deep_diff( $got, $expected, $caption );
 
 ###############################################################################
 #
-# Test 26 'Any' value shouldn't produce a DV record.
+# Test 26 'Any' value on its own shouldn't produce a DV record.
 #
 $got = '';
 $worksheet = _new_worksheet( \$got );
@@ -1025,6 +1025,32 @@ $worksheet->_write_data_validations();
 
 $caption  = " \tData validation api: multiple validations";
 $expected = '<dataValidations count="2"><dataValidation type="whole" operator="greaterThan" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>10</formula1></dataValidation><dataValidation type="whole" operator="lessThan" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="C10"><formula1>10</formula1></dataValidation></dataValidations>';
+
+$expected = _got_to_aref( $expected );
+$got      = _got_to_aref( $got );
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test 45 'any' with an input message should produce a dataValidation record.
+#
+
+$worksheet = _new_worksheet( \$got );
+
+$worksheet->data_validation(
+    'B5',
+    {
+        validate      => 'any',
+        input_title   => 'Input title January',
+        input_message => 'Input message February',
+    }
+);
+
+$worksheet->_write_data_validations();
+
+$caption  = " \tData validation api: input message only";
+$expected = '<dataValidations count="1"><dataValidation allowBlank="1" showInputMessage="1" showErrorMessage="1" promptTitle="Input title January" prompt="Input message February" sqref="B5"/></dataValidations>';
 
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
