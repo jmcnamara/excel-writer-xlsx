@@ -3333,15 +3333,21 @@ sub data_validation {
         $param->{validate} = $valid_type{ lc( $param->{validate} ) };
     }
 
+    # No action is required for validation type 'any'
+    # unless there are input messages.
+    if (   $param->{validate} eq 'none'
+        && !defined $param->{input_message}
+        && !defined $param->{input_title} )
+    {
+        return 0;
+    }
 
-    # No action is required for validation type 'any'.
-    # TODO: we should perhaps store 'any' for message only validations.
-    return 0 if $param->{validate} eq 'none';
-
-
-    # The list and custom validations don't have a criteria so we use a default
-    # of 'between'.
-    if ( $param->{validate} eq 'list' || $param->{validate} eq 'custom' ) {
+    # The any, list and custom validations don't have a criteria
+    # so we use a default of 'between'.
+    if (   $param->{validate} eq 'none'
+        || $param->{validate} eq 'list'
+        || $param->{validate} eq 'custom' )
+    {
         $param->{criteria} = 'between';
         $param->{maximum}  = undef;
     }
@@ -8424,10 +8430,14 @@ sub _write_data_validation {
     }
 
 
-    push @attributes, ( 'type' => $param->{validate} );
+    if ( $param->{validate} ne 'none' ) {
 
-    if ( $param->{criteria} ne 'between' ) {
-        push @attributes, ( 'operator' => $param->{criteria} );
+        push @attributes, ( 'type' => $param->{validate} );
+
+        if ( $param->{criteria} ne 'between' ) {
+            push @attributes, ( 'operator' => $param->{criteria} );
+        }
+
     }
 
     if ( $param->{error_type} ) {
@@ -8456,15 +8466,21 @@ sub _write_data_validation {
 
     push @attributes, ( 'sqref' => $sqref );
 
-    $self->xml_start_tag( 'dataValidation', @attributes );
+    if ( $param->{validate} eq 'none' ) {
+        $self->xml_empty_tag( 'dataValidation', @attributes );
+    }
+    else {
+        $self->xml_start_tag( 'dataValidation', @attributes );
 
-    # Write the formula1 element.
-    $self->_write_formula_1( $param->{value} );
+        # Write the formula1 element.
+        $self->_write_formula_1( $param->{value} );
 
-    # Write the formula2 element.
-    $self->_write_formula_2( $param->{maximum} ) if defined $param->{maximum};
+        # Write the formula2 element.
+        $self->_write_formula_2( $param->{maximum} )
+          if defined $param->{maximum};
 
-    $self->xml_end_tag( 'dataValidation' );
+        $self->xml_end_tag( 'dataValidation' );
+    }
 }
 
 
