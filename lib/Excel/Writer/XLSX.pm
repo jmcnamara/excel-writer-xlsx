@@ -4250,7 +4250,7 @@ The C<validate> parameter is used to set the type of data that you wish to valid
 
 =over
 
-=item * B<any> is used to specify that the type of data is unrestricted. This is the same as not applying a data validation. It is only provided for completeness and isn't used very often in the context of Excel::Writer::XLSX.
+=item * B<any> is used to specify that the type of data is unrestricted. This is useful to display an input message without restricting the data that can be entered.
 
 =item * B<integer> restricts the cell to integer values. Excel refers to this as 'whole number'.
 
