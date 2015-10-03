@@ -806,17 +806,18 @@ sub set_properties {
 
     # List of valid input parameters.
     my %valid = (
-        title       => 1,
-        subject     => 1,
-        author      => 1,
-        keywords    => 1,
-        comments    => 1,
-        last_author => 1,
-        created     => 1,
-        category    => 1,
-        manager     => 1,
-        company     => 1,
-        status      => 1,
+        title          => 1,
+        subject        => 1,
+        author         => 1,
+        keywords       => 1,
+        comments       => 1,
+        last_author    => 1,
+        created        => 1,
+        category       => 1,
+        manager        => 1,
+        company        => 1,
+        status         => 1,
+        hyperlink_base => 1,
     );
 
     # Check for valid input parameters.

@@ -446,6 +446,7 @@ The properties that can be set are:
     keywords
     comments
     status
+    hyperlink_base
 
 See also the C<properties.pl> program in the examples directory of the distro.
 

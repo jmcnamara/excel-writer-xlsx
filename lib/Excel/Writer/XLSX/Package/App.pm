@@ -73,6 +73,7 @@ sub _assemble_xml_file {
     $self->_write_company();
     $self->_write_links_up_to_date();
     $self->_write_shared_doc();
+    $self->_write_hyperlink_base();
     $self->_write_hyperlinks_changed();
     $self->_write_app_version();
 
@@ -363,6 +364,23 @@ sub _write_shared_doc {
     my $data = 'false';
 
     $self->xml_data_element( 'SharedDoc', $data );
+}
+
+
+###############################################################################
+#
+# _write_hyperlink_base()
+#
+# Write the <HyperlinkBase> element.
+#
+sub _write_hyperlink_base {
+
+    my $self = shift;
+    my $data = $self->{_properties}->{hyperlink_base};
+
+    return unless $data;
+
+    $self->xml_data_element( 'HyperlinkBase', $data );
 }
 
 
