@@ -1305,9 +1305,15 @@ For array formulas that return a range of values you must specify the range that
     $worksheet->write_array_formula( 'A1:A3',    '{=TREND(C1:C3,B1:B3)}' );
     $worksheet->write_array_formula( 0, 0, 2, 0, '{=TREND(C1:C3,B1:B3)}' );
 
-If required, it is also possible to specify the calculated value of the formula. This is occasionally necessary when working with non-Excel applications that don't calculate the value of the formula. The calculated C<$value> is added at the end of the argument list:
+If required, it is also possible to specify the calculated value of the formula. This is occasionally necessary when working with non-Excel applications that don't calculate the value of the formula. However, using this parameter only writes a single value to the upper left cell in the result array. For a multi-cell array formula where the results are required, the other result values can be specified by using C<write_number()> to write to the appropriate cell:
 
+    # Specify the result for a single cell range.
+    $worksheet->write_array_formula( 'A1:A3', '{=SUM(B1:C1*B2:C2)}, $format, 2005 );
+
+    # Specify the results for a multi cell range.
     $worksheet->write_array_formula( 'A1:A3', '{=TREND(C1:C3,B1:B3)}', $format, 105 );
+    $worksheet->write_number( 'A2', 12, format );
+    $worksheet->write_number( 'A3', 14, format );
 
 In addition, some early versions of Excel 2007 don't calculate the values of array formulas when they aren't supplied. Installing the latest Office Service Pack should fix this issue.
 
@@ -5055,10 +5061,12 @@ The C<min_type> and C<max_type> properties are available when the conditional fo
 
 The available min/mid/max types are:
 
+    min        (for min_type only)
     num
     percent
     percentile
     formula
+    max        (for max_type only)
 
 
 =head2 min_value, mid_value, max_value
