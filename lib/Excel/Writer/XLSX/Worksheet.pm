@@ -2665,22 +2665,19 @@ sub write_url {
     my $type      = 'l';         # XML data type
     my $link_type = 1;
 
-
-    # Remove the URI scheme from internal links.
-    if ( $url =~ s/^internal:// ) {
-        $link_type = 2;
-    }
-
-    # Remove the URI scheme from external links.
-    if ( $url =~ s/^external:// ) {
-        $link_type = 3;
-    }
-
     # The displayed string defaults to the url string.
     $str = $url unless defined $str;
 
-    # For external links change the directory separator from Unix to Dos.
-    if ( $link_type == 3 ) {
+    # Remove the URI scheme from internal links.
+    if ( $url =~ s/^internal:// ) {
+        $str =~ s/^internal://;
+        $link_type = 2;
+    }
+
+    # Remove the URI scheme from external links and change the directory
+    # separator from Unix to Dos.
+    if ( $url =~ s/^external:// ) {
+        $str =~ s/^external://;
         $url =~ s[/][\\]g;
         $str =~ s[/][\\]g;
     }
@@ -2703,7 +2700,7 @@ sub write_url {
 
     # External links to URLs and to other Excel workbooks have slightly
     # different characteristics that we have to account for.
-    if ( $link_type == 1 || $link_type == 3) {
+    if ( $link_type == 1 ) {
 
         # Escape URL unless it looks already escaped.
         if ( $url !~ /%[0-9a-fA-F]{2}/ ) {
@@ -2718,39 +2715,26 @@ sub write_url {
             $url =~ s/(["<>[\]`^{}])/sprintf '%%%x', ord $1/eg;
         }
 
-        # Ordinary URL style external links don't have a "location" string.
-        $url_str = undef;
-    }
-
-    if ( $link_type == 3 ) {
-
-        # External Workbook links need to be modified into the right format.
-        # The URL will look something like 'c:\temp\file.xlsx#Sheet!A1'.
-        # We need the part to the left of the # as the URL and the part to
-        # the right as the "location" string (if it exists).
+        # Split url into the link and optional anchor/location.
         ( $url, $url_str ) = split /#/, $url;
 
-        # Add the file:/// URI to the $url if non-local.
-        if (
-            $url =~ m{[:]}         # Windows style "C:/" link.
-            || $url =~ m{^\\\\}    # Network share.
-          )
-        {
+        # Add the file:/// URI to the url for Windows style "C:/" link and
+        # Network shares.
+        if ( $url =~ m{^\w:} || $url =~ m{^\\\\} ) {
             $url = 'file:///' . $url;
         }
 
         # Convert a ./dir/file.xlsx link to dir/file.xlsx.
         $url =~ s{^.\\}{};
-
-        # Treat as a default external link now that the data has been modified.
-        $link_type = 1;
     }
 
-    # Excel limits escaped URL to 255 characters.
-    if ( length $url > 255 ) {
-        carp "Ignoring URL '$url' > 255 characters since it exceeds Excel's "
-          . "limit for URLS. See LIMITATIONS section of the "
-          . "Excel::Writer::XLSX documentation.";
+    # Excel limits the escaped URL and location/anchor to 255 characters.
+    my $tmp_url_str = $url_str || '';
+
+    if ( length $url > 255 || length $tmp_url_str > 255) {
+        carp "Ignoring URL '$url' where link or anchor > 255 characters "
+          . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
+          . "section of the Excel::Writer::XLSX documentation.";
         return -4;
     }
 

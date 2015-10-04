@@ -1254,6 +1254,8 @@ Finally, you can avoid most of these quoting problems by using forward slashes. 
 
 Note: Excel::Writer::XLSX will escape the following characters in URLs as required by Excel: C<< \s " < > \ [  ] ` ^ { } >> unless the URL already contains C<%xx> style escapes. In which case it is assumed that the URL was escaped correctly by the user and will by passed directly to Excel.
 
+Excel limits hyperlink links and anchor/locations to 255 characters each.
+
 See also, the note about L</Cell notation>.
 
 
@@ -6416,16 +6418,17 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
 
 The following limits are imposed by Excel 2007+:
 
-    Description                          Limit
-    -----------------------------------  ------
-    Maximum number of chars in a string  32,767
-    Maximum number of columns            16,384
-    Maximum number of rows               1,048,576
-    Maximum chars in a sheet name        31
-    Maximum chars in a header/footer     254
+    Description                             Limit
+    --------------------------------------  ------
+    Maximum number of chars in a string     32,767
+    Maximum number of columns               16,384
+    Maximum number of rows                  1,048,576
+    Maximum chars in a sheet name           31
+    Maximum chars in a header/footer        254
 
-    Maximum characters in hyperlink      255
-    Maximum number of unique hyperlinks* 65,530
+    Maximum characters in hyperlink url     255
+    Maximum characters in hyperlink anchor  255
+    Maximum number of unique hyperlinks*    65,530
 
 * Per worksheet. Excel allows a greater number of non-unique hyperlinks if they are contiguous and can be grouped into a single range. This will be supported in a later version of Excel::Writer::XLSX if possible.
 
