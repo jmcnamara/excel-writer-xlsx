@@ -4780,6 +4780,15 @@ sub _position_object_pixels {
 
     ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
 
+    # Ensure that the image isn't shifted off the page at top left.
+    if ( $col_start == 0 && $x1 < 0 ) {
+        $x1 = 0;
+    }
+
+    if ( $row_start == 0 && $y1 < 0 ) {
+        $y1 = 0;
+    }
+
     # Calculate the absolute x offset of the top-left vertex.
     if ( $self->{_col_size_changed} ) {
         for my $col_id ( 0 .. $col_start -1 ) {
@@ -4807,6 +4816,17 @@ sub _position_object_pixels {
 
     $y_abs += $y1;
 
+    # Adjust start column for negative offsets.
+    while ( $x1 < 0 ) {
+        $x1 += $self->_size_col( $col_start  - 1);
+        $col_start--;
+    }
+
+    # Adjust start row for negative offsets.
+    while ( $y1 < 0 ) {
+        $y1 += $self->_size_row( $row_start - 1);
+        $row_start--;
+    }
 
     # Adjust start column for offsets that are greater than the col width.
     while ( $x1 >= $self->_size_col( $col_start ) ) {
@@ -4819,7 +4839,6 @@ sub _position_object_pixels {
         $y1 -= $self->_size_row( $row_start );
         $row_start++;
     }
-
 
     # Initialise end cell to the same as the start cell.
     $col_end = $col_start;
