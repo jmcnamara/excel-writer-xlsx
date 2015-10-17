@@ -35,7 +35,7 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 # Negative offset should be ignored.
-$worksheet->insert_image( 'A1', $dir . 'images/red.png', -1,  -1 );
+$worksheet->insert_image( 'B2', $dir . 'images/red.png', -100,  -100 );
 
 $workbook->close();
 
