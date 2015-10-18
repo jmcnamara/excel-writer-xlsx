@@ -647,6 +647,7 @@ t/regression/data_validation03.t
 t/regression/data_validation04.t
 t/regression/data_validation05.t
 t/regression/data_validation06.t
+t/regression/data_validation08.t
 t/regression/date_1904_01.t
 t/regression/date_1904_02.t
 t/regression/date_examples01.t
@@ -730,6 +731,9 @@ t/regression/hyperlink18.t
 t/regression/hyperlink19.t
 t/regression/hyperlink20.t
 t/regression/hyperlink21.t
+t/regression/hyperlink22.t
+t/regression/hyperlink23.t
+t/regression/hyperlink24.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -755,6 +759,12 @@ t/regression/image24.t
 t/regression/image25.t
 t/regression/image26.t
 t/regression/image27.t
+t/regression/image28.t
+t/regression/image29.t
+t/regression/image30.t
+t/regression/image31.t
+t/regression/image32.t
+t/regression/image33.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -776,6 +786,7 @@ t/regression/images/mylogo.png
 t/regression/images/red.bmp
 t/regression/images/red.jpg
 t/regression/images/red.png
+t/regression/images/red_208.png
 t/regression/images/red_64x20.png
 t/regression/images/train.jpg
 t/regression/images/yellow.jpg
@@ -828,6 +839,7 @@ t/regression/print_options07.t
 t/regression/print_scale01.t
 t/regression/print_scale02.t
 t/regression/properties01.t
+t/regression/properties02.t
 t/regression/protect01.t
 t/regression/protect02.t
 t/regression/protect03.t
@@ -916,6 +928,8 @@ t/regression/table14.t
 t/regression/table15.t
 t/regression/table16.t
 t/regression/table17.t
+t/regression/table18.t
+t/regression/table19.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/tutorial01.t
@@ -1274,6 +1288,7 @@ t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/data_validation01.xlsx
 t/regression/xlsx_files/data_validation02.xlsx
 t/regression/xlsx_files/data_validation03.xlsx
+t/regression/xlsx_files/data_validation08.xlsx
 t/regression/xlsx_files/date_1904_01.xlsx
 t/regression/xlsx_files/date_1904_02.xlsx
 t/regression/xlsx_files/date_examples01.xlsx
@@ -1357,6 +1372,9 @@ t/regression/xlsx_files/hyperlink18.xlsx
 t/regression/xlsx_files/hyperlink19.xlsx
 t/regression/xlsx_files/hyperlink20.xlsx
 t/regression/xlsx_files/hyperlink21.xlsx
+t/regression/xlsx_files/hyperlink22.xlsx
+t/regression/xlsx_files/hyperlink23.xlsx
+t/regression/xlsx_files/hyperlink24.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1382,6 +1400,12 @@ t/regression/xlsx_files/image24.xlsx
 t/regression/xlsx_files/image25.xlsx
 t/regression/xlsx_files/image26.xlsx
 t/regression/xlsx_files/image27.xlsx
+t/regression/xlsx_files/image28.xlsx
+t/regression/xlsx_files/image29.xlsx
+t/regression/xlsx_files/image30.xlsx
+t/regression/xlsx_files/image31.xlsx
+t/regression/xlsx_files/image32.xlsx
+t/regression/xlsx_files/image33.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/merge_cells01.xlsx
@@ -1430,6 +1454,7 @@ t/regression/xlsx_files/print_options07.xlsx
 t/regression/xlsx_files/print_scale01.xlsx
 t/regression/xlsx_files/print_scale02.xlsx
 t/regression/xlsx_files/properties01.xlsx
+t/regression/xlsx_files/properties02.xlsx
 t/regression/xlsx_files/protect01.xlsx
 t/regression/xlsx_files/protect02.xlsx
 t/regression/xlsx_files/protect03.xlsx
@@ -1516,6 +1541,8 @@ t/regression/xlsx_files/table13.xlsx
 t/regression/xlsx_files/table14.xlsx
 t/regression/xlsx_files/table15.xlsx
 t/regression/xlsx_files/table17.xlsx
+t/regression/xlsx_files/table18.xlsx
+t/regression/xlsx_files/table19.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
@@ -1583,6 +1610,7 @@ t/worksheet/sparkline_08.t
 t/worksheet/sparkline_09.t
 t/worksheet/sparkline_10.t
 t/worksheet/sparkline_11.t
+t/worksheet/sparkline_12.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_convert_date_time_01.t
 t/worksheet/sub_convert_date_time_02.t
@@ -1663,6 +1691,7 @@ t/worksheet/worksheet_cond_format_17.t
 t/worksheet/worksheet_cond_format_18.t
 t/worksheet/worksheet_cond_format_19.t
 t/worksheet/worksheet_cond_format_20.t
+t/worksheet/worksheet_cond_format_21.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t

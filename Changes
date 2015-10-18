@@ -5,6 +5,30 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.86 2015-10-19
+
+   ! Fix to allow chartsheets to support combined charts.
+
+   ! Fix for images with negative offsets.
+
+   + Allow hyperlinks longer than 255 characters when the link and anchor
+     are each less than or equal to 255 characters.
+
+   + Added hyperlink_base document property.
+
+   + Added option to allow data validation input messages with the ‘any’
+     validate parameter.
+     Issue #144.
+
+   + Added "stop if true" feature to conditional formatting.
+     Issue #138.
+
+   + Added better support and documentation for html colours throughout
+     the module. The use of the Excel97 colour palette is supported for
+     backward compatibility but deprecated.
+     Issue #97.
+
+
 
 0.85 2015-08-05
 
