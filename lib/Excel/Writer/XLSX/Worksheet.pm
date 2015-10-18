@@ -4076,6 +4076,7 @@ sub add_table {
             _total_function => '',
             _formula        => '',
             _format         => undef,
+            _name_format    => undef,
         };
 
         # Overwrite the defaults with any use defined values.
@@ -4087,6 +4088,9 @@ sub add_table {
                 # Map user defined values to internal values.
                 $col_data->{_name} = $user_data->{header}
                   if $user_data->{header};
+
+                # Get the header format if defined.
+                $col_data->{_name_format} = $user_data->{header_format};
 
                 # Handle the column formula.
                 if ( $user_data->{formula} ) {
@@ -4160,7 +4164,8 @@ sub add_table {
 
         # Write the column headers to the worksheet.
         if ( $param->{header_row} ) {
-            $self->write_string( $row1, $col_num, $col_data->{_name} );
+            $self->write_string( $row1, $col_num, $col_data->{_name},
+                $col_data->{_name_format} );
         }
 
         $col_id++;
@@ -5839,7 +5844,10 @@ sub _comment_params {
     my $color    = $params{color};
     my $color_id = &Excel::Writer::XLSX::Format::_get_color( $color );
 
-    if ( $color_id == 0 ) {
+    if ( $color_id =~ m/^#[0-9A-F]{6}$/i ) {
+        $params{color} = $color_id;
+    }
+    elsif ( $color_id == 0 ) {
         $params{color} = '#ffffe1';
     }
     else {
@@ -5853,7 +5861,7 @@ sub _comment_params {
         # from long format, ffcc00 to short format fc0 used by VML.
         $rgb_color =~ s/^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3$/$1$2$3/;
 
-        $params{color} = sprintf "#%s [%d]\n", $rgb_color, $color_id;
+        $params{color} = sprintf "#%s [%d]", $rgb_color, $color_id;
     }
 
 

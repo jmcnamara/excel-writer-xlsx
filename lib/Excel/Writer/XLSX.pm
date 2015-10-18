@@ -5671,6 +5671,7 @@ The sub-properties that can be set are:
     total_function
     total_value
     format
+    header_format
 
 The column data must be specified as an array ref of hash refs. For example to override the default 'Column n' style table headers:
 
@@ -5773,7 +5774,7 @@ It is also possible to set a calculated value for the C<total_function> using th
 
 
 
-Format can also be applied to columns:
+Formatting can also be applied to columns, to the column data using C<format> and to the header using C<header_format>:
 
     my $currency_format = $workbook->add_format( num_format => '$#,##0' );
 
@@ -5791,6 +5792,7 @@ Format can also be applied to columns:
                 },
                 {
                     header         => 'Quarter 2',
+                    header_format  => $bold,
                     total_function => 'sum',
                     format         => $currency_format,
                 },
@@ -5798,7 +5800,7 @@ Format can also be applied to columns:
         }
     );
 
-Standard Excel::Writer::XLSX format objects can be used. However, they should be limited to numerical formats. Overriding other table formatting may produce inconsistent results.
+Standard Excel::Writer::XLSX format objects can be used. However, they should be limited to numerical formats for the columns and simple formatting like text wrap for the headers. Overriding other table formatting may produce inconsistent results.
 
 
 

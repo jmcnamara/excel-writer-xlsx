@@ -455,13 +455,14 @@ sub _escape_attributes {
 
     my $str = $_[0];
 
-    return $str if $str !~ m/["&<>]/;
+    return $str if $str !~ m/["&<>\n]/;
 
     for ( $str ) {
         s/&/&amp;/g;
         s/"/&quot;/g;
         s/</&lt;/g;
         s/>/&gt;/g;
+        s/\n/&#xA;/g;
     }
 
     return $str;
