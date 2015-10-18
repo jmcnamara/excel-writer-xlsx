@@ -4017,6 +4017,13 @@ sub add_table {
 
     # Set the table name.
     if ( defined $param->{name} ) {
+        my $name = $param->{name};
+
+        if ($name =~ /\s/) {
+            carp "Name '$name' in add_table() cannot contain spaces";
+            return -3;
+        }
+
         $table{_name} = $param->{name};
     }
 

@@ -5641,7 +5641,7 @@ The default table style is 'Table Style Medium 9'.
 
 The C<name> parameter can be used to set the name of the table.
 
-By default tables are named C<Table1>, C<Table2>, etc. If you override the table name you must ensure that it doesn't clash with an existing table name and that it follows Excel's requirements for table names.
+By default tables are named C<Table1>, C<Table2>, etc. If you override the table name you must ensure that it doesn't clash with an existing table name and that it follows Excel's requirements for table names (for example that it doesn't contain spaces).
 
     $worksheet->add_table( 'B3:F7', { name => 'SalesData' } );
 
