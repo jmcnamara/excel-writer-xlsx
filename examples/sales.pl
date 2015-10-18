@@ -21,7 +21,7 @@ my $worksheet = $workbook->add_worksheet( 'May Sales' );
 my %heading = (
     bold     => 1,
     pattern  => 1,
-    fg_color => 19,
+    fg_color => '#C3FFC0',
     border   => 1,
     align    => 'center',
 );

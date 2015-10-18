@@ -22,7 +22,7 @@ my $worksheet = $workbook->add_worksheet();
 # Add a format for the header cells.
 my $header_format = $workbook->add_format(
     border    => 1,
-    bg_color  => 43,
+    bg_color  => '#C6EFCE',
     bold      => 1,
     text_wrap => 1,
     valign    => 'vcenter',

@@ -500,50 +500,8 @@ The directory for the temporary file must exist, C<set_tempdir()> will not creat
 
 =head2 set_custom_color( $index, $red, $green, $blue )
 
-The C<set_custom_color()> method can be used to override one of the built-in palette values with a more suitable colour.
+The method is maintained for backward compatibility with Spreadsheet::WriteExcel. Excel::Writer::XLSX programs don't require this method and colours can be specified using a Html style C<#RRGGBB> value, see L</WORKING WITH COLOURS>.
 
-The value for C<$index> should be in the range 8..63, see L</COLOURS IN EXCEL>.
-
-The default named colours use the following indices:
-
-     8   =>   black
-     9   =>   white
-    10   =>   red
-    11   =>   lime
-    12   =>   blue
-    13   =>   yellow
-    14   =>   magenta
-    15   =>   cyan
-    16   =>   brown
-    17   =>   green
-    18   =>   navy
-    20   =>   purple
-    22   =>   silver
-    23   =>   gray
-    33   =>   pink
-    53   =>   orange
-
-A new colour is set using its RGB (red green blue) components. The C<$red>, C<$green> and C<$blue> values must be in the range 0..255. You can determine the required values in Excel using the C<Tools-E<gt>Options-E<gt>Colors-E<gt>Modify> dialog.
-
-The C<set_custom_color()> workbook method can also be used with a HTML style C<#rrggbb> hex value:
-
-    $workbook->set_custom_color( 40, 255,  102,  0 );       # Orange
-    $workbook->set_custom_color( 40, 0xFF, 0x66, 0x00 );    # Same thing
-    $workbook->set_custom_color( 40, '#FF6600' );           # Same thing
-
-    my $font = $workbook->add_format( color => 40 );        # Modified colour
-
-The return value from C<set_custom_color()> is the index of the colour that was changed:
-
-    my $ferrari = $workbook->set_custom_color( 40, 216, 12, 12 );
-
-    my $format = $workbook->add_format(
-        bg_color => $ferrari,
-        pattern  => 1,
-        border   => 1
-    );
-
-Note, In the XLSX format the color palette isn't actually confined to 53 unique colors. The Excel::Writer::XLSX module will be extended at a later stage to support the newer, semi-infinite, palette.
 
 
 
@@ -1443,10 +1401,10 @@ This option is used to set the height of the cell comment box explicitly in pixe
 
 =item Option: color
 
-This option is used to set the background colour of cell comment box. You can use one of the named colours recognised by Excel::Writer::XLSX or a colour index. See L</COLOURS IN EXCEL>.
+This option is used to set the background colour of cell comment box. You can use one of the named colours recognised by Excel::Writer::XLSX or a Html style C<#RRGGBB> colour. See L</WORKING WITH COLOURS>.
 
     $worksheet->write_comment( 'C3', 'Hello', color => 'green' );
-    $worksheet->write_comment( 'C4', 'Hello', color => 0x35 );      # Orange
+    $worksheet->write_comment( 'C4', 'Hello', color => '#FF6600' ); # Orange
 
 
 =item Option: start_cell
@@ -2279,10 +2237,10 @@ In Excel this option is found under Tools->Options->View.
 
 =head2 set_tab_color()
 
-The C<set_tab_color()> method is used to change the colour of the worksheet tab. You can use one of the standard colour names provided by the Format object or a colour index. See L</COLOURS IN EXCEL> and the C<set_custom_color()> method.
+The C<set_tab_color()> method is used to change the colour of the worksheet tab. You can use one of the standard colour names provided by the Format object or a Html style C<#RRGGBB> colour. See L</WORKING WITH COLOURS>.
 
     $worksheet1->set_tab_color( 'red' );
-    $worksheet2->set_tab_color( 0x0C );
+    $worksheet2->set_tab_color( '#FF6600' );
 
 See the C<tab_colors.pl> program in the examples directory of the distro.
 
@@ -3219,7 +3177,7 @@ Note: The C<set_color()> method is used to set the colour of the font in a cell.
 
 For additional examples see the 'Named colors' and 'Standard colors' worksheets created by formats.pl in the examples directory.
 
-See also L</COLOURS IN EXCEL>.
+See also L</WORKING WITH COLOURS>.
 
 
 
@@ -3873,57 +3831,36 @@ See also the C<unicode_*.pl> programs in the examples directory of the distro.
 
 
 
-=head1 COLOURS IN EXCEL
+=head1 WORKING WITH COLOURS
 
-Excel provides a colour palette of 56 colours. In Excel::Writer::XLSX these colours are accessed via their palette index in the range 8..63. This index is used to set the colour of fonts, cell patterns and cell borders. For example:
+Throughout Excel::Writer::XLSX colours can be specified using a Html style C<#RRGGBB> value. For example with a Format object:
 
-    my $format = $workbook->add_format(
-                                        color => 12, # index for blue
-                                        font  => 'Calibri',
-                                        size  => 12,
-                                        bold  => 1,
-                                     );
+    $format->set_font_color( '#FF0000' );
 
-The most commonly used colours can also be accessed by name. The name acts as a simple alias for the colour index:
+For backward compatibility a limited number of color names are supported:
 
-    black     =>    8
-    blue      =>   12
-    brown     =>   16
-    cyan      =>   15
-    gray      =>   23
-    green     =>   17
-    lime      =>   11
-    magenta   =>   14
-    navy      =>   18
-    orange    =>   53
-    pink      =>   33
-    purple    =>   20
-    red       =>   10
-    silver    =>   22
-    white     =>    9
-    yellow    =>   13
+    $format->set_font_color( 'red' );
 
-For example:
+The color names supported are:
 
-    my $font = $workbook->add_format( color => 'red' );
+    black
+    blue
+    brown
+    cyan
+    gray
+    green
+    lime
+    magenta
+    navy
+    orange
+    pink
+    purple
+    red
+    silver
+    white
+    yellow
 
-Users of VBA in Excel should note that the equivalent colour indices are in the range 1..56 instead of 8..63.
-
-If the default palette does not provide a required colour you can override one of the built-in values. This is achieved by using the C<set_custom_color()> workbook method to adjust the RGB (red green blue) components of the colour:
-
-    my $ferrari = $workbook->set_custom_color( 40, 216, 12, 12 );
-
-    my $format = $workbook->add_format(
-        bg_color => $ferrari,
-        pattern  => 1,
-        border   => 1
-    );
-
-    $worksheet->write_blank( 'A1', $format );
-
-You can generate and example of the Excel palette using C<colors.pl> in the C<examples> directory.
-
-
+See also C<colors.pl> in the C<examples> directory.
 
 
 =head1 DATES AND TIME IN EXCEL
