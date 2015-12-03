@@ -376,6 +376,10 @@ sub _write_font {
             $self->xml_empty_tag( 'family', 'val', $format->{_font_family} );
         }
 
+        if ($format->{_font_charset}) {
+            $self->xml_empty_tag( 'charset', 'val', $format->{_font_charset} );
+        }
+
         if ( $format->{_font} eq 'Calibri' && !$format->{_hyperlink} ) {
             $self->xml_empty_tag(
 
