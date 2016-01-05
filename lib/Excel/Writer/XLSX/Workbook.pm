@@ -763,25 +763,25 @@ sub define_name {
 
     # Warn if the sheet index wasn't found.
     if ( !defined $sheet_index ) {
-        carp "Unknown sheet name $sheetname in defined_name()\n";
+        carp "Unknown sheet name $sheetname in defined_name()";
         return -1;
     }
 
     # Warn if the name contains invalid chars as defined by Excel help.
-    if ( $name !~ m/^[\w\\][\w.]*$/ || $name =~ m/^\d/ ) {
-        carp "Invalid characters in name '$name' used in defined_name()\n";
+    if ( $name !~ m/^[\w\\][\w\\.]*$/ || $name =~ m/^\d/ ) {
+        carp "Invalid character in name '$name' used in defined_name()";
         return -1;
     }
 
     # Warn if the name looks like a cell name.
     if ( $name =~ m/^[a-zA-Z][a-zA-Z]?[a-dA-D]?[0-9]+$/ ) {
-        carp "Invalid name '$name' looks like a cell name in defined_name()\n";
+        carp "Invalid name '$name' looks like a cell name in defined_name()";
         return -1;
     }
 
     # Warn if the name looks like a R1C1.
     if ( $name =~ m/^[rcRC]$/ || $name =~ m/^[rcRC]\d+[rcRC]\d+$/ ) {
-        carp "Invalid name '$name' like a RC cell ref in defined_name()\n";
+        carp "Invalid name '$name' like a RC cell ref in defined_name()";
         return -1;
     }
 

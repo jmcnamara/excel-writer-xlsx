@@ -4019,8 +4019,21 @@ sub add_table {
     if ( defined $param->{name} ) {
         my $name = $param->{name};
 
-        if ($name =~ /\s/) {
-            carp "Name '$name' in add_table() cannot contain spaces";
+        # Warn if the name contains invalid chars as defined by Excel help.
+        if ( $name !~ m/^[\w\\][\w\\.]*$/ || $name =~ m/^\d/ ) {
+            carp "Invalid character in name '$name' used in add_table()";
+            return -3;
+        }
+
+        # Warn if the name looks like a cell name.
+        if ( $name =~ m/^[a-zA-Z][a-zA-Z]?[a-dA-D]?[0-9]+$/ ) {
+            carp "Invalid name '$name' looks like a cell name in add_table()";
+            return -3;
+        }
+
+        # Warn if the name looks like a R1C1.
+        if ( $name =~ m/^[rcRC]$/ || $name =~ m/^[rcRC]\d+[rcRC]\d+$/ ) {
+            carp "Invalid name '$name' like a RC cell ref in add_table()";
             return -3;
         }
 
