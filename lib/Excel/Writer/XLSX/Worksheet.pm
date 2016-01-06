@@ -5786,6 +5786,7 @@ sub _prepare_tables {
 
     my $self     = shift;
     my $table_id = shift;
+    my $seen     = shift;
 
 
     for my $table ( @{ $self->{_tables} } ) {
@@ -5797,6 +5798,16 @@ sub _prepare_tables {
 
             # Set a default name.
             $table->{_name} = 'Table' . $table_id;
+        }
+
+        # Check for duplicate table names.
+        my $name = lc $table->{_name};
+
+        if ( exists $seen->{$name} ) {
+            die "error: invalid duplicate table name '$table->{_name}' found";
+        }
+        else {
+            $seen->{$name} = 1;
         }
 
         # Store the link used for the rels file.

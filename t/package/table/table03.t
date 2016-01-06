@@ -35,7 +35,7 @@ $worksheet->add_table(
     }
 );
 
-$worksheet->_prepare_tables( 1 );
+$worksheet->_prepare_tables( 1, {} );
 
 
 ###############################################################################

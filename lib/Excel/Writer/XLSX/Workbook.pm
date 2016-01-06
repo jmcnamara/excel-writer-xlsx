@@ -1739,6 +1739,7 @@ sub _prepare_tables {
 
     my $self     = shift;
     my $table_id = 0;
+    my $seen     = {};
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1746,7 +1747,7 @@ sub _prepare_tables {
 
         next unless $table_count;
 
-        $sheet->_prepare_tables( $table_id + 1 );
+        $sheet->_prepare_tables( $table_id + 1, $seen );
 
         $table_id += $table_count;
     }
