@@ -7937,7 +7937,7 @@ Here is a simpler example:
 
 The secondary chart can also be placed on a secondary axis using the methods shown in the previous section.
 
-In this case it is just necessary to add a C<y2_axis> parameter to the series and, if required, add a title using C<set_y2_axis()>. The following are the additions to the previous example to place the secondary chart on the secondary axis:
+In this case it is just necessary to add a C<y2_axis> parameter to the series and, if required, add a title using C<set_y2_axis()> B<of the secondary chart>. The following are the additions to the previous example to place the secondary chart on the secondary axis:
 
     ...
 
@@ -7950,7 +7950,8 @@ In this case it is just necessary to add a C<y2_axis> parameter to the series an
 
     ...
 
-    $column_chart->set_y2_axis( name => 'Target length (mm)' );
+    # Note: the y2 properites are on the secondary chart.
+    $line_chart2->set_y2_axis( name => 'Target length (mm)' );
 
 
 =begin html
@@ -7960,7 +7961,7 @@ In this case it is just necessary to add a C<y2_axis> parameter to the series an
 =end html
 
 
-The examples above use the concept of a I<primary> and I<secondary> chart. The primary chart is the chart that defines the primary X and Y axis. It is also used for setting all chart properties apart from the secondary data series. For example the chart title and axes properties should be set via the primary chart.
+The examples above use the concept of a I<primary> and I<secondary> chart. The primary chart is the chart that defines the primary X and Y axis. It is also used for setting all chart properties apart from the secondary data series. For example the chart title and axes properties should be set via the primary chart (except for the the secondary C<y2> axis properties which should be applied to the secondary chart).
 
 See also C<chart_combined.pl> and C<chart_pareto.pl> examples in the distro for more detailed
 examples.
