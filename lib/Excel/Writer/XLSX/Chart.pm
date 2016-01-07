@@ -212,12 +212,21 @@ sub add_series {
     # Set the fill properties for the series.
     my $fill = $self->_get_fill_properties( $arg{fill} );
 
+    # Set the pattern properties for the series.
+    my $pattern = $self->_get_pattern_properties( $arg{pattern} );
+
     # Set the gradient fill properties for the series.
     my $gradient = $self->_get_gradient_properties( $arg{gradient} );
 
-    # Gradient fill overrides solid fill.
-    if ( $gradient ) {
+    # Pattern fill overrides pattern fill.
+    if ( $pattern ) {
         $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
     }
 
     # Set the marker properties for the series.
@@ -282,6 +291,7 @@ sub add_series {
         _cat_data_id   => $cat_id,
         _line          => $line,
         _fill          => $fill,
+        _pattern       => $pattern,
         _gradient      => $gradient,
         _marker        => $marker,
         _trendline     => $trendline,
@@ -1144,6 +1154,23 @@ sub _get_fill_properties {
     $fill->{_defined} = 1;
 
     return $fill;
+}
+
+
+###############################################################################
+#
+# _get_pattern_properties()
+#
+# Convert user defined pattern properties to the structure required internally.
+#
+sub _get_pattern_properties {
+
+    my $self = shift;
+    my $pattern = shift;
+
+    return  unless $pattern;
+
+    return $pattern;
 }
 
 
@@ -4436,10 +4463,12 @@ sub _write_sp_pr {
 
     if (    !$series->{_line}->{_defined}
         and !$series->{_fill}->{_defined}
+        and !$series->{_pattern}
         and !$series->{_gradient} )
     {
         return;
     }
+
 
     $self->xml_start_tag( 'c:spPr' );
 
@@ -4457,11 +4486,18 @@ sub _write_sp_pr {
         }
     }
 
+    if ( $series->{_pattern} ) {
+
+        # Write the a:pattFill element.
+        $self->_write_a_patt_fill( $series->{_pattern} );
+    }
+
     if ( $series->{_gradient} ) {
 
         # Write the a:gradFill element.
         $self->_write_a_grad_fill( $series->{_gradient} );
     }
+
 
     # Write the a:ln element.
     if ( $series->{_line}->{_defined} ) {
@@ -5963,6 +5999,72 @@ sub _write_a_tile_rect {
     }
 
     $self->xml_empty_tag( 'a:tileRect', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_a_patt_fill()
+#
+# Write the <a:pattFill> element.
+#
+sub _write_a_patt_fill {
+
+    my $self     = shift;
+    my $pattern  = shift;
+
+    my @attributes = ( 'prst' => $pattern->{pattern} );
+
+    $self->xml_start_tag( 'a:pattFill', @attributes );
+
+    # Write the a:fgClr element.
+    $self->_write_a_fg_clr( $pattern->{fg_color} );
+
+    # Write the a:bgClr element.
+    $self->_write_a_bg_clr( $pattern->{bg_color} );
+
+    $self->xml_end_tag( 'a:pattFill' );
+}
+
+
+##############################################################################
+#
+# _write_a_fg_clr()
+#
+# Write the <a:fgClr> element.
+#
+sub _write_a_fg_clr {
+
+    my $self  = shift;
+    my $color = shift;
+
+    $self->xml_start_tag( 'a:fgClr' );
+
+    # Write the a:srgbClr element.
+    $self->_write_a_srgb_clr( $color );
+
+    $self->xml_end_tag( 'a:fgClr' );
+}
+
+
+
+##############################################################################
+#
+# _write_a_bg_clr()
+#
+# Write the <a:bgClr> element.
+#
+sub _write_a_bg_clr {
+
+    my $self  = shift;
+    my $color = shift;
+
+    $self->xml_start_tag( 'a:bgClr' );
+
+    # Write the a:srgbClr element.
+    $self->_write_a_srgb_clr( $color );
+
+    $self->xml_end_tag( 'a:bgClr' );
 }
 
 
