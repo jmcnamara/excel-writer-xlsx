@@ -218,7 +218,7 @@ sub add_series {
     # Set the gradient fill properties for the series.
     my $gradient = $self->_get_gradient_properties( $arg{gradient} );
 
-    # Pattern fill overrides pattern fill.
+    # Pattern fill overrides solid fill.
     if ( $pattern ) {
         $fill = undef;
     }
@@ -1173,13 +1173,13 @@ sub _get_pattern_properties {
 
     # Check the pattern type is present.
     if ( !$args->{pattern} ) {
-        warn "Pattern must include 'pattern'";
+        carp "Pattern must include 'pattern'";
         return;
     }
 
     # Check the foreground color is present.
     if ( !$args->{fg_color} ) {
-        warn "Pattern must include 'fg_color'";
+        carp "Pattern must include 'fg_color'";
         return;
     }
 
@@ -1248,7 +1248,7 @@ sub _get_pattern_properties {
         $pattern->{pattern} = $types{$pattern_type};
     }
     else {
-        warn "Unknown pattern type '$pattern_type'\n";
+        carp "Unknown pattern type '$pattern_type'";
         return;
     }
 
@@ -1431,16 +1431,26 @@ sub _get_marker_properties {
     # Set the fill properties for the marker.
     my $fill = $self->_get_fill_properties( $marker->{fill} );
 
+    # Set the pattern properties for the series.
+    my $pattern = $self->_get_pattern_properties( $marker->{pattern} );
+
     # Set the gradient fill properties for the series.
     my $gradient = $self->_get_gradient_properties( $marker->{gradient} );
 
-    # Gradient fill overrides solid fill.
-    if ( $gradient ) {
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
         $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
     }
 
     $marker->{_line}     = $line;
     $marker->{_fill}     = $fill;
+    $marker->{_pattern}  = $pattern;
     $marker->{_gradient} = $gradient;
 
     return $marker;
@@ -1495,16 +1505,26 @@ sub _get_trendline_properties {
     # Set the fill properties for the trendline.
     my $fill = $self->_get_fill_properties( $trendline->{fill} );
 
+    # Set the pattern properties for the series.
+    my $pattern = $self->_get_pattern_properties( $trendline->{pattern} );
+
     # Set the gradient fill properties for the series.
     my $gradient = $self->_get_gradient_properties( $trendline->{gradient} );
 
-    # Gradient fill overrides solid fill.
-    if ( $gradient ) {
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
         $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
     }
 
     $trendline->{_line}     = $line;
     $trendline->{_fill}     = $fill;
+    $trendline->{_pattern}  = $pattern;
     $trendline->{_gradient} = $gradient;
 
     return $trendline;
@@ -1741,12 +1761,21 @@ sub _get_area_properties {
     # Set the fill properties for the chartarea.
     my $fill = $self->_get_fill_properties( $arg{fill} );
 
+    # Set the pattern properties for the series.
+    my $pattern = $self->_get_pattern_properties( $arg{pattern} );
+
     # Set the gradient fill properties for the series.
     my $gradient = $self->_get_gradient_properties( $arg{gradient} );
 
-    # Gradient fill overrides solid fill.
-    if ( $gradient ) {
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
         $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
     }
 
     # Set the plotarea layout.
@@ -1754,6 +1783,7 @@ sub _get_area_properties {
 
     $area->{_line}     = $line;
     $area->{_fill}     = $fill;
+    $area->{_pattern}  = $pattern;
     $area->{_gradient} = $gradient;
     $area->{_layout}   = $layout;
 
@@ -1857,17 +1887,33 @@ sub _get_points_properties {
             # Set the fill properties for the chartarea.
             my $fill = $self->_get_fill_properties( $user_point->{fill} );
 
+
+            # Set the pattern properties for the series.
+            my $pattern =
+              $self->_get_pattern_properties( $user_point->{pattern} );
+
             # Set the gradient fill properties for the series.
             my $gradient =
               $self->_get_gradient_properties( $user_point->{gradient} );
 
-            # Gradient fill overrides solid fill.
+            # Pattern fill overrides solid fill.
+            if ( $pattern ) {
+                $fill = undef;
+            }
+
+            # Gradient fill overrides solid and pattern fills.
+            if ( $gradient ) {
+                $pattern = undef;
+                $fill    = undef;
+            }
+                        # Gradient fill overrides solid fill.
             if ( $gradient ) {
                 $fill = undef;
             }
 
             $point->{_line}     = $line;
             $point->{_fill}     = $fill;
+            $point->{_pattern}  = $pattern;
             $point->{_gradient} = $gradient;
         }
 
