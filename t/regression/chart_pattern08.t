@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_pattern02.xlsx';
+my $filename     = 'chart_pattern08.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -37,7 +37,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 86421504, 86423040 ];
+$chart->{_axis_ids} = [ 91631616, 91633152 ];
 
 my $data = [
     [ 2, 2, 2 ],
@@ -56,8 +56,8 @@ $chart->add_series(
     values  => '=Sheet1!$A$1:$A$3',
     pattern => {
         pattern  => 'percent_5',
-        fg_color => '#C00000',
-        bg_color => '#FFFFFF'
+        fg_color => 'yellow',
+        bg_color => 'red'
     }
 );
 

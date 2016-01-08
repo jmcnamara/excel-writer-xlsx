@@ -1165,10 +1165,102 @@ sub _get_fill_properties {
 #
 sub _get_pattern_properties {
 
-    my $self = shift;
-    my $pattern = shift;
+    my $self    = shift;
+    my $args    = shift;
+    my $pattern = {};
 
-    return  unless $pattern;
+    return unless $args;
+
+    # Check the pattern type is present.
+    if ( !$args->{pattern} ) {
+        warn "Pattern must include 'pattern'";
+        return;
+    }
+
+    # Check the foreground color is present.
+    if ( !$args->{fg_color} ) {
+        warn "Pattern must include 'fg_color'";
+        return;
+    }
+
+    my %types = (
+        'percent_5'                 => 'pct5',
+        'percent_10'                => 'pct10',
+        'percent_20'                => 'pct20',
+        'percent_25'                => 'pct25',
+        'percent_30'                => 'pct30',
+        'percent_40'                => 'pct40',
+
+        'percent_50'                => 'pct50',
+        'percent_60'                => 'pct60',
+        'percent_70'                => 'pct70',
+        'percent_75'                => 'pct75',
+        'percent_80'                => 'pct80',
+        'percent_90'                => 'pct90',
+
+        'light_downward_diagonal'   => 'ltDnDiag',
+        'light_upward_diagonal'     => 'ltUpDiag',
+        'dark_downward_diagonal'    => 'dkDnDiag',
+        'dark_upward_diagonal'      => 'dkUpDiag',
+        'wide_downward_diagonal'    => 'wdDnDiag',
+        'wide_upward_diagonal'      => 'wdUpDiag',
+
+        'light_vertical'            => 'ltVert',
+        'light_horizontal'          => 'ltHorz',
+        'narrow_vertical'           => 'narVert',
+        'narrow_horizontal'         => 'narHorz',
+        'dark_vertical'             => 'dkVert',
+        'dark_horizontal'           => 'dkHorz',
+
+        'dashed_downward_diagonal'  => 'dashDnDiag',
+        'dashed_upward_diagonal'    => 'dashUpDiag',
+        'dashed_horizontal'         => 'dashHorz',
+        'dashed_vertical'           => 'dashVert',
+        'small_confetti'            => 'smConfetti',
+        'large_confetti'            => 'lgConfetti',
+
+        'zigzag'                    => 'zigZag',
+        'wave'                      => 'wave',
+        'diagonal_brick'            => 'diagBrick',
+        'horizontal_brick'          => 'horzBrick',
+        'weave'                     => 'weave',
+        'plaid'                     => 'plaid',
+
+        'divot'                     => 'divot',
+        'dotted_grid'               => 'dotGrid',
+        'dotted_diamond'            => 'dotDmnd',
+        'shingle'                   => 'shingle',
+        'trellis'                   => 'trellis',
+        'sphere'                    => 'sphere',
+
+        'small_grid'                => 'smGrid',
+        'large_grid'                => 'lgGrid',
+        'small_check'               => 'smCheck',
+        'large_check'               => 'lgCheck',
+        'outlined_diamond'          => 'openDmnd',
+        'solid_diamond'             => 'solidDmnd',
+    );
+
+    # Check for valid types.
+    my $pattern_type = $args->{pattern};
+
+    if ( exists $types{$pattern_type} ) {
+        $pattern->{pattern} = $types{$pattern_type};
+    }
+    else {
+        warn "Unknown pattern type '$pattern_type'\n";
+        return;
+    }
+
+    # Specify a default background color.
+    if ( !$args->{bg_color} ) {
+        $pattern->{bg_color} = '#FFFFFF';
+    }
+    else {
+        $pattern->{bg_color} = $args->{bg_color};
+    }
+
+    $pattern->{fg_color} = $args->{fg_color};
 
     return $pattern;
 }
@@ -1185,6 +1277,7 @@ sub _get_gradient_properties {
     my $self     = shift;
     my $args     = shift;
     my $gradient = {};
+
     my %types    = (
         linear      => 'linear',
         radial      => 'circle',
@@ -6038,6 +6131,8 @@ sub _write_a_fg_clr {
     my $self  = shift;
     my $color = shift;
 
+    $color = $self->_get_color( $color );
+
     $self->xml_start_tag( 'a:fgClr' );
 
     # Write the a:srgbClr element.
@@ -6058,6 +6153,8 @@ sub _write_a_bg_clr {
 
     my $self  = shift;
     my $color = shift;
+
+    $color = $self->_get_color( $color );
 
     $self->xml_start_tag( 'a:bgClr' );
 
