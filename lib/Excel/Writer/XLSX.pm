@@ -1329,7 +1329,7 @@ In addition to the basic 3 argument form of C<write_comment()> you can pass in s
 
     $worksheet->write_comment( 'C3', 'Hello', visible => 1, author => 'Perl' );
 
-Most of these options are quite specific and in general the default comment behaviour will be all that you need. However, should you need greater control over the format of the cell comment the following options are available:
+Most of these options are quite specific and in general the default comment behaves will be all that you need. However, should you need greater control over the format of the cell comment the following options are available:
 
     author
     visible
@@ -2667,7 +2667,7 @@ As stated above the margin parameter is optional. As with the other margins the 
 
 The header and footer margins are independent of the top and bottom margins.
 
-The available optons are:
+The available options are:
 
 =over
 
@@ -2978,9 +2978,9 @@ The following table shows the Excel format categories, the formatting properties
                Top color         top_color       set_top_color()
                Left color        left_color      set_left_color()
                Right color       right_color     set_right_color()
-               Diagional type    diag_type       set_diag_type()
-               Diagional border  diag_border     set_diag_border()
-               Diagional color   diag_color      set_diag_color()
+               Diagonal type     diag_type       set_diag_type()
+               Diagonal border   diag_border     set_diag_border()
+               Diagonal color    diag_color      set_diag_color()
 
 There are two ways of setting Format properties: by using the object method interface or by setting the property directly. For example, a typical use of the method interface would be as follows:
 
@@ -3744,7 +3744,7 @@ For example:
     Default action:     Set border type 1
     Valid args:         0-13, See below.
 
-Set the diagonal border style. Same as the parmater to C<set_border()> above.
+Set the diagonal border style. Same as the parameter to C<set_border()> above.
 
 
 
@@ -6274,7 +6274,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_column.pl         A demo of column (histogram) style charts.
     chart_line.pl           A demo of line style charts.
     chart_pie.pl            A demo of pie style charts.
-    chart_doughnut.pl       A demo of dougnut style charts.
+    chart_doughnut.pl       A demo of doughnut style charts.
     chart_radar.pl          A demo of radar style charts.
     chart_scatter.pl        A demo of scatter style charts.
     chart_secondary_axis.pl A demo of a line chart with a secondary axis.
@@ -6741,10 +6741,6 @@ The roadmap is as follows:
 =item * New separated data/formatting API to allow cells to be formatted after data is added.
 
 =item * More charting features.
-
-=item * Excel::Reader::XLSX and Excel::Rewriter::XLSX. Hopefully.
-
-=item * Pivot tables, maybe.
 
 =back
 

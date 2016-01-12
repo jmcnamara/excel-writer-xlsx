@@ -1357,7 +1357,7 @@ sub _get_gradient_properties {
         my $type = $args->{type};
 
         if ( !exists $types{$type} ) {
-            carp "Unknow gradient type '", $type, "'";
+            carp "Unknown gradient type '", $type, "'";
             return;
         }
         $gradient->{_type} = $types{$type};
@@ -6379,6 +6379,14 @@ Set the border properties of the series such as colour and style. See the L</CHA
 
 Set the fill properties of the series such as colour. See the L</CHART FORMATTING> section below.
 
+=item * C<pattern>
+
+Set the pattern properties of the series. See the L</CHART FORMATTING> section below.
+
+=item * C<gradien>
+
+Set the gradient properties of the series. See the L</CHART FORMATTING> section below.
+
 =item * C<marker>
 
 Set the properties of the series marker such as style and colour. See the L</SERIES OPTIONS> section below.
@@ -6477,6 +6485,8 @@ The properties that can be set are:
     num_format
     line
     fill
+    pattern
+    gradient
     min
     max
     minor_unit
@@ -6558,6 +6568,13 @@ Set the properties of the axis line type such as colour and width. See the L</CH
 
 Set the fill properties of the axis such as colour. See the L</CHART FORMATTING> section below. Note, in Excel the axis fill is applied to the area of the numbers of the axis and not to the area of the axis bounding box. That background is set from the chartarea fill.
 
+=item * C<pattern>
+
+Set the pattern properties of the axis such as colour. See the L</CHART FORMATTING> section below.
+
+=item * C<gradient>
+
+Set the gradient properties of the axis such as colour. See the L</CHART FORMATTING> section below.
 
 =item * C<min>
 
@@ -6947,6 +6964,15 @@ Set the border properties of the chartarea such as colour and style. See the L</
 
 Set the fill properties of the chartarea such as colour. See the L</CHART FORMATTING> section below.
 
+=item * C<pattern>
+
+Set the pattern fill properties of the chartarea. See the L</CHART FORMATTING> section below.
+
+=item * C<gradient>
+
+Set the gradient fill properties of the chartarea. See the L</CHART FORMATTING> section below.
+
+
 =back
 
 =head2 set_plotarea()
@@ -6969,6 +6995,15 @@ Set the border properties of the plotarea such as colour and style. See the L</C
 =item * C<fill>
 
 Set the fill properties of the plotarea such as colour. See the L</CHART FORMATTING> section below.
+
+
+=item * C<pattern>
+
+Set the pattern fill properties of the plotarea. See the L</CHART FORMATTING> section below.
+
+=item * C<gradient>
+
+Set the gradient fill properties of the plotarea. See the L</CHART FORMATTING> section below.
 
 =item * C<layout>
 
@@ -7019,7 +7054,7 @@ The C<set_up_down_bars()> method adds Up-Down bars to Line charts to indicate th
 
     $chart->set_up_down_bars();
 
-It is possible to format the up and down bars to add C<fill> and C<border> properties if required. See the L</CHART FORMATTING> section below.
+It is possible to format the up and down bars to add C<fill>, C<pattern>, C<gradient> and C<border> properties if required. See the L</CHART FORMATTING> section below.
 
     $chart->set_up_down_bars(
         up   => { fill => { color => 'green' } },
@@ -7097,6 +7132,8 @@ The following properties can be set for C<marker> formats in a chart.
     size
     border
     fill
+    pattern
+    gradient
 
 The C<type> property sets the type of marker that is used with a series.
 
@@ -7499,6 +7536,8 @@ The following chart formatting properties can be set for any chart object that t
     line
     border
     fill
+    pattern
+    gradient
 
 Chart formatting properties are generally set using hash refs.
 
@@ -7599,7 +7638,7 @@ The C<border> property is a synonym for C<line>.
 It can be used as a descriptive substitute for C<line> in chart types such as Bar and Column that have a border and fill style rather than a line style. In general chart objects with a C<border> property will also have a fill property.
 
 
-=head2 Fill
+=head2 Solid Fill
 
 The fill format is used to specify filled areas of chart objects such as the interior of a column or the background of the chart itself.
 
@@ -7636,6 +7675,160 @@ The C<fill> format is generally used in conjunction with a C<border> format whic
         border     => { color => 'red' },
         fill       => { color => 'yellow' },
     );
+
+
+
+=head2 Pattern Fill
+
+The pattern fill format is used to specify pattern filled areas of chart objects such as the interior of a column or the background of the chart itself.
+
+The following properties can be set for C<pattern> fill formats in a chart:
+
+    pattern:   the pattern to be applied (required)
+    fg_color:  the foreground color of the pattern (required)
+    bg_color:  the background color (optional, defaults to white)
+
+
+For example:
+
+    $chart->set_plotarea(
+        pattern => {
+            pattern  => 'percent_5',
+            fg_color => 'red',
+            bg_color => 'yellow',
+        }
+    );
+
+The following patterns can be applied:
+
+    percent_5
+    percent_10
+    percent_20
+    percent_25
+    percent_30
+    percent_40
+    percent_50
+    percent_60
+    percent_70
+    percent_75
+    percent_80
+    percent_90
+    light_downward_diagonal
+    light_upward_diagonal
+    dark_downward_diagonal
+    dark_upward_diagonal
+    wide_downward_diagonal
+    wide_upward_diagonal
+    light_vertical
+    light_horizontal
+    narrow_vertical
+    narrow_horizontal
+    dark_vertical
+    dark_horizontal
+    dashed_downward_diagonal
+    dashed_upward_diagonal
+    dashed_horizontal
+    dashed_vertical
+    small_confetti
+    large_confetti
+    zigzag
+    wave
+    diagonal_brick
+    horizontal_brick
+    weave
+    plaid
+    divot
+    dotted_grid
+    dotted_diamond
+    shingle
+    trellis
+    sphere
+    small_grid
+    large_grid
+    small_check
+    large_check
+    outlined_diamond
+    solid_diamond
+
+
+The foreground color, C<fg_color>, is a required parameter and can be a Html style C<#RRGGBB> string or a limited number of named colors. The available colours are shown in the main L<Excel::Writer::XLSX> documentation.
+
+The background color, C<bg_color>, is optional and defaults to black.
+
+If a pattern fill is used on a chart object it overrides the solid fill properties of the object.
+
+
+=head2 Gradient Fill
+
+The gradient fill format is used to specify gradient filled areas of chart objects such as the interior of a column or the background of the chart itself.
+
+
+The following properties can be set for C<gradient> fill formats in a chart:
+
+    colors:    a list of colors
+    positions: an optional list of positions for the colors
+    type:      the optional type of gradient fill
+    angle:     the optional angle of the linear fill
+
+The C<colors> property sets a list of colors that define the C<gradient>:
+
+    $chart->set_plotarea(
+        gradient => { colors => [ '#DDEBCF', '#9CB86E', '#156B13' ] }
+    );
+
+Excel allows between 2 and 10 colors in a gradient but it is unlikely that you will require more than 2 or 3.
+
+As with solid or pattern fill it is also possible to set the colors of a gradient with a Html style C<#RRGGBB> string or a limited number of named colors. The available colours are shown in the main L<Excel::Writer::XLSX> documentation:
+
+    $chart->add_series(
+        values   => '=Sheet1!$A$1:$A$5',
+        gradient => { colors => [ 'red', 'green' ] }
+    );
+
+The C<positions> defines an optional list of positions, between 0 and 100, of
+where the colors in the gradient are located. Default values are provided for
+C<colors> lists of between 2 and 4 but they can be specified if required:
+
+    $chart->add_series(
+        values   => '=Sheet1!$A$1:$A$5',
+        gradient => {
+            colors    => [ '#DDEBCF', '#156B13' ],
+            positions => [ 10,        90 ],
+        }
+    );
+
+The C<type> property can have one of the following values:
+
+    linear        (the default)
+    radial
+    rectangular
+    path
+
+For example:
+
+    $chart->add_series(
+        values   => '=Sheet1!$A$1:$A$5',
+        gradient => {
+            colors => [ '#DDEBCF', '#9CB86E', '#156B13' ],
+            type   => 'radial'
+        }
+    );
+
+If C<type> isn't specified it defaults to C<linear>.
+
+For a C<linear> fill the angle of the gradient can also be specified:
+
+    $chart->add_series(
+        values   => '=Sheet1!$A$1:$A$5',
+        gradient => { colors => [ '#DDEBCF', '#9CB86E', '#156B13' ],
+                      angle => 30 }
+    );
+
+The default angle is 90 degrees.
+
+If gradient fill is used on a chart object it overrides the solid fill and pattern fill properties of the object.
+
+
 
 
 =head1 CHART FONTS
