@@ -5,6 +5,19 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.87 2016-01-12
+
+   + Added chart pattern and gradient fills.
+
+   + Added option to set chart tick interval.
+
+   + Add checks for valid and non-duplicate worksheet table names.
+
+   + Added support for table header formatting and a fix for wrapped lines in
+     the header.
+
+
+
 0.86 2015-10-19
 
    ! Fix to allow chartsheets to support combined charts.
