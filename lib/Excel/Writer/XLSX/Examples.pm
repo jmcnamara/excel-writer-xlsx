@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2015, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2016, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -11028,7 +11028,7 @@ Contributed examples contain the original author's name.
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXV, John McNamara.
+Copyright MM-MMXVI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
