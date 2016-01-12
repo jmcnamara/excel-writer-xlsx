@@ -710,6 +710,7 @@ sub _convert_axis_args {
         _num_format        => $arg{num_format},
         _num_format_linked => $arg{num_format_linked},
         _interval_unit     => $arg{interval_unit},
+        _interval_tick     => $arg{interval_tick},
         _visible           => defined $arg{visible} ? $arg{visible} : 1,
         _text_axis         => 0,
     };
@@ -2953,6 +2954,9 @@ sub _write_cat_axis {
     # Write the c:tickLblSkip element.
     $self->_write_tick_lbl_skip( $x_axis->{_interval_unit} );
 
+    # Write the c:tickMarkSkip element.
+    $self->_write_tick_mark_skip( $x_axis->{_interval_tick} );
+
     $self->xml_end_tag( 'c:catAx' );
 }
 
@@ -3254,6 +3258,9 @@ sub _write_date_axis {
 
     # Write the c:tickLblSkip element.
     $self->_write_tick_lbl_skip( $x_axis->{_interval_unit} );
+
+    # Write the c:tickMarkSkip element.
+    $self->_write_tick_mark_skip( $x_axis->{_interval_tick} );
 
     # Write the c:majorUnit element.
     $self->_write_c_major_unit( $x_axis->{_major_unit} );
@@ -3660,6 +3667,25 @@ sub _write_tick_lbl_skip {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:tickLblSkip', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_tick_mark_skip()
+#
+# Write the <c:tickMarkSkip> element.
+#
+sub _write_tick_mark_skip {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:tickMarkSkip', @attributes );
 }
 
 
@@ -6492,6 +6518,7 @@ The properties that can be set are:
     minor_unit
     major_unit
     interval_unit
+    interval_tick
     crossing
     reverse
     position_axis
@@ -6605,6 +6632,12 @@ Set the increment of the major units in the axis range. (Applicable to value axe
 Set the interval unit for a category axis. (Applicable to category axes only.)
 
     $chart->set_x_axis( interval_unit => 2 );
+
+=item * C<interval_tick>
+
+Set the tick interval for a category axis. (Applicable to category axes only.)
+
+    $chart->set_x_axis( interval_tick => 4 );
 
 =item * C<crossing>
 
