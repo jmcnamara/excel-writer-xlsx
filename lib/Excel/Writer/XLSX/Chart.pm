@@ -4745,16 +4745,16 @@ sub _write_a_no_fill {
 sub _write_a_solid_fill {
 
     my $self = shift;
-    my $line = shift;
+    my $fill = shift;
 
     $self->xml_start_tag( 'a:solidFill' );
 
-    if ( $line->{color} ) {
+    if ( $fill->{color} ) {
 
-        my $color = $self->_get_color( $line->{color} );
+        my $color = $self->_get_color( $fill->{color} );
 
         # Write the a:srgbClr element.
-        $self->_write_a_srgb_clr( $color );
+        $self->_write_a_srgb_clr( $color, $fill->{transparency} );
     }
 
     $self->xml_end_tag( 'a:solidFill' );
@@ -4769,12 +4769,42 @@ sub _write_a_solid_fill {
 #
 sub _write_a_srgb_clr {
 
+    my $self         = shift;
+    my $color        = shift;
+    my $transparency = shift;
+
+    my @attributes = ( 'val' => $color );
+
+    if ( $transparency ) {
+        $self->xml_start_tag( 'a:srgbClr', @attributes );
+
+        # Write the a:alpha element.
+        $self->_write_a_alpha( $transparency );
+
+        $self->xml_end_tag( 'a:srgbClr' );
+    }
+    else {
+        $self->xml_empty_tag( 'a:srgbClr', @attributes );
+    }
+}
+
+
+##############################################################################
+#
+# _write_a_alpha()
+#
+# Write the <a:alpha> element.
+#
+sub _write_a_alpha {
+
     my $self = shift;
     my $val  = shift;
 
+    $val = ( 100 - int( $val ) ) * 1000;
+
     my @attributes = ( 'val' => $val );
 
-    $self->xml_empty_tag( 'a:srgbClr', @attributes );
+    $self->xml_empty_tag( 'a:alpha', @attributes );
 }
 
 
