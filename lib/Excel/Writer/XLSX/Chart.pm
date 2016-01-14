@@ -781,6 +781,11 @@ sub _convert_axis_args {
     # Set the fill properties for the axis.
     $axis->{_fill} = $self->_get_fill_properties( $arg{fill} );
 
+    # Set the tick marker types.
+    $axis->{_minor_tick_mark} = $self->_get_tick_type($arg{minor_tick_mark});
+    $axis->{_major_tick_mark} = $self->_get_tick_type($arg{major_tick_mark});
+
+
     return $axis;
 }
 
@@ -1962,6 +1967,39 @@ sub _get_display_units {
 }
 
 
+
+###############################################################################
+#
+# _get_tick_type()
+#
+# Convert user tick types to internal units.
+#
+sub _get_tick_type {
+
+    my $self      = shift;
+    my $tick_type = shift;
+
+    return if !$tick_type;
+
+    my %types = (
+        'outside' => 'out',
+        'inside'  => 'in',
+        'none'    => 'none',
+        'cross'   => 'cross',
+    );
+
+    if ( exists $types{$tick_type} ) {
+        $tick_type = $types{$tick_type};
+    }
+    else {
+        warn "Unknown tick_type type '$tick_type'\n";
+        return;
+    }
+
+    return $tick_type;
+}
+
+
 ###############################################################################
 #
 # _get_primary_axes_series()
@@ -2913,6 +2951,9 @@ sub _write_cat_axis {
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
 
+    # Write the c:minorTickMark element.
+    $self->_write_minor_tick_mark( $x_axis->{_minor_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
@@ -3022,6 +3063,9 @@ sub _write_val_axis {
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $y_axis->{_major_tick_mark} );
 
+    # Write the c:minorTickMark element.
+    $self->_write_minor_tick_mark( $y_axis->{_minor_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $y_axis->{_label_position} );
 
@@ -3123,6 +3167,9 @@ sub _write_cat_val_axis {
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
 
+    # Write the c:minorTickMark element.
+    $self->_write_minor_tick_mark( $x_axis->{_minor_tick_mark} );
+
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
 
@@ -3222,6 +3269,9 @@ sub _write_date_axis {
 
     # Write the c:majorTickMark element.
     $self->_write_major_tick_mark( $x_axis->{_major_tick_mark} );
+
+    # Write the c:minorTickMark element.
+    $self->_write_minor_tick_mark( $x_axis->{_minor_tick_mark} );
 
     # Write the c:tickLblPos element.
     $self->_write_tick_label_pos( $x_axis->{_label_position} );
@@ -3525,6 +3575,25 @@ sub _write_major_tick_mark {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:majorTickMark', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_minor_tick_mark()
+#
+# Write the <c:minorTickMark> element.
+#
+sub _write_minor_tick_mark {
+
+    my $self = shift;
+    my $val  = shift;
+
+    return unless $val;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:minorTickMark', @attributes );
 }
 
 
@@ -6561,6 +6630,8 @@ The properties that can be set are:
     text_axis
     minor_unit_type
     major_unit_type
+    minor_tick_mark
+    major_tick_mark
     display_units
     display_units_visible
 
@@ -6786,6 +6857,24 @@ More than one property can be set in a call to C<set_x_axis()>:
         min  => 10,
         max  => 80,
     );
+
+=item * C<major_tick_mark>
+
+Set the axis major tick mark type to one of the following values:
+
+    none
+    inside
+    outside
+    cross   (inside and outside)
+
+For example:
+
+    $chart->set_x_axis( major_tick_mark => 'none',
+                        minor_tick_mark => 'inside' );
+
+=item * C<minor_tick_mark>
+
+Set the axis minor tick mark type. Same as C<major_tick_mark>, see above.
 
 =item * C<display_units>
 
