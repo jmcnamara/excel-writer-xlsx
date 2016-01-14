@@ -7709,6 +7709,7 @@ The following properties can be set for C<fill> formats in a chart.
 
     none
     color
+    transparency
 
 The C<none> property is used to turn the C<fill> property off (it is generally on by default).
 
@@ -7730,6 +7731,10 @@ The available colours are shown in the main L<Excel::Writer::XLSX> documentation
     $chart->add_series(
         fill       => { color => '#FF0000' },
     );
+
+The C<transparency> property sets the transparency of the solid fill color in the integer range 1 - 100:
+
+    $chart->set_chartarea( fill => { color => 'yellow', transparency => 75 } );
 
 The C<fill> format is generally used in conjunction with a C<border> format which has the same properties as a C<line> format.
 
