@@ -5,6 +5,14 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.88 2016-01-14
+
+   + Added transparency option to solid fills in chart areas.
+
+   + Added options to configure chart axis tick placement.
+     Feature request #158.
+
+
 0.87 2016-01-12
 
    + Added chart pattern and gradient fills.
