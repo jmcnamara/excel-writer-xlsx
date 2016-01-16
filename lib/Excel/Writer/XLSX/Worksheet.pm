@@ -2716,7 +2716,7 @@ sub write_url {
         }
 
         # Split url into the link and optional anchor/location.
-        ( $url, $url_str ) = split /#/, $url;
+        ( $url, $url_str ) = split /#/, $url, 2;
 
         # Add the file:/// URI to the url for Windows style "C:/" link and
         # Network shares.
