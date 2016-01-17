@@ -2599,6 +2599,44 @@ sub write_array_formula {
 
 ###############################################################################
 #
+# write_blank($row, $col, $format)
+#
+# Write a boolean value to the specified row and column (zero indexed).
+#
+# Returns  0 : normal termination (including no format)
+#         -2 : row or column out of range
+#
+sub write_boolean {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row  = $_[0];            # Zero indexed row
+    my $col  = $_[1];            # Zero indexed column
+    my $val  = $_[2] ? 1 : 0;    # Boolean value.
+    my $xf   = $_[3];            # The cell format
+    my $type = 'l';              # The data type
+
+    # Check that row and col are valid and store max and min values
+    return -2 if $self->_check_dimensions( $row, $col );
+
+    # Write previous row if in in-line string optimization mode.
+    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
+        $self->_write_single_row( $row );
+    }
+
+    $self->{_table}->{$row}->{$col} = [ $type, $val, $xf ];
+
+    return 0;
+}
+
+
+###############################################################################
+#
 # outline_settings($visible, $symbols_below, $symbols_right, $auto_style)
 #
 # This method sets the properties for outlining and grouping. The defaults
@@ -7073,6 +7111,15 @@ sub _write_cell {
         $self->xml_start_tag( 'c', @attributes );
         $self->_write_cell_array_formula( $token, $cell->[3] );
         $self->_write_cell_value( $cell->[4] );
+        $self->xml_end_tag( 'c' );
+    }
+    elsif ( $type eq 'l' ) {
+
+        # Write a boolean value.
+        push @attributes, ( 't' => 'b' );
+
+        $self->xml_start_tag( 'c', @attributes );
+        $self->_write_cell_value( $cell->[1] );
         $self->xml_end_tag( 'c' );
     }
     elsif ( $type eq 'b' ) {

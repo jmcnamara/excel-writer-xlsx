@@ -610,6 +610,7 @@ The following methods are available through a new worksheet:
     write_url()
     write_url_range()
     write_formula()
+    write_boolean()
     write_comment()
     show_comments()
     set_comments_author()
@@ -1281,6 +1282,22 @@ In addition, some early versions of Excel 2007 don't calculate the values of arr
 See also the C<array_formula.pl> program in the C<examples> directory of the distro.
 
 Note: Array formulas are not supported by Spreadsheet::WriteExcel.
+
+
+
+
+=head2 write_boolean( $row, $column, $value, $format )
+
+Write an Excel boolean value to the cell specified by C<$row> and C<$column>:
+
+    $worksheet->write_boolean( 'A1', 1          );  # TRUE
+    $worksheet->write_boolean( 'A2', 0          );  # FALSE
+    $worksheet->write_boolean( 'A3', undef      );  # FALSE
+    $worksheet->write_boolean( 'A3', 0, $format );  # FALSE, with format.
+
+A C<$value> that is true or false using Perl's rules will be written as an Excel boolean C<TRUE> or C<FALSE> value.
+
+See the note about L</Cell notation>.
 
 
 
