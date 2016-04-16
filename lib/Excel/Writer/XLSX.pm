@@ -5843,22 +5843,243 @@ The following table lists the operators that are available in Excel's formulas. 
     [2]: This range is equivalent to cells A1, A2, A3 and A4.
     [3]: The comma behaves like the list separator in Perl.
 
-The range and comma operators can have different symbols in non-English versions of Excel. These may be supported in a later version of Excel::Writer::XLSX. In the meantime European users of Excel take note:
-
-    $worksheet->write('A1', '=SUM(1; 2; 3)'); # Wrong!!
-    $worksheet->write('A1', '=SUM(1, 2, 3)'); # Okay
+The range and comma operators can have different symbols in non-English versions of Excel, see below.
 
 For a general introduction to Excel's formulas and an explanation of the syntax of the function refer to the Excel help files or the following: L<http://office.microsoft.com/en-us/assistance/CH062528031033.aspx>.
 
-If your formula doesn't work in Excel::Writer::XLSX try the following:
+In most cases a formula in Excel can be used directly in the C<write_formula> method. However, there are a few potential issues and differences that the user should be aware of. These are explained in the following sections.
 
-    1. Verify that the formula works in Excel.
-    2. Ensure that cell references and formula names are in uppercase.
-    3. Ensure that you are using ':' as the range operator, A1:A4.
-    4. Ensure that you are using ',' as the union operator, SUM(1,2,3).
-    5. If you verify that the formula works in Gnumeric, OpenOffice.org
-       or LibreOffice, make sure to note items 2-4 above, since these
-       applications are more flexible than Excel with formula syntax.
+
+=head2 Non US Excel functions and syntax
+
+
+Excel stores formulas in the format of the US English version, regardless of the language or locale of the end-user's version of Excel. Therefore all formula function names written using Excel::Writer::XLSX must be in English:
+
+    worksheet->write_formula('A1', '=SUM(1, 2, 3)');   # OK
+    worksheet->write_formula('A2', '=SOMME(1, 2, 3)'); # French. Error on load.
+
+Also, formulas must be written with the US style separator/range operator which is a comma (not semi-colon). Therefore a formula with multiple values should be written as follows:
+
+    worksheet->write_formula('A1', '=SUM(1, 2, 3)'); # OK
+    worksheet->write_formula('A2', '=SUM(1; 2; 3)'); # Semi-colon. Error on load.
+
+If you have a non-English version of Excel you can use the following multi-lingual Formula Translator (L<http://en.excel-translator.de/language/>) to help you convert the formula. It can also replace semi-colons with commas.
+
+
+=head2 Formulas added in Excel 2010 and later
+
+Excel 2010 and later added functions which weren't defined in the original file specification. These functions are referred to by Microsoft as I<future> functions. Examples of these functions are C<ACOT>, C<CHISQ.DIST.RT> , C<CONFIDENCE.NORM>, C<STDEV.P>, C<STDEV.S> and C<WORKDAY.INTL>.
+
+When written using C<write_formula()> these functions need to be fully qualified with a C<_xlfn.> (or other) prefix as they are shown the list below. For example:
+
+    worksheet->write_formula('A1', '=_xlfn.STDEV.S(B1:B10)')
+
+They will appear without the prefix in Excel.
+
+The following list is taken from the MS XLSX extensions documentation on future functions: L<http://msdn.microsoft.com/en-us/library/dd907480%28v=office.12%29.aspx>:
+
+    _xlfn.ACOT
+    _xlfn.ACOTH
+    _xlfn.AGGREGATE
+    _xlfn.ARABIC
+    _xlfn.BASE
+    _xlfn.BETA.DIST
+    _xlfn.BETA.INV
+    _xlfn.BINOM.DIST
+    _xlfn.BINOM.DIST.RANGE
+    _xlfn.BINOM.INV
+    _xlfn.BITAND
+    _xlfn.BITLSHIFT
+    _xlfn.BITOR
+    _xlfn.BITRSHIFT
+    _xlfn.BITXOR
+    _xlfn.CEILING.MATH
+    _xlfn.CEILING.PRECISE
+    _xlfn.CHISQ.DIST
+    _xlfn.CHISQ.DIST.RT
+    _xlfn.CHISQ.INV
+    _xlfn.CHISQ.INV.RT
+    _xlfn.CHISQ.TEST
+    _xlfn.COMBINA
+    _xlfn.CONFIDENCE.NORM
+    _xlfn.CONFIDENCE.T
+    _xlfn.COT
+    _xlfn.COTH
+    _xlfn.COVARIANCE.P
+    _xlfn.COVARIANCE.S
+    _xlfn.CSC
+    _xlfn.CSCH
+    _xlfn.DAYS
+    _xlfn.DECIMAL
+    ECMA.CEILING
+    _xlfn.ERF.PRECISE
+    _xlfn.ERFC.PRECISE
+    _xlfn.EXPON.DIST
+    _xlfn.F.DIST
+    _xlfn.F.DIST.RT
+    _xlfn.F.INV
+    _xlfn.F.INV.RT
+    _xlfn.F.TEST
+    _xlfn.FILTERXML
+    _xlfn.FLOOR.MATH
+    _xlfn.FLOOR.PRECISE
+    _xlfn.FORECAST.ETS
+    _xlfn.FORECAST.ETS.CONFINT
+    _xlfn.FORECAST.ETS.SEASONALITY
+    _xlfn.FORECAST.ETS.STAT
+    _xlfn.FORECAST.LINEAR
+    _xlfn.FORMULATEXT
+    _xlfn.GAMMA
+    _xlfn.GAMMA.DIST
+    _xlfn.GAMMA.INV
+    _xlfn.GAMMALN.PRECISE
+    _xlfn.GAUSS
+    _xlfn.HYPGEOM.DIST
+    _xlfn.IFNA
+    _xlfn.IMCOSH
+    _xlfn.IMCOT
+    _xlfn.IMCSC
+    _xlfn.IMCSCH
+    _xlfn.IMSEC
+    _xlfn.IMSECH
+    _xlfn.IMSINH
+    _xlfn.IMTAN
+    _xlfn.ISFORMULA
+    ISO.CEILING
+    _xlfn.ISOWEEKNUM
+    _xlfn.LOGNORM.DIST
+    _xlfn.LOGNORM.INV
+    _xlfn.MODE.MULT
+    _xlfn.MODE.SNGL
+    _xlfn.MUNIT
+    _xlfn.NEGBINOM.DIST
+    NETWORKDAYS.INTL
+    _xlfn.NORM.DIST
+    _xlfn.NORM.INV
+    _xlfn.NORM.S.DIST
+    _xlfn.NORM.S.INV
+    _xlfn.NUMBERVALUE
+    _xlfn.PDURATION
+    _xlfn.PERCENTILE.EXC
+    _xlfn.PERCENTILE.INC
+    _xlfn.PERCENTRANK.EXC
+    _xlfn.PERCENTRANK.INC
+    _xlfn.PERMUTATIONA
+    _xlfn.PHI
+    _xlfn.POISSON.DIST
+    _xlfn.QUARTILE.EXC
+    _xlfn.QUARTILE.INC
+    _xlfn.QUERYSTRING
+    _xlfn.RANK.AVG
+    _xlfn.RANK.EQ
+    _xlfn.RRI
+    _xlfn.SEC
+    _xlfn.SECH
+    _xlfn.SHEET
+    _xlfn.SHEETS
+    _xlfn.SKEW.P
+    _xlfn.STDEV.P
+    _xlfn.STDEV.S
+    _xlfn.T.DIST
+    _xlfn.T.DIST.2T
+    _xlfn.T.DIST.RT
+    _xlfn.T.INV
+    _xlfn.T.INV.2T
+    _xlfn.T.TEST
+    _xlfn.UNICHAR
+    _xlfn.UNICODE
+    _xlfn.VAR.P
+    _xlfn.VAR.S
+    _xlfn.WEBSERVICE
+    _xlfn.WEIBULL.DIST
+    WORKDAY.INTL
+    _xlfn.XOR
+    _xlfn.Z.TEST
+
+
+=head2 Using Tables in Formulas
+
+Worksheet tables can be added with Excel::Writer::XLSX using the C<add_table()> method:
+
+    worksheet->add_table('B3:F7', {options});
+
+By default tables are named C<Table1>, C<Table2>, etc., in the order that they are added. However it can also be set by the user using the C<name> parameter:
+
+    worksheet->add_table('B3:F7', {'name': 'SalesData'});
+
+If you need to know the name of the table, for example to use it in a formula,
+you can get it as follows:
+
+    table = worksheet->add_table('B3:F7');
+    table_name = table->{_name};
+
+When used in a formula a table name such as C<TableX> should be referred to as C<TableX[]> (like a Perl array):
+
+    worksheet->write_formula('A5', '=VLOOKUP("Sales", Table1[], 2, FALSE');
+
+
+=head2 Dealing with #NAME? errors
+
+If there is an error in the syntax of a formula it is usually displayed in
+Excel as C<#NAME?>. If you encounter an error like this you can debug it as
+follows:
+
+=over
+
+=item 1. Ensure the formula is valid in Excel by copying and pasting it into a cell. Note, this should be done in Excel and not other applications such as OpenOffice or LibreOffice since they may have slightly different syntax.
+
+=item 2. Ensure the formula is using comma separators instead of semi-colons, see L<Non US Excel functions and syntax> above.
+
+=item 3. Ensure the formula is in English, see L<Non US Excel functions and syntax> above.
+
+=item 4. Ensure that the formula doesn't contain an Excel 2010+ future function as listed in L<Formulas added in Excel 2010 and later> above. If it does then ensure that the correct prefix is used.
+
+=back
+
+Finally if you have completed all the previous steps and still get a C<#NAME?> error you can examine a valid Excel file to see what the correct syntax should be. To do this you should create a valid formula in Excel and save the file. You can then examine the XML in the unzipped file.
+
+The following shows how to do that using Linux C<unzip> and libxml's xmllint
+L<http://xmlsoft.org/xmllint.html> to format the XML for clarity:
+
+    $ unzip myfile.xlsx -d myfile
+    $ xmllint --format myfile/xl/worksheets/sheet1.xml | grep '<f>'
+
+            <f>SUM(1, 2, 3)</f>
+
+
+=head2 Formula Results
+
+Excel::Writer::XLSX doesn't calculate the result of a formula and instead stores the value 0 as the formula result. It then sets a global flag in the XLSX file to say that all formulas and functions should be recalculated when the file is opened.
+
+This is the method recommended in the Excel documentation and in general it works fine with spreadsheet applications. However, applications that don't have a facility to calculate formulas will only display the 0 results. Examples of such applications are Excel Viewer, PDF Converters, and some mobile device applications.
+
+If required, it is also possible to specify the calculated result of the
+formula using the optional last C<value> parameter in C<write_formula>:
+
+    worksheet->write_formula('A1', '=2+2', num_format, 4);
+
+The C<value> parameter can be a number, a string, a boolean sting (C<'TRUE'> or C<'FALSE'>) or one of the following Excel error codes:
+
+    #DIV/0!
+    #N/A
+    #NAME?
+    #NULL!
+    #NUM!
+    #REF!
+    #VALUE!
+
+It is also possible to specify the calculated result of an array formula created with C<write_array_formula>:
+
+    # Specify the result for a single cell range.
+    worksheet->write_array_formula('A1:A1', '{=SUM(B1:C1*B2:C2)}', format, 2005);
+
+However, using this parameter only writes a single value to the upper left cell in the result array. For a multi-cell array formula where the results are required, the other result values can be specified by using C<write_number()> to write to the appropriate cell:
+
+    # Specify the results for a multi cell range.
+    worksheet->write_array_formula('A1:A3', '{=TREND(C1:C3,B1:B3)}', format, 15);
+    worksheet->write_number('A2', 12, format);
+    worksheet->write_number('A3', 14, format);
+
 
 
 
@@ -6796,7 +7017,7 @@ Spreadsheet::XLSX: L<http://search.cpan.org/dist/Spreadsheet-XLSX>.
 
 
 
-=head1 ACKNOWLEDGMENTS
+=head1 ACKNOWLEDGEMENTS
 
 
 The following people contributed to the debugging, testing or enhancement of Excel::Writer::XLSX:
