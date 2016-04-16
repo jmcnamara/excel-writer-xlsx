@@ -710,6 +710,7 @@ t/regression/format05.t
 t/regression/format11.t
 t/regression/format12.t
 t/regression/format13.t
+t/regression/format14.t
 t/regression/formula_results01.t
 t/regression/gridlines01.t
 t/regression/header01.t
@@ -754,6 +755,8 @@ t/regression/hyperlink21.t
 t/regression/hyperlink22.t
 t/regression/hyperlink23.t
 t/regression/hyperlink24.t
+t/regression/hyperlink25.t
+t/regression/hyperlink26.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -955,6 +958,8 @@ t/regression/taint02.t
 t/regression/tutorial01.t
 t/regression/tutorial02.t
 t/regression/tutorial03.t
+t/regression/types02.t
+t/regression/types08.t
 t/regression/utf8_01.t
 t/regression/utf8_02.t
 t/regression/utf8_03.t
@@ -1371,6 +1376,7 @@ t/regression/xlsx_files/format05.xlsx
 t/regression/xlsx_files/format11.xlsx
 t/regression/xlsx_files/format12.xlsx
 t/regression/xlsx_files/format13.xlsx
+t/regression/xlsx_files/format14.xlsx
 t/regression/xlsx_files/formula_results01.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/header01.xlsx
@@ -1415,6 +1421,8 @@ t/regression/xlsx_files/hyperlink21.xlsx
 t/regression/xlsx_files/hyperlink22.xlsx
 t/regression/xlsx_files/hyperlink23.xlsx
 t/regression/xlsx_files/hyperlink24.xlsx
+t/regression/xlsx_files/hyperlink25.xlsx
+t/regression/xlsx_files/hyperlink26.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1588,6 +1596,8 @@ t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
 t/regression/xlsx_files/tutorial02.xlsx
 t/regression/xlsx_files/tutorial03.xlsx
+t/regression/xlsx_files/types02.xlsx
+t/regression/xlsx_files/types08.xlsx
 t/regression/xlsx_files/utf8_01.xlsx
 t/regression/xlsx_files/utf8_02.xlsx
 t/regression/xlsx_files/utf8_03.xlsx

@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.89 2016-04-16
+
+   + Added write_boolean() worksheet method to write Excel boolean values.
+
+
 0.88 2016-01-14
 
    + Added transparency option to solid fills in chart areas.
