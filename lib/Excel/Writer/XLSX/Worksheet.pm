@@ -2657,6 +2657,30 @@ sub outline_settings {
 
 ###############################################################################
 #
+# Escape urls like Excel.
+#
+sub _escape_url {
+
+    my $url = shift;
+
+    # Don't escape URL if it looks already escaped.
+    return $url if $url =~ /%[0-9a-fA-F]{2}/;
+
+    # Escape the URL escape symbol.
+    $url =~ s/%/%25/g;
+
+    # Escape whitespace in URL.
+    $url =~ s/[\s\x00]/%20/g;
+
+    # Escape other special characters in URL.
+    $url =~ s/(["<>[\]`^{}])/sprintf '%%%x', ord $1/eg;
+
+    return $url;
+}
+
+
+###############################################################################
+#
 # write_url($row, $col, $url, $string, $format)
 #
 # Write a hyperlink. This is comprised of two elements: the visible label and
@@ -2702,6 +2726,7 @@ sub write_url {
     my $tip       = $args[5];    # Tool tip
     my $type      = 'l';         # XML data type
     my $link_type = 1;
+    my $external  = 0;
 
     # The displayed string defaults to the url string.
     $str = $url unless defined $str;
@@ -2718,6 +2743,7 @@ sub write_url {
         $str =~ s/^external://;
         $url =~ s[/][\\]g;
         $str =~ s[/][\\]g;
+        $external = 1;
     }
 
     # Strip the mailto header.
@@ -2740,21 +2766,15 @@ sub write_url {
     # different characteristics that we have to account for.
     if ( $link_type == 1 ) {
 
-        # Escape URL unless it looks already escaped.
-        if ( $url !~ /%[0-9a-fA-F]{2}/ ) {
-
-            # Escape the URL escape symbol.
-            $url =~ s/%/%25/g;
-
-            # Escape whitespace in URL.
-            $url =~ s/[\s\x00]/%20/g;
-
-            # Escape other special characters in URL.
-            $url =~ s/(["<>[\]`^{}])/sprintf '%%%x', ord $1/eg;
-        }
-
         # Split url into the link and optional anchor/location.
         ( $url, $url_str ) = split /#/, $url, 2;
+
+        $url = _escape_url( $url );
+
+        # Escape the anchor for hyperlink style urls only.
+        if ( $url_str && !$external ) {
+            $url_str = _escape_url( $url_str );
+        }
 
         # Add the file:/// URI to the url for Windows style "C:/" link and
         # Network shares.
@@ -2769,7 +2789,7 @@ sub write_url {
     # Excel limits the escaped URL and location/anchor to 255 characters.
     my $tmp_url_str = $url_str || '';
 
-    if ( length $url > 255 || length $tmp_url_str > 255) {
+    if ( length $url > 255 || length $tmp_url_str > 255 ) {
         carp "Ignoring URL '$url' where link or anchor > 255 characters "
           . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
           . "section of the Excel::Writer::XLSX documentation.";
