@@ -85,7 +85,7 @@ sub new {
     $self->{_named_ranges}       = [];
     $self->{_custom_colors}      = [];
     $self->{_doc_properties}     = {};
-    $self->{_localtime}          = [ localtime() ];
+    $self->{_createtime}         = [ gmtime() ];
     $self->{_num_vml_files}      = 0;
     $self->{_num_comment_files}  = 0;
     $self->{_optimization}       = 0;
@@ -830,7 +830,7 @@ sub set_properties {
 
     # Set the creation time unless specified by the user.
     if ( !exists $param{created} ) {
-        $param{created} = $self->{_localtime};
+        $param{created} = $self->{_createtime};
     }
 
 
