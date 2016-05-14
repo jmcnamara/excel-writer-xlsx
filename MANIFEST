@@ -757,6 +757,7 @@ t/regression/hyperlink23.t
 t/regression/hyperlink24.t
 t/regression/hyperlink25.t
 t/regression/hyperlink26.t
+t/regression/hyperlink27.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -788,6 +789,7 @@ t/regression/image30.t
 t/regression/image31.t
 t/regression/image32.t
 t/regression/image33.t
+t/regression/image34.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -811,6 +813,7 @@ t/regression/images/red.jpg
 t/regression/images/red.png
 t/regression/images/red_208.png
 t/regression/images/red_64x20.png
+t/regression/images/red_readonly.png
 t/regression/images/train.jpg
 t/regression/images/yellow.jpg
 t/regression/images/yellow.png
@@ -970,6 +973,7 @@ t/regression/utf8_07.t
 t/regression/utf8_08.t
 t/regression/utf8_09.t
 t/regression/utf8_10.t
+t/regression/utf8_11.t
 t/regression/vml01.t
 t/regression/vml02.t
 t/regression/vml03.t
@@ -1423,6 +1427,7 @@ t/regression/xlsx_files/hyperlink23.xlsx
 t/regression/xlsx_files/hyperlink24.xlsx
 t/regression/xlsx_files/hyperlink25.xlsx
 t/regression/xlsx_files/hyperlink26.xlsx
+t/regression/xlsx_files/hyperlink27.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1454,6 +1459,7 @@ t/regression/xlsx_files/image30.xlsx
 t/regression/xlsx_files/image31.xlsx
 t/regression/xlsx_files/image32.xlsx
 t/regression/xlsx_files/image33.xlsx
+t/regression/xlsx_files/image34.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/merge_cells01.xlsx
@@ -1608,6 +1614,7 @@ t/regression/xlsx_files/utf8_07.xlsx
 t/regression/xlsx_files/utf8_08.xlsx
 t/regression/xlsx_files/utf8_09.xlsx
 t/regression/xlsx_files/utf8_10.xlsx
+t/regression/xlsx_files/utf8_11.xlsx
 t/regression/xlsx_files/vbaProject01.bin
 t/regression/xlsx_files/vbaProject02.bin
 t/regression/xlsx_files/vml01.xlsx
@@ -1649,6 +1656,7 @@ t/workbook/sub_write_xml_declaration.t
 t/workbook/workbook_01.t
 t/workbook/workbook_02.t
 t/workbook/workbook_03.t
+t/workbook/workbook_get_worksheet_by_name.t
 t/worksheet/sparkline_01.t
 t/worksheet/sparkline_02.t
 t/worksheet/sparkline_03.t

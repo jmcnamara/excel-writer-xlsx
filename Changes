@@ -5,6 +5,23 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.90 2016-05-13
+
+   + Added get_worksheet_by_name() workbook method to retrieve a worksheet
+     in a workbook by name.
+     Feature request #124.
+
+   ! Fixed issue where internal file creation and modification dates where
+     in the local timezone instead of UTC.
+     Issue #162.
+
+   ! Fixed issue with "external:" urls with space in sheetname.
+
+   ! Fixed issue where Unicode full-width number strings were treated as
+     numbers in write().
+     Issue #160.
+
+
 0.89 2016-04-16
 
    + Added write_boolean() worksheet method to write Excel boolean values.
@@ -97,7 +114,7 @@ Revision history for Perl module Excel::Writer::XLSX.
      so that they aren't overwritten.
      Issue #121.
 
-   + Added column funtion_value option to add_table to allow
+   + Added column function_value option to add_table to allow
      function value to be set.
 
    + Allow explicit text categories in charts.
@@ -125,9 +142,9 @@ Revision history for Perl module Excel::Writer::XLSX.
 
     + Added option to add images to headers and footers.
 
-    + Added option to not scale heaader/footer with page.
+    + Added option to not scale header/footer with page.
 
-    ! Fixed issue where non 96dpi images weren’t scaled properly in Excel.
+    ! Fixed issue where non 96dpi images were not scaled properly in Excel.
 
     ! Fix for issue where X axis title formula was overwritten by the
       Y axis title.
@@ -179,7 +196,7 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Allow positioning of plotarea, legend, title and axis names.
       Issue #80.
 
-    ! Fix for modification of user params in condtional_formatting().
+    ! Fix for modification of user params in conditional_formatting().
       Issue #79.
 
     ! Fix for star style markers.
