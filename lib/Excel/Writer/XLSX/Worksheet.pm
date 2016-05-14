@@ -1984,7 +1984,7 @@ sub write {
     }
 
     # Match number
-    elsif ( $token =~ /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ ) {
+    elsif ( $token =~ /^([+-]?)(?=[0-9]|\.[0-9])[0-9]*(\.[0-9]*)?([Ee]([+-]?[0-9]+))?$/ ) {
         return $self->write_number( @_ );
     }
 
