@@ -55,7 +55,6 @@ sub new {
 
     $self->{_package_dir}      = '';
     $self->{_workbook}         = undef;
-    $self->{_sheet_names}      = [];
     $self->{_worksheet_count}  = 0;
     $self->{_chartsheet_count} = 0;
     $self->{_chart_count}      = 0;
@@ -94,10 +93,8 @@ sub _add_workbook {
 
     my $self        = shift;
     my $workbook    = shift;
-    my @sheet_names = @{ $workbook->{_sheetnames} };
 
     $self->{_workbook}          = $workbook;
-    $self->{_sheet_names}       = \@sheet_names;
     $self->{_chart_count}       = scalar @{ $workbook->{_charts} };
     $self->{_drawing_count}     = scalar @{ $workbook->{_drawings} };
     $self->{_num_vml_files}     = $workbook->{_num_vml_files};

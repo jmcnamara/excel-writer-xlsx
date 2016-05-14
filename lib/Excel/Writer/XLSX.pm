@@ -151,6 +151,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     set_tempdir()
     set_custom_color()
     sheets()
+    get_worksheet_by_name()
     set_1904()
     set_optimization()
     set_calc_mode()
@@ -535,6 +536,15 @@ The following example returns the first and last worksheet in a workbook:
 
 
 Array slices are explained in the C<perldata> manpage.
+
+
+
+
+=head2 get_worksheet_by_name()
+
+The C<get_worksheet_by_name()> function return a worksheet or chartsheet object in the workbook using the sheetname:
+
+    $worksheet = $workbook->get_worksheet_by_name('Sheet1');
 
 
 

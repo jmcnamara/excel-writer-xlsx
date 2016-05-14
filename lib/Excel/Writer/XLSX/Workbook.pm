@@ -72,7 +72,7 @@ sub new {
     $self->{_worksheets}         = [];
     $self->{_charts}             = [];
     $self->{_drawings}           = [];
-    $self->{_sheetnames}         = [];
+    $self->{_sheetnames}         = {};
     $self->{_formats}            = [];
     $self->{_xf_formats}         = [];
     $self->{_xf_format_indices}  = {};
@@ -298,6 +298,23 @@ sub sheets {
 
 ###############################################################################
 #
+# get_worksheet_by_name(name)
+#
+# Return a worksheet object in the workbook using the sheetname.
+#
+sub get_worksheet_by_name {
+
+    my $self      = shift;
+    my $sheetname = shift;
+
+    return undef if not defined $sheetname;
+
+    return $self->{_sheetnames}->{$sheetname};
+}
+
+
+###############################################################################
+#
 # worksheets()
 #
 # An accessor for the _worksheets[] array.
@@ -356,7 +373,7 @@ sub add_worksheet {
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
     $self->{_worksheets}->[$index] = $worksheet;
-    $self->{_sheetnames}->[$index] = $name;
+    $self->{_sheetnames}->{$name} = $worksheet;
 
     return $worksheet;
 }
@@ -424,7 +441,7 @@ sub add_chart {
         $chartsheet->{_drawing} = $drawing;
 
         $self->{_worksheets}->[$index] = $chartsheet;
-        $self->{_sheetnames}->[$index] = $name;
+        $self->{_sheetnames}->{$name} = $chartsheet;
 
         push @{ $self->{_charts} }, $chart;
 
@@ -2207,19 +2224,17 @@ sub _get_sheet_index {
 
     my $self        = shift;
     my $sheetname   = shift;
-    my $sheet_count = @{ $self->{_sheetnames} };
     my $sheet_index = undef;
 
     $sheetname =~ s/^'//;
     $sheetname =~ s/'$//;
 
-    for my $i ( 0 .. $sheet_count - 1 ) {
-        if ( $sheetname eq $self->{_sheetnames}->[$i] ) {
-            $sheet_index = $i;
-        }
+    if ( exists $self->{_sheetnames}->{$sheetname} ) {
+        return $self->{_sheetnames}->{$sheetname}->{_index};
     }
-
-    return $sheet_index;
+    else {
+        return undef;
+    }
 }
 
 
