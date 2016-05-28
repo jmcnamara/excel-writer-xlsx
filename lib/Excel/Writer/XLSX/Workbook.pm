@@ -85,6 +85,7 @@ sub new {
     $self->{_named_ranges}       = [];
     $self->{_custom_colors}      = [];
     $self->{_doc_properties}     = {};
+    $self->{_custom_properties}  = [];
     $self->{_createtime}         = [ gmtime() ];
     $self->{_num_vml_files}      = 0;
     $self->{_num_comment_files}  = 0;
@@ -852,6 +853,27 @@ sub set_properties {
 
 
     $self->{_doc_properties} = \%param;
+}
+
+
+###############################################################################
+#
+# set_custom_property()
+#
+# Set a user defined custom document property.
+#
+sub set_custom_property {
+
+    my $self  = shift;
+    my $name  = shift;
+    my $value  = shift;
+    my $type  = shift || 'text';
+
+    if (!$name || !$value ) {
+        return -1;
+    }
+
+    push @{ $self->{_custom_properties} }, [$name, $value, $type];
 }
 
 

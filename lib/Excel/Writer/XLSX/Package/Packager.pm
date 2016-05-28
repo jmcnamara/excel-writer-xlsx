@@ -23,6 +23,7 @@ use Excel::Writer::XLSX::Package::App;
 use Excel::Writer::XLSX::Package::Comments;
 use Excel::Writer::XLSX::Package::ContentTypes;
 use Excel::Writer::XLSX::Package::Core;
+use Excel::Writer::XLSX::Package::Custom;
 use Excel::Writer::XLSX::Package::Relationships;
 use Excel::Writer::XLSX::Package::SharedStrings;
 use Excel::Writer::XLSX::Package::Styles;
@@ -133,6 +134,7 @@ sub _create_package {
     $self->_write_shared_strings_file();
     $self->_write_app_file();
     $self->_write_core_file();
+    $self->_write_custom_file();
     $self->_write_content_types_file();
     $self->_write_styles_file();
     $self->_write_theme_file();
@@ -448,6 +450,29 @@ sub _write_core_file {
 
 ###############################################################################
 #
+# _write_custom_file()
+#
+# Write the custom.xml file.
+#
+sub _write_custom_file {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $properties = $self->{_workbook}->{_custom_properties};
+    my $custom     = Excel::Writer::XLSX::Package::Custom->new();
+
+    return if !@$properties;
+
+    _mkdir( $dir . '/docProps' );
+
+    $custom->_set_properties( $properties );
+    $custom->_set_xml_writer( $dir . '/docProps/custom.xml' );
+    $custom->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
 # _write_content_types_file()
 #
 # Write the ContentTypes.xml file.
@@ -499,6 +524,11 @@ sub _write_content_types_file {
     # Add vbaProject if present.
     if ( $self->{_workbook}->{_vba_project} ) {
         $content->_add_vba_project();
+    }
+
+    # Add the custom properties if present.
+    if ( @{ $self->{_workbook}->{_custom_properties} } ) {
+        $content->_add_custom_properties();
     }
 
     $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
@@ -618,10 +648,17 @@ sub _write_root_rels_file {
     _mkdir( $dir . '/_rels' );
 
     $rels->_add_document_relationship( '/officeDocument', 'xl/workbook.xml' );
+
     $rels->_add_package_relationship( '/metadata/core-properties',
         'docProps/core.xml' );
+
     $rels->_add_document_relationship( '/extended-properties',
         'docProps/app.xml' );
+
+    if ( @{ $self->{_workbook}->{_custom_properties} } ) {
+        $rels->_add_document_relationship( '/custom-properties',
+            'docProps/custom.xml' );
+    }
 
     $rels->_set_xml_writer( $dir . '/_rels/.rels' );
     $rels->_assemble_xml_file();
