@@ -147,6 +147,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     set_vba_name()
     close()
     set_properties()
+    set_custom_property()
     define_name()
     set_tempdir()
     set_custom_color()
@@ -426,7 +427,7 @@ The return value of C<close()> is the same as that returned by perl when it clos
 
 =head2 set_properties()
 
-The C<set_properties> method can be used to set the document properties of the Excel file created by C<Excel::Writer::XLSX>. These properties are visible when you use the C<< Office Button -> Prepare -> Properties >> option in Excel and are also available to external applications that read or index windows files.
+The C<set_properties> method can be used to set the document properties of the Excel file created by C<Excel::Writer::XLSX>. These properties are visible when you use the C<< Office Button -> Prepare -> Properties >> option in Excel and are also available to external applications that read or index Windows files.
 
 The properties should be passed in hash format as follows:
 
@@ -450,6 +451,45 @@ The properties that can be set are:
     hyperlink_base
 
 See also the C<properties.pl> program in the examples directory of the distro.
+
+
+
+
+=head2 set_custom_property( $name, $value, $type)
+
+The C<set_custom_property> method can be used to set custom document properties not covered by the C<set_properties()> method above. These properties are visible when you use the C<< Office Button -> Prepare -> Properties -> Advanced Properties -> Custom >> option in Excel and are also available to external applications that read or index Windows files.
+
+The C<set_custom_property> method takes 3 parameters:
+
+    $workbook-> set_custom_property( $name, $value, $type);
+
+Where the available types are:
+
+    text
+    date
+    number
+    bool
+
+For example:
+
+    $workbook->set_custom_property( 'Checked by',      'Eve',                  'text'   );
+    $workbook->set_custom_property( 'Date completed',  '2016-12-12T23:00:00Z', 'date'   );
+    $workbook->set_custom_property( 'Document number', '12345' ,               'number' );
+    $workbook->set_custom_property( 'Reference',       '1.2345',               'number' );
+    $workbook->set_custom_property( 'Has review',      1,                      'bool'   );
+    $workbook->set_custom_property( 'Has sign off',    0,                      'bool'   );
+    $workbook->set_custom_property( 'Department',      $some_string,           'text'   );
+    $workbook->set_custom_property( 'Scale',           '1.2345678901234',      'number' );
+
+Dates should by in ISO8601 C<yyyy-mm-ddThh:mm:ss.sssZ> date format in Zulu time, as shown above.
+
+The C<text> and C<number> types are optional since they can usually be inferred from the data:
+
+    $workbook->set_custom_property( 'Checked by', 'Eve'    );
+    $workbook->set_custom_property( 'Reference',  '1.2345' );
+
+
+The C<$name> and C<$value> (for text types) are limited to 255 characters by Excel.
 
 
 

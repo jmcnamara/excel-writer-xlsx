@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.91 2016-05-xx
+
+   + Add set_custom_property() workbook method to set custom document
+     properties.
+
+
 0.90 2016-05-13
 
    + Added get_worksheet_by_name() workbook method to retrieve a worksheet

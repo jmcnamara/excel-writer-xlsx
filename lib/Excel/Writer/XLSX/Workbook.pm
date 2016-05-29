@@ -913,6 +913,11 @@ sub set_custom_property {
           . "Excel's limit of 255 in set_custom_property()";
         return -1;
     }
+    if ( length $value > 255 ) {
+        carp "Length of custom name '$name' exceeds "
+          . "Excel's limit of 255 in set_custom_property()";
+        return -1;
+    }
 
     push @{ $self->{_custom_properties} }, [ $name, $value, $type ];
 }
