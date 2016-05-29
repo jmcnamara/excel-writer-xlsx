@@ -867,9 +867,50 @@ sub set_custom_property {
     my $self  = shift;
     my $name  = shift;
     my $value = shift;
-    my $type  = shift || 'text';
+    my $type  = shift;
+
+
+    # Valid types.
+    my %valid_type = (
+        'text'       => 1,
+        'date'       => 1,
+        'number'     => 1,
+        'number_int' => 1,
+        'bool'       => 1,
+    );
 
     if ( !defined $name || !defined $value ) {
+        carp "The name and value parameters must be defined "
+          . "in set_custom_property()";
+
+        return -1;
+    }
+
+    # Determine the type for strings and numbers if it hasn't been specified.
+    if ( !$type ) {
+        if ( $value =~ /^\d+$/ ) {
+            $type = 'number_int';
+        }
+        elsif ( $value =~
+            /^([+-]?)(?=[0-9]|\.[0-9])[0-9]*(\.[0-9]*)?([Ee]([+-]?[0-9]+))?$/ )
+        {
+            $type = 'number';
+        }
+        else {
+            $type = 'text';
+        }
+    }
+
+    # Check for valid validation types.
+    if ( !exists $valid_type{$type} ) {
+        carp "Unknown custom type '$type' in set_custom_property()";
+        return -1;
+    }
+
+    #  Check for strings longer than Excel's limit of 255 chars.
+    if ( $type eq 'text' and length $value > 255 ) {
+        carp "Length of text custom value '$value' exceeds "
+          . "Excel's limit of 255 in set_custom_property()";
         return -1;
     }
 

@@ -154,30 +154,30 @@ sub _write_property {
 
     $self->xml_start_tag( 'property', @attributes );
 
-    if ( $type eq 'text' ) {
-
-        # Write the vt:lpwstr element.
-        $self->_write_vt_lpwstr( $value );
-    }
-    elsif ( $type eq 'date' ) {
+    if ( $type eq 'date' ) {
 
         # Write the vt:filetime element.
         $self->_write_vt_filetime( $value );
     }
-    elsif ( $type eq 'num_int' ) {
-
-        # Write the vt:i4 element.
-        $self->_write_vt_i4( $value );
-    }
-    elsif ( $type eq 'num_real' ) {
+    elsif ( $type eq 'number' ) {
 
         # Write the vt:r8 element.
         $self->_write_vt_r8( $value );
+    }
+    elsif ( $type eq 'number_int' ) {
+
+        # Write the vt:i4 element.
+        $self->_write_vt_i4( $value );
     }
     elsif ( $type eq 'bool' ) {
 
         # Write the vt:bool element.
         $self->_write_vt_bool( $value );
+    }
+    else {
+
+        # Write the vt:lpwstr element.
+        $self->_write_vt_lpwstr( $value );
     }
 
 
