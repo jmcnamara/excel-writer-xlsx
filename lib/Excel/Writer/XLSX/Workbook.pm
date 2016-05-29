@@ -866,15 +866,16 @@ sub set_custom_property {
 
     my $self  = shift;
     my $name  = shift;
-    my $value  = shift;
+    my $value = shift;
     my $type  = shift || 'text';
 
-    if (!$name || !$value ) {
+    if ( !defined $name || !defined $value ) {
         return -1;
     }
 
-    push @{ $self->{_custom_properties} }, [$name, $value, $type];
+    push @{ $self->{_custom_properties} }, [ $name, $value, $type ];
 }
+
 
 
 ###############################################################################

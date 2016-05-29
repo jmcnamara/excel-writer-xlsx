@@ -159,6 +159,27 @@ sub _write_property {
         # Write the vt:lpwstr element.
         $self->_write_vt_lpwstr( $value );
     }
+    elsif ( $type eq 'date' ) {
+
+        # Write the vt:filetime element.
+        $self->_write_vt_filetime( $value );
+    }
+    elsif ( $type eq 'num_int' ) {
+
+        # Write the vt:i4 element.
+        $self->_write_vt_i4( $value );
+    }
+    elsif ( $type eq 'num_real' ) {
+
+        # Write the vt:r8 element.
+        $self->_write_vt_r8( $value );
+    }
+    elsif ( $type eq 'bool' ) {
+
+        # Write the vt:bool element.
+        $self->_write_vt_bool( $value );
+    }
+
 
     $self->xml_end_tag( 'property' );
 }
@@ -176,6 +197,72 @@ sub _write_vt_lpwstr {
     my $data = shift;
 
     $self->xml_data_element( 'vt:lpwstr', $data );
+}
+
+
+##############################################################################
+#
+# _write_vt_i4()
+#
+# Write the <vt:i4> element.
+#
+sub _write_vt_i4 {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->xml_data_element( 'vt:i4', $data );
+}
+
+
+##############################################################################
+#
+# _write_vt_r8()
+#
+# Write the <vt:r8> element.
+#
+sub _write_vt_r8 {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->xml_data_element( 'vt:r8', $data );
+}
+
+
+##############################################################################
+#
+# _write_vt_bool()
+#
+# Write the <vt:bool> element.
+#
+sub _write_vt_bool {
+
+    my $self = shift;
+    my $data = shift;
+
+    if ( $data ) {
+        $data = 'true';
+    }
+    else {
+        $data = 'false';
+    }
+
+    $self->xml_data_element( 'vt:bool', $data );
+}
+
+##############################################################################
+#
+# _write_vt_filetime()
+#
+# Write the <vt:filetime> element.
+#
+sub _write_vt_filetime {
+
+    my $self = shift;
+    my $data = shift;
+
+    $self->xml_data_element( 'vt:filetime', $data );
 }
 
 
