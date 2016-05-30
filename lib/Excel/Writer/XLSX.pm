@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.90';
+our $VERSION = '0.91';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.90 of Excel::Writer::XLSX, released May 13, 2016.
+This document refers to version 0.91 of Excel::Writer::XLSX, released May 31, 2016.
 
 
 
@@ -457,7 +457,7 @@ See also the C<properties.pl> program in the examples directory of the distro.
 
 =head2 set_custom_property( $name, $value, $type)
 
-The C<set_custom_property> method can be used to set custom document properties not covered by the C<set_properties()> method above. These properties are visible when you use the C<< Office Button -> Prepare -> Properties -> Advanced Properties -> Custom >> option in Excel and are also available to external applications that read or index Windows files.
+The C<set_custom_property> method can be used to set one of more custom document properties not covered by the C<set_properties()> method above. These properties are visible when you use the C<< Office Button -> Prepare -> Properties -> Advanced Properties -> Custom >> option in Excel and are also available to external applications that read or index Windows files.
 
 The C<set_custom_property> method takes 3 parameters:
 
@@ -477,7 +477,7 @@ For example:
     $workbook->set_custom_property( 'Document number', '12345' ,               'number' );
     $workbook->set_custom_property( 'Reference',       '1.2345',               'number' );
     $workbook->set_custom_property( 'Has review',      1,                      'bool'   );
-    $workbook->set_custom_property( 'Has sign off',    0,                      'bool'   );
+    $workbook->set_custom_property( 'Signed off',      0,                      'bool'   );
     $workbook->set_custom_property( 'Department',      $some_string,           'text'   );
     $workbook->set_custom_property( 'Scale',           '1.2345678901234',      'number' );
 
@@ -489,7 +489,7 @@ The C<text> and C<number> types are optional since they can usually be inferred 
     $workbook->set_custom_property( 'Reference',  '1.2345' );
 
 
-The C<$name> and C<$value> (for text types) are limited to 255 characters by Excel.
+The C<$name> and C<$value> parameters are limited to 255 characters by Excel.
 
 
 

@@ -124,6 +124,7 @@ lib/Excel/Writer/XLSX/Package/App.pm
 lib/Excel/Writer/XLSX/Package/Comments.pm
 lib/Excel/Writer/XLSX/Package/ContentTypes.pm
 lib/Excel/Writer/XLSX/Package/Core.pm
+lib/Excel/Writer/XLSX/Package/Custom.pm
 lib/Excel/Writer/XLSX/Package/Packager.pm
 lib/Excel/Writer/XLSX/Package/Relationships.pm
 lib/Excel/Writer/XLSX/Package/SharedStrings.pm
@@ -866,6 +867,9 @@ t/regression/print_scale01.t
 t/regression/print_scale02.t
 t/regression/properties01.t
 t/regression/properties02.t
+t/regression/properties03.t
+t/regression/properties04.t
+t/regression/properties05.t
 t/regression/protect01.t
 t/regression/protect02.t
 t/regression/protect03.t
@@ -1509,6 +1513,9 @@ t/regression/xlsx_files/print_scale01.xlsx
 t/regression/xlsx_files/print_scale02.xlsx
 t/regression/xlsx_files/properties01.xlsx
 t/regression/xlsx_files/properties02.xlsx
+t/regression/xlsx_files/properties03.xlsx
+t/regression/xlsx_files/properties04.xlsx
+t/regression/xlsx_files/properties05.xlsx
 t/regression/xlsx_files/protect01.xlsx
 t/regression/xlsx_files/protect02.xlsx
 t/regression/xlsx_files/protect03.xlsx

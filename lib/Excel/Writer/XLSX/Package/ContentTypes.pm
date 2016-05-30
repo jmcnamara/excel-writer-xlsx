@@ -21,7 +21,7 @@ use Carp;
 use Excel::Writer::XLSX::Package::XMLwriter;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.90';
+our $VERSION = '0.91';
 
 
 ###############################################################################
@@ -321,7 +321,7 @@ sub _add_vba_project {
 #
 # _add_custom_properties()
 #
-# Add the name of a table to the ContentTypes overrides.
+# Add the custom properties to the ContentTypes overrides.
 #
 sub _add_custom_properties {
 
