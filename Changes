@@ -5,11 +5,15 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.92 2016-06-01
+
+   + Fix for insert_image issue when handling images with zero dpi.
+
+
 0.91 2016-05-31
 
    + Add set_custom_property() workbook method to set custom document
      properties.
-
 
 0.90 2016-05-13
 
