@@ -2103,6 +2103,9 @@ sub _get_image_properties {
 
     push @{ $self->{_images} }, [ $filename, $type ];
 
+    # Set a default dpi for images with 0 dpi.
+    $x_dpi = 96 if $x_dpi == 0;
+    $y_dpi = 96 if $y_dpi == 0;
 
     $fh->close;
 
