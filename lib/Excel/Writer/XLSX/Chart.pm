@@ -4934,6 +4934,14 @@ sub _write_trendline {
     # Write the c:backward element.
     $self->_write_backward( $trendline->{backward} );
 
+    if ($trendline->{display_equation}) {
+        # Write the c:dispEq element.
+        $self->_write_disp_eq();
+
+        # Write the c:trendlineLbl element.
+        $self->_write_trendline_lbl();
+    }
+
     $self->xml_end_tag( 'c:trendline' );
 }
 
@@ -5043,6 +5051,63 @@ sub _write_backward {
     $self->xml_empty_tag( 'c:backward', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_disp_eq()
+#
+# Write the <c:dispEq> element.
+#
+sub _write_disp_eq {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:dispEq', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_trendline_lbl()
+#
+# Write the <c:trendlineLbl> element.
+#
+sub _write_trendline_lbl {
+
+    my $self = shift;
+
+    $self->xml_start_tag( 'c:trendlineLbl' );
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    # Write the c:numFmt element.
+    $self->_write_trendline_num_fmt();
+
+    $self->xml_end_tag( 'c:trendlineLbl' );
+}
+
+##############################################################################
+#
+# _write_trendline_num_fmt()
+#
+# Write the <c:numFmt> element.
+#
+sub _write_trendline_num_fmt {
+
+    my $self          = shift;
+    my $format_code   = 'General';
+    my $source_linked = 0;
+
+    my @attributes = (
+        'formatCode'   => $format_code,
+        'sourceLinked' => $source_linked,
+    );
+
+    $self->xml_empty_tag( 'c:numFmt', @attributes );
+}
 
 ##############################################################################
 #
