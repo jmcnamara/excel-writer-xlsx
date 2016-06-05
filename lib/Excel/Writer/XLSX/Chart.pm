@@ -4934,6 +4934,11 @@ sub _write_trendline {
     # Write the c:backward element.
     $self->_write_backward( $trendline->{backward} );
 
+    if ($trendline->{display_r_squared}) {
+        # Write the c:dispRSqr element.
+        $self->_write_disp_rsqr();
+    }
+
     if ($trendline->{display_equation}) {
         # Write the c:dispEq element.
         $self->_write_disp_eq();
@@ -5067,6 +5072,21 @@ sub _write_disp_eq {
     $self->xml_empty_tag( 'c:dispEq', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_disp_rsqr()
+#
+# Write the <c:dispRSqr> element.
+#
+sub _write_disp_rsqr {
+
+    my $self = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:dispRSqr', @attributes );
+}
 
 ##############################################################################
 #

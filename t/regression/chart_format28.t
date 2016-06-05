@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_format27.xlsx';
+my $filename     = 'chart_format28.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -51,25 +51,15 @@ $worksheet->write( 'A1', $data );
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
-    trendline  => {
-        type             => 'polynomial',
-        name             => 'My trend name',
-        order            => 2,
-        forward          => 0.5,
-        backward         => 0.5,
-        display_equation => 1,
-        line             => {
-            color     => 'red',
-            width     => 1,
-            dash_type => 'long_dash',
-        }
-    },
+    trendline  => { type => 'linear', 'display_equation' => 1, 'display_r_squared' => 1 },
 );
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
+
+$chart->set_legend( delete_series => [0, 2] );
 
 $worksheet->insert_chart( 'E9', $chart );
 
