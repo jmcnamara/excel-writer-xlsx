@@ -5,9 +5,16 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+
+0.93 2016-06-07
+
+   + Added trendline properties: intercept, display_equation and
+     display_r_squared. Feature request #153.
+
+
 0.92 2016-06-01
 
-   + Fix for insert_image issue when handling images with zero dpi.
+   ! Fix for insert_image issue when handling images with zero dpi.
 
 
 0.91 2016-05-31

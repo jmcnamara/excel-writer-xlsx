@@ -520,6 +520,12 @@ t/regression/chart_format22.t
 t/regression/chart_format23.t
 t/regression/chart_format24.t
 t/regression/chart_format25.t
+t/regression/chart_format26.t
+t/regression/chart_format27.t
+t/regression/chart_format28.t
+t/regression/chart_format29.t
+t/regression/chart_format30.t
+t/regression/chart_format31.t
 t/regression/chart_gap01.t
 t/regression/chart_gap02.t
 t/regression/chart_gap03.t
@@ -1205,6 +1211,12 @@ t/regression/xlsx_files/chart_format22.xlsx
 t/regression/xlsx_files/chart_format23.xlsx
 t/regression/xlsx_files/chart_format24.xlsx
 t/regression/xlsx_files/chart_format25.xlsx
+t/regression/xlsx_files/chart_format26.xlsx
+t/regression/xlsx_files/chart_format27.xlsx
+t/regression/xlsx_files/chart_format28.xlsx
+t/regression/xlsx_files/chart_format29.xlsx
+t/regression/xlsx_files/chart_format30.xlsx
+t/regression/xlsx_files/chart_format31.xlsx
 t/regression/xlsx_files/chart_gap01.xlsx
 t/regression/xlsx_files/chart_gap02.xlsx
 t/regression/xlsx_files/chart_gap03.xlsx
