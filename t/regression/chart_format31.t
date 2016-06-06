@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_format28.xlsx';
+my $filename     = 'chart_format31.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -37,7 +37,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'line', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 108645376, 108655360 ];
+$chart->{_axis_ids} = [ 115443200, 115459200 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -52,17 +52,26 @@ $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$B$1:$B$5',
     trendline  => {
-                   type              => 'linear',
-                   display_equation  => 1,
-                   display_r_squared => 1 },
+        type              => 'polynomial',
+        name              => 'My trend name',
+        order             => 2,
+        forward           => 0.5,
+        backward          => 0.5,
+        intercept         => 1.5,
+        display_equation  => 1,
+        display_r_squared => 1,
+        line              => {
+            color     => 'red',
+            width     => 1,
+            dash_type => 'long_dash',
+        }
+    },
 );
 
 $chart->add_series(
     categories => '=Sheet1!$A$1:$A$5',
     values     => '=Sheet1!$C$1:$C$5',
 );
-
-$chart->set_legend( delete_series => [0, 2] );
 
 $worksheet->insert_chart( 'E9', $chart );
 
@@ -92,3 +101,6 @@ _is_deep_diff( $got, $expected, $caption );
 unlink $got_filename;
 
 __END__
+
+
+

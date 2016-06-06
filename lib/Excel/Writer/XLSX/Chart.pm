@@ -4934,6 +4934,11 @@ sub _write_trendline {
     # Write the c:backward element.
     $self->_write_backward( $trendline->{backward} );
 
+    if ( defined $trendline->{intercept} ) {
+        # Write the c:intercept element.
+        $self->_write_intercept( $trendline->{intercept} );
+    }
+
     if ($trendline->{display_r_squared}) {
         # Write the c:dispRSqr element.
         $self->_write_disp_rsqr();
@@ -5054,6 +5059,23 @@ sub _write_backward {
     my @attributes = ( 'val' => $val );
 
     $self->xml_empty_tag( 'c:backward', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_intercept()
+#
+# Write the <c:intercept> element.
+#
+sub _write_intercept {
+
+    my $self = shift;
+    my $val  = shift;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:intercept', @attributes );
 }
 
 
