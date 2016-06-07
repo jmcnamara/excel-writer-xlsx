@@ -7784,6 +7784,16 @@ The C<font> property is used to set the font properties of the data labels in a 
         },
     );
 
+The C<font> property is also used to rotate the data labels in a series:
+
+    $chart->add_series(
+        values      => '=Sheet1!$A$1:$A$5',
+        data_labels => {
+            value => 1,
+            font  => { rotation => 45 }
+        },
+    );
+
 See the L</CHART FONTS> section below.
 
 
