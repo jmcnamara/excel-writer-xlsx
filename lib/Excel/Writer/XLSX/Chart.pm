@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
 
 ###############################################################################
@@ -5732,7 +5732,7 @@ sub _write_d_table {
     }
 
     if ( $table->{_font} ) {
-
+        # Write the table font.
         $self->_write_tx_pr( undef, $table->{_font} );
     }
 

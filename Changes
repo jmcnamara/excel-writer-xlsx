@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.94 2016-06-07
+
+   + Added font support to chart tables.
+     Feature request #96.
+
 
 0.93 2016-06-07
 

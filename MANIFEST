@@ -449,6 +449,7 @@ t/regression/chart_data_labels21.t
 t/regression/chart_data_labels22.t
 t/regression/chart_data_labels23.t
 t/regression/chart_data_labels24.t
+t/regression/chart_data_labels25.t
 t/regression/chart_date01.t
 t/regression/chart_date02.t
 t/regression/chart_date03.t
@@ -626,6 +627,7 @@ t/regression/chart_str01.t
 t/regression/chart_str02.t
 t/regression/chart_table01.t
 t/regression/chart_table02.t
+t/regression/chart_table03.t
 t/regression/chart_title01.t
 t/regression/chart_title02.t
 t/regression/chart_up_down_bars01.t
@@ -1140,6 +1142,7 @@ t/regression/xlsx_files/chart_data_labels21.xlsx
 t/regression/xlsx_files/chart_data_labels22.xlsx
 t/regression/xlsx_files/chart_data_labels23.xlsx
 t/regression/xlsx_files/chart_data_labels24.xlsx
+t/regression/xlsx_files/chart_data_labels25.xlsx
 t/regression/xlsx_files/chart_date01.xlsx
 t/regression/xlsx_files/chart_date02.xlsx
 t/regression/xlsx_files/chart_date03.xlsx
@@ -1311,6 +1314,7 @@ t/regression/xlsx_files/chart_str01.xlsx
 t/regression/xlsx_files/chart_str02.xlsx
 t/regression/xlsx_files/chart_table01.xlsx
 t/regression/xlsx_files/chart_table02.xlsx
+t/regression/xlsx_files/chart_table03.xlsx
 t/regression/xlsx_files/chart_title01.xlsx
 t/regression/xlsx_files/chart_title02.xlsx
 t/regression/xlsx_files/chart_up_down_bars01.xlsx

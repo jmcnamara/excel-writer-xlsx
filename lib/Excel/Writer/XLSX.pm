@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
 
 ###############################################################################
@@ -50,7 +50,7 @@ Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
 =head1 VERSION
 
-This document refers to version 0.93 of Excel::Writer::XLSX, released June 7, 2016.
+This document refers to version 0.94 of Excel::Writer::XLSX, released June 8, 2016.
 
 
 
