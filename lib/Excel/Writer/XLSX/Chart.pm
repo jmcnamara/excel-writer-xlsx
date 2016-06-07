@@ -571,6 +571,7 @@ sub set_table {
     $table{_vertical}   = $args{vertical}   if defined $args{vertical};
     $table{_outline}    = $args{outline}    if defined $args{outline};
     $table{_show_keys}  = $args{show_keys}  if defined $args{show_keys};
+    $table{_font}       = $self->_convert_font_args( $args{font} );
 
     $self->{_table} = \%table;
 }
@@ -5730,6 +5731,11 @@ sub _write_d_table {
         $self->_write_show_keys();
     }
 
+    if ( $table->{_font} ) {
+
+        $self->_write_tx_pr( undef, $table->{_font} );
+    }
+
     $self->xml_end_tag( 'c:dTable' );
 }
 
@@ -7299,12 +7305,13 @@ The C<set_table()> method adds a data table below the horizontal axis with the d
 
 The available options, with default values are:
 
-    vertical   => 1,    # Display vertical lines in the table.
-    horizontal => 1,    # Display horizontal lines in the table.
-    outline    => 1,    # Display an outline in the table.
-    show_keys  => 0     # Show the legend keys with the table data.
+    vertical   => 1    # Display vertical lines in the table.
+    horizontal => 1    # Display horizontal lines in the table.
+    outline    => 1    # Display an outline in the table.
+    show_keys  => 0    # Show the legend keys with the table data.
+    font       => {}   # Standard chart font properties.
 
-The data table can only be shown with Bar, Column, Line, Area and stock charts.
+The data table can only be shown with Bar, Column, Line, Area and stock charts. For font properties see the L</CHART FONTS> section below.
 
 
 =head2 set_up_down_bars
