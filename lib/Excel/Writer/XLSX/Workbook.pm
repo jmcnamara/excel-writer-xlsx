@@ -33,7 +33,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '0.94';
+our $VERSION = '0.95';
 
 
 ###############################################################################
@@ -824,7 +824,7 @@ sub set_size {
     }
     else {
         # Convert to twips at 96 dpi.
-        $self->{_window_width} = int($width) * 1440 / 96;
+        $self->{_window_width} = int( $width * 1440 / 96 );
     }
 
     if ( !$height ) {
@@ -832,7 +832,7 @@ sub set_size {
     }
     else {
         # Convert to twips at 96 dpi.
-        $self->{_window_height} = int($height) * 1440 / 96;
+        $self->{_window_height} = int( $height * 1440 / 96 );
     }
 }
 
