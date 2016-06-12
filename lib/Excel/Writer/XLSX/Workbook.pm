@@ -809,6 +809,36 @@ sub define_name {
 
 ###############################################################################
 #
+# set_size()
+#
+# Set the workbook size.
+#
+sub set_size {
+
+    my $self   = shift;
+    my $width  = shift;
+    my $height = shift;
+
+    if ( !$width ) {
+        $self->{_window_width} = 16095;
+    }
+    else {
+        # Convert to twips at 96 dpi.
+        $self->{_window_width} = int($width) * 1440 / 96;
+    }
+
+    if ( !$height ) {
+        $self->{_window_height} = 9660;
+    }
+    else {
+        # Convert to twips at 96 dpi.
+        $self->{_window_height} = int($height) * 1440 / 96;
+    }
+}
+
+
+###############################################################################
+#
 # set_properties()
 #
 # Set the document properties such as Title, Author etc. These are written to

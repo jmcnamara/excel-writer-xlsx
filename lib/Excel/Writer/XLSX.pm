@@ -48,13 +48,6 @@ __END__
 
 Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 
-=head1 VERSION
-
-This document refers to version 0.94 of Excel::Writer::XLSX, released June 8, 2016.
-
-
-
-
 =head1 SYNOPSIS
 
 To write a string, a formatted string, a number and a formula to the first worksheet in an Excel workbook called perl.xlsx:
@@ -421,6 +414,19 @@ In general, if you create a file with a size of 0 bytes or you fail to create a 
 The return value of C<close()> is the same as that returned by perl when it closes the file created by C<new()>. This allows you to handle error conditions in the usual way:
 
     $workbook->close() or die "Error closing file: $!";
+
+
+
+
+=head2 set_size( $width, $height )
+
+The C<set_size()> method can be used to set the size of a workbook window.
+
+    $workbook->set_size(1200, 800);
+
+The Excel window size was used in Excel 2007 to define the width and height of a workbook window within the Multiple Document Interface (MDI). In later versions of Excel for Windows this interface was dropped. This method is currectly only useful when setting the window size in Excel for Mac 2011. The units are pixels and the default size is 1073 x 644.
+
+Note, this doesn't equate exactly to the Excel for Mac pixel size since it is based on the original Excel 2007 for Windows sizing.
 
 
 
