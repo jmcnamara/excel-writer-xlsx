@@ -424,7 +424,7 @@ The C<set_size()> method can be used to set the size of a workbook window.
 
     $workbook->set_size(1200, 800);
 
-The Excel window size was used in Excel 2007 to define the width and height of a workbook window within the Multiple Document Interface (MDI). In later versions of Excel for Windows this interface was dropped. This method is currectly only useful when setting the window size in Excel for Mac 2011. The units are pixels and the default size is 1073 x 644.
+The Excel window size was used in Excel 2007 to define the width and height of a workbook window within the Multiple Document Interface (MDI). In later versions of Excel for Windows this interface was dropped. This method is currently only useful when setting the window size in Excel for Mac 2011. The units are pixels and the default size is 1073 x 644.
 
 Note, this doesn't equate exactly to the Excel for Mac pixel size since it is based on the original Excel 2007 for Windows sizing.
 
