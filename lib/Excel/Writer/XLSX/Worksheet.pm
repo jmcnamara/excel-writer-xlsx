@@ -4143,6 +4143,7 @@ sub add_table {
     }
 
     # Add the table columns.
+    my %seen_names;
     my $col_id = 1;
     for my $col_num ( $col1 .. $col2 ) {
 
@@ -4166,6 +4167,17 @@ sub add_table {
                 # Map user defined values to internal values.
                 $col_data->{_name} = $user_data->{header}
                   if $user_data->{header};
+
+                # Excel requires unique case insensitive header names.
+                my $name = $col_data->{_name};
+                my $key = lc $name;
+                if (exists $seen_names{$key}) {
+                    carp "add_table() contains duplicate name: '$name'";
+                    return -1;
+                }
+                else {
+                    $seen_names{$key} = 1;
+                }
 
                 # Get the header format if defined.
                 $col_data->{_name_format} = $user_data->{header_format};
