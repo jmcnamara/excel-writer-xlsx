@@ -2391,7 +2391,10 @@ sub _write_plot_area {
         axis_ids => $self->{_axis2_ids}
     );
 
-    $self->_write_val_axis( @args );
+    if (!$self->{_is_secondary}) {
+        $self->_write_val_axis( @args );
+    }
+
 
     # Write the secondary axis for the secondary chart.
     if ( $second_chart && $second_chart->{_is_secondary} ) {
