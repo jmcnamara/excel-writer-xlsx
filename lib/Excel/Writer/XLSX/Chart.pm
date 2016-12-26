@@ -188,6 +188,12 @@ sub add_series {
         croak "Must specify 'categories' in add_series() for this chart type";
     }
 
+    if ( @{ $self->{_series} } == 255 ) {
+        carp "The maxiumn number of series that can be added to an "
+          . "Excel Chart is 255";
+        return
+    }
+
     # Convert aref params into a formula string.
     my $values     = $self->_aref_to_formula( $arg{values} );
     my $categories = $self->_aref_to_formula( $arg{categories} );
