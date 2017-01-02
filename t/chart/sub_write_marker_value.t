@@ -9,7 +9,7 @@ use lib 't/lib';
 use TestFunctions '_new_object';
 use strict;
 use warnings;
-use Excel::Writer::XLSX::Chart;
+use Excel::Writer::XLSX::Chart::Line;
 
 use Test::More tests => 1;
 
@@ -31,7 +31,7 @@ my $chart;
 $caption  = " \tChart: _write_marker_value()";
 $expected = '<c:marker val="1"/>';
 
-$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Line' );
 
 $chart->{_default_marker} = 'none';
 
