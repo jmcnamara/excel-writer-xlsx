@@ -4640,25 +4640,6 @@ sub _write_marker {
 
 ##############################################################################
 #
-# _write_marker_value()
-#
-# Write the <c:marker> element without a sub-element.
-#
-sub _write_marker_value {
-
-    my $self  = shift;
-    my $style = $self->{_default_marker};
-
-    return unless $style;
-
-    my @attributes = ( 'val' => 1 );
-
-    $self->xml_empty_tag( 'c:marker', @attributes );
-}
-
-
-##############################################################################
-#
 # _write_marker_size()
 #
 # Write the <c:size> element.

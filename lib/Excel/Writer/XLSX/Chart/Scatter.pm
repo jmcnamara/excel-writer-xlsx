@@ -117,11 +117,28 @@ sub _write_scatter_chart {
     my $subtype = $self->{_subtype};
 
     # Set the user defined chart subtype.
-    $style = 'lineMarker'   if $subtype eq 'marker_only';
-    $style = 'lineMarker'   if $subtype eq 'straight_with_markers';
-    $style = 'lineMarker'   if $subtype eq 'straight';
-    $style = 'smoothMarker' if $subtype eq 'smooth_with_markers';
-    $style = 'smoothMarker' if $subtype eq 'smooth';
+
+    if ($subtype eq 'marker_only') {
+        $style = 'lineMarker';
+    }
+
+    if ($subtype eq 'straight_with_markers') {
+        $style = 'lineMarker';
+    }
+
+    if ($subtype eq 'straight') {
+        $style = 'lineMarker';
+        $self->{_default_marker} = { type => 'none' };
+    }
+
+    if ($subtype eq 'smooth_with_markers') {
+        $style = 'smoothMarker';
+    }
+
+    if ($subtype eq 'smooth') {
+        $style = 'smoothMarker';
+        $self->{_default_marker} = { type => 'none' };
+    }
 
     # Add default formatting to the series data.
     $self->_modify_series_formatting();
@@ -133,9 +150,6 @@ sub _write_scatter_chart {
 
     # Write the series elements.
     $self->_write_ser( $_ ) for @series;
-
-    # Write the c:marker element.
-    $self->_write_marker_value();
 
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
@@ -374,23 +388,6 @@ sub _modify_series_formatting {
             }
         }
     }
-
-    # Turn markers off for subtypes that don't have them.
-    if ( $subtype !~ /marker/ ) {
-
-        # Go through each series and define default values.
-        for my $series ( @{ $self->{_series} } ) {
-
-            # Set a marker type unless there is already a user defined type.
-            if ( !$series->{_marker} ) {
-                $series->{_marker} = {
-                    type     => 'none',
-                    _defined => 1,
-                };
-            }
-        }
-    }
-
 }
 
 
@@ -572,4 +569,3 @@ John McNamara jmcnamara@cpan.org
 Copyright MM-MMXVI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
-

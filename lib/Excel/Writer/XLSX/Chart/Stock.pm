@@ -116,9 +116,6 @@ sub _write_stock_chart {
     # Write the c:upDownBars element.
     $self->_write_up_down_bars();
 
-    # Write the c:marker element.
-    $self->_write_marker_value();
-
     # Write the c:axId elements
     $self->_write_axis_ids( %args );
 

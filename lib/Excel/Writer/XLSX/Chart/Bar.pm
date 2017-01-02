@@ -158,9 +158,6 @@ sub _write_bar_chart {
     # Write the c:ser elements.
     $self->_write_ser( $_ ) for @series;
 
-    # Write the c:marker element.
-    $self->_write_marker_value();
-
     if ( $args{primary_axes} ) {
         # Write the c:gapWidth element.
         $self->_write_gap_width( $self->{_series_gap_1} );

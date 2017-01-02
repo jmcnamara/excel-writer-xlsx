@@ -147,6 +147,21 @@ sub _write_d_pt_point {
         $self->xml_end_tag( 'c:dPt' );
 }
 
+##############################################################################
+#
+# _write_marker_value()
+#
+# Write the <c:marker> element without a sub-element.
+#
+sub _write_marker_value {
+
+    my $self  = shift;
+
+    my @attributes = ( 'val' => 1 );
+
+    $self->xml_empty_tag( 'c:marker', @attributes );
+}
+
 
 1;
 
@@ -284,4 +299,3 @@ John McNamara jmcnamara@cpan.org
 Copyright MM-MMXVI, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
-
