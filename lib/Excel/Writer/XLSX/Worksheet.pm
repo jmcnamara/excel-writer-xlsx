@@ -8705,7 +8705,7 @@ sub _write_cf_rule {
     push @attributes, ( 'priority' => $param->{priority} );
 
     push @attributes, ( 'stopIfTrue' => 1 )
-      if defined $param->{stop_if_true};
+      if $param->{stop_if_true};
 
     if ( $param->{type} eq 'cellIs' ) {
         push @attributes, ( 'operator' => $param->{criteria} );
