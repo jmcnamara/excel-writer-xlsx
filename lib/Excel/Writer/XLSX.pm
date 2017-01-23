@@ -4,7 +4,7 @@ package Excel::Writer::XLSX;
 #
 # Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 #
-# Copyright 2000-2016, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2017, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -410,6 +410,8 @@ If the C<new()>, C<add_worksheet()> or C<add_format()> methods are called in sub
 The reason for this is that Excel::Writer::XLSX relies on Perl's C<DESTROY> mechanism to trigger destructor methods in a specific sequence. This may not happen in cases where the Workbook, Worksheet and Format variables are not lexically scoped or where they have different lexical scopes.
 
 In general, if you create a file with a size of 0 bytes or you fail to create a file you need to call C<close()>.
+
+C<close()> also helps with thread safety. Allowing workbooks to be closed automatically is not thread-safe because the code that deletes a temporary directory used to assemble the workbook file calls C<chdir>. An explicit call to C<close()> is thread-safe. After an explicit call to C<close()>, temporary files are deleted, in a non-thread-safe way, when the Workbook object goes out of scope or when the C<DESTROY> method is called on the Workbook object.
 
 The return value of C<close()> is the same as that returned by perl when it closes the file created by C<new()>. This allows you to handle error conditions in the usual way:
 
