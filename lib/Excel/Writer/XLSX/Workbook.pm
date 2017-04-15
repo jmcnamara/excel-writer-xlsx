@@ -974,6 +974,17 @@ sub add_vba_project {
     $self->{_vba_project} = $vba_project;
 }
 
+###############################################################################
+#
+# activesheet()
+#
+# Return the active worksheet.
+#
+sub activesheet {
+    my $self = shift;
+    return $self->{'_worksheets'}->[ $self->{'_activesheet'} ];
+}
+
 
 ###############################################################################
 #
