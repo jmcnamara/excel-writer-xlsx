@@ -198,6 +198,12 @@ sub _write_si {
     # Convert control character to the _xHHHH_ escape.
     $string =~ s/([\x00-\x08\x0B-\x1F])/sprintf "_x%04X_", ord($1)/eg;
 
+    # Handle some Unicode edge cases.
+    {
+        no warnings "utf8";
+        $string =~ s/\x{FFFE}/_xFFFE_/g;
+        $string =~ s/\x{FFFF}/_xFFFF_/g;
+    }
 
     # Add attribute to preserve leading or trailing whitespace.
     if ( $string =~ /^\s/ || $string =~ /\s$/ ) {
