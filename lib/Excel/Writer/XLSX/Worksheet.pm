@@ -3636,6 +3636,7 @@ sub conditional_formatting {
         max_type     => 1,
         min_value    => 1,
         mid_value    => 1,
+        max_value    => 1,
         min_color    => 1,
         mid_color    => 1,
         max_color    => 1,
