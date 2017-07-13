@@ -3621,6 +3621,7 @@ sub conditional_formatting {
     # Copy the user params.
     my $param = {%$options};
 
+
     # List of valid input parameters.
     my %valid_parameter = (
         type         => 1,
@@ -3636,10 +3637,15 @@ sub conditional_formatting {
         min_value    => 1,
         mid_value    => 1,
         max_value    => 1,
-        min_color    => 1,
-        mid_color    => 1,
-        max_color    => 1,
+        red_value    => 1,
+        yel_value    => 1,
+        gre_value    => 1,
         bar_color    => 1,
+        icons        => 1,
+        min_gte      => 1,
+        max_gte      => 1,
+        show_value   => 1,
+        mid_gte      => 1,
     );
 
     # Check for valid input parameters.
@@ -3677,6 +3683,7 @@ sub conditional_formatting {
         '3_color_scale' => '3_color_scale',
         'data_bar'      => 'dataBar',
         'formula'       => 'expression',
+        'iconset'       => 'iconSet'
     );
 
 
@@ -3981,6 +3988,24 @@ sub conditional_formatting {
         $param->{bar_color} = $self->_get_palette_color( $param->{bar_color} );
     }
 
+    # Special Handling for iconSet
+    if ( $param->{type} eq 'iconSet' ) {
+
+         $param->{format} = undef;
+
+         $param->{min_type}   ||= 'num';
+         $param->{mid_type}   ||= 'num';
+         $param->{max_type}   ||= 'num';
+         $param->{min_gte}    ||= 1 unless defined $param->{min_gte};
+         $param->{mid_gte}    ||= 1 unless defined $param->{mid_gte};
+         $param->{max_gte}    ||= 1 unless defined $param->{max_gte};
+         $param->{gre_value}  ||= 10;
+         $param->{yel_value}  ||= 50;
+         $param->{red_value}  ||= 90;
+         $param->{show_value} ||= 1 unless defined $param->{show_value};
+         $param->{icons}      ||='xl3TrafficLights1';
+
+    }
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
@@ -8652,6 +8677,7 @@ sub _write_conditional_formats {
     my $self   = shift;
     my @ranges = sort keys %{ $self->{_cond_formats} };
 
+
     return unless scalar @ranges;
 
     for my $range ( @ranges ) {
@@ -8672,6 +8698,7 @@ sub _write_conditional_formatting {
     my $self   = shift;
     my $range  = shift;
     my $params = shift;
+
 
     my @attributes = ( 'sqref' => $range );
 
@@ -8803,6 +8830,11 @@ sub _write_cf_rule {
         $self->_write_formula( $param->{criteria} );
         $self->xml_end_tag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'iconSet' ) {
+        $self->xml_start_tag( 'cfRule', @attributes );
+        $self->_write_icon_set( $param );
+        $self->xml_end_tag( 'cfRule' );
+    }
 }
 
 
@@ -8878,6 +8910,36 @@ sub _write_data_bar {
     $self->xml_end_tag( 'dataBar' );
 }
 
+sub _write_icon_set {
+    my $self = shift;
+    my $param = shift;
+
+    #$self->xml_start_tag( 'cfIconSet' );
+
+    $self->xml_start_tag( 'iconSet',
+        'iconSet' => $param->{icons},
+        'showValue' => $param->{show_value}
+    );
+
+
+    $self->_write_icon_cfvo(
+        $param->{min_type}, $param->{gre_value},
+        'gte', $param->{min_gte}
+    );
+    $self->_write_icon_cfvo(
+        $param->{mid_type}, $param->{yel_value},
+        'gte', $param->{mid_gte},
+    );
+    $self->_write_icon_cfvo(
+        $param->{max_type}, $param->{red_value},
+        'gte', $param->{max_gte}
+    );
+
+    $self->xml_end_tag( 'iconSet' );
+
+    #$self->xml_end_tag( 'cfIconSet' );
+}
+
 
 ##############################################################################
 #
@@ -8898,7 +8960,25 @@ sub _write_cfvo {
 
     $self->xml_empty_tag( 'cfvo', @attributes );
 }
+sub _write_icon_cfvo {
+    my $self = shift;
+    my $type = shift;
+    my $val = shift;
 
+    my @attributes = (
+        'type' => $type,
+        'val' => $val
+    );
+
+
+    while ( @_ ) {
+        my $str = shift;
+        push( @attributes, $str );
+    }
+
+
+    $self->xml_empty_tag( 'cfvo', @attributes );
+}
 
 ##############################################################################
 #
