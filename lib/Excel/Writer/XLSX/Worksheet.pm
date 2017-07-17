@@ -3641,9 +3641,10 @@ sub conditional_formatting {
         mid_color    => 1,
         max_color    => 1,
         max_value    => 1,
-        red_value    => 1,
+        top_value    => 1,
+        ext_value    => 1,
         yel_value    => 1,
-        gre_value    => 1,
+        bot_value    => 1,
         bar_color    => 1,
         icons        => 1,
         min_gte      => 1,
@@ -4003,11 +4004,13 @@ sub conditional_formatting {
          $param->{min_gte}    ||= 1 unless defined $param->{min_gte};
          $param->{mid_gte}    ||= 1 unless defined $param->{mid_gte};
          $param->{max_gte}    ||= 1 unless defined $param->{max_gte};
-         $param->{gre_value}  ||= 10;
+         $param->{reverse}    ||= 0 unless defined $param->{reverse};
+         $param->{bot_value}  ||= 90;
          $param->{yel_value}  ||= 50;
-         $param->{red_value}  ||= 90;
+         $param->{top_value}  ||= 10;
+         $param->{ext_value}  ||= 0;
          $param->{show_value} ||= 1 unless defined $param->{show_value};
-         $param->{icons}      ||='xl3TrafficLights1';
+         $param->{icons}      ||= 'xl3TrafficLights1';
 
     }
 
@@ -8925,9 +8928,14 @@ sub _write_icon_set {
         'showValue' => $param->{show_value}
     );
 
-
+    if ( $param->{icons} =~ /4/ ) {
+        $self->_write_icon_cfvo(
+            $param->{min_type}, $param->{ext_value},
+            'gte', $param->{min_gte}
+        );
+    }
     $self->_write_icon_cfvo(
-        $param->{min_type}, $param->{gre_value},
+        $param->{min_type}, $param->{bot_value},
         'gte', $param->{min_gte}
     );
     $self->_write_icon_cfvo(
@@ -8935,7 +8943,7 @@ sub _write_icon_set {
         'gte', $param->{mid_gte},
     );
     $self->_write_icon_cfvo(
-        $param->{max_type}, $param->{red_value},
+        $param->{max_type}, $param->{top_value},
         'gte', $param->{max_gte}
     );
 

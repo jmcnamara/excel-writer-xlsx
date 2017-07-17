@@ -9,12 +9,16 @@ use Excel::Writer::XLSX;
 my $workbook = Excel::Writer::XLSX->new('../../test.xlsx');
 
 my $worksheet = $workbook->add_worksheet('Test');
+$worksheet->write_number( 0, 0 , 95 );
+$worksheet->write_number( 0, 1, 55 );
+$worksheet->write_number( 2, 2, 15 );
+$worksheet->write_number( 0, 3 , 5);
 
-$worksheet->conditional_formatting('A1', {
+$worksheet->conditional_formatting( 0, 0, 5, 5, {
     'type' => 'iconSet',
-    'icons' => 'xl3TrafficLights1',
-    'red_value' => 80,
-    'max_gte' => 0,
-    'mid_gte' => 0,
-    'show_value' => 0
+    'icons' => '4TrafficLights',
+    'top_value' => 80,
+    'mid_value' => 40,
+    'bot_value' => 10,
+    'ext_value' => -1,
 });
