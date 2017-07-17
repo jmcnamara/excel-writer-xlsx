@@ -3642,6 +3642,7 @@ sub conditional_formatting {
         max_color    => 1,
         max_value    => 1,
         top_value    => 1,
+        reverse      => 1,
         ext_value    => 1,
         yel_value    => 1,
         bot_value    => 1,
@@ -8925,7 +8926,8 @@ sub _write_icon_set {
 
     $self->xml_start_tag( 'iconSet',
         'iconSet' => $param->{icons},
-        'showValue' => $param->{show_value}
+        'showValue' => $param->{show_value},
+        'reverse'   => $param->{reverse}
     );
 
     if ( $param->{icons} =~ /4/ ) {
