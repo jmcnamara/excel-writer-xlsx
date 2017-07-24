@@ -38,7 +38,7 @@ my $format    = $workbook->add_format( num_format => 14 );
 
 $worksheet->set_column( 'A:A', 12 );
 
-$worksheet->write_date_time( 'A1', '1900-01-00T', $format );
+$worksheet->write_date_time( 'A1', '1900-01-01T', $format );
 $worksheet->write_date_time( 'A2', '1902-09-26T', $format );
 $worksheet->write_date_time( 'A3', '1913-09-08T', $format );
 $worksheet->write_date_time( 'A4', '1927-05-18T', $format );
