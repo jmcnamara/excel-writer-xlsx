@@ -4639,6 +4639,9 @@ Other, less commonly used parameters are:
     max_color
     bar_color
     stop_if_true
+    icon_set
+    hide_value
+    icons
 
 Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
 
@@ -4692,6 +4695,10 @@ The C<type> parameter is used to set the type of conditional formatting that you
     data_bar        (none)
 
     formula         criteria
+
+    icons           icon_set
+                    hide_value
+                    icons
 
 
 All conditional formatting types have a C<format> parameter, see below. Other types and parameters such as icon sets will be added in time.
@@ -5043,6 +5050,54 @@ The C<data_bar> type is used to specify Excel's "Data Bar" style conditional for
 
 This conditional type can be modified with C<min_type>, C<max_type>, C<min_value>, C<max_value> and C<bar_color>, see below.
 
+
+=head2 type => 'icons'
+
+The C<icons> type is used to specify Excel's "Icon Set" style conditional formula:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type       => 'icons',
+            icon_set   => '3Arrows',
+            hide_value => 1,
+            reverse    => 0,
+            icons      => [
+                { type => 'percentile', value => 67, criteria => '>=' },
+                { type => 'percentile', value => 33, criteria => '>=' },
+            ],
+        }
+    );
+
+Or, using the simpler C<icons> selection criteria:
+
+    $worksheet->conditional_formatting( 0, 0, 4, 0,
+        {
+            type       => 'icons',
+            icon_set   => '5Quarters',
+            icons      => [ 80, 60, 40, 20 ],
+        }
+    );
+
+The C<icon_set> can be any of C<'3Arrows'>, C<'3ArrowsGray'>, C<'3Flags'>, C<'3TrafficLights1'>, C<'3TrafficLights2'>, C<'3Signs'>, C<'3Symbols'>, C<'3Symbols2'>, C<'4Arrows'>, C<'4ArrowsGray'>, C<'4RedToBlack'>, C<'4Rating'>, C<'4TrafficLights'>, C<'5Arrows'>, C<'5ArrowsGray'>, C<'5Rating'>, C<'5Quarters'> or C<'5Boxes'>.
+
+The C<hide_value> parameter, if set to a true value, will hide the value in the cell and only display the icon.
+
+The C<reverse> parameter, if set to a true value, will reverse the order of the icons to display in the icon set.
+
+=head2 icons
+
+The icon selection criteria is specified in the C<icons> array. The array can contain either plain values or a hashref of the following parameters:
+
+The C<type> parameter, can be one of C<'num'>, C<'percent'> (default), C<'formula'> or C<'percentile'>.
+
+The C<criteria> parameter is used to set the criteria by which the cell data will be evaluated. The default is C<'&gt;='>
+
+    'greater than'              |  '>'
+    'greater than or equal to'  |  '>='
+
+You can either use Excel's textual description strings, in the first column above, or the more common symbolic alternatives.
+
+The C<value> parameter is used along with the C<type> and C<criteria> parameters to determine which icon is displayed.
 
 
 =head2 type => 'formula'

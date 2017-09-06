@@ -3640,6 +3640,9 @@ sub conditional_formatting {
         mid_color    => 1,
         max_color    => 1,
         bar_color    => 1,
+        icon_set     => 1,
+        hide_value   => 1,
+        icons        => 1,
     );
 
     # Check for valid input parameters.
@@ -3676,6 +3679,7 @@ sub conditional_formatting {
         '2_color_scale' => '2_color_scale',
         '3_color_scale' => '3_color_scale',
         'data_bar'      => 'dataBar',
+        'icons'         => 'iconSet',
         'formula'       => 'expression',
     );
 
@@ -3979,6 +3983,38 @@ sub conditional_formatting {
         $param->{bar_color} ||= '#638EC6';
 
         $param->{bar_color} = $self->_get_palette_color( $param->{bar_color} );
+    }
+
+
+    # Special Handling for iconSet
+    if ( $param->{type} eq 'iconSet' ) {
+
+        # Icon sets don't use any additional formatting.
+        $param->{format} = undef;
+
+        $param->{icons} ||= [ 67, 33 ];
+
+        $param->{icons} = [ map {
+
+                # Convert each plain value into a hashref
+                my %val = ref $_ ? %$_ : ( value => $_ );
+
+                $val{type} ||= 'percent';
+                $val{criteria} ||= '>=';
+
+                if ( $val{type} ne 'num' and $val{type} ne 'percent' and $val{type} ne 'formula' and $val{type} ne 'percentile' ) {
+                    carp "Invalid icon selection type '$val{type}' in conditional_formatting()";
+                    return -3;
+                }
+                my $criteria = exists $criteria_type{ lc $val{criteria} } && $criteria_type{ lc $val{criteria} };
+                if ( $criteria ne 'greaterThan' and $criteria ne 'greaterThanOrEqual' ) {
+                    carp "Invalid icon selection criteria '$val{criteria}' in conditional_formatting()";
+                    return -3;
+                }
+                $val{criteria} = $criteria;
+
+                \%val
+            } @{ $param->{icons} } ];
     }
 
 
@@ -8797,6 +8833,12 @@ sub _write_cf_rule {
         $self->_write_data_bar( $param );
         $self->xml_end_tag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'iconSet' ) {
+
+        $self->xml_start_tag( 'cfRule', @attributes );
+        $self->_write_icon_set( $param );
+        $self->xml_end_tag( 'cfRule' );
+    }
     elsif ( $param->{type} eq 'expression' ) {
 
         $self->xml_start_tag( 'cfRule', @attributes );
@@ -8881,6 +8923,35 @@ sub _write_data_bar {
 
 ##############################################################################
 #
+# _write_icon_set()
+#
+# Write the <dataBar> element.
+#
+sub _write_icon_set {
+
+    my $self  = shift;
+    my $param = shift;
+
+    my @attributes;
+    push @attributes, ('iconSet' => $param->{icon_set}) if defined $param->{icon_set};
+    push @attributes, ('showValue' => 0) if $param->{hide_value};
+    push @attributes, ('reverse' => 1) if $param->{reverse};
+
+    $self->xml_start_tag( 'iconSet', @attributes );
+
+    my @icons = reverse @{ $param->{icons} };
+    $self->_write_cfvo( 'percent', 0 );
+    for my $val ( @icons ) {
+        my @criteria = $val->{criteria} eq 'greaterThan' ? ('gte' => 0) : ();
+        $self->_write_cfvo( $val->{type}, $val->{value}, @criteria );
+    }
+
+    $self->xml_end_tag( 'iconSet' );
+}
+
+
+##############################################################################
+#
 # _write_cfvo()
 #
 # Write the <cfvo> element.
@@ -8896,7 +8967,7 @@ sub _write_cfvo {
         'val'  => $val
     );
 
-    $self->xml_empty_tag( 'cfvo', @attributes );
+    $self->xml_empty_tag( 'cfvo', @attributes, @_ );
 }
 
 
