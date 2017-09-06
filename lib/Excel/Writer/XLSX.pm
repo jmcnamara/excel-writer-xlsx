@@ -4639,6 +4639,10 @@ Other, less commonly used parameters are:
     max_color
     bar_color
     stop_if_true
+    icon_style
+    icons
+    reverse_icons
+    icons_only
 
 Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
 
@@ -4693,8 +4697,13 @@ The C<type> parameter is used to set the type of conditional formatting that you
 
     formula         criteria
 
+    icon_set        icon_style
+                    reverse_icons
+                    icons
+                    icons_only
 
-All conditional formatting types have a C<format> parameter, see below. Other types and parameters such as icon sets will be added in time.
+
+All conditional formatting types, apart from C<icon_set> have a C<format> parameter, see below.
 
 =head2 type => 'cell'
 
@@ -5060,6 +5069,103 @@ The C<formula> type is used to specify a conditional format based on a user defi
 The formula is specified in the C<criteria>.
 
 
+
+=head2 type => 'icon_set'
+
+The C<icon_set> type is used to specify a conditional format with a set of icons such as traffic lights or arrows:
+
+    $worksheet->conditional_formatting( 'A1:C1',
+        {
+            type         => 'icon_set',
+            icon_style   => '3_traffic_lights',
+        }
+    );
+
+The icon set style is specified by the C<icon_style> parameter. Valid options are:
+
+    3_arrows
+    3_arrows_gray
+    3_flags
+    3_signs
+    3_symbols
+    3_symbols_circled
+    3_traffic_lights
+    3_traffic_lights_rimmed
+
+    4_arrows
+    4_arrows_gray
+    4_ratings
+    4_red_to_black
+    4_traffic_lights
+
+    5_arrows
+    5_arrows_gray
+    5_quarters
+    5_ratings
+
+The criteria, type and value of each icon can be specified using the C<icon> array of hash refs with optional C<criteria>, C<type> and C<value> parameters:
+
+    $worksheet->conditional_formatting( 'A1:D1',
+        {
+            type         => 'icon_set',
+            icon_style   => '4_red_to_black',
+            icons        => [ {criteria => '>',  type => 'number',     value => 90},
+                              {criteria => '>=', type => 'percentile', value => 50},
+                              {criteria => '>',  type => 'percent',    value => 25},
+                            ],
+        }
+    );
+
+
+The C<icons criteria> parameter should be either C<< >= >> or C<< > >>. The default C<criteria> is C<< >= >>.
+
+The C<icons type> parameter should be one of the following values:
+
+    number
+    percentile
+    percent
+    formula
+
+The default C<type> is C<percent>.
+
+The C<icons value> parameter can be a value or formula:
+
+    $worksheet->conditional_formatting( 'A1:D1',
+        {
+            type         => 'icon_set',
+            icon_style   => '4_red_to_black',
+            icons        => [ {value => 90},
+                              {value => 50},
+                              {value => 25},
+                            ],
+        }
+    );
+
+Note: The C<icons> parameters should start with the highest value and with each subsequent one being lower. The default C<value> is C<(n * 100) / number_of_icons>. The lowest number icon in an icon set has properties defined by Excel. Therefore in a C<n> icon set, there is no C<n-1> hash of parameters.
+
+The order of the icons can be reversed using the C<reverse_icons> parameter:
+
+    $worksheet->conditional_formatting( 'A1:C1',
+        {
+            type          => 'icon_set',
+            icon_style    => '3_arrows',
+            reverse_icons => 1,
+        }
+    );
+
+The icons can be displayed without the cell value using the C<icons_only> parameter:
+
+    $worksheet->conditional_formatting( 'A1:C1',
+        {
+            type         => 'icon_set',
+            icon_style   => '3_flags',
+            icons_only   => 1,
+        }
+    );
+
+
+
+
 =head2 min_type, mid_type, max_type
 
 The C<min_type> and C<max_type> properties are available when the conditional formatting type is C<2_color_scale>, C<3_color_scale> or C<data_bar>. The C<mid_type> is available for C<3_color_scale>. The properties are used as follows:
@@ -5214,6 +5320,15 @@ Example 10. Highlight blank cells.
         {
             type     => 'blanks',
             format   => $format,
+        }
+    );
+
+Example 11. Set traffic light icons in 3 cells:
+
+    $worksheet->conditional_formatting( 'A1:C1',
+        {
+            type         => 'icon_set',
+            icon_style   => '3_traffic_lights',
         }
     );
 

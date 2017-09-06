@@ -3593,9 +3593,6 @@ sub conditional_formatting {
         @_ = $self->_substitute_cellref( @_ );
     }
 
-    # Check for a valid number of args.
-    if ( @_ != 5 && @_ != 3 ) { return -1 }
-
     # The final hashref contains the validation parameters.
     my $options = pop;
 
@@ -3623,23 +3620,27 @@ sub conditional_formatting {
 
     # List of valid input parameters.
     my %valid_parameter = (
-        type         => 1,
-        format       => 1,
-        criteria     => 1,
-        value        => 1,
-        minimum      => 1,
-        maximum      => 1,
-        stop_if_true => 1,
-        min_type     => 1,
-        mid_type     => 1,
-        max_type     => 1,
-        min_value    => 1,
-        mid_value    => 1,
-        max_value    => 1,
-        min_color    => 1,
-        mid_color    => 1,
-        max_color    => 1,
-        bar_color    => 1,
+        type          => 1,
+        format        => 1,
+        criteria      => 1,
+        value         => 1,
+        minimum       => 1,
+        maximum       => 1,
+        stop_if_true  => 1,
+        min_type      => 1,
+        mid_type      => 1,
+        max_type      => 1,
+        min_value     => 1,
+        mid_value     => 1,
+        max_value     => 1,
+        min_color     => 1,
+        mid_color     => 1,
+        max_color     => 1,
+        bar_color     => 1,
+        icon_style    => 1,
+        reverse_icons => 1,
+        icons_only    => 1,
+        icons         => 1,
     );
 
     # Check for valid input parameters.
@@ -3677,8 +3678,8 @@ sub conditional_formatting {
         '3_color_scale' => '3_color_scale',
         'data_bar'      => 'dataBar',
         'formula'       => 'expression',
+        'icon_set'      => 'iconSet',
     );
-
 
     # Check for valid validation types.
     if ( not exists $valid_type{ lc( $param->{type} ) } ) {
@@ -3775,6 +3776,62 @@ sub conditional_formatting {
             }
         }
     }
+
+
+    # List of valid icon styles.
+    my %icon_set_styles = (
+        "3_arrows"                => "3Arrows",            # 1
+        "3_flags"                 => "3Flags",             # 2
+        "3_traffic_lights_rimmed" => "3TrafficLights2",    # 3
+        "3_symbols_circled"       => "3Symbols",           # 4
+        "4_arrows"                => "4Arrows",            # 5
+        "4_red_to_black"          => "4RedToBlack",        # 6
+        "4_traffic_lights"        => "4TrafficLights",     # 7
+        "5_arrows_gray"           => "5ArrowsGray",        # 8
+        "5_quarters"              => "5Quarters",          # 9
+        "3_arrows_gray"           => "3ArrowsGray",        # 10
+        "3_traffic_lights"        => "3TrafficLights",     # 11
+        "3_signs"                 => "3Signs",             # 12
+        "3_symbols"               => "3Symbols2",          # 13
+        "4_arrows_gray"           => "4ArrowsGray",        # 14
+        "4_ratings"               => "4Rating",            # 15
+        "5_arrows"                => "5Arrows",            # 16
+        "5_ratings"               => "5Rating",            # 17
+    );
+
+
+    # Set properties for icon sets.
+    if ( $param->{type} eq 'iconSet' ) {
+
+        if ( !defined $param->{icon_style} ) {
+            carp "The 'icon_style' parameter must be specified when "
+              . "'type' == 'icon_set' in conditional_formatting()";
+            return -3;
+        }
+
+        # Check for valid icon styles.
+        if ( not exists $icon_set_styles{ $param->{icon_style} } ) {
+            carp "Unknown icon style '$param->{icon_style}' for parameter "
+              . "'icon_style' in conditional_formatting()";
+            return -3;
+        }
+        else {
+            $param->{icon_style} = $icon_set_styles{ $param->{icon_style} };
+        }
+
+        # Set the number of icons for the icon style.
+        $param->{total_icons} = 3;
+        if ( $param->{icon_style} =~ /^4/ ) {
+            $param->{total_icons} = 4;
+        }
+        elsif ( $param->{icon_style} =~ /^5/ ) {
+            $param->{total_icons} = 5;
+        }
+
+        $param->{icons} =
+          $self->_set_icon_properties( $param->{total_icons}, $param->{icons} );
+    }
+
 
     # Set the formatting range.
     my $range      = '';
@@ -3984,6 +4041,100 @@ sub conditional_formatting {
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
+}
+
+
+###############################################################################
+#
+# Set the sub-properites for icons.
+#
+sub _set_icon_properties {
+
+    my $self        = shift;
+    my $total_icons = shift;
+    my $user_props  = shift;
+    my $props       = [];
+
+    # Set the default icon properties.
+    for ( 0 .. $total_icons - 1 ) {
+        push @$props,
+          {
+            criteria => 0,
+            value    => 0,
+            type     => 'percent'
+          };
+    }
+
+    # Set the default icon values based on the number of icons.
+    if ( $total_icons == 3 ) {
+        $props->[0]->{value} = 67;
+        $props->[1]->{value} = 33;
+    }
+
+    if ( $total_icons == 4 ) {
+        $props->[0]->{value} = 75;
+        $props->[1]->{value} = 50;
+        $props->[2]->{value} = 25;
+    }
+
+    if ( $total_icons == 5 ) {
+        $props->[0]->{value} = 80;
+        $props->[1]->{value} = 60;
+        $props->[2]->{value} = 40;
+        $props->[3]->{value} = 20;
+    }
+
+    # Overwrite default properties with user defined properties.
+    if ( defined $user_props ) {
+
+        # Ensure we don't set user properties for lowest icon.
+        my $max_data = @$user_props;
+        if ( $max_data >= $total_icons ) {
+            $max_data = $total_icons -1;
+        }
+
+        for my $i ( 0 .. $max_data - 1 ) {
+
+            # Set the user defined 'value' property.
+            if ( defined $user_props->[$i]->{value} ) {
+                $props->[$i]->{value} = $user_props->[$i]->{value};
+                $props->[$i]->{value} =~ s/^=//;
+            }
+
+            # Set the user defined 'type' property.
+            if ( defined $user_props->[$i]->{type} ) {
+
+                my $type = $user_props->[$i]->{type};
+
+                if (   $type ne 'percent'
+                    && $type ne 'percentile'
+                    && $type ne 'number'
+                    && $type ne 'formula' )
+                {
+                    carp "Unknown icon property type '$props->{type}' for sub-"
+                      . "property 'type' in conditional_formatting()";
+                }
+                else {
+                    $props->[$i]->{type} = $type;
+
+                    if ( $props->[$i]->{type} eq 'number' ) {
+                        $props->[$i]->{type} = 'num';
+                    }
+                }
+            }
+
+            # Set the user defined 'criteria' property.
+            if ( defined $user_props->[$i]->{criteria}
+                && $user_props->[$i]->{criteria} eq '>' )
+            {
+                $props->[$i]->{criteria} = 1;
+            }
+
+        }
+
+    }
+
+    return $props;
 }
 
 
@@ -8803,8 +8954,58 @@ sub _write_cf_rule {
         $self->_write_formula( $param->{criteria} );
         $self->xml_end_tag( 'cfRule' );
     }
+    elsif ( $param->{type} eq 'iconSet' ) {
+
+        $self->xml_start_tag( 'cfRule', @attributes );
+        $self->_write_icon_set( $param );
+        $self->xml_end_tag( 'cfRule' );
+    }
 }
 
+
+##############################################################################
+#
+# _write_icon_set()
+#
+# Write the <iconSet> element.
+#
+sub _write_icon_set {
+
+    my $self        = shift;
+    my $param       = shift;
+    my $icon_style  = $param->{icon_style};
+    my $total_icons = $param->{total_icons};
+    my $icons       = $param->{icons};
+    my $i;
+
+    my @attributes = ();
+
+    # Don't set attribute for default style.
+    if ( $icon_style ne '3TrafficLights' ) {
+        @attributes = ( 'iconSet' => $icon_style );
+    }
+
+    if ( exists $param->{'icons_only'} && $param->{'icons_only'} ) {
+        push @attributes, ( 'showValue' => 0 );
+    }
+
+    if ( exists $param->{'reverse_icons'} && $param->{'reverse_icons'} ) {
+        push @attributes, ( 'reverse' => 1 );
+    }
+
+    $self->xml_start_tag( 'iconSet', @attributes );
+
+    # Write the properites for different icon styles.
+    for my $icon ( reverse @{ $param->{icons} } ) {
+        $self->_write_cfvo(
+            $icon->{'type'},
+            $icon->{'value'},
+            $icon->{'criteria'}
+        );
+    }
+
+    $self->xml_end_tag( 'iconSet' );
+}
 
 ##############################################################################
 #
@@ -8887,14 +9088,19 @@ sub _write_data_bar {
 #
 sub _write_cfvo {
 
-    my $self = shift;
-    my $type = shift;
-    my $val  = shift;
+    my $self     = shift;
+    my $type     = shift;
+    my $value    = shift;
+    my $criteria = shift;
 
     my @attributes = (
         'type' => $type,
-        'val'  => $val
+        'val'  => $value
     );
+
+    if ( $criteria ) {
+        push @attributes, ( 'gte', 0 );
+    }
 
     $self->xml_empty_tag( 'cfvo', @attributes );
 }
