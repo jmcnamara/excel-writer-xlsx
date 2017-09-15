@@ -667,6 +667,11 @@ t/regression/cond_format10.t
 t/regression/cond_format11.t
 t/regression/cond_format12.t
 t/regression/cond_format13.t
+t/regression/cond_format14.t
+t/regression/cond_format15.t
+t/regression/cond_format16.t
+t/regression/cond_format17.t
+t/regression/cond_format18.t
 t/regression/custom_colors01.t
 t/regression/data_validation01.t
 t/regression/data_validation02.t
@@ -970,6 +975,9 @@ t/regression/table16.t
 t/regression/table17.t
 t/regression/table18.t
 t/regression/table19.t
+t/regression/table20.t
+t/regression/table21.t
+t/regression/table22.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/tutorial01.t
@@ -1353,6 +1361,11 @@ t/regression/xlsx_files/cond_format10.xlsx
 t/regression/xlsx_files/cond_format11.xlsx
 t/regression/xlsx_files/cond_format12.xlsx
 t/regression/xlsx_files/cond_format13.xlsx
+t/regression/xlsx_files/cond_format14.xlsx
+t/regression/xlsx_files/cond_format15.xlsx
+t/regression/xlsx_files/cond_format16.xlsx
+t/regression/xlsx_files/cond_format17.xlsx
+t/regression/xlsx_files/cond_format18.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/data_validation01.xlsx
 t/regression/xlsx_files/data_validation02.xlsx
@@ -1623,6 +1636,8 @@ t/regression/xlsx_files/table15.xlsx
 t/regression/xlsx_files/table17.xlsx
 t/regression/xlsx_files/table18.xlsx
 t/regression/xlsx_files/table19.xlsx
+t/regression/xlsx_files/table21.xlsx
+t/regression/xlsx_files/table22.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
@@ -1776,6 +1791,9 @@ t/worksheet/worksheet_cond_format_18.t
 t/worksheet/worksheet_cond_format_19.t
 t/worksheet/worksheet_cond_format_20.t
 t/worksheet/worksheet_cond_format_21.t
+t/worksheet/worksheet_cond_format_22.t
+t/worksheet/worksheet_cond_format_23.t
+t/worksheet/worksheet_cond_format_24.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t

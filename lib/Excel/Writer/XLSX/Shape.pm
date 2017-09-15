@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Shape;
 #
 # Used in conjunction with Excel::Writer::XLSX.
 #
-# Copyright 2000-2016, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2017, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -20,7 +20,7 @@ use Carp;
 use Exporter;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.95';
+our $VERSION = '0.96';
 our $AUTOLOAD;
 
 ###############################################################################
@@ -637,6 +637,6 @@ Dave Clarke dclarke@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXVI, John McNamara.
+(c) MM-MMXVII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::Packager;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2016, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2017, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -32,7 +32,7 @@ use Excel::Writer::XLSX::Package::Theme;
 use Excel::Writer::XLSX::Package::VML;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '0.95';
+our $VERSION = '0.96';
 
 
 ###############################################################################
@@ -996,7 +996,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXVI, John McNamara.
+(c) MM-MMXVII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.96 2017-09-16
+
+   + Added icon sets to conditional formatting. Feature request #116.
+
+
 0.95 2016-06-13
 
    + Added workbook set_size() method. Feature request #59.
