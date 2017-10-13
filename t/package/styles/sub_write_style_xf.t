@@ -32,7 +32,7 @@ $expected = '<xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>';
 
 $style = _new_style(\$got);
 
-$style->_write_style_xf();
+$style->_write_style_xf(0, 0);
 
 is( $got, $expected, $caption );
 

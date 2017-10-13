@@ -62,6 +62,7 @@ sub new {
         _font_extend      => 0,
         _theme            => 0,
         _hyperlink        => 0,
+        _xf_id            => 0,
 
         _hidden => 0,
         _locked => 1,
@@ -289,6 +290,7 @@ sub get_font_key {
         $self->{_italic},
         $self->{_size},
         $self->{_underline},
+        $self->{_theme},
 
     );
 
@@ -678,18 +680,17 @@ sub set_rotation {
 #
 # set_hyperlink()
 #
-# Set the properties for the hyperlink style. TODO. This doesn't currently
-# work. Fix it when styles are supported.
+# Set the properties for the hyperlink style.
 #
 sub set_hyperlink {
 
     my $self = shift;
 
     $self->{_hyperlink} = 1;
+    $self->{_xf_id}     = 1;
 
     $self->set_underline( 1 );
     $self->set_theme( 10 );
-    $self->set_align( 'top' );
 }
 
 

@@ -32,7 +32,7 @@ $expected = '<cellStyle name="Normal" xfId="0" builtinId="0"/>';
 
 $style = _new_style(\$got);
 
-$style->_write_cell_style();
+$style->_write_cell_style("Normal", 0, 0);
 
 is( $got, $expected, $caption );
 
