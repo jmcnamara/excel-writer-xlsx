@@ -10,7 +10,7 @@ use TestFunctions qw(_got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
 
-use Test::More tests => 45;
+use Test::More tests => 47;
 
 
 ###############################################################################
@@ -1054,6 +1054,61 @@ $expected = '<dataValidations count="1"><dataValidation allowBlank="1" showInput
 
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test 46 length validation.
+#
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->data_validation(
+    'A1',
+    {
+        validate => 'length',
+        criteria => 'between',
+        minimum  => 5,
+        maximum  => 10,
+    }
+);
+
+$worksheet->_write_data_validations();
+
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<dataValidations count="1"><dataValidation type="textLength" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="A1"><formula1>5</formula1><formula2>10</formula2></dataValidation></dataValidations>';
+
+$expected = _got_to_aref( $expected );
+$got      = _got_to_aref( $got );
+
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test 47 length validation.
+#
+
+$worksheet = _new_worksheet(\$got);
+
+$worksheet->data_validation(
+    'A1',
+    {
+        validate => 'length',
+        criteria => '>',
+        value    => 5,
+    }
+);
+
+$worksheet->_write_data_validations();
+
+$caption  = " \tWorksheet: _write_sheet_views()";
+$expected = '<dataValidations count="1"><dataValidation type="textLength" operator="greaterThan" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="A1"><formula1>5</formula1></dataValidation></dataValidations>';
+
+$expected = _got_to_aref( $expected );
+$got      = _got_to_aref( $got );
+
 _is_deep_diff( $got, $expected, $caption );
 
 
