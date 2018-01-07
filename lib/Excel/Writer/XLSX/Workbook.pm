@@ -886,6 +886,8 @@ sub set_properties {
 }
 
 
+
+
 ###############################################################################
 #
 # set_custom_property()
@@ -1033,20 +1035,20 @@ sub _store_workbook {
     my $tempdir  = File::Temp->newdir( DIR => $self->{_tempdir} );
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
-
+    my $visible_first_sheet_index = $self->_visible_first_sheet_index();
 
     # Add a default worksheet if non have been added.
     $self->add_worksheet() if not @{ $self->{_worksheets} };
 
     # Ensure that at least one worksheet has been selected.
     if ( $self->{_activesheet} == 0 ) {
-        $self->{_worksheets}->[0]->{_selected} = 1;
-        $self->{_worksheets}->[0]->{_hidden}   = 0;
+        $self->{_worksheets}->[$visible_first_sheet_index]->{_selected} = 1;
+        $self->{_worksheets}->[$visible_first_sheet_index]->{_hidden}   = 0;
     }
 
     # Set the active sheet.
     for my $sheet ( @{ $self->{_worksheets} } ) {
-        $sheet->{_active} = 1 if $sheet->{_index} == $self->{_activesheet};
+        $sheet->{_active} = 1 if $sheet->{_index} == $visible_first_sheet_index;
     }
 
     # Convert the SST strings data structure.
@@ -2681,6 +2683,24 @@ sub _write_defined_name {
     push @attributes, ( 'hidden'       => 1 )   if $hidden;
 
     $self->xml_data_element( 'definedName', $range, @attributes );
+}
+
+
+###############################################################################
+#
+# _visible_first_sheet_index()
+#
+
+sub _visible_first_sheet_index {
+
+    my $self = shift;
+
+    for my $worksheet ( @{ $self->{_worksheets} } ) {
+        if ( $worksheet->{_hidden} == 0 ) {
+            return $worksheet->{_index};
+        }
+    }
+    return 0;
 }
 
 
