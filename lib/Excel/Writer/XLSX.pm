@@ -2053,8 +2053,8 @@ The C<$level> parameter is used to set the outline level of the row. Outlines ar
 
 The following example sets an outline level of 1 for rows 1 and 2 (zero-indexed):
 
+    $worksheet->set_row( 0, undef, undef, 0, 1 );
     $worksheet->set_row( 1, undef, undef, 0, 1 );
-    $worksheet->set_row( 2, undef, undef, 0, 1 );
 
 The C<$hidden> parameter can also be used to hide collapsed outlined rows when used in conjunction with the C<$level> parameter.
 
