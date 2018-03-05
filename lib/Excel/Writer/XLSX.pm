@@ -1416,6 +1416,8 @@ Most of these options are quite specific and in general the default comment beha
     start_col
     x_offset
     y_offset
+    font
+    font_size
 
 
 =over 4
@@ -1513,6 +1515,18 @@ This option is used to change the x offset, in pixels, of a comment within a cel
 This option is used to change the y offset, in pixels, of a comment within a cell:
 
     $worksheet->write_comment('C3', $comment, x_offset => 30);
+
+=item Option: font
+
+This option is used to change the font used in the comment from 'Tahoma' which is the default.
+
+    $worksheet->write_comment('C3', $comment, font => 'Calibri');
+
+=item Option: font_size
+
+This option is used to change the font size used in the comment from 8 which is the default.
+
+    $worksheet->write_comment('C3', $comment, font_size => 20);
 
 
 =back
