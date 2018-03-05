@@ -176,13 +176,15 @@ sub _write_comment_list {
         my $col    = $comment->[1];
         my $text   = $comment->[2];
         my $author = $comment->[3];
+        my $font   = $comment->[7];
+        my $size   = $comment->[8];
 
         # Look up the author id.
         my $author_id = undef;
         $author_id = $self->{_author_ids}->{$author} if defined $author;
 
         # Write the comment element.
-        $self->_write_comment( $row, $col, $text, $author_id );
+        $self->_write_comment( $row, $col, $text, $author_id, $font, $size );
     }
 
     $self->xml_end_tag( 'commentList' );
@@ -203,6 +205,8 @@ sub _write_comment {
     my $text      = shift;
     my $author_id = shift;
     my $ref       = xl_rowcol_to_cell( $row, $col );
+    my $font      = shift;
+    my $size      = shift;
 
     my @attributes = ( 'ref' => $ref );
 
@@ -212,7 +216,7 @@ sub _write_comment {
     $self->xml_start_tag( 'comment', @attributes );
 
     # Write the text element.
-    $self->_write_text( $text );
+    $self->_write_text( $text, [$font, $size] );
 
 
     $self->xml_end_tag( 'comment' );
@@ -229,11 +233,12 @@ sub _write_text {
 
     my $self = shift;
     my $text = shift;
+    my $fmt  = shift;
 
     $self->xml_start_tag( 'text' );
 
     # Write the text r element.
-    $self->_write_text_r( $text );
+    $self->_write_text_r( $text, $fmt );
 
     $self->xml_end_tag( 'text' );
 }
@@ -249,11 +254,12 @@ sub _write_text_r {
 
     my $self = shift;
     my $text = shift;
+    my $fmt  = shift;
 
     $self->xml_start_tag( 'r' );
 
     # Write the rPr element.
-    $self->_write_r_pr();
+    $self->_write_r_pr($fmt);
 
     # Write the text r element.
     $self->_write_text_t( $text );
@@ -292,17 +298,18 @@ sub _write_text_t {
 sub _write_r_pr {
 
     my $self = shift;
+    my $fmt  = shift;
 
     $self->xml_start_tag( 'rPr' );
 
     # Write the sz element.
-    $self->_write_sz();
+    $self->_write_sz($fmt->[1]);
 
     # Write the color element.
     $self->_write_color();
 
     # Write the rFont element.
-    $self->_write_r_font();
+    $self->_write_r_font($fmt->[0]);
 
     # Write the family element.
     $self->_write_family();
@@ -320,7 +327,7 @@ sub _write_r_pr {
 sub _write_sz {
 
     my $self = shift;
-    my $val  = 8;
+    my $val  = shift || 8;
 
     my @attributes = ( 'val' => $val );
 
@@ -354,7 +361,7 @@ sub _write_color {
 sub _write_r_font {
 
     my $self = shift;
-    my $val  = 'Tahoma';
+    my $val  = shift || 'Tahoma';
 
     my @attributes = ( 'val' => $val );
 

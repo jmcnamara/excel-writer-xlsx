@@ -6077,6 +6077,8 @@ sub _comment_params {
         x_scale    => 1,
         y_offset   => undef,
         y_scale    => 1,
+        font       => 'Tahoma',
+        font_size  => 8,
     );
 
 
@@ -6204,7 +6206,10 @@ sub _comment_params {
         $params{visible},
         $params{color},
 
-        [@vertices]
+        [@vertices],
+
+        $params{font},
+        $params{font_size},
     );
 }
 
