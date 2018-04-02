@@ -149,6 +149,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     set_1904()
     set_optimization()
     set_calc_mode()
+    get_default_url_format()
 
 If you are unfamiliar with object oriented interfaces or the way that they are implemented in Perl have a look at C<perlobj> and C<perltoot> in the main Perl documentation.
 
@@ -644,6 +645,18 @@ Only re-calculate formulas when the user requires it. Generally by pressing F9.
 Excel will automatically re-calculate formulas except for tables.
 
 =back
+
+
+
+
+=head2 get_default_url_format()
+
+The C<get_default_url_format()> method gets a copy of the default url format used when a user defined format isn't specified with the worksheet C<write_url()> method. The format is the hyperlink style defined by Excel for the default theme:
+
+    my $url_format = $workbook->get_default_url_format();
+
+
+
 
 =head1 WORKSHEET METHODS
 
@@ -1209,42 +1222,40 @@ See also the date_time.pl program in the C<examples> directory of the distro.
 
 Write a hyperlink to a URL in the cell specified by C<$row> and C<$column>. The hyperlink is comprised of two elements: the visible label and the invisible link. The visible label is the same as the link unless an alternative label is specified. The C<$label> parameter is optional. The label is written using the C<write()> method. Therefore it is possible to write strings, numbers or formulas as labels.
 
-The C<$format> parameter is also optional, however, without a format the link won't look like a link.
+The C<$format> parameter is also optional and the default Excel hyperlink style will be used if it isn't specified. If required you can access the default url format using the Workbook C<get_default_url_format> method:
 
-The suggested format is:
-
-    my $format = $workbook->add_format( color => 'blue', underline => 1 );
-
-B<Note>, this behaviour is different from Spreadsheet::WriteExcel which provides a default hyperlink format if one isn't specified by the user.
+    my $url_format = $workbook->get_default_url_format();
 
 There are four web style URI's supported: C<http://>, C<https://>, C<ftp://> and C<mailto:>:
 
-    $worksheet->write_url( 0, 0, 'ftp://www.perl.org/',       $format );
-    $worksheet->write_url( 'A3', 'http://www.perl.com/',      $format );
-    $worksheet->write_url( 'A4', 'mailto:jmcnamara@cpan.org', $format );
+    $worksheet->write_url( 0, 0, 'ftp://www.perl.org/' );
+    $worksheet->write_url( 'A3', 'http://www.perl.com/' );
+    $worksheet->write_url( 'A4', 'mailto:jmcnamara@cpan.org' );
 
 You can display an alternative string using the C<$label> parameter:
 
-    $worksheet->write_url( 1, 0, 'http://www.perl.com/', $format, 'Perl' );
+    $worksheet->write_url( 1, 0, 'http://www.perl.com/', undef, 'Perl' );
 
 If you wish to have some other cell data such as a number or a formula you can overwrite the cell using another call to C<write_*()>:
 
     $worksheet->write_url( 'A1', 'http://www.perl.com/' );
 
     # Overwrite the URL string with a formula. The cell is still a link.
-    $worksheet->write_formula( 'A1', '=1+1', $format );
+    # Note the use of the default url format for consistency with other links.
+    my $url_format = $workbook->get_default_url_format();
+    $worksheet->write_formula( 'A1', '=1+1', $url_format );
 
 There are two local URIs supported: C<internal:> and C<external:>. These are used for hyperlinks to internal worksheet references or external workbook and worksheet references:
 
-    $worksheet->write_url( 'A6',  'internal:Sheet2!A1',              $format );
-    $worksheet->write_url( 'A7',  'internal:Sheet2!A1',              $format );
-    $worksheet->write_url( 'A8',  'internal:Sheet2!A1:B2',           $format );
-    $worksheet->write_url( 'A9',  q{internal:'Sales Data'!A1},       $format );
-    $worksheet->write_url( 'A10', 'external:c:\temp\foo.xlsx',       $format );
-    $worksheet->write_url( 'A11', 'external:c:\foo.xlsx#Sheet2!A1',  $format );
-    $worksheet->write_url( 'A12', 'external:..\foo.xlsx',            $format );
-    $worksheet->write_url( 'A13', 'external:..\foo.xlsx#Sheet2!A1',  $format );
-    $worksheet->write_url( 'A13', 'external:\\\\NET\share\foo.xlsx', $format );
+    $worksheet->write_url( 'A6',  'internal:Sheet2!A1' );
+    $worksheet->write_url( 'A7',  'internal:Sheet2!A1' );
+    $worksheet->write_url( 'A8',  'internal:Sheet2!A1:B2' );
+    $worksheet->write_url( 'A9',  q{internal:'Sales Data'!A1} );
+    $worksheet->write_url( 'A10', 'external:c:\temp\foo.xlsx' );
+    $worksheet->write_url( 'A11', 'external:c:\foo.xlsx#Sheet2!A1' );
+    $worksheet->write_url( 'A12', 'external:..\foo.xlsx' );
+    $worksheet->write_url( 'A13', 'external:..\foo.xlsx#Sheet2!A1' );
+    $worksheet->write_url( 'A13', 'external:\\\\NET\share\foo.xlsx' );
 
 All of the these URI types are recognised by the C<write()> method, see above.
 

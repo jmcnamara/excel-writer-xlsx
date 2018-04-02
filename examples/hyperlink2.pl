@@ -34,10 +34,7 @@ my $ireland = Excel::Writer::XLSX->new( 'C:\Temp\Europe\Ireland.xlsx' );
 my $ire_links      = $ireland->add_worksheet( 'Links' );
 my $ire_sales      = $ireland->add_worksheet( 'Sales' );
 my $ire_data       = $ireland->add_worksheet( 'Product Data' );
-my $ire_url_format = $ireland->add_format(
-    color     => 'blue',
-    underline => 1,
-);
+my $ire_url_format = $ireland->get_default_url_format();
 
 
 my $italy = Excel::Writer::XLSX->new( 'C:\Temp\Europe\Italy.xlsx' );
@@ -45,10 +42,7 @@ my $italy = Excel::Writer::XLSX->new( 'C:\Temp\Europe\Italy.xlsx' );
 my $ita_links      = $italy->add_worksheet( 'Links' );
 my $ita_sales      = $italy->add_worksheet( 'Sales' );
 my $ita_data       = $italy->add_worksheet( 'Product Data' );
-my $ita_url_format = $italy->add_format(
-    color     => 'blue',
-    underline => 1,
-);
+my $ita_url_format = $italy->get_default_url_format();
 
 
 my $china = Excel::Writer::XLSX->new( 'C:\Temp\Asia\China.xlsx' );
@@ -56,10 +50,7 @@ my $china = Excel::Writer::XLSX->new( 'C:\Temp\Asia\China.xlsx' );
 my $cha_links      = $china->add_worksheet( 'Links' );
 my $cha_sales      = $china->add_worksheet( 'Sales' );
 my $cha_data       = $china->add_worksheet( 'Product Data' );
-my $cha_url_format = $china->add_format(
-    color     => 'blue',
-    underline => 1,
-);
+my $cha_url_format = $china->get_default_url_format();
 
 
 # Add an alternative format

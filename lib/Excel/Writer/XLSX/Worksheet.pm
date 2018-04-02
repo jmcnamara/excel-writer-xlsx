@@ -2682,7 +2682,7 @@ sub _escape_url {
 
 ###############################################################################
 #
-# write_url($row, $col, $url, $string, $format)
+# write_url($row, $col, $url, format, $string)
 #
 # Write a hyperlink. This is comprised of two elements: the visible label and
 # the invisible link. The visible label is the same as the link unless an
@@ -2712,18 +2712,19 @@ sub write_url {
     if ( @_ < 3 ) { return -1 }    # Check the number of args
 
 
-    # Reverse the order of $string and $format if necessary. We work on a copy
-    # in order to protect the callers args. We don't use "local @_" in case of
-    # perl50005 threads.
+    # Reverse the order of $string and $format if necessary, for backward
+    # compatibility. We work on a copy in order to protect the callers
+    # args. We don't use "local @_" in case of perl50005 threads.
     my @args = @_;
-    ( $args[3], $args[4] ) = ( $args[4], $args[3] ) if ref $args[3];
-
+    if (defined $args[3] and !ref $args[3]) {
+        ( $args[3], $args[4] ) = ( $args[4], $args[3] );
+    }
 
     my $row       = $args[0];    # Zero indexed row
     my $col       = $args[1];    # Zero indexed column
     my $url       = $args[2];    # URL string
-    my $str       = $args[3];    # Alternative label
-    my $xf        = $args[4];    # Cell format
+    my $xf        = $args[3];    # Cell format
+    my $str       = $args[4];    # Alternative label
     my $tip       = $args[5];    # Tool tip
     my $type      = 'l';         # XML data type
     my $link_type = 1;

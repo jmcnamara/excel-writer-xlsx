@@ -1026,6 +1026,22 @@ sub set_calc_mode {
 
 ###############################################################################
 #
+# get_default_url_format()
+#
+# Get the default url format used when a user defined format isn't specified
+# with write_url(). The format is the hyperlink style defined by Excel for the
+# default theme.
+#
+sub get_default_url_format {
+
+    my $self    = shift;
+
+    return $self->{_default_url_format};
+}
+
+
+###############################################################################
+#
 # _store_workbook()
 #
 # Assemble worksheets into a workbook.

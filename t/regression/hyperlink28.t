@@ -10,7 +10,7 @@ use TestFunctions qw(_compare_xlsx_files _is_deep_diff);
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 ###############################################################################
 #
@@ -66,6 +66,36 @@ $workbook  = Excel::Writer::XLSX->new( $got_filename );
 $worksheet = $workbook->add_worksheet();
 
 $worksheet->write_url( 'A1', 'http://www.perl.org/');
+
+$workbook->close();
+
+
+###############################################################################
+#
+# Compare the generated and existing Excel files.
+#
+( $got, $expected, $caption ) = _compare_xlsx_files(
+
+    $got_filename,
+    $exp_filename,
+    $ignore_members,
+    $ignore_elements,
+);
+
+_is_deep_diff( $got, $expected, $caption );
+
+
+
+
+###############################################################################
+#
+# Test3. Test with the workbook default format.
+#
+$workbook  = Excel::Writer::XLSX->new( $got_filename );
+$worksheet = $workbook->add_worksheet();
+$format    = $workbook->get_default_url_format();
+
+$worksheet->write_url( 'A1', 'http://www.perl.org/', $format);
 
 $workbook->close();
 
