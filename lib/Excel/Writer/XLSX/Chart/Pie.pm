@@ -152,6 +152,9 @@ sub _write_plot_area {
     # Write the subclass chart type element.
     $self->_write_chart_type();
 
+    # Write the c:spPr element for the plotarea formatting.
+    $self->_write_sp_pr( $self->{_plotarea} );
+
     $self->xml_end_tag( 'c:plotArea' );
 }
 

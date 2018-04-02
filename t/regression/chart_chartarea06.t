@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_chartarea05.xlsx';
+my $filename     = 'chart_chartarea06.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,7 +34,7 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'pie', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'doughnut', embedded => 1 );
 
 my $data = [
     [  2,  4,  6 ],
