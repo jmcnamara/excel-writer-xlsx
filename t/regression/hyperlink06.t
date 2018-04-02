@@ -37,6 +37,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 $worksheet->write_url( 'A1',  'external:C:\Temp\foo.xlsx' );
 $worksheet->write_url( 'A3',  'external:C:\Temp\foo.xlsx#Sheet1!A1' );
 $worksheet->write_url( 'A5',  'external:C:\Temp\foo.xlsx#Sheet1!A1', 'External', undef, 'Tip' );

@@ -2,7 +2,7 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse ('(c)'), September 2012, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), October 2017, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -16,47 +16,39 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table06.xlsx';
+my $filename     = 'hyperlink30.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members  = [];
+my $ignore_members = [];
+
 my $ignore_elements = {};
 
 
 ###############################################################################
 #
-# Test the creation of a simple Excel::Writer::XLSX file with tables.
+# Test the creation of a simple Excel::Writer::XLSX file with hyperlinks.
+# This example has link formatting.
 #
 use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
+
+# Simulate custom colour for testing.
+$workbook->{_custom_colors} = [ 'FF0000FF' ];
+
 my $worksheet = $workbook->add_worksheet();
-
-# Set the column width to match the target worksheet.
-$worksheet->set_column('C:H', 10.288);
-
-# Add the tables.
-$worksheet->add_table('C3:F13');
-$worksheet->add_table('F15:H20');
-$worksheet->add_table('C23:D30');
-
+my $format1   = $workbook->add_format( hyperlink => 1 );
+my $format2   = $workbook->add_format( color => 'red',  underline => 1 );
+my $format3   = $workbook->add_format( color => 'blue', underline => 1 );
 
 # Turn off default URL format for testing.
 $worksheet->{_default_url_format} = undef;
 
-# Add a link to check rId handling.
-$worksheet->write( 'A1', 'http://perl.com/' );
-$worksheet->write( 'C1', 'http://perl.com/' );
-
-# Add comments to check rId handling.
-$worksheet->set_comments_author( 'John' );
-$worksheet->write_comment( 'H1', 'Test1' );
-$worksheet->write_comment( 'J1', 'Test2' );
-
-# Add drawing to check rId handling.
-$worksheet->insert_image( 'A4',  $dir . 'images/blue.png' );
+$worksheet->write_url( 'A1', 'http://www.python.org/1', $format1 );
+$worksheet->write_url( 'A2', 'http://www.python.org/2', $format2 );
+$worksheet->write_url( 'A3', 'http://www.python.org/3', $format3 );
 
 $workbook->close();
 

@@ -35,6 +35,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 # Test an already escapted string.
 $worksheet->write_url( 'A1', 'http://example.com/%5b0%5d', 'http://example.com/[0]' );
 

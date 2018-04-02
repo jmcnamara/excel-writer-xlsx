@@ -142,6 +142,9 @@ sub new {
         $self->add_format( xf_index => 0 );
     }
 
+    # Add a default URL format.
+    $self->{_default_url_format} = $self->add_format( hyperlink => 1 );
+
     # Check for a filename unless it is an existing filehandle
     if ( not ref $self->{_filename} and $self->{_filename} eq '' ) {
         carp 'Filename required by Excel::Writer::XLSX->new()';
@@ -369,7 +372,7 @@ sub add_worksheet {
         $self->{_optimization},
         $self->{_tempdir},
         $self->{_excel2003_style},
-
+        $self->{_default_url_format},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
@@ -1217,6 +1220,9 @@ sub _prepare_formats {
 sub _set_default_xf_indices {
 
     my $self = shift;
+
+    # Delete the default url format.
+    splice @{ $self->{_formats} }, 1, 1;
 
     for my $format ( @{ $self->{_formats} } ) {
         $format->get_xf_index();

@@ -55,18 +55,19 @@ sub new {
     my $colmax = 16_384;
     my $strmax = 32767;
 
-    $self->{_name}            = $_[0];
-    $self->{_index}           = $_[1];
-    $self->{_activesheet}     = $_[2];
-    $self->{_firstsheet}      = $_[3];
-    $self->{_str_total}       = $_[4];
-    $self->{_str_unique}      = $_[5];
-    $self->{_str_table}       = $_[6];
-    $self->{_date_1904}       = $_[7];
-    $self->{_palette}         = $_[8];
-    $self->{_optimization}    = $_[9] || 0;
-    $self->{_tempdir}         = $_[10];
-    $self->{_excel2003_style} = $_[11];
+    $self->{_name}               = $_[0];
+    $self->{_index}              = $_[1];
+    $self->{_activesheet}        = $_[2];
+    $self->{_firstsheet}         = $_[3];
+    $self->{_str_total}          = $_[4];
+    $self->{_str_unique}         = $_[5];
+    $self->{_str_table}          = $_[6];
+    $self->{_date_1904}          = $_[7];
+    $self->{_palette}            = $_[8];
+    $self->{_optimization}       = $_[9] || 0;
+    $self->{_tempdir}            = $_[10];
+    $self->{_excel2003_style}    = $_[11];
+    $self->{_default_url_format} = $_[12];
 
     $self->{_ext_sheets}    = [];
     $self->{_fileclosed}    = 0;
@@ -2806,10 +2807,14 @@ sub write_url {
         return -5;
     }
 
-
     # Write previous row if in in-line string optimization mode.
     if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
         $self->_write_single_row( $row );
+    }
+
+    # Add the default URL format.
+    if ( !defined $xf ) {
+        $xf = $self->{_default_url_format};
     }
 
     # Write the hyperlink string.

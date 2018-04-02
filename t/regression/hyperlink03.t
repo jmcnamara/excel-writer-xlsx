@@ -38,6 +38,10 @@ my $workbook   = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet1 = $workbook->add_worksheet();
 my $worksheet2 = $workbook->add_worksheet();
 
+# Turn off default URL format for testing.
+$worksheet1->{_default_url_format} = undef;
+$worksheet2->{_default_url_format} = undef;
+
 $worksheet1->write_url( 'A1',  'http://www.perl.org/' );
 $worksheet1->write_url( 'D4',  'http://www.perl.org/' );
 $worksheet1->write_url( 'A8',  'http://www.perl.org/' );

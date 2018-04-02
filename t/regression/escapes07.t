@@ -35,6 +35,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 $worksheet->write_url( 'A1', q(http://example.com/!"$%&'( )*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~) );
 
 $workbook->close();

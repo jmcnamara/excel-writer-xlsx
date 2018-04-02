@@ -42,15 +42,16 @@ sub new {
     my $fh    = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
-    $self->{_xf_formats}       = undef;
-    $self->{_palette}          = [];
-    $self->{_font_count}       = 0;
-    $self->{_num_format_count} = 0;
-    $self->{_border_count}     = 0;
-    $self->{_fill_count}       = 0;
-    $self->{_custom_colors}    = [];
-    $self->{_dxf_formats}      = [];
-    $self->{_has_hyperlink}    = 0;
+    $self->{_xf_formats}         = undef;
+    $self->{_palette}            = [];
+    $self->{_font_count}         = 0;
+    $self->{_num_format_count}   = 0;
+    $self->{_border_count}       = 0;
+    $self->{_fill_count}         = 0;
+    $self->{_custom_colors}      = [];
+    $self->{_dxf_formats}        = [];
+    $self->{_has_hyperlink}      = 0;
+    $self->{_hyperlink_font_id}  = 0;
 
     bless $self, $class;
 
@@ -121,14 +122,14 @@ sub _set_style_properties {
 
     my $self = shift;
 
-    $self->{_xf_formats}       = shift;
-    $self->{_palette}          = shift;
-    $self->{_font_count}       = shift;
-    $self->{_num_format_count} = shift;
-    $self->{_border_count}     = shift;
-    $self->{_fill_count}       = shift;
-    $self->{_custom_colors}    = shift;
-    $self->{_dxf_formats}      = shift;
+    $self->{_xf_formats}         = shift;
+    $self->{_palette}            = shift;
+    $self->{_font_count}         = shift;
+    $self->{_num_format_count}   = shift;
+    $self->{_border_count}       = shift;
+    $self->{_fill_count}         = shift;
+    $self->{_custom_colors}      = shift;
+    $self->{_dxf_formats}        = shift;
 }
 
 
@@ -391,6 +392,10 @@ sub _write_font {
 
         if ( $format->{_hyperlink} ) {
             $self->{_has_hyperlink} = 1;
+
+            if ( !$self->{_hyperlink_font_id} ) {
+                $self->{_hyperlink_font_id} = $format->{_font_index};
+            }
         }
     }
 
@@ -773,10 +778,10 @@ sub _write_cell_style_xfs {
     $self->xml_start_tag( 'cellStyleXfs', @attributes );
 
     # Write the style_xf element.
-    $self->_write_style_xf(0, 0);
+    $self->_write_style_xf( 0, 0 );
 
     if ( $self->{_has_hyperlink} ) {
-        $self->_write_style_xf(1, 1);
+        $self->_write_style_xf( 1, $self->{_hyperlink_font_id} );
     }
 
     $self->xml_end_tag( 'cellStyleXfs' );
@@ -824,12 +829,12 @@ sub _write_cell_xfs {
 #
 sub _write_style_xf {
 
-    my $self         = shift;
-    my $is_hyperlink = shift;
-    my $num_fmt_id   = 0;
-    my $font_id      = shift;
-    my $fill_id      = 0;
-    my $border_id    = 0;
+    my $self          = shift;
+    my $has_hyperlink = shift;
+    my $font_id       = shift;
+    my $num_fmt_id    = 0;
+    my $fill_id       = 0;
+    my $border_id     = 0;
 
     my @attributes = (
         'numFmtId' => $num_fmt_id,
@@ -838,7 +843,7 @@ sub _write_style_xf {
         'borderId' => $border_id,
     );
 
-    if ( $is_hyperlink ) {
+    if ( $has_hyperlink ) {
         push @attributes, ( 'applyNumberFormat' => 0 );
         push @attributes, ( 'applyFill'         => 0 );
         push @attributes, ( 'applyBorder'       => 0 );

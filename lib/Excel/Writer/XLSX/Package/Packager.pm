@@ -544,16 +544,16 @@ sub _write_content_types_file {
 #
 sub _write_styles_file {
 
-    my $self             = shift;
-    my $dir              = $self->{_package_dir};
-    my $xf_formats       = $self->{_workbook}->{_xf_formats};
-    my $palette          = $self->{_workbook}->{_palette};
-    my $font_count       = $self->{_workbook}->{_font_count};
-    my $num_format_count = $self->{_workbook}->{_num_format_count};
-    my $border_count     = $self->{_workbook}->{_border_count};
-    my $fill_count       = $self->{_workbook}->{_fill_count};
-    my $custom_colors    = $self->{_workbook}->{_custom_colors};
-    my $dxf_formats      = $self->{_workbook}->{_dxf_formats};
+    my $self               = shift;
+    my $dir                = $self->{_package_dir};
+    my $xf_formats         = $self->{_workbook}->{_xf_formats};
+    my $palette            = $self->{_workbook}->{_palette};
+    my $font_count         = $self->{_workbook}->{_font_count};
+    my $num_format_count   = $self->{_workbook}->{_num_format_count};
+    my $border_count       = $self->{_workbook}->{_border_count};
+    my $fill_count         = $self->{_workbook}->{_fill_count};
+    my $custom_colors      = $self->{_workbook}->{_custom_colors};
+    my $dxf_formats        = $self->{_workbook}->{_dxf_formats};
 
     my $rels = Excel::Writer::XLSX::Package::Styles->new();
 
@@ -568,7 +568,6 @@ sub _write_styles_file {
         $fill_count,
         $custom_colors,
         $dxf_formats,
-
     );
 
     $rels->_set_xml_writer( $dir . '/xl/styles.xml' );

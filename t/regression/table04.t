@@ -40,6 +40,9 @@ $worksheet->set_column('C:F', 10.288);
 # Add the table.
 $worksheet->add_table('C3:F13');
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 # Add a link to check rId handling.
 $worksheet->write( 'A1', 'http://perl.com/' );
 

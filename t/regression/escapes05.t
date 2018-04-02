@@ -36,6 +36,9 @@ my $workbook   = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet1 = $workbook->add_worksheet( "Start" );
 my $worksheet2 = $workbook->add_worksheet( "A & B" );
 
+# Turn off default URL format for testing.
+$worksheet1->{_default_url_format} = undef;
+
 $worksheet1->write_url( 'A1', q(internal:'A & B'!A1), 'Jump to A & B' );
 
 $workbook->close();

@@ -39,6 +39,9 @@ my $worksheet1 = $workbook->add_worksheet();
 my $worksheet2 = $workbook->add_worksheet();
 my $worksheet3 = $workbook->add_worksheet('Data Sheet');
 
+# Turn off default URL format for testing.
+$worksheet1->{_default_url_format} = undef;
+
 $worksheet1->write_url( 'A1',   q(internal:Sheet2!A1) );
 $worksheet1->write_url( 'A3',   q(internal:Sheet2!A1:A5) );
 $worksheet1->write_url( 'A5',   q(internal:'Data Sheet'!D5), 'Some text' );

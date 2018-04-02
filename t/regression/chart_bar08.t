@@ -46,6 +46,9 @@ my $data = [
 
 ];
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 $worksheet->write( 'A1', $data );
 $worksheet->write( 'A7', 'http://www.perl.com/' );
 

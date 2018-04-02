@@ -37,6 +37,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 # Test URL with whitespace.
 $worksheet->write_url( 'A1', 'http://google.com/some link' );
 

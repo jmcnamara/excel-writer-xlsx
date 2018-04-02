@@ -35,6 +35,10 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
+
+# Turn off default URL format for testing.
+$worksheet->{_default_url_format} = undef;
+
 $worksheet->write_url( 'A1', 'http://www.perl.com/?a=1&b=2' );
 
 $workbook->close();

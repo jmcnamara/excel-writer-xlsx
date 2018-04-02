@@ -40,29 +40,29 @@ sub new {
         _xf_index           => undef,
         _dxf_index          => undef,
 
-        _num_format       => 0,
-        _num_format_index => 0,
-        _font_index       => 0,
-        _has_font         => 0,
-        _has_dxf_font     => 0,
-        _font             => 'Calibri',
-        _size             => 11,
-        _bold             => 0,
-        _italic           => 0,
-        _color            => 0x0,
-        _underline        => 0,
-        _font_strikeout   => 0,
-        _font_outline     => 0,
-        _font_shadow      => 0,
-        _font_script      => 0,
-        _font_family      => 2,
-        _font_charset     => 0,
-        _font_scheme      => 'minor',
-        _font_condense    => 0,
-        _font_extend      => 0,
-        _theme            => 0,
-        _hyperlink        => 0,
-        _xf_id            => 0,
+        _num_format        => 0,
+        _num_format_index  => 0,
+        _font_index        => 0,
+        _has_font          => 0,
+        _has_dxf_font      => 0,
+        _font              => 'Calibri',
+        _size              => 11,
+        _bold              => 0,
+        _italic            => 0,
+        _color             => 0x0,
+        _underline         => 0,
+        _font_strikeout    => 0,
+        _font_outline      => 0,
+        _font_shadow       => 0,
+        _font_script       => 0,
+        _font_family       => 2,
+        _font_charset      => 0,
+        _font_scheme       => 'minor',
+        _font_condense     => 0,
+        _font_extend       => 0,
+        _theme             => 0,
+        _hyperlink         => 0,
+        _xf_id             => 0,
 
         _hidden => 0,
         _locked => 1,
@@ -680,17 +680,19 @@ sub set_rotation {
 #
 # set_hyperlink()
 #
-# Set the properties for the hyperlink style.
+# Set the properties for the hyperlink style. This isn't a public method. To
+# be fixed when styles are supported.
 #
 sub set_hyperlink {
 
-    my $self = shift;
+    my $self      = shift;
+    my $hyperlink = shift;
 
-    $self->{_hyperlink} = 1;
-    $self->{_xf_id}     = 1;
+    $self->{_xf_id} = 1;
 
     $self->set_underline( 1 );
     $self->set_theme( 10 );
+    $self->{_hyperlink} = $hyperlink;
 }
 
 
