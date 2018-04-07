@@ -225,9 +225,10 @@ sub new {
         $self->{_fh}           = $fh;
     }
 
-    $self->{_validations}  = [];
-    $self->{_cond_formats} = {};
-    $self->{_dxf_priority} = 1;
+    $self->{_validations}    = [];
+    $self->{_cond_formats}   = {};
+    $self->{_data_bars_2010} = [];
+    $self->{_dxf_priority}   = 1;
 
     if ( $self->{_excel2003_style} ) {
         $self->{_original_row_height}  = 12.75;
@@ -360,8 +361,8 @@ sub _assemble_xml_file {
     # Write the tableParts element.
     $self->_write_table_parts();
 
-    # Write the extLst and sparklines.
-    $self->_write_ext_sparklines();
+    # Write the extLst elements.
+    $self->_write_ext_list();
 
     # Close the worksheet tag.
     $self->xml_end_tag( 'worksheet' );
@@ -3626,27 +3627,39 @@ sub conditional_formatting {
 
     # List of valid input parameters.
     my %valid_parameter = (
-        type          => 1,
-        format        => 1,
-        criteria      => 1,
-        value         => 1,
-        minimum       => 1,
-        maximum       => 1,
-        stop_if_true  => 1,
-        min_type      => 1,
-        mid_type      => 1,
-        max_type      => 1,
-        min_value     => 1,
-        mid_value     => 1,
-        max_value     => 1,
-        min_color     => 1,
-        mid_color     => 1,
-        max_color     => 1,
-        bar_color     => 1,
-        icon_style    => 1,
-        reverse_icons => 1,
-        icons_only    => 1,
-        icons         => 1,
+        type                           => 1,
+        format                         => 1,
+        criteria                       => 1,
+        value                          => 1,
+        minimum                        => 1,
+        maximum                        => 1,
+        stop_if_true                   => 1,
+        min_type                       => 1,
+        mid_type                       => 1,
+        max_type                       => 1,
+        min_value                      => 1,
+        mid_value                      => 1,
+        max_value                      => 1,
+        min_color                      => 1,
+        mid_color                      => 1,
+        max_color                      => 1,
+        bar_color                      => 1,
+        bar_negative_color             => 1,
+        bar_negative_color_same        => 1,
+        bar_solid                      => 1,
+        bar_border_color               => 1,
+        bar_negative_border_color      => 1,
+        bar_negative_border_color_same => 1,
+        bar_no_border                  => 1,
+        bar_direction                  => 1,
+        bar_axis_position              => 1,
+        bar_axis_color                 => 1,
+        bar_only                       => 1,
+        icon_style                     => 1,
+        reverse_icons                  => 1,
+        icons_only                     => 1,
+        icons                          => 1,
+        data_bar_2010                  => 1,
     );
 
     # Check for valid input parameters.
@@ -3662,7 +3675,6 @@ sub conditional_formatting {
         carp "Parameter 'type' is required in conditional_formatting()";
         return -3;
     }
-
 
     # List of  valid validation types.
     my %valid_type = (
@@ -3686,6 +3698,7 @@ sub conditional_formatting {
         'formula'       => 'expression',
         'icon_set'      => 'iconSet',
     );
+
 
     # Check for valid validation types.
     if ( not exists $valid_type{ lc( $param->{type} ) } ) {
@@ -3875,6 +3888,22 @@ sub conditional_formatting {
     # Set the priority based on the order of adding.
     $param->{priority} = $self->{_dxf_priority}++;
 
+    # Check for 2010 style data_bar parameters.
+    if (   $param->{data_bar_2010}
+        || $param->{bar_solid}
+        || $param->{bar_border_color}
+        || $param->{bar_negative_color}
+        || $param->{bar_negative_color_same}
+        || $param->{bar_negative_border_color}
+        || $param->{bar_negative_border_color_same}
+        || $param->{bar_no_border}
+        || $param->{bar_axis_position}
+        || $param->{bar_axis_color}
+        || $param->{bar_direction} )
+    {
+        $param->{_is_data_bar_2010} = 1;
+    }
+
     # Special handling of text criteria.
     if ( $param->{type} eq 'text' ) {
 
@@ -4032,18 +4061,78 @@ sub conditional_formatting {
     # Special handling for data bar.
     if ( $param->{type} eq 'dataBar' ) {
 
-        # Color scales don't use any additional formatting.
+        # Excel 2007 data bars don't use any additional formatting.
         $param->{format} = undef;
 
-        $param->{min_type}  ||= 'min';
-        $param->{max_type}  ||= 'max';
-        $param->{min_value} ||= 0;
-        $param->{max_value} ||= 0;
-        $param->{bar_color} ||= '#638EC6';
+        if ( !defined $param->{min_type} ) {
+            $param->{min_type}      = 'min';
+            $param->{_x14_min_type} = 'autoMin';
+        }
+        else {
+            $param->{_x14_min_type} = $param->{min_type};
+        }
 
-        $param->{bar_color} = $self->_get_palette_color( $param->{bar_color} );
+        if ( !defined $param->{max_type} ) {
+            $param->{max_type}      = 'max';
+            $param->{_x14_max_type} = 'autoMax';
+        }
+        else {
+            $param->{_x14_max_type} = $param->{max_type};
+        }
+
+        $param->{min_value}                      ||= 0;
+        $param->{max_value}                      ||= 0;
+        $param->{bar_color}                      ||= '#638EC6';
+        $param->{bar_border_color}               ||= $param->{bar_color};
+        $param->{bar_only}                       ||= 0;
+        $param->{bar_no_border}                  ||= 0;
+        $param->{bar_solid}                      ||= 0;
+        $param->{bar_direction}                  ||= '';
+        $param->{bar_negative_color}             ||= '#FF0000';
+        $param->{bar_negative_border_color}      ||= '#FF0000';
+        $param->{bar_negative_color_same}        ||= 0;
+        $param->{bar_negative_border_color_same} ||= 0;
+        $param->{bar_axis_position}              ||= '';
+        $param->{bar_axis_color}                 ||= '#000000';
+
+        $param->{bar_color} =
+          $self->_get_palette_color( $param->{bar_color} );
+
+        $param->{bar_border_color} =
+          $self->_get_palette_color( $param->{bar_border_color} );
+
+        $param->{bar_negative_color} =
+          $self->_get_palette_color( $param->{bar_negative_color} );
+
+        $param->{bar_negative_border_color} =
+          $self->_get_palette_color( $param->{bar_negative_border_color} );
+
+        $param->{bar_axis_color} =
+          $self->_get_palette_color( $param->{bar_axis_color} );
+
     }
 
+    # Adjust for 2010 style data_bar parameters.
+    if ( $param->{_is_data_bar_2010} ) {
+
+        $self->{_excel_version} = 2010;
+
+        if ( $param->{min_type} eq 'min' && $param->{min_value} == 0 ) {
+            $param->{min_value} = undef;
+        }
+
+        if ( $param->{max_type} eq 'max' && $param->{max_value} == 0 ) {
+            $param->{max_value} = undef;
+        }
+
+        # Store range for Excel 2010 data bars.
+        $param->{_range} = $range;
+    }
+
+    # Strip the leading = from formulas.
+    $param->{min_value} =~ s/^=// if defined $param->{min_value};
+    $param->{mid_value} =~ s/^=// if defined $param->{mid_value};
+    $param->{max_value} =~ s/^=// if defined $param->{max_value};
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
@@ -4552,7 +4641,6 @@ sub add_sparkline {
 
     # Store the count.
     $sparkline->{_count} = @{ $sparkline->{_locations} };
-
 
     # Get the worksheet name for the range conversion below.
     my $sheetname = quote_sheetname( $self->{_name} );
@@ -8956,7 +9044,13 @@ sub _write_cf_rule {
     elsif ( $param->{type} eq 'dataBar' ) {
 
         $self->xml_start_tag( 'cfRule', @attributes );
+
         $self->_write_data_bar( $param );
+
+        if ($param->{_is_data_bar_2010}) {
+            $self->_write_data_bar_ext( $param );
+        }
+
         $self->xml_end_tag( 'cfRule' );
     }
     elsif ( $param->{type} eq 'expression' ) {
@@ -9077,17 +9171,54 @@ sub _write_color_scale {
 #
 sub _write_data_bar {
 
-    my $self  = shift;
-    my $param = shift;
+    my $self       = shift;
+    my $data_bar   = shift;
+    my @attributes = ();
 
-    $self->xml_start_tag( 'dataBar' );
+    if ( $data_bar->{bar_only} ) {
+        push @attributes, ( 'showValue', 0 );
+    }
 
-    $self->_write_cfvo( $param->{min_type}, $param->{min_value} );
-    $self->_write_cfvo( $param->{max_type}, $param->{max_value} );
+    $self->xml_start_tag( 'dataBar', @attributes );
 
-    $self->_write_color( 'rgb' => $param->{bar_color} );
+    $self->_write_cfvo( $data_bar->{min_type}, $data_bar->{min_value} );
+    $self->_write_cfvo( $data_bar->{max_type}, $data_bar->{max_value} );
+
+    $self->_write_color( 'rgb' => $data_bar->{bar_color} );
 
     $self->xml_end_tag( 'dataBar' );
+}
+
+
+##############################################################################
+#
+# _write_data_bar_ext()
+#
+# Write the <extLst> dataBar extension element.
+#
+sub _write_data_bar_ext {
+
+    my $self      = shift;
+    my $param     = shift;
+
+    # Create a pseudo GUID for each unique Excel 2010 data bar.
+    my $worksheet_count = $self->{_index} + 1;
+    my $data_bar_count  = @{ $self->{_data_bars_2010} } + 1;
+
+    my $guid = sprintf "{DA7ABA51-AAAA-BBBB-%04X-%012X}", $worksheet_count,
+      $data_bar_count;
+
+    # Store the 2010 data bar parameters to write the extLst elements.
+    $param->{_guid} = $guid;
+    push @{$self->{_data_bars_2010}}, $param;
+
+    $self->xml_start_tag( 'extLst' );
+    $self->_write_ext('{B025F937-C7B1-47D3-B67F-A62EFF666E3E}');
+
+    $self->xml_data_element( 'x14:id', $guid);
+
+    $self->xml_end_tag( 'ext' );
+    $self->xml_end_tag( 'extLst' );
 }
 
 
@@ -9104,16 +9235,46 @@ sub _write_cfvo {
     my $value    = shift;
     my $criteria = shift;
 
-    my @attributes = (
-        'type' => $type,
-        'val'  => $value
-    );
+    my @attributes = ( 'type' => $type );
+
+    if ( defined $value ) {
+        push @attributes, ( 'val', $value );
+    }
 
     if ( $criteria ) {
         push @attributes, ( 'gte', 0 );
     }
 
     $self->xml_empty_tag( 'cfvo', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_x14_cfvo()
+#
+# Write the <cfvo> element.
+#
+sub _write_x14_cfvo {
+
+    my $self  = shift;
+    my $type  = shift;
+    my $value = shift;
+
+    my @attributes = ( 'type' => $type );
+
+    if (   $type eq 'min'
+        || $type eq 'max'
+        || $type eq 'autoMin'
+        || $type eq 'autoMax' )
+    {
+        $self->xml_empty_tag( 'x14:cfvo', @attributes );
+    }
+    else {
+        $self->xml_start_tag( 'x14:cfvo', @attributes );
+        $self->xml_data_element( 'xm:f', $value );
+        $self->xml_end_tag( 'x14:cfvo' );
+    }
 }
 
 
@@ -9185,25 +9346,291 @@ sub _write_table_part {
 
 ##############################################################################
 #
-# _write_ext_sparklines()
+# _write_ext_list()
 #
-# Write the <extLst> element and sparkline subelements.
+# Write the <extLst> element for data bars and sparklines.
 #
-sub _write_ext_sparklines {
+sub _write_ext_list {
+
+    my $self            = shift;
+    my $has_data_bars  = scalar @{ $self->{_data_bars_2010} };
+    my $has_sparklines = scalar @{ $self->{_sparklines} };
+
+    if ( !$has_data_bars and !$has_sparklines ) {
+        return;
+    }
+
+    # Write the extLst element.
+    $self->xml_start_tag( 'extLst' );
+
+    if ( $has_data_bars ) {
+        $self->_write_ext_list_data_bars();
+    }
+
+    if ( $has_sparklines ) {
+        $self->_write_ext_list_sparklines();
+    }
+
+    $self->xml_end_tag( 'extLst' );
+}
+
+
+##############################################################################
+#
+# _write_ext_list_data_bars()
+#
+# Write the Excel 2010 data_bar subelements.
+#
+sub _write_ext_list_data_bars {
+
+    my $self      = shift;
+    my @data_bars = @{ $self->{_data_bars_2010} };
+
+    # Write the ext element.
+    $self->_write_ext('{78C0D931-6437-407d-A8EE-F0AAD7539E65}');
+
+
+    $self->xml_start_tag( 'x14:conditionalFormattings' );
+
+    # Write each of the Excel 2010 conditional formatting data bar elements.
+    for my $data_bar (@data_bars) {
+
+        # Write the x14:conditionalFormatting element.
+        $self->_write_conditional_formatting_2010($data_bar);
+    }
+
+    $self->xml_end_tag( 'x14:conditionalFormattings' );
+    $self->xml_end_tag( 'ext' );
+
+
+}
+
+
+##############################################################################
+#
+# _write_conditional_formatting()
+#
+# Write the <x14:conditionalFormatting> element.
+#
+sub _write_conditional_formatting_2010 {
+
+    my $self     = shift;
+    my $data_bar = shift;
+    my $xmlns_xm = 'http://schemas.microsoft.com/office/excel/2006/main';
+
+    my @attributes = ( 'xmlns:xm' => $xmlns_xm );
+
+    $self->xml_start_tag( 'x14:conditionalFormatting', @attributes );
+
+    # Write the '<x14:cfRule element.
+    $self->_write_x14_cf_rule( $data_bar );
+
+    # Write the x14:dataBar element.
+    $self->_write_x14_data_bar( $data_bar );
+
+    # Write the x14 max and min data bars.
+    $self->_write_x14_cfvo( $data_bar->{_x14_min_type},
+        $data_bar->{min_value} );
+
+    $self->_write_x14_cfvo( $data_bar->{_x14_max_type},
+        $data_bar->{max_value} );
+
+    # Write the x14:borderColor element.
+    if ( !$data_bar->{bar_no_border} ) {
+        $self->_write_x14_border_color( $data_bar->{bar_border_color} );
+    }
+
+    # Write the x14:negativeFillColor element.
+    if ( !$data_bar->{bar_negative_color_same} ) {
+        $self->_write_x14_negative_fill_color(
+            $data_bar->{bar_negative_color} );
+    }
+
+    # Write the x14:negativeBorderColor element.
+    if (   !$data_bar->{bar_no_border}
+        && !$data_bar->{bar_negative_border_color_same} )
+    {
+        $self->_write_x14_negative_border_color(
+            $data_bar->{bar_negative_border_color} );
+    }
+
+    # Write the x14:axisColor element.
+    if ( $data_bar->{bar_axis_position} ne 'none') {
+        $self->_write_x14_axis_color($data_bar->{bar_axis_color});
+    }
+
+    # Write closing elements.
+    $self->xml_end_tag( 'x14:dataBar' );
+    $self->xml_end_tag( 'x14:cfRule' );
+
+    # Add the conditional format range.
+    $self->xml_data_element( 'xm:sqref', $data_bar->{_range} );
+
+    $self->xml_end_tag( 'x14:conditionalFormatting' );
+}
+
+
+##############################################################################
+#
+# _write_x14_cf_rule()
+#
+# Write the <'<x14:cfRule> element.
+#
+sub _write_x14_cf_rule {
+
+    my $self     = shift;
+    my $data_bar = shift;
+    my $type     = 'dataBar';
+    my $id       = $data_bar->{_guid};
+
+    my @attributes = (
+        'type' => $type,
+        'id'   => $id,
+    );
+
+    $self->xml_start_tag( 'x14:cfRule', @attributes );
+
+}
+
+
+##############################################################################
+#
+# _write_x14_data_bar()
+#
+# Write the <x14:dataBar> element.
+#
+sub _write_x14_data_bar {
+
+    my $self          = shift;
+    my $data_bar      = shift;
+    my $min_length    = 0;
+    my $max_length    = 100;
+
+    my @attributes = (
+        'minLength' => $min_length,
+        'maxLength' => $max_length,
+    );
+
+    if ( !$data_bar->{bar_no_border} ) {
+        push @attributes, ( 'border', 1 );
+    }
+
+    if ( $data_bar->{bar_solid} ) {
+        push @attributes, ( 'gradient', 0 );
+    }
+
+    if ( $data_bar->{bar_direction} eq 'left' ) {
+        push @attributes, ( 'direction', 'leftToRight' );
+    }
+
+    if ( $data_bar->{bar_direction} eq 'right' ) {
+        push @attributes, ( 'direction', 'rightToLeft' );
+    }
+
+    if ( $data_bar->{bar_negative_color_same} ) {
+        push @attributes, ( 'negativeBarColorSameAsPositive', 1 );
+    }
+
+    if (   !$data_bar->{bar_no_border}
+        && !$data_bar->{bar_negative_border_color_same} )
+    {
+        push @attributes, ( 'negativeBarBorderColorSameAsPositive', 0 );
+    }
+
+    if ( $data_bar->{bar_axis_position} eq 'middle') {
+        push @attributes, ( 'axisPosition', 'middle' );
+    }
+
+    if ( $data_bar->{bar_axis_position} eq 'none') {
+        push @attributes, ( 'axisPosition', 'none' );
+    }
+
+    $self->xml_start_tag( 'x14:dataBar', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_x14_border_color()
+#
+# Write the <x14:borderColor> element.
+#
+sub _write_x14_border_color {
+
+    my $self = shift;
+    my $rgb  = shift;
+
+    my @attributes = ( 'rgb' => $rgb );
+
+    $self->xml_empty_tag( 'x14:borderColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_x14_negative_fill_color()
+#
+# Write the <x14:negativeFillColor> element.
+#
+sub _write_x14_negative_fill_color {
+
+    my $self = shift;
+    my $rgb  = shift;
+
+    my @attributes = ( 'rgb' => $rgb );
+
+    $self->xml_empty_tag( 'x14:negativeFillColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_x14_negative_border_color()
+#
+# Write the <x14:negativeBorderColor> element.
+#
+sub _write_x14_negative_border_color {
+
+    my $self = shift;
+    my $rgb  = shift;
+
+    my @attributes = ( 'rgb' => $rgb );
+
+    $self->xml_empty_tag( 'x14:negativeBorderColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_x14_axis_color()
+#
+# Write the <x14:axisColor> element.
+#
+sub _write_x14_axis_color {
+
+    my $self = shift;
+    my $rgb  = shift;
+
+    my @attributes = ( 'rgb' => $rgb );
+
+    $self->xml_empty_tag( 'x14:axisColor', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_ext_list_sparklines()
+#
+# Write the sparkline subelements.
+#
+sub _write_ext_list_sparklines {
 
     my $self       = shift;
     my @sparklines = @{ $self->{_sparklines} };
     my $count      = scalar @sparklines;
 
-    # Return if worksheet doesn't contain any sparklines.
-    return unless $count;
-
-
-    # Write the extLst element.
-    $self->xml_start_tag( 'extLst' );
-
     # Write the ext element.
-    $self->_write_ext();
+    $self->_write_ext('{05C60535-1F16-4fd2-B633-F4F36F0B64E0}');
 
     # Write the x14:sparklineGroups element.
     $self->_write_sparkline_groups();
@@ -9250,7 +9677,6 @@ sub _write_ext_sparklines {
 
     $self->xml_end_tag( 'x14:sparklineGroups' );
     $self->xml_end_tag( 'ext' );
-    $self->xml_end_tag( 'extLst' );
 }
 
 
@@ -9287,17 +9713,17 @@ sub _write_sparklines {
 #
 # _write_ext()
 #
-# Write the <ext> element.
+# Write the <ext> element for sparklines.
 #
 sub _write_ext {
 
-    my $self       = shift;
-    my $schema     = 'http://schemas.microsoft.com/office/';
-    my $xmlns_x_14 = $schema . 'spreadsheetml/2009/9/main';
-    my $uri        = '{05C60535-1F16-4fd2-B633-F4F36F0B64E0}';
+    my $self      = shift;
+    my $uri       = shift;
+    my $schema    = 'http://schemas.microsoft.com/office/';
+    my $xmlns_x14 = $schema . 'spreadsheetml/2009/9/main';
 
     my @attributes = (
-        'xmlns:x14' => $xmlns_x_14,
+        'xmlns:x14' => $xmlns_x14,
         'uri'       => $uri,
     );
 
