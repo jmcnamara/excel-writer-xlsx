@@ -4663,11 +4663,24 @@ Other, less commonly used parameters are:
     mid_color
     max_color
     bar_color
-    stop_if_true
+    bar_only
+    bar_solid
+    bar_negative_color
+    bar_border_color
+    bar_negative_border_color
+    bar_negative_color_same
+    bar_negative_border_color_same
+    bar_no_border
+    bar_direction
+    bar_axis_position
+    bar_axis_color
+    data_bar_2010
     icon_style
     icons
     reverse_icons
     icons_only
+    stop_if_true
+    multi_range
 
 Additional parameters which are used for specific conditional format types are shown in the relevant sections below.
 
@@ -4683,52 +4696,89 @@ The C<type> parameter is used to set the type of conditional formatting that you
                     value
                     minimum
                     maximum
+                    format
 
     date            criteria
                     value
                     minimum
                     maximum
+                    format
 
     time_period     criteria
+                    format
 
     text            criteria
                     value
+                    format
 
     average         criteria
+                    format
 
-    duplicate       (none)
+    duplicate       format
 
-    unique          (none)
+    unique          format
 
     top             criteria
                     value
+                    format
 
     bottom          criteria
                     value
+                    format
 
-    blanks          (none)
+    blanks          format
 
-    no_blanks       (none)
+    no_blanks       format
 
-    errors          (none)
+    errors          format
 
-    no_errors       (none)
-
-    2_color_scale   (none)
-
-    3_color_scale   (none)
-
-    data_bar        (none)
+    no_errors       format
 
     formula         criteria
+                    format
+
+    2_color_scale   min_type
+                    max_type
+                    min_value
+                    max_value
+                    min_color
+                    max_color
+
+    3_color_scale   min_type
+                    mid_type
+                    max_type
+                    min_value
+                    mid_value
+                    max_value
+                    min_color
+                    mid_color
+                    max_color
+
+    data_bar        min_type
+                    max_type
+                    min_value
+                    max_value
+                    bar_only
+                    bar_color
+                    bar_solid*
+                    bar_negative_color*
+                    bar_border_color*
+                    bar_negative_border_color*
+                    bar_negative_color_same*
+                    bar_negative_border_color_same*
+                    bar_no_border*
+                    bar_direction*
+                    bar_axis_position*
+                    bar_axis_color*
+                    data_bar_2010*
 
     icon_set        icon_style
                     reverse_icons
                     icons
                     icons_only
 
+Data bar parameters marked with (*) are only available in Excel 2010 and later. Files that use these properties can still be opened in Excel 2007 but the data bars will be displayed without them.
 
-All conditional formatting types, apart from C<icon_set> have a C<format> parameter, see below.
 
 =head2 type => 'cell'
 
@@ -5039,6 +5089,22 @@ The C<no_errors> type is used to highlight non error cells in a range:
     );
 
 
+
+=head2 type => 'formula'
+
+The C<formula> type is used to specify a conditional format based on a user defined formula:
+
+    $worksheet->conditional_formatting( 'A1:A4',
+        {
+            type     => 'formula',
+            criteria => '=$A$1 > 5',
+            format   => $format,
+        }
+    );
+
+The formula is specified in the C<criteria>.
+
+
 =head2 type => '2_color_scale'
 
 The C<2_color_scale> type is used to specify Excel's "2 Color Scale" style conditional format.
@@ -5075,23 +5141,30 @@ The C<data_bar> type is used to specify Excel's "Data Bar" style conditional for
         }
     );
 
-This conditional type can be modified with C<min_type>, C<max_type>, C<min_value>, C<max_value> and C<bar_color>, see below.
+This data bar conditional type can be modified with the following parameters, which are explained in the sections below. These properties were available in the original xlsx file specification used in Excel 2007::
 
+    min_type
+    max_type
+    min_value
+    max_value
+    bar_color
+    bar_only
 
+In Excel 2010 additional data bar properties were added such as solid (non-gradient) bars and control over how negative values are displayed. These properties can be set using the following parameters:
 
-=head2 type => 'formula'
+    bar_solid
+    bar_negative_color
+    bar_border_color
+    bar_negative_border_color
+    bar_negative_color_same
+    bar_negative_border_color_same
+    bar_no_border
+    bar_direction
+    bar_axis_position
+    bar_axis_color
+    data_bar_2010
 
-The C<formula> type is used to specify a conditional format based on a user defined formula:
-
-    $worksheet->conditional_formatting( 'A1:A4',
-        {
-            type     => 'formula',
-            criteria => '=$A$1 > 5',
-            format   => $format,
-        }
-    );
-
-The formula is specified in the C<criteria>.
+Files that use these Excel 2010 properties can still be opened in Excel 2007 but the data bars will be displayed without them.
 
 
 
@@ -5237,7 +5310,135 @@ The C<min_color> and C<max_color> properties are available when the conditional 
         }
     );
 
-The color can be specifies as an Excel::Writer::XLSX color index or, more usefully, as a HTML style RGB hex number, as shown above.
+The color can be specified as an Excel::Writer::XLSX color index or, more usefully, as a HTML style RGB hex number, as shown above.
+
+
+=head2 bar_only
+
+The C<bar_only> parameter property displays a bar data but not the data in the cells:
+
+    $worksheet->conditional_formatting( 'D3:D14',
+        {
+            type     => 'data_bar',
+            bar_only => 1
+        }
+    );
+
+
+=head2 bar_solid
+
+The C<bar_solid> parameter turns on a solid (non-gradient) fill for data bars:
+
+
+    $worksheet->conditional_formatting( 'H3:H14',
+        {
+            type      => 'data_bar',
+            bar_solid => 1
+        }
+    );
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_negative_color
+
+The C<bar_negative_color> parameter is used to set the color fill for the negative portion of a data bar.
+
+The color can be specified as an Excel::Writer::XLSX color index or as a HTML style RGB hex number, as shown in the other examples.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_border_color
+
+The C<bar_border_color> parameter is used to set the border color of a data bar.
+
+The color can be specified as an Excel::Writer::XLSX color index or as a HTML style RGB hex number, as shown in the other examples.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_negative_border_color
+
+The C<bar_negative_border_color> parameter is used to set the border color of the negative portion of a data bar.
+
+The color can be specified as an Excel::Writer::XLSX color index or as a HTML style RGB hex number, as shown in the other examples.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_negative_color_same
+
+The C<bar_negative_color_same> parameter sets the fill color for the negative portion of a data bar to be the same as the fill color for the positive portion of the data bar:
+
+    $worksheet->conditional_formatting( 'N3:N14',
+        {
+            type                           => 'data_bar',
+            bar_negative_color_same        => 1,
+            bar_negative_border_color_same => 1
+        }
+    );
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_negative_border_color_same
+
+The C<bar_negative_border_color_same> parameter sets the border color for the negative portion of a data bar to be the same as the border color for the positive portion of the data bar.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_no_border
+
+The C<bar_no_border> parameter turns off the border of a data bar.
+
+
+Note, this property is only visible in Excel 2010 and later, however the default in Excel 2007 is not to have a border.
+
+
+=head2 bar_direction
+
+The C<bar_direction> parameter sets the direction for data bars. This property can be either C<left> for left-to-right or C<right> for right-to-left. If the property isn't set then Excel will adjust the position automatically based on the context:
+
+    $worksheet->conditional_formatting( 'J3:J14',
+        {
+            type          => 'data_bar',
+            bar_direction => 'right'
+        }
+    );
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_axis_position
+
+The C<bar_axis_position> parameter sets the position within the cells for the axis that is shown in data bars when there are negative values to display. The property can be either C<middle> or C<none>. If the property isn't set then Excel will position the axis based on the range of positive and negative values.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 bar_axis_color
+
+The C<bar_axis_color> parameter sets the color for the axis that is shown in data bars when there are negative values to display.
+
+The color can be specified as an Excel::Writer::XLSX color index or as a HTML style RGB hex number, as shown in the other examples.
+
+Note, this property is only visible in Excel 2010 and later.
+
+
+=head2 data_bar_2010
+
+The C<data_bar_2010> parameter sets Excel 2010 style data bars even when Excel 2010 specific properties aren't used. This can be used to create consistency across all the data bar formatting in a worksheet:
+
+    $worksheet->conditional_formatting( 'L3:L14',
+        {
+            type          => 'data_bar',
+            data_bar_2010 => 1
+        }
+    );
+
+Note, this property is only visible in Excel 2010 and later.
 
 
 =head2 stop_if_true

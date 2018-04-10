@@ -233,7 +233,7 @@ $worksheet6->conditional_formatting( 'B3:K6,B9:K12',
 #
 # Example 7.
 #
-$caption = 'Examples of color scales and data bars. Default colors.';
+$caption = 'Examples of color scales with default and user colors.';
 
 $data = [ 1 .. 12 ];
 
@@ -242,11 +242,14 @@ $worksheet7->write( 'A1', $caption );
 $worksheet7->write    ( 'B2', "2 Color Scale" );
 $worksheet7->write_col( 'B3', $data );
 
-$worksheet7->write    ( 'D2', "3 Color Scale" );
+$worksheet7->write    ( 'D2', "2 Color Scale + user colors" );
 $worksheet7->write_col( 'D3', $data );
 
-$worksheet7->write    ( 'F2', "Data Bars" );
-$worksheet7->write_col( 'F3', $data );
+$worksheet7->write    ( 'G2', "3 Color Scale" );
+$worksheet7->write_col( 'G3', $data );
+
+$worksheet7->write    ( 'I2', "3 Color Scale + user colors" );
+$worksheet7->write_col( 'I3', $data );
 
 
 $worksheet7->conditional_formatting( 'B3:B14',
@@ -261,34 +264,7 @@ $worksheet7->conditional_formatting( 'D3:D14',
     }
 );
 
-$worksheet7->conditional_formatting( 'F3:F14',
-    {
-        type => 'data_bar',
-    }
-);
-
-
-###############################################################################
-#
-# Example 8.
-#
-$caption = 'Examples of color scales and data bars. Modified colors.';
-
-$data = [ 1 .. 12 ];
-
-$worksheet8->write( 'A1', $caption );
-
-$worksheet8->write    ( 'B2', "2 Color Scale" );
-$worksheet8->write_col( 'B3', $data );
-
-$worksheet8->write    ( 'D2', "3 Color Scale" );
-$worksheet8->write_col( 'D3', $data );
-
-$worksheet8->write    ( 'F2', "Data Bars" );
-$worksheet8->write_col( 'F3', $data );
-
-
-$worksheet8->conditional_formatting( 'B3:B14',
+$worksheet7->conditional_formatting( 'G3:G14',
     {
         type      => '2_color_scale',
         min_color => "#FF0000",
@@ -297,12 +273,60 @@ $worksheet8->conditional_formatting( 'B3:B14',
     }
 );
 
-$worksheet8->conditional_formatting( 'D3:D14',
+$worksheet7->conditional_formatting( 'I3:I14',
     {
         type      => '3_color_scale',
         min_color => "#C5D9F1",
         mid_color => "#8DB4E3",
         max_color => "#538ED5",
+    }
+);
+
+
+###############################################################################
+#
+# Example 8.
+#
+$caption = 'Examples of data bars.';
+
+$data = [ 1 .. 12 ];
+
+$worksheet8->write( 'A1', $caption );
+
+$worksheet8->write    ( 'B2', "Default data bars" );
+$worksheet8->write_col( 'B3', $data );
+
+$worksheet8->write    ( 'D2', "Bars only" );
+$worksheet8->write_col( 'D3', $data );
+
+$worksheet8->write    ( 'F2', "With user color" );
+$worksheet8->write_col( 'F3', $data );
+
+$worksheet8->write    ( 'H2', "Solid bars" );
+$worksheet8->write_col( 'H3', $data );
+
+$worksheet8->write    ( 'J2', "Right to left" );
+$worksheet8->write_col( 'J3', $data );
+
+$data = [-1, -2, -3, -2, -1, 0, 1, 2, 3, 2, 1, 0];
+
+$worksheet8->write    ( 'L2', "Excel 2010 style" );
+$worksheet8->write_col( 'L3', $data );
+
+$worksheet8->write    ( 'N2', "Negative same as positive" );
+$worksheet8->write_col( 'N3', $data );
+
+
+$worksheet8->conditional_formatting( 'B3:B14',
+    {
+        type      => 'data_bar'
+    }
+);
+
+$worksheet8->conditional_formatting( 'D3:D14',
+    {
+        type     => 'data_bar',
+        bar_only => 1
     }
 );
 
@@ -312,7 +336,34 @@ $worksheet8->conditional_formatting( 'F3:F14',
         bar_color => '#63C384'
     }
 );
+$worksheet8->conditional_formatting( 'H3:H14',
+    {
+        type      => 'data_bar',
+        bar_solid => 1
+    }
+);
 
+$worksheet8->conditional_formatting( 'J3:J14',
+    {
+        type          => 'data_bar',
+        bar_direction => 'right'
+    }
+);
+
+$worksheet8->conditional_formatting( 'L3:L14',
+    {
+        type          => 'data_bar',
+        data_bar_2010 => 1
+    }
+);
+
+$worksheet8->conditional_formatting( 'N3:N14',
+    {
+        type                           => 'data_bar',
+        bar_negative_color_same        => 1,
+        bar_negative_border_color_same => 1
+    }
+);
 
 
 ###############################################################################
@@ -388,6 +439,3 @@ $worksheet9->conditional_formatting( 'B9:F9',
 
 
 __END__
-
-
-

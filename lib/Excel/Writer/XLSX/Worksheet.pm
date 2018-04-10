@@ -225,10 +225,11 @@ sub new {
         $self->{_fh}           = $fh;
     }
 
-    $self->{_validations}    = [];
-    $self->{_cond_formats}   = {};
-    $self->{_data_bars_2010} = [];
-    $self->{_dxf_priority}   = 1;
+    $self->{_validations}        = [];
+    $self->{_cond_formats}       = {};
+    $self->{_data_bars_2010}     = [];
+    $self->{_use_data_bars_2010} = 0;
+    $self->{_dxf_priority}       = 1;
 
     if ( $self->{_excel2003_style} ) {
         $self->{_original_row_height}  = 12.75;
@@ -3889,7 +3890,8 @@ sub conditional_formatting {
     $param->{priority} = $self->{_dxf_priority}++;
 
     # Check for 2010 style data_bar parameters.
-    if (   $param->{data_bar_2010}
+    if (   $self->{_use_data_bars_2010}
+        || $param->{data_bar_2010}
         || $param->{bar_solid}
         || $param->{bar_border_color}
         || $param->{bar_negative_color}
