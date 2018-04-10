@@ -215,6 +215,7 @@ t/package/app/app02.t
 t/package/app/app03.t
 t/package/app/sub_write_xml_declaration.t
 t/package/comments/comments_01.t
+t/package/comments/comments_02.t
 t/package/comments/sub_write_text_t.t
 t/package/comments/sub_write_xml_declaration.t
 t/package/content_types/content_types.t
@@ -399,6 +400,7 @@ t/regression/chart_chartarea02.t
 t/regression/chart_chartarea03.t
 t/regression/chart_chartarea04.t
 t/regression/chart_chartarea05.t
+t/regression/chart_chartarea06.t
 t/regression/chart_clustered01.t
 t/regression/chart_column01.t
 t/regression/chart_column02.t
@@ -772,6 +774,10 @@ t/regression/hyperlink24.t
 t/regression/hyperlink25.t
 t/regression/hyperlink26.t
 t/regression/hyperlink27.t
+t/regression/hyperlink28.t
+t/regression/hyperlink29.t
+t/regression/hyperlink30.t
+t/regression/hyperlink31.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -1100,6 +1106,7 @@ t/regression/xlsx_files/chart_chartarea01.xlsx
 t/regression/xlsx_files/chart_chartarea03.xlsx
 t/regression/xlsx_files/chart_chartarea04.xlsx
 t/regression/xlsx_files/chart_chartarea05.xlsx
+t/regression/xlsx_files/chart_chartarea06.xlsx
 t/regression/xlsx_files/chart_clustered01.xlsx
 t/regression/xlsx_files/chart_column01.xlsx
 t/regression/xlsx_files/chart_column02.xlsx
@@ -1463,6 +1470,10 @@ t/regression/xlsx_files/hyperlink24.xlsx
 t/regression/xlsx_files/hyperlink25.xlsx
 t/regression/xlsx_files/hyperlink26.xlsx
 t/regression/xlsx_files/hyperlink27.xlsx
+t/regression/xlsx_files/hyperlink28.xlsx
+t/regression/xlsx_files/hyperlink29.xlsx
+t/regression/xlsx_files/hyperlink30.xlsx
+t/regression/xlsx_files/hyperlink31.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1794,6 +1805,20 @@ t/worksheet/worksheet_cond_format_21.t
 t/worksheet/worksheet_cond_format_22.t
 t/worksheet/worksheet_cond_format_23.t
 t/worksheet/worksheet_cond_format_24.t
+t/worksheet/worksheet_data_bar_01.t
+t/worksheet/worksheet_data_bar_02.t
+t/worksheet/worksheet_data_bar_03.t
+t/worksheet/worksheet_data_bar_04.t
+t/worksheet/worksheet_data_bar_05.t
+t/worksheet/worksheet_data_bar_06.t
+t/worksheet/worksheet_data_bar_07.t
+t/worksheet/worksheet_data_bar_08.t
+t/worksheet/worksheet_data_bar_09.t
+t/worksheet/worksheet_data_bar_10.t
+t/worksheet/worksheet_data_bar_11.t
+t/worksheet/worksheet_data_bar_12.t
+t/worksheet/worksheet_data_bar_13.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t
+~$outline.xlsx

@@ -5,6 +5,19 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+
+0.97 2018-04-10
+
+   + Added Excel 2010 data bar features such as solid fills and control over
+     the display of negative values.
+
+   + Added default formatting for hyperlinks if none is specified. The format
+     is the Excel hyperlink style so links change colour after they are
+     clicked.
+
+   ! Fixed missing plotarea formatting in pie/doughnut charts.
+
+
 0.96 2017-09-16
 
    + Added icon sets to conditional formatting. Feature request #116.
