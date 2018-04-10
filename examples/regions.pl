@@ -44,3 +44,7 @@ $south->set_column( 0, 0, 20 );
 
 # Set the active cell
 $south->set_selection( 0, 1 );
+
+$workbook->close();
+
+__END__

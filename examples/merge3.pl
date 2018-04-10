@@ -42,3 +42,6 @@ $worksheet->merge_range( 'B4:D4', 'http://www.perl.com', $format );
 $worksheet->merge_range( 'B7:D8', 'http://www.perl.com', $format );
 
 
+$workbook->close();
+
+__END__

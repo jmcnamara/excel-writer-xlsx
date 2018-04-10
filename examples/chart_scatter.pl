@@ -200,6 +200,6 @@ $chart5->set_style( 15 );
 $worksheet->insert_chart( 'D66', $chart5, 25, 11 );
 
 
-
+$workbook->close();
 
 __END__

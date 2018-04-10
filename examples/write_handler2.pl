@@ -66,6 +66,7 @@ $worksheet->write( 'B1', '0000001', $id_format );
 $worksheet->write( 'C1', '0000002', $id_format );
 $worksheet->write( 'D1', '0000003', $id_format );
 
+$workbook->close();
 
 __END__
 

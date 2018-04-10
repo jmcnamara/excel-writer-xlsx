@@ -67,4 +67,6 @@ $worksheet->write( 9, 1, '=STDEV(B2:I2)' );
 $worksheet->write( 10, 0, 'Kurtosis', $format );
 $worksheet->write( 10, 1, '=KURT(B2:I2)' );
 
+$workbook->close();
+
 __END__

@@ -135,3 +135,6 @@ $worksheet6->set_header( $header6 );
 $worksheet6->set_column( 'A:A', 50 );
 $worksheet6->write( 'A1', $preview );
 
+$workbook->close();
+
+__END__

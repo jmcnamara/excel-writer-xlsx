@@ -5,7 +5,7 @@ NAME
 DESCRIPTION
 
     The Excel::Writer::XLSX module can be used to create a new Excel file
-    in the 2007+ XLSX format. 
+    in the 2007+ XLSX format.
 
     The module supports the following Excel features:
 
@@ -61,6 +61,8 @@ SYNOPSIS
         # Write a number and a formula using A1 notation
         $worksheet->write('A3', 1.2345);
         $worksheet->write('A4', '=SIN(PI()/4)');
+
+        $workbook->close();
 
 
 INSTALLATION

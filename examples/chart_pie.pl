@@ -103,6 +103,6 @@ $chart3->set_rotation(90);
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'C34', $chart3, 25, 10 );
 
-
+$workbook->close();
 
 __END__

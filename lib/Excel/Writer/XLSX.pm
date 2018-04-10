@@ -75,6 +75,7 @@ To write a string, a formatted string, a number and a formula to the first works
     $worksheet->write( 'A3', 1.2345 );
     $worksheet->write( 'A4', '=SIN(PI()/4)' );
 
+    $workbook->close();
 
 
 
@@ -104,13 +105,15 @@ The main advantage of the XLSX format over the XLS format is that it allows a la
 
 =head1 QUICK START
 
-Excel::Writer::XLSX tries to provide an interface to as many of Excel's features as possible. As a result there is a lot of documentation to accompany the interface and it can be difficult at first glance to see what it important and what is not. So for those of you who prefer to assemble Ikea furniture first and then read the instructions, here are three easy steps:
+Excel::Writer::XLSX tries to provide an interface to as many of Excel's features as possible. As a result there is a lot of documentation to accompany the interface and it can be difficult at first glance to see what it important and what is not. So for those of you who prefer to assemble Ikea furniture first and then read the instructions, here are four easy steps:
 
 1. Create a new Excel I<workbook> (i.e. file) using C<new()>.
 
 2. Add a worksheet to the new workbook using C<add_worksheet()>.
 
 3. Write to the worksheet using C<write()>.
+
+4. C<close()> the file.
 
 Like this:
 
@@ -119,6 +122,9 @@ Like this:
     my $workbook = Excel::Writer::XLSX->new( 'perl.xlsx' );    # Step 1
     $worksheet = $workbook->add_worksheet();                   # Step 2
     $worksheet->write( 'A1', 'Hi Excel!' );                    # Step 3
+
+    $workbook->close();                                        # Step 4
+
 
 This will create an Excel file called C<perl.xlsx> with a single worksheet and the text C<'Hi Excel!'> in the relevant cell. And that's it. Okay, so there is actually a zeroth step as well, but C<use module> goes without saying. There are many examples that come with the distribution and which you can use to get you started. See L</EXAMPLES>.
 
@@ -163,6 +169,8 @@ A new Excel workbook is created using the C<new()> constructor which accepts eit
     my $workbook  = Excel::Writer::XLSX->new( 'filename.xlsx' );
     my $worksheet = $workbook->add_worksheet();
     $worksheet->write( 0, 0, 'Hi Excel!' );
+    $workbook->close();
+
 
 Here are some other examples of using C<new()> with filenames:
 
@@ -388,9 +396,13 @@ The C<set_vba_name()> method can be used to set the VBA codename for the workboo
 
 =head2 close()
 
-In general your Excel file will be closed automatically when your program ends or when the Workbook object goes out of scope, however the C<close()> method can be used to explicitly close an Excel file.
+In general your Excel file will be closed automatically when your program ends or when the Workbook object goes out of scope. However it is recommended to explicitly call the C<close()> method close the Excel file and avoid the potential issues outlined below. The C<close()> method is called like this:
 
     $workbook->close();
+
+The return value of C<close()> is the same as that returned by perl when it closes the file created by C<new()>. This allows you to handle error conditions in the usual way:
+
+    $workbook->close() or die "Error closing file: $!";
 
 An explicit C<close()> is required if the file must be closed prior to performing some external action on it such as copying it, reading its size or attaching it to an email.
 
@@ -410,11 +422,7 @@ If the C<new()>, C<add_worksheet()> or C<add_format()> methods are called in sub
 
 The reason for this is that Excel::Writer::XLSX relies on Perl's C<DESTROY> mechanism to trigger destructor methods in a specific sequence. This may not happen in cases where the Workbook, Worksheet and Format variables are not lexically scoped or where they have different lexical scopes.
 
-In general, if you create a file with a size of 0 bytes or you fail to create a file you need to call C<close()>.
-
-The return value of C<close()> is the same as that returned by perl when it closes the file created by C<new()>. This allows you to handle error conditions in the usual way:
-
-    $workbook->close() or die "Error closing file: $!";
+To avoid these issues it is recommended that you always close the Excel::Writer::XLSX filehandle using C<close()>.
 
 
 
@@ -1122,6 +1130,7 @@ The C<write_row()> method allows the following idiomatic conversion of a text fi
 
     $worksheet->write( $. -1, 0, [split] ) while <INPUT>;
 
+    $workbook->close();
 
 
 
@@ -4020,6 +4029,7 @@ A date or time in Excel is just like any other number. To have the number displa
     my $format7 = $workbook->add_format( num_format => 'mmm d yyyy hh:mm AM/PM' );
     $worksheet->write('A7', $number , $format7);     #  Feb 28 2008 12:00 PM
 
+    $workbook->close();
 
 =head2 Excel::Writer::XLSX doesn't automatically convert date/time strings
 
@@ -4086,6 +4096,8 @@ Here is an example:
         }
         $row++;
     }
+
+    $workbook->close();
 
     __DATA__
     Item    Cost    Date
@@ -6622,6 +6634,7 @@ The following example shows some of the basic features of Excel::Writer::XLSX.
 
     $worksheet->write( 10, 0, 'http://www.perl.com/', $hyperlink_format );
 
+    $workbook->close();
 
 =begin html
 
@@ -6675,6 +6688,7 @@ The following is a general example which demonstrates some features of working w
     # Set the active cell
     $south->set_selection( 0, 1 );
 
+    $workbook->close();
 
 =begin html
 
@@ -6757,6 +6771,7 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file. The
         }
     );
 
+    $workbook->close();
 
 =begin html
 
@@ -6834,6 +6849,7 @@ The following is a simple example of using functions.
     $worksheet->write( 10, 0, 'Kurtosis', $format );
     $worksheet->write( 10, 1, '=KURT(B2:I2)' );
 
+    $workbook->close();
 
 =begin html
 
@@ -6875,6 +6891,7 @@ The following example converts a tab separated file called C<tab.txt> into an Ex
         $row++;
     }
 
+    $workbook->close();
 
 NOTE: This is a simple conversion program for illustrative purposes only. For converting a CSV or Tab separated or any other type of delimited text file to Excel I recommend the more rigorous csv2xls program that is part of H.Merijn Brand's L<Text::CSV_XS> module distro.
 

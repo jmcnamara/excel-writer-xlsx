@@ -133,5 +133,8 @@ $cha_links->write_url( 'A1', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B6', $c
 $cha_sales->write_url( 'B8', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B8', $cha_url_format, 'Back' );
 $cha_data->write_url ( 'B9', 'external:C:/Temp/Europe/Ireland.xlsx#Links!B9', $cha_url_format, 'Back' );
 
+$ireland->close();
+$italy->close();
+$china->close();
 
 __END__

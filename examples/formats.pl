@@ -511,4 +511,7 @@ sub misc {
     $worksheet->write( 13, 2, 'Shadow (Macintosh only)',  $format07 );
 }
 
+
+$workbook->close();
+
 __END__

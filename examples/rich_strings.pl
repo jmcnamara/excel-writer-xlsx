@@ -39,5 +39,6 @@ $worksheet->write_rich_string( 'A5',
 $worksheet->write_rich_string( 'A7',
     $italic, 'j = k', $super, '(n-1)', $center );
 
+$workbook->close();
 
 __END__

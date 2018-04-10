@@ -22,4 +22,6 @@ $worksheet2->right_to_left();
 $worksheet1->write( 0, 0, 'Hello' );    #  A1, B1, C1, ...
 $worksheet2->write( 0, 0, 'Hello' );    # ..., C1, B1, A1
 
+$workbook->close();
 
+__END__

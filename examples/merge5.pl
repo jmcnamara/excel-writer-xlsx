@@ -73,3 +73,6 @@ my $format3 = $workbook->add_format(
 
 $worksheet->merge_range( 'F4:F9', 'Rotation -90°', $format3 );
 
+$workbook->close();
+
+__END__

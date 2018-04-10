@@ -91,5 +91,6 @@ $chart2->set_legend( position => 'none' );
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'D18', $chart2, 25, 11 );
 
+$workbook->close();
 
 __END__

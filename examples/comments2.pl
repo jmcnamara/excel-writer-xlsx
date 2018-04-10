@@ -344,4 +344,6 @@ $comment = 'Hello.';
 $worksheet8->write( 'C6', $cell_text, $text_wrap );
 $worksheet8->write_comment( 'C6', $comment );
 
+$workbook->close();
+
 __END__

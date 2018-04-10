@@ -66,4 +66,6 @@ $chart->set_y_axis( name => 'Share price', );
 
 $worksheet->insert_chart( 'E9', $chart );
 
+$workbook->close();
+
 __END__

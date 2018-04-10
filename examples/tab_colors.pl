@@ -23,3 +23,7 @@ my $worksheet4 = $workbook->add_worksheet();
 $worksheet2->set_tab_color( 'red' );
 $worksheet3->set_tab_color( 'green' );
 $worksheet4->set_tab_color( '#FF6600'); # Orange
+
+$workbook->close();
+
+__END__

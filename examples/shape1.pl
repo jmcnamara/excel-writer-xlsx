@@ -29,4 +29,6 @@ $worksheet->insert_shape( 'A1', $ellipse, 50, 50 );
 my $plus = $workbook->add_shape( type => 'plus', width => 20, height => 20 );
 $worksheet->insert_shape( 'D8', $plus );
 
+$workbook->close();
+
 __END__

@@ -34,6 +34,7 @@ $worksheet->write( 'B6',  'Text', $format2 );
 $worksheet->write( 'B9',  'Text', $format3 );
 $worksheet->write( 'B12', 'Text', $format4 );
 
+$workbook->close();
 
 __END__
 

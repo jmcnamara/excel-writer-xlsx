@@ -307,6 +307,7 @@ $worksheet->data_validation(
     }
 );
 
+$workbook->close();
 
 __END__
 

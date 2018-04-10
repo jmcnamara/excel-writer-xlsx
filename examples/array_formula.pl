@@ -29,6 +29,8 @@ $worksheet->write_array_formula( 'A2:A2', '{=SUM(B1:C1*B2:C2)}' );
 # Write an array formula that returns a range of values
 $worksheet->write_array_formula( 'A5:A7', '{=TREND(C5:C7,B5:B7)}' );
 
+$workbook->close();
+
 __END__
 
 

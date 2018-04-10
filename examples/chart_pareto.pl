@@ -82,5 +82,6 @@ $column_chart->combine( $line_chart );
 # Insert the chart into the worksheet.
 $worksheet->insert_chart( 'F2', $column_chart );
 
+$workbook->close();
 
 __END__

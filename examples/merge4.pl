@@ -86,3 +86,6 @@ my $format4 = $workbook->add_format(
 $worksheet->merge_range( 'B11:D12', 'Justified: ' . 'so on and ' x 18,
     $format4 );
 
+$workbook->close();
+
+__END__

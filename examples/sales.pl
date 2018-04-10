@@ -92,6 +92,7 @@ my $total = '=SUM(D2:' . xl_rowcol_to_cell( $row - 1, 3 ) . ")";
 
 $worksheet->write( $row, 3, $total, $total_format );
 
+$workbook->close();
 
 __DATA__
 586 card,20,125.50,5/12/01

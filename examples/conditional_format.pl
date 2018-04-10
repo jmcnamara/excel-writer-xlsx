@@ -336,6 +336,7 @@ $worksheet8->conditional_formatting( 'F3:F14',
         bar_color => '#63C384'
     }
 );
+
 $worksheet8->conditional_formatting( 'H3:H14',
     {
         type      => 'data_bar',
@@ -437,5 +438,6 @@ $worksheet9->conditional_formatting( 'B9:F9',
     }
 );
 
+$workbook->close();
 
 __END__

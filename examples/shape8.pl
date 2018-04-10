@@ -63,5 +63,7 @@ $cxn_shape->set_end( $p4->get_id() );
 $cxn_shape->set_adjustments( -50, 45, 120 );
 $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
 
+$workbook->close();
+
 __END__
 

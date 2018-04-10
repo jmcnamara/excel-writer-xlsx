@@ -108,4 +108,6 @@ $line_chart2->set_y2_axis( name => 'Target length (mm)' );
 # Insert the chart into the worksheet
 $worksheet->insert_chart( 'E18', $column_chart2 );
 
+$workbook->close();
+
 __END__

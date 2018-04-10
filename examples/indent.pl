@@ -25,5 +25,6 @@ $worksheet->set_column( 'A:A', 40 );
 $worksheet->write( 'A1', "This text is indented 1 level",  $indent1 );
 $worksheet->write( 'A2', "This text is indented 2 levels", $indent2 );
 
+$workbook->close();
 
 __END__

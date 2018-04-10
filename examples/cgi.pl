@@ -51,4 +51,6 @@ $format->set_color( 'blue' );
 # Write to the workbook
 $worksheet->write( 0, 0, "Hi Excel!", $format );
 
+$workbook->close();
+
 __END__

@@ -126,5 +126,6 @@ $chart3->set_style( 13 );
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'D34', $chart3, 25, 11 );
 
+$workbook->close();
 
 __END__

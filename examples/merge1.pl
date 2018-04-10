@@ -35,3 +35,6 @@ $worksheet->write( 2, 1, "Center across selection", $format );
 $worksheet->write_blank( 2, 2, $format );
 $worksheet->write_blank( 2, 3, $format );
 
+$workbook->close();
+
+__END__

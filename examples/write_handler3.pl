@@ -58,6 +58,7 @@ $worksheet->write( 'A1', '22/12/2004', $date_format );
 $worksheet->write( 'A2', '1/1/1995',   $date_format );
 $worksheet->write( 'A3', '01/01/1995', $date_format );
 
+$workbook->close();
 
 __END__
 

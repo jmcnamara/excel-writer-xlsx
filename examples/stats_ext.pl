@@ -74,3 +74,7 @@ $worksheet2->write( 'B6', 25.3,     $numformat );
 $worksheet2->write( 'B7', 24.9,     $numformat );
 $worksheet2->write( 'B8', 25.2,     $numformat );
 $worksheet2->write( 'B9', 24.8,     $numformat );
+
+$workbook->close();
+
+__END__

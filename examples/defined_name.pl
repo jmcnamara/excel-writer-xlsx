@@ -35,4 +35,6 @@ for my $worksheet ( $workbook->sheets() ) {
     $worksheet->write( 'B3', '=Exchange_rate' );
 }
 
+$workbook->close();
+
 __END__

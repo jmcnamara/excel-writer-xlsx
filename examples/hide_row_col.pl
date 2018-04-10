@@ -32,6 +32,8 @@ for my $row (1 .. 6) {
 # Hide a range of columns.
 $worksheet->set_column( 'G:XFD', undef, undef, 1);
 
+$workbook->close();
+
 __END__
 
 

@@ -49,4 +49,6 @@ my $decor = $workbook->add_shape(
 $worksheet->insert_shape( 'A1', $plain, 50,  50 );
 $worksheet->insert_shape( 'A1', $decor, 250, 50 );
 
+$workbook->close();
+
 __END__

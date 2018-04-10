@@ -52,5 +52,6 @@ $worksheet->insert_shape( 'A1', $stencil, 300, 150 );
 $stencil->set_type( 'ellipse' );
 $stencil->set_text( 'Now its a circle' );
 
+$workbook->close();
 
 __END__

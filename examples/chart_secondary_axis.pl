@@ -53,4 +53,6 @@ $chart->set_y2_axis( name => 'Laser wounds' );
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'D2', $chart, 25, 10 );
 
+$workbook->close();
+
 __END__

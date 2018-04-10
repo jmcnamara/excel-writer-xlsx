@@ -221,6 +221,7 @@ for my $row_data ( @data ) {
     $worksheet6->write( $row++, 0, $row_data );
 }
 
+$workbook->close();
 
 __DATA__
 Region    Item      Volume    Month

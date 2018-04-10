@@ -87,5 +87,7 @@ $row += 2;
 $worksheet->write_date_time( $row, 0, '2004-13-01T12:30:45.123' );
 $worksheet->write( $row, 1, 'Invalid date. Written as string.', $bold );
 
+$workbook->close();
+
 __END__
 

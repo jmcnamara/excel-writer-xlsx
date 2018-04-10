@@ -36,6 +36,7 @@ while ( <FH> ) {
     $worksheet->write( $row++, 0, $_ );
 }
 
+$workbook->close();
 
 __END__
 

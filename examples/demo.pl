@@ -109,4 +109,6 @@ $worksheet->insert_image( 'B10', 'republic.png', 16, 8 );
 $worksheet->write( 'A18', "Page/printer setup" );
 $worksheet->write( 'A19', "Multiple worksheets" );
 
+$workbook->close();
+
 __END__

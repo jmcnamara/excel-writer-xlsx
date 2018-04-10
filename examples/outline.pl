@@ -249,5 +249,6 @@ $worksheet4->set_row( 10, undef, undef, undef, 3 );
 $worksheet4->set_row( 11, undef, undef, undef, 2 );
 $worksheet4->set_row( 12, undef, undef, undef, 1 );
 
+$workbook->close();
 
 __END__

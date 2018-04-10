@@ -61,4 +61,6 @@ $chart->set_legend( position => 'none' );
 # Insert the chart into the worksheet.
 $worksheet->insert_chart( 'G3', $chart );
 
+$workbook->close();
+
 __END__

@@ -36,4 +36,6 @@ $cxn_shape->set_end_side( 't' );    # t)top.
 
 $worksheet->insert_shape( 'A1', $cxn_shape, 0, 0 );
 
+$workbook->close();
+
 __END__

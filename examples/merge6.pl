@@ -49,4 +49,6 @@ $worksheet->merge_range( 'B3:D4', 'ASCII: A simple string', $format );
 my $smiley = chr 0x263a;
 $worksheet->merge_range( 'B6:D7', "UTF-8: A Unicode smiley $smiley", $format );
 
+$workbook->close();
+
 __END__

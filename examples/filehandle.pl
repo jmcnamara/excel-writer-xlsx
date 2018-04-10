@@ -25,6 +25,8 @@ my $worksheet1 = $workbook1->add_worksheet();
 
 $worksheet1->write( 0, 0, 'Hi Excel 1' );
 
+$workbook1->close();
+
 
 ###############################################################################
 #
@@ -39,6 +41,7 @@ my $worksheet2 = $workbook2->add_worksheet();
 
 $worksheet2->write( 0, 0, 'Hi Excel 2' );
 
+$workbook2->close();
 
 ###############################################################################
 #
@@ -53,6 +56,8 @@ my $workbook3  = Excel::Writer::XLSX->new( $fh );
 my $worksheet3 = $workbook3->add_worksheet();
 
 $worksheet3->write( 0, 0, 'Hi Excel 3' );
+
+$workbook3->close();
 
 
 ###############################################################################

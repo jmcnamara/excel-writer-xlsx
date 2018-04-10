@@ -88,6 +88,8 @@ Here is some code that demonstrates the problem.
 
     $worksheet->write(0, 0, "Hi Excel!");
 
+    $workbook->close();
+
     __END__
 
 My automatically generated system details are as follows:

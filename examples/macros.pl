@@ -40,5 +40,6 @@ $worksheet->insert_button(
     }
 );
 
+$workbook->close();
 
 __END__

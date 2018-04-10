@@ -131,3 +131,6 @@ for my $i ( 1 .. 49 ) {
     }
 }
 
+$workbook->close();
+
+__END__

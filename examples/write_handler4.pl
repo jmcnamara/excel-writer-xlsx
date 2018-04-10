@@ -98,6 +98,7 @@ $worksheet->write( 'A8', '2/5/1895',  $date_format ); # Date out of Excel range
 $worksheet->write( 'A9', '29/2/2003', $date_format ); # Invalid leap day
 $worksheet->write( 'A10', '50/50/50', $date_format ); # Matches but isn't a date
 
+$workbook->close();
 
 __END__
 

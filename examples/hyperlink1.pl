@@ -49,3 +49,6 @@ $worksheet->write( 'A9', 'mailto:jmcnamara@cpan.org', undef, 'Mail me' );
 # Write a URL that isn't a hyperlink
 $worksheet->write_string( 'A11', 'http://www.perl.com/' );
 
+$workbook->close();
+
+__END__

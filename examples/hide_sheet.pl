@@ -27,5 +27,6 @@ $worksheet1->write( 0, 0, 'Sheet2 is hidden' );
 $worksheet2->write( 0, 0, "Now it's my turn to find you." );
 $worksheet3->write( 0, 0, 'Sheet2 is hidden' );
 
+$workbook->close();
 
 __END__

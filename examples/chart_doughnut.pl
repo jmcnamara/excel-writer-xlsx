@@ -127,5 +127,6 @@ $chart4->set_hole_size(33);
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'C50', $chart4, 25, 10 );
 
+$workbook->close();
 
 __END__

@@ -210,5 +210,6 @@ $chart6->set_title( name => 'Chart with Drop Lines' );
 # Insert the chart into the worksheet (with an offset).
 $worksheet->insert_chart( 'D82', $chart6, 25, 10 );
 
+$workbook->close();
 
 __END__

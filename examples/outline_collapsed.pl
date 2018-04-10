@@ -208,5 +208,6 @@ $worksheet6->set_column( 'H:H', 10, undef, 0, 0, 1 );
 $worksheet6->write_col( 'A1', $data );
 $worksheet6->write( 'H6', '=SUM(H2:H5)', $bold );
 
+$workbook->close();
 
 __END__

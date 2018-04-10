@@ -60,4 +60,6 @@ $worksheet->add_sparkline(
     }
 );
 
+$workbook->close();
+
 __END__

@@ -399,5 +399,6 @@ my $data = [
 # Write the sample data to the worksheet.
 $worksheet2->write_col( 'A1', $data );
 
+$workbook->close();
 
 __END__

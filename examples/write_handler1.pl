@@ -59,6 +59,7 @@ $worksheet->write( 'A7', '000001', $id_format );
 $worksheet->write( 'A8', '004000', $id_format );
 $worksheet->write( 'A9', '123456', $id_format );
 
+$workbook->close();
 
 __END__
 

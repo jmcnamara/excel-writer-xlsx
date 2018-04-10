@@ -46,6 +46,8 @@ while ( <DATA> ) {
     $r += 5;
 }
 
+$workbook->close();
+
 __END__
 Action	actionButtonBackPrevious
 Action	actionButtonBeginning

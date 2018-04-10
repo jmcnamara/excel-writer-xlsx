@@ -31,5 +31,6 @@ $workbook->set_properties(
 $worksheet->set_column( 'A:A', 70 );
 $worksheet->write( 'A1', qq{Select 'Office Button -> Prepare -> Properties' to see the file properties.} );
 
+$workbook->close();
 
 __END__

@@ -41,6 +41,7 @@ my $worksheet = $workbook->add_worksheet( $sheet . '1' );
 $worksheet->set_column( 'A:A', 18 );
 $worksheet->write( 'A1', $str );
 
+$workbook->close();
 
 __END__
 

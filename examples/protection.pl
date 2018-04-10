@@ -39,5 +39,7 @@ $worksheet->write_formula( 'B3', '=1+2', $hidden, 3 );
 $worksheet->write( 'A5', 'Use Menu->Tools->Protection->Unprotect Sheet' );
 $worksheet->write( 'A6', 'to remove the worksheet protection.' );
 
+$workbook->close();
+
 __END__
 

@@ -154,4 +154,6 @@ while ( my ( $html_color, $color ) = each %colors ) {
     $i++;
 }
 
+$workbook->close();
+
 __END__
