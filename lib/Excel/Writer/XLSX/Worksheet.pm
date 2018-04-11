@@ -7951,20 +7951,26 @@ sub _write_filter_column {
 #
 sub _write_filters {
 
-    my $self    = shift;
-    my @filters = @_;
+    my $self       = shift;
+    my @filters    = @_;
+    my @non_blanks = grep { !/^blanks$/ } @filters;
+    my @attributes = ();
 
-    if ( @filters == 1 && $filters[0] eq 'blanks' ) {
+    if ( @filters != @non_blanks ) {
+        @attributes = ( 'blank' => 1 );
+    }
+
+    if ( @filters == 1 && @non_blanks == 0 ) {
 
         # Special case for blank cells only.
-        $self->xml_empty_tag( 'filters', 'blank' => 1 );
+        $self->xml_empty_tag( 'filters', @attributes );
     }
     else {
 
         # General case.
-        $self->xml_start_tag( 'filters' );
+        $self->xml_start_tag( 'filters', @attributes );
 
-        for my $filter ( @filters ) {
+        for my $filter ( @non_blanks ) {
             $self->_write_filter( $filter );
         }
 
