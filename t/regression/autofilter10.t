@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'autofilter08.xlsx';
+my $filename     = 'autofilter10.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -32,8 +32,7 @@ my $ignore_elements = {
 #
 # Test the creation of a simple Excel::Writer::XLSX file with an autofilter.
 #
-# This test corresponds to the following examples/autofilter.pl example:
-# Example 5. Autofilter with filter for blanks with another value.
+# This test checks a filter list including blanks.
 #
 use Excel::Writer::XLSX;
 
@@ -51,7 +50,7 @@ $worksheet->write( 'A1', \@headings );
 $data[5]->[0] = '';
 
 $worksheet->autofilter( 'A1:D51' );
-$worksheet->filter_column( 'A', 'x == Blanks or x == North' );
+$worksheet->filter_column_list( 'A', ('North', 'South', 'East', 'Blanks') );
 
 # Hide the rows that don't match the filter criteria.
 my $row = 1;
@@ -59,7 +58,7 @@ my $row = 1;
 for my $row_data ( @data ) {
     my $region = $row_data->[0];
 
-    if ( $region eq '' || $region eq 'North') {
+    if ( $region eq 'North' || $region eq 'South' || $region eq 'East' || $region eq '') {
         # Row is visible.
     }
     else {

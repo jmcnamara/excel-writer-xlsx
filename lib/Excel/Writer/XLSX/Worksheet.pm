@@ -7953,7 +7953,7 @@ sub _write_filters {
 
     my $self       = shift;
     my @filters    = @_;
-    my @non_blanks = grep { !/^blanks$/ } @filters;
+    my @non_blanks = grep { !/^blanks$/i } @filters;
     my @attributes = ();
 
     if ( @filters != @non_blanks ) {
@@ -7970,7 +7970,7 @@ sub _write_filters {
         # General case.
         $self->xml_start_tag( 'filters', @attributes );
 
-        for my $filter ( @non_blanks ) {
+        for my $filter ( sort @non_blanks ) {
             $self->_write_filter( $filter );
         }
 
