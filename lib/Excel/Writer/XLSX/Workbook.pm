@@ -2298,18 +2298,23 @@ sub _process_jpg {
     my $offset      = 2;
     my $data_length = length $data;
 
-    # Search through the image data to read the height and width in the
-    # 0xFFC0/C2 element. Also read the DPI in the 0xFFE0 element.
+    # Search through the image data to read the JPEG markers.
     while ( $offset < $data_length ) {
 
         my $marker = unpack "n", substr $data, $offset + 0, 2;
         my $length = unpack "n", substr $data, $offset + 2, 2;
 
-        if ( $marker == 0xFFC0 || $marker == 0xFFC2 ) {
+        # Read the height and width in the 0xFFCn elements (except C4, C8 and
+        # CC which aren't SOF markers).
+        if (   ( $marker & 0xFFF0 ) == 0xFFC0
+            && $marker != 0xFFC4
+            && $marker != 0xFFCC )
+        {
             $height = unpack "n", substr $data, $offset + 5, 2;
             $width  = unpack "n", substr $data, $offset + 7, 2;
         }
 
+        # Read the DPI in the 0xFFE0 element.
         if ( $marker == 0xFFE0 ) {
             my $units     = unpack "C", substr $data, $offset + 11, 1;
             my $x_density = unpack "n", substr $data, $offset + 12, 2;
