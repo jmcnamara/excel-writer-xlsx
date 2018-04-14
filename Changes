@@ -6,6 +6,13 @@ Revision history for Perl module Excel::Writer::XLSX.
 
 
 
+0.98 2018-04-14
+
+   + Set the xlsx internal file member datetimes to 1980-01-01 00:00:00 like
+     Excel so that apps can produce a consistent binary file once the
+     workbook set_properties() created date is set. Feature request #168.
+
+
 0.97 2018-04-10
 
    + Added Excel 2010 data bar features such as solid fills and control over

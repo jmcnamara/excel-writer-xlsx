@@ -18,7 +18,7 @@ use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '0.97';
+our $VERSION = '0.98';
 
 
 ###############################################################################
@@ -464,6 +464,7 @@ The properties that can be set are:
     comments
     status
     hyperlink_base
+    created - File create date. Such be an aref of gmtime() values.
 
 See also the C<properties.pl> program in the examples directory of the distro.
 

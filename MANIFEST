@@ -306,6 +306,9 @@ t/regression/autofilter04.t
 t/regression/autofilter05.t
 t/regression/autofilter06.t
 t/regression/autofilter07.t
+t/regression/autofilter08.t
+t/regression/autofilter09.t
+t/regression/autofilter10.t
 t/regression/button01.t
 t/regression/button02.t
 t/regression/button03.t
@@ -811,6 +814,7 @@ t/regression/image32.t
 t/regression/image33.t
 t/regression/image34.t
 t/regression/image35.t
+t/regression/image36.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -826,6 +830,7 @@ t/regression/images/blue.jpg
 t/regression/images/blue.png
 t/regression/images/grey.jpg
 t/regression/images/grey.png
+t/regression/images/happy.jpg
 t/regression/images/issue32.png
 t/regression/images/logo.png
 t/regression/images/mylogo.png
@@ -1016,6 +1021,9 @@ t/regression/xlsx_files/autofilter04.xlsx
 t/regression/xlsx_files/autofilter05.xlsx
 t/regression/xlsx_files/autofilter06.xlsx
 t/regression/xlsx_files/autofilter07.xlsx
+t/regression/xlsx_files/autofilter08.xlsx
+t/regression/xlsx_files/autofilter09.xlsx
+t/regression/xlsx_files/autofilter10.xlsx
 t/regression/xlsx_files/button01.xlsx
 t/regression/xlsx_files/button02.xlsx
 t/regression/xlsx_files/button03.xlsx
@@ -1507,6 +1515,7 @@ t/regression/xlsx_files/image32.xlsx
 t/regression/xlsx_files/image33.xlsx
 t/regression/xlsx_files/image34.xlsx
 t/regression/xlsx_files/image35.xlsx
+t/regression/xlsx_files/image36.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/merge_cells01.xlsx
@@ -1821,4 +1830,4 @@ t/worksheet/worksheet_data_bar_13.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t
-~$outline.xlsx
+
