@@ -463,13 +463,13 @@ sub _get_color {
         yellow  => 0x0D,
     );
 
+    # Return the default color if undef,
+    return 0x00 unless defined $_[0];
+
     # Return RGB style colors for processing later.
     if ( $_[0] =~ m/^#[0-9A-F]{6}$/i ) {
         return $_[0];
     }
-
-    # Return the default color if undef,
-    return 0x00 unless defined $_[0];
 
     # or the color string converted to an integer,
     return $colors{ lc( $_[0] ) } if exists $colors{ lc( $_[0] ) };
