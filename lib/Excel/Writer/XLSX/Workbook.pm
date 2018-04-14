@@ -1114,9 +1114,14 @@ sub _store_workbook {
     for my $filename ( @xlsx_files ) {
         my $short_name = $filename;
         $short_name =~ s{^\Q$tempdir\E/?}{};
-        $zip->addFile( $filename, $short_name );
-    }
+        my $member = $zip->addFile( $filename, $short_name );
 
+        # Set the file member datetime to 1980-01-01 00:00:00 like Excel so
+        # that apps can produce a consistent binary file. Note, we don't use
+        # the Archive::Zip::setLastModFileDateTimeFromUnix() function directly
+        # since it doesn't allow the time 00:00:00 for this date.
+        $member->{'lastModFileDateTime'} = 2162688;
+    }
 
     if ( $self->{_internal_fh} ) {
 
