@@ -457,15 +457,19 @@ The properties that can be set are:
     title
     subject
     author
+    last_author
     manager
     company
     category
     keywords
     comments
+    created
     status
     hyperlink_base
 
 See also the C<properties.pl> program in the examples directory of the distro.
+Note that the C<created> property must be an array reference which matches the
+return values of L<perlfunc/gmtime> in list context, e.g. C<< created => [ gmtime() ] >>.
 
 
 

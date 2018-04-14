@@ -23,6 +23,7 @@ use File::Find;
 use File::Temp qw(tempfile);
 use File::Basename 'fileparse';
 use Archive::Zip;
+use Time::Local qw(timegm);
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
@@ -1111,10 +1112,18 @@ sub _store_workbook {
     );
 
     # Store the xlsx component files with the temp dir name removed.
+    my @created_time = @{ $self->{_doc_properties}->{created} || $self->{_createtime} };
+    my $created_time = timegm(@created_time);
+
     for my $filename ( @xlsx_files ) {
         my $short_name = $filename;
         $short_name =~ s{^\Q$tempdir\E/?}{};
-        $zip->addFile( $filename, $short_name );
+        my $member = $zip->addFile( $filename, $short_name );
+
+        # Set zip member timestamps to match the workbook's timestamp, so that
+        # when the workbook's "created" property is set, the generated .xlsx
+        # file is byte-for-byte the same given the same inputs.
+        $member->setLastModFileDateTimeFromUnix( $created_time );
     }
 
 
