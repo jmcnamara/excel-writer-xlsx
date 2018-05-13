@@ -7874,6 +7874,7 @@ The following properties can be set for C<line> formats in a chart.
     color
     width
     dash_type
+    transparency
 
 
 The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
@@ -7925,6 +7926,13 @@ The following C<dash_type> values are available. They are shown in the order tha
 
 The default line style is C<solid>.
 
+The C<transparency> property sets the transparency of the C<line> color in the integer range 1 - 100. The color must be set for transparency to work, it doesn't work with an automatic/default color:
+
+    $chart->add_series(
+        values     => '=Sheet1!$B$1:$B$5',
+        line       => { color => 'yellow', transparency => 50 },
+    );
+
 More than one C<line> property can be specified at a time:
 
     $chart->add_series(
@@ -7974,7 +7982,7 @@ The available colours are shown in the main L<Excel::Writer::XLSX> documentation
         fill       => { color => '#FF0000' },
     );
 
-The C<transparency> property sets the transparency of the solid fill color in the integer range 1 - 100:
+The C<transparency> property sets the transparency of the solid fill color in the integer range 1 - 100. The color must be set for transparency to work, it doesn't work with an automatic/default color:
 
     $chart->set_chartarea( fill => { color => 'yellow', transparency => 75 } );
 
