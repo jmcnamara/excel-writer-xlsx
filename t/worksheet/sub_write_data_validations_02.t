@@ -10,7 +10,7 @@ use TestFunctions qw(_got_to_aref _is_deep_diff _new_worksheet);
 use strict;
 use warnings;
 
-use Test::More tests => 47;
+use Test::More tests => 48;
 
 
 ###############################################################################
@@ -1109,6 +1109,33 @@ $expected = '<dataValidations count="1"><dataValidation type="textLength" operat
 $expected = _got_to_aref( $expected );
 $got      = _got_to_aref( $got );
 
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test 48 Date between ranges with formula.
+#
+$worksheet = _new_worksheet( \$got );
+$worksheet->{_date_1904} = 0;
+
+$worksheet->data_validation(
+    'B5',
+    {
+        validate => 'date',
+        criteria => 'between',
+        minimum  => '2018-01-01T',
+        maximum  => '=TODAY()',
+    }
+);
+
+$worksheet->_write_data_validations();
+
+$caption  = " \tData validation api: date auto, between";
+$expected = '<dataValidations count="1"><dataValidation type="date" allowBlank="1" showInputMessage="1" showErrorMessage="1" sqref="B5"><formula1>43101</formula1><formula2>TODAY()</formula2></dataValidation></dataValidations>';
+
+$expected = _got_to_aref( $expected );
+$got      = _got_to_aref( $got );
 _is_deep_diff( $got, $expected, $caption );
 
 

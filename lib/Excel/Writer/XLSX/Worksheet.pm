@@ -3477,27 +3477,16 @@ sub data_validation {
 
     # Convert date/times value if required.
     if ( $param->{validate} eq 'date' || $param->{validate} eq 'time' ) {
-        if ( $param->{value} =~ /T/ ) {
-            my $date_time = $self->convert_date_time( $param->{value} );
+        my $date_time = $self->convert_date_time( $param->{value} );
 
-            if ( !defined $date_time ) {
-                carp "Invalid date/time value '$param->{value}' "
-                  . "in data_validation()";
-                return -3;
-            }
-            else {
-                $param->{value} = $date_time;
-            }
+        if ( defined $date_time ) {
+            $param->{value} = $date_time;
         }
-        if ( defined $param->{maximum} && $param->{maximum} =~ /T/ ) {
+
+        if ( defined $param->{maximum} ) {
             my $date_time = $self->convert_date_time( $param->{maximum} );
 
-            if ( !defined $date_time ) {
-                carp "Invalid date/time value '$param->{maximum}' "
-                  . "in data_validation()";
-                return -3;
-            }
-            else {
+            if ( defined $date_time ) {
                 $param->{maximum} = $date_time;
             }
         }
