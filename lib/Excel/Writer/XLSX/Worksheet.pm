@@ -8964,7 +8964,19 @@ sub _write_cf_rule {
             $self->_write_formula( $param->{maximum} );
         }
         else {
-            $self->_write_formula( $param->{value} );
+            my $value = $param->{value};
+
+            # String "Cell" values must be quoted, apart from ranges.
+            if (   $value !~ /(\$?)([A-Z]{1,3})(\$?)(\d+)/
+                && $value !~
+                /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ )
+            {
+                if ( $value !~ /^".*"$/ ) {
+                    $value = qq("$value");
+                }
+            }
+
+            $self->_write_formula( $value );
         }
 
         $self->xml_end_tag( 'cfRule' );
