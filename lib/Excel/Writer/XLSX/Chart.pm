@@ -3936,11 +3936,13 @@ sub _write_legend {
     }
 
     my %allowed = (
-        right  => 'r',
-        left   => 'l',
-        top    => 't',
-        bottom => 'b',
+        right     => 'r',
+        left      => 'l',
+        top       => 't',
+        bottom    => 'b',
+        top_right => 'tr',
     );
+
 
     return if $position eq 'none';
     return unless exists $allowed{$position};
@@ -7158,8 +7160,10 @@ The default legend position is C<right>. The available positions are:
     bottom
     left
     right
+    top_right
     overlay_left
     overlay_right
+    overlay_top_right
     none
 
 =item * C<layout>

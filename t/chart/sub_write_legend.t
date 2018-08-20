@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Chart;
 
-use Test::More tests => 10;
+use Test::More tests => 12;
 
 
 ###############################################################################
@@ -175,6 +175,33 @@ $chart->_write_legend();
 is( $got, $expected, $caption );
 
 
+###############################################################################
+#
+# Test the _write_legend() method.
+#
+$caption  = " \tChart: _write_legend()";
+$expected = '<c:legend><c:legendPos val="tr"/><c:layout/></c:legend>';
+
+$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+
+$chart->set_legend( position => 'top_right' );
+$chart->_write_legend();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_legend() method.
+#
+$caption  = " \tChart: _write_legend()";
+$expected = '<c:legend><c:legendPos val="tr"/><c:layout/><c:overlay val="1"/></c:legend>';
+
+$chart = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+
+$chart->set_legend( position => 'overlay_top_right' );
+$chart->_write_legend();
+
+is( $got, $expected, $caption );
+
 __END__
-
-
