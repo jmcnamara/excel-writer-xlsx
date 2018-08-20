@@ -170,15 +170,16 @@ sub _write_plot_area {
 sub _write_legend {
 
     my $self          = shift;
-    my $position      = $self->{_legend_position};
-    my $font          = $self->{_legend_font};
+    my $legend        = $self->{_legend};
+    my $position      = $legend->{_position} || 'right';
+    my $font          = $legend->{_font};
     my @delete_series = ();
     my $overlay       = 0;
 
-    if ( defined $self->{_legend_delete_series}
-        && ref $self->{_legend_delete_series} eq 'ARRAY' )
+    if ( defined $legend->{_delete_series}
+        && ref $legend->{_delete_series} eq 'ARRAY' )
     {
-        @delete_series = @{ $self->{_legend_delete_series} };
+        @delete_series = @{ $legend->{_delete_series} };
     }
 
     if ( $position =~ s/^overlay_// ) {
@@ -186,10 +187,11 @@ sub _write_legend {
     }
 
     my %allowed = (
-        right  => 'r',
-        left   => 'l',
-        top    => 't',
-        bottom => 'b',
+        right     => 'r',
+        left      => 'l',
+        top       => 't',
+        bottom    => 'b',
+        top_right => 'tr',
     );
 
     return if $position eq 'none';
@@ -210,10 +212,13 @@ sub _write_legend {
     }
 
     # Write the c:layout element.
-    $self->_write_layout( $self->{_legend_layout}, 'legend' );
+    $self->_write_layout( $legend->{_layout}, 'legend' );
 
     # Write the c:overlay element.
     $self->_write_overlay() if $overlay;
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $legend );
 
     # Write the c:txPr element. Over-ridden.
     $self->_write_tx_pr_legend( 0, $font );

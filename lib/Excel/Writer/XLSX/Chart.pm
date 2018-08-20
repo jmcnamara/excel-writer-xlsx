@@ -79,7 +79,7 @@ sub new {
     $self->{_axis2_ids}         = [];
     $self->{_cat_has_num_fmt}   = 0;
     $self->{_requires_category} = 0;
-    $self->{_legend_position}   = 'right';
+    $self->{_legend}            = {};
     $self->{_cat_axis_position} = 'b';
     $self->{_val_axis_position} = 'l';
     $self->{_formula_ids}       = {};
@@ -423,19 +423,9 @@ sub set_title {
 sub set_legend {
 
     my $self = shift;
-    my %arg  = @_;
 
-    $self->{_legend_position}      = $arg{position} || 'right';
-    $self->{_legend_delete_series} = $arg{delete_series};
-    $self->{_legend_font}          = $self->_convert_font_args( $arg{font} );
-
-    # Set the legend layout.
-    $self->{_legend_layout} = $self->_get_layout_properties( $arg{layout} );
-
-    # Turn off the legend.
-    if ( $arg{none} ) {
-        $self->{_legend_position} = 'none';
-    }
+    # Convert the user defined properties to internal properties.
+    $self->{_legend} = $self->_get_legend_properties( @_ );
 }
 
 
@@ -1801,6 +1791,71 @@ sub _get_area_properties {
     $area->{_layout}   = $layout;
 
     return $area;
+}
+
+
+###############################################################################
+#
+# _get_legend_properties()
+#
+# Convert user defined legend properties to the structure required internally.
+#
+sub _get_legend_properties {
+
+    my $self = shift;
+    my %arg  = @_;
+    my $legend = {};
+
+    $legend->{_position}      = $arg{position} || 'right';
+    $legend->{_delete_series} = $arg{delete_series};
+    $legend->{_font}          = $self->_convert_font_args( $arg{font} );
+
+    # Set the legend layout.
+    $legend->{_layout} = $self->_get_layout_properties( $arg{layout} );
+
+    # Turn off the legend.
+    if ( $arg{none} ) {
+        $legend->{_position} = 'none';
+    }
+
+    # Set the line properties for the legend.
+    my $line = $self->_get_line_properties( $arg{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $arg{border} ) {
+        $line = $self->_get_line_properties( $arg{border} );
+    }
+
+    # Set the fill properties for the legend.
+    my $fill = $self->_get_fill_properties( $arg{fill} );
+
+    # Set the pattern properties for the legend.
+    my $pattern = $self->_get_pattern_properties( $arg{pattern} );
+
+    # Set the gradient fill properties for the legend.
+    my $gradient = $self->_get_gradient_properties( $arg{gradient} );
+
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
+        $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
+    }
+
+    # Set the legend layout.
+    my $layout = $self->_get_layout_properties( $arg{layout} );
+
+    $legend->{_line}     = $line;
+    $legend->{_fill}     = $fill;
+    $legend->{_pattern}  = $pattern;
+    $legend->{_gradient} = $gradient;
+    $legend->{_layout}   = $layout;
+
+    return $legend;
 }
 
 
@@ -3920,15 +3975,16 @@ sub _write_c_minor_time_unit {
 sub _write_legend {
 
     my $self          = shift;
-    my $position      = $self->{_legend_position};
-    my $font          = $self->{_legend_font};
+    my $legend        = $self->{_legend};
+    my $position      = $legend->{_position} || 'right';
+    my $font          = $legend->{_font};
     my @delete_series = ();
     my $overlay       = 0;
 
-    if ( defined $self->{_legend_delete_series}
-        && ref $self->{_legend_delete_series} eq 'ARRAY' )
+    if ( defined $legend->{_delete_series}
+        && ref $legend->{_delete_series} eq 'ARRAY' )
     {
-        @delete_series = @{ $self->{_legend_delete_series} };
+        @delete_series = @{ $legend->{_delete_series} };
     }
 
     if ( $position =~ s/^overlay_// ) {
@@ -3942,7 +3998,6 @@ sub _write_legend {
         bottom    => 'b',
         top_right => 'tr',
     );
-
 
     return if $position eq 'none';
     return unless exists $allowed{$position};
@@ -3962,15 +4017,18 @@ sub _write_legend {
     }
 
     # Write the c:layout element.
-    $self->_write_layout( $self->{_legend_layout}, 'legend' );
+    $self->_write_layout( $legend->{_layout}, 'legend' );
+
+    # Write the c:overlay element.
+    $self->_write_overlay() if $overlay;
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $legend );
 
     # Write the c:txPr element.
     if ( $font ) {
         $self->_write_tx_pr( undef, $font );
     }
-
-    # Write the c:overlay element.
-    $self->_write_overlay() if $overlay;
 
     $self->xml_end_tag( 'c:legend' );
 }
@@ -4692,7 +4750,6 @@ sub _write_sp_pr {
     {
         return;
     }
-
 
     $self->xml_start_tag( 'c:spPr' );
 
