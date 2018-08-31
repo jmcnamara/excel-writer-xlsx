@@ -7223,6 +7223,38 @@ The default legend position is C<right>. The available positions are:
     overlay_top_right
     none
 
+=item * C<border>
+
+Set the border properties of the legend such as colour and style. See the L</CHART FORMATTING> section below.
+
+=item * C<fill>
+
+Set the fill properties of the legend such as colour. See the L</CHART FORMATTING> section below.
+
+=item * C<pattern>
+
+Set the pattern fill properties of the legend. See the L</CHART FORMATTING> section below.
+
+=item * C<gradient>
+
+Set the gradient fill properties of the legend. See the L</CHART FORMATTING> section below.
+
+
+=item * C<font>
+
+Set the font properties of the chart legend:
+
+    $chart->set_legend( font => { bold => 1, italic => 1 } );
+
+See the L</CHART FONTS> section below.
+
+=item * C<delete_series>
+
+This allows you to remove 1 or more series from the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
+
+    # Delete/hide series index 0 and 2 from the legend.
+    $chart->set_legend( delete_series => [0, 2] );
+
 =item * C<layout>
 
 Set the C<(x, y)> position of the legend in chart relative units:
@@ -7237,23 +7269,6 @@ Set the C<(x, y)> position of the legend in chart relative units:
     );
 
 See the L</CHART LAYOUT> section below.
-
-
-=item * C<delete_series>
-
-This allows you to remove 1 or more series from the legend (the series will still display on the chart). This property takes an array ref as an argument and the series are zero indexed:
-
-    # Delete/hide series index 0 and 2 from the legend.
-    $chart->set_legend( delete_series => [0, 2] );
-
-=item * C<font>
-
-Set the font properties of the chart legend:
-
-    $chart->set_legend( font => { bold => 1, italic => 1 } );
-
-See the L</CHART FONTS> section below.
-
 
 =back
 
