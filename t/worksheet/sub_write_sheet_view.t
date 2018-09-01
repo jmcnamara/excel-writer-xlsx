@@ -10,7 +10,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 ###############################################################################
 #
@@ -104,6 +104,21 @@ $expected = '<sheetView showGridLines="0" tabSelected="1" workbookViewId="0"/>';
 $worksheet = _new_worksheet(\$got);
 $worksheet->select();
 $worksheet->hide_gridlines( 2 );
+$worksheet->_write_sheet_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_sheet_view() method. Tab selected + hide_row_col_headings().
+#
+$caption  = " \tWorksheet: _write_sheet_view() + hide_row_col_headings()";
+$expected = '<sheetView showRowColHeaders="0" tabSelected="1" workbookViewId="0"/>';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->select();
+$worksheet->hide_row_col_headers();
 $worksheet->_write_sheet_view();
 
 is( $got, $expected, $caption );

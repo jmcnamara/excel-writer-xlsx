@@ -87,9 +87,10 @@ sub new {
     $self->{_active}     = 0;
     $self->{_tab_color}  = 0;
 
-    $self->{_panes}       = [];
-    $self->{_active_pane} = 3;
-    $self->{_selected}    = 0;
+    $self->{_panes}                = [];
+    $self->{_active_pane}          = 3;
+    $self->{_selected}             = 0;
+    $self->{_hide_row_col_headers} = 0;
 
     $self->{_page_setup_changed} = 0;
     $self->{_paper_size}         = 0;
@@ -1680,6 +1681,19 @@ sub print_row_col_headers {
     else {
         $self->{_print_headers} = 0;
     }
+}
+
+
+###############################################################################
+#
+# hide_row_col_headers()
+#
+# Set the option to hide the row and column headers in Excel.
+#
+sub hide_row_col_headers {
+
+    my $self = shift;
+    $self->{_hide_row_col_headers} = 1;
 }
 
 
@@ -6688,12 +6702,18 @@ sub _write_sheet_view {
     my $tab_selected     = $self->{_selected};
     my $view             = $self->{_page_view};
     my $zoom             = $self->{_zoom};
+    my $row_col_headers  = $self->{_hide_row_col_headers};
     my $workbook_view_id = 0;
     my @attributes       = ();
 
-    # Hide screen gridlines if required
+    # Hide screen gridlines if required.
     if ( !$gridlines ) {
         push @attributes, ( 'showGridLines' => 0 );
+    }
+
+    # Hide the row/column headers.
+    if ( $row_col_headers ) {
+        push @attributes, ( 'showRowColHeaders' => 0 );
     }
 
     # Hide zeroes in cells.

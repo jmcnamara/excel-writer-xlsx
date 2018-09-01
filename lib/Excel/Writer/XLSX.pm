@@ -440,7 +440,7 @@ Note, this doesn't equate exactly to the Excel for Mac pixel size since it is ba
 
 
 
-=head2 set_tab_ration( $tab_ratio )
+=head2 set_tab_ratio( $tab_ratio )
 
 
 The C<set_tab_ratio()> method can be used to set the ratio between worksheet tabs and the horizontal slider at the bottom of a workbook. This can be increased to give more room to the tabs or reduced to increase the size of the horizontal slider:
@@ -2894,11 +2894,20 @@ An Excel worksheet looks something like the following;
     | 4 |       |       |       |       |  ...
     |...|  ...  |  ...  |  ...  |  ...  |  ...
 
-The headers are the letters and numbers at the top and the left of the worksheet. Since these headers serve mainly as a indication of position on the worksheet they generally do not appear on the printed page. If you wish to have them printed you can use the C<print_row_col_headers()> method :
+The headers are the letters and numbers at the top and the left of the worksheet. Since these headers serve mainly as a indication of position on the worksheet they generally do not appear on the printed page. If you wish to have them printed you can use the C<print_row_col_headers()> method:
 
     $worksheet->print_row_col_headers();
 
 Do not confuse these headers with page headers as described in the C<set_header()> section above.
+
+
+
+
+=head2 hide_row_col_headers()
+
+Similar to C<print_row_col_headers()> above but set the option to hide the row and column headers within Excel so that they aren't visible to the user:
+
+    $worksheet->hide_row_col_headers();
 
 
 
