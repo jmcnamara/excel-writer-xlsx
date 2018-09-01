@@ -94,7 +94,7 @@ sub new {
     $self->{_y_window}           = 15;
     $self->{_window_width}       = 16095;
     $self->{_window_height}      = 9660;
-    $self->{_tab_ratio}          = 500;
+    $self->{_tab_ratio}          = 600;
     $self->{_excel2003_style}    = 0;
 
     $self->{_default_format_properties} = {};
@@ -836,6 +836,30 @@ sub set_size {
     else {
         # Convert to twips at 96 dpi.
         $self->{_window_height} = int( $height * 1440 / 96 );
+    }
+}
+
+
+###############################################################################
+#
+# set_tab_ratio()
+#
+# Set the ratio of space for worksheet tabs.
+#
+sub set_tab_ratio {
+
+    my $self  = shift;
+    my $tab_ratio = shift;
+
+    if (!defined $tab_ratio) {
+        return;
+    }
+
+    if ( $tab_ratio < 0 or $tab_ratio > 100 ) {
+        carp "Tab ratio outside range: 0 <= zoom <= 100";
+    }
+    else {
+        $self->{_tab_ratio} = int( $tab_ratio * 10 );
     }
 }
 
@@ -2523,7 +2547,7 @@ sub _write_workbook_view {
     );
 
     # Store the tabRatio attribute when it isn't the default.
-    push @attributes, ( tabRatio => $tab_ratio ) if $tab_ratio != 500;
+    push @attributes, ( tabRatio => $tab_ratio ) if $tab_ratio != 600;
 
     # Store the firstSheet attribute when it isn't the default.
     push @attributes, ( firstSheet => $first_sheet + 1 ) if $first_sheet > 0;

@@ -10,7 +10,7 @@ use TestFunctions '_new_workbook';
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 12;
 
 
 ###############################################################################
@@ -130,6 +130,62 @@ $expected = '<workbookView xWindow="240" yWindow="15" windowWidth="10785" window
 
 $workbook = _new_workbook(\$got);
 $workbook->set_size(719, 490);
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method.
+#
+$caption  = " \tWorkbook: _write_workbook_view() 9";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660"/>';
+
+$workbook = _new_workbook(\$got);
+$workbook->set_tab_ratio();
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method.
+#
+$caption  = " \tWorkbook: _write_workbook_view() 9";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" tabRatio="346"/>';
+
+$workbook = _new_workbook(\$got);
+$workbook->set_tab_ratio(34.6);
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method.
+#
+$caption  = " \tWorkbook: _write_workbook_view() 10";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" tabRatio="0"/>';
+
+$workbook = _new_workbook(\$got);
+$workbook->set_tab_ratio(0);
+$workbook->_write_workbook_view();
+
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_workbook_view() method.
+#
+$caption  = " \tWorkbook: _write_workbook_view() 11";
+$expected = '<workbookView xWindow="240" yWindow="15" windowWidth="16095" windowHeight="9660" tabRatio="1000"/>';
+
+$workbook = _new_workbook(\$got);
+$workbook->set_tab_ratio(100);
 $workbook->_write_workbook_view();
 
 is( $got, $expected, $caption );

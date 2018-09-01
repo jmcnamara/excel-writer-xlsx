@@ -440,6 +440,18 @@ Note, this doesn't equate exactly to the Excel for Mac pixel size since it is ba
 
 
 
+=head2 set_tab_ration( $tab_ratio )
+
+
+The C<set_tab_ratio()> method can be used to set the ratio between worksheet tabs and the horizontal slider at the bottom of a workbook. This can be increased to give more room to the tabs or reduced to increase the size of the horizontal slider:
+
+    $workbook->set_tab_ratio(75);
+
+The default value in Excel is 60.
+
+
+
+
 =head2 set_properties()
 
 The C<set_properties> method can be used to set the document properties of the Excel file created by C<Excel::Writer::XLSX>. These properties are visible when you use the C<< Office Button -> Prepare -> Properties >> option in Excel and are also available to external applications that read or index Windows files.
