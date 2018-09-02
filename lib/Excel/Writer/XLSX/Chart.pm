@@ -704,6 +704,7 @@ sub _convert_axis_args {
         _position_axis     => $arg{position_axis},
         _position          => $arg{position},
         _label_position    => $arg{label_position},
+        _label_align       => $arg{label_align},
         _num_format        => $arg{num_format},
         _num_format_linked => $arg{num_format_linked},
         _interval_unit     => $arg{interval_unit},
@@ -3049,7 +3050,7 @@ sub _write_cat_axis {
     }
 
     # Write the c:labelAlign element.
-    $self->_write_label_align( 'ctr' );
+    $self->_write_label_align( $x_axis->{_label_align} );
 
     # Write the c:labelOffset element.
     $self->_write_label_offset( 100 );
@@ -3757,7 +3758,15 @@ sub _write_auto {
 sub _write_label_align {
 
     my $self = shift;
-    my $val  = 'ctr';
+    my $val  = shift || 'ctr';
+
+    if ( $val eq 'right' ) {
+        $val = 'r';
+    }
+
+    if ( $val eq 'left' ) {
+        $val = 'l';
+    }
 
     my @attributes = ( 'val' => $val );
 
