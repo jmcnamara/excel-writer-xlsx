@@ -110,14 +110,36 @@ sub _assemble_xml_file {
 # Over-ride parent protect() method to protect both worksheet and chart.
 sub protect {
 
-    my $self     = shift;
-    my $password = shift || '';
-    my $options  = shift || {};
+    my $self         = shift;
+    my $password     = shift || '';
+    my $user_options = shift;
+    my $options      = {};
+
+    # Objects are default on for chartsheets.
+    if ( defined $user_options->{objects} ) {
+        $options->{objects} = not $user_options->{objects};
+    }
+    else {
+        $options->{objects} = 0;
+    }
+
+    if ( defined $user_options->{content} ) {
+        $options->{content} = $user_options->{content};
+    }
+    else {
+        $options->{content} = 1;
+    }
+
+    # If objects and content are off then the chartsheet isn't locked, except
+    # if it has a password.
+    if ( $password eq '' && $options->{objects} && !$options->{content} ) {
+        return;
+    }
 
     $self->{_chart}->{_protection} = 1;
 
+    # Turn off worksheet defaults.
     $options->{sheet}     = 0;
-    $options->{content}   = 1;
     $options->{scenarios} = 1;
 
     $self->SUPER::protect( $password, $options );

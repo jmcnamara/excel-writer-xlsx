@@ -2050,6 +2050,12 @@ The default boolean values are shown above. Individual elements can be protected
 
     $worksheet->protect( 'drowssap', { insert_rows => 1 } );
 
+For chartsheets the allowable options and default values are:
+
+    %options = (
+        objects               => 1,
+        content               => 1,
+    );
 
 
 
