@@ -172,19 +172,21 @@ sub _write_comment_list {
     $self->xml_start_tag( 'commentList' );
 
     for my $comment ( @$comment_data ) {
-        my $row    = $comment->[0];
-        my $col    = $comment->[1];
-        my $text   = $comment->[2];
-        my $author = $comment->[3];
-        my $font   = $comment->[7];
-        my $size   = $comment->[8];
+        my $row         = $comment->[0];
+        my $col         = $comment->[1];
+        my $text        = $comment->[2];
+        my $author      = $comment->[3];
+        my $font_name   = $comment->[6];
+        my $font_size   = $comment->[7];
+        my $font_family = $comment->[8];
 
         # Look up the author id.
         my $author_id = undef;
         $author_id = $self->{_author_ids}->{$author} if defined $author;
 
         # Write the comment element.
-        $self->_write_comment( $row, $col, $text, $author_id, $font, $size );
+        my $font = [ $font_name, $font_size, $font_family ];
+        $self->_write_comment( $row, $col, $text, $author_id, $font );
     }
 
     $self->xml_end_tag( 'commentList' );
@@ -206,7 +208,7 @@ sub _write_comment {
     my $author_id = shift;
     my $ref       = xl_rowcol_to_cell( $row, $col );
     my $font      = shift;
-    my $size      = shift;
+
 
     my @attributes = ( 'ref' => $ref );
 
@@ -216,8 +218,7 @@ sub _write_comment {
     $self->xml_start_tag( 'comment', @attributes );
 
     # Write the text element.
-    $self->_write_text( $text, [$font, $size] );
-
+    $self->_write_text( $text, $font );
 
     $self->xml_end_tag( 'comment' );
 }
@@ -233,12 +234,12 @@ sub _write_text {
 
     my $self = shift;
     my $text = shift;
-    my $fmt  = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'text' );
 
     # Write the text r element.
-    $self->_write_text_r( $text, $fmt );
+    $self->_write_text_r( $text, $font );
 
     $self->xml_end_tag( 'text' );
 }
@@ -254,12 +255,12 @@ sub _write_text_r {
 
     my $self = shift;
     my $text = shift;
-    my $fmt  = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'r' );
 
     # Write the rPr element.
-    $self->_write_r_pr($fmt);
+    $self->_write_r_pr($font);
 
     # Write the text r element.
     $self->_write_text_t( $text );
@@ -298,21 +299,21 @@ sub _write_text_t {
 sub _write_r_pr {
 
     my $self = shift;
-    my $fmt  = shift;
+    my $font = shift;
 
     $self->xml_start_tag( 'rPr' );
 
     # Write the sz element.
-    $self->_write_sz($fmt->[1]);
+    $self->_write_sz($font->[1]);
 
     # Write the color element.
     $self->_write_color();
 
     # Write the rFont element.
-    $self->_write_r_font($fmt->[0]);
+    $self->_write_r_font($font->[0]);
 
     # Write the family element.
-    $self->_write_family();
+    $self->_write_family($font->[2]);
 
     $self->xml_end_tag( 'rPr' );
 }
@@ -327,7 +328,7 @@ sub _write_r_pr {
 sub _write_sz {
 
     my $self = shift;
-    my $val  = shift || 8;
+    my $val  = shift;
 
     my @attributes = ( 'val' => $val );
 
@@ -361,7 +362,7 @@ sub _write_color {
 sub _write_r_font {
 
     my $self = shift;
-    my $val  = shift || 'Tahoma';
+    my $val  = shift;
 
     my @attributes = ( 'val' => $val );
 
@@ -378,7 +379,7 @@ sub _write_r_font {
 sub _write_family {
 
     my $self = shift;
-    my $val  = 2;
+    my $val  = shift;
 
     my @attributes = ( 'val' => $val );
 

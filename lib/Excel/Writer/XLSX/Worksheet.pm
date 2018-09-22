@@ -6158,20 +6158,21 @@ sub _comment_params {
     my $default_height = 74;
 
     my %params = (
-        author     => undef,
-        color      => 81,
-        start_cell => undef,
-        start_col  => undef,
-        start_row  => undef,
-        visible    => undef,
-        width      => $default_width,
-        height     => $default_height,
-        x_offset   => undef,
-        x_scale    => 1,
-        y_offset   => undef,
-        y_scale    => 1,
-        font       => 'Tahoma',
-        font_size  => 8,
+        author      => undef,
+        color       => 81,
+        start_cell  => undef,
+        start_col   => undef,
+        start_row   => undef,
+        visible     => undef,
+        width       => $default_width,
+        height      => $default_height,
+        x_offset    => undef,
+        x_scale     => 1,
+        y_offset    => undef,
+        y_scale     => 1,
+        font        => 'Tahoma',
+        font_size   => 8,
+        font_family => 2,
     );
 
 
@@ -6298,11 +6299,11 @@ sub _comment_params {
         $params{author},
         $params{visible},
         $params{color},
-
-        [@vertices],
-
         $params{font},
         $params{font_size},
+        $params{font_family},
+
+        [@vertices],
     );
 }
 

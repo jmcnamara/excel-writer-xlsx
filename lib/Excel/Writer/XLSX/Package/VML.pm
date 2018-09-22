@@ -512,7 +512,7 @@ sub _write_comment_shape {
     my $author    = $comment->[3];
     my $visible   = $comment->[4];
     my $fillcolor = $comment->[5];
-    my $vertices  = $comment->[6];
+    my $vertices  = $comment->[9];
 
     my ( $left, $top, $width, $height ) = $self->_pixels_to_points( $vertices );
 
