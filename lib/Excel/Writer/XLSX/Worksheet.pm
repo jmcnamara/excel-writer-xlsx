@@ -4797,6 +4797,12 @@ sub _table_function_to_formula {
     my $col_name = shift;
     my $formula  = '';
 
+    # Escape special characters, as required by Excel.
+    $col_name =~ s/'/''/g;
+    $col_name =~ s/#/'#/g;
+    $col_name =~ s/\[/'[/g;
+    $col_name =~ s/]/']/g;
+
     my %subtotals = (
         average   => 101,
         countNums => 102,
