@@ -14,7 +14,6 @@ use strict;
 use warnings;
 use Exporter;
 
-use strict;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
