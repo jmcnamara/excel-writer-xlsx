@@ -33,7 +33,7 @@ $vml->_assemble_xml_file(
     1, 1024,
     [
         [
-            1, 1, 'Some text', '', undef, '#ffffe1',
+            1, 1, 'Some text', '', undef, '#ffffe1', 'Tahoma', 8, 2,
             [ 2, 0, 15, 10, 4, 4, 15, 4, 143, 10, 128, 74 ]
         ]
     ]
