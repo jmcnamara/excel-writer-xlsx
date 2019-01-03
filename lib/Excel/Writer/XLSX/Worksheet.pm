@@ -7382,7 +7382,10 @@ sub _write_cell {
     elsif ( $type eq 'f' ) {
 
         # Write a formula.
-        my $value = $cell->[3] || 0;
+
+        # Allowing empty string here to force spreadsheet applications
+        # to recalculate the formula value upon XLSX load!
+        my $value = $cell->[3] // 0;
 
         # Check if the formula value is a string.
         if (   $value
