@@ -40,7 +40,7 @@ sub new {
         _xf_index           => undef,
         _dxf_index          => undef,
 
-        _num_format        => 0,
+        _num_format        => 'General',
         _num_format_index  => 0,
         _font_index        => 0,
         _has_font          => 0,

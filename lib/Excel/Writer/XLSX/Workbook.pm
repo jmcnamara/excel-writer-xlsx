@@ -1347,14 +1347,25 @@ sub _prepare_num_formats {
     for my $format ( @{ $self->{_xf_formats} }, @{ $self->{_dxf_formats} } ) {
         my $num_format = $format->{_num_format};
 
+
         # Check if $num_format is an index to a built-in number format.
         # Also check for a string of zeros, which is a valid number format
         # string but would evaluate to zero.
         #
         if ( $num_format =~ m/^\d+$/ && $num_format !~ m/^0+\d/ ) {
 
+            # Number format '0' is indexed as 1 in Excel.
+            if ($num_format == 0) {
+                $num_format = 1;
+            }
+
             # Index to a built-in number format.
             $format->{_num_format_index} = $num_format;
+            next;
+        }
+        elsif ( $num_format  eq 'General' ) {
+            # The 'General' format has an number format index of 0.
+            $format->{_num_format_index} = 0;
             next;
         }
 
