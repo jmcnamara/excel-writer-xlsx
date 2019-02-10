@@ -4,7 +4,7 @@ package Excel::Writer::XLSX;
 #
 # Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 #
-# Copyright 2000-2018, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2019, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -7511,6 +7511,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXVIII, John McNamara.
+Copyright MM-MMXIX, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
