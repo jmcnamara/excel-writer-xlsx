@@ -5,6 +5,28 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+0.99 2019-02-10
+
+   + Added font and font_size parameters to write_comment().
+
+   + Allow formulas in date field of data_validation().
+
+   + Added top_left chart legend position.
+
+   + Added legend formatting options.
+
+   + Added set_tab_ratio() method to set the ratio between the worksheet tabs
+     and the horizontal slider.
+
+   + Added worksheet hide_row_col_headers() method to turn off worksheet row
+     and column headings.
+
+   + Add functionality to align chart category axis labels.
+
+   ! Fix for issue with special characters in worksheet table functions.
+
+   ! Fix handling of 'num_format': '0' in duplicate formats.
+
 
 0.98 2018-04-14
 

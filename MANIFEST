@@ -1,3 +1,4 @@
+
 .travis.yml
 CONTRIBUTING.md
 Changes
@@ -185,6 +186,7 @@ t/chart/sub_write_v.t
 t/chart/sub_write_xml_declaration.t
 t/chartsheet/chartsheet01.t
 t/chartsheet/chartsheet_subs.t
+t/chartsheet/sub_write_sheet_protection.t
 t/chartsheet/sub_write_xml_declaration.t
 t/drawing/drawing_chart_01.t
 t/drawing/drawing_image_01.t
@@ -298,6 +300,7 @@ t/package/vml/vml_03.t
 t/package/xml_writer/sub_write_xml_declaration.t
 t/regression/array_formula01.t
 t/regression/array_formula02.t
+t/regression/array_formula03.t
 t/regression/autofilter00.t
 t/regression/autofilter01.t
 t/regression/autofilter02.t
@@ -368,6 +371,8 @@ t/regression/chart_axis38.t
 t/regression/chart_axis39.t
 t/regression/chart_axis40.t
 t/regression/chart_axis41.t
+t/regression/chart_axis42.t
+t/regression/chart_axis43.t
 t/regression/chart_bar01.t
 t/regression/chart_bar02.t
 t/regression/chart_bar03.t
@@ -571,6 +576,11 @@ t/regression/chart_layout07.t
 t/regression/chart_layout08.t
 t/regression/chart_legend01.t
 t/regression/chart_legend02.t
+t/regression/chart_legend03.t
+t/regression/chart_legend04.t
+t/regression/chart_legend05.t
+t/regression/chart_legend06.t
+t/regression/chart_legend07.t
 t/regression/chart_line01.t
 t/regression/chart_line02.t
 t/regression/chart_line03.t
@@ -659,6 +669,7 @@ t/regression/comment09.t
 t/regression/comment10.t
 t/regression/comment11.t
 t/regression/comment12.t
+t/regression/comment13.t
 t/regression/cond_format01.t
 t/regression/cond_format02.t
 t/regression/cond_format03.t
@@ -677,6 +688,8 @@ t/regression/cond_format15.t
 t/regression/cond_format16.t
 t/regression/cond_format17.t
 t/regression/cond_format18.t
+t/regression/cond_format19.t
+t/regression/cond_format20.t
 t/regression/custom_colors01.t
 t/regression/data_validation01.t
 t/regression/data_validation02.t
@@ -730,6 +743,7 @@ t/regression/format11.t
 t/regression/format12.t
 t/regression/format13.t
 t/regression/format14.t
+t/regression/format15.t
 t/regression/formula_results01.t
 t/regression/gridlines01.t
 t/regression/header01.t
@@ -989,6 +1003,7 @@ t/regression/table19.t
 t/regression/table20.t
 t/regression/table21.t
 t/regression/table22.t
+t/regression/table23.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/tutorial01.t
@@ -1013,6 +1028,7 @@ t/regression/vml03.t
 t/regression/vml04.t
 t/regression/xlsx_files/array_formula01.xlsx
 t/regression/xlsx_files/array_formula02.xlsx
+t/regression/xlsx_files/array_formula03.xlsx
 t/regression/xlsx_files/autofilter00.xlsx
 t/regression/xlsx_files/autofilter01.xlsx
 t/regression/xlsx_files/autofilter02.xlsx
@@ -1080,6 +1096,8 @@ t/regression/xlsx_files/chart_axis38.xlsx
 t/regression/xlsx_files/chart_axis39.xlsx
 t/regression/xlsx_files/chart_axis40.xlsx
 t/regression/xlsx_files/chart_axis41.xlsx
+t/regression/xlsx_files/chart_axis42.xlsx
+t/regression/xlsx_files/chart_axis43.xlsx
 t/regression/xlsx_files/chart_bar01.xlsx
 t/regression/xlsx_files/chart_bar02.xlsx
 t/regression/xlsx_files/chart_bar03.xlsx
@@ -1281,6 +1299,11 @@ t/regression/xlsx_files/chart_layout06.xlsx
 t/regression/xlsx_files/chart_layout07.xlsx
 t/regression/xlsx_files/chart_layout08.xlsx
 t/regression/xlsx_files/chart_legend01.xlsx
+t/regression/xlsx_files/chart_legend03.xlsx
+t/regression/xlsx_files/chart_legend04.xlsx
+t/regression/xlsx_files/chart_legend05.xlsx
+t/regression/xlsx_files/chart_legend06.xlsx
+t/regression/xlsx_files/chart_legend07.xlsx
 t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
 t/regression/xlsx_files/chart_line03.xlsx
@@ -1364,6 +1387,7 @@ t/regression/xlsx_files/comment09.xlsx
 t/regression/xlsx_files/comment10.xlsx
 t/regression/xlsx_files/comment11.xlsx
 t/regression/xlsx_files/comment12.xlsx
+t/regression/xlsx_files/comment13.xlsx
 t/regression/xlsx_files/cond_format01.xlsx
 t/regression/xlsx_files/cond_format02.xlsx
 t/regression/xlsx_files/cond_format03.xlsx
@@ -1381,6 +1405,8 @@ t/regression/xlsx_files/cond_format15.xlsx
 t/regression/xlsx_files/cond_format16.xlsx
 t/regression/xlsx_files/cond_format17.xlsx
 t/regression/xlsx_files/cond_format18.xlsx
+t/regression/xlsx_files/cond_format19.xlsx
+t/regression/xlsx_files/cond_format20.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/data_validation01.xlsx
 t/regression/xlsx_files/data_validation02.xlsx
@@ -1431,6 +1457,7 @@ t/regression/xlsx_files/format11.xlsx
 t/regression/xlsx_files/format12.xlsx
 t/regression/xlsx_files/format13.xlsx
 t/regression/xlsx_files/format14.xlsx
+t/regression/xlsx_files/format15.xlsx
 t/regression/xlsx_files/formula_results01.xlsx
 t/regression/xlsx_files/gridlines01.xlsx
 t/regression/xlsx_files/header01.xlsx
@@ -1658,6 +1685,7 @@ t/regression/xlsx_files/table18.xlsx
 t/regression/xlsx_files/table19.xlsx
 t/regression/xlsx_files/table21.xlsx
 t/regression/xlsx_files/table22.xlsx
+t/regression/xlsx_files/table23.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
@@ -1830,4 +1858,3 @@ t/worksheet/worksheet_data_bar_13.t
 t/worksheet/worksheet_merge_cells_01.t
 t/worksheet/worksheet_merge_cells_02.t
 t/worksheet/worksheet_merge_cells_03.t
-
