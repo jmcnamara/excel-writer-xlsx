@@ -763,24 +763,28 @@ sub AUTOLOAD {
         # For "set_property_color" methods
         $value = _get_color( $_[0] );
 
-        *{$AUTOLOAD} = sub {
-            my $self = shift;
+        if ( ! $self->can($AUTOLOAD) ) {
+            *{$AUTOLOAD} = sub {
+                my $self = shift;
 
-            $self->{$attribute} = _get_color( $_[0] );
-        };
+                $self->{$attribute} = _get_color( $_[0] );
+            };
+        }
     }
     else {
 
         $value = $_[0];
         $value = 1 if not defined $value;    # The default value is always 1
 
-        *{$AUTOLOAD} = sub {
-            my $self  = shift;
-            my $value = shift;
+        if ( ! $self->can($AUTOLOAD) ) {
+            *{$AUTOLOAD} = sub {
+                my $self  = shift;
+                my $value = shift;
 
-            $value = 1 if not defined $value;
-            $self->{$attribute} = $value;
-        };
+                $value = 1 if not defined $value;
+                $self->{$attribute} = $value;
+            };
+        }
     }
 
 
