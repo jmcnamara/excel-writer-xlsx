@@ -52,6 +52,9 @@ WriteMakefile(%params);
 sub MY::postamble {
     "mydocs:\n"
       . "\tperl -Mblib examples/gen_examples_pod.pl examples "
-      . "> lib/Excel/Writer/XLSX/Examples.pm\n\n";
+      . "> lib/Excel/Writer/XLSX/Examples.pm\n\n"
+      . "tags:\n"
+	  . "\trm -f TAGS\n"
+	  . "\tetags lib/Excel/Writer/XLSX/*.pm lib/Excel/Writer/XLSX/Package/*.pm\n"
 }
 
