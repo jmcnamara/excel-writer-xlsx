@@ -1134,6 +1134,29 @@ sub _store_workbook {
         $tempdir
     );
 
+    # Re-order the XML files before adding them to the Zip container to match
+    # (mainly) the order used by Excel and thus satisfy mime-type heuristics
+    # such as file(1) and magic.
+    my @tmp     = grep {  m{/xl/} } @xlsx_files;
+    @xlsx_files = grep { !m{/xl/} } @xlsx_files;
+    @xlsx_files = ( @tmp, @xlsx_files );
+
+    @tmp        = grep {  m{workbook\.xml$} } @xlsx_files;
+    @xlsx_files = grep { !m{workbook\.xml$} } @xlsx_files;
+    @xlsx_files = ( @tmp, @xlsx_files );
+
+    @tmp        = grep {  m{_rels/workbook\.xml\.rels$} } @xlsx_files;
+    @xlsx_files = grep { !m{_rels/workbook\.xml\.rels$} } @xlsx_files;
+    @xlsx_files = ( @tmp, @xlsx_files );
+
+    @tmp        = grep {  m{_rels/\.rels$} } @xlsx_files;
+    @xlsx_files = grep { !m{_rels/\.rels$} } @xlsx_files;
+    @xlsx_files = ( @tmp, @xlsx_files );
+
+    @tmp        = grep {  m{\[Content_Types\]\.xml$} } @xlsx_files;
+    @xlsx_files = grep { !m{\[Content_Types\]\.xml$} } @xlsx_files;
+    @xlsx_files = ( @tmp, @xlsx_files );
+
     # Store the xlsx component files with the temp dir name removed.
     for my $filename ( @xlsx_files ) {
         my $short_name = $filename;
