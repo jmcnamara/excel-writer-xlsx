@@ -829,6 +829,10 @@ t/regression/image33.t
 t/regression/image34.t
 t/regression/image35.t
 t/regression/image36.t
+t/regression/image44.t
+t/regression/image45.t
+t/regression/image46.t
+t/regression/image47.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -1543,6 +1547,10 @@ t/regression/xlsx_files/image33.xlsx
 t/regression/xlsx_files/image34.xlsx
 t/regression/xlsx_files/image35.xlsx
 t/regression/xlsx_files/image36.xlsx
+t/regression/xlsx_files/image44.xlsx
+t/regression/xlsx_files/image45.xlsx
+t/regression/xlsx_files/image46.xlsx
+t/regression/xlsx_files/image47.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/merge_cells01.xlsx

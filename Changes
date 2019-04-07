@@ -5,6 +5,16 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+1.00 2019-04-07
+
+   !  Fixed issue where images that started in hidden rows/columns weren't placed
+      correctly in the worksheet.
+
+   !  Fixed the mime-type reported by system "file(1)". The mime-type reported
+      by "file --mime-type"/magic was incorrect for XlsxWriter files since it
+      expected the "[Content_types]" to be the first file in the zip container.
+
+
 0.99 2019-02-10
 
    + Added font and font_size parameters to write_comment().
