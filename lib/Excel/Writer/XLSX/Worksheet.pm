@@ -159,6 +159,7 @@ sub new {
     $self->{_original_row_height} = 15;
     $self->{_default_row_height}  = 15;
     $self->{_default_row_pixels}  = 20;
+    $self->{_default_col_width}   = 8.43;
     $self->{_default_col_pixels}  = 64;
     $self->{_default_row_zeroed}  = 0;
 
@@ -630,13 +631,16 @@ sub set_column {
 
     # Store the col sizes for use when calculating image vertices taking
     # hidden columns into account. Also store the column formats.
-    my $width = $data[4] ? 0 : $data[2];    # Set width to zero if hidden.
+    my $width  = $data[2];
     my $format = $data[3];
+    my $hidden = $data[4] || 0;
+
+    $width = $self->{_default_col_width} if !defined $width;
 
     my ( $firstcol, $lastcol ) = @data;
 
     foreach my $col ( $firstcol .. $lastcol ) {
-        $self->{_col_sizes}->{$col} = $width;
+        $self->{_col_sizes}->{$col}   = [$width, $hidden];
         $self->{_col_formats}->{$col} = $format if $format;
     }
 }
@@ -3093,12 +3097,8 @@ sub set_row {
     # Store the row change to allow optimisations.
     $self->{_row_size_changed} = 1;
 
-    if ($hidden) {
-        $height = 0;
-    }
-
     # Store the row sizes for use when calculating image vertices.
-    $self->{_row_sizes}->{$row} = $height;
+    $self->{_row_sizes}->{$row} = [$height, $hidden];
 }
 
 
@@ -5107,6 +5107,10 @@ sub _check_dimensions {
 # the width and height of the object from the width and height of the
 # underlying cells.
 #
+# The anchor/object position defines how images are scaled for hidden rows and
+# columns. For option 1 "Move and size with cells" the size of the hidden
+# row/column is subtracted from the image.
+#
 sub _position_object_pixels {
 
     my $self = shift;
@@ -5129,7 +5133,9 @@ sub _position_object_pixels {
     my $x_abs = 0;    # Absolute distance to left side of object.
     my $y_abs = 0;    # Absolute distance to top  side of object.
 
-    ( $col_start, $row_start, $x1, $y1, $width, $height ) = @_;
+    my $anchor;       # The type of object positioning.
+
+    ( $col_start, $row_start, $x1, $y1, $width, $height, $anchor ) = @_;
 
     # Adjust start column for negative offsets.
     while ( $x1 < 0 && $col_start > 0) {
@@ -5205,15 +5211,15 @@ sub _position_object_pixels {
     }
 
     # Subtract the underlying cell widths to find the end cell of the object.
-    while ( $width >= $self->_size_col( $col_end ) ) {
-        $width -= $self->_size_col( $col_end );
+    while ( $width >= $self->_size_col( $col_end, $anchor ) ) {
+        $width -= $self->_size_col( $col_end, $anchor );
         $col_end++;
     }
 
 
     # Subtract the underlying cell heights to find the end cell of the object.
-    while ( $height >= $self->_size_row( $row_end ) ) {
-        $height -= $self->_size_row( $row_end );
+    while ( $height >= $self->_size_row( $row_end, $anchor ) ) {
+        $height -= $self->_size_row( $row_end, $anchor );
         $row_end++;
     }
 
@@ -5322,25 +5328,28 @@ sub _position_shape_emus {
 #
 # Convert the width of a cell from user's units to pixels. Excel rounds the
 # column width to the nearest pixel. If the width hasn't been set by the user
-# we use the default value. If the column is hidden it has a value of zero.
+# we use the default value. A hidden column is treated as having a width of
+# zero unless it has the special "object_position" of 4 (size with cells).
 #
 sub _size_col {
 
-    my $self = shift;
-    my $col  = shift;
+    my $self    = shift;
+    my $col     = shift;
+    my $anchor  = shift || 0;
 
     my $max_digit_width = 7;    # For Calabri 11.
     my $padding         = 5;
     my $pixels;
 
+
     # Look up the cell value to see if it has been changed.
-    if ( exists $self->{_col_sizes}->{$col}
-        and defined $self->{_col_sizes}->{$col} )
+    if ( exists $self->{_col_sizes}->{$col} )
     {
-        my $width = $self->{_col_sizes}->{$col};
+        my $width  = $self->{_col_sizes}->{$col}[0];
+        my $hidden = $self->{_col_sizes}->{$col}[1];
 
         # Convert to pixels.
-        if ( $width == 0 ) {
+        if ( $hidden == 1 && $anchor != 4 ) {
             $pixels = 0;
         }
         elsif ( $width < 1 ) {
@@ -5363,20 +5372,23 @@ sub _size_col {
 # _size_row($row)
 #
 # Convert the height of a cell from user's units to pixels. If the height
-# hasn't been set by the user we use the default value. If the row is hidden
-# it has a value of zero.
+# hasn't been set by the user we use the default value. A hidden row is
+# treated as having a height of zero unless it has the special
+# "object_position" of 4 (size with cells).
 #
 sub _size_row {
 
-    my $self = shift;
-    my $row  = shift;
+    my $self    = shift;
+    my $row     = shift;
+    my $anchor  = shift || 0;
     my $pixels;
 
     # Look up the cell value to see if it has been changed
     if ( exists $self->{_row_sizes}->{$row} ) {
-        my $height = $self->{_row_sizes}->{$row};
+        my $height = $self->{_row_sizes}->{$row}[0];
+        my $hidden = $self->{_row_sizes}->{$row}[1];
 
-        if ( $height == 0 ) {
+        if ( $hidden == 1 && $anchor != 4 ) {
             $pixels = 0;
         }
         else {
@@ -5439,6 +5451,7 @@ sub insert_chart {
     my $y_offset = $_[4] || 0;
     my $x_scale  = $_[5] || 1;
     my $y_scale  = $_[6] || 1;
+    my $anchor   = $_[7] || 1;
 
     croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
 
@@ -5476,7 +5489,7 @@ sub insert_chart {
     $y_offset = $chart->{_y_offset} if $chart->{_y_offset};
 
     push @{ $self->{_charts} },
-      [ $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ];
+      [ $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ];
 }
 
 
@@ -5494,7 +5507,7 @@ sub _prepare_chart {
     my $drawing_id   = shift;
     my $drawing_type = 1;
 
-    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale ) =
+    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ) =
       @{ $self->{_charts}->[$index] };
 
     $chart->{_id} = $chart_id - 1;
@@ -5508,7 +5521,7 @@ sub _prepare_chart {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height);
+        $height, $anchor);
 
     # Set the chart name for the embedded object if it has been specified.
     my $name = $chart->{_chart_name};
@@ -5518,7 +5531,7 @@ sub _prepare_chart {
 
         my $drawing = Excel::Writer::XLSX::Drawing->new();
         $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
-            $name );
+            $name, undef, $anchor );
         $drawing->{_embedded} = 1;
 
         $self->{_drawing} = $drawing;
@@ -5529,7 +5542,7 @@ sub _prepare_chart {
     else {
         my $drawing = $self->{_drawing};
         $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
-            $name );
+            $name, undef, $anchor );
 
     }
 
@@ -5640,12 +5653,13 @@ sub insert_image {
     my $y_offset = $_[4] || 0;
     my $x_scale  = $_[5] || 1;
     my $y_scale  = $_[6] || 1;
+    my $anchor   = $_[7] || 2;
 
     croak "Insufficient arguments in insert_image()" unless @_ >= 3;
     croak "Couldn't locate $image: $!" unless -e $image;
 
     push @{ $self->{_images} },
-      [ $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale ];
+      [ $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ];
 }
 
 
@@ -5670,7 +5684,7 @@ sub _prepare_image {
     my $drawing_type = 2;
     my $drawing;
 
-    my ( $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale ) =
+    my ( $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ) =
       @{ $self->{_images}->[$index] };
 
     $width  *= $x_scale;
@@ -5681,7 +5695,7 @@ sub _prepare_image {
 
     my @dimensions =
       $self->_position_object_emus( $col, $row, $x_offset, $y_offset, $width,
-        $height);
+        $height, $anchor);
 
     # Convert from pixels to emus.
     $width  = int( 0.5 + ( $width * 9_525 ) );
@@ -5703,7 +5717,7 @@ sub _prepare_image {
     }
 
     $drawing->_add_drawing_object( $drawing_type, @dimensions, $width, $height,
-        $name );
+        $name, undef, $anchor );
 
 
     push @{ $self->{_drawing_links} },
@@ -5774,6 +5788,7 @@ sub insert_shape {
     # existing shape scale factors.
     $shape->{_scale_x} = $_[5] if defined $_[5];
     $shape->{_scale_y} = $_[6] if defined $_[6];
+    $shape->{_anchor}  = $_[7] || 1;
 
     # Assign a shape ID.
     my $needs_id = 1;
@@ -5874,7 +5889,7 @@ sub _prepare_shape {
     );
 
     $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{_name},
-        $shape );
+        $shape, $shape->{_anchor} );
 }
 
 

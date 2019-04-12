@@ -36,7 +36,7 @@ $caption = " \tDrawing: _assemble_xml_file() shape object";
 
 $drawing->_add_drawing_object(
     3,     4,     8,     209550, 95250,  12,       22, 209660,
-    96260, 10000, 20000, 95250,  190500, 'rect 1', $shape
+    96260, 10000, 20000, 95250,  190500, 'rect 1', $shape, 1
 );
 
 $drawing->_assemble_xml_file();

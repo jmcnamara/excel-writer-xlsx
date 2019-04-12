@@ -40,7 +40,7 @@ $drawing->{_embedded} = 1;
 $caption = " \tDrawing: _assemble_xml_file() shape connection";
 
 $drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260,
-    10000, 20000, 95250, 190500, 'Connector 1', $shape );
+    10000, 20000, 95250, 190500, 'Connector 1', $shape, 1 );
 
 $drawing->_assemble_xml_file();
 

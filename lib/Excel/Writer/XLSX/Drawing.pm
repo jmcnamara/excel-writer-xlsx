@@ -167,13 +167,17 @@ sub _write_two_cell_anchor {
     my $height          = shift;
     my $description     = shift;
     my $shape           = shift;
+    my $anchor          = shift;
 
     my @attributes = ();
 
 
     # Add attribute for images.
-    if ( $type == 2 ) {
+    if ( $anchor == 2 ) {
         push @attributes, ( editAs => 'oneCell' );
+    }
+    elsif ( $anchor == 3 ) {
+        push @attributes, ( editAs => 'absolute' );
     }
 
     # Add editAs attribute for shapes.

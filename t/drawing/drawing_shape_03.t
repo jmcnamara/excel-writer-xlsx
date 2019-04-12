@@ -42,7 +42,7 @@ $caption = " \tDrawing: _write_nv_cxn_sp_pr() shape connection";
 
 $drawing->_add_drawing_object(
     3,     4,     8,     209550, 95250,  12, 22, 209660,
-    96260, 10000, 20000, 95250,  190500, '', $shape
+    96260, 10000, 20000, 95250,  190500, '', $shape, 1
 );
 
 $drawing->_write_nv_cxn_sp_pr( 1, $shape );
