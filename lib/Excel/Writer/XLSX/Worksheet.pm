@@ -2178,7 +2178,7 @@ sub write_comment {
     $self->{_has_comments} = 1;
 
     # Process the properties of the cell comment.
-    $self->{_comments}->{$row}->{$col} = [ $self->_comment_params( @_ ) ];
+    $self->{_comments}->{$row}->{$col} = [ @_ ];
 }
 
 
@@ -6062,6 +6062,10 @@ sub _prepare_vml_objects {
         my @cols = sort { $a <=> $b } keys %{ $self->{_comments}->{$row} };
 
         for my $col ( @cols ) {
+            my $user_options = $self->{_comments}->{$row}->{$col};
+            my $params = [ $self->_comment_params( @$user_options ) ];
+
+            $self->{_comments}->{$row}->{$col} = $params;
 
             # Set comment visibility if required and not already user defined.
             if ( $self->{_comments_visible} ) {
@@ -6343,7 +6347,7 @@ sub _comment_params {
 # _button_params()
 #
 # This method handles the parameters passed to insert_button() as well as
-# calculating the comment object position and vertices.
+# calculating the button object position and vertices.
 #
 sub _button_params {
 
@@ -6385,7 +6389,7 @@ sub _button_params {
     $params->{x_offset}  = 0  if !$params->{x_offset};
     $params->{y_offset}  = 0  if !$params->{y_offset};
 
-    # Scale the size of the comment box if required.
+    # Scale the size of the button box if required.
     if ( $params->{x_scale} ) {
         $params->{width} = $params->{width} * $params->{x_scale};
     }
@@ -6401,7 +6405,7 @@ sub _button_params {
     $params->{start_row} = $row;
     $params->{start_col} = $col;
 
-    # Calculate the positions of comment object.
+    # Calculate the positions of button object.
     my @vertices = $self->_position_object_pixels(
         $params->{start_col}, $params->{start_row}, $params->{x_offset},
         $params->{y_offset},  $params->{width},     $params->{height}
