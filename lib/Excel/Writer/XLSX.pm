@@ -260,9 +260,23 @@ At least one worksheet should be added to a new workbook. A worksheet is used to
 
 If C<$sheetname> is not specified the default Excel convention will be followed, i.e. Sheet1, Sheet2, etc.
 
-The worksheet name must be a valid Excel worksheet name, i.e. it cannot contain any of the following characters, C<[ ] : * ? / \> and it must be less than 32 characters. In addition, you cannot use the same, case insensitive, C<$sheetname> for more than one worksheet.
+The worksheet name must be a valid Excel worksheet name, i.e:
 
+=over
 
+=item * It must be less than 32 characters.
+
+=item * It cannot contain any of the following characters: C<[ ] : * ? / \>
+
+=item * It cannot start or end with an apostrophe.
+
+=item * It cannot be the same as an existing worksheet name (or a case insensitive variant).
+
+=item * It cannot be the reserved name "History" (or a case insensitive variant).
+
+=back
+
+See the Excel worksheet naming rules at L<https://support.office.com/en-ie/article/rename-a-worksheet-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9>.
 
 
 =head2 add_format( %properties )
