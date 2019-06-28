@@ -2236,6 +2236,7 @@ sub write_number {
 #         -1 : insufficient number of arguments
 #         -2 : row or column out of range
 #         -3 : long string truncated to 32767 chars
+#         -4 : Ignore undef strings
 #
 sub write_string {
 
@@ -2255,6 +2256,9 @@ sub write_string {
     my $type = 's';                # The data type
     my $index;
     my $str_error = 0;
+
+    # Ignore undef strings.
+    return -4 if !defined $str;
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
