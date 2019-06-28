@@ -13,7 +13,7 @@ use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Shape;
 use Excel::Writer::XLSX::Drawing;
 
-use Test::More tests => 2;
+use Test::More tests => 1;
 
 ###############################################################################
 #
@@ -39,10 +39,18 @@ $drawing->{_embedded} = 2;
 #
 $caption = " \tDrawing: _assemble_xml_file() shape text";
 
-$drawing->_add_drawing_object(
-    3,     4,     8,     209550, 95250,  12,       22, 209660,
-    96260, 10000, 20000, 95250,  190500, 'rect 1', $shape, 1
-);
+
+my @dimensions = ( 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000 );
+
+my $drawing_object = $drawing->_add_drawing_object();
+
+$drawing_object->{_type}       = 3;
+$drawing_object->{_dimensions} = \@dimensions;
+$drawing_object->{_width}      = 95250;
+$drawing_object->{_height}     = 190500;
+$drawing_object->{_name}       = 'rect 1';
+$drawing_object->{_shape}      = $shape;
+$drawing_object->{_anchor}     = 1;
 
 $drawing->_assemble_xml_file();
 
@@ -51,31 +59,6 @@ $got1     = _got_to_aref( $got1 );
 
 _is_deep_diff( $got1, $expected, $caption );
 
-###############################################################################
-#
-# Test for rounding of shape dimensions
-#
-$caption = " \tDrawing: _assemble_xml_file() integer shape dimensions";
-
-my $sheet = Excel::Writer::XLSX::Worksheet->new();
-my $drawing1 = _new_object( \$got2, 'Excel::Writer::XLSX::Drawing' );
-$sheet->{_drawing} = $drawing1;
-my $inserted = $sheet->insert_shape( 4, 8, $shape, 300, 400 );
-
-# Force the shape cell x offset to be non-integer
-$inserted->{_x_offset} += 0.5;
-$sheet->_prepare_shape( 0, 1 );
-
-# Truncate drawing object to just the dimensions
-$#{ $drawing1->{_drawings}->[0] } = 12;
-
-# Verify fractional dimensions have been rounded
-$expected = [
-    3,     12,      24,      423862, 0, 13, 26, 290512,
-    95250, 7739062, 4572000, 476250, 476250
-];
-
-_is_deep_diff( $drawing1->{_drawings}->[0], $expected, $caption );
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>

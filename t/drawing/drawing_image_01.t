@@ -29,9 +29,18 @@ my $drawing = _new_object( \$got, 'Excel::Writer::XLSX::Drawing' );
 #
 $caption = " \tDrawing: _assemble_xml_file()";
 
-$drawing->_add_drawing_object( 2, 2, 1, 0, 0, 3, 6, 533257, 190357,
-                               1219200, 190500, 1142857, 1142857, 'republic.png',
-                               undef, 2);
+my @dimensions = ( 2, 1, 0, 0, 3, 6, 533257, 190357, 1219200, 190500 );
+
+my $drawing_object = $drawing->_add_drawing_object();
+
+$drawing_object->{_type}       = 2;
+$drawing_object->{_dimensions} = \@dimensions;
+$drawing_object->{_width}      = 1142857;
+$drawing_object->{_height}     = 1142857;
+$drawing_object->{_name}       = 'republic.png';
+$drawing_object->{_shape}      = undef;
+$drawing_object->{_anchor}     = 2;
+
 $drawing->{_embedded} = 1;
 
 $drawing->_assemble_xml_file();

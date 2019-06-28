@@ -39,8 +39,17 @@ $drawing->{_embedded} = 1;
 #
 $caption = " \tDrawing: _assemble_xml_file() shape connection";
 
-$drawing->_add_drawing_object( 3, 4, 8, 209550, 95250, 12, 22, 209660, 96260,
-    10000, 20000, 95250, 190500, 'Connector 1', $shape, 1 );
+my @dimensions = ( 4, 8, 209550, 95250, 12, 22, 209660, 96260, 10000, 20000 );
+
+my $drawing_object = $drawing->_add_drawing_object();
+
+$drawing_object->{_type}       = 3;
+$drawing_object->{_dimensions} = \@dimensions;
+$drawing_object->{_width}      = 95250;
+$drawing_object->{_height}     = 190500;
+$drawing_object->{_name}       = 'Connector 1';
+$drawing_object->{_shape}      = $shape;
+$drawing_object->{_anchor}     = 1;
 
 $drawing->_assemble_xml_file();
 

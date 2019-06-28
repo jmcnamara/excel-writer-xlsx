@@ -71,10 +71,10 @@ sub _assemble_xml_file {
     if ( $self->{_embedded} ) {
 
         my $index = 0;
-        for my $dimensions ( @{ $self->{_drawings} } ) {
+        for my $drawing_object ( @{ $self->{_drawings} } ) {
 
             # Write the xdr:twoCellAnchor element.
-            $self->_write_two_cell_anchor( ++$index, @$dimensions );
+            $self->_write_two_cell_anchor( ++$index, $drawing_object );
         }
 
     }
@@ -102,7 +102,18 @@ sub _add_drawing_object {
 
     my $self = shift;
 
-    push @{ $self->{_drawings} }, [@_];
+    my $drawing_object = {
+        _type       => undef,
+        _dimensions => [],
+        _width      => 0,
+        _height     => 0,
+        _shape      => undef,
+        _anchor     => undef
+    };
+
+    push @{ $self->{_drawings} }, $drawing_object;
+
+    return $drawing_object;
 }
 
 
@@ -152,25 +163,27 @@ sub _write_two_cell_anchor {
 
     my $self            = shift;
     my $index           = shift;
-    my $type            = shift;
-    my $col_from        = shift;
-    my $row_from        = shift;
-    my $col_from_offset = shift;
-    my $row_from_offset = shift;
-    my $col_to          = shift;
-    my $row_to          = shift;
-    my $col_to_offset   = shift;
-    my $row_to_offset   = shift;
-    my $col_absolute    = shift;
-    my $row_absolute    = shift;
-    my $width           = shift;
-    my $height          = shift;
-    my $description     = shift;
-    my $shape           = shift;
-    my $anchor          = shift;
+    my $drawing_object  = shift;
+
+    my $type            = $drawing_object->{_type};
+    my $dimensions      = $drawing_object->{_dimensions};
+    my $col_from        = $dimensions->[0];
+    my $row_from        = $dimensions->[1];
+    my $col_from_offset = $dimensions->[2];
+    my $row_from_offset = $dimensions->[3];
+    my $col_to          = $dimensions->[4];
+    my $row_to          = $dimensions->[5];
+    my $col_to_offset   = $dimensions->[6];
+    my $row_to_offset   = $dimensions->[7];
+    my $col_absolute    = $dimensions->[8];
+    my $row_absolute    = $dimensions->[9];
+    my $width           = $drawing_object->{_width};
+    my $height          = $drawing_object->{_height};
+    my $description     = $drawing_object->{_name};
+    my $shape           = $drawing_object->{_shape};
+    my $anchor          = $drawing_object->{_anchor};
 
     my @attributes = ();
-
 
     # Add attribute for images.
     if ( $anchor == 2 ) {

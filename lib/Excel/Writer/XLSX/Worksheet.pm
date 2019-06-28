@@ -5506,9 +5506,10 @@ sub _prepare_chart {
     my $chart_id     = shift;
     my $drawing_id   = shift;
     my $drawing_type = 1;
+    my $drawing;
 
-    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ) =
-      @{ $self->{_charts}->[$index] };
+    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor )
+      = @{ $self->{_charts}->[$index] };
 
     $chart->{_id} = $chart_id - 1;
 
@@ -5529,22 +5530,26 @@ sub _prepare_chart {
     # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {
 
-        my $drawing = Excel::Writer::XLSX::Drawing->new();
-        $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
-            $name, undef, $anchor );
+        $drawing              = Excel::Writer::XLSX::Drawing->new();
         $drawing->{_embedded} = 1;
-
-        $self->{_drawing} = $drawing;
+        $self->{_drawing}     = $drawing;
 
         push @{ $self->{_external_drawing_links} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
     }
     else {
-        my $drawing = $self->{_drawing};
-        $drawing->_add_drawing_object( $drawing_type, @dimensions, 0, 0,
-            $name, undef, $anchor );
-
+        $drawing = $self->{_drawing};
     }
+
+    my $drawing_object = $drawing->_add_drawing_object();
+
+    $drawing_object->{_type}       = $drawing_type;
+    $drawing_object->{_dimensions} = \@dimensions;
+    $drawing_object->{_width}      = 0;
+    $drawing_object->{_height}     = 0;
+    $drawing_object->{_name}       = $name;
+    $drawing_object->{_shape}      = undef;
+    $drawing_object->{_anchor}     = $anchor;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -5704,10 +5709,9 @@ sub _prepare_image {
     # Create a Drawing object to use with worksheet unless one already exists.
     if ( !$self->{_drawing} ) {
 
-        $drawing = Excel::Writer::XLSX::Drawing->new();
+        $drawing              = Excel::Writer::XLSX::Drawing->new();
         $drawing->{_embedded} = 1;
-
-        $self->{_drawing} = $drawing;
+        $self->{_drawing}     = $drawing;
 
         push @{ $self->{_external_drawing_links} },
           [ '/drawing', '../drawings/drawing' . $drawing_id . '.xml' ];
@@ -5716,9 +5720,15 @@ sub _prepare_image {
         $drawing = $self->{_drawing};
     }
 
-    $drawing->_add_drawing_object( $drawing_type, @dimensions, $width, $height,
-        $name, undef, $anchor );
+    my $drawing_object = $drawing->_add_drawing_object();
 
+    $drawing_object->{_type}       = $drawing_type;
+    $drawing_object->{_dimensions} = \@dimensions;
+    $drawing_object->{_width}      = $width;
+    $drawing_object->{_height}     = $height;
+    $drawing_object->{_name}       = $name;
+    $drawing_object->{_shape}      = undef;
+    $drawing_object->{_anchor}     = $anchor;
 
     push @{ $self->{_drawing_links} },
       [ '/image', '../media/image' . $image_id . '.' . $image_type ];
@@ -5885,11 +5895,17 @@ sub _prepare_shape {
         $shape->{_column_end},   $shape->{_row_end},
         $shape->{_x2},           $shape->{_y2},
         $shape->{_x_abs},        $shape->{_y_abs},
-        $shape->{_width_emu},    $shape->{_height_emu},
     );
 
-    $drawing->_add_drawing_object( $drawing_type, @dimensions, $shape->{_name},
-        $shape, $shape->{_anchor} );
+    my $drawing_object = $drawing->_add_drawing_object();
+
+    $drawing_object->{_type}       = $drawing_type;
+    $drawing_object->{_dimensions} = \@dimensions;
+    $drawing_object->{_width}      = $shape->{_width_emu};
+    $drawing_object->{_height}     = $shape->{_height_emu};
+    $drawing_object->{_name}       = $shape->{_name};
+    $drawing_object->{_shape}      = $shape;
+    $drawing_object->{_anchor}     = $shape->{_anchor};
 }
 
 
