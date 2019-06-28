@@ -35,7 +35,7 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 
-$worksheet->insert_image( 0, 6, $dir . 'images/red_208.png', 46, 1 );
+$worksheet->insert_image( 0, 6, $dir . 'images/red_208.png', {x_offset => 46, y_offset => 1} );
 
 $workbook->close();
 

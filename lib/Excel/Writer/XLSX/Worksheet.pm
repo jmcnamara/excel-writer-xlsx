@@ -5638,7 +5638,7 @@ sub _get_range_data {
 
 ###############################################################################
 #
-# insert_image( $row, $col, $filename, $x, $y, $x_scale, $y_scale )
+# insert_image( $row, $col, $filename, $options )
 #
 # Insert an image into the worksheet.
 #
@@ -5654,11 +5654,29 @@ sub insert_image {
     my $row      = $_[0];
     my $col      = $_[1];
     my $image    = $_[2];
-    my $x_offset = $_[3] || 0;
-    my $y_offset = $_[4] || 0;
-    my $x_scale  = $_[5] || 1;
-    my $y_scale  = $_[6] || 1;
-    my $anchor   = $_[7] || 2;
+    my $x_offset;
+    my $y_offset;
+    my $x_scale;
+    my $y_scale;
+    my $anchor;
+
+    if ( ref $_[3] eq 'HASH' ) {
+        # Newer hashref bashed options.
+        my $options = $_[3];
+        $x_offset = $options->{x_offset}        || 0;
+        $y_offset = $options->{y_offset}        || 0;
+        $x_scale  = $options->{x_scale}         || 1;
+        $y_scale  = $options->{y_scale}         || 1;
+        $anchor   = $options->{object_position} || 2;
+    }
+    else {
+        # Older parameter based options.
+        $x_offset = $_[3] || 0;
+        $y_offset = $_[4] || 0;
+        $x_scale  = $_[5] || 1;
+        $y_scale  = $_[6] || 1;
+        $anchor   = $_[7] || 2;
+    }
 
     croak "Insufficient arguments in insert_image()" unless @_ >= 3;
     croak "Couldn't locate $image: $!" unless -e $image;

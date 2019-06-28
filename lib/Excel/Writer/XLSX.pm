@@ -1693,24 +1693,34 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 
 
-=head2 insert_image( $row, $col, $filename, $x, $y, $x_scale, $y_scale )
+=head2 insert_image( $row, $col, $filename, $options )
 
-This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format. The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
+This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format.
 
     $worksheet1->insert_image( 'A1', 'perl.bmp' );
     $worksheet2->insert_image( 'A1', '../images/perl.bmp' );
     $worksheet3->insert_image( 'A1', '.c:\images\perl.bmp' );
 
-The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
-    $worksheet1->insert_image('A1', 'perl.bmp', 32, 10);
+The C<$options> parameter can be used to set various options for the image. The defaults are:
+
+    $options = {
+        x_offset => 0,
+        y_offset => 0,
+        x_scale  => 0,
+        y_scale  => 0,
+    };
+
+The option parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
+
+    $worksheet1->insert_image('A1', 'perl.bmp', { x_offset =>32, y_offset => 10 });
 
 The offsets can be greater than the width or height of the underlying cell. This can be occasionally useful if you wish to align two or more images relative to the same cell.
 
-The parameters C<$x_scale> and C<$y_scale> can be used to scale the inserted image horizontally and vertically:
+The option parameters C<x_scale> and C<y_scale> can be used to scale the inserted image horizontally and vertically:
 
     # Scale the inserted image: width x 2.0, height x 0.8
-    $worksheet->insert_image( 'A1', 'perl.bmp', 0, 0, 2, 0.8 );
+    $worksheet->insert_image( 'A1', 'perl.bmp', { y_scale => 2, y_scale => 0.8 } );
 
 Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
 

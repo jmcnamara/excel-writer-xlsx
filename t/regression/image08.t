@@ -34,7 +34,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->insert_image( 'B3',  $dir . 'images/grey.png', 0, 0, 0.5, 0.5 );
+$worksheet->insert_image( 'B3',  $dir . 'images/grey.png', {x_scale => 0.5, y_scale => 0.5} );
 
 $workbook->close();
 
