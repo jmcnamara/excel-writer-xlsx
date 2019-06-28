@@ -7146,7 +7146,8 @@ The C<x_offset> and C<y_offset> position the top left corner of the chart in the
 
 Note: the C<x_scale>, C<y_scale>, C<x_offset> and C<y_offset> parameters can also be set via the C<insert_chart()> method:
 
-    $worksheet->insert_chart( 'E2', $chart, 2, 4, 1.5, 2 );
+    $worksheet->insert_chart( 'E2', $chart, { x_offset =>2,    y_offset => 4,
+                                              x_scale  => 1.5, y_scale  => 2 } );
 
 
 =head2 set_title()
@@ -8488,7 +8489,7 @@ Here is a complete example that demonstrates some of the available features when
     $chart->set_style( 11 );
 
     # Insert the chart into the worksheet (with an offset).
-    $worksheet->insert_chart( 'D2', $chart, 25, 10 );
+    $worksheet->insert_chart( 'D2', $chart, { x_offset => 25, y_offset => 10 } );
 
     $workbook->close();
 

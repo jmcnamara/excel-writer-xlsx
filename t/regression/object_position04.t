@@ -52,7 +52,15 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-$worksheet->insert_chart( 'E9', $chart, 0, 0, 1, 1, 2 );
+$worksheet->insert_chart('E9', $chart,
+    {
+        x_offset        => 0,
+        y_offset        => 0,
+        x_scale         => 1,
+        y_scale         => 1,
+        object_position => 2
+    }
+);
 
 $workbook->close();
 

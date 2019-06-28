@@ -34,6 +34,7 @@ chart_data_table.pl     A demo of a chart with a data table on the axis.
 chart_data_tools.pl     A demo of charts with data highlighting options.
 chart_clustered.pl      A demo of a chart with a clustered axis.
 chart_styles.pl         A demo of the available chart styles.
+chart_gauge.pl          A demo of a gauge style chart.
 colors.pl               A demo of the colour palette and named colours.
 comments1.pl            Add comments to worksheet cells.
 comments2.pl            Add comments with advanced options.

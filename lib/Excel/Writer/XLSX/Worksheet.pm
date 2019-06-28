@@ -5447,11 +5447,11 @@ sub insert_chart {
     my $row      = $_[0];
     my $col      = $_[1];
     my $chart    = $_[2];
-    my $x_offset = $_[3] || 0;
-    my $y_offset = $_[4] || 0;
-    my $x_scale  = $_[5] || 1;
-    my $y_scale  = $_[6] || 1;
-    my $anchor   = $_[7] || 1;
+    my $x_offset;
+    my $y_offset;
+    my $x_scale;
+    my $y_scale;
+    my $anchor;
 
     croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
 
@@ -5465,6 +5465,24 @@ sub insert_chart {
         croak "Not a embedded style Chart object in insert_chart()"
           unless $chart->{_embedded};
 
+    }
+
+    if ( ref $_[3] eq 'HASH' ) {
+        # Newer hashref bashed options.
+        my $options = $_[3];
+        $x_offset = $options->{x_offset}        || 0;
+        $y_offset = $options->{y_offset}        || 0;
+        $x_scale  = $options->{x_scale}         || 1;
+        $y_scale  = $options->{y_scale}         || 1;
+        $anchor   = $options->{object_position} || 1;
+    }
+    else {
+        # Older parameter based options.
+        $x_offset = $_[3] || 0;
+        $y_offset = $_[4] || 0;
+        $x_scale  = $_[5] || 1;
+        $y_scale  = $_[6] || 1;
+        $anchor   = $_[7] || 1;
     }
 
     # Ensure a chart isn't inserted more than once.

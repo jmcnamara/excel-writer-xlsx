@@ -55,7 +55,7 @@ $chart1->set_y_axis( name => 'Sample length (mm)' );
 $chart1->set_table();
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D2', $chart1, 25, 10 );
+$worksheet->insert_chart( 'D2', $chart1, { x_offset => 25, y_offset => 10 } );
 
 
 #
@@ -89,7 +89,7 @@ $chart2->set_table( show_keys => 1 );
 $chart2->set_legend( position => 'none' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D18', $chart2, 25, 11 );
+$worksheet->insert_chart( 'D18', $chart2, { x_offset => 25, y_offset => 10 } );
 
 $workbook->close();
 

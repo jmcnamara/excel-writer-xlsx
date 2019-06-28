@@ -61,7 +61,7 @@ $chart1->add_series(
 $chart1->set_title( name => 'Chart with Trendlines' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D2', $chart1, 25, 10 );
+$worksheet->insert_chart( 'D2', $chart1, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -90,7 +90,7 @@ $chart2->add_series(
 $chart2->set_title( name => 'Chart with Data Labels and Markers' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D18', $chart2, 25, 10 );
+$worksheet->insert_chart( 'D18', $chart2, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -118,7 +118,7 @@ $chart3->add_series(
 $chart3->set_title( name => 'Chart with Error Bars' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D34', $chart3, 25, 10 );
+$worksheet->insert_chart( 'D34', $chart3, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -148,7 +148,7 @@ $chart4->add_series(
 $chart4->set_title( name => 'Chart with Up-Down Bars' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D50', $chart4, 25, 10 );
+$worksheet->insert_chart( 'D50', $chart4, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -178,7 +178,7 @@ $chart5->add_series(
 $chart5->set_title( name => 'Chart with High-Low Lines' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D66', $chart5, 25, 10 );
+$worksheet->insert_chart( 'D66', $chart5, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -208,7 +208,7 @@ $chart6->add_series(
 $chart6->set_title( name => 'Chart with Drop Lines' );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D82', $chart6, 25, 10 );
+$worksheet->insert_chart( 'D82', $chart6, { x_offset => 25, y_offset => 10 } );
 
 $workbook->close();
 

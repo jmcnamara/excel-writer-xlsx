@@ -54,7 +54,7 @@ $chart->set_y_axis( name => 'Sample length (mm)' );
 $chart->set_style( 10 );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D2', $chart, 25, 10 );
+$worksheet->insert_chart( 'D2', $chart, { x_offset => 25, y_offset => 10 } );
 
 $workbook->close();
 

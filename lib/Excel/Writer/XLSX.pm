@@ -1693,7 +1693,7 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 
 
-=head2 insert_image( $row, $col, $filename, $options )
+=head2 insert_image( $row, $col, $filename, , { %options } )
 
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format.
 
@@ -1701,15 +1701,14 @@ This method can be used to insert a image into a worksheet. The image can be in 
     $worksheet2->insert_image( 'A1', '../images/perl.bmp' );
     $worksheet3->insert_image( 'A1', '.c:\images\perl.bmp' );
 
+The optional C<options> hash/hashref parameter can be used to set various options for the image. The defaults are:
 
-The C<$options> parameter can be used to set various options for the image. The defaults are:
-
-    $options = {
+    %options = (
         x_offset => 0,
         y_offset => 0,
-        x_scale  => 0,
-        y_scale  => 0,
-    };
+        x_scale  => 1,
+        y_scale  => 1,
+    );
 
 The option parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
@@ -1729,7 +1728,7 @@ BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid 
 
 
 
-=head2 insert_chart( $row, $col, $chart, $x, $y, $x_scale, $y_scale )
+=head2 insert_chart( $row, $col, $chart, , { %options } )
 
 This method can be used to insert a Chart object into a worksheet. The Chart must be created by the C<add_chart()> Workbook method and it must have the C<embedded> option set.
 
@@ -1743,16 +1742,24 @@ This method can be used to insert a Chart object into a worksheet. The Chart mus
 
 See C<add_chart()> for details on how to create the Chart object and L<Excel::Writer::XLSX::Chart> for details on how to configure it. See also the C<chart_*.pl> programs in the examples directory of the distro.
 
-The C<$x>, C<$y>, C<$x_scale> and C<$y_scale> parameters are optional.
+The optional C<options> hash/hashref parameter can be used to set various options for the chart. The defaults are:
 
-The parameters C<$x> and C<$y> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
+    %options = (
+        x_offset => 0,
+        y_offset => 0,
+        x_scale  => 1,
+        y_scale  => 1,
+    );
 
-    $worksheet1->insert_chart( 'E2', $chart, 3, 3 );
+The option parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
 
-The parameters C<$x_scale> and C<$y_scale> can be used to scale the inserted chart horizontally and vertically:
+    $worksheet1->insert_chart( 'E2', $chart, { x_offset =>10, y_offset => 20 });
+
+The option parameters C<x_scale> and C<y_scale> can be used to scale the inserted chart horizontally and vertically:
 
     # Scale the width by 120% and the height by 150%
-    $worksheet->insert_chart( 'E2', $chart, 0, 0, 1.2, 1.5 );
+    $worksheet->insert_chart( 'E2', $chart, { y_scale => 1.2, y_scale => 1.5 } );
+
 
 =head2 insert_shape( $row, $col, $shape, $x, $y, $x_scale, $y_scale )
 
@@ -1785,7 +1792,7 @@ See also the C<shape*.pl> programs in the examples directory of the distro.
 
 
 
-=head2 insert_button( $row, $col, { %properties })
+=head2 insert_button( $row, $col, { %options })
 
 The C<insert_button()> method can be used to insert an Excel form button into a worksheet.
 
