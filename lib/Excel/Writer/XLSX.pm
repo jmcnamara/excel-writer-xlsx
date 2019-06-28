@@ -7499,7 +7499,7 @@ In no event unless required by applicable law or agreed to in writing will any c
 
 =head1 LICENSE
 
-Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> or the GPL L<http://www.opensource.org/licenses/gpl-license.php>.
+The Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html>.
 
 
 
