@@ -37,7 +37,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'line', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 45444480, 47402368 ];
+$chart->{_axis_ids} = [ 145169024, 145176448 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],

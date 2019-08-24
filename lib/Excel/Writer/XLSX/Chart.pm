@@ -2972,8 +2972,8 @@ sub _write_cat_axis {
     return unless $axis_ids;
     return unless scalar @$axis_ids;
 
-    my $position = $self->{_cat_axis_position};
-    my $horiz    = $self->{_horiz_cat_axis};
+    my $position  = $self->{_cat_axis_position};
+    my $is_y_axis = $self->{_horiz_cat_axis};
 
     # Overwrite the default axis position with a user supplied value.
     $position = $x_axis->{_position} || $position;
@@ -3000,11 +3000,11 @@ sub _write_cat_axis {
     my $title;
     if ( $title = $x_axis->{_formula} ) {
 
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz,
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, $is_y_axis,
             $x_axis->{_name_font}, $x_axis->{_layout} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $x_axis->{_name_font},
+        $self->_write_title_rich( $title, $is_y_axis, $x_axis->{_name_font},
             $x_axis->{_layout} );
     }
 
@@ -3075,13 +3075,13 @@ sub _write_cat_axis {
 #
 sub _write_val_axis {
 
-    my $self     = shift;
-    my %args     = @_;
-    my $x_axis   = $args{x_axis};
-    my $y_axis   = $args{y_axis};
-    my $axis_ids = $args{axis_ids};
-    my $position = $args{position} || $self->{_val_axis_position};
-    my $horiz    = $self->{_horiz_val_axis};
+    my $self      = shift;
+    my %args      = @_;
+    my $x_axis    = $args{x_axis};
+    my $y_axis    = $args{y_axis};
+    my $axis_ids  = $args{axis_ids};
+    my $position  = $args{position} || $self->{_val_axis_position};
+    my $is_y_axis = $self->{_horiz_val_axis};
 
     return unless $axis_ids && scalar @$axis_ids;
 
@@ -3112,11 +3112,11 @@ sub _write_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $y_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $y_axis->{_data_id}, $horiz,
+        $self->_write_title_formula( $title, $y_axis->{_data_id}, $is_y_axis,
             $y_axis->{_name_font}, $y_axis->{_layout} );
     }
     elsif ( $title = $y_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $y_axis->{_name_font},
+        $self->_write_title_rich( $title, $is_y_axis, $y_axis->{_name_font},
             $y_axis->{_layout} );
     }
 
@@ -3179,13 +3179,13 @@ sub _write_val_axis {
 #
 sub _write_cat_val_axis {
 
-    my $self     = shift;
-    my %args     = @_;
-    my $x_axis   = $args{x_axis};
-    my $y_axis   = $args{y_axis};
-    my $axis_ids = $args{axis_ids};
-    my $position = $args{position} || $self->{_val_axis_position};
-    my $horiz    = $self->{_horiz_val_axis};
+    my $self      = shift;
+    my %args      = @_;
+    my $x_axis    = $args{x_axis};
+    my $y_axis    = $args{y_axis};
+    my $axis_ids  = $args{axis_ids};
+    my $position  = $args{position} || $self->{_val_axis_position};
+    my $is_y_axis = $self->{_horiz_val_axis};
 
     return unless $axis_ids && scalar @$axis_ids;
 
@@ -3216,11 +3216,11 @@ sub _write_cat_val_axis {
     # Write the axis title elements.
     my $title;
     if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, $horiz,
+        $self->_write_title_formula( $title, $x_axis->{_data_id}, $is_y_axis,
             $x_axis->{_name_font}, $x_axis->{_layout} );
     }
     elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $horiz, $x_axis->{_name_font},
+        $self->_write_title_rich( $title, $is_y_axis, $x_axis->{_name_font},
             $x_axis->{_layout} );
     }
 
@@ -4226,17 +4226,17 @@ sub _write_auto_title_deleted {
 #
 sub _write_title_rich {
 
-    my $self    = shift;
-    my $title   = shift;
-    my $horiz   = shift;
-    my $font    = shift;
-    my $layout  = shift;
-    my $overlay = shift;
+    my $self      = shift;
+    my $title     = shift;
+    my $is_y_axis = shift;
+    my $font      = shift;
+    my $layout    = shift;
+    my $overlay   = shift;
 
     $self->xml_start_tag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx_rich( $title, $horiz, $font );
+    $self->_write_tx_rich( $title, $is_y_axis, $font );
 
     # Write the c:layout element.
     $self->_write_layout( $layout, 'text' );
@@ -4256,13 +4256,13 @@ sub _write_title_rich {
 #
 sub _write_title_formula {
 
-    my $self    = shift;
-    my $title   = shift;
-    my $data_id = shift;
-    my $horiz   = shift;
-    my $font    = shift;
-    my $layout  = shift;
-    my $overlay = shift;
+    my $self      = shift;
+    my $title     = shift;
+    my $data_id   = shift;
+    my $is_y_axis = shift;
+    my $font      = shift;
+    my $layout    = shift;
+    my $overlay   = shift;
 
     $self->xml_start_tag( 'c:title' );
 
@@ -4276,7 +4276,7 @@ sub _write_title_formula {
     $self->_write_overlay() if $overlay;
 
     # Write the c:txPr element.
-    $self->_write_tx_pr( $horiz, $font );
+    $self->_write_tx_pr( $is_y_axis, $font );
 
     $self->xml_end_tag( 'c:title' );
 }
@@ -4290,15 +4290,15 @@ sub _write_title_formula {
 #
 sub _write_tx_rich {
 
-    my $self  = shift;
-    my $title = shift;
-    my $horiz = shift;
-    my $font  = shift;
+    my $self      = shift;
+    my $title     = shift;
+    my $is_y_axis = shift;
+    my $font      = shift;
 
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:rich element.
-    $self->_write_rich( $title, $horiz, $font );
+    $self->_write_rich( $title, $is_y_axis, $font );
 
     $self->xml_end_tag( 'c:tx' );
 }
@@ -4358,11 +4358,11 @@ sub _write_tx_formula {
 #
 sub _write_rich {
 
-    my $self     = shift;
-    my $title    = shift;
-    my $horiz    = shift;
-    my $rotation = undef;
-    my $font     = shift;
+    my $self      = shift;
+    my $title     = shift;
+    my $is_y_axis = shift;
+    my $rotation  = undef;
+    my $font      = shift;
 
     if ( $font && exists $font->{_rotation} ) {
         $rotation = $font->{_rotation};
@@ -4371,7 +4371,7 @@ sub _write_rich {
     $self->xml_start_tag( 'c:rich' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( $rotation, $horiz );
+    $self->_write_a_body_pr( $rotation, $is_y_axis );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
@@ -4390,18 +4390,28 @@ sub _write_rich {
 # Write the <a:bodyPr> element.
 sub _write_a_body_pr {
 
-    my $self  = shift;
-    my $rot   = shift;
-    my $horiz = shift;
+    my $self      = shift;
+    my $rot       = shift;
+    my $is_y_axis = shift;
 
     my @attributes = ();
 
-    if ( !defined $rot && $horiz ) {
+    if ( !defined $rot && $is_y_axis ) {
         $rot = -5400000;
     }
 
-    push @attributes, ( 'rot' => $rot ) if defined $rot;
-    push @attributes, ( 'vert' => 'horz' ) if $horiz;
+    if (defined $rot) {
+        if ($rot == 16_200_000) {
+            # 270 deg/stacked angle.
+            push @attributes, ( 'rot' => 0 );
+            push @attributes, ( 'vert' => 'wordArtVert' );
+
+        }
+        else {
+            push @attributes, ( 'rot' => $rot );
+            push @attributes, ( 'vert' => 'horz' );
+        }
+    }
 
     $self->xml_empty_tag( 'a:bodyPr', @attributes );
 }
@@ -4653,10 +4663,10 @@ sub _write_a_t {
 #
 sub _write_tx_pr {
 
-    my $self     = shift;
-    my $horiz    = shift;
-    my $font     = shift;
-    my $rotation = undef;
+    my $self      = shift;
+    my $is_y_axis = shift;
+    my $font      = shift;
+    my $rotation  = undef;
 
     if ( $font && exists $font->{_rotation} ) {
         $rotation = $font->{_rotation};
@@ -4665,7 +4675,7 @@ sub _write_tx_pr {
     $self->xml_start_tag( 'c:txPr' );
 
     # Write the a:bodyPr element.
-    $self->_write_a_body_pr( $rotation, $horiz );
+    $self->_write_a_body_pr( $rotation, $is_y_axis );
 
     # Write the a:lstStyle element.
     $self->_write_a_lst_style();
@@ -8283,11 +8293,13 @@ Set the font underline property, should be 0 or 1:
 
 =item * C<rotation>
 
-Set the font rotation in the range -90 to 90:
+Set the font rotation in the integer range -90 to 90, and 270:
 
     $chart->set_x_axis( num_font => { rotation => 45 } );
 
 This is useful for displaying large axis data such as dates in a more compact format.
+
+The angle 270 is also supported. This indicates text where the letters run from top to bottom (stacked).
 
 =item * C<color>
 

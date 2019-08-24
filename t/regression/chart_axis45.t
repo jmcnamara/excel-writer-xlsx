@@ -2,7 +2,7 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# reverse ('(c)'), October 2014, John McNamara, jmcnamara@cpan.org
+# reverse ('(c)'), January 2011, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';
@@ -16,14 +16,14 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_data_labels25.xlsx';
+my $filename     = 'chart_axis45.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
 my $ignore_members  = [];
 
-my $ignore_elements = {};
+my $ignore_elements = { 'xl/charts/chart1.xml' => ['<c:pageMargins'] };
 
 
 ###############################################################################
@@ -34,10 +34,10 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
-my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
+my $chart     = $workbook->add_chart( type => 'bar', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 108315392, 108329600 ];
+$chart->{_axis_ids} = [ 108178048, 108321408 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -48,21 +48,21 @@ my $data = [
 
 $worksheet->write( 'A1', $data );
 
-$chart->add_series(
-    values      => '=Sheet1!$A$1:$A$5',
-    data_labels => { value => 1,
-                     position => 'outside_end',
-                     font => { rotation => 45, baseline => -1 } },
-);
-
-$chart->add_series(
-    values      => '=Sheet1!$B$1:$B$5',
-    data_labels => { value => 1,
-                     position => 'inside_base',
-                     font => { rotation => -45, baseline => -1 }},
-);
-
+$chart->add_series( values => '=Sheet1!$A$1:$A$5' );
+$chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
+
+$chart->set_x_axis(
+    name      => 'XXX',
+    name_font => { rotation => 270, baseline => -1 },
+    num_font  => { rotation => 270, baseline => -1 }
+);
+
+$chart->set_y_axis(
+    name      => 'YYY',
+    name_font => { rotation => 270, baseline => -1 },
+    num_font  => { rotation => 270, baseline => -1 }
+);
 
 $worksheet->insert_chart( 'E9', $chart );
 
