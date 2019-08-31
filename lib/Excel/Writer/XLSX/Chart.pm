@@ -4407,6 +4407,12 @@ sub _write_a_body_pr {
             push @attributes, ( 'vert' => 'wordArtVert' );
 
         }
+        elsif ($rot == 16_260_000) {
+            # 271 deg/East Asian vertical.
+            push @attributes, ( 'rot' => 0 );
+            push @attributes, ( 'vert' => 'eaVert' );
+
+        }
         else {
             push @attributes, ( 'rot' => $rot );
             push @attributes, ( 'vert' => 'horz' );
@@ -8293,13 +8299,21 @@ Set the font underline property, should be 0 or 1:
 
 =item * C<rotation>
 
-Set the font rotation in the integer range -90 to 90, and 270:
+Set the font rotation in the integer range -90 to 90, and 270-271:
 
     $chart->set_x_axis( num_font => { rotation => 45 } );
 
 This is useful for displaying large axis data such as dates in a more compact format.
 
-The angle 270 is also supported. This indicates text where the letters run from top to bottom (stacked).
+There are 2 special case angles outside the range -90 to 90:
+
+=over
+
+=item * 270: Stacked text, where the text runs from top to bottom.
+
+=item * 271: A special variant of stacked text for East Asian fonts.
+
+=back
 
 =item * C<color>
 
