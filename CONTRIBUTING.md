@@ -100,7 +100,7 @@ Ideally, new features should be accompanied by tests that compare Excel::Writer:
 
 ### Code Style
 
-Follow the general style of the surrounding code and format it format it with [perltidy](http://perltidy.sourceforge.net) and the following options:
+Follow the general style of the surrounding code and format it with [perltidy](http://perltidy.sourceforge.net) and the following options:
 
     -mbl=2 -pt=0 -nola
 
