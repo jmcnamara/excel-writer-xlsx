@@ -2827,7 +2827,7 @@ sub write_url {
 
     if ( $self->{_hlink_count} > 65_530 ) {
         carp "Ignoring URL '$url' since it exceeds Excel's limit of 65,530 "
-          . "URLS per worksheet. See LIMITATIONS section of the "
+          . "URLs per worksheet. See LIMITATIONS section of the "
           . "Excel::Writer::XLSX documentation.";
         return -5;
     }
