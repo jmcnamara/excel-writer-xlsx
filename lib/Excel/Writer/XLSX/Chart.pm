@@ -5310,7 +5310,11 @@ sub _write_num_cache {
 
     my $self  = shift;
     my $data  = shift;
-    my $count = @$data;
+    my $count = 0;
+
+    if (defined $data) {
+        $count = @$data;
+    }
 
     $self->xml_start_tag( 'c:numCache' );
 
