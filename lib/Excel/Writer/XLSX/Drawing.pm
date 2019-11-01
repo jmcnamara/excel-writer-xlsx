@@ -103,12 +103,13 @@ sub _add_drawing_object {
     my $self = shift;
 
     my $drawing_object = {
-        _type       => undef,
-        _dimensions => [],
-        _width      => 0,
-        _height     => 0,
-        _shape      => undef,
-        _anchor     => undef
+        _type        => undef,
+        _dimensions  => [],
+        _width       => 0,
+        _height      => 0,
+        _description => undef,
+        _shape       => undef,
+        _anchor      => undef
     };
 
     push @{ $self->{_drawings} }, $drawing_object;
@@ -179,7 +180,7 @@ sub _write_two_cell_anchor {
     my $row_absolute    = $dimensions->[9];
     my $width           = $drawing_object->{_width};
     my $height          = $drawing_object->{_height};
-    my $description     = $drawing_object->{_name};
+    my $description     = $drawing_object->{_description};
     my $shape           = $drawing_object->{_shape};
     my $anchor          = $drawing_object->{_anchor};
 

@@ -33,13 +33,13 @@ my @dimensions = ( 4, 8, 457200, 104775, 12, 22, 152400, 180975 );
 
 my $drawing_object = $drawing->_add_drawing_object();
 
-$drawing_object->{_type}       = 1;
-$drawing_object->{_dimensions} = \@dimensions;
-$drawing_object->{_width}      = undef;
-$drawing_object->{_height}     = undef;
-$drawing_object->{_name}       = undef;
-$drawing_object->{_shape}      = undef;
-$drawing_object->{_anchor}     = 1;
+$drawing_object->{_type}        = 1;
+$drawing_object->{_dimensions}  = \@dimensions;
+$drawing_object->{_width}       = undef;
+$drawing_object->{_height}      = undef;
+$drawing_object->{_description} = undef;
+$drawing_object->{_shape}       = undef;
+$drawing_object->{_anchor}      = 1;
 
 $drawing->{_embedded} = 1;
 

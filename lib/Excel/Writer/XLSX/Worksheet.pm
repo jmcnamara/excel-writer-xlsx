@@ -5565,13 +5565,13 @@ sub _prepare_chart {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}       = $drawing_type;
-    $drawing_object->{_dimensions} = \@dimensions;
-    $drawing_object->{_width}      = 0;
-    $drawing_object->{_height}     = 0;
-    $drawing_object->{_name}       = $name;
-    $drawing_object->{_shape}      = undef;
-    $drawing_object->{_anchor}     = $anchor;
+    $drawing_object->{_type}        = $drawing_type;
+    $drawing_object->{_dimensions}  = \@dimensions;
+    $drawing_object->{_width}       = 0;
+    $drawing_object->{_height}      = 0;
+    $drawing_object->{_description} = $name;
+    $drawing_object->{_shape}       = undef;
+    $drawing_object->{_anchor}      = $anchor;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -5762,13 +5762,13 @@ sub _prepare_image {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}       = $drawing_type;
-    $drawing_object->{_dimensions} = \@dimensions;
-    $drawing_object->{_width}      = $width;
-    $drawing_object->{_height}     = $height;
-    $drawing_object->{_name}       = $name;
-    $drawing_object->{_shape}      = undef;
-    $drawing_object->{_anchor}     = $anchor;
+    $drawing_object->{_type}        = $drawing_type;
+    $drawing_object->{_dimensions}  = \@dimensions;
+    $drawing_object->{_width}       = $width;
+    $drawing_object->{_height}      = $height;
+    $drawing_object->{_description} = $name;
+    $drawing_object->{_shape}       = undef;
+    $drawing_object->{_anchor}      = $anchor;
 
     push @{ $self->{_drawing_links} },
       [ '/image', '../media/image' . $image_id . '.' . $image_type ];
@@ -5939,13 +5939,13 @@ sub _prepare_shape {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}       = $drawing_type;
-    $drawing_object->{_dimensions} = \@dimensions;
-    $drawing_object->{_width}      = $shape->{_width_emu};
-    $drawing_object->{_height}     = $shape->{_height_emu};
-    $drawing_object->{_name}       = $shape->{_name};
-    $drawing_object->{_shape}      = $shape;
-    $drawing_object->{_anchor}     = $shape->{_anchor};
+    $drawing_object->{_type}        = $drawing_type;
+    $drawing_object->{_dimensions}  = \@dimensions;
+    $drawing_object->{_width}       = $shape->{_width_emu};
+    $drawing_object->{_height}      = $shape->{_height_emu};
+    $drawing_object->{_description} = $shape->{_name};
+    $drawing_object->{_shape}       = $shape;
+    $drawing_object->{_anchor}      = $shape->{_anchor};
 }
 
 
