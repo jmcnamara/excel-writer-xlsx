@@ -77,13 +77,14 @@ sub _assemble_xml_file {
 #
 sub _add_document_relationship {
 
-    my $self   = shift;
-    my $type   = shift;
-    my $target = shift;
+    my $self        = shift;
+    my $type        = shift;
+    my $target      = shift;
+    my $target_mode = shift;
 
     $type   = $document_schema . $type;
 
-    push @{ $self->{_rels} }, [ $type, $target ];
+    push @{ $self->{_rels} }, [ $type, $target, $target_mode ];
 }
 
 

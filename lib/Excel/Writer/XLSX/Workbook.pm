@@ -1783,12 +1783,6 @@ sub _prepare_drawings {
             $has_drawing = 1;
         }
 
-        # Prepare the worksheet charts.
-        for my $index ( 0 .. $chart_count - 1 ) {
-            $chart_ref_id++;
-            $sheet->_prepare_chart( $index, $chart_ref_id, $drawing_id );
-        }
-
         # Prepare the worksheet images.
         for my $index ( 0 .. $image_count - 1 ) {
 
@@ -1804,6 +1798,12 @@ sub _prepare_drawings {
                 $width, $height,       $name,
                 $type,  $x_dpi,        $y_dpi
             );
+        }
+
+        # Prepare the worksheet charts.
+        for my $index ( 0 .. $chart_count - 1 ) {
+            $chart_ref_id++;
+            $sheet->_prepare_chart( $index, $chart_ref_id, $drawing_id );
         }
 
         # Prepare the worksheet shapes.

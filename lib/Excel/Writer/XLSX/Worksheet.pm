@@ -5572,6 +5572,8 @@ sub _prepare_chart {
     $drawing_object->{_description} = $name;
     $drawing_object->{_shape}       = undef;
     $drawing_object->{_anchor}      = $anchor;
+    $drawing_object->{_tip}         = undef;
+    $drawing_object->{_url}         = undef;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -5681,6 +5683,8 @@ sub insert_image {
     my $x_scale;
     my $y_scale;
     my $anchor;
+    my $url;
+    my $tip;
 
     if ( ref $_[3] eq 'HASH' ) {
         # Newer hashref bashed options.
@@ -5690,6 +5694,8 @@ sub insert_image {
         $x_scale  = $options->{x_scale}         || 1;
         $y_scale  = $options->{y_scale}         || 1;
         $anchor   = $options->{object_position} || 2;
+        $url      = $options->{url};
+        $tip      = $options->{tip};
     }
     else {
         # Older parameter based options.
@@ -5704,7 +5710,10 @@ sub insert_image {
     croak "Couldn't locate $image: $!" unless -e $image;
 
     push @{ $self->{_images} },
-      [ $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ];
+      [
+        $row,     $col,     $image, $x_offset, $y_offset,
+        $x_scale, $y_scale, $url,   $tip,      $anchor
+      ];
 }
 
 
@@ -5729,8 +5738,10 @@ sub _prepare_image {
     my $drawing_type = 2;
     my $drawing;
 
-    my ( $row, $col, $image, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ) =
-      @{ $self->{_images}->[$index] };
+    my (
+        $row,     $col,     $image, $x_offset, $y_offset,
+        $x_scale, $y_scale, $url,   $tip,      $anchor
+    ) = @{ $self->{_images}->[$index] };
 
     $width  *= $x_scale;
     $height *= $y_scale;
@@ -5769,6 +5780,32 @@ sub _prepare_image {
     $drawing_object->{_description} = $name;
     $drawing_object->{_shape}       = undef;
     $drawing_object->{_anchor}      = $anchor;
+    $drawing_object->{_url}         = $url;
+    $drawing_object->{_tip}         = $tip;
+
+    if ( $url ) {
+        my $rel_type    = '/hyperlink';
+        my $target_mode = 'External';
+        my $target;
+
+        if ( $url =~ m|^[fh]tt?ps?://| ) {
+            $target = $url;
+        }
+
+        if ( $url =~ s/^external:// ) {
+            $target = $url;
+        }
+
+        if ( $url =~ s/^internal:/#/ ) {
+            $target      = $url;
+            $target_mode = undef;
+        }
+
+        if ( $target ) {
+            push @{ $self->{_drawing_links} },
+              [ $rel_type, $target, $target_mode ];
+        }
+    }
 
     push @{ $self->{_drawing_links} },
       [ '/image', '../media/image' . $image_id . '.' . $image_type ];
@@ -5946,6 +5983,8 @@ sub _prepare_shape {
     $drawing_object->{_description} = $shape->{_name};
     $drawing_object->{_shape}       = $shape;
     $drawing_object->{_anchor}      = $shape->{_anchor};
+    $drawing_object->{_url}         = undef;
+    $drawing_object->{_tip}         = undef;
 }
 
 

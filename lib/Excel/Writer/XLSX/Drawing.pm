@@ -70,13 +70,18 @@ sub _assemble_xml_file {
 
     if ( $self->{_embedded} ) {
 
-        my $index = 0;
+        my $index     = 0;
+        my $rel_index = 0;
         for my $drawing_object ( @{ $self->{_drawings} } ) {
 
             # Write the xdr:twoCellAnchor element.
-            $self->_write_two_cell_anchor( ++$index, $drawing_object );
+            $index++;
+            $rel_index++ if $drawing_object->{_url};
+            $self->_write_two_cell_anchor( $index,
+                                           $rel_index,
+                                           $drawing_object );
+            $rel_index++;
         }
-
     }
     else {
         my $index = 0;
@@ -164,6 +169,7 @@ sub _write_two_cell_anchor {
 
     my $self            = shift;
     my $index           = shift;
+    my $rel_index       = shift;
     my $drawing_object  = shift;
 
     my $type            = $drawing_object->{_type};
@@ -183,6 +189,8 @@ sub _write_two_cell_anchor {
     my $description     = $drawing_object->{_description};
     my $shape           = $drawing_object->{_shape};
     my $anchor          = $drawing_object->{_anchor};
+    my $url             = $drawing_object->{_url};
+    my $tip             = $drawing_object->{_tip};
 
     my @attributes = ();
 
@@ -222,13 +230,16 @@ sub _write_two_cell_anchor {
         # Graphic frame.
 
         # Write the xdr:graphicFrame element for charts.
-        $self->_write_graphic_frame( $index, $description );
+        $self->_write_graphic_frame( $index, $rel_index, $description );
     }
     elsif ( $type == 2 ) {
 
         # Write the xdr:pic element.
-        $self->_write_pic( $index, $col_absolute, $row_absolute, $width,
-            $height, $description );
+        $self->_write_pic(
+            $index,        $rel_index, $col_absolute,
+            $row_absolute, $width,     $height,
+            $description,  $url,       $tip
+        );
     }
     else {
 
@@ -279,7 +290,7 @@ sub _write_absolute_anchor {
 
 
     # Write the xdr:graphicFrame element.
-    $self->_write_graphic_frame( $index );
+    $self->_write_graphic_frame( $index, $index - 1 );
 
     # Write the xdr:clientData element.
     $self->_write_client_data();
@@ -462,10 +473,11 @@ sub _write_ext {
 #
 sub _write_graphic_frame {
 
-    my $self  = shift;
-    my $index = shift;
-    my $name  = shift;
-    my $macro = '';
+    my $self      = shift;
+    my $index     = shift;
+    my $rel_index = shift;
+    my $name      = shift;
+    my $macro     = '';
 
     my @attributes = ( 'macro' => $macro );
 
@@ -478,7 +490,7 @@ sub _write_graphic_frame {
     $self->_write_xfrm();
 
     # Write the a:graphic element.
-    $self->_write_atag_graphic( $index );
+    $self->_write_atag_graphic( $rel_index + 1);
 
     $self->xml_end_tag( 'xdr:graphicFrame' );
 }
@@ -520,22 +532,62 @@ sub _write_nv_graphic_frame_pr {
 #
 sub _write_c_nv_pr {
 
-    my $self  = shift;
-    my $id    = shift;
-    my $name  = shift;
-    my $descr = shift;
+    my $self        = shift;
+    my $index       = shift;
+    my $name        = shift;
+    my $description = shift;
+    my $url         = shift;
+    my $tip         = shift;
+    my $rel_index   = shift;
 
     my @attributes = (
-        'id'   => $id,
+        'id'   => $index,
         'name' => $name,
     );
 
     # Add description attribute for images.
-    if ( defined $descr ) {
-        push @attributes, ( descr => $descr );
+    if ( defined $description ) {
+        push @attributes, ( descr => $description );
     }
 
-    $self->xml_empty_tag( 'xdr:cNvPr', @attributes );
+    if ($url) {
+        $self->xml_start_tag( 'xdr:cNvPr', @attributes );
+
+        # Write the a:hlinkClick element.
+        $self->_write_a_hlink_click($rel_index, $tip);
+
+        $self->xml_end_tag( 'xdr:cNvPr');
+    }
+    else {
+        $self->xml_empty_tag( 'xdr:cNvPr', @attributes );
+    }
+
+}
+
+
+##############################################################################
+#
+# _write_a_hlink_click()
+#
+# Write the <a:hlinkClick> element.
+#
+sub _write_a_hlink_click {
+
+    my $self    = shift;
+    my $index   = shift;
+    my $tip     = shift;
+    my $schema  = 'http://schemas.openxmlformats.org/officeDocument/';
+    my $xmlns_r = $schema . '2006/relationships';
+    my $r_id    = 'rId' . $index;
+
+    my @attributes = (
+        'xmlns:r' => $xmlns_r,
+        'r:id'    => $r_id,
+    );
+
+    push( @attributes, ( 'tooltip' => $tip ) ) if $tip;
+
+    $self->xml_empty_tag('a:hlinkClick', @attributes );
 }
 
 
@@ -858,19 +910,22 @@ sub _write_pic {
 
     my $self         = shift;
     my $index        = shift;
+    my $rel_index    = shift;
     my $col_absolute = shift;
     my $row_absolute = shift;
     my $width        = shift;
     my $height       = shift;
     my $description  = shift;
+    my $url          = shift;
+    my $tip          = shift;
 
     $self->xml_start_tag( 'xdr:pic' );
 
     # Write the xdr:nvPicPr element.
-    $self->_write_nv_pic_pr( $index, $description );
+    $self->_write_nv_pic_pr( $index, $rel_index, $description, $url, $tip );
 
     # Write the xdr:blipFill element.
-    $self->_write_blip_fill( $index );
+    $self->_write_blip_fill( $rel_index );
 
     # Pictures are rectangle shapes by default.
     my $shape = { _type => 'rect' };
@@ -893,12 +948,16 @@ sub _write_nv_pic_pr {
 
     my $self        = shift;
     my $index       = shift;
+    my $rel_index   = shift;
     my $description = shift;
+    my $url         = shift;
+    my $tip         = shift;
 
     $self->xml_start_tag( 'xdr:nvPicPr' );
 
     # Write the xdr:cNvPr element.
-    $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index, $description );
+    $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index,
+        $description, $url, $tip, $rel_index );
 
     # Write the xdr:cNvPicPr element.
     $self->_write_c_nv_pic_pr();
@@ -957,7 +1016,7 @@ sub _write_blip_fill {
     $self->xml_start_tag( 'xdr:blipFill' );
 
     # Write the a:blip element.
-    $self->_write_a_blip( $index );
+    $self->_write_a_blip( $index + 1);
 
     # Write the a:stretch element.
     $self->_write_a_stretch();
