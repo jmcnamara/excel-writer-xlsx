@@ -212,6 +212,8 @@ sub new {
     $self->{_shape_hash}             = {};
     $self->{_has_shapes}             = 0;
     $self->{_drawing}                = 0;
+    $self->{_drawing_rels}           = {};
+    $self->{_drawing_rels_id}        = 0;
 
     $self->{_horizontal_dpi} = 0;
     $self->{_vertical_dpi}   = 0;
@@ -5433,6 +5435,31 @@ sub _get_shared_string_index {
 
 ###############################################################################
 #
+# _get_drawing_rel_index()
+#
+# Get the index used to address a drawing rel link.
+#
+sub _get_drawing_rel_index {
+
+    my $self   = shift;
+    my $target = shift;
+
+    if ( ! defined $target ) {
+        # Undefined values for drawings like charts will always be unique.
+        return ++$self->{_drawing_rels_id};
+    }
+    elsif ( exists $self->{_drawing_rels}->{$target} ) {
+        return $self->{_drawing_rels}->{$target};
+    }
+    else {
+        $self->{_drawing_rels}->{$target} = ++$self->{_drawing_rels_id};
+        return $self->{_drawing_rels_id};
+    }
+}
+
+
+###############################################################################
+#
 # insert_chart( $row, $col, $chart, $x, $y, $x_scale, $y_scale )
 #
 # Insert a chart into a worksheet. The $chart argument should be a Chart
@@ -5565,15 +5592,16 @@ sub _prepare_chart {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}        = $drawing_type;
-    $drawing_object->{_dimensions}  = \@dimensions;
-    $drawing_object->{_width}       = 0;
-    $drawing_object->{_height}      = 0;
-    $drawing_object->{_description} = $name;
-    $drawing_object->{_shape}       = undef;
-    $drawing_object->{_anchor}      = $anchor;
-    $drawing_object->{_tip}         = undef;
-    $drawing_object->{_url}         = undef;
+    $drawing_object->{_type}          = $drawing_type;
+    $drawing_object->{_dimensions}    = \@dimensions;
+    $drawing_object->{_width}         = 0;
+    $drawing_object->{_height}        = 0;
+    $drawing_object->{_description}   = $name;
+    $drawing_object->{_shape}         = undef;
+    $drawing_object->{_anchor}        = $anchor;
+    $drawing_object->{_rel_index}     = $self->_get_drawing_rel_index();
+    $drawing_object->{_url_rel_index} = 0;
+    $drawing_object->{_tip}           = undef;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -5773,27 +5801,32 @@ sub _prepare_image {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}        = $drawing_type;
-    $drawing_object->{_dimensions}  = \@dimensions;
-    $drawing_object->{_width}       = $width;
-    $drawing_object->{_height}      = $height;
-    $drawing_object->{_description} = $name;
-    $drawing_object->{_shape}       = undef;
-    $drawing_object->{_anchor}      = $anchor;
-    $drawing_object->{_url}         = $url;
-    $drawing_object->{_tip}         = $tip;
+    $drawing_object->{_type}          = $drawing_type;
+    $drawing_object->{_dimensions}    = \@dimensions;
+    $drawing_object->{_width}         = $width;
+    $drawing_object->{_height}        = $height;
+    $drawing_object->{_description}   = $name;
+    $drawing_object->{_shape}         = undef;
+    $drawing_object->{_anchor}        = $anchor;
+    $drawing_object->{_rel_index}     = 0;
+    $drawing_object->{_url_rel_index} = 0;
+    $drawing_object->{_tip}           = $tip;
+
 
     if ( $url ) {
         my $rel_type    = '/hyperlink';
         my $target_mode = 'External';
         my $target;
 
-        if ( $url =~ m|^[fh]tt?ps?://| ) {
-            $target = $url;
+        if ( $url =~ m{^[fh]tt?ps?://} || $url =~ m{^mailto:} ) {
+            $target = _escape_url( $url );
         }
 
-        if ( $url =~ s/^external:// ) {
-            $target = $url;
+        if ( $url =~ s{^external:}{file:///} ) {
+            $target = _escape_url( $url );
+
+            # Additional escape not required in worksheet hyperlinks.
+            $target =~ s/#/%23/g;
         }
 
         if ( $url =~ s/^internal:/#/ ) {
@@ -5801,11 +5834,24 @@ sub _prepare_image {
             $target_mode = undef;
         }
 
-        if ( $target ) {
-            push @{ $self->{_drawing_links} },
-              [ $rel_type, $target, $target_mode ];
+
+        if ( length $target > 255 ) {
+            carp "Ignoring URL '$url' where link or anchor > 255 characters "
+              . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
+              . "section of the Excel::Writer::XLSX documentation.";
+        }
+        else {
+            if ( $target ) {
+                push @{ $self->{_drawing_links} },
+                  [ $rel_type, $target, $target_mode ];
+            }
+
+            $drawing_object->{_url_rel_index} = $self->_get_drawing_rel_index();
         }
     }
+
+    $drawing_object->{_rel_index} = $self->_get_drawing_rel_index();
+
 
     push @{ $self->{_drawing_links} },
       [ '/image', '../media/image' . $image_id . '.' . $image_type ];
@@ -5976,15 +6022,16 @@ sub _prepare_shape {
 
     my $drawing_object = $drawing->_add_drawing_object();
 
-    $drawing_object->{_type}        = $drawing_type;
-    $drawing_object->{_dimensions}  = \@dimensions;
-    $drawing_object->{_width}       = $shape->{_width_emu};
-    $drawing_object->{_height}      = $shape->{_height_emu};
-    $drawing_object->{_description} = $shape->{_name};
-    $drawing_object->{_shape}       = $shape;
-    $drawing_object->{_anchor}      = $shape->{_anchor};
-    $drawing_object->{_url}         = undef;
-    $drawing_object->{_tip}         = undef;
+    $drawing_object->{_type}          = $drawing_type;
+    $drawing_object->{_dimensions}    = \@dimensions;
+    $drawing_object->{_width}         = $shape->{_width_emu};
+    $drawing_object->{_height}        = $shape->{_height_emu};
+    $drawing_object->{_description}   = $shape->{_name};
+    $drawing_object->{_shape}         = $shape;
+    $drawing_object->{_anchor}        = $shape->{_anchor};
+    $drawing_object->{_rel_index}     = $self->_get_drawing_rel_index();
+    $drawing_object->{_url_rel_index} = 0;
+    $drawing_object->{_tip}           = undef;
 }
 
 

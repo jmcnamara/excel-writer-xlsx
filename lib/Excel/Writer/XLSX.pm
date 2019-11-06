@@ -1709,6 +1709,8 @@ The optional C<options> hash/hashref parameter can be used to set various option
         x_scale         => 1,
         y_scale         => 1,
         object_position => 2,
+        url             => undef,
+        tip             => undef,
     );
 
 The parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
@@ -1736,6 +1738,21 @@ The C<object_position> parameter can have one of the following allowable values:
 
 Option 4 appears in Excel as Option 1. However, the worksheet object is sized to take hidden rows or columns into account. This allows the user to hide an image in a cell, possibly as part of an autofilter.
 
+The C<url> option can be use to used to add a hyperlink to an image:
+
+    $worksheet->insert_image( 'A1', 'logo.png',
+        { url => 'https://github.com/jmcnamara' } );
+
+The supported url formats are the same as those supported by the C<write_url()> method and the same rules/limits apply.
+
+The C<tip> option can be use to used to add a mouseover tip to the hyperlink:
+
+    $worksheet->insert_image( 'A1', 'logo.png',
+        {
+            url => 'https://github.com/jmcnamara',
+            tip => 'GitHub'
+        }
+    );
 
 Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
 

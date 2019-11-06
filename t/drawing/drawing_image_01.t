@@ -40,6 +40,7 @@ $drawing_object->{_height}      = 1142857;
 $drawing_object->{_description} = 'republic.png';
 $drawing_object->{_shape}       = undef;
 $drawing_object->{_anchor}      = 2;
+$drawing_object->{_rel_index}   = 1;
 
 $drawing->{_embedded} = 1;
 

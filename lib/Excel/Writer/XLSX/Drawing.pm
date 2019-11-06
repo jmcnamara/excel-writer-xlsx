@@ -70,17 +70,10 @@ sub _assemble_xml_file {
 
     if ( $self->{_embedded} ) {
 
-        my $index     = 0;
-        my $rel_index = 0;
+        my $index = 0;
         for my $drawing_object ( @{ $self->{_drawings} } ) {
-
             # Write the xdr:twoCellAnchor element.
-            $index++;
-            $rel_index++ if $drawing_object->{_url};
-            $self->_write_two_cell_anchor( $index,
-                                           $rel_index,
-                                           $drawing_object );
-            $rel_index++;
+            $self->_write_two_cell_anchor( ++$index, $drawing_object );
         }
     }
     else {
@@ -108,13 +101,16 @@ sub _add_drawing_object {
     my $self = shift;
 
     my $drawing_object = {
-        _type        => undef,
-        _dimensions  => [],
-        _width       => 0,
-        _height      => 0,
-        _description => undef,
-        _shape       => undef,
-        _anchor      => undef
+        _type          => undef,
+        _dimensions    => [],
+        _width         => 0,
+        _height        => 0,
+        _description   => undef,
+        _shape         => undef,
+        _anchor        => undef,
+        _rel_index     => 0,
+        _url_rel_index => 0,
+        _tip           => undef
     };
 
     push @{ $self->{_drawings} }, $drawing_object;
@@ -169,7 +165,6 @@ sub _write_two_cell_anchor {
 
     my $self            = shift;
     my $index           = shift;
-    my $rel_index       = shift;
     my $drawing_object  = shift;
 
     my $type            = $drawing_object->{_type};
@@ -189,7 +184,8 @@ sub _write_two_cell_anchor {
     my $description     = $drawing_object->{_description};
     my $shape           = $drawing_object->{_shape};
     my $anchor          = $drawing_object->{_anchor};
-    my $url             = $drawing_object->{_url};
+    my $rel_index       = $drawing_object->{_rel_index};
+    my $url_rel_index   = $drawing_object->{_url_rel_index};
     my $tip             = $drawing_object->{_tip};
 
     my @attributes = ();
@@ -236,9 +232,9 @@ sub _write_two_cell_anchor {
 
         # Write the xdr:pic element.
         $self->_write_pic(
-            $index,        $rel_index, $col_absolute,
-            $row_absolute, $width,     $height,
-            $description,  $url,       $tip
+            $index,        $rel_index,     $col_absolute,
+            $row_absolute, $width,         $height,
+            $description,  $url_rel_index, $tip
         );
     }
     else {
@@ -290,7 +286,7 @@ sub _write_absolute_anchor {
 
 
     # Write the xdr:graphicFrame element.
-    $self->_write_graphic_frame( $index, $index - 1 );
+    $self->_write_graphic_frame( $index, $index );
 
     # Write the xdr:clientData element.
     $self->_write_client_data();
@@ -490,7 +486,7 @@ sub _write_graphic_frame {
     $self->_write_xfrm();
 
     # Write the a:graphic element.
-    $self->_write_atag_graphic( $rel_index + 1);
+    $self->_write_atag_graphic( $rel_index );
 
     $self->xml_end_tag( 'xdr:graphicFrame' );
 }
@@ -532,13 +528,12 @@ sub _write_nv_graphic_frame_pr {
 #
 sub _write_c_nv_pr {
 
-    my $self        = shift;
-    my $index       = shift;
-    my $name        = shift;
-    my $description = shift;
-    my $url         = shift;
-    my $tip         = shift;
-    my $rel_index   = shift;
+    my $self          = shift;
+    my $index         = shift;
+    my $name          = shift;
+    my $description   = shift;
+    my $url_rel_index = shift;
+    my $tip           = shift;
 
     my @attributes = (
         'id'   => $index,
@@ -550,11 +545,11 @@ sub _write_c_nv_pr {
         push @attributes, ( descr => $description );
     }
 
-    if ($url) {
+    if ($url_rel_index) {
         $self->xml_start_tag( 'xdr:cNvPr', @attributes );
 
         # Write the a:hlinkClick element.
-        $self->_write_a_hlink_click($rel_index, $tip);
+        $self->_write_a_hlink_click($url_rel_index, $tip);
 
         $self->xml_end_tag( 'xdr:cNvPr');
     }
@@ -908,21 +903,22 @@ sub _write_nv_sp_pr {
 #
 sub _write_pic {
 
-    my $self         = shift;
-    my $index        = shift;
-    my $rel_index    = shift;
-    my $col_absolute = shift;
-    my $row_absolute = shift;
-    my $width        = shift;
-    my $height       = shift;
-    my $description  = shift;
-    my $url          = shift;
-    my $tip          = shift;
+    my $self          = shift;
+    my $index         = shift;
+    my $rel_index     = shift;
+    my $col_absolute  = shift;
+    my $row_absolute  = shift;
+    my $width         = shift;
+    my $height        = shift;
+    my $description   = shift;
+    my $url_rel_index = shift;
+    my $tip           = shift;
 
     $self->xml_start_tag( 'xdr:pic' );
 
     # Write the xdr:nvPicPr element.
-    $self->_write_nv_pic_pr( $index, $rel_index, $description, $url, $tip );
+    $self->_write_nv_pic_pr( $index, $rel_index, $description, $url_rel_index,
+        $tip );
 
     # Write the xdr:blipFill element.
     $self->_write_blip_fill( $rel_index );
@@ -946,18 +942,18 @@ sub _write_pic {
 #
 sub _write_nv_pic_pr {
 
-    my $self        = shift;
-    my $index       = shift;
-    my $rel_index   = shift;
-    my $description = shift;
-    my $url         = shift;
-    my $tip         = shift;
+    my $self          = shift;
+    my $index         = shift;
+    my $rel_index     = shift;
+    my $description   = shift;
+    my $url_rel_index = shift;
+    my $tip           = shift;
 
     $self->xml_start_tag( 'xdr:nvPicPr' );
 
     # Write the xdr:cNvPr element.
     $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index,
-        $description, $url, $tip, $rel_index );
+        $description, $url_rel_index, $tip );
 
     # Write the xdr:cNvPicPr element.
     $self->_write_c_nv_pic_pr();
@@ -1016,7 +1012,7 @@ sub _write_blip_fill {
     $self->xml_start_tag( 'xdr:blipFill' );
 
     # Write the a:blip element.
-    $self->_write_a_blip( $index + 1);
+    $self->_write_a_blip( $index );
 
     # Write the a:stretch element.
     $self->_write_a_stretch();

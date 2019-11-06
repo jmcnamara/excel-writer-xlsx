@@ -40,6 +40,8 @@ $drawing_object->{_height}      = undef;
 $drawing_object->{_description} = undef;
 $drawing_object->{_shape}       = undef;
 $drawing_object->{_anchor}      = 1;
+$drawing_object->{_rel_index}   = 1;
+
 
 $drawing->{_embedded} = 1;
 
