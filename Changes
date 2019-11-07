@@ -5,6 +5,14 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+1.02 2019-11-07
+
+   + Added support for hyperlinks in worksheet images.
+
+   + Increased allowable url length from 255 to 2079 characters, as allowed in
+     more recent versions of Excel.
+
+
 1.01 2019-10-28
 
    + Added support for stacked and  East Asian vertical chart fonts.

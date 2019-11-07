@@ -21,7 +21,7 @@ use Encode;
 use Excel::Writer::XLSX::Package::XMLwriter;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 
 ###############################################################################
