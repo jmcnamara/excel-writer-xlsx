@@ -96,6 +96,7 @@ sub new {
     $self->{_window_height}      = 9660;
     $self->{_tab_ratio}          = 600;
     $self->{_excel2003_style}    = 0;
+    $self->{_max_url_length}     = 2079;
 
     $self->{_default_format_properties} = {};
 
@@ -118,6 +119,14 @@ sub new {
 
     if ( exists $options->{excel2003_style} ) {
         $self->{_excel2003_style} = 1;
+    }
+
+    if ( exists $options->{max_url_length} ) {
+        $self->{_max_url_length} = $options->{max_url_length};
+
+        if ($self->{_max_url_length} < 255) {
+            $self->{_max_url_length} = 2079;
+        }
     }
 
     # Structures for the shared strings data.
@@ -373,6 +382,7 @@ sub add_worksheet {
         $self->{_tempdir},
         $self->{_excel2003_style},
         $self->{_default_url_format},
+        $self->{_max_url_length},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );

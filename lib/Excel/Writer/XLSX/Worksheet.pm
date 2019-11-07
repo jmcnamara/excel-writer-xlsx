@@ -68,6 +68,7 @@ sub new {
     $self->{_tempdir}            = $_[10];
     $self->{_excel2003_style}    = $_[11];
     $self->{_default_url_format} = $_[12];
+    $self->{_max_url_length}     = $_[13] || 2079;
 
     $self->{_ext_sheets}    = [];
     $self->{_fileclosed}    = 0;
@@ -2816,9 +2817,10 @@ sub write_url {
 
     # Excel limits the escaped URL and location/anchor to 255 characters.
     my $tmp_url_str = $url_str || '';
+    my $max_url     = $self->{_max_url_length};
 
-    if ( length $url > 255 || length $tmp_url_str > 255 ) {
-        carp "Ignoring URL '$url' where link or anchor > 255 characters "
+    if ( length $url > $max_url || length $tmp_url_str > $max_url ) {
+        carp "Ignoring URL '$url' where link or anchor > $max_url characters "
           . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
           . "section of the Excel::Writer::XLSX documentation.";
         return -4;
@@ -5834,9 +5836,9 @@ sub _prepare_image {
             $target_mode = undef;
         }
 
-
-        if ( length $target > 255 ) {
-            carp "Ignoring URL '$url' where link or anchor > 255 characters "
+        my $max_url = $self->{_max_url_length};
+        if ( length $target > $max_url ) {
+            carp "Ignoring URL '$url' where link or anchor > $max_url characters "
               . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
               . "section of the Excel::Writer::XLSX documentation.";
         }
