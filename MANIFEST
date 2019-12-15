@@ -8,7 +8,6 @@ MANIFEST
 Makefile.PL
 README
 bin/extract_vba
-chart_gauge.xlsx
 examples/README
 examples/a_simple.pl  
 examples/array_formula.pl
