@@ -215,6 +215,8 @@ sub new {
     $self->{_drawing}                = 0;
     $self->{_drawing_rels}           = {};
     $self->{_drawing_rels_id}        = 0;
+    $self->{_vml_drawing_rels}           = {};
+    $self->{_vml_drawing_rels_id}        = 0;
 
     $self->{_horizontal_dpi} = 0;
     $self->{_vertical_dpi}   = 0;
@@ -5462,6 +5464,27 @@ sub _get_drawing_rel_index {
 
 ###############################################################################
 #
+# _get_vml_drawing_rel_index()
+#
+# Get the index used to address a vml_drawing rel link.
+#
+sub _get_vml_drawing_rel_index {
+
+    my $self   = shift;
+    my $target = shift;
+
+    if ( exists $self->{_vml_drawing_rels}->{$target} ) {
+        return $self->{_vml_drawing_rels}->{$target};
+    }
+    else {
+        $self->{_vml_drawing_rels}->{$target} = ++$self->{_vml_drawing_rels_id};
+        return $self->{_vml_drawing_rels_id};
+    }
+}
+
+
+###############################################################################
+#
 # insert_chart( $row, $col, $chart, $x, $y, $x_scale, $y_scale )
 #
 # Insert a chart into a worksheet. The $chart argument should be a Chart
@@ -5765,6 +5788,7 @@ sub _prepare_image {
     my $image_type   = shift;
     my $x_dpi        = shift;
     my $y_dpi        = shift;
+    my $md5          = shift;
     my $drawing_type = 2;
     my $drawing;
 
@@ -5843,20 +5867,22 @@ sub _prepare_image {
               . "section of the Excel::Writer::XLSX documentation.";
         }
         else {
-            if ( $target ) {
+            if ( $target && !exists $self->{_drawing_rels}->{$url} ) {
                 push @{ $self->{_drawing_links} },
                   [ $rel_type, $target, $target_mode ];
             }
 
-            $drawing_object->{_url_rel_index} = $self->_get_drawing_rel_index();
+            $drawing_object->{_url_rel_index} =
+              $self->_get_drawing_rel_index( $url );
         }
     }
 
-    $drawing_object->{_rel_index} = $self->_get_drawing_rel_index();
+    if ( !exists $self->{_drawing_rels}->{$md5} ) {
+        push @{ $self->{_drawing_links} },
+          [ '/image', '../media/image' . $image_id . '.' . $image_type ];
+    }
 
-
-    push @{ $self->{_drawing_links} },
-      [ '/image', '../media/image' . $image_id . '.' . $image_type ];
+    $drawing_object->{_rel_index} = $self->_get_drawing_rel_index( $md5 );
 }
 
 
@@ -5877,15 +5903,20 @@ sub _prepare_header_image {
     my $position   = shift;
     my $x_dpi      = shift;
     my $y_dpi      = shift;
+    my $md5        = shift;
 
     # Strip the extension from the filename.
     $name =~ s/\.[^\.]+$//;
 
-    push @{ $self->{_header_images_array} },
-      [ $width, $height, $name, $position, $x_dpi, $y_dpi ];
+    if ( !exists $self->{_vml_drawing_rels}->{$md5} ) {
+        push @{ $self->{_vml_drawing_links} },
+          [ '/image', '../media/image' . $image_id . '.' . $image_type ];
+    }
 
-    push @{ $self->{_vml_drawing_links} },
-      [ '/image', '../media/image' . $image_id . '.' . $image_type ];
+    my $ref_id = $self->_get_vml_drawing_rel_index( $md5 );
+
+    push @{ $self->{_header_images_array} },
+      [ $width, $height, $name, $position, $x_dpi, $y_dpi, $ref_id ];
 }
 
 

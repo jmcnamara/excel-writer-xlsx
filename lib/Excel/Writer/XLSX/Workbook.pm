@@ -23,6 +23,7 @@ use File::Find;
 use File::Temp qw(tempfile);
 use File::Basename 'fileparse';
 use Archive::Zip;
+use Digest::MD5 qw(md5_hex);
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
@@ -1761,10 +1762,13 @@ sub _extract_named_ranges {
 #
 sub _prepare_drawings {
 
-    my $self         = shift;
-    my $chart_ref_id = 0;
-    my $image_ref_id = 0;
-    my $drawing_id   = 0;
+    my $self             = shift;
+    my $chart_ref_id     = 0;
+    my $image_ref_id     = 0;
+    my $drawing_id       = 0;
+    my $ref_id           = 0;
+    my %image_ids        = ();
+    my %header_image_ids = ();
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1798,15 +1802,21 @@ sub _prepare_drawings {
 
             my $filename = $sheet->{_images}->[$index]->[2];
 
-            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
               $self->_get_image_properties( $filename );
 
-            $image_ref_id++;
+            if ( exists $image_ids{$md5} ) {
+                $ref_id = $image_ids{$md5};
+            }
+            else {
+                $ref_id = ++$image_ref_id;
+                $image_ids{$md5} = $ref_id;
+                push @{ $self->{_images} }, [ $filename, $type ];
+            }
 
             $sheet->_prepare_image(
-                $index, $image_ref_id, $drawing_id,
-                $width, $height,       $name,
-                $type,  $x_dpi,        $y_dpi
+                $index, $ref_id, $drawing_id, $width, $height,
+                $name,  $type,   $x_dpi,      $y_dpi, $md5
             );
         }
 
@@ -1827,13 +1837,22 @@ sub _prepare_drawings {
             my $filename = $sheet->{_header_images}->[$index]->[0];
             my $position = $sheet->{_header_images}->[$index]->[1];
 
-            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
               $self->_get_image_properties( $filename );
 
-            $image_ref_id++;
+            if ( exists $header_image_ids{$md5} ) {
+                $ref_id = $header_image_ids{$md5};
+            }
+            else {
+                $ref_id = ++$image_ref_id;
+                $header_image_ids{$md5} = $ref_id;
+                push @{ $self->{_images} }, [ $filename, $type ];
+            }
 
-            $sheet->_prepare_header_image( $image_ref_id, $width, $height,
-                $name, $type, $position, $x_dpi, $y_dpi );
+            $sheet->_prepare_header_image(
+                $ref_id,   $width, $height, $name, $type,
+                $position, $x_dpi, $y_dpi,  $md5
+            );
         }
 
         # Prepare the footer images.
@@ -1842,13 +1861,22 @@ sub _prepare_drawings {
             my $filename = $sheet->{_footer_images}->[$index]->[0];
             my $position = $sheet->{_footer_images}->[$index]->[1];
 
-            my ( $type, $width, $height, $name, $x_dpi, $y_dpi ) =
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
               $self->_get_image_properties( $filename );
 
-            $image_ref_id++;
+            if ( exists $header_image_ids{$md5} ) {
+                $ref_id = $header_image_ids{$md5};
+            }
+            else {
+                $ref_id = ++$image_ref_id;
+                $header_image_ids{$md5} = $ref_id;
+                push @{ $self->{_images} }, [ $filename, $type ];
+            }
 
-            $sheet->_prepare_header_image( $image_ref_id, $width, $height,
-                $name, $type, $position, $x_dpi, $y_dpi );
+            $sheet->_prepare_header_image(
+                $ref_id,   $width, $height, $name, $type,
+                $position, $x_dpi, $y_dpi,  $md5
+            );
         }
 
 
@@ -1872,7 +1900,7 @@ sub _prepare_drawings {
     # written from the worksheets above.
     @chart_data = sort { $a->{_id} <=> $b->{_id} } @chart_data;
 
-    $self->{_charts} = \@chart_data;
+    $self->{_charts}        = \@chart_data;
     $self->{_drawing_count} = $drawing_id;
 }
 
@@ -2203,6 +2231,7 @@ sub _get_image_properties {
     # Slurp the file into a string and do some size calcs.
     my $data = do { local $/; <$fh> };
     my $size = length $data;
+    my $md5  = md5_hex($data);
 
 
     if ( unpack( 'x A3', $data ) eq 'PNG' ) {
@@ -2232,15 +2261,13 @@ sub _get_image_properties {
         croak "Unsupported image format for file: $filename\n";
     }
 
-    push @{ $self->{_images} }, [ $filename, $type ];
-
     # Set a default dpi for images with 0 dpi.
     $x_dpi = 96 if $x_dpi == 0;
     $y_dpi = 96 if $y_dpi == 0;
 
     $fh->close;
 
-    return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi );
+    return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi, $md5 );
 }
 
 

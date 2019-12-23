@@ -31,7 +31,7 @@ $caption = " \tVML: _assemble_xml_file()";
 
 $vml->_assemble_xml_file(
     1, 1024, undef, undef,
-    [ [ 32, 32, 'red', 'CH', 96, 96 ] ]
+    [ [ 32, 32, 'red', 'CH', 96, 96, 1 ] ]
 );
 
 $expected = _expected_vml_to_aref();
