@@ -773,6 +773,11 @@ t/regression/header_image11.t
 t/regression/header_image12.t
 t/regression/header_image13.t
 t/regression/header_image14.t
+t/regression/header_image15.t
+t/regression/header_image16.t
+t/regression/header_image17.t
+t/regression/header_image18.t
+t/regression/header_image19.t
 t/regression/hide01.t
 t/regression/hyperlink01.t
 t/regression/hyperlink02.t
@@ -821,6 +826,8 @@ t/regression/hyperlink44.t
 t/regression/hyperlink45.t
 t/regression/hyperlink46.t
 t/regression/hyperlink47.t
+t/regression/hyperlink48.t
+t/regression/hyperlink49.t
 t/regression/image01.t
 t/regression/image02.t
 t/regression/image03.t
@@ -859,6 +866,9 @@ t/regression/image44.t
 t/regression/image45.t
 t/regression/image46.t
 t/regression/image47.t
+t/regression/image48.t
+t/regression/image49.t
+t/regression/image50.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -1044,6 +1054,8 @@ t/regression/table20.t
 t/regression/table21.t
 t/regression/table22.t
 t/regression/table23.t
+t/regression/table24.t
+t/regression/table25.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/tutorial01.t
@@ -1524,6 +1536,11 @@ t/regression/xlsx_files/header_image11.xlsx
 t/regression/xlsx_files/header_image12.xlsx
 t/regression/xlsx_files/header_image13.xlsx
 t/regression/xlsx_files/header_image14.xlsx
+t/regression/xlsx_files/header_image15.xlsx
+t/regression/xlsx_files/header_image16.xlsx
+t/regression/xlsx_files/header_image17.xlsx
+t/regression/xlsx_files/header_image18.xlsx
+t/regression/xlsx_files/header_image19.xlsx
 t/regression/xlsx_files/hide01.xlsx
 t/regression/xlsx_files/hyperlink01.xlsx
 t/regression/xlsx_files/hyperlink02.xlsx
@@ -1572,6 +1589,8 @@ t/regression/xlsx_files/hyperlink44.xlsx
 t/regression/xlsx_files/hyperlink45.xlsx
 t/regression/xlsx_files/hyperlink46.xlsx
 t/regression/xlsx_files/hyperlink47.xlsx
+t/regression/xlsx_files/hyperlink48.xlsx
+t/regression/xlsx_files/hyperlink49.xlsx
 t/regression/xlsx_files/image01.xlsx
 t/regression/xlsx_files/image02.xlsx
 t/regression/xlsx_files/image03.xlsx
@@ -1610,6 +1629,9 @@ t/regression/xlsx_files/image44.xlsx
 t/regression/xlsx_files/image45.xlsx
 t/regression/xlsx_files/image46.xlsx
 t/regression/xlsx_files/image47.xlsx
+t/regression/xlsx_files/image48.xlsx
+t/regression/xlsx_files/image49.xlsx
+t/regression/xlsx_files/image50.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/macro02.xlsm
@@ -1763,6 +1785,8 @@ t/regression/xlsx_files/table19.xlsx
 t/regression/xlsx_files/table21.xlsx
 t/regression/xlsx_files/table22.xlsx
 t/regression/xlsx_files/table23.xlsx
+t/regression/xlsx_files/table24.xlsx
+t/regression/xlsx_files/table25.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/tutorial01.xlsx
