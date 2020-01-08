@@ -554,6 +554,7 @@ sub _write_styles_file {
     my $fill_count         = $self->{_workbook}->{_fill_count};
     my $custom_colors      = $self->{_workbook}->{_custom_colors};
     my $dxf_formats        = $self->{_workbook}->{_dxf_formats};
+    my $has_comments       = $self->{_workbook}->{_has_comments};
 
     my $rels = Excel::Writer::XLSX::Package::Styles->new();
 
@@ -568,6 +569,7 @@ sub _write_styles_file {
         $fill_count,
         $custom_colors,
         $dxf_formats,
+        $has_comments,
     );
 
     $rels->_set_xml_writer( $dir . '/xl/styles.xml' );

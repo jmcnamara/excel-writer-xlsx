@@ -98,6 +98,7 @@ sub new {
     $self->{_tab_ratio}          = 600;
     $self->{_excel2003_style}    = 0;
     $self->{_max_url_length}     = 2079;
+    $self->{_has_comments}       = 0;
 
     $self->{_default_format_properties} = {};
 
@@ -1930,8 +1931,12 @@ sub _prepare_vml_objects {
 
         if ( $sheet->{_has_vml} ) {
 
-            $comment_files++ if $sheet->{_has_comments};
-            $comment_id++    if $sheet->{_has_comments};
+            if ( $sheet->{_has_comments} ) {
+                $comment_files++;
+                $comment_id++;
+                $self->{_has_comments} = 1;
+            }
+
             $vml_drawing_id++;
 
             my $count =
@@ -1956,21 +1961,6 @@ sub _prepare_vml_objects {
     $self->{_num_vml_files}     = $vml_files;
     $self->{_num_comment_files} = $comment_files;
 
-    # Add a font format for cell comments.
-    if ( $comment_files > 0 ) {
-        my $format = Excel::Writer::XLSX::Format->new(
-            \$self->{_xf_format_indices},
-            \$self->{_dxf_format_indices},
-            font          => 'Tahoma',
-            size          => 8,
-            color_indexed => 81,
-            font_only     => 1,
-        );
-
-        $format->get_xf_index();
-
-        push @{ $self->{_formats} }, $format;
-    }
 }
 
 

@@ -52,6 +52,7 @@ sub new {
     $self->{_dxf_formats}        = [];
     $self->{_has_hyperlink}      = 0;
     $self->{_hyperlink_font_id}  = 0;
+    $self->{_has_comments}       = 0;
 
     bless $self, $class;
 
@@ -130,6 +131,7 @@ sub _set_style_properties {
     $self->{_fill_count}         = shift;
     $self->{_custom_colors}      = shift;
     $self->{_dxf_formats}        = shift;
+    $self->{_has_comments}       = shift;
 }
 
 
@@ -303,6 +305,11 @@ sub _write_fonts {
     my $self  = shift;
     my $count = $self->{_font_count};
 
+    if ( $self->{_has_comments} ) {
+        # Add an extra font for comments.
+        $count++;
+    }
+
     my @attributes = ( 'count' => $count );
 
     $self->xml_start_tag( 'fonts', @attributes );
@@ -310,6 +317,10 @@ sub _write_fonts {
     # Write the font elements for format objects that have them.
     for my $format ( @{ $self->{_xf_formats} } ) {
         $self->_write_font( $format ) if $format->{_has_font};
+    }
+
+    if ( $self->{_has_comments} ) {
+        $self->_write_comment_font();
     }
 
     $self->xml_end_tag( 'fonts' );
@@ -402,6 +413,25 @@ sub _write_font {
     $self->xml_end_tag( 'font' );
 }
 
+##############################################################################
+#
+# _write_comment_font()
+#
+# Write the <font> element used for comments.
+#
+sub _write_comment_font {
+
+    my $self = shift;
+
+    $self->xml_start_tag( 'font' );
+
+    $self->xml_empty_tag( 'sz', 'val', 8 );
+    $self->_write_color( 'indexed' => 81 );
+    $self->xml_empty_tag( 'name',   'val', 'Tahoma' );
+    $self->xml_empty_tag( 'family', 'val', 2 );
+
+    $self->xml_end_tag( 'font' );
+}
 
 ###############################################################################
 #
@@ -798,16 +828,8 @@ sub _write_cell_xfs {
 
     my $self    = shift;
     my @formats = @{ $self->{_xf_formats} };
+    my $count   = scalar @formats;
 
-    # Workaround for when the last format is used for the comment font
-    # and shouldn't be used for cellXfs.
-    my $last_format = $formats[-1];
-
-    if ( $last_format->{_font_only} ) {
-        pop @formats;
-    }
-
-    my $count = scalar @formats;
     my @attributes = ( 'count' => $count );
 
     $self->xml_start_tag( 'cellXfs', @attributes );
