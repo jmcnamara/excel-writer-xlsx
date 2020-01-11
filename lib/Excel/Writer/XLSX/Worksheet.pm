@@ -4783,7 +4783,7 @@ sub set_vba_name {
         $self->{_vba_codename} = $vba_codemame;
     }
     else {
-        $self->{_vba_codename} = $self->{_name};
+        $self->{_vba_codename} = "Sheet" . ($self->{_index} + 1);
     }
 }
 
