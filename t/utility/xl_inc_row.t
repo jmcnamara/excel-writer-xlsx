@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Utility.
 #
-# reverse ('(c)'), January 2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

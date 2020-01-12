@@ -4,7 +4,7 @@
 #
 # An example of adding document properties to a Excel::Writer::XLSX file.
 #
-# reverse ('(c)'), August 2008, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

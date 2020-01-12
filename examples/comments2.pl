@@ -9,7 +9,7 @@
 #
 # Each of the worksheets demonstrates different features of cell comments.
 #
-# reverse ('(c)'), November 2005, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

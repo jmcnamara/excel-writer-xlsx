@@ -4,7 +4,7 @@
 #
 # Example of using the Excel::Writer::XLSX module to create worksheet panes.
 #
-# reverse ('(c)'), May 2001, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

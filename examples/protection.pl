@@ -5,7 +5,7 @@
 # Example of cell locking and formula hiding in an Excel worksheet via
 # the Excel::Writer::XLSX module.
 #
-# reverse ('(c)'), August 2001, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

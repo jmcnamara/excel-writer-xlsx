@@ -10,7 +10,7 @@
 # since each segment is represented as a point so it is necessary to assign
 # formatting to each point in the series.
 #
-# reverse ('(c)'), March 2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

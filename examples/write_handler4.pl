@@ -10,7 +10,7 @@
 #
 # This is a more rigorous version of write_handler3.pl.
 #
-# reverse ('(c)'), September 2004, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

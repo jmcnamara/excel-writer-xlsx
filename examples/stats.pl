@@ -5,7 +5,7 @@
 # A simple example of how to use functions with the Excel::Writer::XLSX
 # module.
 #
-# reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

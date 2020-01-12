@@ -6,7 +6,7 @@
 # hide rows without setting each one, (of approximately 1 million rows),
 # Excel uses an optimisation to hide all rows that don't have data.
 #
-# reverse ('(c)'), December 2012, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -6,7 +6,7 @@
 #
 # This program demonstrates the indentation cell format.
 #
-# reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 

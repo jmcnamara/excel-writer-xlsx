@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# reverse ('(c)'), February 2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

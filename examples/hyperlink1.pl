@@ -6,7 +6,7 @@
 #
 # See also hyperlink2.pl for worksheet URL examples.
 #
-# reverse ('(c)'), May 2004, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

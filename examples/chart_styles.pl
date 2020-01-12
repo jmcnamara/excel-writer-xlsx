@@ -6,7 +6,7 @@
 # using Excel::Writer::XLSX.. Note, these styles are not the same as the
 # styles available in Excel 2013.
 #
-# reverse ('(c)'), March 2015, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

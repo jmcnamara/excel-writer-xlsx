@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2016, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #

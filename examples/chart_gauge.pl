@@ -9,7 +9,7 @@
 # elements. This example follows the following online example of how to create
 # a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
 #
-# reverse ('(c)'), May 2019, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

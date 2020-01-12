@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Chartsheet;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2019, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -290,7 +290,7 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXIX, John McNamara.
+(c) MM-MMXX, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

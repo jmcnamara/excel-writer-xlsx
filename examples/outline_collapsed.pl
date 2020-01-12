@@ -8,7 +8,7 @@
 # These examples focus mainly on collapsed outlines. See also the
 # outlines.pl example program for more general examples.
 #
-# reverse ('(c)'), March 2008, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

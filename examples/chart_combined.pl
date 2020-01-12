@@ -4,7 +4,7 @@
 #
 # An example of a Combined chart in Excel::Writer::XLSX.
 #
-# reverse ('(c)'), March 2015, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

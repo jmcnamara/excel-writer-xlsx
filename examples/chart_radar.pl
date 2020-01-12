@@ -4,7 +4,7 @@
 #
 # A demo of an Radar chart in Excel::Writer::XLSX.
 #
-# reverse ('(c)'), October 2012, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

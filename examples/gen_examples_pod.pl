@@ -5,7 +5,7 @@
 # Simple utility to convert the example programs listed in the README file into
 # a Pod doc for easier access via CPAN.
 #
-# reverse ('(c)'), November 2009, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -82,7 +82,7 @@ sub print_header {
     print "# program that is also included in the examples directory.\n";
     print "#\n";
 
-    print "# Copyright 2000-2016, John McNamara, jmcnamara\@cpan.org\n";
+    print "# Copyright 2000-2020, John McNamara, jmcnamara\@cpan.org\n";
     print "#\n";
     print "# Documentation after __END__\n";
     print "#\n\n";

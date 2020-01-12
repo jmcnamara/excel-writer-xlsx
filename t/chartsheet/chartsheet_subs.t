@@ -2,7 +2,7 @@
 #
 # Tests for Excel::Writer::XLSX::Chartsheet methods.
 #
-# reverse ('(c)'), December 2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

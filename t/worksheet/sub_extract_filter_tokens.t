@@ -4,7 +4,7 @@
 #
 # Tests for the token extraction method used to parse autofilter expressions.
 #
-# reverse ('(c)'), January 2011, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

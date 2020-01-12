@@ -9,7 +9,7 @@
 # modern approach use the merge_range() worksheet method instead.
 # See the merge3.pl - merge6.pl programs.
 #
-# reverse ('(c)'), August 2002, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

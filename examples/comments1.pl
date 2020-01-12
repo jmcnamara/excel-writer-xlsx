@@ -9,7 +9,7 @@
 #
 # For more advanced comment options see comments2.pl.
 #
-# reverse ('(c)'), November 2005, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

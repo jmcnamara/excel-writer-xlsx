@@ -13,7 +13,7 @@
 # the file. If you want to stream the file to the browser instead, comment out
 # that line as shown below.
 #
-# reverse ('(c)'), March 2001, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

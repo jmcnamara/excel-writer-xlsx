@@ -5,7 +5,7 @@
 # Excel::Writer::XLSX example of writing dates and times using the
 # write_date_time() Worksheet method.
 #
-# reverse ('(c)'), August 2004, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
