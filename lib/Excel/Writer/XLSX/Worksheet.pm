@@ -5190,21 +5190,16 @@ sub _position_object_pixels {
 
     $y_abs += $y1;
 
-
     # Adjust start column for offsets that are greater than the col width.
-    if ($self->_size_col( $col_start) > 0 ) {
-        while ( $x1 >= $self->_size_col( $col_start ) ) {
-            $x1 -= $self->_size_col( $col_start );
-            $col_start++;
-        }
+    while ( $x1 >= $self->_size_col( $col_start, $anchor ) ) {
+        $x1 -= $self->_size_col( $col_start );
+        $col_start++;
     }
 
     # Adjust start row for offsets that are greater than the row height.
-    if ( $self->_size_row( $row_start ) > 0 ) {
-        while ( $y1 >= $self->_size_row( $row_start ) ) {
-            $y1 -= $self->_size_row( $row_start );
-            $row_start++;
-        }
+    while ( $y1 >= $self->_size_row( $row_start, $anchor ) ) {
+        $y1 -= $self->_size_row( $row_start );
+        $row_start++;
     }
 
     # Initialise end cell to the same as the start cell.
@@ -5212,11 +5207,11 @@ sub _position_object_pixels {
     $row_end = $row_start;
 
     # Only offset the image in the cell if the row/col isn't hidden.
-    if ($self->_size_col( $col_start) > 0 ) {
+    if ($self->_size_col( $col_start, $anchor) > 0 ) {
         $width  = $width + $x1;
     }
 
-    if ( $self->_size_row( $row_start ) > 0 ) {
+    if ( $self->_size_row( $row_start, $anchor ) > 0 ) {
         $height = $height + $y1;
     }
 

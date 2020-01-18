@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'image46.xlsx';
+my $filename     = 'object_position13.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,9 +34,9 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->insert_image( 'E9', $dir . 'images/red.png', {object_position => 4, y_offset => 4} );
+$worksheet->set_column( 1, 1, undef, undef, 1 );
 
-$worksheet->set_row( 8, 30, undef, 1 );
+$worksheet->insert_image( 'E9', $dir . 'images/red.png' );
 
 $workbook->close();
 
