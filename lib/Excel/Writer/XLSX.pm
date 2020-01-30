@@ -3604,7 +3604,19 @@ For examples of these formatting codes see the 'Numerical formats' worksheet cre
 
 Note 1. Numeric formats 23 to 36 are not documented by Microsoft and may differ in international versions.
 
-Note 2. The dollar sign appears as the defined local currency symbol.
+Note 2. The built-in formats are localized according to the locale settings (regional settings on Windows) of the user when opening the file in Excel:
+
+=over
+
+=item * The dot appears as the defined local decimal separator.
+
+=item * The comma appears as the defined local digit groups separator.
+
+=item * The dollar sign appears as the defined local currency symbol.
+
+=item * The date, time and duration formats appear as the local equivalent date or time format.
+
+=back
 
 
 
