@@ -4060,11 +4060,11 @@ See also the C<unicode_*.pl> programs in the examples directory of the distro.
 
 Throughout Excel::Writer::XLSX colours can be specified using a Html style C<#RRGGBB> value. For example with a Format object:
 
-    $format->set_font_color( '#FF0000' );
+    $format->set_color( '#FF0000' );
 
 For backward compatibility a limited number of color names are supported:
 
-    $format->set_font_color( 'red' );
+    $format->set_color( 'red' );
 
 The color names supported are:
 
