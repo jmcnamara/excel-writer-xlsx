@@ -527,11 +527,6 @@ sub _check_sheetname {
         croak "Worksheet name $name cannot start or end with an apostrophe";
     }
 
-    # Check that sheetname isn't a reserved word.
-    if ( lc($name) eq 'history') {
-        croak "Worksheet name cannot be Excel reserved word 'History'";
-    }
-
     # Check that the worksheet name doesn't already exist since this is a fatal
     # error in Excel 97. The check must also exclude case insensitive matches.
     foreach my $worksheet ( @{ $self->{_worksheets} } ) {

@@ -46,12 +46,6 @@ eval { $workbook->add_worksheet(q(Sheet')); };
 eval { $workbook->add_worksheet(q('Sheet)); };
 eval { $workbook->add_worksheet(q('Sheet')); };
 
-# Test reserved name.
-eval { $workbook->add_worksheet('History'); };
-eval { $workbook->add_worksheet('history'); };
-eval { $workbook->add_worksheet('HISTORY'); };
-eval { $workbook->add_worksheet('HisTory'); };
-
 
 # Test that only 1 worksheet was written.
 my $expected = 1;
