@@ -7450,7 +7450,7 @@ To read data from Excel files try:
 
 =item * Spreadsheet::XLSX
 
-A module for reading formatted or unformatted data form XLSX files.
+A module for reading formatted or unformatted data from XLSX files.
 
 L<Spreadsheet::XLSX>
 
