@@ -7448,6 +7448,18 @@ To read data from Excel files try:
 
 =over 4
 
+=item * L<Spreadsheet::ParseXLSX>
+
+A module for reading data from XLSX files. It also imports most, if
+not all, of the metadata to be found in Excel XLSX files.  As its
+author describes it: "This module is an adaptor for
+L<Spreadsheet::ParseExcel> that reads XLSX files. For documentation
+about the various data that you can retrieve from these classes,
+please see L<Spreadsheet::ParseExcel>,
+L<Spreadsheet::ParseExcel::Workbook>,
+L<Spreadsheet::ParseExcel::Worksheet>, and
+L<Spreadsheet::ParseExcel::Cell>."
+
 =item * Spreadsheet::XLSX
 
 A module for reading formatted or unformatted data from XLSX files.
@@ -7462,7 +7474,7 @@ L<SimpleXlsx>
 
 =item * Spreadsheet::ParseExcel
 
-This module can read  data from an Excel XLS file but it doesn't support the XLSX format.
+This module can read data from an Excel XLS file but it doesn't support the XLSX format.
 
 L<Spreadsheet::ParseExcel>
 
