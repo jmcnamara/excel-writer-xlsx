@@ -17,7 +17,7 @@ use Exporter;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 
 ###############################################################################
@@ -3604,7 +3604,7 @@ For examples of these formatting codes see the 'Numerical formats' worksheet cre
 
 Note 1. Numeric formats 23 to 36 are not documented by Microsoft and may differ in international versions.
 
-Note 2. The built-in formats are localized according to the locale settings (regional settings on Windows) of the user when opening the file in Excel:
+Note 2. The built-in formats are localised according to the locale settings (regional settings on Windows) of the user when opening the file in Excel:
 
 =over
 

@@ -594,6 +594,8 @@ t/regression/chart_line01.t
 t/regression/chart_line02.t
 t/regression/chart_line03.t
 t/regression/chart_line04.t
+t/regression/chart_line05.t
+t/regression/chart_line06.t
 t/regression/chart_name01.t
 t/regression/chart_name02.t
 t/regression/chart_name03.t
@@ -680,6 +682,8 @@ t/regression/comment11.t
 t/regression/comment12.t
 t/regression/comment13.t
 t/regression/comment14.t
+t/regression/comment15.t
+t/regression/comment16.t
 t/regression/cond_format01.t
 t/regression/cond_format02.t
 t/regression/cond_format03.t
@@ -869,6 +873,7 @@ t/regression/image47.t
 t/regression/image48.t
 t/regression/image49.t
 t/regression/image50.t
+t/regression/image51.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
@@ -891,6 +896,7 @@ t/regression/images/mylogo.png
 t/regression/images/red.bmp
 t/regression/images/red.jpg
 t/regression/images/red.png
+t/regression/images/red2.png
 t/regression/images/red_208.png
 t/regression/images/red_64x20.png
 t/regression/images/red_readonly.png
@@ -901,6 +907,7 @@ t/regression/images/zero_dpi.jpg
 t/regression/landscape01.t
 t/regression/macro01.t
 t/regression/macro02.t
+t/regression/macro03.t
 t/regression/merge_cells01.t
 t/regression/merge_range01.t
 t/regression/merge_range02.t
@@ -916,6 +923,15 @@ t/regression/object_position07.t
 t/regression/object_position08.t
 t/regression/object_position09.t
 t/regression/object_position10.t
+t/regression/object_position12.t
+t/regression/object_position13.t
+t/regression/object_position14.t
+t/regression/object_position15.t
+t/regression/object_position16.t
+t/regression/object_position17.t
+t/regression/object_position18.t
+t/regression/object_position19.t
+t/regression/object_position20.t
 t/regression/optimize01.t
 t/regression/optimize02.t
 t/regression/optimize03.t
@@ -924,6 +940,8 @@ t/regression/optimize05.t
 t/regression/optimize06.t
 t/regression/optimize07.t
 t/regression/optimize08.t
+t/regression/optimize13.t
+t/regression/optimize14.t
 t/regression/outline01.t
 t/regression/outline02.t
 t/regression/outline03.t
@@ -1366,6 +1384,8 @@ t/regression/xlsx_files/chart_line01.xlsx
 t/regression/xlsx_files/chart_line02.xlsx
 t/regression/xlsx_files/chart_line03.xlsx
 t/regression/xlsx_files/chart_line04.xlsx
+t/regression/xlsx_files/chart_line05.xlsx
+t/regression/xlsx_files/chart_line06.xlsx
 t/regression/xlsx_files/chart_name01.xlsx
 t/regression/xlsx_files/chart_name02.xlsx
 t/regression/xlsx_files/chart_name03.xlsx
@@ -1447,6 +1467,8 @@ t/regression/xlsx_files/comment11.xlsx
 t/regression/xlsx_files/comment12.xlsx
 t/regression/xlsx_files/comment13.xlsx
 t/regression/xlsx_files/comment14.xlsx
+t/regression/xlsx_files/comment15.xlsx
+t/regression/xlsx_files/comment16.xlsx
 t/regression/xlsx_files/cond_format01.xlsx
 t/regression/xlsx_files/cond_format02.xlsx
 t/regression/xlsx_files/cond_format03.xlsx
@@ -1632,9 +1654,11 @@ t/regression/xlsx_files/image47.xlsx
 t/regression/xlsx_files/image48.xlsx
 t/regression/xlsx_files/image49.xlsx
 t/regression/xlsx_files/image50.xlsx
+t/regression/xlsx_files/image51.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/macro02.xlsm
+t/regression/xlsx_files/macro03.xlsm
 t/regression/xlsx_files/merge_cells01.xlsx
 t/regression/xlsx_files/merge_range01.xlsx
 t/regression/xlsx_files/merge_range02.xlsx
@@ -1650,6 +1674,15 @@ t/regression/xlsx_files/object_position07.xlsx
 t/regression/xlsx_files/object_position08.xlsx
 t/regression/xlsx_files/object_position09.xlsx
 t/regression/xlsx_files/object_position10.xlsx
+t/regression/xlsx_files/object_position12.xlsx
+t/regression/xlsx_files/object_position13.xlsx
+t/regression/xlsx_files/object_position14.xlsx
+t/regression/xlsx_files/object_position15.xlsx
+t/regression/xlsx_files/object_position16.xlsx
+t/regression/xlsx_files/object_position17.xlsx
+t/regression/xlsx_files/object_position18.xlsx
+t/regression/xlsx_files/object_position19.xlsx
+t/regression/xlsx_files/object_position20.xlsx
 t/regression/xlsx_files/optimize01.xlsx
 t/regression/xlsx_files/optimize02.xlsx
 t/regression/xlsx_files/optimize03.xlsx
@@ -1658,6 +1691,8 @@ t/regression/xlsx_files/optimize05.xlsx
 t/regression/xlsx_files/optimize06.xlsx
 t/regression/xlsx_files/optimize07.xlsx
 t/regression/xlsx_files/optimize08.xlsx
+t/regression/xlsx_files/optimize13.xlsx
+t/regression/xlsx_files/optimize14.xlsx
 t/regression/xlsx_files/outline01.xlsx
 t/regression/xlsx_files/outline02.xlsx
 t/regression/xlsx_files/outline03.xlsx
@@ -1808,6 +1843,7 @@ t/regression/xlsx_files/utf8_11.xlsx
 t/regression/xlsx_files/vbaProject01.bin
 t/regression/xlsx_files/vbaProject02.bin
 t/regression/xlsx_files/vbaProject03.bin
+t/regression/xlsx_files/vbaProject04.bin
 t/regression/xlsx_files/vml01.xlsx
 t/regression/xlsx_files/vml02.xlsx
 t/regression/xlsx_files/vml03.xlsx

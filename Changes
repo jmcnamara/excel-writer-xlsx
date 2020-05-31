@@ -4,6 +4,20 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+1.04 2020-05-31
+
+   + Added support for "stacked" and "percent_stacked" Line charts.
+
+   ! Fix for worksheet objects (charts and images) that are inserted with an
+     offset that starts in a hidden cell.
+
+   ! Fix for issue with default worksheet VBA codenames.
+
+   - Removed error in add_worksheet() for sheet name "History" which is a
+     reserved name in English version of Excel. However, this is an allowed
+     worksheet name in some Excel variants so the warning has been turned into
+     a documentation note instead.
+
 1.03 2019-12-26
 
    + Fix for duplicate images being copied to an Excel::Writer::XLSX
