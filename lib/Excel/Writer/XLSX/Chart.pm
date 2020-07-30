@@ -189,7 +189,7 @@ sub add_series {
     }
 
     if ( @{ $self->{_series} } == 255 ) {
-        carp "The maxiumn number of series that can be added to an "
+        carp "The maximum number of series that can be added to an "
           . "Excel Chart is 255";
         return
     }
@@ -1704,6 +1704,42 @@ sub _get_labels_properties {
 
     if ($labels->{font}) {
         $labels->{font} = $self->_convert_font_args( $labels->{font} );
+    }
+
+    if ( $labels->{custom} ) {
+
+        # Duplicate, and modify, the custom label properties.
+        my @custom = ();
+
+        for my $label ( @{ $labels->{custom} } ) {
+            if (! defined $label) {
+                push @custom, undef;
+                next;
+            }
+
+            my %property = %{$label};
+
+            # Convert formula.
+            if ( $property{value} && $property{value} =~ m/^=[^!]+!\$/) {
+                $property{formula} = $property{value};
+            }
+
+            if ( $property{formula} ) {
+                $property{formula} =~ s/^=//;
+
+                my $data_id = $self->_get_data_id( $property{formula},
+                                                   $property{data} );
+                $property{data_id} = $data_id;
+            }
+
+            if ($property{font}) {
+                $property{font} = $self->_convert_font_args( $property{font} );
+            }
+
+            push @custom, \%property;
+        }
+
+        $labels->{custom} = \@custom;
     }
 
     return $labels;
@@ -4036,7 +4072,7 @@ sub _write_legend {
 
     # Write the c:txPr element.
     if ( $font ) {
-        $self->_write_tx_pr( undef, $font );
+        $self->_write_tx_pr( $font );
     }
 
     $self->xml_end_tag( 'c:legend' );
@@ -4276,7 +4312,7 @@ sub _write_title_formula {
     $self->_write_overlay() if $overlay;
 
     # Write the c:txPr element.
-    $self->_write_tx_pr( $is_y_axis, $font );
+    $self->_write_tx_pr( $font, $is_y_axis );
 
     $self->xml_end_tag( 'c:title' );
 }
@@ -4290,15 +4326,16 @@ sub _write_title_formula {
 #
 sub _write_tx_rich {
 
-    my $self      = shift;
-    my $title     = shift;
-    my $is_y_axis = shift;
-    my $font      = shift;
+    my $self          = shift;
+    my $title         = shift;
+    my $is_y_axis     = shift;
+    my $font          = shift;
+    my $is_data_label = 0;
 
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:rich element.
-    $self->_write_rich( $title, $is_y_axis, $font );
+    $self->_write_rich( $title, $font, $is_y_axis, $is_data_label );
 
     $self->xml_end_tag( 'c:tx' );
 }
@@ -4358,11 +4395,13 @@ sub _write_tx_formula {
 #
 sub _write_rich {
 
-    my $self      = shift;
-    my $title     = shift;
-    my $is_y_axis = shift;
+    my $self          = shift;
+    my $title         = shift;
+    my $font          = shift;
+    my $is_y_axis     = shift;
+    my $is_data_label = shift;
+
     my $rotation  = undef;
-    my $font      = shift;
 
     if ( $font && exists $font->{_rotation} ) {
         $rotation = $font->{_rotation};
@@ -4377,7 +4416,7 @@ sub _write_rich {
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p_rich( $title, $font );
+    $self->_write_a_p_rich( $title, $font, $is_data_label );
 
     $self->xml_end_tag( 'c:rich' );
 }
@@ -4445,14 +4484,17 @@ sub _write_a_lst_style {
 #
 sub _write_a_p_rich {
 
-    my $self  = shift;
-    my $title = shift;
-    my $font  = shift;
+    my $self          = shift;
+    my $title         = shift;
+    my $font          = shift;
+    my $is_data_label = shift;
 
     $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
-    $self->_write_a_p_pr_rich( $font );
+    if (!$is_data_label) {
+        $self->_write_a_p_pr_rich( $font );
+    }
 
     # Write the a:r element.
     $self->_write_a_r( $title, $font );
@@ -4670,8 +4712,8 @@ sub _write_a_t {
 sub _write_tx_pr {
 
     my $self      = shift;
-    my $is_y_axis = shift;
     my $font      = shift;
+    my $is_y_axis = shift;
     my $rotation  = undef;
 
     if ( $font && exists $font->{_rotation} ) {
@@ -5521,6 +5563,11 @@ sub _write_d_lbls {
 
     $self->xml_start_tag( 'c:dLbls' );
 
+    # Write the custom c:dLbl elements.
+    if ( $labels->{custom} ) {
+        $self->_write_custom_labels( $labels, $labels->{custom} );
+    }
+
     # Write the c:numFmt element.
     if ( $labels->{num_format} ) {
         $self->_write_data_label_number_format( $labels->{num_format} );
@@ -5557,6 +5604,124 @@ sub _write_d_lbls {
 
     $self->xml_end_tag( 'c:dLbls' );
 }
+
+
+##############################################################################
+#
+# _write_custom_labels()
+#
+# Write the <c:dLbl> element.
+#
+sub _write_custom_labels {
+
+    my $self   = shift;
+    my $parent = shift;
+    my $labels = shift;
+    my $index  = 0;
+
+    for my $label ( @$labels ) {
+        $index++;
+        next if !defined $label;
+
+        $self->xml_start_tag( 'c:dLbl' );
+
+        # Write the c:idx element.
+        $self->_write_idx( $index - 1 );
+
+        if ( defined $label->{delete} && $label->{delete} ) {
+            $self->_write_delete( 1 );
+        }
+        elsif ( defined $label->{formula} ) {
+            my $formula = $label->{formula};
+            my $data_id = $label->{data_id};
+            my $font  = $label->{font};
+            $self->_write_custom_label_formula( $formula, $data_id, $font );
+
+            $self->_write_show_val()      if $parent->{value};
+            $self->_write_show_cat_name() if $parent->{category};
+            $self->_write_show_ser_name() if $parent->{series_name};
+        }
+        elsif ( defined $label->{value} ) {
+            my $value = $label->{value};
+            my $font  = $label->{font};
+            $self->_write_custom_label_str( $value, $font );
+
+            $self->_write_show_val()      if $parent->{value};
+            $self->_write_show_cat_name() if $parent->{category};
+            $self->_write_show_ser_name() if $parent->{series_name};
+        }
+        else {
+            my $font = $label->{font};
+            if ( $font ) {
+                $self->xml_empty_tag( 'c:spPr' );
+                $self->_write_tx_pr( $font );
+            }
+        }
+
+        $self->xml_end_tag( 'c:dLbl' );
+    }
+}
+
+
+##############################################################################
+#
+# _write_custom_label_str()
+#
+# Write parts of the <c:dLbl> element for strings.
+#
+sub _write_custom_label_str {
+
+    my $self          = shift;
+    my $value         = shift;
+    my $font          = shift;
+    my $is_y_axis     = 0;
+    my $is_data_label = 1;
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    $self->xml_start_tag( 'c:tx' );
+
+    # Write the c:rich element.
+    $self->_write_rich( $value, $font, $is_y_axis, $is_data_label );
+
+    $self->xml_end_tag( 'c:tx' );
+}
+
+##############################################################################
+#
+# _write_custom_label_formula()
+#
+# Write parts of the <c:dLbl> element for formulas.
+#
+sub _write_custom_label_formula {
+
+    my $self    = shift;
+    my $formula = shift;
+    my $data_id = shift;
+    my $font    = shift;
+    my $data;
+
+    if ( defined $data_id ) {
+        $data = $self->{_formula_data}->[$data_id];
+    }
+
+    # Write the c:layout element.
+    $self->_write_layout();
+
+    $self->xml_start_tag( 'c:tx' );
+
+    # Write the c:strRef element.
+    $self->_write_str_ref( $formula, $data, 'str' );
+
+    $self->xml_end_tag( 'c:tx' );
+
+    if ( $font ) {
+        $self->xml_empty_tag( 'c:spPr' );
+        $self->_write_tx_pr( $font );
+    }
+}
+
 
 ##############################################################################
 #
@@ -5808,7 +5973,7 @@ sub _write_d_table {
 
     if ( $table->{_font} ) {
         # Write the table font.
-        $self->_write_tx_pr( undef, $table->{_font} );
+        $self->_write_tx_pr( $table->{_font} );
     }
 
     $self->xml_end_tag( 'c:dTable' );
@@ -7781,6 +7946,7 @@ The following properties can be set for C<data_labels> formats in a chart.
     legend_key
     num_format
     font
+    custom
 
 The C<value> property turns on the I<Value> data label for a series.
 
@@ -7899,6 +8065,78 @@ The C<font> property is also used to rotate the data labels in a series:
     );
 
 See the L</CHART FONTS> section below.
+
+The C<custom> property data label property is used to set the properties of individual data labels, see below.
+
+
+=head2 Custom Data Labels
+
+The C<custom> property data label property is used to set the properties of individual data labels in a series. The most common use for this is to set custom text or number labels:
+
+    my $custom_labels = [
+        { value => 'Jan' },
+        { value => 'Feb' },
+        { value => 'Mar' },
+        { value => 'Apr' },
+        { value => 'May' },
+        { value => 'Jun' },
+    ];
+
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+        data_labels => { value => 1, custom => $custom_labels },
+    );
+
+As shown in the previous examples th C<custom> property should be a list of dicts. Any property dict that is set to C<undef> or not included in the list will be assigned the default data label value:
+
+    my $custom_labels = [
+        undef,
+        { value => 'Feb' },
+        { value => 'Mar' },
+        { value => 'Apr' },
+    ];
+
+The property elements of the C<custom> lists should be dicts with the following allowable keys/sub-properties:
+
+    value
+    font
+    delete
+
+The C<value> property should be a string, number or formula string that refers to a cell from which the value will be taken:
+
+    $custom_labels = [
+        { value => '=Sheet1!$C$2' },
+        { value => '=Sheet1!$C$3' },
+        { value => '=Sheet1!$C$4' },
+        { value => '=Sheet1!$C$5' },
+        { value => '=Sheet1!$C$6' },
+        { value => '=Sheet1!$C$7' },
+    ];
+
+The C<font> property is used to set the font of the custom data label of a series (See the L</CHART FONTS> section below):
+
+    $custom_labels = [
+        { value => '=Sheet1!$C$1', font => { color => 'red' } },
+        { value => '=Sheet1!$C$2', font => { color => 'red' } },
+        { value => '=Sheet1!$C$2', font => { color => 'red' } },
+        { value => '=Sheet1!$C$4', font => { color => 'red' } },
+        { value => '=Sheet1!$C$5', font => { color => 'red' } },
+        { value => '=Sheet1!$C$6', font => { color => 'red' } },
+    ];
+
+The C<delete> property can be used to delete labels in a series. This can be
+useful if you want to highlight one or more cells in the series, for example
+the maximum and the minimum:
+
+    $custom_labels = [
+        undef,
+        { delete => 1 },
+        { delete => 1 },
+        { delete => 1 },
+        { delete => 1 },
+        undef,
+    ];
 
 
 =head2 Points
