@@ -7580,7 +7580,9 @@ sub _write_cell {
     elsif ( $type eq 'f' ) {
 
         # Write a formula.
-        my $value = $cell->[3] || 0;
+        my $value = $cell->[3];
+
+        $value = 0 if !defined $value;
 
         # Check if the formula value is a string.
         if (   $value
