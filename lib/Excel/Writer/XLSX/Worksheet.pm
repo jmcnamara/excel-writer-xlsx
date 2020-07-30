@@ -30,7 +30,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     quote_sheetname);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 
 ###############################################################################
@@ -4156,7 +4156,7 @@ sub conditional_formatting {
 
 ###############################################################################
 #
-# Set the sub-properites for icons.
+# Set the sub-properties for icons.
 #
 sub _set_icon_properties {
 
@@ -4777,10 +4777,10 @@ sub insert_button {
 sub set_vba_name {
 
     my $self         = shift;
-    my $vba_codemame = shift;
+    my $vba_codename = shift;
 
-    if ( $vba_codemame ) {
-        $self->{_vba_codename} = $vba_codemame;
+    if ( $vba_codename ) {
+        $self->{_vba_codename} = $vba_codename;
     }
     else {
         $self->{_vba_codename} = "Sheet" . ($self->{_index} + 1);
@@ -9336,7 +9336,7 @@ sub _write_icon_set {
 
     $self->xml_start_tag( 'iconSet', @attributes );
 
-    # Write the properites for different icon styles.
+    # Write the properties for different icon styles.
     for my $icon ( reverse @{ $param->{icons} } ) {
         $self->_write_cfvo(
             $icon->{'type'},

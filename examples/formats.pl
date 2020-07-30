@@ -335,10 +335,10 @@ sub borders {
         $worksheet->write( ( 2 * ( $i + 1 ) ), 3, "Border", $format );
     }
 
-    $worksheet->write( 30, 0, "Diag type",             $heading );
-    $worksheet->write( 30, 1, "Index",                 $heading );
-    $worksheet->write( 30, 3, "Style",                 $heading );
-    $worksheet->write( 30, 5, "Diagonal Boder styles", $heading );
+    $worksheet->write( 30, 0, "Diag type",              $heading );
+    $worksheet->write( 30, 1, "Index",                  $heading );
+    $worksheet->write( 30, 3, "Style",                  $heading );
+    $worksheet->write( 30, 5, "Diagonal Border styles", $heading );
 
     for my $i ( 1 .. 3 ) {
         my $format = $workbook->add_format();

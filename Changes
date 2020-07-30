@@ -4,6 +4,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+1.05 2020-07-30
+
+   + Added support for custom data labels in charts.
+
+
 1.04 2020-05-31
 
    + Added support for "stacked" and "percent_stacked" Line charts.
