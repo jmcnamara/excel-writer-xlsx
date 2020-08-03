@@ -4,6 +4,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+1.06 2020-08-03
+
+   ! Fix for issue where array formulas weren't included in the output file
+     for certain ranges/conditions.
+
 
 1.05 2020-07-30
 

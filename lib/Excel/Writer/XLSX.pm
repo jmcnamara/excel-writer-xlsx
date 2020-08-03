@@ -17,7 +17,7 @@ use Exporter;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 
 ###############################################################################
@@ -7058,8 +7058,10 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     chart_stock.pl          A demo of stock style charts.
     chart_data_table.pl     A demo of a chart with a data table on the axis.
     chart_data_tools.pl     A demo of charts with data highlighting options.
+    chart_data_labels.pl    A demo of standard and custom chart data labels.
     chart_clustered.pl      A demo of a chart with a clustered axis.
     chart_styles.pl         A demo of the available chart styles.
+    chart_gauge.pl          A demo of a gauge style chart.
     colors.pl               A demo of the colour palette and named colours.
     comments1.pl            Add comments to worksheet cells.
     comments2.pl            Add comments with advanced options.
@@ -7084,9 +7086,10 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     merge6.pl               An example of merging with Unicode strings.
     mod_perl1.pl            A simple mod_perl 1 program.
     mod_perl2.pl            A simple mod_perl 2 program.
-    panes.pl                An examples of how to create panes.
     outline.pl              An example of outlines and grouping.
     outline_collapsed.pl    An example of collapsed outlines.
+    panes.pl                An example of how to create panes.
+    properties.pl           Add document properties to a workbook.
     protection.pl           Example of cell locking and formula hiding.
     rich_strings.pl         Example of strings with multiple formats.
     right_to_left.pl        Change default sheet direction to right to left.
@@ -7112,6 +7115,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     write_handler4.pl       Example of extending the write() method. Step 4.
     write_to_scalar.pl      Example of writing an Excel file to a Perl scalar.
 
+
     Unicode
     =======
     unicode_2022_jp.pl      Japanese: ISO-2022-JP.
@@ -7124,7 +7128,6 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     unicode_koi8r.pl        Russian:  KOI8-R.
     unicode_polish_utf8.pl  Polish :  UTF8.
     unicode_shift_jis.pl    Japanese: Shift JIS.
-
 
 
 

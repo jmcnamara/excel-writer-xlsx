@@ -30,7 +30,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     quote_sheetname);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 
 ###############################################################################
@@ -5982,7 +5982,7 @@ sub insert_shape {
         # if the stencil is modified.
         my $insert = { %{$shape} };
 
-       # For connectors change x/y coords based on location of connected shapes.
+       # For connectors change x/y co-ords based on location of connected shapes.
         $self->_auto_locate_connectors( $insert );
 
         # Bless the copy into this class, so AUTOLOADED _get, _set methods
@@ -5994,7 +5994,7 @@ sub insert_shape {
     }
     else {
 
-       # For connectors change x/y coords based on location of connected shapes.
+       # For connectors change x/y co-ords based on location of connected shapes.
         $self->_auto_locate_connectors( $shape );
 
         # Insert a link to the shape on the list of shapes. Connection to

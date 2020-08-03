@@ -305,6 +305,7 @@ t/package/xml_writer/sub_write_xml_declaration.t
 t/regression/array_formula01.t
 t/regression/array_formula02.t
 t/regression/array_formula03.t
+t/regression/array_formula04.t
 t/regression/autofilter00.t
 t/regression/autofilter01.t
 t/regression/autofilter02.t
@@ -1109,6 +1110,7 @@ t/regression/vml04.t
 t/regression/xlsx_files/array_formula01.xlsx
 t/regression/xlsx_files/array_formula02.xlsx
 t/regression/xlsx_files/array_formula03.xlsx
+t/regression/xlsx_files/array_formula04.xlsx
 t/regression/xlsx_files/autofilter00.xlsx
 t/regression/xlsx_files/autofilter01.xlsx
 t/regression/xlsx_files/autofilter02.xlsx
@@ -1971,6 +1973,7 @@ t/worksheet/sub_write_sheet_views9.t
 t/worksheet/sub_write_tab_color.t
 t/worksheet/sub_write_worksheet.t
 t/worksheet/sub_write_xml_declaration.t
+t/worksheet/test_range_return_values.t
 t/worksheet/worksheet_01.t
 t/worksheet/worksheet_02.t
 t/worksheet/worksheet_03.t
