@@ -3173,8 +3173,9 @@ sub merge_range {
     ( $col_first, $col_last ) = ( $col_last, $col_first )
       if $col_first > $col_last;
 
-    # Check that column number is valid and store the max value
-    return if $self->_check_dimensions( $row_last, $col_last );
+    # Check that the data range is valid and store the max and min values.
+    return -2 if $self->_check_dimensions( $row_first, $col_first );
+    return -2 if $self->_check_dimensions( $row_last, $col_last );
 
     # Store the merge range.
     push @{ $self->{_merge} }, [ $row_first, $col_first, $row_last, $col_last ];
@@ -3244,8 +3245,9 @@ sub merge_range_type {
     ( $col_first, $col_last ) = ( $col_last, $col_first )
       if $col_first > $col_last;
 
-    # Check that column number is valid and store the max value
-    return if $self->_check_dimensions( $row_last, $col_last );
+    # Check that the data range is valid and store the max and min values.
+    return -2 if $self->_check_dimensions( $row_first, $col_first );
+    return -2 if $self->_check_dimensions( $row_last, $col_last );
 
     # Store the merge range.
     push @{ $self->{_merge} }, [ $row_first, $col_first, $row_last, $col_last ];
