@@ -2581,10 +2581,9 @@ sub write_array_formula {
     ( $row1, $row2 ) = ( $row2, $row1 ) if $row1 > $row2;
     ( $col1, $col2 ) = ( $col1, $col2 ) if $col1 > $col2;
 
-
-    # Check that row and col are valid and store max and min values
+    # Check that row and col are valid and store max and min values.
+    return -2 if $self->_check_dimensions( $row1, $col1 );
     return -2 if $self->_check_dimensions( $row2, $col2 );
-
 
     # Define array range
     my $range;
