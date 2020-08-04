@@ -1702,6 +1702,41 @@ sub _get_labels_properties {
         }
     }
 
+
+    # Set the line properties for the data labels.
+    my $line = $self->_get_line_properties( $labels->{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $labels->{border} ) {
+        $line = $self->_get_line_properties( $labels->{border} );
+    }
+
+    # Set the fill properties for the labels.
+    my $fill = $self->_get_fill_properties( $labels->{fill} );
+
+    # Set the pattern properties for the series.
+    my $pattern = $self->_get_pattern_properties( $labels->{pattern} );
+
+    # Set the gradient fill properties for the series.
+    my $gradient = $self->_get_gradient_properties( $labels->{gradient} );
+
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
+        $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
+    }
+
+    $labels->{_line}     = $line;
+    $labels->{_fill}     = $fill;
+    $labels->{_pattern}  = $pattern;
+    $labels->{_gradient} = $gradient;
+
+
     if ($labels->{font}) {
         $labels->{font} = $self->_convert_font_args( $labels->{font} );
     }
@@ -5572,6 +5607,9 @@ sub _write_d_lbls {
     if ( $labels->{num_format} ) {
         $self->_write_data_label_number_format( $labels->{num_format} );
     }
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $labels );
 
     # Write the data label font elements.
     if ($labels->{font} ) {
