@@ -1702,7 +1702,6 @@ sub _get_labels_properties {
         }
     }
 
-
     # Set the line properties for the data labels.
     my $line = $self->_get_line_properties( $labels->{line} );
 
@@ -1714,10 +1713,10 @@ sub _get_labels_properties {
     # Set the fill properties for the labels.
     my $fill = $self->_get_fill_properties( $labels->{fill} );
 
-    # Set the pattern properties for the series.
+    # Set the pattern properties for the labels.
     my $pattern = $self->_get_pattern_properties( $labels->{pattern} );
 
-    # Set the gradient fill properties for the series.
+    # Set the gradient fill properties for the labels.
     my $gradient = $self->_get_gradient_properties( $labels->{gradient} );
 
     # Pattern fill overrides solid fill.
@@ -1770,6 +1769,39 @@ sub _get_labels_properties {
             if ($property{font}) {
                 $property{font} = $self->_convert_font_args( $property{font} );
             }
+
+            # Set the line properties for the data labels.
+            my $line = $self->_get_line_properties( $property{line} );
+
+            # Allow 'border' as a synonym for 'line'.
+            if ( $property{border} ) {
+                $line = $self->_get_line_properties( $property{border} );
+            }
+
+            # Set the fill properties for the labels.
+            my $fill = $self->_get_fill_properties( $property{fill} );
+
+            # Set the pattern properties for the labels.
+            my $pattern = $self->_get_pattern_properties( $property{pattern} );
+
+            # Set the gradient fill properties for the labels.
+            my $gradient = $self->_get_gradient_properties( $property{gradient} );
+
+            # Pattern fill overrides solid fill.
+            if ( $pattern ) {
+                $fill = undef;
+            }
+
+            # Gradient fill overrides solid and pattern fills.
+            if ( $gradient ) {
+                $pattern = undef;
+                $fill    = undef;
+            }
+
+            $property{_line}     = $line;
+            $property{_fill}     = $fill;
+            $property{_pattern}  = $pattern;
+            $property{_gradient} = $gradient;
 
             push @custom, \%property;
         }
@@ -2061,6 +2093,28 @@ sub _get_points_properties {
     }
 
     return \@points;
+}
+
+##############################################################################
+#
+# _has_fill_formatting()
+#
+# Check if a chart element has line, fill or gradient formatting.
+#
+sub _has_fill_formatting {
+
+    my $element = shift;
+
+    if (    !$element->{_line}->{_defined}
+        and !$element->{_fill}->{_defined}
+        and !$element->{_pattern}
+        and !$element->{_gradient} )
+    {
+        return 0;
+    }
+    else {
+        return 1;
+    }
 }
 
 
@@ -4365,12 +4419,11 @@ sub _write_tx_rich {
     my $title         = shift;
     my $is_y_axis     = shift;
     my $font          = shift;
-    my $is_data_label = 0;
 
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:rich element.
-    $self->_write_rich( $title, $font, $is_y_axis, $is_data_label );
+    $self->_write_rich( $title, $font, $is_y_axis );
 
     $self->xml_end_tag( 'c:tx' );
 }
@@ -4430,13 +4483,13 @@ sub _write_tx_formula {
 #
 sub _write_rich {
 
-    my $self          = shift;
-    my $title         = shift;
-    my $font          = shift;
-    my $is_y_axis     = shift;
-    my $is_data_label = shift;
+    my $self           = shift;
+    my $title          = shift;
+    my $font           = shift;
+    my $is_y_axis      = shift;
+    my $ignore_rich_pr = shift;
 
-    my $rotation  = undef;
+    my $rotation = undef;
 
     if ( $font && exists $font->{_rotation} ) {
         $rotation = $font->{_rotation};
@@ -4451,7 +4504,7 @@ sub _write_rich {
     $self->_write_a_lst_style();
 
     # Write the a:p element.
-    $self->_write_a_p_rich( $title, $font, $is_data_label );
+    $self->_write_a_p_rich( $title, $font, $ignore_rich_pr );
 
     $self->xml_end_tag( 'c:rich' );
 }
@@ -4519,15 +4572,15 @@ sub _write_a_lst_style {
 #
 sub _write_a_p_rich {
 
-    my $self          = shift;
-    my $title         = shift;
-    my $font          = shift;
-    my $is_data_label = shift;
+    my $self           = shift;
+    my $title          = shift;
+    my $font           = shift;
+    my $ignore_rich_pr = shift;
 
     $self->xml_start_tag( 'a:p' );
 
     # Write the a:pPr element.
-    if (!$is_data_label) {
+    if ( !$ignore_rich_pr ) {
         $self->_write_a_p_pr_rich( $font );
     }
 
@@ -4845,13 +4898,7 @@ sub _write_sp_pr {
     my $self   = shift;
     my $series = shift;
 
-    if (    !$series->{_line}->{_defined}
-        and !$series->{_fill}->{_defined}
-        and !$series->{_pattern}
-        and !$series->{_gradient} )
-    {
-        return;
-    }
+    return if !_has_fill_formatting($series);
 
     $self->xml_start_tag( 'c:spPr' );
 
@@ -5670,30 +5717,21 @@ sub _write_custom_labels {
             $self->_write_delete( 1 );
         }
         elsif ( defined $label->{formula} ) {
-            my $formula = $label->{formula};
-            my $data_id = $label->{data_id};
-            my $font  = $label->{font};
-            $self->_write_custom_label_formula( $formula, $data_id, $font );
+            $self->_write_custom_label_formula( $label );
 
             $self->_write_show_val()      if $parent->{value};
             $self->_write_show_cat_name() if $parent->{category};
             $self->_write_show_ser_name() if $parent->{series_name};
         }
         elsif ( defined $label->{value} ) {
-            my $value = $label->{value};
-            my $font  = $label->{font};
-            $self->_write_custom_label_str( $value, $font );
+            $self->_write_custom_label_str( $label );
 
             $self->_write_show_val()      if $parent->{value};
             $self->_write_show_cat_name() if $parent->{category};
             $self->_write_show_ser_name() if $parent->{series_name};
         }
         else {
-            my $font = $label->{font};
-            if ( $font ) {
-                $self->xml_empty_tag( 'c:spPr' );
-                $self->_write_tx_pr( $font );
-            }
+            $self->_write_custom_label_format_only( $label );
         }
 
         $self->xml_end_tag( 'c:dLbl' );
@@ -5709,11 +5747,12 @@ sub _write_custom_labels {
 #
 sub _write_custom_label_str {
 
-    my $self          = shift;
-    my $value         = shift;
-    my $font          = shift;
-    my $is_y_axis     = 0;
-    my $is_data_label = 1;
+    my $self           = shift;
+    my $label          = shift;
+    my $value          = $label->{value};
+    my $font           = $label->{font};
+    my $is_y_axis      = 0;
+    my $has_formatting = _has_fill_formatting($label);
 
     # Write the c:layout element.
     $self->_write_layout();
@@ -5721,9 +5760,12 @@ sub _write_custom_label_str {
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:rich element.
-    $self->_write_rich( $value, $font, $is_y_axis, $is_data_label );
+    $self->_write_rich( $value, $font, $is_y_axis, !$has_formatting );
 
     $self->xml_end_tag( 'c:tx' );
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $label );
 }
 
 ##############################################################################
@@ -5734,10 +5776,12 @@ sub _write_custom_label_str {
 #
 sub _write_custom_label_formula {
 
-    my $self    = shift;
-    my $formula = shift;
-    my $data_id = shift;
-    my $font    = shift;
+    my $self           = shift;
+    my $label          = shift;
+    my $formula        = $label->{formula};
+    my $data_id        = $label->{data_id};
+    my $font           = $label->{font};
+    my $has_formatting = _has_fill_formatting($label);
     my $data;
 
     if ( defined $data_id ) {
@@ -5754,7 +5798,31 @@ sub _write_custom_label_formula {
 
     $self->xml_end_tag( 'c:tx' );
 
-    if ( $font ) {
+    # Write the data label formating, if any.
+    $self->_write_custom_label_format_only($label);
+}
+
+##############################################################################
+#
+# _write_custom_label_format_only()
+#
+# Write parts of the <c:dLbl> element for labels where only the formatting has
+# changed.
+#
+sub _write_custom_label_format_only {
+
+    my $self           = shift;
+    my $label          = shift;
+    my $font           = $label->{font};
+    my $has_formatting = _has_fill_formatting($label);
+
+    if ( $has_formatting ) {
+
+        # Write the c:spPr element.
+        $self->_write_sp_pr( $label );
+        $self->_write_tx_pr( $font );
+    }
+    elsif ( $font ) {
         $self->xml_empty_tag( 'c:spPr' );
         $self->_write_tx_pr( $font );
     }
