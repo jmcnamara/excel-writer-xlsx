@@ -21,7 +21,7 @@ use Carp;
 use IO::File;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 #
 # NOTE: this module is a light weight re-implementation of XML::Writer. See

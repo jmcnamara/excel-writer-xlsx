@@ -21,7 +21,7 @@ use warnings;
 use autouse 'Date::Calc'  => qw(Delta_DHMS Decode_Date_EU Decode_Date_US);
 use autouse 'Date::Manip' => qw(ParseDate Date_Init);
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 # Row and column functions
 my @rowcol = qw(

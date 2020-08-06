@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 
 ###############################################################################
@@ -6971,7 +6971,7 @@ Set the fill properties of the series such as colour. See the L</CHART FORMATTIN
 
 Set the pattern properties of the series. See the L</CHART FORMATTING> section below.
 
-=item * C<gradien>
+=item * C<gradient>
 
 Set the gradient properties of the series. See the L</CHART FORMATTING> section below.
 
@@ -8052,6 +8052,10 @@ The following properties can be set for C<data_labels> formats in a chart.
     legend_key
     num_format
     font
+    border
+    fill
+    pattern
+    gradient
     custom
 
 The C<value> property turns on the I<Value> data label for a series.
@@ -8172,7 +8176,25 @@ The C<font> property is also used to rotate the data labels in a series:
 
 See the L</CHART FONTS> section below.
 
-The C<custom> property data label property is used to set the properties of individual data labels, see below.
+The C<border> property sets the border properties of the data labels such as colour and style. See the L</CHART FORMATTING> section below.
+
+The C<fill> property sets the fill properties of the data labels such as colour. See the L</CHART FORMATTING> section below.
+
+Example of setting data label formatting:
+
+    $chart->add_series(
+        categories => '=Sheet1!$A$2:$A$7',
+        values     => '=Sheet1!$B$2:$B$7',
+        data_labels => { value  => 1,
+                         border => {color => 'red'},
+                         fill   => {color => 'yellow'} },
+    );
+
+The C<pattern> property sets the pattern properties of the data labels. See the L</CHART FORMATTING> section below.
+
+The C<gradient> property sets the gradient properties of the data labels. See the L</CHART FORMATTING> section below.
+
+The C<custom> property is used to set the properties of individual data labels, see below.
 
 
 =head2 Custom Data Labels
@@ -8207,6 +8229,10 @@ The property elements of the C<custom> lists should be dicts with the following 
 
     value
     font
+    border
+    fill
+    pattern
+    gradient
     delete
 
 The C<value> property should be a string, number or formula string that refers to a cell from which the value will be taken:
@@ -8230,6 +8256,25 @@ The C<font> property is used to set the font of the custom data label of a serie
         { value => '=Sheet1!$C$5', font => { color => 'red' } },
         { value => '=Sheet1!$C$6', font => { color => 'red' } },
     ];
+
+The C<border> property sets the border properties of the data labels such as colour and style. See the L</CHART FORMATTING> section below.
+
+The C<fill> property sets the fill properties of the data labels such as colour. See the L</CHART FORMATTING> section below.
+
+Example of setting custom data label formatting:
+
+    $custom_labels = [
+        { value => 'Jan', border => {color => 'blue'} },
+        { value => 'Feb' },
+        { value => 'Mar' },
+        { value => 'Apr' },
+        { value => 'May' },
+        { value => 'Jun', fill   => {color => 'green'} },
+    ];
+
+The C<pattern> property sets the pattern properties of the data labels. See the L</CHART FORMATTING> section below.
+
+The C<gradient> property sets the gradient properties of the data labels. See the L</CHART FORMATTING> section below.
 
 The C<delete> property can be used to delete labels in a series. This can be
 useful if you want to highlight one or more cells in the series, for example

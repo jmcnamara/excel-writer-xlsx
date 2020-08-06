@@ -108,11 +108,38 @@ $worksheet->insert_chart( 'D34', $chart3, { x_offset => 25, y_offset => 10 } );
 
 #######################################################################
 #
-# Example with custom string data labels.
+# Example with standard data labels and formatting.
 #
 
 # Create a Column chart.
 my $chart4 = $workbook->add_chart( type => 'column', embedded => 1 );
+
+# Configure the data series and add the data labels.
+$chart4->add_series(
+    categories => '=Sheet1!$A$2:$A$7',
+    values     => '=Sheet1!$B$2:$B$7',
+    data_labels => { value  => 1,
+                     border => {color => 'red'},
+                     fill   => {color => 'yellow'} },
+);
+
+# Add a chart title. and some axis labels.
+$chart4->set_title( name => 'Data labels with formatting' );
+
+# Turn off the chart legend.
+$chart4->set_legend( none => 1 );
+
+# Insert the chart into the worksheet (with an offset).
+$worksheet->insert_chart( 'D50', $chart4, { x_offset => 25, y_offset => 10 } );
+
+
+#######################################################################
+#
+# Example with custom string data labels.
+#
+
+# Create a Column chart.
+my $chart5 = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # Some custom labels.
 my $custom_labels = [
@@ -126,20 +153,20 @@ my $custom_labels = [
 
 
 # Configure the data series and add the data labels.
-$chart4->add_series(
+$chart5->add_series(
     categories => '=Sheet1!$A$2:$A$7',
     values     => '=Sheet1!$B$2:$B$7',
     data_labels => { value => 1, custom => $custom_labels },
 );
 
 # Add a chart title. and some axis labels.
-$chart4->set_title( name => 'Chart with custom string data labels' );
+$chart5->set_title( name => 'Chart with custom string data labels' );
 
 # Turn off the chart legend.
-$chart4->set_legend( none => 1 );
+$chart5->set_legend( none => 1 );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D50', $chart4, { x_offset => 25, y_offset => 10 } );
+$worksheet->insert_chart( 'D66', $chart5, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -148,7 +175,7 @@ $worksheet->insert_chart( 'D50', $chart4, { x_offset => 25, y_offset => 10 } );
 #
 
 # Create a Column chart.
-my $chart5 = $workbook->add_chart( type => 'column', embedded => 1 );
+my $chart6 = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # Some custom labels.
 $custom_labels = [
@@ -162,20 +189,20 @@ $custom_labels = [
 
 
 # Configure the data series and add the data labels.
-$chart5->add_series(
+$chart6->add_series(
     categories => '=Sheet1!$A$2:$A$7',
     values     => '=Sheet1!$B$2:$B$7',
     data_labels => { value => 1, custom => $custom_labels },
 );
 
 # Add a chart title. and some axis labels.
-$chart5->set_title( name => 'Chart with custom data labels from cells' );
+$chart6->set_title( name => 'Chart with custom data labels from cells' );
 
 # Turn off the chart legend.
-$chart5->set_legend( none => 1 );
+$chart6->set_legend( none => 1 );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D66', $chart5, { x_offset => 25, y_offset => 10 } );
+$worksheet->insert_chart( 'D82', $chart6, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -184,7 +211,7 @@ $worksheet->insert_chart( 'D66', $chart5, { x_offset => 25, y_offset => 10 } );
 #
 
 # Create a Column chart.
-my $chart6 = $workbook->add_chart( type => 'column', embedded => 1 );
+my $chart7 = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # Some custom labels. The undef items will get the default value.
 # We also set a font for the custom items as an extra example.
@@ -197,20 +224,20 @@ $custom_labels = [
 
 
 # Configure the data series and add the data labels.
-$chart6->add_series(
+$chart7->add_series(
     categories => '=Sheet1!$A$2:$A$7',
     values     => '=Sheet1!$B$2:$B$7',
     data_labels => { value => 1, custom => $custom_labels },
 );
 
 # Add a chart title. and some axis labels.
-$chart6->set_title( name => 'Mixed custom and default data labels' );
+$chart7->set_title( name => 'Mixed custom and default data labels' );
 
 # Turn off the chart legend.
-$chart6->set_legend( none => 1 );
+$chart7->set_legend( none => 1 );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D82', $chart6, { x_offset => 25, y_offset => 10 } );
+$worksheet->insert_chart( 'D98', $chart7, { x_offset => 25, y_offset => 10 } );
 
 
 #######################################################################
@@ -219,7 +246,7 @@ $worksheet->insert_chart( 'D82', $chart6, { x_offset => 25, y_offset => 10 } );
 #
 
 # Create a Column chart.
-my $chart7 = $workbook->add_chart( type => 'column', embedded => 1 );
+my $chart8 = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # Some deleted custom labels and defaults (undef). This allows us to
 # highlight certain values such as the minimum and maximum.
@@ -233,20 +260,59 @@ $custom_labels = [
 ];
 
 # Configure the data series and add the data labels.
-$chart7->add_series(
+$chart8->add_series(
     categories => '=Sheet1!$A$2:$A$7',
     values     => '=Sheet1!$B$2:$B$7',
     data_labels => { value => 1, custom => $custom_labels },
 );
 
 # Add a chart title. and some axis labels.
-$chart7->set_title( name => 'Chart with deleted data labels' );
+$chart8->set_title( name => 'Chart with deleted data labels' );
 
 # Turn off the chart legend.
-$chart7->set_legend( none => 1 );
+$chart8->set_legend( none => 1 );
 
 # Insert the chart into the worksheet (with an offset).
-$worksheet->insert_chart( 'D98', $chart7, { x_offset => 25, y_offset => 10 } );
+$worksheet->insert_chart( 'D114', $chart8, { x_offset => 25, y_offset => 10 } );
+
+
+#######################################################################
+#
+# Example with custom string data labels and formatting.
+#
+
+# Create a Column chart.
+my $chart9 = $workbook->add_chart( type => 'column', embedded => 1 );
+
+# Some custom labels.
+$custom_labels = [
+    { value => 'Amy', border => {color => 'blue'} },
+    { value => 'Bea' },
+    { value => 'Eva' },
+    { value => 'Fay' },
+    { value => 'Liv' },
+    { value => 'Una', fill   => {color => 'green'} },
+];
+
+
+# Configure the data series and add the data labels.
+$chart9->add_series(
+    categories => '=Sheet1!$A$2:$A$7',
+    values     => '=Sheet1!$B$2:$B$7',
+    data_labels => { value => 1,
+                     custom => $custom_labels,
+                     border => {color => 'red'},
+                     fill   => {color => 'yellow'} },
+);
+
+# Add a chart title. and some axis labels.
+$chart9->set_title( name => 'Chart with custom labels and formatting' );
+
+# Turn off the chart legend.
+$chart9->set_legend( none => 1 );
+
+# Insert the chart into the worksheet (with an offset).
+$worksheet->insert_chart( 'D130', $chart9, { x_offset => 25, y_offset => 10 } );
 
 
 $workbook->close();
