@@ -43,7 +43,7 @@ $chart1->add_series(
     data_labels => { value => 1 },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart1->set_title( name => 'Chart with standard data labels' );
 
 # Turn off the chart legend.
@@ -68,7 +68,7 @@ $chart2->add_series(
     data_labels => { value => 1, category => 1 },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart2->set_title( name => 'Category and Value data labels' );
 
 # Turn off the chart legend.
@@ -96,7 +96,7 @@ $chart3->add_series(
                                rotation => -30} },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart3->set_title( name => 'Data labels with user defined font' );
 
 # Turn off the chart legend.
@@ -123,7 +123,7 @@ $chart4->add_series(
                      fill   => {color => 'yellow'} },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart4->set_title( name => 'Data labels with formatting' );
 
 # Turn off the chart legend.
@@ -159,7 +159,7 @@ $chart5->add_series(
     data_labels => { value => 1, custom => $custom_labels },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart5->set_title( name => 'Chart with custom string data labels' );
 
 # Turn off the chart legend.
@@ -195,7 +195,7 @@ $chart6->add_series(
     data_labels => { value => 1, custom => $custom_labels },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart6->set_title( name => 'Chart with custom data labels from cells' );
 
 # Turn off the chart legend.
@@ -230,7 +230,7 @@ $chart7->add_series(
     data_labels => { value => 1, custom => $custom_labels },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart7->set_title( name => 'Mixed custom and default data labels' );
 
 # Turn off the chart legend.
@@ -266,7 +266,7 @@ $chart8->add_series(
     data_labels => { value => 1, custom => $custom_labels },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart8->set_title( name => 'Chart with deleted data labels' );
 
 # Turn off the chart legend.
@@ -305,7 +305,7 @@ $chart9->add_series(
                      fill   => {color => 'yellow'} },
 );
 
-# Add a chart title. and some axis labels.
+# Add a chart title.
 $chart9->set_title( name => 'Chart with custom labels and formatting' );
 
 # Turn off the chart legend.
