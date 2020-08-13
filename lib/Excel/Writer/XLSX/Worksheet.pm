@@ -182,6 +182,7 @@ sub new {
     $self->{_vml_shape_id}        = 1024;
     $self->{_buttons_array}       = [];
     $self->{_header_images_array} = [];
+    $self->{_ignore_errors}       = undef;
 
     $self->{_autofilter}   = '';
     $self->{_filter_on}    = 0;
@@ -215,8 +216,8 @@ sub new {
     $self->{_drawing}                = 0;
     $self->{_drawing_rels}           = {};
     $self->{_drawing_rels_id}        = 0;
-    $self->{_vml_drawing_rels}           = {};
-    $self->{_vml_drawing_rels_id}        = 0;
+    $self->{_vml_drawing_rels}       = {};
+    $self->{_vml_drawing_rels_id}    = 0;
 
     $self->{_horizontal_dpi} = 0;
     $self->{_vertical_dpi}   = 0;
@@ -356,6 +357,9 @@ sub _assemble_xml_file {
 
     # Write the colBreaks element.
     $self->_write_col_breaks();
+
+    # Write the ignoredErrors element.
+    $self->_write_ignored_errors();
 
     # Write the drawing element.
     $self->_write_drawings();
@@ -4786,6 +4790,42 @@ sub set_vba_name {
     else {
         $self->{_vba_codename} = "Sheet" . ($self->{_index} + 1);
     }
+}
+
+
+
+###############################################################################
+#
+# ignore_errors()
+#
+# Ignore worksheet errors/warnings in user defined ranges.
+#
+sub ignore_errors {
+
+    my $self    = shift;
+    my $ignores = shift;
+
+    # List of valid input parameters.
+    my %valid_parameter = (
+        number_stored_as_text => 1,
+        eval_error            => 1,
+        formula_differs       => 1,
+        formula_range         => 1,
+        formula_unlocked      => 1,
+        empty_cell_reference  => 1,
+        list_data_validation  => 1,
+        calculated_column     => 1,
+        two_digit_text_year   => 1,
+    );
+
+    for my $param_key ( keys %$ignores ) {
+        if ( not exists $valid_parameter{$param_key} ) {
+            carp "Unknown parameter '$param_key' in ignore_errors()";
+            return -3;
+        }
+    }
+
+    $self->{_ignore_errors} = {%$ignores};
 }
 
 
@@ -10200,6 +10240,92 @@ sub _write_color_low {
     my $self = shift;
 
     $self->_write_spark_color( 'x14:colorLow', @_ );
+}
+
+
+##############################################################################
+#
+# _write_ignored_errors()
+#
+# Write the <ignoredErrors> element.
+#
+sub _write_ignored_errors {
+
+    my $self   = shift;
+    my $ignore = $self->{_ignore_errors};
+
+    if ( !defined $ignore ) {
+        return;
+    }
+
+    $self->xml_start_tag( 'ignoredErrors' );
+
+    if ( exists $ignore->{number_stored_as_text} ) {
+        my $range = $ignore->{number_stored_as_text};
+        $self->_write_ignored_error( 'numberStoredAsText', $range );
+    }
+
+    if ( exists $ignore->{eval_error} ) {
+        my $range = $ignore->{eval_error};
+        $self->_write_ignored_error( 'evalError', $range );
+    }
+
+    if ( exists $ignore->{formula_differs} ) {
+        my $range = $ignore->{formula_differs};
+        $self->_write_ignored_error( 'formula', $range );
+    }
+
+    if ( exists $ignore->{formula_range} ) {
+        my $range = $ignore->{formula_range};
+        $self->_write_ignored_error( 'formulaRange', $range );
+    }
+
+    if ( exists $ignore->{formula_unlocked} ) {
+        my $range = $ignore->{formula_unlocked};
+        $self->_write_ignored_error( 'unlockedFormula', $range );
+    }
+
+    if ( exists $ignore->{empty_cell_reference} ) {
+        my $range = $ignore->{empty_cell_reference};
+        $self->_write_ignored_error( 'emptyCellReference', $range );
+    }
+
+    if ( exists $ignore->{list_data_validation} ) {
+        my $range = $ignore->{list_data_validation};
+        $self->_write_ignored_error( 'listDataValidation', $range );
+    }
+
+    if ( exists $ignore->{calculated_column} ) {
+        my $range = $ignore->{calculated_column};
+        $self->_write_ignored_error( 'calculatedColumn', $range );
+    }
+
+    if ( exists $ignore->{two_digit_text_year} ) {
+        my $range = $ignore->{two_digit_text_year};
+        $self->_write_ignored_error( 'twoDigitTextYear', $range );
+    }
+
+    $self->xml_end_tag( 'ignoredErrors' );
+}
+
+##############################################################################
+#
+# _write_ignored_error()
+#
+# Write the <ignoredError> element.
+#
+sub _write_ignored_error {
+
+    my $self  = shift;
+    my $type  = shift;
+    my $sqref = shift;
+
+    my @attributes = (
+        'sqref' => $sqref,
+        $type   => 1,
+    );
+
+    $self->xml_empty_tag( 'ignoredError', @attributes );
 }
 
 

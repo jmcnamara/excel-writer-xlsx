@@ -749,7 +749,7 @@ The following methods are available through a new worksheet:
     filter_column()
     filter_column_list()
     set_vba_name()
-
+    ignore_errors()
 
 
 =head2 Cell notation
@@ -2563,7 +2563,6 @@ B<NOTE:> It isn't sufficient to just specify the filter condition. You must also
 
 
 
-
 =head2 convert_date_time( $date_string )
 
 The C<convert_date_time()> method is used internally by the C<write_date_time()> method to convert date strings to a number that represents an Excel date and time.
@@ -2572,13 +2571,76 @@ It is exposed as a public method for utility purposes.
 
 The C<$date_string> format is detailed in the C<write_date_time()> method.
 
-=head2 Worksheet set_vba_name()
 
-The Worksheet C<set_vba_name()> method can be used to set the VBA codename for the
-worksheet (there is a similar method for the workbook VBA name). This is sometimes required when a C<vbaProject> macro included via C<add_vba_project()> refers to the worksheet. The default Excel VBA name of C<Sheet1>, etc., is used if a user defined name isn't specified.
+
+=head2 set_vba_name()
+
+The Worksheet C<set_vba_name()> method can be used to set the VBA codename for the worksheet (there is a similar method for the workbook VBA name). This is sometimes required when a C<vbaProject> macro included via C<add_vba_project()> refers to the worksheet. The default Excel VBA name of C<Sheet1>, etc., is used if a user defined name isn't specified.
 
 See also L<WORKING WITH VBA MACROS>.
 
+
+
+=head2 ignore_errors()
+
+The C<ignore_errors()> method can be used to ignore various worksheet cell errors/warnings. For example the following code writes a string that looks like a number:
+
+    $worksheet->write_string('D2', '123');
+
+This causes Excel to display a small green triangle in the top left hand corner of the cell to indicate an error/warning.
+
+Sometimes these warnings are useful indicators that there is an issue in the spreadsheet but sometimes it is preferable to turn them off. Warnings can be turned off at the Excel level for all workbooks and worksheets by using the using "Excel options -> Formulas -> Error checking rules". Alternatively you can turn them off for individual cells in a worksheet, or ranges of cells, using the C<ignore_errors()> method with a hashref of options and ranges like this:
+
+    $worksheet->ignore_errors({number_stored_as_text => 'A1:H50'});
+
+    # Or for more than one option:
+    $worksheet->ignore_errors({number_stored_as_text => 'A1:H50',
+                               eval_error =>            'A1:H50'});
+
+The range can be a single cell, a range of cells, or multiple cells and ranges separated by spaces:
+
+    # Single cell.
+    $worksheet->ignore_errors({eval_error => 'C6'});
+
+    # Or a single range:
+    $worksheet->ignore_errors({eval_error => 'C6:G8'});
+
+    # Or multiple cells and ranges:
+    $worksheet->ignore_errors({eval_error => 'C6 E6 G1:G20 J2:J6'});
+
+Note: calling C<ignore_errors> multiple times will overwrite the previous settings.
+
+You can turn off warnings for an entire column by specifying the range from the first cell in the column to the last cell in the column:
+
+    $worksheet->ignore_errors({number_stored_as_text => 'A1:A1048576'});
+
+Or for the entire worksheet by specifying the range from the first cell in the worksheet to the last cell in the worksheet:
+
+    $worksheet->ignore_errors({number_stored_as_text => 'A1:XFD1048576'});
+
+The worksheet errors/warnings that can be ignored are:
+
+=over
+
+=item * C<number_stored_as_text>: Turn off errors/warnings for numbers stores as text.
+
+=item * C<eval_error>: Turn off errors/warnings for formula errors (such as divide by zero).
+
+=item * C<formula_differs>: Turn off errors/warnings for formulas that differ from surrounding formulas.
+
+=item * C<formula_range>: Turn off errors/warnings for formulas that omit cells in a range.
+
+=item * C<formula_unlocked>: Turn off errors/warnings for unlocked cells that contain formulas.
+
+=item * C<empty_cell_reference>: Turn off errors/warnings for formulas that refer to empty cells.
+
+=item * C<list_data_validation>: Turn off errors/warnings for cells in a table that do not comply with applicable data validation rules.
+
+=item * C<calculated_column>: Turn off errors/warnings for cell formulas that differ from the column formula.
+
+=item * C<two_digit_text_year>: Turn off errors/warnings for formulas that contain a two digit text representation of a year.
+
+=back
 
 
 =head1 PAGE SET-UP METHODS
@@ -7077,6 +7139,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     hyperlink1.pl           Shows how to create web hyperlinks.
     hyperlink2.pl           Examples of internal and external hyperlinks.
     indent.pl               An example of cell indentation.
+    ignore_errors.pl        An example of turning off worksheet cells errors/warnings.
     macros.pl               An example of adding macros from an existing file.
     merge1.pl               A simple example of cell merging.
     merge2.pl               A simple example of cell merging with formatting.
