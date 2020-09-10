@@ -868,8 +868,9 @@ sub set_header {
     # Replace the Excel placeholder &[Picture] with the internal &G.
     $string =~ s/&\[Picture\]/&G/g;
 
-    if ( length $string >= 255 ) {
-        carp 'Header string must be less than 255 characters';
+    if ( length $string > 255 ) {
+        carp "Header string cannot be longer than Excel's " .
+             "limit of 255 characters";
         return;
     }
 
@@ -933,8 +934,9 @@ sub set_footer {
     # Replace the Excel placeholder &[Picture] with the internal &G.
     $string =~ s/&\[Picture\]/&G/g;
 
-    if ( length $string >= 255 ) {
-        carp 'Footer string must be less than 255 characters';
+    if ( length $string > 255 ) {
+        carp "Footer string cannot be longer than Excel's " .
+             "limit of 255 characters";
         return;
     }
 
