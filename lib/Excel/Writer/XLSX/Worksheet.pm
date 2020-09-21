@@ -5893,11 +5893,20 @@ sub _prepare_image {
             $target = _escape_url( $url );
         }
 
-        if ( $url =~ s{^external:}{file:///} ) {
+
+        if ( $url =~ s{^external:}{} ) {
             $target = _escape_url( $url );
 
             # Additional escape not required in worksheet hyperlinks.
             $target =~ s/#/%23/g;
+
+            # Prefix absolute paths (not relative) with file:///.
+            if ( $target =~ m{^\w:} || $target =~ m{^\\\\} ) {
+                $target = 'file:///' . $target;
+            }
+            else {
+                $target =~ s[\\][/]g;
+            }
         }
 
         if ( $url =~ s/^internal:/#/ ) {
