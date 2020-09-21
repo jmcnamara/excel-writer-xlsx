@@ -4293,6 +4293,14 @@ sub add_table {
     return -2 if $self->_check_dimensions( $row1, $col1, 1, 1 );
     return -2 if $self->_check_dimensions( $row2, $col2, 1, 1 );
 
+    # Swap last row/col for first row/col as necessary.
+    if ( $row1 > $row2 ) {
+        ( $row1, $row2 ) = ( $row2, $row1 );
+    }
+
+    if ( $col1 > $col2 ) {
+        ( $col1, $col2 ) = ( $col2, $col1 );
+    }
 
     # The final hashref contains the validation parameters.
     my $param = $_[4] || {};
@@ -4331,6 +4339,15 @@ sub add_table {
     $param->{banded_rows} = 1 if !defined $param->{banded_rows};
     $param->{header_row}  = 1 if !defined $param->{header_row};
     $param->{autofilter}  = 1 if !defined $param->{autofilter};
+
+    # Check that there are enough rows.
+    my $num_rows = $row2 - $row1;
+    $num_rows -= 1 if $param->{header_row};
+
+    if ( $num_rows < 0 ) {
+        carp "Must have at least one data row in in add_table()";
+        return -3;
+    }
 
     # Set the table options.
     $table{_show_first_col}   = $param->{first_column}   ? 1 : 0;
@@ -4375,16 +4392,6 @@ sub add_table {
     }
     else {
         $table{_style} = "TableStyleMedium9";
-    }
-
-
-    # Swap last row/col for first row/col as necessary.
-    if ( $row1 > $row2 ) {
-        ( $row1, $row2 ) = ( $row2, $row1 );
-    }
-
-    if ( $col1 > $col2 ) {
-        ( $col1, $col2 ) = ( $col2, $col1 );
     }
 
 
