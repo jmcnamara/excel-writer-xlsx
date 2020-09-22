@@ -160,7 +160,12 @@ sub xl_range {
     my $range1 = xl_rowcol_to_cell( $row_1, $col_1, $row_abs_1, $col_abs_1 );
     my $range2 = xl_rowcol_to_cell( $row_2, $col_2, $row_abs_2, $col_abs_2 );
 
-    return $range1 . ':' . $range2;
+    if ($range1 eq $range2) {
+        return $range1;
+    }
+    else {
+        return $range1 . ':' . $range2;
+    }
 }
 
 
@@ -612,7 +617,8 @@ This function converts zero based row and column cell references to an A1 style 
     my $str = xl_range( 1, 8, 2, 2 );          # C2:C9
     my $str = xl_range( 0, 3, 0, 4 );          # A1:E4
     my $str = xl_range( 0, 3, 0, 4, 1 );       # A$1:E4
-    my $str = xl_range( 0, 3, 0, 4, 1, 1 );    # A$1:E$4
+    my $str = xl_range( 0, 3, 0, 4, 1, 1 );    # A$1:E$
+    my $str = xl_range( 0, 0, 0, 0 );          # A1
 
 =head2 xl_range_formula($sheetname, $row_1, $row_2, $col_1, $col_2)
 

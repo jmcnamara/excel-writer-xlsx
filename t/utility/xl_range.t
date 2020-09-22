@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Utility qw(xl_range);
 
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 ###############################################################################
 #
@@ -119,6 +119,29 @@ $expected = '$A$1:$E$4';
 $caption  = " \tUtility: xl_range( @range ) -> $expected";
 $got      = xl_range( @range );
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the xl_range() method.
+#
+@range    = ( 0, 0, 1, 1 );
+$expected = 'B1';
+$caption  = " \tUtility: xl_range( @range ) -> $expected";
+$got      = xl_range( @range );
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the xl_range() method.
+#
+@range    = ( 0, 0, 1, 1, 1, 1, 1, 1 );
+$expected = '$B$1';
+$caption  = " \tUtility: xl_range( @range ) -> $expected";
+$got      = xl_range( @range );
+is( $got, $expected, $caption );
+
 
 
 __END__

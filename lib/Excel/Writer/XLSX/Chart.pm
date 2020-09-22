@@ -22,7 +22,7 @@ use Excel::Writer::XLSX::Format;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   xl_rowcol_to_cell
-  xl_col_to_name xl_range
+  xl_col_to_name
   xl_range_formula
   quote_sheetname );
 

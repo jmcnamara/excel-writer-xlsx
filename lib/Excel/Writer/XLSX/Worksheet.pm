@@ -699,13 +699,7 @@ sub set_selection {
             ( $col_first, $col_last ) = ( $col_last, $col_first );
         }
 
-        # If the first and last cell are the same write a single cell.
-        if ( ( $row_first == $row_last ) && ( $col_first == $col_last ) ) {
-            $sqref = $active_cell;
-        }
-        else {
-            $sqref = xl_range( $row_first, $row_last, $col_first, $col_last );
-        }
+        $sqref = xl_range( $row_first, $row_last, $col_first, $col_last );
 
     }
     else {
@@ -3886,15 +3880,8 @@ sub conditional_formatting {
         ( $col1, $col2 ) = ( $col2, $col1 );
     }
 
-    # If the first and last cell are the same write a single cell.
-    if ( ( $row1 == $row2 ) && ( $col1 == $col2 ) ) {
-        $range = xl_rowcol_to_cell( $row1, $col1 );
-        $start_cell = $range;
-    }
-    else {
-        $range = xl_range( $row1, $row2, $col1, $col2 );
-        $start_cell = xl_rowcol_to_cell( $row1, $col1 );
-    }
+    $range = xl_range( $row1, $row2, $col1, $col2 );
+    $start_cell = xl_rowcol_to_cell( $row1, $col1 );
 
     # Override with user defined multiple range if provided.
     if ( $user_range ) {
@@ -9070,13 +9057,7 @@ sub _write_data_validation {
             ( $col_first, $col_last ) = ( $col_last, $col_first );
         }
 
-        # If the first and last cell are the same write a single cell.
-        if ( ( $row_first == $row_last ) && ( $col_first == $col_last ) ) {
-            $sqref .= xl_rowcol_to_cell( $row_first, $col_first );
-        }
-        else {
-            $sqref .= xl_range( $row_first, $row_last, $col_first, $col_last );
-        }
+        $sqref .= xl_range( $row_first, $row_last, $col_first, $col_last );
     }
 
 
