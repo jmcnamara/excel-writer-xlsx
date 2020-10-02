@@ -732,6 +732,7 @@ The following methods are available through a new worksheet:
     hide()
     set_first_sheet()
     protect()
+    unprotect_range()
     set_selection()
     set_row()
     set_default_row()
@@ -2134,6 +2135,23 @@ For chartsheets the allowable options and default values are:
         objects               => 1,
         content               => 1,
     );
+
+
+
+
+=head2 unprotect_range( $cell_range, $range_name )
+
+
+The C<unprotect_range()> method is used to unprotect ranges in a protected worksheet. It can be used to set a single range or multiple ranges:
+
+    $worksheet->unprotect_range( 'A1' );
+    $worksheet->unprotect_range( 'C1' );
+    $worksheet->unprotect_range( 'E1:E3' );
+    $worksheet->unprotect_range( 'G1:K100' );
+
+As in Excel the ranges are given sequential names like C<Range1> and C<Range2> but a user defined name can also be specified:
+
+    $worksheet->unprotect_range( 'G4:I6', 'MyRange' );
 
 
 

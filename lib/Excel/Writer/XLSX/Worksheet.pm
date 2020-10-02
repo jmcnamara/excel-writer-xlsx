@@ -136,8 +136,10 @@ sub new {
     $self->{_hbreaks} = [];
     $self->{_vbreaks} = [];
 
-    $self->{_protect}  = 0;
-    $self->{_password} = undef;
+    $self->{_protect}              = 0;
+    $self->{_password}             = undef;
+    $self->{_protected_ranges}     = [];
+    $self->{_num_protected_ranges} = 0;
 
     $self->{_set_cols} = {};
     $self->{_set_rows} = {};
@@ -316,6 +318,9 @@ sub _assemble_xml_file {
 
     # Write the sheetProtection element.
     $self->_write_sheet_protection();
+
+    # Write the protectedRanges element.
+    $self->_write_protected_ranges();
 
     # Write the worksheet calculation properties.
     #$self->_write_sheet_calc_pr();
@@ -536,6 +541,42 @@ sub protect {
     $defaults{password} = $password;
 
     $self->{_protect} = \%defaults;
+}
+
+
+###############################################################################
+#
+# unprotect_range( $range, $range_name, $password )
+#
+# Unprotect ranges within a protected worksheet.
+#
+sub unprotect_range {
+
+    my $self       = shift;
+    my $range      = shift;
+    my $range_name = shift;
+    my $password   = shift;
+
+    if ( !defined $range ) {
+        carp "The range must be defined in unprotect_range())\n";
+        return;
+    }
+    else {
+        $range =~ s/\$//g;
+        $range =~ s/^=//;
+        $self->{_num_protected_ranges}++;
+    }
+
+
+    if ( !defined $range_name ) {
+        $range_name = 'Range' . $self->{_num_protected_ranges};
+    }
+
+    if ( defined $password ) {
+        $password = $self->_encode_password( $password );
+    }
+
+    push @{ $self->{_protected_ranges} }, [ $range, $range_name, $password ];
 }
 
 
@@ -8786,6 +8827,51 @@ sub _write_sheet_protection {
 
 
     $self->xml_empty_tag( 'sheetProtection', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_protected_ranges()
+#
+# Write the <protectedRanges> element.
+#
+sub _write_protected_ranges {
+
+    my $self = shift;
+
+    return if $self->{_num_protected_ranges} == 0;
+
+    $self->xml_start_tag( 'protectedRanges' );
+
+    for my $aref (@{ $self->{_protected_ranges} }) {
+        $self->_write_protected_range(@$aref);
+    }
+
+    $self->xml_end_tag( 'protectedRanges' );
+}
+
+
+##############################################################################
+#
+# _write_protected_range()
+#
+# Write the <protectedRange> element.
+#
+sub _write_protected_range {
+
+    my $self     = shift;
+    my $sqref    = shift;
+    my $name     = shift;
+    my $password = shift;
+
+    my @attributes = ();
+
+    push @attributes, ( 'password' => $password ) if $password;
+    push @attributes, ( 'sqref' => $sqref );
+    push @attributes, ( 'name' =>  $name );
+
+    $self->xml_empty_tag( 'protectedRange', @attributes );
 }
 
 
