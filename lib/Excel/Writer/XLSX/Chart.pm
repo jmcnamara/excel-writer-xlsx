@@ -5719,12 +5719,20 @@ sub _write_custom_labels {
         elsif ( defined $label->{formula} ) {
             $self->_write_custom_label_formula( $label );
 
+            if ( $parent->{position} ) {
+                $self->_write_d_lbl_pos( $parent->{position} );
+            }
+
             $self->_write_show_val()      if $parent->{value};
             $self->_write_show_cat_name() if $parent->{category};
             $self->_write_show_ser_name() if $parent->{series_name};
         }
         elsif ( defined $label->{value} ) {
             $self->_write_custom_label_str( $label );
+
+            if ( $parent->{position} ) {
+                $self->_write_d_lbl_pos( $parent->{position} );
+            }
 
             $self->_write_show_val()      if $parent->{value};
             $self->_write_show_cat_name() if $parent->{category};
