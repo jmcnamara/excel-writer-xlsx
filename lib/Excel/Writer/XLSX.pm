@@ -1699,9 +1699,13 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format.
 
+if $filename is a reference to a scalar, the image is actually contained as a binary in that variable.
+
     $worksheet1->insert_image( 'A1', 'perl.bmp' );
     $worksheet2->insert_image( 'A1', '../images/perl.bmp' );
     $worksheet3->insert_image( 'A1', '.c:\images\perl.bmp' );
+    my $png = make_png();
+    $worksheet3->insert_image( 'A1',  \$png);
 
 The optional C<options> hash/hashref parameter can be used to set various options for the image. The defaults are:
 
