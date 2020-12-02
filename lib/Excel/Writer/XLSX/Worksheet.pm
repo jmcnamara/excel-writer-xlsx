@@ -5833,7 +5833,7 @@ sub insert_image {
     }
 
     croak "Insufficient arguments in insert_image()" unless @_ >= 3;
-    croak "Couldn't locate $image: $!" unless -e $image;
+    croak "Couldn't locate $image: $!" unless ref $image || -e $image;
 
     push @{ $self->{_images} },
       [
