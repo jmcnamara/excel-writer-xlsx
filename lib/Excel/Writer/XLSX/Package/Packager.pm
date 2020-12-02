@@ -898,7 +898,14 @@ sub _add_image_files {
         _mkdir( $dir . '/xl' );
         _mkdir( $dir . '/xl/media' );
 
-        copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
+    	if (ref($filename) eq 'SCALAR') {
+			open my $out, '>', $dir . '/xl/media/image' . $index++ . $extension;
+			binmode $out;
+			print {$out} $$filename;
+			close $out;	
+		} else {	
+			copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
+		}
     }
 }
 
