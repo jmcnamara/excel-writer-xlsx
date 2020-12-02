@@ -2206,15 +2206,24 @@ sub _get_image_properties {
     my $image_name;
 
 
-    ( $image_name ) = fileparse( $filename );
+	my $data;
 
-    # Open the image file and import the data.
-    my $fh = FileHandle->new( $filename );
-    croak "Couldn't import $filename: $!" unless defined $fh;
-    binmode $fh;
+	if (ref $filename eq 'SCALAR') {
+		$data = $$filename;
+		$image_name = 'AutogenImg'.rand(100000); #scalar(123), just give it a name...
+	} else {
+	    ( $image_name ) = fileparse( $filename );
+	
+	    # Open the image file and import the data.
+	    my $fh = FileHandle->new( $filename );
+	    croak "Couldn't import $filename: $!" unless defined $fh;
+	    binmode $fh;
+	
+	    # Slurp the file into a string and do some size calcs.
+	    $data = do { local $/; <$fh> };
+ 	   	$fh->close;
+	}
 
-    # Slurp the file into a string and do some size calcs.
-    my $data = do { local $/; <$fh> };
     my $size = length $data;
     my $md5  = md5_hex($data);
 
