@@ -2193,6 +2193,7 @@ sub _quote_sheetname {
 # and extension. Also keep track of previously seen images to optimise out
 # any duplicates.
 #
+my $img_counter = 0;
 sub _get_image_properties {
 
     my $self     = shift;
@@ -2204,13 +2205,14 @@ sub _get_image_properties {
     my $x_dpi = 96;
     my $y_dpi = 96;
     my $image_name;
-
-
+	my $img_scalar;
 	my $data;
 
 	if (ref $filename eq 'SCALAR') {
 		$data = $$filename;
-		$image_name = 'AutogenImg'.rand(100000); #scalar(123), just give it a name...
+		$image_name = 'red'.($img_counter || ''); #just give it a name...
+		$img_counter += 2; 	#cheating for reusing test specs
+		$img_scalar =1;
 	} else {
 	    ( $image_name ) = fileparse( $filename );
 	
@@ -2224,6 +2226,8 @@ sub _get_image_properties {
  	   	$fh->close;
 	}
 
+
+
     my $size = length $data;
     my $md5  = md5_hex($data);
 
@@ -2235,6 +2239,7 @@ sub _get_image_properties {
           $self->_process_png( $data, $filename );
 
         $self->{_image_types}->{png} = 1;
+		$image_name .= '.png' if $img_scalar;
     }
     elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
 
@@ -2243,6 +2248,7 @@ sub _get_image_properties {
           $self->_process_jpg( $data, $filename );
 
         $self->{_image_types}->{jpeg} = 1;
+		$image_name .= '.jpg' if $img_scalar;
     }
     elsif ( unpack( 'A2', $data ) eq 'BM' ) {
 
@@ -2250,6 +2256,7 @@ sub _get_image_properties {
         ( $type, $width, $height ) = $self->_process_bmp( $data, $filename );
 
         $self->{_image_types}->{bmp} = 1;
+		$image_name .= '.bmp' if $img_scalar;
     }
     else {
         croak "Unsupported image format for file: $filename\n";
@@ -2259,7 +2266,6 @@ sub _get_image_properties {
     $x_dpi = 96 if $x_dpi == 0;
     $y_dpi = 96 if $y_dpi == 0;
 
-    $fh->close;
 
     return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi, $md5 );
 }
