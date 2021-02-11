@@ -567,7 +567,17 @@ sub set_table {
     $table{_vertical}   = $args{vertical}   if defined $args{vertical};
     $table{_outline}    = $args{outline}    if defined $args{outline};
     $table{_show_keys}  = $args{show_keys}  if defined $args{show_keys};
+    $table{_line}       = $self->_get_line_properties( defined $args{border} ? $args{border} : $args{line} );
+    $table{_fill}       = $self->_get_fill_properties( $args{fill} );
+    $table{_pattern}    = $self->_get_pattern_properties( $args{pattern} );
+    $table{_gradient}   = $self->_get_gradient_properties( $args{gradient} );
     $table{_font}       = $self->_convert_font_args( $args{font} );
+
+    # Pattern and gradient fills override solid fill.
+    undef $table{_fill} if $table{_pattern} or $table{_gradient};
+
+    # Gradient fill overrides pattern fill.
+    undef $table{_pattern} if $table{_gradient};
 
     $self->{_table} = \%table;
 }
@@ -6085,6 +6095,9 @@ sub _write_d_table {
         $self->_write_show_keys();
     }
 
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $table );
+
     if ( $table->{_font} ) {
         # Write the table font.
         $self->_write_tx_pr( $table->{_font} );
@@ -7685,9 +7698,15 @@ The available options, with default values are:
     horizontal => 1    # Display horizontal lines in the table.
     outline    => 1    # Display an outline in the table.
     show_keys  => 0    # Show the legend keys with the table data.
+    line       => {}   # Standard chart line properties.
+    fill       => {}   # Standard chart fill properties.
+    pattern    => {}   # Standard chart pattern properties.
+    gradient   => {}   # Standard chart gradient properties.
     font       => {}   # Standard chart font properties.
 
-The data table can only be shown with Bar, Column, Line, Area and stock charts. For font properties see the L</CHART FONTS> section below.
+The data table can only be shown with Bar, Column, Line, Area and stock charts.
+For C<fill>, C<pattern>, C<gradient> and C<line> properties see the L</CHART FORMATTING> section below.
+For font properties see the L</CHART FONTS> section below.
 
 
 =head2 set_up_down_bars
