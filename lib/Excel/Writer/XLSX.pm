@@ -438,7 +438,7 @@ The reason for this is that Excel::Writer::XLSX relies on Perl's C<DESTROY> mech
 
 To avoid these issues it is recommended that you always close the Excel::Writer::XLSX filehandle using C<close()>.
 
-
+C<close()> is thread-safe but disposal of the Workbook object is not (because disposal of the Workbook object triggers the non-thread-safe destruction of temporary files by the C<File::Temp> module).  In a program in which several threads might be concurrently writing C<Excel::Writer::XLSX> files, the Workbook objects must only be destroyed or allowed to go out of scope within a critical code section that only one thread can be running at any one time.
 
 
 =head2 set_size( $width, $height )
