@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'chart_crossing01.xlsx';
+my $filename     = 'chart_crossing06.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -37,7 +37,7 @@ my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'column', embedded => 1 );
 
 # For testing, copy the randomly generated axis ids in the target xlsx file.
-$chart->{_axis_ids} = [ 43812352, 43814272 ];
+$chart->{_axis_ids} = [ 72794880, 72796416 ];
 
 my $data = [
     [ 1, 2, 3, 4,  5 ],
@@ -52,10 +52,7 @@ $chart->add_series( values => '=Sheet1!$A$1:$A$5' );
 $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
-$chart->set_y_axis( crossing => 'max');
-
-# Not strictly required. Just to match reference file.
-$chart->set_x_axis( position => 't' );
+$chart->set_y_axis( crossing => 'min');
 
 $worksheet->insert_chart( 'E9', $chart );
 
@@ -85,6 +82,3 @@ _is_deep_diff( $got, $expected, $caption );
 unlink $got_filename;
 
 __END__
-
-
-

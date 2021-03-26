@@ -3157,8 +3157,10 @@ sub _write_cat_axis {
     if ( $self->{_show_crosses} || $x_axis->{_visible} ) {
 
         # Note, the category crossing comes from the value axis.
-        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
-
+        if (   !defined $y_axis->{_crossing}
+            || $y_axis->{_crossing} eq 'max'
+            || $y_axis->{_crossing} eq 'min' )
+        {
             # Write the c:crosses element.
             $self->_write_crosses( $y_axis->{_crossing} );
         }
@@ -3267,8 +3269,10 @@ sub _write_val_axis {
     $self->_write_cross_axis( $axis_ids->[0] );
 
     # Note, the category crossing comes from the value axis.
-    if ( !defined $x_axis->{_crossing} || $x_axis->{_crossing} eq 'max' ) {
-
+    if (   !defined $x_axis->{_crossing}
+        || $x_axis->{_crossing} eq 'max'
+        || $x_axis->{_crossing} eq 'min' )
+    {
         # Write the c:crosses element.
         $self->_write_crosses( $x_axis->{_crossing} );
     }
@@ -3371,8 +3375,10 @@ sub _write_cat_val_axis {
     $self->_write_cross_axis( $axis_ids->[1] );
 
     # Note, the category crossing comes from the value axis.
-    if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
-
+    if (   !defined $y_axis->{_crossing}
+        || $y_axis->{_crossing} eq 'max'
+        || $y_axis->{_crossing} eq 'min' )
+    {
         # Write the c:crosses element.
         $self->_write_crosses( $y_axis->{_crossing} );
     }
@@ -3476,8 +3482,10 @@ sub _write_date_axis {
     if ( $self->{_show_crosses} || $x_axis->{_visible} ) {
 
         # Note, the category crossing comes from the value axis.
-        if ( !defined $y_axis->{_crossing} || $y_axis->{_crossing} eq 'max' ) {
-
+        if (   !defined $y_axis->{_crossing}
+            || $y_axis->{_crossing} eq 'max'
+            || $y_axis->{_crossing} eq 'min' )
+        {
             # Write the c:crosses element.
             $self->_write_crosses( $y_axis->{_crossing} );
         }
@@ -7215,7 +7223,7 @@ Set the tick interval for a category axis. (Applicable to category axes only.)
 
 Set the position where the y axis will cross the x axis. (Applicable to category and value axes.)
 
-The C<crossing> value can either be the string C<'max'> to set the crossing at the maximum axis value or a numeric value.
+The C<crossing> value can either be a numeric value or the strings C<'max'> or C<'min'> to set the crossing at the maximum/minimum axis value.
 
     $chart->set_x_axis( crossing => 3 );
     # or
