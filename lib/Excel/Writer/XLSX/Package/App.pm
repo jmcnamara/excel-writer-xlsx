@@ -45,6 +45,7 @@ sub new {
     $self->{_part_names}    = [];
     $self->{_heading_pairs} = [];
     $self->{_properties}    = {};
+    $self->{_doc_security}  = 0;
 
     bless $self, $class;
 
@@ -196,9 +197,8 @@ sub _write_application {
 sub _write_doc_security {
 
     my $self = shift;
-    my $data = 0;
 
-    $self->xml_data_element( 'DocSecurity', $data );
+    $self->xml_data_element( 'DocSecurity', $self->{_doc_security} );
 }
 
 

@@ -99,6 +99,7 @@ sub new {
     $self->{_excel2003_style}    = 0;
     $self->{_max_url_length}     = 2079;
     $self->{_has_comments}       = 0;
+    $self->{_read_only}          = 0;
 
     $self->{_default_format_properties} = {};
 
@@ -213,6 +214,9 @@ sub _assemble_xml_file {
 
     # Write the XLSX file version.
     $self->_write_file_version();
+
+    # Write the fileSharing element.
+    $self->_write_file_sharing();
 
     # Write the workbook properties.
     $self->_write_workbook_pr();
@@ -1045,6 +1049,20 @@ sub set_vba_name {
 
 ###############################################################################
 #
+# read_only_recommended()
+#
+# Set the Excel "Read-only recommended" save option.
+#
+sub read_only_recommended {
+
+    my $self = shift;
+
+    $self->{_read_only} = 2;
+}
+
+
+###############################################################################
+#
 # set_calc_mode()
 #
 # Set the Excel caclcuation mode for the workbook.
@@ -1067,6 +1085,7 @@ sub set_calc_mode {
 
     $self->{_calc_id} = $calc_id if defined $calc_id;
 }
+
 
 
 ###############################################################################
@@ -2542,6 +2561,24 @@ sub _write_file_version {
     }
 
     $self->xml_empty_tag( 'fileVersion', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_file_sharing()
+#
+# Write the <fileSharing> element.
+#
+sub _write_file_sharing {
+
+    my $self = shift;
+
+    return if !$self->{_read_only};
+
+    my @attributes = ( 'readOnlyRecommended' => 1, );
+
+    $self->xml_empty_tag( 'fileSharing', @attributes );
 }
 
 

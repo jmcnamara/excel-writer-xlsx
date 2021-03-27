@@ -421,6 +421,7 @@ sub _write_app_file {
     }
 
     $app->_set_properties( $properties );
+    $app->{_doc_security} = $self->{_workbook}->{_read_only};
 
     $app->_set_xml_writer( $dir . '/docProps/app.xml' );
     $app->_assemble_xml_file();
