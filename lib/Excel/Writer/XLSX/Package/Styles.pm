@@ -592,6 +592,11 @@ sub _write_fill {
 
     );
 
+    # Special handling for pattern only case.
+    if ( !$fg_color && !$bg_color && $format->{_pattern} ) {
+        $self->_write_default_fill( $patterns[ $format->{_pattern} ] );
+        return;
+    }
 
     $self->xml_start_tag( 'fill' );
 
@@ -618,7 +623,7 @@ sub _write_fill {
         $self->xml_empty_tag( 'bgColor', 'rgb' => $bg_color );
     }
     else {
-        if ( !$dxf_format ) {
+        if ( !$dxf_format && $format->{_pattern} <= 1) {
             $self->xml_empty_tag( 'bgColor', 'indexed' => 64 );
         }
     }
