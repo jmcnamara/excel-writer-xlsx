@@ -5700,6 +5700,7 @@ sub _prepare_chart {
     $drawing_object->{_rel_index}     = $self->_get_drawing_rel_index();
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = undef;
+    $drawing_object->{_decorative}    = 0;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -5812,6 +5813,7 @@ sub insert_image {
     my $url;
     my $tip;
     my $description;
+    my $decorative;
 
     if ( ref $_[3] eq 'HASH' ) {
         # Newer hashref bashed options.
@@ -5824,6 +5826,7 @@ sub insert_image {
         $url         = $options->{url};
         $tip         = $options->{tip};
         $description = $options->{description};
+        $decorative  = $options->{decorative};
     }
     else {
         # Older parameter based options.
@@ -5839,9 +5842,9 @@ sub insert_image {
 
     push @{ $self->{_images} },
       [
-        $row,      $col,     $image,   $x_offset,
-        $y_offset, $x_scale, $y_scale, $url,
-        $tip,      $anchor,  $description
+        $row,      $col,     $image,       $x_offset,
+        $y_offset, $x_scale, $y_scale,     $url,
+        $tip,      $anchor,  $description, $decorative
       ];
 }
 
@@ -5869,9 +5872,9 @@ sub _prepare_image {
     my $drawing;
 
     my (
-        $row,      $col,     $image,   $x_offset,
-        $y_offset, $x_scale, $y_scale, $url,
-        $tip,      $anchor,  $description
+        $row,      $col,     $image,       $x_offset,
+        $y_offset, $x_scale, $y_scale,     $url,
+        $tip,      $anchor,  $description, $decorative
     ) = @{ $self->{_images}->[$index] };
 
     $width  *= $x_scale;
@@ -5914,6 +5917,7 @@ sub _prepare_image {
     $drawing_object->{_rel_index}     = 0;
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = $tip;
+    $drawing_object->{_decorative}    = $decorative;
 
     if ( defined $description ) {
         $drawing_object->{_description} = $description;
@@ -6154,6 +6158,7 @@ sub _prepare_shape {
     $drawing_object->{_rel_index}     = $self->_get_drawing_rel_index();
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = undef;
+    $drawing_object->{_decorative}    = 0;
 }
 
 

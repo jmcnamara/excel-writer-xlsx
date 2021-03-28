@@ -155,6 +155,7 @@ The Excel::Writer::XLSX module provides an object oriented interface to a new Ex
     set_optimization()
     set_calc_mode()
     get_default_url_format()
+    read_only_recommended()
 
 If you are unfamiliar with object oriented interfaces or the way that they are implemented in Perl have a look at C<perlobj> and C<perltoot> in the main Perl documentation.
 
@@ -688,6 +689,15 @@ Excel will automatically re-calculate formulas except for tables.
 The C<get_default_url_format()> method gets a copy of the default url format used when a user defined format isn't specified with the worksheet C<write_url()> method. The format is the hyperlink style defined by Excel for the default theme:
 
     my $url_format = $workbook->get_default_url_format();
+
+
+
+
+=head2 read_only_recommended()
+
+The C<read_only_recommended()> method can be used to set the Excel "Read-only Recommended" option that is available when saving a file. This presents the user of the file with an option to open it in "read-only" mode. This means that any changes to the file can't be saved back to the same file and must be saved to a new file. It can be set as follows:
+
+    $workbook->read_only_recommended();
 
 
 
@@ -1713,6 +1723,8 @@ The optional C<options> hash/hashref parameter can be used to set various option
         object_position => 2,
         url             => undef,
         tip             => undef,
+        description     => $filename,
+        decorative      => 0,
     );
 
 The parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
@@ -1725,7 +1737,6 @@ The parameters C<x_scale> and C<y_scale> can be used to scale the inserted image
 
     # Scale the inserted image: width x 2.0, height x 0.8
     $worksheet->insert_image( 'A1', 'perl.bmp', { y_scale => 2, y_scale => 0.8 } );
-
 
 The positioning of the image when cells are resized can be set with the C<object_position> parameter:
 
@@ -1755,6 +1766,15 @@ The C<tip> option can be use to used to add a mouseover tip to the hyperlink:
             tip => 'GitHub'
         }
     );
+
+The C<description> parameter can be used to specify a description or "alt text" string for the image. In general this would be used to provide a text description of the image to help accessibility. It is an optional parameter and defaults to the filename of the image. It can be used as follows:
+
+    $worksheet->insert_image( 'E9', 'logo.png',
+                              {description => "This is some alternative text"} );
+
+The optional C<decorative> parameter is also used to help accessibility. It is used to mark the image as decorative, and thus uninformative, for automated screen readers. As in Excel, if this parameter is in use the C<description> field isn't written. It is used as follows:
+
+    $worksheet->insert_image( 'E9', 'logo.png', {decorative => 1} );
 
 Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
 

@@ -110,7 +110,8 @@ sub _add_drawing_object {
         _anchor        => undef,
         _rel_index     => 0,
         _url_rel_index => 0,
-        _tip           => undef
+        _tip           => undef,
+        _decorative    => undef,
     };
 
     push @{ $self->{_drawings} }, $drawing_object;
@@ -187,6 +188,7 @@ sub _write_two_cell_anchor {
     my $rel_index       = $drawing_object->{_rel_index};
     my $url_rel_index   = $drawing_object->{_url_rel_index};
     my $tip             = $drawing_object->{_tip};
+    my $decorative      = $drawing_object->{_decorative};
 
     my @attributes = ();
 
@@ -232,9 +234,9 @@ sub _write_two_cell_anchor {
 
         # Write the xdr:pic element.
         $self->_write_pic(
-            $index,        $rel_index,     $col_absolute,
-            $row_absolute, $width,         $height,
-            $description,  $url_rel_index, $tip
+            $index, $rel_index, $col_absolute, $row_absolute,
+            $width, $height,    $description,  $url_rel_index,
+            $tip,   $decorative
         );
     }
     else {
@@ -271,7 +273,7 @@ sub _write_absolute_anchor {
         $self->_write_pos( 0, 0 );
 
         # Write the xdr:ext element.
-        $self->_write_ext( 9308969, 6078325 );
+        $self->_write_xdr_ext( 9308969, 6078325 );
 
     }
     else {
@@ -280,7 +282,7 @@ sub _write_absolute_anchor {
         $self->_write_pos( 0, -47625 );
 
         # Write the xdr:ext element.
-        $self->_write_ext( 6162675, 6124575 );
+        $self->_write_xdr_ext( 6162675, 6124575 );
 
     }
 
@@ -442,11 +444,11 @@ sub _write_pos {
 
 ##############################################################################
 #
-# _write_ext()
+# _write_xdr_ext()
 #
 # Write the <xdr:ext> element.
 #
-sub _write_ext {
+sub _write_xdr_ext {
 
     my $self = shift;
     my $cx   = shift;
@@ -534,6 +536,7 @@ sub _write_c_nv_pr {
     my $description   = shift;
     my $url_rel_index = shift;
     my $tip           = shift;
+    my $decorative    = shift;
 
     my @attributes = (
         'id'   => $index,
@@ -541,22 +544,28 @@ sub _write_c_nv_pr {
     );
 
     # Add description attribute for images.
-    if ($description) {
+    if ($description && !$decorative) {
         push @attributes, ( descr => $description );
     }
 
-    if ($url_rel_index) {
+    if ( $url_rel_index || $decorative ) {
         $self->xml_start_tag( 'xdr:cNvPr', @attributes );
 
-        # Write the a:hlinkClick element.
-        $self->_write_a_hlink_click($url_rel_index, $tip);
+        if ($url_rel_index) {
+            # Write the a:hlinkClick element.
+            $self->_write_a_hlink_click( $url_rel_index, $tip );
+        }
 
-        $self->xml_end_tag( 'xdr:cNvPr');
+        if ($decorative) {
+            # Write the adec:decorative element.
+            $self->_write_decorative();
+        }
+
+        $self->xml_end_tag( 'xdr:cNvPr' );
     }
     else {
         $self->xml_empty_tag( 'xdr:cNvPr', @attributes );
     }
-
 }
 
 
@@ -585,6 +594,87 @@ sub _write_a_hlink_click {
     $self->xml_empty_tag('a:hlinkClick', @attributes );
 }
 
+
+##############################################################################
+#
+# _write_decorative()
+#
+# Write the <adec:decorative> element.
+#
+sub _write_decorative {
+
+    my $self = shift;
+
+
+    $self->xml_start_tag( 'a:extLst' );
+
+    $self->_write_a_uri_ext( '{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}' );
+    $self->_write_a16_creation_id();
+    $self->xml_end_tag( 'a:ext' );
+
+    $self->_write_a_uri_ext( '{C183D7F6-B498-43B3-948B-1728B52AA6E4}' );
+    $self->_write_adec_decorative();
+    $self->xml_end_tag( 'a:ext' );
+
+    $self->xml_end_tag( 'a:extLst' );
+}
+
+##############################################################################
+#
+# _write_a_uri_ext()
+#
+# Write the <a:ext> element.
+#
+sub _write_a_uri_ext {
+
+    my $self = shift;
+    my $uri  = shift;
+
+    my @attributes = ( 'uri' => $uri );
+
+    $self->xml_start_tag( 'a:ext', @attributes );
+}
+
+##############################################################################
+#
+# _write_adec_decorative()
+#
+# Write the <adec:decorative> element.
+#
+sub _write_adec_decorative {
+
+    my $self       = shift;
+    my $xmlns_adec = 'http://schemas.microsoft.com/office/' .
+                     'drawing/2017/decorative';
+    my $val        = 1;
+
+    my @attributes = (
+        'xmlns:adec' => $xmlns_adec,
+        'val'        => $val,
+    );
+
+    $self->xml_empty_tag( 'adec:decorative', @attributes );
+}
+
+##############################################################################
+#
+# _write_a16_creation_id()
+#
+# Write the <a16:creationId> element.
+#
+sub _write_a16_creation_id {
+
+    my $self       = shift;
+    my $xmlns_a_16 = 'http://schemas.microsoft.com/office/drawing/2014/main';
+    my $id         = '{00000000-0008-0000-0000-000002000000}';
+
+    my @attributes = (
+        'xmlns:a16' => $xmlns_a_16,
+        'id'        => $id,
+    );
+
+    $self->xml_empty_tag( 'a16:creationId', @attributes );
+}
 
 ##############################################################################
 #
@@ -913,12 +1003,13 @@ sub _write_pic {
     my $description   = shift;
     my $url_rel_index = shift;
     my $tip           = shift;
+    my $decorative    = shift;
 
     $self->xml_start_tag( 'xdr:pic' );
 
     # Write the xdr:nvPicPr element.
     $self->_write_nv_pic_pr( $index, $rel_index, $description, $url_rel_index,
-        $tip );
+        $tip, $decorative );
 
     # Write the xdr:blipFill element.
     $self->_write_blip_fill( $rel_index );
@@ -948,12 +1039,13 @@ sub _write_nv_pic_pr {
     my $description   = shift;
     my $url_rel_index = shift;
     my $tip           = shift;
+    my $decorative    = shift;
 
     $self->xml_start_tag( 'xdr:nvPicPr' );
 
     # Write the xdr:cNvPr element.
     $self->_write_c_nv_pr( $index + 1, 'Picture ' . $index,
-        $description, $url_rel_index, $tip );
+        $description, $url_rel_index, $tip, $decorative );
 
     # Write the xdr:cNvPicPr element.
     $self->_write_c_nv_pic_pr();
