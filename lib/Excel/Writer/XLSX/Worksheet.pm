@@ -5811,17 +5811,19 @@ sub insert_image {
     my $anchor;
     my $url;
     my $tip;
+    my $description;
 
     if ( ref $_[3] eq 'HASH' ) {
         # Newer hashref bashed options.
         my $options = $_[3];
-        $x_offset = $options->{x_offset}        || 0;
-        $y_offset = $options->{y_offset}        || 0;
-        $x_scale  = $options->{x_scale}         || 1;
-        $y_scale  = $options->{y_scale}         || 1;
-        $anchor   = $options->{object_position} || 2;
-        $url      = $options->{url};
-        $tip      = $options->{tip};
+        $x_offset    = $options->{x_offset}        || 0;
+        $y_offset    = $options->{y_offset}        || 0;
+        $x_scale     = $options->{x_scale}         || 1;
+        $y_scale     = $options->{y_scale}         || 1;
+        $anchor      = $options->{object_position} || 2;
+        $url         = $options->{url};
+        $tip         = $options->{tip};
+        $description = $options->{description};
     }
     else {
         # Older parameter based options.
@@ -5837,8 +5839,9 @@ sub insert_image {
 
     push @{ $self->{_images} },
       [
-        $row,     $col,     $image, $x_offset, $y_offset,
-        $x_scale, $y_scale, $url,   $tip,      $anchor
+        $row,      $col,     $image,   $x_offset,
+        $y_offset, $x_scale, $y_scale, $url,
+        $tip,      $anchor,  $description
       ];
 }
 
@@ -5866,8 +5869,9 @@ sub _prepare_image {
     my $drawing;
 
     my (
-        $row,     $col,     $image, $x_offset, $y_offset,
-        $x_scale, $y_scale, $url,   $tip,      $anchor
+        $row,      $col,     $image,   $x_offset,
+        $y_offset, $x_scale, $y_scale, $url,
+        $tip,      $anchor,  $description
     ) = @{ $self->{_images}->[$index] };
 
     $width  *= $x_scale;
@@ -5911,6 +5915,9 @@ sub _prepare_image {
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = $tip;
 
+    if ( defined $description ) {
+        $drawing_object->{_description} = $description;
+    }
 
     if ( $url ) {
         my $rel_type    = '/hyperlink';

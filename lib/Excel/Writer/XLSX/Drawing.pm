@@ -541,7 +541,7 @@ sub _write_c_nv_pr {
     );
 
     # Add description attribute for images.
-    if ( defined $description ) {
+    if ($description) {
         push @attributes, ( descr => $description );
     }
 
