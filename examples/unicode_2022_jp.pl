@@ -8,7 +8,7 @@
 # This example generates some Japanese from a file with ISO-2022-JP
 # encoded text.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

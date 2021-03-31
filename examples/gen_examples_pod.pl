@@ -5,7 +5,7 @@
 # Simple utility to convert the example programs listed in the README file into
 # a Pod doc for easier access via CPAN.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
@@ -82,7 +82,7 @@ sub print_header {
     print "# program that is also included in the examples directory.\n";
     print "#\n";
 
-    print "# Copyright 2000-2020, John McNamara, jmcnamara\@cpan.org\n";
+    print "# Copyright 2000-2021, John McNamara, jmcnamara\@cpan.org\n";
     print "#\n";
     print "# Documentation after __END__\n";
     print "#\n\n";
@@ -219,7 +219,7 @@ sub print_footer {
 
     print "=head1 COPYRIGHT\n\n";
 
-    print "Copyright MM-MMXVI, John McNamara.\n\n";
+    print "Copyright 2000-2021, John McNamara.\n\n";
 
     print "All Rights Reserved. This module is free software. It may be used, ";
     print "redistributed and/or modified under the same terms as Perl itself.";

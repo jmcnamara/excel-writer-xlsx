@@ -3,7 +3,7 @@
 #
 # Tests for Excel::Writer::XLSX::Utility.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

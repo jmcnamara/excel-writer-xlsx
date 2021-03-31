@@ -8,7 +8,7 @@
 # running this program and viewing the output Excel file if you are interested
 # in the various formatting possibilities.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

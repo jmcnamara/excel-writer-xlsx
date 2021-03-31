@@ -8,7 +8,7 @@
 # used to show trends in data. This example shows the majority of
 # options that can be applied to sparklines.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

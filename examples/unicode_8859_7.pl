@@ -8,7 +8,7 @@
 # This example generates some Greek from a file with ISO-8859-7 encoded text.
 #
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

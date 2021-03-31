@@ -11,7 +11,7 @@
 # The grouping by worksheet name is for illustration only. It isn't
 # part of the ECMA-376 standard.
 #
-# Copyright 2000-2020, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;
