@@ -745,8 +745,10 @@ The following methods are available through a new worksheet:
     unprotect_range()
     set_selection()
     set_row()
+    set_row_pixels()
     set_default_row()
     set_column()
+    set_column_pixels()
     outline_settings()
     freeze_panes()
     split_panes()
@@ -2197,9 +2199,11 @@ The default cell selections is (0, 0), 'A1'.
 
 This method can be used to change the default properties of a row. All parameters apart from C<$row> are optional.
 
-The most common use for this method is to change the height of a row:
+The most common use for this method is to change the height of a row.
 
     $worksheet->set_row( 0, 20 );    # Row 1 height set to 20
+
+Note: the row height is in Excel character units. To set the height in pixels use the C<set_row_pixels()> method, see below.
 
 If you wish to set the format without changing the height you can pass C<undef> as the height parameter:
 
@@ -2241,6 +2245,16 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 
 
+=head2 set_row_pixels( $row, $height, $format, $hidden, $level, $collapsed )
+
+This method is the same as C<set_row()> except that C<$height> is in pixels.
+
+    $worksheet->set_row       ( 0, 24 );    # Set row height in character units
+    $worksheet->set_row_pixels( 1, 18 );    # Set row to same height in pixels
+
+
+
+
 =head2 set_column( $first_col, $last_col, $width, $format, $hidden, $level, $collapsed )
 
 This method can be used to change the default properties of a single column or a range of columns. All parameters apart from C<$first_col> and C<$last_col> are optional.
@@ -2256,7 +2270,9 @@ Examples:
     $worksheet->set_column( 'E:E', 20 );   # Column  E   width set to 20
     $worksheet->set_column( 'F:H', 30 );   # Columns F-H width set to 30
 
-The width corresponds to the column width value that is specified in Excel. It is approximately equal to the length of a string in the default font of Calibri 11. Unfortunately, there is no way to specify "AutoFit" for a column in the Excel file format. This feature is only available at runtime from within Excel.
+The width corresponds to the column width value that is specified in Excel. It is approximately equal to the length of a string in the default font of Calibri 11. To set the width in pixels use the C<set_column_pixels()> method, see below.
+
+Unfortunately, there is no way to specify "AutoFit" for a column in the Excel file format. This feature is only available at runtime from within Excel.
 
 As usual the C<$format> parameter is optional, for additional information, see L</CELL FORMATTING>. If you wish to set the format without changing the width you can pass C<undef> as the width parameter:
 
@@ -2299,6 +2315,16 @@ For collapsed outlines you should also indicate which row has the collapsed C<+>
 For a more complete example see the C<outline.pl> and C<outline_collapsed.pl> programs in the examples directory of the distro.
 
 Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be in the range C<0 E<lt>= $level E<lt>= 7>.
+
+
+
+
+=head2 set_column_pixels( $first_col, $last_col, $width, $format, $hidden, $level, $collapsed )
+
+This method is the same as C<set_column()> except that C<$width> is in pixels.
+
+    $worksheet->set_column( 0, 0, 10 );    # Column A width set to 20 in character units
+    $worksheet->set_column( 1, 1, 75 );    # Column B set to the same width in pixels
 
 
 
