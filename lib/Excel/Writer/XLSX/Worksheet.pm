@@ -220,6 +220,7 @@ sub new {
     $self->{_drawing_rels_id}        = 0;
     $self->{_vml_drawing_rels}       = {};
     $self->{_vml_drawing_rels_id}    = 0;
+    $self->{_has_dynamic_arrays}     = 0;
 
     $self->{_horizontal_dpi} = 0;
     $self->{_vertical_dpi}   = 0;
@@ -2630,20 +2631,9 @@ sub write_formula {
     return 0;
 }
 
-
-###############################################################################
-#
-# write_array_formula($row1, $col1, $row2, $col2, $formula, $format)
-#
-# Write an array formula to the specified row and column (zero indexed).
-#
-# $format is optional.
-#
-# Returns  0 : normal termination
-#         -1 : insufficient number of arguments
-#         -2 : row or column out of range
-#
-sub write_array_formula {
+# Internal method shared by the write_array_formula() and
+# write_dynamic_array_formula() methods.
+sub _write_array_formula {
 
     my $self = shift;
 
@@ -2661,7 +2651,7 @@ sub write_array_formula {
     my $formula = $_[4];           # The formula text string
     my $xf      = $_[5];           # The format object.
     my $value   = $_[6];           # Optional formula value.
-    my $type    = 'a';             # The data type
+    my $type    = $_[7];           # The data type
 
     # Swap last row/col with first row/col as necessary
     ( $row1, $row2 ) = ( $row2, $row1 ) if $row1 > $row2;
@@ -2709,6 +2699,53 @@ sub write_array_formula {
     }
 
     return 0;
+}
+
+
+
+###############################################################################
+#
+# write_array_formula($row1, $col1, $row2, $col2, $formula, $format)
+#
+# Write an array formula to the specified row and column (zero indexed).
+#
+# $format is optional.
+#
+# Returns  0 : normal termination
+#         -1 : insufficient number of arguments
+#         -2 : row or column out of range
+#
+sub write_array_formula {
+
+    my $self = shift;
+
+    return $self->_write_array_formula( @_, 'a' );
+}
+
+
+###############################################################################
+#
+# write_dynamic_array_formula($row1, $col1, $row2, $col2, $formula, $format)
+#
+# Write a dynamic formula to the specified row and column (zero indexed).
+#
+# $format is optional.
+#
+# Returns  0 : normal termination
+#         -1 : insufficient number of arguments
+#         -2 : row or column out of range
+#
+sub write_dynamic_array_formula {
+
+    my $self = shift;
+
+    my $error = $self->_write_array_formula( @_, 'd' );
+
+    if ( $error == 0 ) {
+        $self->{_has_dynamic_arrays} = 1;
+    }
+
+    return $error;
 }
 
 
@@ -5868,7 +5905,7 @@ sub _get_range_data {
                     # Store a formula.
                     push @data, $cell->[3] || 0;
                 }
-                elsif ( $type eq 'a' ) {
+                elsif ( $type eq 'a' || $type eq 'd') {
 
                     # Store an array formula.
                     push @data, $cell->[4] || 0;
@@ -7808,7 +7845,12 @@ sub _write_cell {
         $self->xml_formula_element( $token, $value, @attributes );
 
     }
-    elsif ( $type eq 'a' ) {
+    elsif ( $type eq 'a' || $type eq 'd') {
+
+        # Add metadata linkage for dynamic array formulas.
+        if ($type eq 'd') {
+            push @attributes, ( 'cm' => '1' );
+        }
 
         # Write an array formula.
         $self->xml_start_tag( 'c', @attributes );

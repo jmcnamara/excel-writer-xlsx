@@ -334,6 +334,22 @@ sub _add_custom_properties {
 
 ###############################################################################
 #
+# _add_metadata()
+#
+# Add the metadata file to the ContentTypes overrides.
+#
+sub _add_metadata {
+
+    my $self   = shift;
+    my $custom = "/xl/metadata.xml";
+
+    $self->_add_override( $custom,
+        $app_document . 'spreadsheetml.sheetMetadata+xml' );
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################

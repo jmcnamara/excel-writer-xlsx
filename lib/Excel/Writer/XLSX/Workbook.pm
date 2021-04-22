@@ -100,6 +100,7 @@ sub new {
     $self->{_max_url_length}     = 2079;
     $self->{_has_comments}       = 0;
     $self->{_read_only}          = 0;
+    $self->{_has_metadata}       = 0;
 
     $self->{_default_format_properties} = {};
 
@@ -1159,6 +1160,9 @@ sub _store_workbook {
     # Prepare the worksheet tables.
     $self->_prepare_tables();
 
+    # Prepare the metadata file links.
+    $self->_prepare_metadata();
+
     # Package the workbook.
     $packager->_add_workbook( $self );
     $packager->_set_package_dir( $tempdir );
@@ -1999,6 +2003,24 @@ sub _prepare_tables {
         $sheet->_prepare_tables( $table_id + 1, $seen );
 
         $table_id += $table_count;
+    }
+}
+
+
+###############################################################################
+#
+# _prepare_metadata()
+#
+# Set the metadata rel link.
+#
+sub _prepare_metadata {
+
+    my $self = shift;
+
+    for my $sheet ( @{ $self->{_worksheets} } ) {
+        if ($sheet->{_has_dynamic_arrays}) {
+            $self->{_has_metadata} = 1;
+        }
     }
 }
 
