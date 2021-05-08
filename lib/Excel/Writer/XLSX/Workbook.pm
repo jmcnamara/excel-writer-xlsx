@@ -2259,7 +2259,6 @@ sub _get_image_properties {
     my $size = length $data;
     my $md5  = md5_hex($data);
 
-
     if ( unpack( 'x A3', $data ) eq 'PNG' ) {
 
         # Test for PNGs.
@@ -2275,6 +2274,14 @@ sub _get_image_properties {
           $self->_process_jpg( $data, $filename );
 
         $self->{_image_types}->{jpeg} = 1;
+    }
+    elsif ( unpack( 'A4', $data ) eq 'GIF8' ) {
+
+        # Test for GIFs.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          $self->_process_gif( $data, $filename );
+
+        $self->{_image_types}->{gif} = 1;
     }
     elsif ( unpack( 'A2', $data ) eq 'BM' ) {
 
@@ -2469,6 +2476,34 @@ sub _process_jpg {
 
     if ( not defined $height ) {
         croak "$filename: no size data found in jpeg image.\n";
+    }
+
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
+}
+
+
+###############################################################################
+#
+# _process_gif()
+#
+# Extract width and height information from a GIF file.
+#
+sub _process_gif {
+
+    my $self     = shift;
+    my $data     = $_[0];
+    my $filename = $_[1];
+
+    my $type   = 'gif';
+    my $x_dpi  = 96;
+    my $y_dpi  = 96;
+
+    my $width  = unpack "v", substr $data, 6, 2;
+    my $height = unpack "v", substr $data, 8, 2;
+    print join ", ", ( $type, $width, $height, $x_dpi, $y_dpi, "\n" );
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in gif image.\n";
     }
 
     return ( $type, $width, $height, $x_dpi, $y_dpi );
