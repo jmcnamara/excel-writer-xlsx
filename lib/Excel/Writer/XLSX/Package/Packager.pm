@@ -772,6 +772,7 @@ sub _write_worksheet_rels_files {
             @{ $worksheet->{_external_drawing_links} },
             @{ $worksheet->{_external_vml_links} },
             @{ $worksheet->{_external_table_links} },
+            @{ $worksheet->{_external_background_links} },
             @{ $worksheet->{_external_comment_links} },
         );
 

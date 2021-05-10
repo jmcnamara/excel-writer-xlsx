@@ -1788,6 +1788,7 @@ sub _prepare_drawings {
     my $ref_id           = 0;
     my %image_ids        = ();
     my %header_image_ids = ();
+    my %background_ids   = ();
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1797,6 +1798,7 @@ sub _prepare_drawings {
 
         my $header_image_count = scalar @{ $sheet->{_header_images} };
         my $footer_image_count = scalar @{ $sheet->{_footer_images} };
+        my $has_background     = $sheet->{_background_image};
         my $has_drawing        = 0;
 
 
@@ -1805,7 +1807,8 @@ sub _prepare_drawings {
             && !$image_count
             && !$shape_count
             && !$header_image_count
-            && !$footer_image_count )
+            && !$footer_image_count
+            && !$has_background )
         {
             next;
         }
@@ -1814,6 +1817,26 @@ sub _prepare_drawings {
         if ( $chart_count || $image_count || $shape_count ) {
             $drawing_id++;
             $has_drawing = 1;
+        }
+
+        # Prepare the background images.
+        if ( $has_background ) {
+
+            my $filename = $sheet->{_background_image};
+
+            my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
+              $self->_get_image_properties( $filename );
+
+            if ( exists $background_ids{$md5} ) {
+                $ref_id = $background_ids{$md5};
+            }
+            else {
+                $ref_id = ++$image_ref_id;
+                $background_ids{$md5} = $ref_id;
+                push @{ $self->{_images} }, [ $filename, $type ];
+            }
+
+            $sheet->_prepare_background($ref_id, $type);
         }
 
         # Prepare the worksheet images.
