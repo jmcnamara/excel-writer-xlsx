@@ -222,13 +222,15 @@ sub new {
     $self->{_drawing_rels_id}        = 0;
     $self->{_vml_drawing_rels}       = {};
     $self->{_vml_drawing_rels_id}    = 0;
+    $self->{_horizontal_dpi}         = 0;
+    $self->{_vertical_dpi}           = 0;
     $self->{_has_dynamic_arrays}     = 0;
-
-    $self->{_horizontal_dpi} = 0;
-    $self->{_vertical_dpi}   = 0;
+    $self->{_use_future_functions}   = 0;
 
     $self->{_rstring}      = '';
     $self->{_previous_row} = 0;
+
+
 
     if ( $self->{_optimization} == 1 ) {
         my $fh = tempfile( DIR => $self->{_tempdir} );
@@ -2583,6 +2585,171 @@ sub write_blank {
     return 0;
 }
 
+###############################################################################
+#
+# _prepare_formula($formula)
+#
+# Utility method to strip equal sign and array braces from a formula and also
+# expand out future and dynamic array formulas.
+#
+sub _prepare_formula {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    # Ignore empty/null formulas.
+    return $formula if !$formula;
+
+    # Remove array formula braces and the leading =.
+    $formula =~ s/^{(.*)}$/$1/;
+    $formula =~ s/^=//;
+
+    # # Don't expand formulas that the user has already expanded.
+    return $formula if $formula =~ m/_xlfn\./;
+
+    # Expand dynamic array formulas.
+    $formula =~ s/\b(LET\()/_xlfn.$1/g;
+    $formula =~ s/\b(LAMBDA\()/_xlfn.$1/g;
+    $formula =~ s/\b(SINGLE\()/_xlfn.$1/g;
+    $formula =~ s/\b(SORTBY\()/_xlfn.$1/g;
+    $formula =~ s/\b(UNIQUE\()/_xlfn.$1/g;
+    $formula =~ s/\b(XMATCH\()/_xlfn.$1/g;
+    $formula =~ s/\b(XLOOKUP\()/_xlfn.$1/g;
+    $formula =~ s/\b(SEQUENCE\()/_xlfn.$1/g;
+    $formula =~ s/\b(RANDARRAY\()/_xlfn.$1/g;
+    $formula =~ s/\b(SORT\()/_xlfn._xlws.$1/g;
+    $formula =~ s/\b(ANCHORARRAY\()/_xlfn.$1/g;
+    $formula =~ s/\b(FILTER\()/_xlfn._xlws.$1/g;
+
+    if ( !$self->{_use_future_functions} ) {
+        return $formula;
+    }
+
+    # Future functions.
+    $formula =~ s/\b(ACOTH\()/_xlfn.$1/g;
+    $formula =~ s/\b(ACOT\()/_xlfn.$1/g;
+    $formula =~ s/\b(AGGREGATE\()/_xlfn.$1/g;
+    $formula =~ s/\b(ARABIC\()/_xlfn.$1/g;
+    $formula =~ s/\b(BASE\()/_xlfn.$1/g;
+    $formula =~ s/\b(BETA.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(BETA.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(BINOM.DIST.RANGE\()/_xlfn.$1/g;
+    $formula =~ s/\b(BINOM.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(BINOM.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(BITAND\()/_xlfn.$1/g;
+    $formula =~ s/\b(BITLSHIFT\()/_xlfn.$1/g;
+    $formula =~ s/\b(BITOR\()/_xlfn.$1/g;
+    $formula =~ s/\b(BITRSHIFT\()/_xlfn.$1/g;
+    $formula =~ s/\b(BITXOR\()/_xlfn.$1/g;
+    $formula =~ s/\b(CEILING.MATH\()/_xlfn.$1/g;
+    $formula =~ s/\b(CEILING.PRECISE\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHISQ.DIST.RT\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHISQ.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHISQ.INV.RT\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHISQ.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHISQ.TEST\()/_xlfn.$1/g;
+    $formula =~ s/\b(COMBINA\()/_xlfn.$1/g;
+    $formula =~ s/\b(CONCAT\()/_xlfn.$1/g;
+    $formula =~ s/\b(CONFIDENCE.NORM\()/_xlfn.$1/g;
+    $formula =~ s/\b(CONFIDENCE.T\()/_xlfn.$1/g;
+    $formula =~ s/\b(COTH\()/_xlfn.$1/g;
+    $formula =~ s/\b(COT\()/_xlfn.$1/g;
+    $formula =~ s/\b(COVARIANCE.P\()/_xlfn.$1/g;
+    $formula =~ s/\b(COVARIANCE.S\()/_xlfn.$1/g;
+    $formula =~ s/\b(CSCH\()/_xlfn.$1/g;
+    $formula =~ s/\b(CSC\()/_xlfn.$1/g;
+    $formula =~ s/\b(DAYS\()/_xlfn.$1/g;
+    $formula =~ s/\b(DECIMAL\()/_xlfn.$1/g;
+    $formula =~ s/\b(ERF.PRECISE\()/_xlfn.$1/g;
+    $formula =~ s/\b(ERFC.PRECISE\()/_xlfn.$1/g;
+    $formula =~ s/\b(EXPON.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(F.DIST.RT\()/_xlfn.$1/g;
+    $formula =~ s/\b(F.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(F.INV.RT\()/_xlfn.$1/g;
+    $formula =~ s/\b(F.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(F.TEST\()/_xlfn.$1/g;
+    $formula =~ s/\b(FILTERXML\()/_xlfn.$1/g;
+    $formula =~ s/\b(FLOOR.MATH\()/_xlfn.$1/g;
+    $formula =~ s/\b(FLOOR.PRECISE\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORECAST.ETS.CONFINT\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORECAST.ETS.SEASONALITY\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORECAST.ETS.STAT\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORECAST.ETS\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORECAST.LINEAR\()/_xlfn.$1/g;
+    $formula =~ s/\b(FORMULATEXT\()/_xlfn.$1/g;
+    $formula =~ s/\b(GAMMA.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(GAMMA.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(GAMMALN.PRECISE\()/_xlfn.$1/g;
+    $formula =~ s/\b(GAMMA\()/_xlfn.$1/g;
+    $formula =~ s/\b(GAUSS\()/_xlfn.$1/g;
+    $formula =~ s/\b(HYPGEOM.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(IFNA\()/_xlfn.$1/g;
+    $formula =~ s/\b(IFS\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMCOSH\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMCOT\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMCSCH\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMCSC\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMSECH\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMSEC\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMSINH\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMTAN\()/_xlfn.$1/g;
+    $formula =~ s/\b(ISFORMULA\()/_xlfn.$1/g;
+    $formula =~ s/\b(ISOWEEKNUM\()/_xlfn.$1/g;
+    $formula =~ s/\b(LOGNORM.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(LOGNORM.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(MAXIFS\()/_xlfn.$1/g;
+    $formula =~ s/\b(MINIFS\()/_xlfn.$1/g;
+    $formula =~ s/\b(MODE.MULT\()/_xlfn.$1/g;
+    $formula =~ s/\b(MODE.SNGL\()/_xlfn.$1/g;
+    $formula =~ s/\b(MUNIT\()/_xlfn.$1/g;
+    $formula =~ s/\b(NEGBINOM.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(NORM.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(NORM.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(NORM.S.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(NORM.S.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(NUMBERVALUE\()/_xlfn.$1/g;
+    $formula =~ s/\b(PDURATION\()/_xlfn.$1/g;
+    $formula =~ s/\b(PERCENTILE.EXC\()/_xlfn.$1/g;
+    $formula =~ s/\b(PERCENTILE.INC\()/_xlfn.$1/g;
+    $formula =~ s/\b(PERCENTRANK.EXC\()/_xlfn.$1/g;
+    $formula =~ s/\b(PERCENTRANK.INC\()/_xlfn.$1/g;
+    $formula =~ s/\b(PERMUTATIONA\()/_xlfn.$1/g;
+    $formula =~ s/\b(PHI\()/_xlfn.$1/g;
+    $formula =~ s/\b(POISSON.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(QUARTILE.EXC\()/_xlfn.$1/g;
+    $formula =~ s/\b(QUARTILE.INC\()/_xlfn.$1/g;
+    $formula =~ s/\b(QUERYSTRING\()/_xlfn.$1/g;
+    $formula =~ s/\b(RANK.AVG\()/_xlfn.$1/g;
+    $formula =~ s/\b(RANK.EQ\()/_xlfn.$1/g;
+    $formula =~ s/\b(RRI\()/_xlfn.$1/g;
+    $formula =~ s/\b(SECH\()/_xlfn.$1/g;
+    $formula =~ s/\b(SEC\()/_xlfn.$1/g;
+    $formula =~ s/\b(SHEETS\()/_xlfn.$1/g;
+    $formula =~ s/\b(SHEET\()/_xlfn.$1/g;
+    $formula =~ s/\b(SKEW.P\()/_xlfn.$1/g;
+    $formula =~ s/\b(STDEV.P\()/_xlfn.$1/g;
+    $formula =~ s/\b(STDEV.S\()/_xlfn.$1/g;
+    $formula =~ s/\b(SWITCH\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.DIST.2T\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.DIST.RT\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.INV.2T\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.INV\()/_xlfn.$1/g;
+    $formula =~ s/\b(T.TEST\()/_xlfn.$1/g;
+    $formula =~ s/\b(TEXTJOIN\()/_xlfn.$1/g;
+    $formula =~ s/\b(UNICHAR\()/_xlfn.$1/g;
+    $formula =~ s/\b(UNICODE\()/_xlfn.$1/g;
+    $formula =~ s/\b(VAR.P\()/_xlfn.$1/g;
+    $formula =~ s/\b(VAR.S\()/_xlfn.$1/g;
+    $formula =~ s/\b(WEBSERVICE\()/_xlfn.$1/g;
+    $formula =~ s/\b(WEIBULL.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(XOR\()/_xlfn.$1/g;
+    $formula =~ s/\b(Z.TEST\()/_xlfn.$1/g;
+
+    return $formula;
+
+}
+
 
 ###############################################################################
 #
@@ -2614,6 +2781,25 @@ sub write_formula {
     my $value   = $_[4];           # Optional formula value.
     my $type    = 'f';             # The data type
 
+    # Check for dynamic array functions.
+    local $_ = $formula;
+    if (   m{\bLET\(}
+        || m{\bSORT\(}
+        || m{\bLAMBDA\(}
+        || m{\bSINGLE\(}
+        || m{\bSORTBY\(}
+        || m{\bUNIQUE\(}
+        || m{\bXMATCH\(}
+        || m{\bFILTER\(}
+        || m{\bXLOOKUP\(}
+        || m{\bSEQUENCE\(}
+        || m{\bRANDARRAY\(}
+        || m{\bANCHORARRAY\(} )
+    {
+        return $self->write_dynamic_array_formula( $row, $col, $row, $col,
+            $formula, $xf, $value );
+    }
+
     # Hand off array formulas.
     if ( $formula =~ /^{=.*}$/ ) {
         return $self->write_array_formula( $row, $col, $row, $col, $formula,
@@ -2641,22 +2827,33 @@ sub write_formula {
 sub _write_array_formula {
 
     my $self = shift;
+    my $type = shift;
+    my @args = @_;
 
     # Check for a cell reference in A1 notation and substitute row and column
-    if ( $_[0] =~ /^\D/ ) {
-        @_ = $self->_substitute_cellref( @_ );
+    if ( $args[0] =~ /^\D/ ) {
+        my $cellref = shift @args;
+
+        # Convert single cell to range.
+        my @dims = $self->_substitute_cellref( $cellref );
+
+        if ( @dims == 2 ) {
+            @args = ( @dims, @dims, @args );
+        }
+        else {
+            @args = ( @dims, @args );
+        }
     }
 
-    if ( @_ < 5 ) { return -1 }    # Check the number of args
+    if ( @args < 5 ) { return -1 }    # Check the number of args
 
-    my $row1    = $_[0];           # First row
-    my $col1    = $_[1];           # First column
-    my $row2    = $_[2];           # Last row
-    my $col2    = $_[3];           # Last column
-    my $formula = $_[4];           # The formula text string
-    my $xf      = $_[5];           # The format object.
-    my $value   = $_[6];           # Optional formula value.
-    my $type    = $_[7];           # The data type
+    my $row1    = $args[0];           # First row
+    my $col1    = $args[1];           # First column
+    my $row2    = $args[2];           # Last row
+    my $col2    = $args[3];           # Last column
+    my $formula = $args[4];           # The formula text string
+    my $xf      = $args[5];           # The format object.
+    my $value   = $args[6];           # Optional formula value.
 
     # Swap last row/col with first row/col as necessary
     ( $row1, $row2 ) = ( $row2, $row1 ) if $row1 > $row2;
@@ -2679,9 +2876,8 @@ sub _write_array_formula {
           . xl_rowcol_to_cell( $row2, $col2 );
     }
 
-    # Remove array formula braces and the leading =.
-    $formula =~ s/^{(.*)}$/$1/;
-    $formula =~ s/^=//;
+    # Modify the formula string, as needed.
+    $formula = $self->_prepare_formula($formula);
 
     # Write previous row if in in-line string optimization mode.
     my $row = $row1;
@@ -2691,7 +2887,6 @@ sub _write_array_formula {
 
     $self->{_table}->{$row1}->{$col1} =
       [ $type, $formula, $xf, $range, $value ];
-
 
     # Pad out the rest of the area with formatted zeroes.
     if ( !$self->{_optimization} ) {
@@ -2705,7 +2900,6 @@ sub _write_array_formula {
 
     return 0;
 }
-
 
 
 ###############################################################################
@@ -2724,7 +2918,7 @@ sub write_array_formula {
 
     my $self = shift;
 
-    return $self->_write_array_formula( @_, 'a' );
+    return $self->_write_array_formula( 'a', @_ );
 }
 
 
@@ -2744,7 +2938,7 @@ sub write_dynamic_array_formula {
 
     my $self = shift;
 
-    my $error = $self->_write_array_formula( @_, 'd' );
+    my $error = $self->_write_array_formula( 'd', @_ );
 
     if ( $error == 0 ) {
         $self->{_has_dynamic_arrays} = 1;

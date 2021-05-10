@@ -16,7 +16,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'dynamic_array01.xlsx';
+my $filename     = 'dynamic_array03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -34,9 +34,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->write_dynamic_array_formula( 'A1', '=AVERAGE(TIMEVALUE(B1:B2))', undef, 0 );
-$worksheet->write( 'B1', '12:00' );
-$worksheet->write( 'B2', '12:00' );
+$worksheet->write_formula( 'A1', '=1+_xlfn.XOR(1)', undef, 2 );
 
 $workbook->close();
 
