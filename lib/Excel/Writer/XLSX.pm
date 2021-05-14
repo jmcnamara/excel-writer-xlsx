@@ -757,6 +757,7 @@ The following methods are available through a new worksheet:
     set_zoom()
     right_to_left()
     hide_zero()
+    set_background()
     set_tab_color()
     autofilter()
     filter_column()
@@ -1709,7 +1710,7 @@ See the C<write_handler 1-4> programs in the C<examples> directory for further e
 
 =head2 insert_image( $row, $col, $filename, { %options } )
 
-This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG or BMP format.
+This method can be used to insert a image into a worksheet. The image can be in PNG, JPEG, GIF or BMP format.
 
     $worksheet1->insert_image( 'A1', 'perl.bmp' );
     $worksheet2->insert_image( 'A1', '../images/perl.bmp' );
@@ -2500,6 +2501,28 @@ The C<hide_zero()> method is used to hide any zero values that appear in cells.
 
 In Excel this option is found under Tools->Options->View.
 
+
+
+
+=head2 set_background( $filename )
+
+
+The C<set_background()> method can be used to set the background image for the
+worksheet:
+
+    $worksheet->set_background( 'logo.png' )
+
+The C<set_background()> method supports all the image formats supported by
+C<insert_image()>.
+
+Some people use this method to add a watermark background to their
+document. However, Microsoft recommends using a header image L<to set a
+watermark|https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d733-484e-825c-18ddf3edf009>. The
+choice of method depends on whether you want the watermark to be visible in
+normal viewing mode or just when the file is printed. In Excel::Writer::XLSX
+you can get the header watermark effect using C<set_header()>:
+
+    $worksheet->set_header( '&C&G', undef, { image_center => 'watermark.png' } )
 
 
 
@@ -7234,6 +7257,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     sparklines2.pl          Sparklines demo showing formatting options.
     stats_ext.pl            Same as stats.pl with external references.
     stocks.pl               Demonstrates conditional formatting.
+    background.pl           Example of how to set the background image for a worksheet.
     tab_colors.pl           Example of how to set worksheet tab colours.
     tables.pl               Add Excel tables to a worksheet.
     write_handler1.pl       Example of extending the write() method. Step 1.
