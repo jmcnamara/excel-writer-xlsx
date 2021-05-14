@@ -4,6 +4,19 @@ Revision history for Perl module Excel::Writer::XLSX.
      - Removed/deprecated feature.
      ! Bug fix.
 
+
+1.08 2021-03-31
+
+    + Added support for background images in worksheets. See set_background().
+
+    + Added support for GIF image files (and in Excel 365, animated GIF files).
+
+    + Added support for pixel sizing in set_row() and set_column() via new
+      functions called set_row_pixels() and set_column_pixels().
+
+    + Added initial support for dynamic arrays in formulas.
+
+
 1.08 2021-03-31
 
     + Added ability to add accessibility options "description" and
