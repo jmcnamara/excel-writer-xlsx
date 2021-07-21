@@ -14,7 +14,7 @@ my %deps = (
 
 my %resources = (
 
-    homepage    => 'http://jmcnamara.github.com/excel-writer-xlsx/',
+    homepage    => 'http://github.com/jmcnamara/excel-writer-xlsx',
     repository  => 'http://github.com/jmcnamara/excel-writer-xlsx',
     bugtracker  => 'http://github.com/jmcnamara/excel-writer-xlsx/issues',
 );
