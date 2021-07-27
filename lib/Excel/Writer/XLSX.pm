@@ -1146,7 +1146,6 @@ To find out more about array references refer to C<perlref> and C<perlreftut> in
 
 The C<write_row()> method returns the first error encountered when writing the elements of the data or zero if no errors were encountered. See the return values described for the C<write()> method above.
 
-See also the C<write_arrays.pl> program in the C<examples> directory of the distro.
 
 The C<write_row()> method allows the following idiomatic conversion of a text file to an Excel file:
 
@@ -1219,7 +1218,6 @@ To find out more about array references refer to C<perlref> and C<perlreftut> in
 
 The C<write_col()> method returns the first error encountered when writing the elements of the data or zero if no errors were encountered. See the return values described for the C<write()> method above.
 
-See also the C<write_arrays.pl> program in the C<examples> directory of the distro.
 
 
 
