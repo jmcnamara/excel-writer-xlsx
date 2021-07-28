@@ -604,14 +604,23 @@ sub _write_button_shape {
 
 
     my @attributes = (
-        'id'          => $id,
-        'type'        => $type,
+        'id'   => $id,
+        'type' => $type,
+    );
+
+    if ( $button->{_description} ) {
+        push @attributes, ( 'alt' => $button->{_description} );
+    }
+
+    push @attributes,
+      (
         'style'       => $style,
         'o:button'    => 't',
         'fillcolor'   => 'buttonFace [67]',
         'strokecolor' => 'windowText [64]',
         'o:insetmode' => 'auto',
-    );
+      );
+
 
     $self->xml_start_tag( 'v:shape', @attributes );
 

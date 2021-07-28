@@ -5727,6 +5727,8 @@ sub insert_chart {
     my $x_scale;
     my $y_scale;
     my $anchor;
+    my $description;
+    my $decorative;
 
     croak "Insufficient arguments in insert_chart()" unless @_ >= 3;
 
@@ -5743,13 +5745,16 @@ sub insert_chart {
     }
 
     if ( ref $_[3] eq 'HASH' ) {
+
         # Newer hashref bashed options.
-        my $options = $_[3];
-        $x_offset = $options->{x_offset}        || 0;
-        $y_offset = $options->{y_offset}        || 0;
-        $x_scale  = $options->{x_scale}         || 1;
-        $y_scale  = $options->{y_scale}         || 1;
-        $anchor   = $options->{object_position} || 1;
+        my $options  = $_[3];
+        $x_offset    = $options->{x_offset}        || 0;
+        $y_offset    = $options->{y_offset}        || 0;
+        $x_scale     = $options->{x_scale}         || 1;
+        $y_scale     = $options->{y_scale}         || 1;
+        $anchor      = $options->{object_position} || 1;
+        $description = $options->{description};
+        $decorative  = $options->{decorative};
     }
     else {
         # Older parameter based options.
@@ -5782,7 +5787,9 @@ sub insert_chart {
     $y_offset = $chart->{_y_offset} if $chart->{_y_offset};
 
     push @{ $self->{_charts} },
-      [ $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor ];
+      [ $row,     $col,     $chart,  $x_offset,    $y_offset,
+        $x_scale, $y_scale, $anchor, $description, $decorative
+      ];
 }
 
 
@@ -5801,8 +5808,10 @@ sub _prepare_chart {
     my $drawing_type = 1;
     my $drawing;
 
-    my ( $row, $col, $chart, $x_offset, $y_offset, $x_scale, $y_scale, $anchor )
-      = @{ $self->{_charts}->[$index] };
+    my (
+        $row,     $col,     $chart,  $x_offset,    $y_offset,
+        $x_scale, $y_scale, $anchor, $description, $decorative
+    ) = @{ $self->{_charts}->[$index] };
 
     $chart->{_id} = $chart_id - 1;
 
@@ -5840,13 +5849,14 @@ sub _prepare_chart {
     $drawing_object->{_dimensions}    = \@dimensions;
     $drawing_object->{_width}         = 0;
     $drawing_object->{_height}        = 0;
-    $drawing_object->{_description}   = $name;
+    $drawing_object->{_name}          = $name;
     $drawing_object->{_shape}         = undef;
     $drawing_object->{_anchor}        = $anchor;
     $drawing_object->{_rel_index}     = $self->_get_drawing_rel_index();
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = undef;
-    $drawing_object->{_decorative}    = 0;
+    $drawing_object->{_description}   = $description;
+    $drawing_object->{_decorative}    = $decorative;
 
     push @{ $self->{_drawing_links} },
       [ '/chart', '../charts/chart' . $chart_id . '.xml' ];
@@ -6057,16 +6067,17 @@ sub _prepare_image {
     $drawing_object->{_dimensions}    = \@dimensions;
     $drawing_object->{_width}         = $width;
     $drawing_object->{_height}        = $height;
-    $drawing_object->{_description}   = $name;
+    $drawing_object->{_name}          = $name;
     $drawing_object->{_shape}         = undef;
     $drawing_object->{_anchor}        = $anchor;
     $drawing_object->{_rel_index}     = 0;
     $drawing_object->{_url_rel_index} = 0;
     $drawing_object->{_tip}           = $tip;
+    $drawing_object->{_description}   = $description;
     $drawing_object->{_decorative}    = $decorative;
 
-    if ( defined $description ) {
-        $drawing_object->{_description} = $description;
+    if ( !defined $description ) {
+        $drawing_object->{_description} = $name;
     }
 
     if ( $url ) {
@@ -6827,6 +6838,8 @@ sub _button_params {
         $button->{_macro} = '[0]!Button' . $button_number . '_Click';
     }
 
+    # Set the alt text for the button.
+    $button->{_description} = $params->{description};
 
     # Ensure that a width and height have been set.
     my $default_width  = $self->{_default_col_pixels};

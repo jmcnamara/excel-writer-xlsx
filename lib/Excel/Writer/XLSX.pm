@@ -1798,6 +1798,8 @@ The optional C<options> hash/hashref parameter can be used to set various option
         x_scale         => 1,
         y_scale         => 1,
         object_position => 1,
+        description     => undef,
+        decorative      => 0,
     );
 
 The parameters C<x_offset> and C<y_offset> can be used to specify an offset from the top left hand corner of the cell specified by C<$row> and C<$col>. The offset values are in pixels.
@@ -1821,6 +1823,15 @@ The C<object_position> parameter can have one of the following allowable values:
     4. Same as Option 1, see below.
 
 Option 4 appears in Excel as Option 1. However, the worksheet object is sized to take hidden rows or columns into account. This is generally only useful for images and not for charts.
+
+The C<description> parameter can be used to specify a description or "alt text" string for the chart. In general this would be used to provide a text description of the chart to help accessibility. It is an optional parameter and has no default. It can be used as follows:
+
+    $worksheet->insert_chart( 'E9', $chart, {description => 'Some alternative text'} );
+
+The optional C<decorative> parameter is also used to help accessibility. It is used to mark the chart as decorative, and thus uninformative, for automated screen readers. As in Excel, if this parameter is in use the C<description> field isn't written. It is used as follows:
+
+    $worksheet->insert_chart( 'E9', $chart, {decorative => 1} );
+
 
 
 =head2 insert_shape( $row, $col, $shape, $x, $y, $x_scale, $y_scale )
@@ -1876,6 +1887,7 @@ The properties of the button that can be set are:
     y_scale
     x_offset
     y_offset
+    description
 
 
 =over
@@ -1932,6 +1944,10 @@ This option is used to change the x offset, in pixels, of a button within a cell
 =item Option: y_offset
 
 This option is used to change the y offset, in pixels, of a comment within a cell.
+
+=item Option: description
+
+The option is used to specify a description or "alt text" string for the button.
 
 =back
 
