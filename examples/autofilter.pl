@@ -23,6 +23,7 @@ my $worksheet3 = $workbook->add_worksheet();
 my $worksheet4 = $workbook->add_worksheet();
 my $worksheet5 = $workbook->add_worksheet();
 my $worksheet6 = $workbook->add_worksheet();
+my $worksheet7 = $workbook->add_worksheet();
 
 my $bold = $workbook->add_format( bold => 1 );
 
@@ -158,15 +159,12 @@ for my $row_data ( @data ) {
 ###############################################################################
 #
 #
-# Example 5. Autofilter with filter for blanks.
+# Example 5. Autofilter with filter list condition in one of the columns.
 #
 
-# Create a blank cell in our test data.
-$data[5]->[0] = '';
-
-
 $worksheet5->autofilter( 'A1:D51' );
-$worksheet5->filter_column( 'A', 'x == Blanks' );
+
+$worksheet5->filter_column_list( 'A', ('East', 'North', 'South') );
 
 #
 # Hide the rows that don't match the filter criteria.
@@ -176,7 +174,7 @@ $row = 1;
 for my $row_data ( @data ) {
     my $region = $row_data->[0];
 
-    if ( $region eq '' ) {
+    if ( $region eq 'East' or $region eq 'North'  or $region eq 'South' ) {
 
         # Row is visible.
     }
@@ -193,12 +191,47 @@ for my $row_data ( @data ) {
 ###############################################################################
 #
 #
-# Example 6. Autofilter with filter for non-blanks.
+# Example 6. Autofilter with filter for blanks.
 #
+
+# Create a blank cell in our test data.
+$data[5]->[0] = '';
 
 
 $worksheet6->autofilter( 'A1:D51' );
-$worksheet6->filter_column( 'A', 'x == NonBlanks' );
+$worksheet6->filter_column( 'A', 'x == Blanks' );
+
+#
+# Hide the rows that don't match the filter criteria.
+#
+$row = 1;
+
+for my $row_data ( @data ) {
+    my $region = $row_data->[0];
+
+    if ( $region eq '' ) {
+
+        # Row is visible.
+    }
+    else {
+
+        # Hide row.
+        $worksheet6->set_row( $row, undef, undef, 1 );
+    }
+
+    $worksheet6->write( $row++, 0, $row_data );
+}
+
+
+###############################################################################
+#
+#
+# Example 7. Autofilter with filter for non-blanks.
+#
+
+
+$worksheet7->autofilter( 'A1:D51' );
+$worksheet7->filter_column( 'A', 'x == NonBlanks' );
 
 #
 # Hide the rows that don't match the filter criteria.
@@ -215,10 +248,10 @@ for my $row_data ( @data ) {
     else {
 
         # Hide row.
-        $worksheet6->set_row( $row, undef, undef, 1 );
+        $worksheet7->set_row( $row, undef, undef, 1 );
     }
 
-    $worksheet6->write( $row++, 0, $row_data );
+    $worksheet7->write( $row++, 0, $row_data );
 }
 
 $workbook->close();
