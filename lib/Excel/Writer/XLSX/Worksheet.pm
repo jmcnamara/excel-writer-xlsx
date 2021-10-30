@@ -92,6 +92,7 @@ sub new {
     $self->{_active_pane}          = 3;
     $self->{_selected}             = 0;
     $self->{_hide_row_col_headers} = 0;
+    $self->{_top_left_cell}        = '';
 
     $self->{_page_setup_changed} = 0;
     $self->{_paper_size}         = 0;
@@ -804,6 +805,35 @@ sub set_selection {
     return if $sqref eq 'A1';
 
     $self->{_selections} = [ [ $pane, $active_cell, $sqref ] ];
+}
+
+
+###############################################################################
+#
+# set_top_left_cell()
+#
+# Set the first visible cell at the top left of the worksheet.
+#
+sub set_top_left_cell {
+
+    my $self = shift;
+    my $sqref;
+
+    return unless @_;
+
+    # Check for a cell reference in A1 notation and substitute row and column.
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row = $_[0] || 0;
+    my $col = $_[1] || 0;
+
+    return if ( $row == 0 && $col == 0 );
+
+    my $top_left_cell = xl_rowcol_to_cell( $row, $col );
+
+    $self->{_top_left_cell} = $top_left_cell;
 }
 
 
@@ -7200,6 +7230,7 @@ sub _write_sheet_view {
     my $view             = $self->{_page_view};
     my $zoom             = $self->{_zoom};
     my $row_col_headers  = $self->{_hide_row_col_headers};
+    my $top_left_cell    = $self->{_top_left_cell};
     my $workbook_view_id = 0;
     my @attributes       = ();
 
@@ -7238,6 +7269,11 @@ sub _write_sheet_view {
     # TODO. Add pageBreakPreview mode when requested.
     if ( $view ) {
         push @attributes, ( 'view' => 'pageLayout' );
+    }
+
+    # Set the first visible cell.
+    if ($top_left_cell) {
+        push @attributes, ( 'topLeftCell' => $top_left_cell );
     }
 
     # Set the zoom level.
