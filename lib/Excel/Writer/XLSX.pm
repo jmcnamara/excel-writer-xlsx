@@ -3803,7 +3803,7 @@ This property can be used to prevent modification of a cells contents. Following
     $locked->set_locked( 1 );    # A non-op
 
     my $unlocked = $workbook->add_format();
-    $locked->set_locked( 0 );
+    $unlocked->set_locked( 0 );
 
     # Enable worksheet protection
     $worksheet->protect();
