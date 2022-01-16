@@ -8,7 +8,7 @@
 # The set_custom_color() Worksheet method can be used to override one of the
 # built-in palette values with a more suitable colour. See the main docs.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -5,7 +5,7 @@
 # Example of how to use the Excel::Writer::XLSX merge_range() workbook
 # method with complex formatting.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

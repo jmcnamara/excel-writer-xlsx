@@ -4,7 +4,7 @@ package Excel::Writer::XLSX;
 #
 # Excel::Writer::XLSX - Create a new file in the Excel 2007+ XLSX format.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #

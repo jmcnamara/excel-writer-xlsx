@@ -8,7 +8,7 @@ package Excel::Writer::XLSX::Chart::Bar;
 #
 # See formatting note in Excel::Writer::XLSX::Chart.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #

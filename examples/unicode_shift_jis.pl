@@ -8,7 +8,7 @@
 # This example generates some Japenese text from a file with Shift-JIS
 # encoded text.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

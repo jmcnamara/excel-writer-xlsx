@@ -4,7 +4,7 @@
 #
 # Example of how to hide a worksheet with Excel::Writer::XLSX.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

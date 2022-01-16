@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -253,7 +253,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # write text and numbers to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -311,7 +311,7 @@ Run this program and read the output from the command line.
     #
     # Run this program and read the output from the command line.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -473,7 +473,7 @@ Source code for this example:
     # This program is used to create the project screenshot for Freshmeat:
     # L<http://freshmeat.net/projects/writeexcel/>
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -613,7 +613,7 @@ Source code for this example:
     # running this program and viewing the output Excel file if you are interested
     # in the various formatting possibilities.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1148,7 +1148,7 @@ Source code for this example:
     # An example of how to use the Excel::Writer::XLSX module to write a basic
     # Excel workbook with multiple worksheets.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1219,7 +1219,7 @@ Source code for this example:
     # A simple example of how to use functions with the Excel::Writer::XLSX
     # module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1318,7 +1318,7 @@ Source code for this example:
     # of worksheet data. This allows users to filter the data based on
     # simple criteria so that some data is shown and some is hidden.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1613,7 +1613,7 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX module to write simple
     # array formulas.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1678,7 +1678,7 @@ that line as shown below.
     # the file. If you want to stream the file to the browser instead, comment out
     # that line as shown below.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1745,7 +1745,7 @@ Source code for this example:
     #
     # A demo of an Area chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -1896,7 +1896,7 @@ Source code for this example:
     #
     # A demo of an Bar chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2047,7 +2047,7 @@ Source code for this example:
     #
     # A demo of a Column chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2198,7 +2198,7 @@ Source code for this example:
     #
     # A demo of a Line chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2361,7 +2361,7 @@ Source code for this example:
     # since each segment is represented as a point so it is necessary to assign
     # formatting to each point in the series.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2495,7 +2495,7 @@ Source code for this example:
     # since each segment is represented as a point so it is necessary to assign
     # formatting to each point in the series.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2641,7 +2641,7 @@ Source code for this example:
     #
     # A demo of an Radar chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -2798,7 +2798,7 @@ Source code for this example:
     # straight, smooth_with_markers and smooth. See the main documentation for
     # more details.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3020,7 +3020,7 @@ Source code for this example:
     #
     # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3090,7 +3090,7 @@ An example of a Combined chart in Excel::Writer::XLSX.
     #
     # An example of a Combined chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3215,7 +3215,7 @@ A demo of a Pareto chart in Excel::Writer::XLSX.
     #
     # A demo of a Pareto chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3322,7 +3322,7 @@ Source code for this example:
     #
     # A demo of a Stock chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3415,7 +3415,7 @@ Source code for this example:
     # A demo of an Column chart with a data table on the X-axis using
     # Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3538,7 +3538,7 @@ Source code for this example:
     # These include, Trendlines, Data Labels, Error Bars, Drop Lines,
     # High-Low Lines and Up-Down Bars.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -3763,7 +3763,7 @@ via an Excel::Writer::XLSX chart.
     # A demo of an various Excel chart data label features that are available
     # via an Excel::Writer::XLSX chart.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4094,7 +4094,7 @@ A demo of a clustered category chart in Excel::Writer::XLSX.
     #
     # A demo of a clustered category chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4176,7 +4176,7 @@ styles available in Excel 2013.
     # using Excel::Writer::XLSX.. Note, these styles are not the same as the
     # styles available in Excel 2013.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4253,7 +4253,7 @@ a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     # elements. This example follows the following online example of how to create
     # a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4350,7 +4350,7 @@ Source code for this example:
     # The set_custom_color() Worksheet method can be used to override one of the
     # built-in palette values with a more suitable colour. See the main docs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4535,7 +4535,7 @@ Source code for this example:
     #
     # For more advanced comment options see comments2.pl.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4588,7 +4588,7 @@ Source code for this example:
     #
     # Each of the worksheets demonstrates different features of cell comments.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -4958,7 +4958,7 @@ Source code for this example:
     # Conditional formatting allows you to apply a format to a cell or a range of
     # cells based on certain criteria.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5428,7 +5428,7 @@ Source code for this example:
     # that a user enters in a cell and to display help and warning messages. It
     # also allows you to restrict input to values in a drop down list.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5758,7 +5758,7 @@ Source code for this example:
     # Excel::Writer::XLSX example of writing dates and times using the
     # write_date_time() Worksheet method.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5876,7 +5876,7 @@ Source code for this example:
     # This method is used to define a user friendly name to represent a value,
     # a single cell or a range of cells in a workbook.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5935,7 +5935,7 @@ Source code for this example:
     # A simple formatting example that demonstrates how to add a diagonal cell
     # border with Excel::Writer::XLSX
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -5996,7 +5996,7 @@ Source code for this example:
     # Example of using Excel::Writer::XLSX to write Excel files to different
     # filehandles.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6185,7 +6185,7 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -6318,7 +6318,7 @@ Source code for this example:
     # hide rows without setting each one, (of approximately 1 million rows),
     # Excel uses an optimisation to hide all rows that don't have data.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6376,7 +6376,7 @@ Source code for this example:
     #
     # Example of how to hide a worksheet with Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6432,7 +6432,7 @@ Source code for this example:
     #
     # See also hyperlink2.pl for worksheet URL examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6518,7 +6518,7 @@ See also hyperlink1.pl for web URL examples.
     #
     # See also hyperlink1.pl for web URL examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -6671,7 +6671,7 @@ Source code for this example:
     #
     # This program demonstrates the indentation cell format.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -6713,7 +6713,7 @@ Excel::Writer::XLSX module.
     # An example of turning off worksheet cells errors/warnings using the
     # Excel::Writer::XLSX module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6781,7 +6781,7 @@ Source code for this example:
     #
     # An embedded macro is connected to a form button on the worksheet.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6850,7 +6850,7 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6915,7 +6915,7 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -6981,7 +6981,7 @@ Source code for this example:
     # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
     # merged cell.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7049,7 +7049,7 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX merge_range() workbook
     # method with complex formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7163,7 +7163,7 @@ Source code for this example:
     # method with complex formatting and rotation.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7263,7 +7263,7 @@ Source code for this example:
     # method with Unicode strings.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -7698,7 +7698,7 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     
@@ -7925,7 +7925,7 @@ Source code for this example:
     # These examples focus mainly on collapsed outlines. See also the
     # outlines.pl example program for more general examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8154,7 +8154,7 @@ Source code for this example:
     #
     # Example of using the Excel::Writer::XLSX module to create worksheet panes.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8310,7 +8310,7 @@ Source code for this example:
     #
     # An example of adding document properties to a Excel::Writer::XLSX file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8368,7 +8368,7 @@ Source code for this example:
     # Example of cell locking and formula hiding in an Excel worksheet via
     # the Excel::Writer::XLSX module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8434,7 +8434,7 @@ Source code for this example:
     # An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
     # strings with multiple formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8501,7 +8501,7 @@ Source code for this example:
     # left-to-right to right-to-left as required by some eastern verions
     # of Excel.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8548,7 +8548,7 @@ Source code for this example:
     # Example of a sales worksheet to demonstrate several different features.
     # Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8672,7 +8672,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8727,7 +8727,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # modify shape properties in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8802,7 +8802,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # scale shapes in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8856,7 +8856,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # demonstrate stenciling in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8934,7 +8934,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and top/bottom connectors) to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -8996,7 +8996,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and right/left connectors) to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9058,7 +9058,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9149,7 +9149,7 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9251,7 +9251,7 @@ Source code for this example:
     # The grouping by worksheet name is for illustration only. It isn't
     # part of the ECMA-376 standard.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9510,7 +9510,7 @@ Source code for this example:
     # used to show trends in data. See sparklines2.pl for examples
     # of more complex sparkline formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -9599,7 +9599,7 @@ Source code for this example:
     # used to show trends in data. This example shows the majority of
     # options that can be applied to sparklines.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10025,7 +10025,7 @@ Source code for this example:
     # This is a simple example of how to use functions that reference cells in
     # other worksheets within the same workbook.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10128,7 +10128,7 @@ Source code for this example:
     # This example shows how to use a conditional numerical format
     # with colours to indicate if a share price has gone up or down.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10216,7 +10216,7 @@ An example of setting a worksheet background image with Excel::Writer::XLSX.
     #
     # An example of setting a worksheet background image with Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10256,7 +10256,7 @@ Source code for this example:
     #
     # Example of how to set Excel worksheet tab colours.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10311,7 +10311,7 @@ Source code for this example:
     # Tables in Excel are used to group rows and columns of data into a single
     # structure that can be referenced in a formula or formatted collectively.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10742,7 +10742,7 @@ Source code for this example:
     # The following example shows how to add a handler for a 7 digit ID number.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10835,7 +10835,7 @@ Source code for this example:
     # filters data that isn't in the third column.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -10933,7 +10933,7 @@ Source code for this example:
     #
     # See write_handler4.pl for a more rigorous example with error handling.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11023,7 +11023,7 @@ Source code for this example:
     #
     # This is a more rigorous version of write_handler3.pl.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11133,7 +11133,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
     # An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11198,7 +11198,7 @@ Source code for this example:
     # This example generates some Japanese from a file with ISO-2022-JP
     # encoded text.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11264,7 +11264,7 @@ Source code for this example:
     # This example generates some Thai from a file with ISO-8859-11 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11330,7 +11330,7 @@ Source code for this example:
     # This example generates some Greek from a file with ISO-8859-7 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11396,7 +11396,7 @@ Source code for this example:
     # This example generates some Chinese from a file with BIG5 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11462,7 +11462,7 @@ Source code for this example:
     # This example generates some Russian from a file with CP1251 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11528,7 +11528,7 @@ Source code for this example:
     # This example generates some Arabic text from a CP-1256 encoded file.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11594,7 +11594,7 @@ Source code for this example:
     #
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11665,7 +11665,7 @@ Source code for this example:
     # This example generates some Russian from a file with KOI8-R encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11731,7 +11731,7 @@ Source code for this example:
     # This example generates some Polish from a file with UTF8 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11797,7 +11797,7 @@ Source code for this example:
     # This example generates some Japenese text from a file with Shift-JIS
     # encoded text.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
     #
     
     use strict;
@@ -11841,7 +11841,7 @@ Contributed examples contain the original author's name.
 
 =head1 COPYRIGHT
 
-Copyright 2000-2021, John McNamara.
+Copyright 2000-2022, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

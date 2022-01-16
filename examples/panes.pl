@@ -4,7 +4,7 @@
 #
 # Example of using the Excel::Writer::XLSX module to create worksheet panes.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

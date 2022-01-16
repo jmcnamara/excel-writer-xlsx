@@ -5,7 +5,7 @@
 # A simple example of how to use the Excel::Writer::XLSX module to
 # add shapes to an Excel xlsx file.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

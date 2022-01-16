@@ -8,7 +8,7 @@
 # These examples focus mainly on collapsed outlines. See also the
 # outlines.pl example program for more general examples.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

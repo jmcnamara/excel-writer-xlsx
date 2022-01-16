@@ -7,7 +7,7 @@
 # Tables in Excel are used to group rows and columns of data into a single
 # structure that can be referenced in a formula or formatted collectively.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

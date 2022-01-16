@@ -6,7 +6,7 @@
 # left-to-right to right-to-left as required by some eastern verions
 # of Excel.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

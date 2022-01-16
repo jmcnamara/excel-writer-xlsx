@@ -7,7 +7,7 @@
 # straight, smooth_with_markers and smooth. See the main documentation for
 # more details.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

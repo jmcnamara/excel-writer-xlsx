@@ -8,7 +8,7 @@
 # This example generates some Russian from a file with CP1251 encoded text.
 #
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

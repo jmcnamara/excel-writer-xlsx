@@ -35,7 +35,7 @@
 #
 # See the main Excel::Writer::XLSX documentation for more information.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
 #
 
 
