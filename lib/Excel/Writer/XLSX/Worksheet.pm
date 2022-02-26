@@ -1931,6 +1931,7 @@ sub print_black_and_white {
     my $self = shift;
 
     $self->{_black_white} = 1;
+    $self->{_page_setup_changed} = 1;
 }
 
 
