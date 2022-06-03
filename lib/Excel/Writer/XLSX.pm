@@ -482,7 +482,7 @@ The properties that can be set are:
     comments
     status
     hyperlink_base
-    created - File create date. Such be an aref of gmtime() values.
+    created - File create date. Should be an aref of gmtime() values.
 
 See also the C<properties.pl> program in the examples directory of the distro.
 
