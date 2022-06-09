@@ -8390,7 +8390,7 @@ The following properties can be set for C<line> formats in a chart.
     transparency
 
 
-The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
+The C<none> property is used to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
