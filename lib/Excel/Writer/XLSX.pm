@@ -2205,7 +2205,7 @@ The default cell selections is (0, 0), 'A1'.
 
 =head2 set_top_left_cell( $row, $col )
 
-This method can be used to can be used to set the top leftmost visible cell in the worksheet:
+This method can be used to set the top leftmost visible cell in the worksheet:
 
     $worksheet->set_top_left_cell( 31, 26 );
 
