@@ -691,7 +691,7 @@ sub set_column {
     }
 
     # Store the column data based on the first column. Padded for sorting.
-    $self->{_colinfo}->{ sprintf "%05d", $first_col } = [@data];
+    $self->{_colinfo}->{ sprintf "%05d", $first_col } = [ $first_col, $last_col, $width, $format, $hidden, $level ];
 
     # Store the column change to allow optimisations.
     $self->{_col_size_changed} = 1;
