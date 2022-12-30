@@ -4,7 +4,7 @@
 #
 # Tests date and time second handling.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use lib 't/lib';

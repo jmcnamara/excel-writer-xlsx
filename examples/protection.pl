@@ -5,7 +5,7 @@
 # Example of cell locking and formula hiding in an Excel worksheet via
 # the Excel::Writer::XLSX module.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

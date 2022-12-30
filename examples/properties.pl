@@ -4,7 +4,7 @@
 #
 # An example of adding document properties to a Excel::Writer::XLSX file.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

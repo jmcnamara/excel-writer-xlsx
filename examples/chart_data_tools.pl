@@ -8,7 +8,7 @@
 # These include, Trendlines, Data Labels, Error Bars, Drop Lines,
 # High-Low Lines and Up-Down Bars.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -7,7 +7,7 @@
 # Conditional formatting allows you to apply a format to a cell or a range of
 # cells based on certain criteria.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

@@ -7,7 +7,7 @@ package Excel::Writer::XLSX::Chart;
 #
 # Used in conjunction with Excel::Writer::XLSX.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -27,7 +27,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 
 ###############################################################################
@@ -9168,6 +9168,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXXI, John McNamara.
+Copyright MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

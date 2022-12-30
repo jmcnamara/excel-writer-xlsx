@@ -5,7 +5,7 @@
 # A demo of an Column chart with a data table on the X-axis using
 # Excel::Writer::XLSX.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

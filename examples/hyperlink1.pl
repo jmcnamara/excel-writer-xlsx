@@ -6,7 +6,7 @@
 #
 # See also hyperlink2.pl for worksheet URL examples.
 #
-# Copyright 2000-2022, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 
 use strict;

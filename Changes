@@ -5,6 +5,11 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+1.10 2022-12-30
+
+    + Add support for new Excel 365 dynamic functions.
+ 
+
 1.09 2021-05-14
 
     + Added support for background images in worksheets. See set_background().
