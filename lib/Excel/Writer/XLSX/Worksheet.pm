@@ -82,7 +82,7 @@ sub new {
     $self->{_dim_colmin} = undef;
     $self->{_dim_colmax} = undef;
 
-    $self->{_colinfo}    = {};
+    $self->{_col_info}    = {};
     $self->{_selections} = [];
     $self->{_hidden}     = 0;
     $self->{_active}     = 0;
@@ -193,9 +193,7 @@ sub new {
     $self->{_filter_range} = [];
     $self->{_filter_cols}  = {};
 
-    $self->{_col_sizes}        = {};
     $self->{_row_sizes}        = {};
-    $self->{_col_formats}      = {};
     $self->{_col_size_changed} = 0;
     $self->{_row_size_changed} = 0;
 
@@ -692,20 +690,14 @@ sub set_column {
         $self->{_outline_col_level} = $level;
     }
 
-    # Store the column data based on the first column. Padded for sorting.
-    $self->{_colinfo}->{ sprintf "%05d", $first_col } = [ $first_col, $last_col, $width, $format, $hidden, $level ];
+    # Store the column data for each column.
+    foreach my $col ( $first_col .. $last_col ) {
+        $self->{_col_info}->{ $col } = [ $width, $format, $hidden, $level ];
+    }
+
 
     # Store the column change to allow optimisations.
     $self->{_col_size_changed} = 1;
-
-    # Store the col sizes for use when calculating image vertices taking
-    # hidden columns into account. Also store the column formats.
-    $width = $self->{_default_col_width} if !defined $width;
-
-    foreach my $col ( $first_col .. $last_col ) {
-        $self->{_col_sizes}->{$col}   = [$width, $hidden];
-        $self->{_col_formats}->{$col} = $format if $format;
-    }
 }
 
 ###############################################################################
@@ -5760,10 +5752,13 @@ sub _size_col {
 
 
     # Look up the cell value to see if it has been changed.
-    if ( exists $self->{_col_sizes}->{$col} )
+    if ( exists $self->{_col_info}->{$col} )
     {
-        my $width  = $self->{_col_sizes}->{$col}[0];
-        my $hidden = $self->{_col_sizes}->{$col}[1];
+        my $width  = $self->{_col_info}->{$col}[0];
+        my $hidden = $self->{_col_info}->{$col}[2];
+
+        $width = $self->{_default_col_width} if !defined $width;
+
 
         # Convert to pixels.
         if ( $hidden == 1 && $anchor != 4 ) {
@@ -7213,6 +7208,47 @@ sub repeat_formula {
 }
 
 
+# Helper function to compare adjacent column information structures.
+sub _compare_col_info {
+    my $col_options      = shift;
+    my $previous_options = shift;
+
+    if ( defined( $col_options->[0] ) != defined( $previous_options->[0] ) ) {
+        return undef;
+    }
+
+    if (   defined( $col_options->[0] )
+        && defined( $previous_options->[0] )
+        && $col_options->[0] != $previous_options->[0] )
+    {
+        return undef;
+    }
+
+    if ( defined( $col_options->[1] ) != defined( $previous_options->[1] ) ) {
+        return undef;
+    }
+
+    if (   defined( $col_options->[1] )
+        && defined( $previous_options->[1] )
+        && $col_options->[1] != $previous_options->[1] )
+    {
+        return undef;
+    }
+
+
+    if ( $col_options->[2] != $previous_options->[2] ) {
+        return undef;
+    }
+
+    if ( $col_options->[3] != $previous_options->[3] ) {
+        return undef;
+    }
+
+
+    return 1;
+}
+
+
 ###############################################################################
 #
 # XML writing methods.
@@ -7577,16 +7613,53 @@ sub _write_cols {
     my $self = shift;
 
     # Exit unless some column have been formatted.
-    return unless %{ $self->{_colinfo} };
+    return unless %{ $self->{_col_info} };
 
     $self->xml_start_tag( 'cols' );
 
-    for my $col ( sort keys %{ $self->{_colinfo} } ) {
-        $self->_write_col_info( @{ $self->{_colinfo}->{$col} } );
+
+    # Use the first element of the column information structures to set
+    # the initial/previous properties.
+    my $first_col = ( sort { $a <=> $b } keys %{ $self->{_col_info} } )[0];
+    my $last_col = $first_col;
+    my $previous_options    = $self->{_col_info}->{$first_col};
+    my $deleted_col         = $first_col;
+    my $deleted_col_options = $previous_options;
+
+    delete $self->{_col_info}->{$first_col};
+
+    for my $col ( sort { $a <=> $b } keys %{ $self->{_col_info} } ) {
+        my $col_options = $self->{_col_info}->{$col};
+
+        # Check if the column number is contiguous with the previous
+        # column and if the properties are the same.
+        if ( $col == $last_col + 1
+            && _compare_col_info( $col_options, $previous_options ) )
+        {
+            $last_col = $col;
+        }
+        else {
+            # If not contiguous/equal then we write out the current range
+            # of columns and start again.
+            $self->_write_col_info( $first_col, $last_col, @$previous_options );
+            $first_col        = $col;
+            $last_col         = $first_col;
+            $previous_options = $col_options;
+        }
     }
+
+    # We will exit the previous loop with one unhandled column range.
+    $self->_write_col_info( $first_col, $last_col, @$previous_options );
+
+
+    # Put back the deleted first column information structure.
+    $self->{_col_info}->{$deleted_col} = $deleted_col_options;
 
     $self->xml_end_tag( 'cols' );
 }
+
+
+
 
 
 ##############################################################################
@@ -8057,9 +8130,11 @@ sub _write_cell {
         my $row_xf = $self->{_set_rows}->{$row}->[1];
         push @attributes, ( 's' => $row_xf->get_xf_index() );
     }
-    elsif ( $self->{_col_formats}->{$col} ) {
-        my $col_xf = $self->{_col_formats}->{$col};
-        push @attributes, ( 's' => $col_xf->get_xf_index() );
+    elsif ( $self->{_col_info}->{$col} ) {
+        my $col_xf = $self->{_col_info}->{$col}->[1];
+        if (defined $col_xf) {
+            push @attributes, ( 's' => $col_xf->get_xf_index() );
+        }
     }
 
 
