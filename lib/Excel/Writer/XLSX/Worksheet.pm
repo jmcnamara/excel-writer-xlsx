@@ -27,6 +27,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     xl_rowcol_to_cell
                                     xl_col_to_name
                                     xl_range
+                                    xl_string_pixel_width
                                     quote_sheetname);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
@@ -167,6 +168,7 @@ sub new {
     $self->{_default_col_width}   = 8.43;
     $self->{_default_col_pixels}  = 64;
     $self->{_default_row_zeroed}  = 0;
+    $self->{_default_date_pixels} = 68;
 
     $self->{_names} = {};
 
@@ -656,7 +658,9 @@ sub set_column {
     my $width     = $data[2];
     my $format    = $data[3];
     my $hidden    = $data[4] || 0;
-    my $level     = $data[5];
+    my $level     = $data[5] || 0;
+    my $collapsed = $data[6] || 0;
+    my $autofit   = 0;
 
     return if not defined $first_col;    # Columns must be defined.
     return if not defined $last_col;
@@ -673,8 +677,8 @@ sub set_column {
     #       the column dimensions in certain cases.
     my $ignore_row = 1;
     my $ignore_col = 1;
-    $ignore_col = 0 if ref $format;       # Column has a format.
-    $ignore_col = 0 if $width && $hidden; # Column has a width but is hidden
+    $ignore_col = 0 if ref $format;          # Column has a format.
+    $ignore_col = 0 if $width && $hidden;    # Column has a width but is hidden
 
     return -2
       if $self->_check_dimensions( 0, $first_col, $ignore_row, $ignore_col );
@@ -686,13 +690,20 @@ sub set_column {
     $level = 0 if $level < 0;
     $level = 7 if $level > 7;
 
+
+    # Excel has a maximumn column width of 255 characters.
+    if (defined $width && $width > 255.0) {
+        $width = 255.0;
+    }
+
     if ( $level > $self->{_outline_col_level} ) {
         $self->{_outline_col_level} = $level;
     }
 
     # Store the column data for each column.
     foreach my $col ( $first_col .. $last_col ) {
-        $self->{_col_info}->{ $col } = [ $width, $format, $hidden, $level ];
+        $self->{_col_info}->{$col} =
+          [ $width, $format, $hidden, $level, $collapsed, $autofit ];
     }
 
 
@@ -739,6 +750,169 @@ sub set_column_pixels {
 
     return $self->set_column( $first_col, $last_col, $width, $format,
                               $hidden, $level );
+}
+
+###############################################################################
+#
+# autofit()
+#
+# Simulate autofit based on the data, and datatypes in each column. We do this
+# by estimating a pixel width for each cell data.
+#
+sub autofit {
+    my $self      = shift;
+    my %col_width = ();
+
+    # Create a reverse lookup for the share strings table so we can convert
+    # the string id back to the original string.
+    my @strings;
+    while ( my $key = each %{ ${ $self->{_str_table} } } ) {
+        $strings[ ${ $self->{_str_table} }->{$key} ] = $key;
+    }
+
+
+    # Iterate through all the data in the worksheet.
+    for my $row_num ( $self->{_dim_rowmin} .. $self->{_dim_rowmax} ) {
+
+        # Skip row if it doesn't contain cell data.
+        if ( !$self->{_table}->{$row_num} ) {
+            next;
+        }
+
+        if ( my $row_ref = $self->{_table}->{$row_num} ) {
+            for my $col_num ( $self->{_dim_colmin} .. $self->{_dim_colmax} ) {
+                if ( my $cell = $self->{_table}->{$row_num}->{$col_num} ) {
+
+                    # Get the cell type and data.
+                    my $type   = $cell->[0];
+                    my $token  = $cell->[1];
+                    my $length = 0;
+
+
+                    if ( $type eq 's' || $type eq 'r' ) {
+
+                        # Handle strings and rich strings.
+                        #
+                        # For standard shared strings we do a reverse lookup
+                        # from the shared string id to the actual string. For
+                        # rich strings we use the unformatted string. We also
+                        # split multiline strings and handle each part
+                        # separately.
+                        my $string;
+
+                        if ( $type eq 's' ) {
+
+                            # Handle standard shared strings.
+                            $string = $strings[$token];
+                        }
+                        else {
+                            # Handle rich strings without html formatting.
+                            $string = $cell->[3];
+                        }
+
+                        if ( $string !~ /\n/ ) {
+                            $length = xl_string_pixel_width( $string );
+                        }
+                        else {
+                            # Handle multiline strings.
+                            my $max = 0;
+
+                            my @segments = split "\n", $string;
+                            for my $string ( @segments ) {
+                                my $seg_length =
+                                  xl_string_pixel_width( $string );
+
+                                if ( $seg_length > $max ) {
+                                    $max    = $seg_length;
+                                    $length = $seg_length;
+                                }
+                            }
+                        }
+                    }
+                    elsif ( $type eq 'n' ) {
+
+                        # Handle numbers.
+                        #
+                        # We use a workaround/optimization for numbers since
+                        # digits all have a pixel width of 7. This gives a
+                        # slightly greater width for the decimal place and
+                        # minus sign but only by a few pixels and
+                        # over-estimation is okay.
+                        $length = 7 * length $token;
+                    }
+                    elsif ( $type eq 't' ) {
+
+                        # Handle dates.
+                        #
+                        # The following uses the default width for mm/dd/yyyy
+                        # dates. It isn't feasible to parse the number format
+                        # to get the actual string width for all format types.
+                        $length = $self->{_default_date_pixels};
+                    }
+                    elsif ( $type eq 'l' ) {
+
+                        # Handle boolean values.
+                        #
+                        # Use the Excel standard widths for TRUE and FALSE.
+                        if ( $token ) {
+                            $length = 31;
+                        }
+                        else {
+                            $length = 36;
+                        }
+                    }
+                    elsif ( $type eq 'f' ) {
+
+                        # Handle formulas.
+                        #
+                        # We only try to autofit a formula if it has a
+                        # non-zero value.
+                        my $value = $cell->[3];
+                        if ( $value ) {
+                            $length = xl_string_pixel_width( $value );
+                        }
+                    }
+                    elsif ( $type eq 'a' || $type eq 'd' ) {
+
+                        # Handle array and dynamic formulas.
+                        my $value = $cell->[4];
+                        if ( $value ) {
+                            $length = xl_string_pixel_width( $value );
+                        }
+                    }
+
+                    # Add the string lenght to the lookup hash.
+                    my $max = $col_width{$col_num} || 0;
+                    if ( $length > $max ) {
+                        $col_width{$col_num} = $length;
+
+                    }
+                }
+            }
+        }
+    }
+
+    # Apply the width to the column.
+    while ( my ( $col_num, $pixel_width ) = each %col_width ) {
+
+        # Convert the string pixel width to a character width using an
+        # additional padding of 7 pixels, like Excel.
+        my $width = _pixels_to_width( $pixel_width + 7 );
+
+        # The max column character width in Excel is 255.
+        if ( $width > 255.0 ) {
+            $width = 255.0;
+        }
+
+        # Add the width to an existing col info structure or add a new one.
+        if ( exists $self->{_col_info}->{$col_num} ) {
+            $self->{_col_info}->{$col_num}->[0] = $width;
+            $self->{_col_info}->{$col_num}->[5] = 1;
+        }
+        else {
+            $self->{_col_info}->{$col_num} = [ $width, undef, 0, 0, 0, 1 ];
+        }
+    }
 }
 
 
@@ -2439,10 +2613,10 @@ sub write_rich_string {
     my $col    = shift;            # Zero indexed column.
     my $str    = '';
     my $xf     = undef;
-    my $type   = 's';              # The data type.
-    my $length = 0;                # String length.
+    my $type   = 'r';              # The data type.
     my $index;
     my $str_error = 0;
+    my $raw_string = '';
 
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
@@ -2488,7 +2662,8 @@ sub write_rich_string {
                 push @fragments, $token;
             }
 
-            $length += length $token;    # Keep track of actual string length.
+            $raw_string .= $token; # Keep track of the unformatted string.
+
             $last = 'string';
         }
         else {
@@ -2535,7 +2710,7 @@ sub write_rich_string {
     }
 
     # Check that the string is < 32767 chars.
-    if ( $length > $self->{_xls_strmax} ) {
+    if ( length $raw_string > $self->{_xls_strmax} ) {
         return -3;
     }
 
@@ -2553,7 +2728,7 @@ sub write_rich_string {
         $self->_write_single_row( $row );
     }
 
-    $self->{_table}->{$row}->{$col} = [ $type, $index, $xf ];
+    $self->{_table}->{$row}->{$col} = [ $type, $index, $xf, $raw_string ];
 
     return 0;
 }
@@ -3234,7 +3409,7 @@ sub write_date_time {
     my $col  = $_[1];              # Zero indexed column
     my $str  = $_[2];
     my $xf   = $_[3];              # The cell format
-    my $type = 'n';                # The data type
+    my $type = 't';                # The data type
 
 
     # Check that row and col are valid and store max and min values
@@ -6120,12 +6295,12 @@ sub _get_range_data {
                 my $token = $cell->[1];
 
 
-                if ( $type eq 'n' ) {
+                if ( $type eq 'n'  || $type eq 't') {
 
                     # Store a number.
                     push @data, $token;
                 }
-                elsif ( $type eq 's' ) {
+                elsif ( $type eq 's' || $type eq 'r' ) {
 
                     # Store a string.
                     if ( $self->{_optimization} == 0 ) {
@@ -7213,37 +7388,32 @@ sub _compare_col_info {
     my $col_options      = shift;
     my $previous_options = shift;
 
-    if ( defined( $col_options->[0] ) != defined( $previous_options->[0] ) ) {
+    if ( defined $col_options->[0] != defined $previous_options->[0] ) {
         return undef;
     }
 
-    if (   defined( $col_options->[0] )
-        && defined( $previous_options->[0] )
+    if (   defined $col_options->[0]
+        && defined $previous_options->[0]
         && $col_options->[0] != $previous_options->[0] )
     {
         return undef;
     }
 
-    if ( defined( $col_options->[1] ) != defined( $previous_options->[1] ) ) {
+    if ( defined $col_options->[1] != defined $previous_options->[1] ) {
         return undef;
     }
 
-    if (   defined( $col_options->[1] )
-        && defined( $previous_options->[1] )
+    if (   defined $col_options->[1]
+        && defined $previous_options->[1]
         && $col_options->[1] != $previous_options->[1] )
     {
         return undef;
     }
 
-
-    if ( $col_options->[2] != $previous_options->[2] ) {
-        return undef;
-    }
-
-    if ( $col_options->[3] != $previous_options->[3] ) {
-        return undef;
-    }
-
+    return undef if $col_options->[2] != $previous_options->[2];
+    return undef if $col_options->[3] != $previous_options->[3];
+    return undef if $col_options->[4] != $previous_options->[4];
+    return undef if $col_options->[5] != $previous_options->[5];
 
     return 1;
 }
@@ -7677,7 +7847,8 @@ sub _write_col_info {
     my $format       = $_[3];         # Format index.
     my $hidden       = $_[4] || 0;    # Hidden flag.
     my $level        = $_[5] || 0;    # Outline level.
-    my $collapsed    = $_[6] || 0;    # Outline level.
+    my $collapsed    = $_[6] || 0;    # Outline collapsed.
+    my $autofit      = $_[7] || 0;    # Best fit for autofit numbers.
     my $custom_width = 1;
     my $xf_index     = 0;
 
@@ -7732,6 +7903,7 @@ sub _write_col_info {
 
     push @attributes, ( 'style'        => $xf_index ) if $xf_index;
     push @attributes, ( 'hidden'       => 1 )         if $hidden;
+    push @attributes, ( 'bestFit'      => 1 )         if $autofit;
     push @attributes, ( 'customWidth'  => 1 )         if $custom_width;
     push @attributes, ( 'outlineLevel' => $level )    if $level;
     push @attributes, ( 'collapsed'    => 1 )         if $collapsed;
@@ -8139,12 +8311,12 @@ sub _write_cell {
 
 
     # Write the various cell types.
-    if ( $type eq 'n' ) {
+    if ( $type eq 'n' || $type eq 't' ) {
 
         # Write a number.
         $self->xml_number_element( $token, @attributes );
     }
-    elsif ( $type eq 's' ) {
+    elsif ( $type eq 's' || $type eq 'r' ) {
 
         # Write a string.
         if ( $self->{_optimization} == 0 ) {
