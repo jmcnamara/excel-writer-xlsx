@@ -1566,7 +1566,7 @@ This option is used to change the x offset, in pixels, of a comment within a cel
 
 This option is used to change the y offset, in pixels, of a comment within a cell:
 
-    $worksheet->write_comment('C3', $comment, x_offset => 30);
+    $worksheet->write_comment('C3', $comment, y_offset => 30);
 
 =item Option: font
 
