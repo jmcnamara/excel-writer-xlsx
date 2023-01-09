@@ -106,6 +106,8 @@ sub new {
         _color_indexed => 0,
         _font_only     => 0,
 
+        _quote_prefix  => 0,
+
     };
 
     bless $self, $class;
@@ -261,7 +263,8 @@ sub get_format_key {
         $self->get_font_key(), $self->get_border_key,
         $self->get_fill_key(), $self->get_alignment_key(),
         $self->{_num_format},  $self->{_locked},
-        $self->{_hidden}
+        $self->{_hidden},
+        $self->{_quote_prefix},
       );
 
     return $key;

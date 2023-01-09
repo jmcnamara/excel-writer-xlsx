@@ -915,6 +915,10 @@ sub _write_xf {
     );
 
 
+    if ( $format->{_quote_prefix} ) {
+        push @attributes, ( 'quotePrefix' => 1 );
+    }
+
     if ( $format->{_num_format_index} > 0 ) {
         push @attributes, ( 'applyNumberFormat' => 1 );
     }
