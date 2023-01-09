@@ -815,15 +815,12 @@ sub autofit {
                         }
                         else {
                             # Handle multiline strings.
-                            my $max = 0;
-
                             my @segments = split "\n", $string;
                             for my $string ( @segments ) {
                                 my $seg_length =
                                   xl_string_pixel_width( $string );
 
-                                if ( $seg_length > $max ) {
-                                    $max    = $seg_length;
+                                if ( $seg_length > $length ) {
                                     $length = $seg_length;
                                 }
                             }
@@ -881,7 +878,7 @@ sub autofit {
                         }
                     }
 
-                    # Add the string lenght to the lookup hash.
+                    # Add the string length to the lookup hash.
                     my $max = $col_width{$col_num} || 0;
                     if ( $length > $max ) {
                         $col_width{$col_num} = $length;
