@@ -194,6 +194,7 @@ sub new {
     $self->{_filter_on}    = 0;
     $self->{_filter_range} = [];
     $self->{_filter_cols}  = {};
+    $self->{_filter_cells}  = {};
 
     $self->{_row_sizes}        = {};
     $self->{_col_size_changed} = 0;
@@ -878,6 +879,16 @@ sub autofit {
                         }
                     }
 
+
+                    # If the cell is in an autofilter header we add an
+                    # additional 16 pixels for the dropdown arrow.
+                    if ( $length > 0
+                        && exists $self->{_filter_cells}->{"$row_num:$col_num"}
+                      )
+                    {
+                        $length += 16;
+                    }
+
                     # Add the string length to the lookup hash.
                     my $max = $col_width{$col_num} || 0;
                     if ( $length > $max ) {
@@ -1553,6 +1564,12 @@ sub autofilter {
     $self->{_autofilter}     = $area;
     $self->{_autofilter_ref} = $ref;
     $self->{_filter_range}   = [ $col1, $col2 ];
+
+    # Store the filter cell positions for use in the autofit calculation.
+    for my $col ($col1 .. $col2) {
+        $self->{_filter_cells}->{ "$row1:$col"} = 1;
+    }
+
 }
 
 
@@ -5084,6 +5101,13 @@ sub add_table {
         }
     }
 
+
+    # Store the filter cell positions for use in the autofit calculation.
+    if ( $param->{autofilter} ) {
+        for my $col ($col1 .. $col2) {
+            $self->{_filter_cells}->{ "$row1:$col" } = 1;
+        }
+    }
 
     # Store the table data.
     push @{ $self->{_tables} }, \%table;
