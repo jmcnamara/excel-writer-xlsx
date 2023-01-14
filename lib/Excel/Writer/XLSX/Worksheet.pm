@@ -594,37 +594,26 @@ sub unprotect_range {
 #
 # _encode_password($password)
 #
-# Based on the algorithm provided by Daniel Rentz of OpenOffice.
+# Hash a worksheet password. Based on the algorithm in ECMA-376-4:2016, Office
+# Open XML File Formats — Transitional Migration Features, Additional
+# attributes for workbookProtection element (Part 1, §18.2.29).
 #
 sub _encode_password {
+    my $self     = shift;
+    my $password = $_[0];
+    my $hash     = 0;
+    my $length;
 
-    use integer;
-
-    my $self      = shift;
-    my $plaintext = $_[0];
-    my $password;
-    my $count;
-    my @chars;
-    my $i = 0;
-
-    $count = @chars = split //, $plaintext;
-
-    foreach my $char ( @chars ) {
-        my $low_15;
-        my $high_15;
-        $char    = ord( $char ) << ++$i;
-        $low_15  = $char & 0x7fff;
-        $high_15 = $char & 0x7fff << 15;
-        $high_15 = $high_15 >> 15;
-        $char    = $low_15 | $high_15;
+    foreach my $char ( split //, reverse $password ) {
+        $hash = ( ( $hash >> 14 ) & 0x01 ) | ( ( $hash << 1 ) & 0x7fff );
+        $hash ^= ord $char;
     }
 
-    $password = 0x0000;
-    $password ^= $_ for @chars;
-    $password ^= $count;
-    $password ^= 0xCE4B;
+    $hash = ( ( $hash >> 14 ) & 0x01 ) | ( ( $hash << 1 ) & 0x7fff );
+    $hash ^= length $password;
+    $hash ^= 0xCE4B;
 
-    return sprintf "%X", $password;
+    return sprintf "%X", $hash;
 }
 
 

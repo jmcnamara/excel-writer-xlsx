@@ -2131,7 +2131,7 @@ You can optionally add a password to the worksheet protection:
 
     $worksheet->protect( 'drowssap' );
 
-Passing the empty string C<''> is the same as turning on protection without a password.
+The password should be an ASCII string. Passing the empty string C<''> is the same as turning on protection without a password.
 
 Note, the worksheet level password in Excel provides very weak protection. It does not encrypt your data and is very easy to deactivate. Full workbook encryption is not supported by C<Excel::Writer::XLSX> since it requires a completely different file format and would take several man months to implement.
 
