@@ -470,7 +470,7 @@ sub set_style {
     my $self = shift;
     my $style_id = defined $_[0] ? $_[0] : 2;
 
-    if ( $style_id < 0 || $style_id > 48 ) {
+    if ( $style_id < 1 || $style_id > 48 ) {
         $style_id = 2;
     }
 
