@@ -578,7 +578,7 @@ sub _write_styles_file {
     my $xf_formats         = $self->{_workbook}->{_xf_formats};
     my $palette            = $self->{_workbook}->{_palette};
     my $font_count         = $self->{_workbook}->{_font_count};
-    my $num_format_count   = $self->{_workbook}->{_num_format_count};
+    my $num_formats        = $self->{_workbook}->{_num_formats};
     my $border_count       = $self->{_workbook}->{_border_count};
     my $fill_count         = $self->{_workbook}->{_fill_count};
     my $custom_colors      = $self->{_workbook}->{_custom_colors};
@@ -593,7 +593,7 @@ sub _write_styles_file {
         $xf_formats,
         $palette,
         $font_count,
-        $num_format_count,
+        $num_formats,
         $border_count,
         $fill_count,
         $custom_colors,

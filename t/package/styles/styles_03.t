@@ -49,7 +49,7 @@ $style->_set_style_properties(
     $workbook->{_xf_formats},
     $workbook->{_palette},
     $workbook->{_font_count},
-    $workbook->{_num_format_count},
+    $workbook->{_num_formats},
     $workbook->{_border_count},
     $workbook->{_fill_count},
     $workbook->{_custom_colors},

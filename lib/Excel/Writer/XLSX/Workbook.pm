@@ -81,7 +81,7 @@ sub new {
     $self->{_dxf_format_indices} = {};
     $self->{_palette}            = [];
     $self->{_font_count}         = 0;
-    $self->{_num_format_count}   = 0;
+    $self->{_num_formats}        = [];
     $self->{_defined_names}      = [];
     $self->{_named_ranges}       = [];
     $self->{_custom_colors}      = [];
@@ -1416,7 +1416,8 @@ sub _prepare_num_formats {
 
     my $self = shift;
 
-    my %num_formats;
+    my @num_formats = ();
+    my %unique_num_formats;
     my $index            = 164;
     my $num_format_count = 0;
 
@@ -1431,7 +1432,7 @@ sub _prepare_num_formats {
         if ( $num_format =~ m/^\d+$/ && $num_format !~ m/^0+\d/ ) {
 
             # Number format '0' is indexed as 1 in Excel.
-            if ($num_format == 0) {
+            if ( $num_format == 0 ) {
                 $num_format = 1;
             }
 
@@ -1439,33 +1440,34 @@ sub _prepare_num_formats {
             $format->{_num_format_index} = $num_format;
             next;
         }
-        elsif ( $num_format  eq 'General' ) {
+        elsif ( $num_format eq 'General' ) {
+
             # The 'General' format has an number format index of 0.
             $format->{_num_format_index} = 0;
             next;
         }
 
-
-        if ( exists( $num_formats{$num_format} ) ) {
+        if ( exists( $unique_num_formats{$num_format} ) ) {
 
             # Number format has already been used.
-            $format->{_num_format_index} = $num_formats{$num_format};
+            $format->{_num_format_index} = $unique_num_formats{$num_format};
         }
         else {
-
             # Add a new number format.
-            $num_formats{$num_format} = $index;
+            $unique_num_formats{$num_format} = $index;
             $format->{_num_format_index} = $index;
             $index++;
 
-            # Only increase font count for XF formats (not for DXF formats).
+            # Only store/increase number format count for XF formats (not for
+            # DXF formats).
             if ( $format->{_xf_index} ) {
+                push @num_formats, $num_format;
                 $num_format_count++;
             }
         }
     }
 
-    $self->{_num_format_count} = $num_format_count;
+    $self->{_num_formats} = \@num_formats;
 }
 
 

@@ -45,7 +45,7 @@ sub new {
     $self->{_xf_formats}         = undef;
     $self->{_palette}            = [];
     $self->{_font_count}         = 0;
-    $self->{_num_format_count}   = 0;
+    $self->{_num_formats}        = [];
     $self->{_border_count}       = 0;
     $self->{_fill_count}         = 0;
     $self->{_custom_colors}      = [];
@@ -126,7 +126,7 @@ sub _set_style_properties {
     $self->{_xf_formats}         = shift;
     $self->{_palette}            = shift;
     $self->{_font_count}         = shift;
-    $self->{_num_format_count}   = shift;
+    $self->{_num_formats}        = shift;
     $self->{_border_count}       = shift;
     $self->{_fill_count}         = shift;
     $self->{_custom_colors}      = shift;
@@ -203,7 +203,7 @@ sub _write_style_sheet {
 sub _write_num_fmts {
 
     my $self  = shift;
-    my $count = $self->{_num_format_count};
+    my $count = @{ $self->{_num_formats} };
 
     return unless $count;
 
@@ -212,12 +212,11 @@ sub _write_num_fmts {
     $self->xml_start_tag( 'numFmts', @attributes );
 
     # Write the numFmts elements.
-    for my $format ( @{ $self->{_xf_formats} } ) {
+    my $index = 164;
+    for my $num_format ( @{ $self->{_num_formats} } ) {
 
-        # Ignore built-in number formats, i.e., < 164.
-        next unless $format->{_num_format_index} >= 164;
-        $self->_write_num_fmt( $format->{_num_format_index},
-            $format->{_num_format} );
+        $self->_write_num_fmt( $index, $num_format );
+        $index++;
     }
 
     $self->xml_end_tag( 'numFmts' );
