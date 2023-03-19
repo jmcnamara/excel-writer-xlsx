@@ -18,7 +18,7 @@ use Exporter;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 
 ###############################################################################
@@ -7226,6 +7226,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
 
     Intermediate
     ============
+    autofit.pl              Examples of simulated worksheet autofit.
     autofilter.pl           Examples of worksheet autofilters.
     array_formula.pl        Examples of how to write array formulas.
     cgi.pl                  A simple CGI program.
@@ -7255,6 +7256,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     date_time.pl            Write dates and times with write_date_time().
     defined_name.pl         Example of how to create defined names.
     diag_border.pl          A simple example of diagonal cell borders.
+    dynamic_arrays.pl       Example of using new Excel 365 dynamic functions.
     filehandle.pl           Examples of working with filehandles.
     headers.pl              Examples of worksheet headers and footers.
     hide_row_col.pl         Example of hiding rows and columns.
@@ -7263,6 +7265,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     hyperlink2.pl           Examples of internal and external hyperlinks.
     indent.pl               An example of cell indentation.
     ignore_errors.pl        An example of turning off worksheet cells errors/warnings.
+    lambda.pl               Example of using the Excel 365 LAMBDA() function.
     macros.pl               An example of adding macros from an existing file.
     merge1.pl               A simple example of cell merging.
     merge2.pl               A simple example of cell merging with formatting.
@@ -7302,7 +7305,6 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     write_handler3.pl       Example of extending the write() method. Step 3.
     write_handler4.pl       Example of extending the write() method. Step 4.
     write_to_scalar.pl      Example of writing an Excel file to a Perl scalar.
-
 
     Unicode
     =======
