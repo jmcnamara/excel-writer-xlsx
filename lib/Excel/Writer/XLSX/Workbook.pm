@@ -1212,8 +1212,13 @@ sub _store_workbook {
 
     # Store the xlsx component files with the temp dir name removed.
     for my $filename ( @xlsx_files ) {
-        my $short_name = $filename;
-        $short_name =~ s{^\Q$tempdir\E/?}{};
+        # Standardise the Windows paths.
+        (my $short_name = $filename) =~ s{\\}{/}g;
+        (my $prefix = $tempdir)      =~ s{\\}{/}g;
+
+        # Get the zip subfile name without the tempdir path.
+        $short_name =~ s{^\Q$prefix\E/?}{};
+
         my $member = $zip->addFile( $filename, $short_name );
 
         # Set the file member datetime to 1980-01-01 00:00:00 like Excel so
