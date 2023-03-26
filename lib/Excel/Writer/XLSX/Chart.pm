@@ -4959,7 +4959,9 @@ sub _write_a_ln {
     my @attributes = ();
 
     # Add the line width as an attribute.
-    if ( my $width = $line->{width} ) {
+    if ( defined $line->{width} ) {
+
+        my $width = $line->{width};
 
         # Round width to nearest 0.25, like Excel.
         $width = int( ( $width + 0.125 ) * 4 ) / 4;
@@ -4970,29 +4972,37 @@ sub _write_a_ln {
         @attributes = ( 'w' => $width );
     }
 
-    $self->xml_start_tag( 'a:ln', @attributes );
+    if ( $line->{none} || $line->{color} || $line->{dash_type} ) {
 
-    # Write the line fill.
-    if ( $line->{none} ) {
+        $self->xml_start_tag( 'a:ln', @attributes );
 
-        # Write the a:noFill element.
-        $self->_write_a_no_fill();
+        # Write the line fill.
+        if ( $line->{none} ) {
+
+            # Write the a:noFill element.
+            $self->_write_a_no_fill();
+        }
+        elsif ( $line->{color} ) {
+
+            # Write the a:solidFill element.
+            $self->_write_a_solid_fill( $line );
+        }
+
+        # Write the line/dash type.
+        if ( my $type = $line->{dash_type} ) {
+
+            # Write the a:prstDash element.
+            $self->_write_a_prst_dash( $type );
+        }
+
+
+        $self->xml_end_tag( 'a:ln' );
     }
-    elsif ( $line->{color} ) {
-
-        # Write the a:solidFill element.
-        $self->_write_a_solid_fill( $line );
+    else {
+        $self->xml_empty_tag( 'a:ln', @attributes );
     }
-
-    # Write the line/dash type.
-    if ( my $type = $line->{dash_type} ) {
-
-        # Write the a:prstDash element.
-        $self->_write_a_prst_dash( $type );
-    }
-
-    $self->xml_end_tag( 'a:ln' );
 }
+
 
 
 ##############################################################################
