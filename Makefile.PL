@@ -50,7 +50,7 @@ WriteMakefile(%params);
 #
 sub MY::postamble {
     "mydocs:\n"
-      . "\tperl -Mblib examples/gen_examples_pod.pl examples "
+      . "\tperl -Mlib=lib examples/gen_examples_pod.pl ./examples "
       . "> lib/Excel/Writer/XLSX/Examples.pm\n\n"
       . "tags:\n"
 	  . "\trm -f TAGS\n"
