@@ -245,6 +245,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 write text and numbers to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -262,6 +264,8 @@ Source code for this example:
     # write text and numbers to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -310,6 +314,8 @@ A template for submitting a bug report.
 Run this program and read the output from the command line.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -320,6 +326,8 @@ Run this program and read the output from the command line.
     # Run this program and read the output from the command line.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -463,6 +471,8 @@ This program is used to create the project screenshot for Freshmeat:
 L<http://freshmeat.net/projects/writeexcel/>
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -482,6 +492,8 @@ Source code for this example:
     # L<http://freshmeat.net/projects/writeexcel/>
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -602,6 +614,8 @@ running this program and viewing the output Excel file if you are interested
 in the various formatting possibilities.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -622,6 +636,8 @@ Source code for this example:
     # in the various formatting possibilities.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1140,6 +1156,8 @@ An example of how to use the Excel::Writer::XLSX module to write a basic
 Excel workbook with multiple worksheets.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1157,6 +1175,8 @@ Source code for this example:
     # Excel workbook with multiple worksheets.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1211,6 +1231,8 @@ A simple example of how to use functions with the Excel::Writer::XLSX
 module.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1228,6 +1250,8 @@ Source code for this example:
     # module.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1304,6 +1328,8 @@ An example of using simulated autofit to automatically adjust the width of
 worksheet columns based on the data in the cells.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1321,6 +1347,8 @@ Source code for this example:
     # worksheet columns based on the data in the cells.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1365,6 +1393,8 @@ of worksheet data. This allows users to filter the data based on
 simple criteria so that some data is shown and some is hidden.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1385,6 +1415,8 @@ Source code for this example:
     # simple criteria so that some data is shown and some is hidden.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1696,6 +1728,8 @@ Example of how to use the Excel::Writer::XLSX module to write simple
 array formulas.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1713,6 +1747,8 @@ Source code for this example:
     # array formulas.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1761,6 +1797,8 @@ the file. If you want to stream the file to the browser instead, comment out
 that line as shown below.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -1778,6 +1816,8 @@ that line as shown below.
     # that line as shown below.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1829,6 +1869,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of an Area chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1845,6 +1887,8 @@ Source code for this example:
     # A demo of an Area chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1980,6 +2024,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of an Bar chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -1996,6 +2042,8 @@ Source code for this example:
     # A demo of an Bar chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2131,6 +2179,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Column chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2147,6 +2197,8 @@ Source code for this example:
     # A demo of a Column chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2282,6 +2334,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Line chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2298,6 +2352,8 @@ Source code for this example:
     # A demo of a Line chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2439,6 +2495,8 @@ since each segment is represented as a point so it is necessary to assign
 formatting to each point in the series.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2461,6 +2519,8 @@ Source code for this example:
     # formatting to each point in the series.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2573,6 +2633,8 @@ since each segment is represented as a point so it is necessary to assign
 formatting to each point in the series.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2595,6 +2657,8 @@ Source code for this example:
     # formatting to each point in the series.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2725,6 +2789,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of an Radar chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2741,6 +2807,8 @@ Source code for this example:
     # A demo of an Radar chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2873,6 +2941,8 @@ straight, smooth_with_markers and smooth. See the main documentation for
 more details.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -2892,6 +2962,8 @@ Source code for this example:
     # more details.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3098,6 +3170,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -3114,6 +3188,8 @@ Source code for this example:
     # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3176,6 +3252,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of a Combined chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3184,6 +3262,8 @@ An example of a Combined chart in Excel::Writer::XLSX.
     # An example of a Combined chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3301,6 +3381,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Pareto chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3309,6 +3391,8 @@ A demo of a Pareto chart in Excel::Writer::XLSX.
     # A demo of a Pareto chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3400,6 +3484,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Stock chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -3416,6 +3502,8 @@ Source code for this example:
     # A demo of a Stock chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3492,6 +3580,8 @@ A demo of an Column chart with a data table on the X-axis using
 Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -3509,6 +3599,8 @@ Source code for this example:
     # Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3612,6 +3704,8 @@ These include, Trendlines, Data Labels, Error Bars, Drop Lines,
 High-Low Lines and Up-Down Bars.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -3632,6 +3726,8 @@ Source code for this example:
     # High-Low Lines and Up-Down Bars.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3848,6 +3944,8 @@ A demo of an various Excel chart data label features that are available
 via an Excel::Writer::XLSX chart.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3857,6 +3955,8 @@ via an Excel::Writer::XLSX chart.
     # via an Excel::Writer::XLSX chart.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4180,6 +4280,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a clustered category chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4188,6 +4290,8 @@ A demo of a clustered category chart in Excel::Writer::XLSX.
     # A demo of a clustered category chart in Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4260,6 +4364,8 @@ using Excel::Writer::XLSX.. Note, these styles are not the same as the
 styles available in Excel 2013.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4270,6 +4376,8 @@ styles available in Excel 2013.
     # styles available in Excel 2013.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4334,6 +4442,8 @@ elements. This example follows the following online example of how to create
 a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4347,6 +4457,8 @@ a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     # a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4424,6 +4536,8 @@ The set_custom_color() Worksheet method can be used to override one of the
 built-in palette values with a more suitable colour. See the main docs.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -4444,6 +4558,8 @@ Source code for this example:
     # built-in palette values with a more suitable colour. See the main docs.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4608,6 +4724,8 @@ right-hand corner of the cell.
 For more advanced comment options see comments2.pl.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -4629,6 +4747,8 @@ Source code for this example:
     # For more advanced comment options see comments2.pl.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4661,6 +4781,8 @@ right-hand corner of the cell.
 Each of the worksheets demonstrates different features of cell comments.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -4682,6 +4804,8 @@ Source code for this example:
     # Each of the worksheets demonstrates different features of cell comments.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5033,6 +5157,8 @@ Conditional formatting allows you to apply a format to a cell or a range of
 cells based on certain criteria.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -5052,6 +5178,8 @@ Source code for this example:
     # cells based on certain criteria.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5501,6 +5629,8 @@ that a user enters in a cell and to display help and warning messages. It
 also allows you to restrict input to values in a drop down list.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -5522,6 +5652,8 @@ Source code for this example:
     # also allows you to restrict input to values in a drop down list.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5835,6 +5967,8 @@ Excel::Writer::XLSX example of writing dates and times using the
 write_date_time() Worksheet method.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -5852,6 +5986,8 @@ Source code for this example:
     # write_date_time() Worksheet method.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5951,6 +6087,8 @@ This method is used to define a user friendly name to represent a value,
 a single cell or a range of cells in a workbook.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -5970,6 +6108,8 @@ Source code for this example:
     # a single cell or a range of cells in a workbook.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6012,6 +6152,8 @@ A simple formatting example that demonstrates how to add a diagonal cell
 border with Excel::Writer::XLSX
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6029,6 +6171,8 @@ Source code for this example:
     # border with Excel::Writer::XLSX
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6357,6 +6501,8 @@ Example of using Excel::Writer::XLSX to write Excel files to different
 filehandles.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6374,6 +6520,8 @@ Source code for this example:
     # filehandles.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6516,6 +6664,8 @@ The control characters used in the header/footer strings are:
 See the main Excel::Writer::XLSX documentation for more information.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6563,6 +6713,8 @@ Source code for this example:
     # See the main Excel::Writer::XLSX documentation for more information.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -6678,6 +6830,8 @@ hide rows without setting each one, (of approximately 1 million rows),
 Excel uses an optimisation to hide all rows that don't have data.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6696,6 +6850,8 @@ Source code for this example:
     # Excel uses an optimisation to hide all rows that don't have data.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6738,6 +6894,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of how to hide a worksheet with Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6754,6 +6912,8 @@ Source code for this example:
     # Example of how to hide a worksheet with Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6792,6 +6952,8 @@ Example of how to use the Excel::Writer::XLSX module to write hyperlinks
 See also hyperlink2.pl for worksheet URL examples.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -6810,6 +6972,8 @@ Source code for this example:
     # See also hyperlink2.pl for worksheet URL examples.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6877,6 +7041,8 @@ C:\ -- Temp --+-- Europe
 See also hyperlink1.pl for web URL examples.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -6896,6 +7062,8 @@ See also hyperlink1.pl for web URL examples.
     # See also hyperlink1.pl for web URL examples.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -7031,6 +7199,8 @@ A simple formatting example using Excel::Writer::XLSX.
 This program demonstrates the indentation cell format.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7049,6 +7219,8 @@ Source code for this example:
     # This program demonstrates the indentation cell format.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -7082,6 +7254,8 @@ An example of turning off worksheet cells errors/warnings using the
 Excel::Writer::XLSX module.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -7091,6 +7265,8 @@ Excel::Writer::XLSX module.
     # Excel::Writer::XLSX module.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7190,6 +7366,8 @@ used to extract the vbaProject.bin file.
 An embedded macro is connected to a form button on the worksheet.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7212,6 +7390,8 @@ Source code for this example:
     # An embedded macro is connected to a form button on the worksheet.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7260,6 +7440,8 @@ modern approach use the merge_range() worksheet method instead.
 See the merge3.pl - merge6.pl programs.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7281,6 +7463,8 @@ Source code for this example:
     # See the merge3.pl - merge6.pl programs.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7325,6 +7509,8 @@ modern approach use the merge_range() worksheet method instead.
 See the merge3.pl - merge6.pl programs.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7346,6 +7532,8 @@ Source code for this example:
     # See the merge3.pl - merge6.pl programs.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7395,6 +7583,8 @@ Example of how to use Excel::Writer::XLSX to write a hyperlink in a
 merged cell.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7412,6 +7602,8 @@ Source code for this example:
     # merged cell.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7463,6 +7655,8 @@ Example of how to use the Excel::Writer::XLSX merge_range() workbook
 method with complex formatting.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7480,6 +7674,8 @@ Source code for this example:
     # method with complex formatting.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7576,6 +7772,8 @@ method with complex formatting and rotation.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7594,6 +7792,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7676,6 +7876,8 @@ method with Unicode strings.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -7694,6 +7896,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8058,6 +8262,8 @@ rows as follows:
 See the main Excel::Writer::XLSX documentation for more information.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8129,6 +8335,8 @@ Source code for this example:
     # See the main Excel::Writer::XLSX documentation for more information.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -8336,6 +8544,8 @@ These examples focus mainly on collapsed outlines. See also the
 outlines.pl example program for more general examples.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8356,6 +8566,8 @@ Source code for this example:
     # outlines.pl example program for more general examples.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8569,6 +8781,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of using the Excel::Writer::XLSX module to create worksheet panes.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8585,6 +8799,8 @@ Source code for this example:
     # Example of using the Excel::Writer::XLSX module to create worksheet panes.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8725,6 +8941,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of adding document properties to a Excel::Writer::XLSX file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8741,6 +8959,8 @@ Source code for this example:
     # An example of adding document properties to a Excel::Writer::XLSX file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8782,6 +9002,8 @@ Example of cell locking and formula hiding in an Excel worksheet via
 the Excel::Writer::XLSX module.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8799,6 +9021,8 @@ Source code for this example:
     # the Excel::Writer::XLSX module.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8848,6 +9072,8 @@ An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
 strings with multiple formatting.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8865,6 +9091,8 @@ Source code for this example:
     # strings with multiple formatting.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8914,6 +9142,8 @@ left-to-right to right-to-left as required by some eastern verions
 of Excel.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8932,6 +9162,8 @@ Source code for this example:
     # of Excel.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8962,6 +9194,8 @@ Example of a sales worksheet to demonstrate several different features.
 Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -8979,6 +9213,8 @@ Source code for this example:
     # Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9086,6 +9322,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 add shapes to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9103,6 +9341,8 @@ Source code for this example:
     # add shapes to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9141,6 +9381,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 modify shape properties in an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9158,6 +9400,8 @@ Source code for this example:
     # modify shape properties in an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9216,6 +9460,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 scale shapes in an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9233,6 +9479,8 @@ Source code for this example:
     # scale shapes in an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9270,6 +9518,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 demonstrate stenciling in an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9287,6 +9537,8 @@ Source code for this example:
     # demonstrate stenciling in an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9348,6 +9600,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 add shapes (objects and top/bottom connectors) to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9365,6 +9619,8 @@ Source code for this example:
     # add shapes (objects and top/bottom connectors) to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9410,6 +9666,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 add shapes (objects and right/left connectors) to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9427,6 +9685,8 @@ Source code for this example:
     # add shapes (objects and right/left connectors) to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9472,6 +9732,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 add shapes and one-to-many connectors to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9489,6 +9751,8 @@ Source code for this example:
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9563,6 +9827,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 add shapes and one-to-many connectors to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9580,6 +9846,8 @@ Source code for this example:
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9659,6 +9927,8 @@ The grouping by worksheet name is for illustration only. It isn't
 part of the ECMA-376 standard.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9682,6 +9952,8 @@ Source code for this example:
     # part of the ECMA-376 standard.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9921,6 +10193,8 @@ used to show trends in data. See sparklines2.pl for examples
 of more complex sparkline formatting.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -9941,6 +10215,8 @@ Source code for this example:
     # of more complex sparkline formatting.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10010,6 +10286,8 @@ used to show trends in data. This example shows the majority of
 options that can be applied to sparklines.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -10030,6 +10308,8 @@ Source code for this example:
     # options that can be applied to sparklines.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10437,6 +10717,8 @@ This is a simple example of how to use functions that reference cells in
 other worksheets within the same workbook.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -10456,6 +10738,8 @@ Source code for this example:
     # other worksheets within the same workbook.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10540,6 +10824,8 @@ This example shows how to use a conditional numerical format
 with colours to indicate if a share price has gone up or down.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -10559,6 +10845,8 @@ Source code for this example:
     # with colours to indicate if a share price has gone up or down.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10642,6 +10930,8 @@ header as suggested in the Microsoft documentation:
 https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d733-484e-825c-18ddf3edf009
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -10653,6 +10943,8 @@ https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d73
     # https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d733-484e-825c-18ddf3edf009
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10678,6 +10970,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of setting a worksheet background image with Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -10686,6 +10980,8 @@ An example of setting a worksheet background image with Excel::Writer::XLSX.
     # An example of setting a worksheet background image with Excel::Writer::XLSX.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10710,6 +11006,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of how to set Excel worksheet tab colours.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -10726,6 +11024,8 @@ Source code for this example:
     # Example of how to set Excel worksheet tab colours.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10762,6 +11062,8 @@ Tables in Excel are used to group rows and columns of data into a single
 structure that can be referenced in a formula or formatted collectively.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -10781,6 +11083,8 @@ Source code for this example:
     # structure that can be referenced in a formula or formatted collectively.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11192,6 +11496,8 @@ The following example shows how to add a handler for a 7 digit ID number.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11212,6 +11518,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11283,6 +11591,8 @@ filters data that isn't in the third column.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11305,6 +11615,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11381,6 +11693,8 @@ format.
 See write_handler4.pl for a more rigorous example with error handling.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11403,6 +11717,8 @@ Source code for this example:
     # See write_handler4.pl for a more rigorous example with error handling.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11471,6 +11787,8 @@ format.
 This is a more rigorous version of write_handler3.pl.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11493,6 +11811,8 @@ Source code for this example:
     # This is a more rigorous version of write_handler3.pl.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11595,6 +11915,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of writing an Excel::Writer::XLSX file to a perl scalar.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -11603,6 +11925,8 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     # An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11648,6 +11972,8 @@ This example generates some Japanese from a file with ISO-2022-JP
 encoded text.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11668,6 +11994,8 @@ Source code for this example:
     # encoded text.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11714,6 +12042,8 @@ This example generates some Thai from a file with ISO-8859-11 encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11734,6 +12064,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11780,6 +12112,8 @@ This example generates some Greek from a file with ISO-8859-7 encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11800,6 +12134,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11846,6 +12182,8 @@ This example generates some Chinese from a file with BIG5 encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11866,6 +12204,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11912,6 +12252,8 @@ This example generates some Russian from a file with CP1251 encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11932,6 +12274,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11978,6 +12322,8 @@ This example generates some Arabic text from a CP-1256 encoded file.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -11998,6 +12344,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -12044,6 +12392,8 @@ Excel::Writer::XLSX.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -12064,6 +12414,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -12115,6 +12467,8 @@ This example generates some Russian from a file with KOI8-R encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -12135,6 +12489,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -12181,6 +12537,8 @@ This example generates some Polish from a file with UTF8 encoded text.
 
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -12201,6 +12559,8 @@ Source code for this example:
     #
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -12247,6 +12607,8 @@ This example generates some Japenese text from a file with Shift-JIS
 encoded text.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -12267,6 +12629,8 @@ Source code for this example:
     # encoded text.
     #
     # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;

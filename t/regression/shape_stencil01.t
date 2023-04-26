@@ -4,6 +4,8 @@
 #
 # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+#
 
 use lib 't/lib';
 use TestFunctions qw(_compare_xlsx_files _is_deep_diff);
@@ -36,9 +38,9 @@ my $worksheet = $workbook->add_worksheet();
 $worksheet->hide_gridlines(2);
 
 my $format = $workbook->add_format(font => 'Arial', size => 8);
-my $shape = $workbook->add_shape( 
-    type => 'rect', 
-    width=> 90, 
+my $shape = $workbook->add_shape(
+    type => 'rect',
+    width=> 90,
     height => 90,
     format => $format,
 );
@@ -46,8 +48,8 @@ my $shape = $workbook->add_shape(
 for my $n (1..10) {
     # Change the last 5 rectangles to stars.  Previously inserted shapes stay as rectangles
     $shape->set_type('star5') if $n == 6;
-    my $text = $shape->get_type(); 
-    $shape->set_text( join (' ', $text, $n) ); 
+    my $text = $shape->get_type();
+    $shape->set_text( join (' ', $text, $n) );
     $worksheet->insert_shape('A1', $shape,  $n * 100, 50);
 }
 

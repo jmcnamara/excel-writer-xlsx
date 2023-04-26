@@ -4,6 +4,8 @@
 #
 # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+#
 
 use lib 't/lib';
 use TestFunctions '_new_object';
@@ -300,7 +302,7 @@ is( $got, $expected, $caption );
 
 ###############################################################################
 #
-# Test the _write_d_lbls() method. Pie chart. Postion = 
+# Test the _write_d_lbls() method. Pie chart. Postion =
 #
 $caption  = " \tChart: _write_d_lbls()";
 $expected = '<c:dLbls><c:showVal val="1"/><c:showLeaderLines val="1"/></c:dLbls>';

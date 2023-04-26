@@ -7,6 +7,8 @@ package Excel::Writer::XLSX;
 #
 # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+#
 # Documentation after __END__
 #
 
@@ -7582,7 +7584,7 @@ In no event unless required by applicable law or agreed to in writing will any c
 
 =head1 LICENSE
 
-The Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html>.
+Either the Perl Artistic Licence L<https://dev.perl.org/licenses/artistic.html> or the GNU General Public License v1.0 or later L<https://dev.perl.org/licenses/gpl1.html>.
 
 
 
