@@ -257,7 +257,8 @@ sub add_series {
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
 
     # Set the "invert if negative" fill property.
-    my $invert_if_neg = $arg{invert_if_negative};
+    my $invert_if_neg  = $arg{invert_if_negative};
+    my $inverted_color = $arg{invert_if_negative_color};
 
     # Set the secondary axis properties.
     my $x2_axis = $arg{x2_axis};
@@ -290,25 +291,26 @@ sub add_series {
 
     # Add the user supplied data to the internal structures.
     %arg = (
-        _values        => $values,
-        _categories    => $categories,
-        _name          => $name,
-        _name_formula  => $name_formula,
-        _name_id       => $name_id,
-        _val_data_id   => $val_id,
-        _cat_data_id   => $cat_id,
-        _line          => $line,
-        _fill          => $fill,
-        _pattern       => $pattern,
-        _gradient      => $gradient,
-        _marker        => $marker,
-        _trendline     => $trendline,
-        _smooth        => $smooth,
-        _labels        => $labels,
-        _invert_if_neg => $invert_if_neg,
-        _x2_axis       => $x2_axis,
-        _y2_axis       => $y2_axis,
-        _points        => $points,
+        _values         => $values,
+        _categories     => $categories,
+        _name           => $name,
+        _name_formula   => $name_formula,
+        _name_id        => $name_id,
+        _val_data_id    => $val_id,
+        _cat_data_id    => $cat_id,
+        _line           => $line,
+        _fill           => $fill,
+        _pattern        => $pattern,
+        _gradient       => $gradient,
+        _marker         => $marker,
+        _trendline      => $trendline,
+        _smooth         => $smooth,
+        _labels         => $labels,
+        _invert_if_neg  => $invert_if_neg,
+        _inverted_color => $inverted_color,
+        _x2_axis        => $x2_axis,
+        _y2_axis        => $y2_axis,
+        _points         => $points,
         _error_bars =>
           { _x_error_bars => $x_error_bars, _y_error_bars => $y_error_bars },
     );
@@ -988,6 +990,35 @@ sub _get_color {
     }
 
     return $self->_get_palette_color( $index );
+}
+
+###############################################################################
+#
+# _get_color_or_undef()
+#
+# Convert the user specified colour index or string to a rgb colour.
+#
+sub _get_color_or_undef {
+
+    my $self  = shift;
+    my $color = shift;
+
+    # Convert a HTML style #RRGGBB color.
+    if ( defined $color and $color =~ /^#[0-9a-fA-F]{6}$/ ) {
+        $color =~ s/^#//;
+        return uc $color;
+    }
+
+    my $index = &Excel::Writer::XLSX::Format::_get_color( $color );
+
+
+    if ( $index ) {
+        return $self->_get_palette_color( $index );
+    }
+    else {
+        warn "Unknown color '$color' used in chart formatting.\n";
+        return undef;
+    }
 }
 
 
@@ -2770,9 +2801,52 @@ sub _write_ser {
         $self->_write_c_smooth( $series->{_smooth} );
     }
 
+    if ( $series->{_inverted_color} ) {
+        # Write the c:extLst element.
+        $self->_write_ext_lst( $series->{_inverted_color} );
+    }
+
+
     $self->xml_end_tag( 'c:ser' );
 }
 
+
+##############################################################################
+#
+# _write_ext_lst()
+#
+# Write the <c:extLst> element for the inverted fill color.
+#
+sub _write_ext_lst {
+
+    my $self  = shift;
+    my $color = shift;
+
+    my $uri = '{6F2FDCE9-48DA-4B69-8628-5D25D57E5C99}';
+    my $xmlns_c_14 =
+      'http://schemas.microsoft.com/office/drawing/2007/8/2/chart';
+
+
+    my @attributes1 = (
+        'uri'       => $uri,
+        'xmlns:c14' => $xmlns_c_14,
+    );
+
+    my @attributes2 = ( 'xmlns:c14' => $xmlns_c_14, );
+
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_start_tag( 'c14:invertSolidFillFmt' );
+    $self->xml_start_tag( 'c14:spPr', @attributes2 );
+
+    $self->_write_a_solid_fill( { color => $color } );
+
+    $self->xml_end_tag( 'c14:spPr' );
+    $self->xml_end_tag( 'c14:invertSolidFillFmt' );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
+}
 
 ##############################################################################
 #
