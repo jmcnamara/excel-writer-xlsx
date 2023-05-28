@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Worksheet;
 
-use Test::More tests => 145;
+use Test::More tests => 179;
 
 
 ###############################################################################
@@ -30,7 +30,6 @@ my @testcases = (
     ['{=foo()}', 'foo()'],
 
     # Dynamic array functions.
-    ['LET()', '_xlfn.LET()'],
     ['SEQUENCE(10)', '_xlfn.SEQUENCE(10)'],
     ['UNIQUES(A1:A10)', 'UNIQUES(A1:A10)'],
     ['UUNIQUE(A1:A10)', 'UUNIQUE(A1:A10)'],
@@ -49,10 +48,40 @@ my @testcases = (
     ['XLOOKUP(B1,A1:A10,ANCHORARRAY(D1))', '_xlfn.XLOOKUP(B1,A1:A10,_xlfn.ANCHORARRAY(D1))'],
     ['LAMBDA(_xlpm.number, _xlpm.number + 1)(1)', '_xlfn.LAMBDA(_xlpm.number, _xlpm.number + 1)(1)'],
 
+    # Newer dynamic functions (some duplicates with above).
+    ['BYCOL(E1:G2)', '_xlfn.BYCOL(E1:G2)'],
+    ['BYROW(E1:G2)', '_xlfn.BYROW(E1:G2)'],
+    ['CHOOSECOLS(E1:G2,1)', '_xlfn.CHOOSECOLS(E1:G2,1)'],
+    ['CHOOSEROWS(E1:G2,1)', '_xlfn.CHOOSEROWS(E1:G2,1)'],
+    ['DROP(E1:G2,1)', '_xlfn.DROP(E1:G2,1)'],
+    ['EXPAND(E1:G2,2)', '_xlfn.EXPAND(E1:G2,2)'],
+    ['FILTER(E1:G2,H1:H2)', '_xlfn._xlws.FILTER(E1:G2,H1:H2)'],
+    ['HSTACK(E1:G2)', '_xlfn.HSTACK(E1:G2)'],
+    ['LAMBDA(_xlpm.number, _xlpm.number + 1)', '_xlfn.LAMBDA(_xlpm.number, _xlpm.number + 1)'],
+    ['MAKEARRAY(1,1,LAMBDA(_xlpm.row,_xlpm.col,TRUE)', '_xlfn.MAKEARRAY(1,1,_xlfn.LAMBDA(_xlpm.row,_xlpm.col,TRUE)'],
+    ['MAP(E1:G2,LAMBDA()', '_xlfn.MAP(E1:G2,_xlfn.LAMBDA()'],
+    ['RANDARRAY(1)', '_xlfn.RANDARRAY(1)'],
+    ['REDUCE("1,2,3",E1:G2,LAMBDA()', '_xlfn.REDUCE("1,2,3",E1:G2,_xlfn.LAMBDA()'],
+    ['SCAN("1,2,3",E1:G2,LAMBDA()', '_xlfn.SCAN("1,2,3",E1:G2,_xlfn.LAMBDA()'],
+    ['SEQUENCE(E1:E2)', '_xlfn.SEQUENCE(E1:E2)'],
+    ['SORT(F1)', '_xlfn._xlws.SORT(F1)'],
+    ['SORTBY(E1:G1,E2:G2)', '_xlfn.SORTBY(E1:G1,E2:G2)'],
+    ['SWITCH(WEEKDAY(E1)', '_xlfn.SWITCH(WEEKDAY(E1)'],
+    ['TAKE(E1:G2,1)', '_xlfn.TAKE(E1:G2,1)'],
+    ['TEXTSPLIT("foo bar", " ")', '_xlfn.TEXTSPLIT("foo bar", " ")'],
+    ['TOCOL(E1:G1)', '_xlfn.TOCOL(E1:G1)'],
+    ['TOROW(E1:E2)', '_xlfn.TOROW(E1:E2)'],
+    ['UNIQUE(E1:G1)', '_xlfn.UNIQUE(E1:G1)'],
+    ['VSTACK(E1:G2)', '_xlfn.VSTACK(E1:G2)'],
+    ['WRAPCOLS(E1:F1,2)', '_xlfn.WRAPCOLS(E1:F1,2)'],
+    ['WRAPROWS(E1:F1,2)', '_xlfn.WRAPROWS(E1:F1,2)'],
+    ['XLOOKUP(M34,I35:I42,J35:K42)', '_xlfn.XLOOKUP(M34,I35:I42,J35:K42)'],
+
     # Future functions.
     ['COT()', '_xlfn.COT()'],
     ['CSC()', '_xlfn.CSC()'],
     ['IFS()', '_xlfn.IFS()'],
+    ['LET()', '_xlfn.LET()'],
     ['PHI()', '_xlfn.PHI()'],
     ['RRI()', '_xlfn.RRI()'],
     ['SEC()', '_xlfn.SEC()'],
@@ -96,6 +125,7 @@ my @testcases = (
     ['T.DIST()', '_xlfn.T.DIST()'],
     ['T.TEST()', '_xlfn.T.TEST()'],
     ['Z.TEST()', '_xlfn.Z.TEST()'],
+    ['XMATCH()', '_xlfn.XMATCH()'],
     ['COMBINA()', '_xlfn.COMBINA()'],
     ['DECIMAL()', '_xlfn.DECIMAL()'],
     ['RANK.EQ()', '_xlfn.RANK.EQ()'],
@@ -109,6 +139,7 @@ my @testcases = (
     ['NORM.INV()', '_xlfn.NORM.INV()'],
     ['RANK.AVG()', '_xlfn.RANK.AVG()'],
     ['T.INV.2T()', '_xlfn.T.INV.2T()'],
+    ['TEXTJOIN()', '_xlfn.TEXTJOIN()'],
     ['TEXTJOIN()', '_xlfn.TEXTJOIN()'],
     ['AGGREGATE()', '_xlfn.AGGREGATE()'],
     ['BETA.DIST()', '_xlfn.BETA.DIST()'],
@@ -128,6 +159,8 @@ my @testcases = (
     ['T.DIST.2T()', '_xlfn.T.DIST.2T()'],
     ['T.DIST.RT()', '_xlfn.T.DIST.RT()'],
     ['WORKDAY.INTL()', 'WORKDAY.INTL()'],
+    ['ISOMITTED()', '_xlfn.ISOMITTED()'],
+    ['TEXTAFTER()', '_xlfn.TEXTAFTER()'],
     ['BINOM.DIST()', '_xlfn.BINOM.DIST()'],
     ['CHISQ.DIST()', '_xlfn.CHISQ.DIST()'],
     ['CHISQ.TEST()', '_xlfn.CHISQ.TEST()'],
@@ -137,12 +170,15 @@ my @testcases = (
     ['ISOWEEKNUM()', '_xlfn.ISOWEEKNUM()'],
     ['NORM.S.INV()', '_xlfn.NORM.S.INV()'],
     ['WEBSERVICE()', '_xlfn.WEBSERVICE()'],
+    ['TEXTBEFORE()', '_xlfn.TEXTBEFORE()'],
     ['ERF.PRECISE()', '_xlfn.ERF.PRECISE()'],
     ['FORMULATEXT()', '_xlfn.FORMULATEXT()'],
     ['LOGNORM.INV()', '_xlfn.LOGNORM.INV()'],
     ['NORM.S.DIST()', '_xlfn.NORM.S.DIST()'],
     ['NUMBERVALUE()', '_xlfn.NUMBERVALUE()'],
     ['QUERYSTRING()', '_xlfn.QUERYSTRING()'],
+    ['ARRAYTOTEXT()', '_xlfn.ARRAYTOTEXT()'],
+    ['VALUETOTEXT()', '_xlfn.VALUETOTEXT()'],
     ['CEILING.MATH()', '_xlfn.CEILING.MATH()'],
     ['CHISQ.INV.RT()', '_xlfn.CHISQ.INV.RT()'],
     ['CONFIDENCE.T()', '_xlfn.CONFIDENCE.T()'],
@@ -173,7 +209,6 @@ my @testcases = (
     ['FORECAST.ETS.STAT()', '_xlfn.FORECAST.ETS.STAT()'],
     ['FORECAST.ETS.CONFINT()', '_xlfn.FORECAST.ETS.CONFINT()'],
     ['FORECAST.ETS.SEASONALITY()', '_xlfn.FORECAST.ETS.SEASONALITY()'],
-
     ['Z.TEST(Z.TEST(Z.TEST()))', '_xlfn.Z.TEST(_xlfn.Z.TEST(_xlfn.Z.TEST()))'],
 );
 

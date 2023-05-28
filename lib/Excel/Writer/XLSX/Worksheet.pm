@@ -2811,18 +2811,35 @@ sub _prepare_formula {
     return $formula if $formula =~ m/_xlfn\./;
 
     # Expand dynamic array formulas.
-    $formula =~ s/\b(LET\()/_xlfn.$1/g;
-    $formula =~ s/\b(LAMBDA\()/_xlfn.$1/g;
-    $formula =~ s/\b(SINGLE\()/_xlfn.$1/g;
-    $formula =~ s/\b(SORTBY\()/_xlfn.$1/g;
-    $formula =~ s/\b(UNIQUE\()/_xlfn.$1/g;
-    $formula =~ s/\b(XMATCH\()/_xlfn.$1/g;
-    $formula =~ s/\b(XLOOKUP\()/_xlfn.$1/g;
-    $formula =~ s/\b(SEQUENCE\()/_xlfn.$1/g;
-    $formula =~ s/\b(RANDARRAY\()/_xlfn.$1/g;
-    $formula =~ s/\b(SORT\()/_xlfn._xlws.$1/g;
     $formula =~ s/\b(ANCHORARRAY\()/_xlfn.$1/g;
+    $formula =~ s/\b(BYCOL\()/_xlfn.$1/g;
+    $formula =~ s/\b(BYROW\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHOOSECOLS\()/_xlfn.$1/g;
+    $formula =~ s/\b(CHOOSEROWS\()/_xlfn.$1/g;
+    $formula =~ s/\b(DROP\()/_xlfn.$1/g;
+    $formula =~ s/\b(EXPAND\()/_xlfn.$1/g;
     $formula =~ s/\b(FILTER\()/_xlfn._xlws.$1/g;
+    $formula =~ s/\b(HSTACK\()/_xlfn.$1/g;
+    $formula =~ s/\b(LAMBDA\()/_xlfn.$1/g;
+    $formula =~ s/\b(MAKEARRAY\()/_xlfn.$1/g;
+    $formula =~ s/\b(MAP\()/_xlfn.$1/g;
+    $formula =~ s/\b(RANDARRAY\()/_xlfn.$1/g;
+    $formula =~ s/\b(REDUCE\()/_xlfn.$1/g;
+    $formula =~ s/\b(SCAN\()/_xlfn.$1/g;
+    $formula =~ s/\b(SEQUENCE\()/_xlfn.$1/g;
+    $formula =~ s/\b(SINGLE\()/_xlfn.$1/g;
+    $formula =~ s/\b(SORT\()/_xlfn._xlws.$1/g;
+    $formula =~ s/\b(SORTBY\()/_xlfn.$1/g;
+    $formula =~ s/\b(SWITCH\()/_xlfn.$1/g;
+    $formula =~ s/\b(TAKE\()/_xlfn.$1/g;
+    $formula =~ s/\b(TEXTSPLIT\()/_xlfn.$1/g;
+    $formula =~ s/\b(TOCOL\()/_xlfn.$1/g;
+    $formula =~ s/\b(TOROW\()/_xlfn.$1/g;
+    $formula =~ s/\b(UNIQUE\()/_xlfn.$1/g;
+    $formula =~ s/\b(VSTACK\()/_xlfn.$1/g;
+    $formula =~ s/\b(WRAPCOLS\()/_xlfn.$1/g;
+    $formula =~ s/\b(WRAPROWS\()/_xlfn.$1/g;
+    $formula =~ s/\b(XLOOKUP\()/_xlfn.$1/g;
 
     if ( !$self->{_use_future_functions} ) {
         return $formula;
@@ -2833,6 +2850,7 @@ sub _prepare_formula {
     $formula =~ s/\b(ACOT\()/_xlfn.$1/g;
     $formula =~ s/\b(AGGREGATE\()/_xlfn.$1/g;
     $formula =~ s/\b(ARABIC\()/_xlfn.$1/g;
+    $formula =~ s/\b(ARRAYTOTEXT\()/_xlfn.$1/g;
     $formula =~ s/\b(BASE\()/_xlfn.$1/g;
     $formula =~ s/\b(BETA.DIST\()/_xlfn.$1/g;
     $formula =~ s/\b(BETA.INV\()/_xlfn.$1/g;
@@ -2897,7 +2915,9 @@ sub _prepare_formula {
     $formula =~ s/\b(IMSINH\()/_xlfn.$1/g;
     $formula =~ s/\b(IMTAN\()/_xlfn.$1/g;
     $formula =~ s/\b(ISFORMULA\()/_xlfn.$1/g;
+    $formula =~ s/\b(ISOMITTED\()/_xlfn.$1/g;
     $formula =~ s/\b(ISOWEEKNUM\()/_xlfn.$1/g;
+    $formula =~ s/\b(LET\()/_xlfn.$1/g;
     $formula =~ s/\b(LOGNORM.DIST\()/_xlfn.$1/g;
     $formula =~ s/\b(LOGNORM.INV\()/_xlfn.$1/g;
     $formula =~ s/\b(MAXIFS\()/_xlfn.$1/g;
@@ -2932,20 +2952,23 @@ sub _prepare_formula {
     $formula =~ s/\b(SKEW.P\()/_xlfn.$1/g;
     $formula =~ s/\b(STDEV.P\()/_xlfn.$1/g;
     $formula =~ s/\b(STDEV.S\()/_xlfn.$1/g;
-    $formula =~ s/\b(SWITCH\()/_xlfn.$1/g;
     $formula =~ s/\b(T.DIST.2T\()/_xlfn.$1/g;
     $formula =~ s/\b(T.DIST.RT\()/_xlfn.$1/g;
     $formula =~ s/\b(T.DIST\()/_xlfn.$1/g;
     $formula =~ s/\b(T.INV.2T\()/_xlfn.$1/g;
     $formula =~ s/\b(T.INV\()/_xlfn.$1/g;
     $formula =~ s/\b(T.TEST\()/_xlfn.$1/g;
+    $formula =~ s/\b(TEXTAFTER\()/_xlfn.$1/g;
+    $formula =~ s/\b(TEXTBEFORE\()/_xlfn.$1/g;
     $formula =~ s/\b(TEXTJOIN\()/_xlfn.$1/g;
     $formula =~ s/\b(UNICHAR\()/_xlfn.$1/g;
     $formula =~ s/\b(UNICODE\()/_xlfn.$1/g;
+    $formula =~ s/\b(VALUETOTEXT\()/_xlfn.$1/g;
     $formula =~ s/\b(VAR.P\()/_xlfn.$1/g;
     $formula =~ s/\b(VAR.S\()/_xlfn.$1/g;
     $formula =~ s/\b(WEBSERVICE\()/_xlfn.$1/g;
     $formula =~ s/\b(WEIBULL.DIST\()/_xlfn.$1/g;
+    $formula =~ s/\b(XMATCH\()/_xlfn.$1/g;
     $formula =~ s/\b(XOR\()/_xlfn.$1/g;
     $formula =~ s/\b(Z.TEST\()/_xlfn.$1/g;
 
@@ -2986,18 +3009,35 @@ sub write_formula {
 
     # Check for dynamic array functions.
     local $_ = $formula;
-    if (   m{\bLET\(}
-        || m{\bSORT\(}
-        || m{\bLAMBDA\(}
-        || m{\bSINGLE\(}
-        || m{\bSORTBY\(}
-        || m{\bUNIQUE\(}
-        || m{\bXMATCH\(}
+    if (   m{\bANCHORARRAY\(}
+        || m{\bBYCOL\(}
+        || m{\bBYROW\(}
+        || m{\bCHOOSECOLS\(}
+        || m{\bCHOOSEROWS\(}
+        || m{\bDROP\(}
+        || m{\bEXPAND\(}
         || m{\bFILTER\(}
-        || m{\bXLOOKUP\(}
-        || m{\bSEQUENCE\(}
+        || m{\bHSTACK\(}
+        || m{\bLAMBDA\(}
+        || m{\bMAKEARRAY\(}
+        || m{\bMAP\(}
         || m{\bRANDARRAY\(}
-        || m{\bANCHORARRAY\(} )
+        || m{\bREDUCE\(}
+        || m{\bSCAN\(}
+        || m{\bSEQUENCE\(}
+        || m{\bSINGLE\(}
+        || m{\bSORT\(}
+        || m{\bSORTBY\(}
+        || m{\bSWITCH\(}
+        || m{\bTAKE\(}
+        || m{\bTEXTSPLIT\(}
+        || m{\bTOCOL\(}
+        || m{\bTOROW\(}
+        || m{\bUNIQUE\(}
+        || m{\bVSTACK\(}
+        || m{\bWRAPCOLS\(}
+        || m{\bWRAPROWS\(}
+        || m{\bXLOOKUP\(} )
     {
         return $self->write_dynamic_array_formula( $row, $col, $row, $col,
             $formula, $xf, $value );
