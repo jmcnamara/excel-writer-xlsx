@@ -50,6 +50,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => undef,
     _y2_axis       => undef,
 };
@@ -88,6 +89,7 @@ $expected = [
         _points        => undef,
         _labels        => undef,
         _invert_if_neg => undef,
+        _inverted_color=> undef,
         _x2_axis       => undef,
         _y2_axis       => undef,
     }
@@ -131,6 +133,7 @@ $expected = [
         _points        => undef,
         _labels        => undef,
         _invert_if_neg => undef,
+        _inverted_color=> undef,
         _x2_axis       => undef,
         _y2_axis       => undef,
     }
@@ -169,6 +172,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => undef,
     _y2_axis       => undef,
 };
@@ -210,6 +214,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => 1,
     _y2_axis       => 1,
 };
