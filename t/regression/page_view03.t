@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'page_view01.xlsx';
+my $filename     = 'page_view03.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -36,7 +36,8 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->set_page_view();
+$worksheet->set_pagebreak_view();
+$worksheet->set_zoom(75);
 
 # Options to match automatic page setup.
 $worksheet->set_paper(9);

@@ -1091,13 +1091,26 @@ sub set_landscape {
 #
 # set_page_view()
 #
-# Set the page view mode for Mac Excel.
+# Set the page view mode.
 #
 sub set_page_view {
 
     my $self = shift;
 
     $self->{_page_view} = defined $_[0] ? $_[0] : 1;
+}
+
+###############################################################################
+#
+# set_pagebreak_view()
+#
+# Set the page view mode.
+#
+sub set_pagebreak_view {
+
+    my $self = shift;
+
+    $self->{_page_view} = 2;
 }
 
 
@@ -7680,7 +7693,7 @@ sub _write_sheet_view {
     my $show_zeros       = $self->{_show_zeros};
     my $right_to_left    = $self->{_right_to_left};
     my $tab_selected     = $self->{_selected};
-    my $view             = $self->{_page_view};
+    my $view             = $self->{_page_view} || 0;
     my $zoom             = $self->{_zoom};
     my $row_col_headers  = $self->{_hide_row_col_headers};
     my $top_left_cell    = $self->{_top_left_cell};
@@ -7719,9 +7732,11 @@ sub _write_sheet_view {
     }
 
     # Set the page view/layout mode if required.
-    # TODO. Add pageBreakPreview mode when requested.
-    if ( $view ) {
+    if ( $view == 1) {
         push @attributes, ( 'view' => 'pageLayout' );
+    }
+    elsif ( $view == 2) {
+        push @attributes, ( 'view' => 'pageBreakPreview' );
     }
 
     # Set the first visible cell.
@@ -7731,9 +7746,17 @@ sub _write_sheet_view {
 
     # Set the zoom level.
     if ( $zoom != 100 ) {
-        push @attributes, ( 'zoomScale' => $zoom ) unless $view;
-        push @attributes, ( 'zoomScaleNormal' => $zoom )
-          if $self->{_zoom_scale_normal};
+        push @attributes, ( 'zoomScale' => $zoom );
+
+        if ( $view == 0 && $self->{_zoom_scale_normal} ) {
+            push @attributes, ( 'zoomScaleNormal' => $zoom );
+        }
+        elsif ( $view == 1 ) {
+            push @attributes, ( 'zoomScalePageLayoutView' => $zoom );
+        }
+        elsif ( $view == 2 ) {
+            push @attributes, ( 'zoomScaleSheetLayoutView' => $zoom );
+        }
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );

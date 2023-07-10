@@ -2763,6 +2763,7 @@ The following methods are available for page set-up:
     set_landscape()
     set_portrait()
     set_page_view()
+    set_pagebreak_view()
     set_paper()
     center_horizontally()
     center_vertically()
@@ -2808,11 +2809,22 @@ This method is used to set the orientation of a worksheet's printed page to port
 
 
 
+
 =head2 set_page_view()
 
 This method is used to display the worksheet in "Page View/Layout" mode.
 
     $worksheet->set_page_view();
+
+
+
+
+=head2 set_pagebreak_view()
+
+This method is used to display the worksheet in "Page Break Preview" mode.
+
+    $worksheet->set_pagebreak_view();
+
 
 
 
