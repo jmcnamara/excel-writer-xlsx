@@ -818,7 +818,10 @@ sub _write_chartsheet_rels_files {
 
         $index++;
 
-        my @external_links = @{ $worksheet->{_external_drawing_links} };
+        my @external_links = (
+            @{ $worksheet->{_external_drawing_links} },
+            @{ $worksheet->{_external_vml_links} },
+        );
 
         next unless @external_links;
 

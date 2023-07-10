@@ -95,6 +95,9 @@ sub _assemble_xml_file {
     # Write the drawing element.
     $self->_write_drawings();
 
+    # Write the legacyDrawingHF element.
+    $self->_write_legacy_drawing_hf();
+
     # Close the worksheet tag.
     $self->xml_end_tag( 'chartsheet' );
 
