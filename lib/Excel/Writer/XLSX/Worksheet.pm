@@ -5027,8 +5027,9 @@ sub add_table {
             if ( my $user_data = $param->{columns}->[ $col_id - 1 ] ) {
 
                 # Map user defined values to internal values.
-                $col_data->{_name} = $user_data->{header}
-                  if $user_data->{header};
+                if (defined $user_data->{header} && $user_data->{header} ne "") {
+                    $col_data->{_name} = $user_data->{header};
+                }
 
                 # Excel requires unique case insensitive header names.
                 my $name = $col_data->{_name};
