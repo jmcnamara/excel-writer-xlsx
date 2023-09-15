@@ -229,11 +229,20 @@ sub _write_table_column {
         push @attributes, ( dataDxfId => $col_data->{_format} );
     }
 
-    if ( $col_data->{_formula} ) {
+    if ( $col_data->{_formula} || $col_data->{_custom_total} ) {
         $self->xml_start_tag( 'tableColumn', @attributes );
 
-        # Write the calculatedColumnFormula element.
-        $self->_write_calculated_column_formula( $col_data->{_formula} );
+
+        if ($col_data->{_formula}) {
+            # Write the calculatedColumnFormula element.
+            $self->_write_calculated_column_formula( $col_data->{_formula} );
+        }
+
+        if ($col_data->{_custom_total}) {
+            # Write the totalsRowFormula  element.
+            $self->_write_totals_row_formula( $col_data->{_custom_total} );
+        }
+
 
         $self->xml_end_tag( 'tableColumn' );
     }
@@ -287,6 +296,21 @@ sub _write_calculated_column_formula {
     my $formula = shift;
 
     $self->xml_data_element( 'calculatedColumnFormula', $formula );
+}
+
+
+##############################################################################
+#
+# _write_totals_row_formula()
+#
+# Write the <totalsRowFormula> element.
+#
+sub _write_totals_row_formula {
+
+    my $self    = shift;
+    my $formula = shift;
+
+    $self->xml_data_element( 'totalsRowFormula', $formula );
 }
 
 

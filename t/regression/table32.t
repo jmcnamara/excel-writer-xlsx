@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table17.xlsx';
+my $filename     = 'table32.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -37,49 +37,27 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 # Set the column width to match the target worksheet.
-$worksheet->set_column('B:K', 10.288);
+$worksheet->set_column('C:F', 10.288);
 
 # Write some strings to order the string table.
 $worksheet->write_string('A1', 'Column1');
 $worksheet->write_string('B1', 'Column2');
 $worksheet->write_string('C1', 'Column3');
 $worksheet->write_string('D1', 'Column4');
-$worksheet->write_string('E1', 'Column5');
-$worksheet->write_string('F1', 'Column6');
-$worksheet->write_string('G1', 'Column7');
-$worksheet->write_string('H1', 'Column8');
-$worksheet->write_string('I1', 'Column9');
-$worksheet->write_string('J1', 'Column10');
-$worksheet->write_string('K1', 'Total');
-
-# Populate the data range.
-my $data =  [ 0, 0, 0, undef, undef, 0, 0, 0, 0, 0];
-$worksheet->write_row('B4', $data);
-$worksheet->write_row('B5', $data);
-
-$worksheet->write('G4', 4);
-$worksheet->write('G5', 5);
-$worksheet->write('I4', 1);
-$worksheet->write('I5', 2);
-
+$worksheet->write_string('E1', 'Total');
 
 # Add the table.
 $worksheet->add_table(
-    'B3:K6',
+    'C3:F14',
     {
         total_row => 1,
-        columns => [
+        columns   => [
             { total_string => 'Total' },
-            {},
-            { total_function => 'average' },
+            { total_function => 'D5+D9' },
+            { total_function => '=SUM([Column3])' },
             { total_function => 'count' },
-            { total_function => 'count_nums' },
-            { total_function => 'max', total_value => 5 },
-            { total_function => 'min' },
-            { total_function => 'sum', total_value => 3 },
-            { total_function => 'std_dev' },
-            { total_function => 'var' }
-          ],
+        ],
+
     }
 );
 

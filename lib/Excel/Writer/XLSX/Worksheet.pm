@@ -5015,6 +5015,7 @@ sub add_table {
             _name           => 'Column' . $col_id,
             _total_string   => '',
             _total_function => '',
+            _custom_total   => '',
             _formula        => '',
             _format         => undef,
             _name_format    => undef,
@@ -5027,14 +5028,16 @@ sub add_table {
             if ( my $user_data = $param->{columns}->[ $col_id - 1 ] ) {
 
                 # Map user defined values to internal values.
-                if (defined $user_data->{header} && $user_data->{header} ne "") {
+                if ( defined $user_data->{header}
+                    && $user_data->{header} ne "" )
+                {
                     $col_data->{_name} = $user_data->{header};
                 }
 
                 # Excel requires unique case insensitive header names.
                 my $name = $col_data->{_name};
-                my $key = lc $name;
-                if (exists $seen_names{$key}) {
+                my $key  = lc $name;
+                if ( exists $seen_names{$key} ) {
                     carp "add_table() contains duplicate name: '$name'";
                     return -1;
                 }
@@ -5065,23 +5068,38 @@ sub add_table {
 
                 # Handle the function for the total row.
                 if ( $user_data->{total_function} ) {
+                    my $formula = '';
+
                     my $function = $user_data->{total_function};
+                    $function = 'countNums' if $function eq 'count_nums';
+                    $function = 'stdDev'    if $function eq 'std_dev';
 
-                    # Massage the function name.
-                    $function = lc $function;
-                    $function =~ s/_//g;
-                    $function =~ s/\s//g;
+                    my %subtotals = (
+                        average   => 101,
+                        countNums => 102,
+                        count     => 103,
+                        max       => 104,
+                        min       => 105,
+                        stdDev    => 107,
+                        sum       => 109,
+                        var       => 110,
+                    );
 
-                    $function = 'countNums' if $function eq 'countnums';
-                    $function = 'stdDev'    if $function eq 'stddev';
+                    if ( exists $subtotals{$function} ) {
+                        $formula =
+                          _table_function_to_formula( $function,
+                            $col_data->{_name} );
+
+                    }
+                    else {
+                        $formula = $function;
+                        $formula =~ s/^=//;
+                        $col_data->{_custom_total} = $formula;
+                        $function = 'custom';
+                    }
+
 
                     $col_data->{_total_function} = $function;
-
-                    my $formula = _table_function_to_formula(
-                        $function,
-                        $col_data->{_name}
-
-                    );
 
                     my $value = $user_data->{total_value} || 0;
 
@@ -5149,8 +5167,8 @@ sub add_table {
 
     # Store the filter cell positions for use in the autofit calculation.
     if ( $param->{autofilter} ) {
-        for my $col ($col1 .. $col2) {
-            $self->{_filter_cells}->{ "$row1:$col" } = 1;
+        for my $col ( $col1 .. $col2 ) {
+            $self->{_filter_cells}->{"$row1:$col"} = 1;
         }
     }
 
@@ -5159,6 +5177,7 @@ sub add_table {
 
     return \%table;
 }
+
 
 
 ###############################################################################

@@ -18,7 +18,7 @@ use Test::More tests => 1;
 #
 # Tests setup.
 #
-my $filename     = 'table17.xlsx';
+my $filename     = 'table33.xlsx';
 my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
@@ -35,6 +35,7 @@ use Excel::Writer::XLSX;
 
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
+my $format    = $workbook->add_format( num_format => 2 );
 
 # Set the column width to match the target worksheet.
 $worksheet->set_column('B:K', 10.288);
@@ -57,11 +58,6 @@ my $data =  [ 0, 0, 0, undef, undef, 0, 0, 0, 0, 0];
 $worksheet->write_row('B4', $data);
 $worksheet->write_row('B5', $data);
 
-$worksheet->write('G4', 4);
-$worksheet->write('G5', 5);
-$worksheet->write('I4', 1);
-$worksheet->write('I5', 2);
-
 
 # Add the table.
 $worksheet->add_table(
@@ -74,11 +70,11 @@ $worksheet->add_table(
             { total_function => 'average' },
             { total_function => 'count' },
             { total_function => 'count_nums' },
-            { total_function => 'max', total_value => 5 },
+            { total_function => 'max' },
             { total_function => 'min' },
-            { total_function => 'sum', total_value => 3 },
+            { total_function => 'sum' },
             { total_function => 'std_dev' },
-            { total_function => 'var' }
+            { total_function => '=SUM([Column10])', formula => 'SUM(Table1[[#This Row],[Column1]:[Column3]])', format => $format }
           ],
     }
 );
