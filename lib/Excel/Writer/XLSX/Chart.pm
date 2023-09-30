@@ -97,6 +97,7 @@ sub new {
     $self->{_x2_axis}           = {};
     $self->{_chart_name}        = '';
     $self->{_show_blanks}       = 'gap';
+    $self->{_show_na_as_empty}  = 0;
     $self->{_show_hidden_data}  = 0;
     $self->{_show_crosses}      = 1;
     $self->{_width}             = 480;
@@ -508,6 +509,21 @@ sub show_blanks_as {
     }
 
     $self->{_show_blanks} = $option;
+}
+
+
+
+###############################################################################
+#
+# show_na_as_empty_cell()
+#
+# Set the option for displaying #N/A as an empty cell in a chart.
+#
+sub show_na_as_empty_cell {
+
+    my $self   = shift;
+
+    $self->{_show_na_as_empty} = 1;
 }
 
 
@@ -2521,6 +2537,12 @@ sub _write_chart {
     # Write the c:dispBlanksAs element.
     $self->_write_disp_blanks_as();
 
+
+    if ( $self->{_show_na_as_empty} ) {
+        # Write the c:extLst element.
+        $self->_write_ext_lst_display_na();
+    }
+
     $self->xml_end_tag( 'c:chart' );
 }
 
@@ -2803,7 +2825,7 @@ sub _write_ser {
 
     if ( $series->{_inverted_color} ) {
         # Write the c:extLst element.
-        $self->_write_ext_lst( $series->{_inverted_color} );
+        $self->_write_ext_lst_inverted_fill( $series->{_inverted_color} );
     }
 
 
@@ -2813,18 +2835,17 @@ sub _write_ser {
 
 ##############################################################################
 #
-# _write_ext_lst()
+# _write_ext_lst_inverted_fill()
 #
 # Write the <c:extLst> element for the inverted fill color.
 #
-sub _write_ext_lst {
+sub _write_ext_lst_inverted_fill {
 
     my $self  = shift;
     my $color = shift;
 
-    my $uri = '{6F2FDCE9-48DA-4B69-8628-5D25D57E5C99}';
-    my $xmlns_c_14 =
-      'http://schemas.microsoft.com/office/drawing/2007/8/2/chart';
+    my $uri        = '{6F2FDCE9-48DA-4B69-8628-5D25D57E5C99}';
+    my $xmlns_c_14 = 'http://schemas.microsoft.com/office/drawing/2007/8/2/chart';
 
 
     my @attributes1 = (
@@ -2832,7 +2853,7 @@ sub _write_ext_lst {
         'xmlns:c14' => $xmlns_c_14,
     );
 
-    my @attributes2 = ( 'xmlns:c14' => $xmlns_c_14, );
+    my @attributes2 = ( 'xmlns:c14' => $xmlns_c_14 );
 
 
     $self->xml_start_tag( 'c:extLst' );
@@ -2847,6 +2868,38 @@ sub _write_ext_lst {
     $self->xml_end_tag( 'c:ext' );
     $self->xml_end_tag( 'c:extLst' );
 }
+
+
+##############################################################################
+#
+# _write_ext_lst_display_na()
+#
+# Write the <c:extLst> element for the display N/A as empty cell option.
+#
+sub _write_ext_lst_display_na {
+
+    my $self  = shift;
+    my $color = shift;
+
+    my $uri        = '{56B9EC1D-385E-4148-901F-78D8002777C0}';
+    my $xmlns_c_16 = 'http://schemas.microsoft.com/office/drawing/2017/03/chart';
+
+    my @attributes1 = (
+        'uri'         => $uri,
+        'xmlns:c16r3' => $xmlns_c_16,
+    );
+
+    my @attributes2 = ( 'val' => 1 );
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_start_tag( 'c16r3:dataDisplayOptions16' );
+    $self->xml_empty_tag( 'c16r3:dispNaAsBlank', @attributes2 );
+    $self->xml_end_tag( 'c16r3:dataDisplayOptions16' );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
+}
+
 
 ##############################################################################
 #
@@ -7837,6 +7890,11 @@ The available options are:
         gap    # Blank data is shown as a gap. The default.
         zero   # Blank data is displayed as zero.
         span   # Blank data is connected with a line.
+
+
+=head2 show_na_as_empty_cell()
+
+The C<show_na_as_empty_cell()> method enables the option to display C<#N/A> as a blank cell in a chart.
 
 
 =head2 show_hidden_data()
