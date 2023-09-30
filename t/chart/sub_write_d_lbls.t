@@ -12,8 +12,9 @@ use TestFunctions '_new_object';
 use strict;
 use warnings;
 use Excel::Writer::XLSX::Chart;
+use Excel::Writer::XLSX::Chart::Pie;
 
-use Test::More tests => 18;
+use Test::More tests => 17;
 
 
 ###############################################################################
@@ -284,7 +285,7 @@ $expected = '<c:dLbls><c:showVal val="1"/><c:showLeaderLines val="1"/></c:dLbls>
 
 $arg{data_labels} = { value => 1, leader_lines => 1 };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 $chart->{_label_positions} = {
     center      => 'ctr',
     right       => 'r',
@@ -309,7 +310,7 @@ $expected = '<c:dLbls><c:showVal val="1"/><c:showLeaderLines val="1"/></c:dLbls>
 
 $arg{data_labels} = { value => 1, leader_lines => 1, position => '' };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 $chart->{_label_positions} = {
     center      => 'ctr',
     right       => 'r',
@@ -334,7 +335,7 @@ $expected = '<c:dLbls><c:dLblPos val="ctr"/><c:showVal val="1"/><c:showLeaderLin
 
 $arg{data_labels} = { value => 1, leader_lines => 1, position => 'center' };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 
 $chart->{_label_positions} = {
     center      => 'ctr',
@@ -360,7 +361,7 @@ $expected = '<c:dLbls><c:dLblPos val="inEnd"/><c:showVal val="1"/><c:showLeaderL
 
 $arg{data_labels} = { value => 1, leader_lines => 1, position => 'inside_end' };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 $chart->{_label_positions} = {
     center      => 'ctr',
     inside_base => 'inBase',
@@ -384,7 +385,7 @@ $expected = '<c:dLbls><c:dLblPos val="outEnd"/><c:showVal val="1"/><c:showLeader
 
 $arg{data_labels} = { value => 1, leader_lines => 1, position => 'outside_end' };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 $chart->{_label_positions} = {
     center      => 'ctr',
     inside_base => 'inBase',
@@ -398,30 +399,6 @@ $chart->_write_d_lbls( $labels );
 
 is( $got, $expected, $caption );
 
-
-###############################################################################
-#
-# Test the _write_d_lbls() method. Pie chart. Postion = best_fit
-#
-$caption  = " \tChart: _write_d_lbls()";
-$expected = '<c:dLbls><c:dLblPos val="bestFit"/><c:showVal val="1"/><c:showLeaderLines val="1"/></c:dLbls>';
-
-$arg{data_labels} = { value => 1, leader_lines => 1, position => 'best_fit' };
-
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
-$chart->{_label_positions} = {
-    center      => 'ctr',
-    inside_base => 'inBase',
-    inside_end  => 'inEnd',
-    outside_end => 'outEnd',
-    best_fit    => 'bestFit',
-};
-
-$labels = $chart->_get_labels_properties( $arg{data_labels} );
-
-$chart->_write_d_lbls( $labels );
-
-is( $got, $expected, $caption );
 
 
 ###############################################################################
@@ -433,7 +410,7 @@ $expected = '<c:dLbls><c:showPercent val="1"/><c:showLeaderLines val="1"/></c:dL
 
 $arg{data_labels} = { leader_lines => 1, percentage => 1 };
 
-$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart' );
+$chart  = _new_object( \$got, 'Excel::Writer::XLSX::Chart::Pie' );
 
 $labels = $chart->_get_labels_properties( $arg{data_labels} );
 

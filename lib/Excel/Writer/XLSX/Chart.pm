@@ -6085,16 +6085,32 @@ sub _write_separator {
 #
 # _write_show_leader_lines()
 #
-# Write the <c:showLeaderLines> element.
+# Write the <c:showLeaderLines> element. This is different for Pie/Doughnut
+# charts. Other chart types only supported leader lines after Excel 2015 via
+# an extension element.
 #
 sub _write_show_leader_lines {
 
-    my $self = shift;
-    my $val  = 1;
+    my $self  = shift;
+    my $color = shift;
 
-    my @attributes = ( 'val' => $val );
+    my $uri        = '{CE6537A1-D6FC-4f65-9D91-7224C49458BB}';
+    my $xmlns_c_15 = 'http://schemas.microsoft.com/office/drawing/2012/chart';
 
-    $self->xml_empty_tag( 'c:showLeaderLines', @attributes );
+
+    my @attributes1 = (
+        'uri'       => $uri,
+        'xmlns:c15' => $xmlns_c_15,
+    );
+
+    my @attributes2 = ( 'val' => 1 );
+
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_empty_tag( 'c15:showLeaderLines', @attributes2 );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
 }
 
 

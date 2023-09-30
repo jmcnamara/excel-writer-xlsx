@@ -349,6 +349,27 @@ sub _write_first_slice_ang {
 1;
 
 
+##############################################################################
+#
+# _write_show_leader_lines()
+#
+# Write the <c:showLeaderLines> element. This is for Pie/Doughnut charts.
+# Other chart types only supported leader lines after Excel 2015 via an
+# extension element.
+#
+sub _write_show_leader_lines {
+
+    my $self = shift;
+    my $val  = 1;
+
+    my @attributes = ( 'val' => $val );
+
+    $self->xml_empty_tag( 'c:showLeaderLines', @attributes );
+}
+
+
+
+
 __END__
 
 
