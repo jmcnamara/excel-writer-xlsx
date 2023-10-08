@@ -735,6 +735,7 @@ The following methods are available through a new worksheet:
     activate()
     select()
     hide()
+    very_hidden()
     set_first_sheet()
     protect()
     unprotect_range()
@@ -2096,6 +2097,16 @@ A hidden worksheet can not be activated or selected so this method is mutually e
 
     $worksheet2->activate();
     $worksheet1->hide();
+
+
+
+
+=head2 very_hidden()
+
+The C<very_hidden()> method can be used to hide a worksheet similar to the
+C<hide()> method. The difference is that the worksheet cannot be unhidden in
+the the Excel user interface. The Excel worksheet "xlSheetVeryHidden" option
+can only be unset programmatically by VBA.
 
 
 

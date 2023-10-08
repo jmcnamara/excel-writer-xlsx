@@ -396,17 +396,23 @@ sub _write_app_file {
 
     _mkdir( $dir . '/docProps' );
 
+    # Add the Worksheet parts.
+    my $worksheet_count = 0;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next if $worksheet->{_is_chartsheet};
+
+        # Don't write/count veryHidden sheets.
+        next if $worksheet->{_hidden} == 2;
+
+        $app->_add_part_name( $worksheet->get_name() );
+        $worksheet_count++;
+    }
+
     # Add the Worksheet heading pairs.
-    $app->_add_heading_pair( [ 'Worksheets', $self->{_worksheet_count} ] );
+    $app->_add_heading_pair( [ 'Worksheets', $worksheet_count ] );
 
     # Add the Chartsheet heading pairs.
     $app->_add_heading_pair( [ 'Charts', $self->{_chartsheet_count} ] );
-
-    # Add the Worksheet parts.
-    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next if $worksheet->{_is_chartsheet};
-        $app->_add_part_name( $worksheet->get_name() );
-    }
 
     # Add the Chartsheet parts.
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {

@@ -472,13 +472,28 @@ sub activate {
 sub hide {
 
     my $self = shift;
+    my $hidden = shift || 1;
 
-    $self->{_hidden} = 1;
+    $self->{_hidden} = $hidden;
 
     # A hidden worksheet shouldn't be active or selected.
     $self->{_selected} = 0;
     ${ $self->{_activesheet} } = 0;
     ${ $self->{_firstsheet} }  = 0;
+}
+
+
+###############################################################################
+#
+# very_hidden()
+#
+# Hide this worksheet. This can only be unhidden from VBA.
+#
+sub very_hidden {
+
+    my $self = shift;
+
+    $self->hide( 2 );
 }
 
 

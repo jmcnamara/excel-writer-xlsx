@@ -2787,9 +2787,15 @@ sub _write_sheet {
         'sheetId' => $sheet_id,
     );
 
-    push @attributes, ( 'state' => 'hidden' ) if $hidden;
-    push @attributes, ( 'r:id' => $r_id );
+    if ( $hidden == 1 ) {
+        push @attributes, ( 'state' => 'hidden' );
+    }
+    elsif ( $hidden == 2 ) {
+        push @attributes, ( 'state' => 'veryHidden' );
+    }
 
+
+    push @attributes, ( 'r:id' => $r_id );
 
     $self->xml_empty_tag( 'sheet', @attributes );
 }
