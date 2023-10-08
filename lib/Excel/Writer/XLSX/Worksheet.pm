@@ -5059,11 +5059,7 @@ sub add_table {
                     $formula =~ s/@/[#This Row],/g;
 
                     $col_data->{_formula} = $formula;
-
-                    for my $row ( $first_data_row .. $last_data_row ) {
-                        $self->write_formula( $row, $col_num, $formula,
-                            $user_data->{format} );
-                    }
+                    # We write the formulas below after the table data.
                 }
 
                 # Handle the function for the total row.
@@ -5162,6 +5158,26 @@ sub add_table {
             }
             $i++;
         }
+    }
+
+
+    # Write any columns formulas after the user supplied table data to
+    # overwrite it if required.
+    $col_id = 0;
+    for my $col_num ( $col1 .. $col2 ) {
+
+        my $column_data = $table{_columns}->[$col_id];
+
+        if ( $column_data && $column_data->{_formula} ) {
+            my $formula_format = $col_formats[$col_id];
+            my $formula        = $column_data->{_formula};
+
+            for my $row ( $first_data_row .. $last_data_row ) {
+                $self->write_formula( $row, $col_num, $formula,
+                    $formula_format );
+            }
+        }
+        $col_id++;
     }
 
 
