@@ -2827,6 +2827,7 @@ sub _prepare_formula {
 
     my $self    = shift;
     my $formula = shift;
+    my $expand_future_functions = shift;
 
     # Ignore empty/null formulas.
     return $formula if !$formula;
@@ -2869,7 +2870,7 @@ sub _prepare_formula {
     $formula =~ s/\b(WRAPROWS\()/_xlfn.$1/g;
     $formula =~ s/\b(XLOOKUP\()/_xlfn.$1/g;
 
-    if ( !$self->{_use_future_functions} ) {
+    if ( !$self->{_use_future_functions} && !$expand_future_functions ) {
         return $formula;
     }
 
@@ -5073,6 +5074,9 @@ sub add_table {
                     # Covert Excel 2010 "@" ref to 2007 "#This Row".
                     $formula =~ s/@/[#This Row],/g;
 
+                    # Escape any future functions.
+                    $formula = $self->_prepare_formula($formula, 1);
+
                     $col_data->{_formula} = $formula;
                     # We write the formulas below after the table data.
                 }
@@ -5103,8 +5107,7 @@ sub add_table {
 
                     }
                     else {
-                        $formula = $function;
-                        $formula =~ s/^=//;
+                        $formula = $self->_prepare_formula($function, 1);
                         $col_data->{_custom_total} = $formula;
                         $function = 'custom';
                     }
