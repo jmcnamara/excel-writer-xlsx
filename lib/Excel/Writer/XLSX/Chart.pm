@@ -1547,6 +1547,7 @@ sub _get_trendline_properties {
         return;
     }
 
+
     # Set the line properties for the trendline..
     my $line = $self->_get_line_properties( $trendline->{line} );
 
@@ -1558,11 +1559,14 @@ sub _get_trendline_properties {
     # Set the fill properties for the trendline.
     my $fill = $self->_get_fill_properties( $trendline->{fill} );
 
-    # Set the pattern properties for the series.
+    # Set the pattern properties for the trendline.
     my $pattern = $self->_get_pattern_properties( $trendline->{pattern} );
 
-    # Set the gradient fill properties for the series.
+    # Set the gradient fill properties for the trendline.
     my $gradient = $self->_get_gradient_properties( $trendline->{gradient} );
+
+    # Set the format properties for the trendline label.
+    my $label = $self->_get_trendline_label_properties( $trendline->{label} );
 
     # Pattern fill overrides solid fill.
     if ( $pattern ) {
@@ -1579,8 +1583,69 @@ sub _get_trendline_properties {
     $trendline->{_fill}     = $fill;
     $trendline->{_pattern}  = $pattern;
     $trendline->{_gradient} = $gradient;
+    $trendline->{_label}    = $label;
 
     return $trendline;
+}
+
+
+###############################################################################
+#
+# _get_trendline_label_properties()
+#
+# Convert user defined trendline label properties to the structure required
+# internally.
+#
+sub _get_trendline_label_properties {
+
+    my $self  = shift;
+    my $label = shift;
+
+    return if !$label && ref $label ne 'HASH';
+
+    # Copy the user supplied properties.
+    $label = {%$label};
+
+    # Set the font properties for the label.
+    if ($label->{font}) {
+        $label->{font} = $self->_convert_font_args( $label->{font} );
+    }
+
+
+    # Set the line properties for the label.
+    my $line = $self->_get_line_properties( $label->{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $label->{border} ) {
+        $line = $self->_get_line_properties( $label->{border} );
+    }
+
+    # Set the fill properties for the label.
+    my $fill = $self->_get_fill_properties( $label->{fill} );
+
+    # Set the pattern properties for the label.
+    my $pattern = $self->_get_pattern_properties( $label->{pattern} );
+
+    # Set the gradient fill properties for the label.
+    my $gradient = $self->_get_gradient_properties( $label->{gradient} );
+
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
+        $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
+    }
+
+    $label->{_line}     = $line;
+    $label->{_fill}     = $fill;
+    $label->{_pattern}  = $pattern;
+    $label->{_gradient} = $gradient;
+
+    return $label;
 }
 
 
@@ -5292,7 +5357,7 @@ sub _write_trendline {
         $self->_write_disp_eq();
 
         # Write the c:trendlineLbl element.
-        $self->_write_trendline_lbl();
+        $self->_write_trendline_lbl( $trendline );
     }
 
     $self->xml_end_tag( 'c:trendline' );
@@ -5461,7 +5526,8 @@ sub _write_disp_rsqr {
 #
 sub _write_trendline_lbl {
 
-    my $self = shift;
+    my $self      = shift;
+    my $trendline = shift;
 
     $self->xml_start_tag( 'c:trendlineLbl' );
 
@@ -5470,6 +5536,14 @@ sub _write_trendline_lbl {
 
     # Write the c:numFmt element.
     $self->_write_trendline_num_fmt();
+
+    # Write the c:spPr element for the label formatting.
+    $self->_write_sp_pr( $trendline->{_label} );
+
+    # Write the data label font elements.
+    if ($trendline->{_label}->{font} ) {
+        $self->_write_axis_font( $trendline->{_label}->{font} );
+    }
 
     $self->xml_end_tag( 'c:trendlineLbl' );
 }
