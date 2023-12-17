@@ -232,6 +232,7 @@ sub xml_data_element {
     }
 
     $data = _escape_data( $data );
+    $data = _escape_control_characters( $data );
 
     local $\ = undef;
     print { $self->{_fh} } "<$tag>$data</$end_tag>";
@@ -489,6 +490,29 @@ sub _escape_data {
         s/</&lt;/g;
         s/>/&gt;/g;
     }
+
+    return $str;
+}
+
+
+###############################################################################
+#
+# _escape_control_characters()
+#
+# Excel escapes control characters with _xHHHH_ and also escapes any
+# literal strings of that type by encoding the leading underscore. So
+# "\0" -> _x0000_ and "_x0000_" -> _x005F_x0000_.
+# The following substitutions deal with those cases.
+#
+sub _escape_control_characters {
+
+    my $str = $_[0];
+
+    # Escape the escape.
+    $str =~ s/(_x[0-9a-fA-F]{4}_)/_x005F$1/g;
+
+    # Convert control character to the _xHHHH_ escape.
+    $str =~ s/([\x00-\x08\x0B-\x1F])/sprintf "_x%04X_", ord($1)/eg;
 
     return $str;
 }
