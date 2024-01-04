@@ -2,7 +2,9 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -64,13 +66,13 @@ $worksheet->add_table(
         columns => [
             { total_string => 'Total' },
             {},
-            { total_function => 'Average' },
-            { total_function => 'COUNT' },
+            { total_function => 'average' },
+            { total_function => 'count' },
             { total_function => 'count_nums' },
             { total_function => 'max' },
             { total_function => 'min' },
             { total_function => 'sum' },
-            { total_function => 'std Dev' },
+            { total_function => 'std_dev' },
             { total_function => 'var' }
           ],
     }

@@ -6,7 +6,9 @@
 # hide rows without setting each one, (of approximately 1 million rows),
 # Excel uses an optimisation to hide all rows that don't have data.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use strict;

@@ -2,7 +2,9 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -34,7 +36,7 @@ use Excel::Writer::XLSX;
 my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
-$worksheet->write_dynamic_array_formula( 'A1:A1', '=AVERAGE(TIMEVALUE(B1:B2))', undef, 0 );
+$worksheet->write_dynamic_array_formula( 'A1', '=AVERAGE(TIMEVALUE(B1:B2))', undef, 0 );
 $worksheet->write( 'B1', '12:00' );
 $worksheet->write( 'B2', '12:00' );
 

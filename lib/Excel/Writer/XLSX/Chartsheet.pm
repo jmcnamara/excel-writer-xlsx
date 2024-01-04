@@ -6,7 +6,9 @@ package Excel::Writer::XLSX::Chartsheet;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -20,7 +22,7 @@ use Exporter;
 use Excel::Writer::XLSX::Worksheet;
 
 our @ISA     = qw(Excel::Writer::XLSX::Worksheet);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 
 ###############################################################################
@@ -93,6 +95,9 @@ sub _assemble_xml_file {
     # Write the drawing element.
     $self->_write_drawings();
 
+    # Write the legacyDrawingHF element.
+    $self->_write_legacy_drawing_hf();
+
     # Close the worksheet tag.
     $self->xml_end_tag( 'chartsheet' );
 
@@ -152,24 +157,25 @@ sub protect {
 #
 ###############################################################################
 
-sub add_series         { return shift->{_chart}->add_series( @_ ) }
-sub combine            { return shift->{_chart}->combine( @_ ) }
-sub set_x_axis         { return shift->{_chart}->set_x_axis( @_ ) }
-sub set_y_axis         { return shift->{_chart}->set_y_axis( @_ ) }
-sub set_x2_axis        { return shift->{_chart}->set_x2_axis( @_ ) }
-sub set_y2_axis        { return shift->{_chart}->set_y2_axis( @_ ) }
-sub set_title          { return shift->{_chart}->set_title( @_ ) }
-sub set_legend         { return shift->{_chart}->set_legend( @_ ) }
-sub set_plotarea       { return shift->{_chart}->set_plotarea( @_ ) }
-sub set_chartarea      { return shift->{_chart}->set_chartarea( @_ ) }
-sub set_style          { return shift->{_chart}->set_style( @_ ) }
-sub show_blanks_as     { return shift->{_chart}->show_blanks_as( @_ ) }
-sub show_hidden_data   { return shift->{_chart}->show_hidden_data( @_ ) }
-sub set_size           { return shift->{_chart}->set_size( @_ ) }
-sub set_table          { return shift->{_chart}->set_table( @_ ) }
-sub set_up_down_bars   { return shift->{_chart}->set_up_down_bars( @_ ) }
-sub set_drop_lines     { return shift->{_chart}->set_drop_lines( @_ ) }
-sub set_high_low_lines { return shift->{_chart}->high_low_lines( @_ ) }
+sub add_series            { return shift->{_chart}->add_series( @_ ) }
+sub combine               { return shift->{_chart}->combine( @_ ) }
+sub set_x_axis            { return shift->{_chart}->set_x_axis( @_ ) }
+sub set_y_axis            { return shift->{_chart}->set_y_axis( @_ ) }
+sub set_x2_axis           { return shift->{_chart}->set_x2_axis( @_ ) }
+sub set_y2_axis           { return shift->{_chart}->set_y2_axis( @_ ) }
+sub set_title             { return shift->{_chart}->set_title( @_ ) }
+sub set_legend            { return shift->{_chart}->set_legend( @_ ) }
+sub set_plotarea          { return shift->{_chart}->set_plotarea( @_ ) }
+sub set_chartarea         { return shift->{_chart}->set_chartarea( @_ ) }
+sub set_style             { return shift->{_chart}->set_style( @_ ) }
+sub show_blanks_as        { return shift->{_chart}->show_blanks_as( @_ ) }
+sub show_na_as_empty_cell { return shift->{_chart}->show_na_as_empty_cell( @_ ) }
+sub show_hidden_data      { return shift->{_chart}->show_hidden_data( @_ ) }
+sub set_size              { return shift->{_chart}->set_size( @_ ) }
+sub set_table             { return shift->{_chart}->set_table( @_ ) }
+sub set_up_down_bars      { return shift->{_chart}->set_up_down_bars( @_ ) }
+sub set_drop_lines        { return shift->{_chart}->set_drop_lines( @_ ) }
+sub set_high_low_lines    { return shift->{_chart}->high_low_lines( @_ ) }
 
 
 
@@ -290,13 +296,13 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXI, John McNamara.
+(c) MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
 =head1 LICENSE
 
-Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> or the GPL L<http://www.opensource.org/licenses/gpl-license.php>.
+Either the Perl Artistic Licence L<https://dev.perl.org/licenses/artistic.html> or the GNU General Public License v1.0 or later L<https://dev.perl.org/licenses/gpl1.html>.
 
 =head1 DISCLAIMER OF WARRANTY
 

@@ -2,7 +2,9 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -21,17 +23,8 @@ my $dir          = 't/regression/';
 my $got_filename = $dir . "ewx_$filename";
 my $exp_filename = $dir . 'xlsx_files/' . $filename;
 
-my $ignore_members = [
-    qw(
-      xl/printerSettings/printerSettings1.bin
-      xl/worksheets/_rels/sheet1.xml.rels
-      )
-];
-
-my $ignore_elements = {
-    '[Content_Types].xml'      => ['<Default Extension="bin"'],
-    'xl/worksheets/sheet1.xml' => ['<pageMargins', '<pageSetup'],
-};
+my $ignore_members = [];
+my $ignore_elements = {};
 
 
 ###############################################################################
@@ -44,6 +37,10 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 $worksheet->set_page_view();
+
+# Options to match automatic page setup.
+$worksheet->set_paper(9);
+$worksheet->{_vertical_dpi} = 200;
 
 $worksheet->write( 'A1', 'Foo' );
 

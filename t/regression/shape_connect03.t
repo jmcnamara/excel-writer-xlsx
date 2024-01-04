@@ -2,7 +2,9 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -74,7 +76,7 @@ $cxn_shape->set_end ( $p3->get_id() );
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
 $cxn_shape->set_end ( $p4->get_id() );
-$cxn_shape->set_adjustments(-50, 45, 120);    
+$cxn_shape->set_adjustments(-50, 45, 120);
 $worksheet->insert_shape('A1', $cxn_shape, 0, 0);
 
 $workbook->close();

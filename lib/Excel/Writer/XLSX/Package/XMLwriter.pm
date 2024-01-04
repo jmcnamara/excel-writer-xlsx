@@ -6,7 +6,9 @@ package Excel::Writer::XLSX::Package::XMLwriter;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -21,7 +23,7 @@ use Carp;
 use IO::File;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 #
 # NOTE: this module is a light weight re-implementation of XML::Writer. See
@@ -230,6 +232,7 @@ sub xml_data_element {
     }
 
     $data = _escape_data( $data );
+    $data = _escape_control_characters( $data );
 
     local $\ = undef;
     print { $self->{_fh} } "<$tag>$data</$end_tag>";
@@ -492,6 +495,29 @@ sub _escape_data {
 }
 
 
+###############################################################################
+#
+# _escape_control_characters()
+#
+# Excel escapes control characters with _xHHHH_ and also escapes any
+# literal strings of that type by encoding the leading underscore. So
+# "\0" -> _x0000_ and "_x0000_" -> _x005F_x0000_.
+# The following substitutions deal with those cases.
+#
+sub _escape_control_characters {
+
+    my $str = $_[0];
+
+    # Escape the escape.
+    $str =~ s/(_x[0-9a-fA-F]{4}_)/_x005F$1/g;
+
+    # Convert control character to the _xHHHH_ escape.
+    $str =~ s/([\x00-\x08\x0B-\x1F])/sprintf "_x%04X_", ord($1)/eg;
+
+    return $str;
+}
+
+
 1;
 
 
@@ -519,13 +545,13 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXI, John McNamara.
+(c) MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
 =head1 LICENSE
 
-Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> or the GPL L<http://www.opensource.org/licenses/gpl-license.php>.
+Either the Perl Artistic Licence L<https://dev.perl.org/licenses/artistic.html> or the GNU General Public License v1.0 or later L<https://dev.perl.org/licenses/gpl1.html>.
 
 =head1 DISCLAIMER OF WARRANTY
 

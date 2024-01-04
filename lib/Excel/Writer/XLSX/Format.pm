@@ -7,7 +7,9 @@ package Excel::Writer::XLSX::Format;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -20,7 +22,7 @@ use Carp;
 
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 our $AUTOLOAD;
 
 
@@ -105,6 +107,8 @@ sub new {
         _just_distrib  => 0,
         _color_indexed => 0,
         _font_only     => 0,
+
+        _quote_prefix  => 0,
 
     };
 
@@ -261,7 +265,8 @@ sub get_format_key {
         $self->get_font_key(), $self->get_border_key,
         $self->get_fill_key(), $self->get_alignment_key(),
         $self->{_num_format},  $self->{_locked},
-        $self->{_hidden}
+        $self->{_hidden},
+        $self->{_quote_prefix},
       );
 
     return $key;
@@ -442,25 +447,26 @@ sub get_dxf_index {
 sub _get_color {
 
     my %colors = (
-        aqua    => 0x0F,
-        cyan    => 0x0F,
-        black   => 0x08,
-        blue    => 0x0C,
-        brown   => 0x10,
-        magenta => 0x0E,
-        fuchsia => 0x0E,
-        gray    => 0x17,
-        grey    => 0x17,
-        green   => 0x11,
-        lime    => 0x0B,
-        navy    => 0x12,
-        orange  => 0x35,
-        pink    => 0x21,
-        purple  => 0x14,
-        red     => 0x0A,
-        silver  => 0x16,
-        white   => 0x09,
-        yellow  => 0x0D,
+        aqua       => 0x0F,
+        cyan       => 0x0F,
+        black      => 0x08,
+        blue       => 0x0C,
+        brown      => 0x10,
+        magenta    => 0x0E,
+        fuchsia    => 0x0E,
+        gray       => 0x17,
+        grey       => 0x17,
+        green      => 0x11,
+        lime       => 0x0B,
+        navy       => 0x12,
+        orange     => 0x35,
+        pink       => 0x21,
+        purple     => 0x14,
+        red        => 0x0A,
+        silver     => 0x16,
+        white      => 0x09,
+        yellow     => 0x0D,
+        automatic  => 0x40,
     );
 
     # Return the default color if undef,
@@ -812,6 +818,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXI, John McNamara.
+(c) MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

@@ -6,7 +6,9 @@ package Excel::Writer::XLSX::Package::Packager;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -33,7 +35,7 @@ use Excel::Writer::XLSX::Package::Theme;
 use Excel::Writer::XLSX::Package::VML;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 
 ###############################################################################
@@ -394,17 +396,23 @@ sub _write_app_file {
 
     _mkdir( $dir . '/docProps' );
 
+    # Add the Worksheet parts.
+    my $worksheet_count = 0;
+    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
+        next if $worksheet->{_is_chartsheet};
+
+        # Don't write/count veryHidden sheets.
+        next if $worksheet->{_hidden} == 2;
+
+        $app->_add_part_name( $worksheet->get_name() );
+        $worksheet_count++;
+    }
+
     # Add the Worksheet heading pairs.
-    $app->_add_heading_pair( [ 'Worksheets', $self->{_worksheet_count} ] );
+    $app->_add_heading_pair( [ 'Worksheets', $worksheet_count ] );
 
     # Add the Chartsheet heading pairs.
     $app->_add_heading_pair( [ 'Charts', $self->{_chartsheet_count} ] );
-
-    # Add the Worksheet parts.
-    for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
-        next if $worksheet->{_is_chartsheet};
-        $app->_add_part_name( $worksheet->get_name() );
-    }
 
     # Add the Chartsheet parts.
     for my $worksheet ( @{ $self->{_workbook}->{_worksheets} } ) {
@@ -578,7 +586,7 @@ sub _write_styles_file {
     my $xf_formats         = $self->{_workbook}->{_xf_formats};
     my $palette            = $self->{_workbook}->{_palette};
     my $font_count         = $self->{_workbook}->{_font_count};
-    my $num_format_count   = $self->{_workbook}->{_num_format_count};
+    my $num_formats        = $self->{_workbook}->{_num_formats};
     my $border_count       = $self->{_workbook}->{_border_count};
     my $fill_count         = $self->{_workbook}->{_fill_count};
     my $custom_colors      = $self->{_workbook}->{_custom_colors};
@@ -593,7 +601,7 @@ sub _write_styles_file {
         $xf_formats,
         $palette,
         $font_count,
-        $num_format_count,
+        $num_formats,
         $border_count,
         $fill_count,
         $custom_colors,
@@ -771,8 +779,8 @@ sub _write_worksheet_rels_files {
             @{ $worksheet->{_external_hyper_links} },
             @{ $worksheet->{_external_drawing_links} },
             @{ $worksheet->{_external_vml_links} },
-            @{ $worksheet->{_external_table_links} },
             @{ $worksheet->{_external_background_links} },
+            @{ $worksheet->{_external_table_links} },
             @{ $worksheet->{_external_comment_links} },
         );
 
@@ -816,7 +824,10 @@ sub _write_chartsheet_rels_files {
 
         $index++;
 
-        my @external_links = @{ $worksheet->{_external_drawing_links} };
+        my @external_links = (
+            @{ $worksheet->{_external_drawing_links} },
+            @{ $worksheet->{_external_vml_links} },
+        );
 
         next unless @external_links;
 
@@ -1032,13 +1043,13 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXI, John McNamara.
+(c) MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 
 =head1 LICENSE
 
-Either the Perl Artistic Licence L<http://dev.perl.org/licenses/artistic.html> or the GPL L<http://www.opensource.org/licenses/gpl-license.php>.
+Either the Perl Artistic Licence L<https://dev.perl.org/licenses/artistic.html> or the GNU General Public License v1.0 or later L<https://dev.perl.org/licenses/gpl1.html>.
 
 =head1 DISCLAIMER OF WARRANTY
 

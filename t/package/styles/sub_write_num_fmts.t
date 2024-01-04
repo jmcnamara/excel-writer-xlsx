@@ -2,7 +2,9 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -62,7 +64,7 @@ $num_format_count = 1;
 $got = ''; # Since it was previously undef.
 
 $style = _new_style( \$got );
-$style->_set_style_properties( \@formats, undef,  undef, $num_format_count );
+$style->_set_style_properties( \@formats, undef,  undef, ['#,##0.0'] );
 
 $style->_write_num_fmts();
 

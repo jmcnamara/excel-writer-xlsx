@@ -7,7 +7,9 @@ package Excel::Writer::XLSX::Workbook;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -34,7 +36,7 @@ use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 
 ###############################################################################
@@ -81,7 +83,7 @@ sub new {
     $self->{_dxf_format_indices} = {};
     $self->{_palette}            = [];
     $self->{_font_count}         = 0;
-    $self->{_num_format_count}   = 0;
+    $self->{_num_formats}        = [];
     $self->{_defined_names}      = [];
     $self->{_named_ranges}       = [];
     $self->{_custom_colors}      = [];
@@ -1212,8 +1214,13 @@ sub _store_workbook {
 
     # Store the xlsx component files with the temp dir name removed.
     for my $filename ( @xlsx_files ) {
-        my $short_name = $filename;
-        $short_name =~ s{^\Q$tempdir\E/?}{};
+        # Standardise the Windows paths.
+        (my $short_name = $filename) =~ s{\\}{/}g;
+        (my $prefix = $tempdir)      =~ s{\\}{/}g;
+
+        # Get the zip subfile name without the tempdir path.
+        $short_name =~ s{^\Q$prefix\E/?}{};
+
         my $member = $zip->addFile( $filename, $short_name );
 
         # Set the file member datetime to 1980-01-01 00:00:00 like Excel so
@@ -1416,7 +1423,8 @@ sub _prepare_num_formats {
 
     my $self = shift;
 
-    my %num_formats;
+    my @num_formats = ();
+    my %unique_num_formats;
     my $index            = 164;
     my $num_format_count = 0;
 
@@ -1431,7 +1439,7 @@ sub _prepare_num_formats {
         if ( $num_format =~ m/^\d+$/ && $num_format !~ m/^0+\d/ ) {
 
             # Number format '0' is indexed as 1 in Excel.
-            if ($num_format == 0) {
+            if ( $num_format == 0 ) {
                 $num_format = 1;
             }
 
@@ -1439,33 +1447,34 @@ sub _prepare_num_formats {
             $format->{_num_format_index} = $num_format;
             next;
         }
-        elsif ( $num_format  eq 'General' ) {
+        elsif ( $num_format eq 'General' ) {
+
             # The 'General' format has an number format index of 0.
             $format->{_num_format_index} = 0;
             next;
         }
 
-
-        if ( exists( $num_formats{$num_format} ) ) {
+        if ( exists( $unique_num_formats{$num_format} ) ) {
 
             # Number format has already been used.
-            $format->{_num_format_index} = $num_formats{$num_format};
+            $format->{_num_format_index} = $unique_num_formats{$num_format};
         }
         else {
-
             # Add a new number format.
-            $num_formats{$num_format} = $index;
+            $unique_num_formats{$num_format} = $index;
             $format->{_num_format_index} = $index;
             $index++;
 
-            # Only increase font count for XF formats (not for DXF formats).
+            # Only store/increase number format count for XF formats (not for
+            # DXF formats).
             if ( $format->{_xf_index} ) {
+                push @num_formats, $num_format;
                 $num_format_count++;
             }
         }
     }
 
-    $self->{_num_format_count} = $num_format_count;
+    $self->{_num_formats} = \@num_formats;
 }
 
 
@@ -2778,9 +2787,15 @@ sub _write_sheet {
         'sheetId' => $sheet_id,
     );
 
-    push @attributes, ( 'state' => 'hidden' ) if $hidden;
-    push @attributes, ( 'r:id' => $r_id );
+    if ( $hidden == 1 ) {
+        push @attributes, ( 'state' => 'hidden' );
+    }
+    elsif ( $hidden == 2 ) {
+        push @attributes, ( 'state' => 'veryHidden' );
+    }
 
+
+    push @attributes, ( 'r:id' => $r_id );
 
     $self->xml_empty_tag( 'sheet', @attributes );
 }
@@ -2943,6 +2958,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXI, John McNamara.
+(c) MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

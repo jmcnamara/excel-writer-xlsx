@@ -15,6 +15,7 @@ stats.pl                Basic formulas and functions.
 
 Intermediate
 ============
+autofit.pl              Examples of simulated worksheet autofit.
 autofilter.pl           Examples of worksheet autofilters.
 array_formula.pl        Examples of how to write array formulas.
 cgi.pl                  A simple CGI program.
@@ -44,6 +45,7 @@ data_validate.pl        An example of data validation and dropdown lists.
 date_time.pl            Write dates and times with write_date_time().
 defined_name.pl         Example of how to create defined names.
 diag_border.pl          A simple example of diagonal cell borders.
+dynamic_arrays.pl       Example of using new Excel 365 dynamic functions.
 filehandle.pl           Examples of working with filehandles.
 headers.pl              Examples of worksheet headers and footers.
 hide_row_col.pl         Example of hiding rows and columns.
@@ -52,6 +54,7 @@ hyperlink1.pl           Shows how to create web hyperlinks.
 hyperlink2.pl           Examples of internal and external hyperlinks.
 indent.pl               An example of cell indentation.
 ignore_errors.pl        An example of turning off worksheet cells errors/warnings.
+lambda.pl               Example of using the Excel 365 LAMBDA() function.
 macros.pl               An example of adding macros from an existing file.
 merge1.pl               A simple example of cell merging.
 merge2.pl               A simple example of cell merging with formatting.
@@ -82,6 +85,7 @@ sparklines1.pl          Simple sparklines demo.
 sparklines2.pl          Sparklines demo showing formatting options.
 stats_ext.pl            Same as stats.pl with external references.
 stocks.pl               Demonstrates conditional formatting.
+watermark.pl            Example of how to set a watermark image for a worksheet.
 background.pl           Example of how to set the background image for a worksheet.
 tab_colors.pl           Example of how to set worksheet tab colours.
 tables.pl               Add Excel tables to a worksheet.

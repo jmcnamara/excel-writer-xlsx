@@ -7,7 +7,9 @@ package Excel::Writer::XLSX::Chart;
 #
 # Used in conjunction with Excel::Writer::XLSX.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 # Documentation after __END__
 #
@@ -27,7 +29,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
   quote_sheetname );
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 
 ###############################################################################
@@ -95,6 +97,7 @@ sub new {
     $self->{_x2_axis}           = {};
     $self->{_chart_name}        = '';
     $self->{_show_blanks}       = 'gap';
+    $self->{_show_na_as_empty}  = 0;
     $self->{_show_hidden_data}  = 0;
     $self->{_show_crosses}      = 1;
     $self->{_width}             = 480;
@@ -255,7 +258,8 @@ sub add_series {
     my $labels = $self->_get_labels_properties( $arg{data_labels} );
 
     # Set the "invert if negative" fill property.
-    my $invert_if_neg = $arg{invert_if_negative};
+    my $invert_if_neg  = $arg{invert_if_negative};
+    my $inverted_color = $arg{invert_if_negative_color};
 
     # Set the secondary axis properties.
     my $x2_axis = $arg{x2_axis};
@@ -288,25 +292,26 @@ sub add_series {
 
     # Add the user supplied data to the internal structures.
     %arg = (
-        _values        => $values,
-        _categories    => $categories,
-        _name          => $name,
-        _name_formula  => $name_formula,
-        _name_id       => $name_id,
-        _val_data_id   => $val_id,
-        _cat_data_id   => $cat_id,
-        _line          => $line,
-        _fill          => $fill,
-        _pattern       => $pattern,
-        _gradient      => $gradient,
-        _marker        => $marker,
-        _trendline     => $trendline,
-        _smooth        => $smooth,
-        _labels        => $labels,
-        _invert_if_neg => $invert_if_neg,
-        _x2_axis       => $x2_axis,
-        _y2_axis       => $y2_axis,
-        _points        => $points,
+        _values         => $values,
+        _categories     => $categories,
+        _name           => $name,
+        _name_formula   => $name_formula,
+        _name_id        => $name_id,
+        _val_data_id    => $val_id,
+        _cat_data_id    => $cat_id,
+        _line           => $line,
+        _fill           => $fill,
+        _pattern        => $pattern,
+        _gradient       => $gradient,
+        _marker         => $marker,
+        _trendline      => $trendline,
+        _smooth         => $smooth,
+        _labels         => $labels,
+        _invert_if_neg  => $invert_if_neg,
+        _inverted_color => $inverted_color,
+        _x2_axis        => $x2_axis,
+        _y2_axis        => $y2_axis,
+        _points         => $points,
         _error_bars =>
           { _x_error_bars => $x_error_bars, _y_error_bars => $y_error_bars },
     );
@@ -470,7 +475,7 @@ sub set_style {
     my $self = shift;
     my $style_id = defined $_[0] ? $_[0] : 2;
 
-    if ( $style_id < 0 || $style_id > 48 ) {
+    if ( $style_id < 1 || $style_id > 48 ) {
         $style_id = 2;
     }
 
@@ -504,6 +509,21 @@ sub show_blanks_as {
     }
 
     $self->{_show_blanks} = $option;
+}
+
+
+
+###############################################################################
+#
+# show_na_as_empty_cell()
+#
+# Set the option for displaying #N/A as an empty cell in a chart.
+#
+sub show_na_as_empty_cell {
+
+    my $self   = shift;
+
+    $self->{_show_na_as_empty} = 1;
 }
 
 
@@ -996,6 +1016,35 @@ sub _get_color {
     }
 
     return $self->_get_palette_color( $index );
+}
+
+###############################################################################
+#
+# _get_color_or_undef()
+#
+# Convert the user specified colour index or string to a rgb colour.
+#
+sub _get_color_or_undef {
+
+    my $self  = shift;
+    my $color = shift;
+
+    # Convert a HTML style #RRGGBB color.
+    if ( defined $color and $color =~ /^#[0-9a-fA-F]{6}$/ ) {
+        $color =~ s/^#//;
+        return uc $color;
+    }
+
+    my $index = &Excel::Writer::XLSX::Format::_get_color( $color );
+
+
+    if ( $index ) {
+        return $self->_get_palette_color( $index );
+    }
+    else {
+        warn "Unknown color '$color' used in chart formatting.\n";
+        return undef;
+    }
 }
 
 
@@ -1508,6 +1557,7 @@ sub _get_trendline_properties {
         return;
     }
 
+
     # Set the line properties for the trendline..
     my $line = $self->_get_line_properties( $trendline->{line} );
 
@@ -1519,11 +1569,14 @@ sub _get_trendline_properties {
     # Set the fill properties for the trendline.
     my $fill = $self->_get_fill_properties( $trendline->{fill} );
 
-    # Set the pattern properties for the series.
+    # Set the pattern properties for the trendline.
     my $pattern = $self->_get_pattern_properties( $trendline->{pattern} );
 
-    # Set the gradient fill properties for the series.
+    # Set the gradient fill properties for the trendline.
     my $gradient = $self->_get_gradient_properties( $trendline->{gradient} );
+
+    # Set the format properties for the trendline label.
+    my $label = $self->_get_trendline_label_properties( $trendline->{label} );
 
     # Pattern fill overrides solid fill.
     if ( $pattern ) {
@@ -1540,8 +1593,69 @@ sub _get_trendline_properties {
     $trendline->{_fill}     = $fill;
     $trendline->{_pattern}  = $pattern;
     $trendline->{_gradient} = $gradient;
+    $trendline->{_label}    = $label;
 
     return $trendline;
+}
+
+
+###############################################################################
+#
+# _get_trendline_label_properties()
+#
+# Convert user defined trendline label properties to the structure required
+# internally.
+#
+sub _get_trendline_label_properties {
+
+    my $self  = shift;
+    my $label = shift;
+
+    return if !$label && ref $label ne 'HASH';
+
+    # Copy the user supplied properties.
+    $label = {%$label};
+
+    # Set the font properties for the label.
+    if ($label->{font}) {
+        $label->{font} = $self->_convert_font_args( $label->{font} );
+    }
+
+
+    # Set the line properties for the label.
+    my $line = $self->_get_line_properties( $label->{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $label->{border} ) {
+        $line = $self->_get_line_properties( $label->{border} );
+    }
+
+    # Set the fill properties for the label.
+    my $fill = $self->_get_fill_properties( $label->{fill} );
+
+    # Set the pattern properties for the label.
+    my $pattern = $self->_get_pattern_properties( $label->{pattern} );
+
+    # Set the gradient fill properties for the label.
+    my $gradient = $self->_get_gradient_properties( $label->{gradient} );
+
+    # Pattern fill overrides solid fill.
+    if ( $pattern ) {
+        $fill = undef;
+    }
+
+    # Gradient fill overrides solid and pattern fills.
+    if ( $gradient ) {
+        $pattern = undef;
+        $fill    = undef;
+    }
+
+    $label->{_line}     = $line;
+    $label->{_fill}     = $fill;
+    $label->{_pattern}  = $pattern;
+    $label->{_gradient} = $gradient;
+
+    return $label;
 }
 
 
@@ -2498,6 +2612,12 @@ sub _write_chart {
     # Write the c:dispBlanksAs element.
     $self->_write_disp_blanks_as();
 
+
+    if ( $self->{_show_na_as_empty} ) {
+        # Write the c:extLst element.
+        $self->_write_ext_lst_display_na();
+    }
+
     $self->xml_end_tag( 'c:chart' );
 }
 
@@ -2778,7 +2898,81 @@ sub _write_ser {
         $self->_write_c_smooth( $series->{_smooth} );
     }
 
+    if ( $series->{_inverted_color} ) {
+        # Write the c:extLst element.
+        $self->_write_ext_lst_inverted_fill( $series->{_inverted_color} );
+    }
+
+
     $self->xml_end_tag( 'c:ser' );
+}
+
+
+##############################################################################
+#
+# _write_ext_lst_inverted_fill()
+#
+# Write the <c:extLst> element for the inverted fill color.
+#
+sub _write_ext_lst_inverted_fill {
+
+    my $self  = shift;
+    my $color = shift;
+
+    my $uri        = '{6F2FDCE9-48DA-4B69-8628-5D25D57E5C99}';
+    my $xmlns_c_14 = 'http://schemas.microsoft.com/office/drawing/2007/8/2/chart';
+
+
+    my @attributes1 = (
+        'uri'       => $uri,
+        'xmlns:c14' => $xmlns_c_14,
+    );
+
+    my @attributes2 = ( 'xmlns:c14' => $xmlns_c_14 );
+
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_start_tag( 'c14:invertSolidFillFmt' );
+    $self->xml_start_tag( 'c14:spPr', @attributes2 );
+
+    $self->_write_a_solid_fill( { color => $color } );
+
+    $self->xml_end_tag( 'c14:spPr' );
+    $self->xml_end_tag( 'c14:invertSolidFillFmt' );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
+}
+
+
+##############################################################################
+#
+# _write_ext_lst_display_na()
+#
+# Write the <c:extLst> element for the display N/A as empty cell option.
+#
+sub _write_ext_lst_display_na {
+
+    my $self  = shift;
+    my $color = shift;
+
+    my $uri        = '{56B9EC1D-385E-4148-901F-78D8002777C0}';
+    my $xmlns_c_16 = 'http://schemas.microsoft.com/office/drawing/2017/03/chart';
+
+    my @attributes1 = (
+        'uri'         => $uri,
+        'xmlns:c16r3' => $xmlns_c_16,
+    );
+
+    my @attributes2 = ( 'val' => 1 );
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_start_tag( 'c16r3:dataDisplayOptions16' );
+    $self->xml_empty_tag( 'c16r3:dispNaAsBlank', @attributes2 );
+    $self->xml_end_tag( 'c16r3:dataDisplayOptions16' );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
 }
 
 
@@ -4969,7 +5163,9 @@ sub _write_a_ln {
     my @attributes = ();
 
     # Add the line width as an attribute.
-    if ( my $width = $line->{width} ) {
+    if ( defined $line->{width} ) {
+
+        my $width = $line->{width};
 
         # Round width to nearest 0.25, like Excel.
         $width = int( ( $width + 0.125 ) * 4 ) / 4;
@@ -4980,29 +5176,37 @@ sub _write_a_ln {
         @attributes = ( 'w' => $width );
     }
 
-    $self->xml_start_tag( 'a:ln', @attributes );
+    if ( $line->{none} || $line->{color} || $line->{dash_type} ) {
 
-    # Write the line fill.
-    if ( $line->{none} ) {
+        $self->xml_start_tag( 'a:ln', @attributes );
 
-        # Write the a:noFill element.
-        $self->_write_a_no_fill();
+        # Write the line fill.
+        if ( $line->{none} ) {
+
+            # Write the a:noFill element.
+            $self->_write_a_no_fill();
+        }
+        elsif ( $line->{color} ) {
+
+            # Write the a:solidFill element.
+            $self->_write_a_solid_fill( $line );
+        }
+
+        # Write the line/dash type.
+        if ( my $type = $line->{dash_type} ) {
+
+            # Write the a:prstDash element.
+            $self->_write_a_prst_dash( $type );
+        }
+
+
+        $self->xml_end_tag( 'a:ln' );
     }
-    elsif ( $line->{color} ) {
-
-        # Write the a:solidFill element.
-        $self->_write_a_solid_fill( $line );
+    else {
+        $self->xml_empty_tag( 'a:ln', @attributes );
     }
-
-    # Write the line/dash type.
-    if ( my $type = $line->{dash_type} ) {
-
-        # Write the a:prstDash element.
-        $self->_write_a_prst_dash( $type );
-    }
-
-    $self->xml_end_tag( 'a:ln' );
 }
+
 
 
 ##############################################################################
@@ -5163,7 +5367,7 @@ sub _write_trendline {
         $self->_write_disp_eq();
 
         # Write the c:trendlineLbl element.
-        $self->_write_trendline_lbl();
+        $self->_write_trendline_lbl( $trendline );
     }
 
     $self->xml_end_tag( 'c:trendline' );
@@ -5332,7 +5536,8 @@ sub _write_disp_rsqr {
 #
 sub _write_trendline_lbl {
 
-    my $self = shift;
+    my $self      = shift;
+    my $trendline = shift;
 
     $self->xml_start_tag( 'c:trendlineLbl' );
 
@@ -5341,6 +5546,14 @@ sub _write_trendline_lbl {
 
     # Write the c:numFmt element.
     $self->_write_trendline_num_fmt();
+
+    # Write the c:spPr element for the label formatting.
+    $self->_write_sp_pr( $trendline->{_label} );
+
+    # Write the data label font elements.
+    if ($trendline->{_label}->{font} ) {
+        $self->_write_axis_font( $trendline->{_label}->{font} );
+    }
 
     $self->xml_end_tag( 'c:trendlineLbl' );
 }
@@ -5956,16 +6169,32 @@ sub _write_separator {
 #
 # _write_show_leader_lines()
 #
-# Write the <c:showLeaderLines> element.
+# Write the <c:showLeaderLines> element. This is different for Pie/Doughnut
+# charts. Other chart types only supported leader lines after Excel 2015 via
+# an extension element.
 #
 sub _write_show_leader_lines {
 
-    my $self = shift;
-    my $val  = 1;
+    my $self  = shift;
+    my $color = shift;
 
-    my @attributes = ( 'val' => $val );
+    my $uri        = '{CE6537A1-D6FC-4f65-9D91-7224C49458BB}';
+    my $xmlns_c_15 = 'http://schemas.microsoft.com/office/drawing/2012/chart';
 
-    $self->xml_empty_tag( 'c:showLeaderLines', @attributes );
+
+    my @attributes1 = (
+        'uri'       => $uri,
+        'xmlns:c15' => $xmlns_c_15,
+    );
+
+    my @attributes2 = ( 'val' => 1 );
+
+
+    $self->xml_start_tag( 'c:extLst' );
+    $self->xml_start_tag( 'c:ext', @attributes1 );
+    $self->xml_empty_tag( 'c15:showLeaderLines', @attributes2 );
+    $self->xml_end_tag( 'c:ext' );
+    $self->xml_end_tag( 'c:extLst' );
 }
 
 
@@ -7772,6 +8001,11 @@ The available options are:
         span   # Blank data is connected with a line.
 
 
+=head2 show_na_as_empty_cell()
+
+The C<show_na_as_empty_cell()> method enables the option to display C<#N/A> as a blank cell in a chart.
+
+
 =head2 show_hidden_data()
 
 Display data in hidden rows or columns on the chart.
@@ -8409,7 +8643,7 @@ The following properties can be set for C<line> formats in a chart.
     transparency
 
 
-The C<none> property is uses to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
+The C<none> property is used to turn the C<line> off (it is always on by default except in Scatter charts). This is useful if you wish to plot a series with markers but without a line.
 
     $chart->add_series(
         values     => '=Sheet1!$B$1:$B$5',
@@ -9187,6 +9421,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-Copyright MM-MMXXI, John McNamara.
+Copyright MM-MMXXIII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

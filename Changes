@@ -5,6 +5,31 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+1.11 2023-03-19
+
+    + Added support for simulated worksheet `autofit()`.
+
+    + Refactored internal column property handling to allow column ranges
+      to be overridden (a common UX expectation).
+
+    + Add `quote_prefix` format property.
+
+    ! Add fix for forward/backward slash issue on Windows perl builds.
+      Possibly introduced by a change in File::Find. Issue #284
+
+    ! Fix for duplicate number formats. Issue #283
+
+    ! Add fix for worksheets with tables and background images.
+
+    ! Replace/fix the worksheet protection password algorithm
+      so that is works correctly for strings over 24 chars.
+
+
+1.10 2022-12-30
+
+    + Add support for new Excel 365 dynamic functions.
+
+
 1.09 2021-05-14
 
     + Added support for background images in worksheets. See set_background().

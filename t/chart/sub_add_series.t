@@ -2,7 +2,9 @@
 #
 # Tests for Excel::Writer::XLSX::Chart methods.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -48,6 +50,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => undef,
     _y2_axis       => undef,
 };
@@ -86,6 +89,7 @@ $expected = [
         _points        => undef,
         _labels        => undef,
         _invert_if_neg => undef,
+        _inverted_color=> undef,
         _x2_axis       => undef,
         _y2_axis       => undef,
     }
@@ -129,6 +133,7 @@ $expected = [
         _points        => undef,
         _labels        => undef,
         _invert_if_neg => undef,
+        _inverted_color=> undef,
         _x2_axis       => undef,
         _y2_axis       => undef,
     }
@@ -167,6 +172,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => undef,
     _y2_axis       => undef,
 };
@@ -208,6 +214,7 @@ $expected = {
     _points        => undef,
     _labels        => undef,
     _invert_if_neg => undef,
+    _inverted_color=> undef,
     _x2_axis       => 1,
     _y2_axis       => 1,
 };

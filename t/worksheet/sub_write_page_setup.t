@@ -2,7 +2,9 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -10,7 +12,7 @@ use TestFunctions '_new_worksheet';
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 
 ###############################################################################
@@ -96,6 +98,22 @@ $worksheet->print_across();
 $worksheet->_write_page_setup();
 
 is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the _write_page_setup() method. With black_and_white();
+#
+$caption  = " \tWorksheet: _write_page_setup()";
+$expected = '<pageSetup orientation="portrait" blackAndWhite="1"/>';
+
+$worksheet = _new_worksheet(\$got);
+$worksheet->print_black_and_white();
+
+$worksheet->_write_page_setup();
+
+is( $got, $expected, $caption );
+
 
 __END__
 

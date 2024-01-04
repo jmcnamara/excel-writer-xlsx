@@ -9,7 +9,7 @@ package Excel::Writer::XLSX::Examples;
 # file was generated automatically via the gen_examples_pod.pl
 # program that is also included in the examples directory.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
 #
 # Documentation after __END__
 #
@@ -17,7 +17,7 @@ package Excel::Writer::XLSX::Examples;
 use strict;
 use warnings;
 
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 1;
 
@@ -41,7 +41,7 @@ program that is also included in the examples directory.
 
 =head1 Example programs
 
-The following is a list of the 91 example programs that are included in the Excel::Writer::XLSX distribution.
+The following is a list of the 95 example programs that are included in the Excel::Writer::XLSX distribution.
 
 =over
 
@@ -56,6 +56,8 @@ The following is a list of the 91 example programs that are included in the Exce
 =item * L<Example: regions.pl> A simple example of multiple worksheets.
 
 =item * L<Example: stats.pl> Basic formulas and functions.
+
+=item * L<Example: autofit.pl> Examples of simulated worksheet autofit.
 
 =item * L<Example: autofilter.pl> Examples of worksheet autofilters.
 
@@ -115,6 +117,8 @@ The following is a list of the 91 example programs that are included in the Exce
 
 =item * L<Example: diag_border.pl> A simple example of diagonal cell borders.
 
+=item * L<Example: dynamic_arrays.pl> Example of using new Excel 365 dynamic functions.
+
 =item * L<Example: filehandle.pl> Examples of working with filehandles.
 
 =item * L<Example: headers.pl> Examples of worksheet headers and footers.
@@ -130,6 +134,8 @@ The following is a list of the 91 example programs that are included in the Exce
 =item * L<Example: indent.pl> An example of cell indentation.
 
 =item * L<Example: ignore_errors.pl> An example of turning off worksheet cells errors/warnings.
+
+=item * L<Example: lambda.pl> Example of using the Excel 365 LAMBDA() function.
 
 =item * L<Example: macros.pl> An example of adding macros from an existing file.
 
@@ -191,6 +197,8 @@ The following is a list of the 91 example programs that are included in the Exce
 
 =item * L<Example: stocks.pl> Demonstrates conditional formatting.
 
+=item * L<Example: watermark.pl> Example of how to set a watermark image for a worksheet.
+
 =item * L<Example: background.pl> Example of how to set the background image for a worksheet.
 
 =item * L<Example: tab_colors.pl> Example of how to set worksheet tab colours.
@@ -237,6 +245,8 @@ A simple example of how to use the Excel::Writer::XLSX module to
 write text and numbers to an Excel xlsx file.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
 =begin html
 
@@ -253,7 +263,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # write text and numbers to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -291,7 +303,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/a_simple.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/a_simple.pl>
 
 =head2 Example: bug_report.pl
 
@@ -302,6 +314,8 @@ A template for submitting a bug report.
 Run this program and read the output from the command line.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -311,7 +325,9 @@ Run this program and read the output from the command line.
     #
     # Run this program and read the output from the command line.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -443,7 +459,7 @@ Run this program and read the output from the command line.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/bug_report.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/bug_report.pl>
 
 =head2 Example: demo.pl
 
@@ -454,6 +470,8 @@ A simple demo of some of the features of Excel::Writer::XLSX.
 This program is used to create the project screenshot for Freshmeat:
 L<http://freshmeat.net/projects/writeexcel/>
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -473,7 +491,9 @@ Source code for this example:
     # This program is used to create the project screenshot for Freshmeat:
     # L<http://freshmeat.net/projects/writeexcel/>
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -581,7 +601,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/demo.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/demo.pl>
 
 =head2 Example: formats.pl
 
@@ -593,6 +613,8 @@ This program demonstrates almost all possible formatting options. It is worth
 running this program and viewing the output Excel file if you are interested
 in the various formatting possibilities.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -613,7 +635,9 @@ Source code for this example:
     # running this program and viewing the output Excel file if you are interested
     # in the various formatting possibilities.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1122,7 +1146,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/formats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/formats.pl>
 
 =head2 Example: regions.pl
 
@@ -1131,6 +1155,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of how to use the Excel::Writer::XLSX module to write a basic
 Excel workbook with multiple worksheets.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1148,7 +1174,9 @@ Source code for this example:
     # An example of how to use the Excel::Writer::XLSX module to write a basic
     # Excel workbook with multiple worksheets.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1193,7 +1221,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/regions.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/regions.pl>
 
 =head2 Example: stats.pl
 
@@ -1202,6 +1230,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use functions with the Excel::Writer::XLSX
 module.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1219,7 +1249,9 @@ Source code for this example:
     # A simple example of how to use functions with the Excel::Writer::XLSX
     # module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1286,7 +1318,69 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/stats.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/stats.pl>
+
+=head2 Example: autofit.pl
+
+
+
+An example of using simulated autofit to automatically adjust the width of
+worksheet columns based on the data in the cells.
+
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
+
+=begin html
+
+<p><center><img src="http://jmcnamara.github.io/excel-writer-xlsx/images/examples/autofit.jpg" width="640" height="420" alt="Output from autofit.pl" /></center></p>
+
+=end html
+
+Source code for this example:
+
+    #!/usr/bin/perl -w
+    
+    #######################################################################
+    #
+    # An example of using simulated autofit to automatically adjust the width of
+    # worksheet columns based on the data in the cells.
+    #
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'autofit.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    # Write some worksheet data to demonstrate autofitting.
+    $worksheet->write( 0, 0, "Foo" );
+    $worksheet->write( 1, 0, "Food" );
+    $worksheet->write( 2, 0, "Foody" );
+    $worksheet->write( 3, 0, "Froody" );
+    
+    $worksheet->write( 0, 1, 12345 );
+    $worksheet->write( 1, 1, 12345678 );
+    $worksheet->write( 2, 1, 12345 );
+    
+    $worksheet->write( 0, 2, "Some longer text" );
+    
+    $worksheet->write( 0, 3, "http://ww.google.com" );
+    $worksheet->write( 1, 3, "https://github.com" );
+    
+    # Autofit the worksheet.
+    $worksheet->autofit();
+    
+    $workbook->close();
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/autofit.pl>
 
 =head2 Example: autofilter.pl
 
@@ -1298,6 +1392,8 @@ An autofilter is a way of adding drop down lists to the headers of a 2D range
 of worksheet data. This allows users to filter the data based on
 simple criteria so that some data is shown and some is hidden.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1318,7 +1414,9 @@ Source code for this example:
     # of worksheet data. This allows users to filter the data based on
     # simple criteria so that some data is shown and some is hidden.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1333,6 +1431,7 @@ Source code for this example:
     my $worksheet4 = $workbook->add_worksheet();
     my $worksheet5 = $workbook->add_worksheet();
     my $worksheet6 = $workbook->add_worksheet();
+    my $worksheet7 = $workbook->add_worksheet();
     
     my $bold = $workbook->add_format( bold => 1 );
     
@@ -1468,15 +1567,12 @@ Source code for this example:
     ###############################################################################
     #
     #
-    # Example 5. Autofilter with filter for blanks.
+    # Example 5. Autofilter with filter list condition in one of the columns.
     #
     
-    # Create a blank cell in our test data.
-    $data[5]->[0] = '';
-    
-    
     $worksheet5->autofilter( 'A1:D51' );
-    $worksheet5->filter_column( 'A', 'x == Blanks' );
+    
+    $worksheet5->filter_column_list( 'A', ('East', 'North', 'South') );
     
     #
     # Hide the rows that don't match the filter criteria.
@@ -1486,7 +1582,7 @@ Source code for this example:
     for my $row_data ( @data ) {
         my $region = $row_data->[0];
     
-        if ( $region eq '' ) {
+        if ( $region eq 'East' or $region eq 'North'  or $region eq 'South' ) {
     
             # Row is visible.
         }
@@ -1503,12 +1599,47 @@ Source code for this example:
     ###############################################################################
     #
     #
-    # Example 6. Autofilter with filter for non-blanks.
+    # Example 6. Autofilter with filter for blanks.
     #
+    
+    # Create a blank cell in our test data.
+    $data[5]->[0] = '';
     
     
     $worksheet6->autofilter( 'A1:D51' );
-    $worksheet6->filter_column( 'A', 'x == NonBlanks' );
+    $worksheet6->filter_column( 'A', 'x == Blanks' );
+    
+    #
+    # Hide the rows that don't match the filter criteria.
+    #
+    $row = 1;
+    
+    for my $row_data ( @data ) {
+        my $region = $row_data->[0];
+    
+        if ( $region eq '' ) {
+    
+            # Row is visible.
+        }
+        else {
+    
+            # Hide row.
+            $worksheet6->set_row( $row, undef, undef, 1 );
+        }
+    
+        $worksheet6->write( $row++, 0, $row_data );
+    }
+    
+    
+    ###############################################################################
+    #
+    #
+    # Example 7. Autofilter with filter for non-blanks.
+    #
+    
+    
+    $worksheet7->autofilter( 'A1:D51' );
+    $worksheet7->filter_column( 'A', 'x == NonBlanks' );
     
     #
     # Hide the rows that don't match the filter criteria.
@@ -1525,10 +1656,10 @@ Source code for this example:
         else {
     
             # Hide row.
-            $worksheet6->set_row( $row, undef, undef, 1 );
+            $worksheet7->set_row( $row, undef, undef, 1 );
         }
     
-        $worksheet6->write( $row++, 0, $row_data );
+        $worksheet7->write( $row++, 0, $row_data );
     }
     
     $workbook->close();
@@ -1587,7 +1718,7 @@ Source code for this example:
     East      Grape     6000      February
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/autofilter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/autofilter.pl>
 
 =head2 Example: array_formula.pl
 
@@ -1596,6 +1727,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of how to use the Excel::Writer::XLSX module to write simple
 array formulas.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1613,7 +1746,9 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX module to write simple
     # array formulas.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1644,7 +1779,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/array_formula.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/array_formula.pl>
 
 =head2 Example: cgi.pl
 
@@ -1662,6 +1797,8 @@ the file. If you want to stream the file to the browser instead, comment out
 that line as shown below.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -1678,7 +1815,9 @@ that line as shown below.
     # the file. If you want to stream the file to the browser instead, comment out
     # that line as shown below.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1721,7 +1860,7 @@ that line as shown below.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/cgi.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/cgi.pl>
 
 =head2 Example: chart_area.pl
 
@@ -1729,6 +1868,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of an Area chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1745,7 +1886,9 @@ Source code for this example:
     #
     # A demo of an Area chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -1872,7 +2015,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_area.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_area.pl>
 
 =head2 Example: chart_bar.pl
 
@@ -1880,6 +2023,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of an Bar chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -1896,7 +2041,9 @@ Source code for this example:
     #
     # A demo of an Bar chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2023,7 +2170,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_bar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_bar.pl>
 
 =head2 Example: chart_column.pl
 
@@ -2031,6 +2178,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of a Column chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2047,7 +2196,9 @@ Source code for this example:
     #
     # A demo of a Column chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2174,7 +2325,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_column.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_column.pl>
 
 =head2 Example: chart_line.pl
 
@@ -2182,6 +2333,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of a Line chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2198,7 +2351,9 @@ Source code for this example:
     #
     # A demo of a Line chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2325,7 +2480,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_line.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_line.pl>
 
 =head2 Example: chart_pie.pl
 
@@ -2339,6 +2494,8 @@ add_series() method. However, Pie and Doughtnut charts are a special case
 since each segment is represented as a point so it is necessary to assign
 formatting to each point in the series.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2361,7 +2518,9 @@ Source code for this example:
     # since each segment is represented as a point so it is necessary to assign
     # formatting to each point in the series.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2459,7 +2618,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_pie.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_pie.pl>
 
 =head2 Example: chart_doughnut.pl
 
@@ -2473,6 +2632,8 @@ add_series() method. However, Pie and Doughtnut charts are a special case
 since each segment is represented as a point so it is necessary to assign
 formatting to each point in the series.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2495,7 +2656,9 @@ Source code for this example:
     # since each segment is represented as a point so it is necessary to assign
     # formatting to each point in the series.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2617,7 +2780,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_doughnut.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_doughnut.pl>
 
 =head2 Example: chart_radar.pl
 
@@ -2625,6 +2788,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of an Radar chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2641,7 +2806,9 @@ Source code for this example:
     #
     # A demo of an Radar chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2682,10 +2849,8 @@ Source code for this example:
         values     => [ 'Sheet1', 1, 6, 2, 2 ],
     );
     
-    # Add a chart title and some axis labels.
+    # Add a chart title.
     $chart1->set_title ( name => 'Results of sample analysis' );
-    $chart1->set_x_axis( name => 'Test number' );
-    $chart1->set_y_axis( name => 'Sample length (mm)' );
     
     # Set an Excel chart style. Blue colors with white outline and shadow.
     $chart1->set_style( 11 );
@@ -2717,10 +2882,8 @@ Source code for this example:
         values     => [ 'Sheet1', 1, 6, 2, 2 ],
     );
     
-    # Add a chart title and some axis labels.
+    # Add a chart title.
     $chart2->set_title ( name => 'Stacked Chart' );
-    $chart2->set_x_axis( name => 'Test number' );
-    $chart2->set_y_axis( name => 'Sample length (mm)' );
     
     # Set an Excel chart style. Blue colors with white outline and shadow.
     $chart2->set_style( 12 );
@@ -2752,10 +2915,8 @@ Source code for this example:
         values     => [ 'Sheet1', 1, 6, 2, 2 ],
     );
     
-    # Add a chart title and some axis labels.
+    # Add a chart title.
     $chart3->set_title ( name => 'Percent Stacked Chart' );
-    $chart3->set_x_axis( name => 'Test number' );
-    $chart3->set_y_axis( name => 'Sample length (mm)' );
     
     # Set an Excel chart style. Blue colors with white outline and shadow.
     $chart3->set_style( 13 );
@@ -2768,7 +2929,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_radar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_radar.pl>
 
 =head2 Example: chart_scatter.pl
 
@@ -2779,6 +2940,8 @@ also supported such as markers_only (the default), straight_with_markers,
 straight, smooth_with_markers and smooth. See the main documentation for
 more details.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -2798,7 +2961,9 @@ Source code for this example:
     # straight, smooth_with_markers and smooth. See the main documentation for
     # more details.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -2996,7 +3161,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_scatter.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_scatter.pl>
 
 =head2 Example: chart_secondary_axis.pl
 
@@ -3004,6 +3169,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -3020,7 +3187,9 @@ Source code for this example:
     #
     # A demo of a Line chart with a secondary axis in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3074,7 +3243,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_secondary_axis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_secondary_axis.pl>
 
 =head2 Example: chart_combined.pl
 
@@ -3083,6 +3252,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of a Combined chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3090,7 +3261,9 @@ An example of a Combined chart in Excel::Writer::XLSX.
     #
     # An example of a Combined chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3199,7 +3372,7 @@ An example of a Combined chart in Excel::Writer::XLSX.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_combined.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_combined.pl>
 
 =head2 Example: chart_pareto.pl
 
@@ -3208,6 +3381,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a Pareto chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3215,7 +3390,9 @@ A demo of a Pareto chart in Excel::Writer::XLSX.
     #
     # A demo of a Pareto chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3298,7 +3475,7 @@ A demo of a Pareto chart in Excel::Writer::XLSX.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_pareto.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_pareto.pl>
 
 =head2 Example: chart_stock.pl
 
@@ -3306,6 +3483,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 A demo of a Stock chart in Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -3322,7 +3501,9 @@ Source code for this example:
     #
     # A demo of a Stock chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3389,7 +3570,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_stock.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_stock.pl>
 
 =head2 Example: chart_data_table.pl
 
@@ -3398,6 +3579,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of an Column chart with a data table on the X-axis using
 Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -3415,7 +3598,9 @@ Source code for this example:
     # A demo of an Column chart with a data table on the X-axis using
     # Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3506,7 +3691,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_data_table.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_data_table.pl>
 
 =head2 Example: chart_data_tools.pl
 
@@ -3518,6 +3703,8 @@ an Excel::Writer::XLSX chart.
 These include, Trendlines, Data Labels, Error Bars, Drop Lines,
 High-Low Lines and Up-Down Bars.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -3538,7 +3725,9 @@ Source code for this example:
     # These include, Trendlines, Data Labels, Error Bars, Drop Lines,
     # High-Low Lines and Up-Down Bars.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -3745,7 +3934,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_data_tools.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_data_tools.pl>
 
 =head2 Example: chart_data_labels.pl
 
@@ -3755,6 +3944,8 @@ A demo of an various Excel chart data label features that are available
 via an Excel::Writer::XLSX chart.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -3763,7 +3954,9 @@ via an Excel::Writer::XLSX chart.
     # A demo of an various Excel chart data label features that are available
     # via an Excel::Writer::XLSX chart.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4078,7 +4271,7 @@ via an Excel::Writer::XLSX chart.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_data_labels.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_data_labels.pl>
 
 =head2 Example: chart_clustered.pl
 
@@ -4087,6 +4280,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A demo of a clustered category chart in Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4094,7 +4289,9 @@ A demo of a clustered category chart in Excel::Writer::XLSX.
     #
     # A demo of a clustered category chart in Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4156,7 +4353,7 @@ A demo of a clustered category chart in Excel::Writer::XLSX.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_clustered.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_clustered.pl>
 
 =head2 Example: chart_styles.pl
 
@@ -4167,6 +4364,8 @@ using Excel::Writer::XLSX.. Note, these styles are not the same as the
 styles available in Excel 2013.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4176,7 +4375,9 @@ styles available in Excel 2013.
     # using Excel::Writer::XLSX.. Note, these styles are not the same as the
     # styles available in Excel 2013.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4227,7 +4428,7 @@ styles available in Excel 2013.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_styles.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_styles.pl>
 
 =head2 Example: chart_gauge.pl
 
@@ -4241,6 +4442,8 @@ elements. This example follows the following online example of how to create
 a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -4253,7 +4456,9 @@ a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     # elements. This example follows the following online example of how to create
     # a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4318,7 +4523,7 @@ a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
     $workbook->close();
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/chart_gauge.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/chart_gauge.pl>
 
 =head2 Example: colors.pl
 
@@ -4330,6 +4535,8 @@ palette.
 The set_custom_color() Worksheet method can be used to override one of the
 built-in palette values with a more suitable colour. See the main docs.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -4350,7 +4557,9 @@ Source code for this example:
     # The set_custom_color() Worksheet method can be used to override one of the
     # built-in palette values with a more suitable colour. See the main docs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4501,7 +4710,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/colors.pl>
 
 =head2 Example: comments1.pl
 
@@ -4514,6 +4723,8 @@ right-hand corner of the cell.
 
 For more advanced comment options see comments2.pl.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -4535,7 +4746,9 @@ Source code for this example:
     #
     # For more advanced comment options see comments2.pl.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4554,7 +4767,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/comments1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/comments1.pl>
 
 =head2 Example: comments2.pl
 
@@ -4567,6 +4780,8 @@ right-hand corner of the cell.
 
 Each of the worksheets demonstrates different features of cell comments.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -4588,7 +4803,9 @@ Source code for this example:
     #
     # Each of the worksheets demonstrates different features of cell comments.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -4928,7 +5145,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/comments2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/comments2.pl>
 
 =head2 Example: conditional_format.pl
 
@@ -4939,6 +5156,8 @@ Example of how to add conditional formatting to an Excel::Writer::XLSX file.
 Conditional formatting allows you to apply a format to a cell or a range of
 cells based on certain criteria.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -4958,7 +5177,9 @@ Source code for this example:
     # Conditional formatting allows you to apply a format to a cell or a range of
     # cells based on certain criteria.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5394,7 +5615,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/conditional_format.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/conditional_format.pl>
 
 =head2 Example: data_validate.pl
 
@@ -5407,6 +5628,8 @@ Data validation is a feature of Excel which allows you to restrict the data
 that a user enters in a cell and to display help and warning messages. It
 also allows you to restrict input to values in a drop down list.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -5428,7 +5651,9 @@ Source code for this example:
     # that a user enters in a cell and to display help and warning messages. It
     # also allows you to restrict input to values in a drop down list.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5732,7 +5957,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/data_validate.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/data_validate.pl>
 
 =head2 Example: date_time.pl
 
@@ -5741,6 +5966,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Excel::Writer::XLSX example of writing dates and times using the
 write_date_time() Worksheet method.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -5758,7 +5985,9 @@ Source code for this example:
     # Excel::Writer::XLSX example of writing dates and times using the
     # write_date_time() Worksheet method.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5846,7 +6075,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/date_time.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/date_time.pl>
 
 =head2 Example: defined_name.pl
 
@@ -5857,6 +6086,8 @@ Example of how to create defined names in an Excel::Writer::XLSX file.
 This method is used to define a user friendly name to represent a value,
 a single cell or a range of cells in a workbook.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -5876,7 +6107,9 @@ Source code for this example:
     # This method is used to define a user friendly name to represent a value,
     # a single cell or a range of cells in a workbook.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5909,7 +6142,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/defined_name.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/defined_name.pl>
 
 =head2 Example: diag_border.pl
 
@@ -5918,6 +6151,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple formatting example that demonstrates how to add a diagonal cell
 border with Excel::Writer::XLSX
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -5935,7 +6170,9 @@ Source code for this example:
     # A simple formatting example that demonstrates how to add a diagonal cell
     # border with Excel::Writer::XLSX
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -5970,7 +6207,291 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/diag_border.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/diag_border.pl>
+
+=head2 Example: dynamic_arrays.pl
+
+
+
+An example of how to use the Excel::Writer::XLSX module to write functions
+that create dynamic arrays. These functions are new to Excel 365. The
+examples mirror the examples in the Excel documentation on these functions.
+
+
+
+    #!/usr/bin/perl -w
+    
+    #######################################################################
+    #
+    # An example of how to use the Excel::Writer::XLSX module to write functions
+    # that create dynamic arrays. These functions are new to Excel 365. The
+    # examples mirror the examples in the Excel documentation on these functions.
+    #
+    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    sub write_worksheet_data;
+    
+    # Create a new workbook called simple.xls and add a worksheet
+    my $workbook    = Excel::Writer::XLSX->new('dynamic_arrays.xlsx');
+    my $worksheet1  = $workbook->add_worksheet('Filter');
+    my $worksheet2  = $workbook->add_worksheet('Unique');
+    my $worksheet3  = $workbook->add_worksheet('Sort');
+    my $worksheet4  = $workbook->add_worksheet('Sortby');
+    my $worksheet5  = $workbook->add_worksheet('Xlookup');
+    my $worksheet6  = $workbook->add_worksheet('Xmatch');
+    my $worksheet7  = $workbook->add_worksheet('Randarray');
+    my $worksheet8  = $workbook->add_worksheet('Sequence');
+    my $worksheet9  = $workbook->add_worksheet('Spill ranges');
+    my $worksheet10 = $workbook->add_worksheet('Older functions');
+    my $header1     = $workbook->add_format(fg_color => '#74AC4C', color => '#FFFFFF');
+    my $header2     = $workbook->add_format(fg_color => '#528FD3', color => '#FFFFFF');
+    
+    
+    #
+    # Example of using the FILTER() function.
+    #
+    $worksheet1->write('F2', '=FILTER(A1:D17,C1:C17=K2)');
+    
+    
+    # Write the data the function will work on.
+    $worksheet1->write('K1', 'Product',   $header2);
+    $worksheet1->write('K2', 'Apple');
+    $worksheet1->write('F1', 'Region',    $header2);
+    $worksheet1->write('G1', 'Sales Rep', $header2);
+    $worksheet1->write('H1', 'Product',   $header2);
+    $worksheet1->write('I1', 'Units',     $header2);
+    
+    write_worksheet_data($worksheet1, $header1);
+    $worksheet1->set_column_pixels('E:E', 20);
+    $worksheet1->set_column_pixels('J:J', 20);
+    
+    #
+    # Example of using the UNIQUE() function.
+    #
+    $worksheet2->write('F2', '=UNIQUE(B2:B17)');
+    
+    
+    # A more complex example combining SORT and UNIQUE.
+    $worksheet2->write('H2', '=SORT(UNIQUE(B2:B17))');
+    
+    # Write the data the function will work on.
+    $worksheet2->write('F1', 'Sales Rep', $header2);
+    $worksheet2->write('H1', 'Sales Rep', $header2);
+    
+    write_worksheet_data($worksheet2, $header1);
+    $worksheet2->set_column_pixels('E:E', 20);
+    $worksheet2->set_column_pixels('G:G', 20);
+    
+    
+    #
+    # Example of using the SORT() function.
+    #
+    $worksheet3->write('F2', '=SORT(B2:B17)');
+    
+    # A more complex example combining SORT and FILTER.
+    $worksheet3->write('H2', '=SORT(FILTER(C2:D17,D2:D17>5000,""),2,1)');
+    
+    
+    # Write the data the function will work on.
+    $worksheet3->write('F1', 'Sales Rep', $header2);
+    $worksheet3->write('H1', 'Product',   $header2);
+    $worksheet3->write('I1', 'Units',     $header2);
+    
+    write_worksheet_data($worksheet3, $header1);
+    $worksheet3->set_column_pixels('E:E', 20);
+    $worksheet3->set_column_pixels('G:G', 20);
+    
+    
+    #
+    # Example of using the SORTBY() function.
+    #
+    $worksheet4->write('D2', '=SORTBY(A2:B9,B2:B9)');
+    
+    
+    # Write the data the function will work on.
+    $worksheet4->write('A1', 'Name', $header1);
+    $worksheet4->write('B1', 'Age',  $header1);
+    
+    $worksheet4->write('A2', 'Tom');
+    $worksheet4->write('A3', 'Fred');
+    $worksheet4->write('A4', 'Amy');
+    $worksheet4->write('A5', 'Sal');
+    $worksheet4->write('A6', 'Fritz');
+    $worksheet4->write('A7', 'Srivan');
+    $worksheet4->write('A8', 'Xi');
+    $worksheet4->write('A9', 'Hector');
+    
+    $worksheet4->write('B2', 52);
+    $worksheet4->write('B3', 65);
+    $worksheet4->write('B4', 22);
+    $worksheet4->write('B5', 73);
+    $worksheet4->write('B6', 19);
+    $worksheet4->write('B7', 39);
+    $worksheet4->write('B8', 19);
+    $worksheet4->write('B9', 66);
+    
+    $worksheet4->write('D1', 'Name', $header2);
+    $worksheet4->write('E1', 'Age',  $header2);
+    
+    $worksheet4->set_column_pixels('C:C', 20);
+    
+    
+    #
+    # Example of using the XLOOKUP() function.
+    #
+    $worksheet5->write('F1', '=XLOOKUP(E1,A2:A9,C2:C9)');
+    
+    
+    # Write the data the function will work on.
+    $worksheet5->write('A1', 'Country', $header1);
+    $worksheet5->write('B1', 'Abr',     $header1);
+    $worksheet5->write('C1', 'Prefix',  $header1);
+    
+    $worksheet5->write('A2', 'China');
+    $worksheet5->write('A3', 'India');
+    $worksheet5->write('A4', 'United States');
+    $worksheet5->write('A5', 'Indonesia');
+    $worksheet5->write('A6', 'Brazil');
+    $worksheet5->write('A7', 'Pakistan');
+    $worksheet5->write('A8', 'Nigeria');
+    $worksheet5->write('A9', 'Bangladesh');
+    
+    $worksheet5->write('B2', 'CN');
+    $worksheet5->write('B3', 'IN');
+    $worksheet5->write('B4', 'US');
+    $worksheet5->write('B5', 'ID');
+    $worksheet5->write('B6', 'BR');
+    $worksheet5->write('B7', 'PK');
+    $worksheet5->write('B8', 'NG');
+    $worksheet5->write('B9', 'BD');
+    
+    $worksheet5->write('C2', 86);
+    $worksheet5->write('C3', 91);
+    $worksheet5->write('C4', 1);
+    $worksheet5->write('C5', 62);
+    $worksheet5->write('C6', 55);
+    $worksheet5->write('C7', 92);
+    $worksheet5->write('C8', 234);
+    $worksheet5->write('C9', 880);
+    
+    $worksheet5->write('E1', 'Brazil', $header2);
+    
+    $worksheet5->set_column_pixels('A:A', 100);
+    $worksheet5->set_column_pixels('D:D', 20);
+    
+    
+    #
+    # Example of using the XMATCH() function.
+    #
+    $worksheet6->write('D2', '=XMATCH(C2,A2:A6)');
+    
+    
+    # Write the data the function will work on.
+    $worksheet6->write('A1', 'Product', $header1);
+    
+    $worksheet6->write('A2', 'Apple');
+    $worksheet6->write('A3', 'Grape');
+    $worksheet6->write('A4', 'Pear');
+    $worksheet6->write('A5', 'Banana');
+    $worksheet6->write('A6', 'Cherry');
+    
+    $worksheet6->write('C1', 'Product' , $header2);
+    $worksheet6->write('D1', 'Position', $header2);
+    $worksheet6->write('C2', 'Grape');
+    
+    $worksheet6->set_column_pixels('B:B', 20);
+    
+    
+    #
+    # Example of using the RANDARRAY() function.
+    #
+    $worksheet7->write('A1', '=RANDARRAY(5,3,1,100, TRUE)');
+    
+    
+    #
+    # Example of using the SEQUENCE() function.
+    #
+    $worksheet8->write('A1', '=SEQUENCE(4,5)');
+    
+    
+    #
+    # Example of using the Spill range operator.
+    #
+    $worksheet9->write('H2', '=ANCHORARRAY(F2)');
+    
+    $worksheet9->write('J2', '=COUNTA(ANCHORARRAY(F2))');
+    
+    
+    # Write the data the to work on.
+    $worksheet9->write( 'F2', '=UNIQUE(B2:B17)');
+    $worksheet9->write('F1', 'Unique', $header2);
+    $worksheet9->write('H1', 'Spill', $header2);
+    $worksheet9->write('J1', 'Spill', $header2);
+    
+    write_worksheet_data($worksheet9, $header1);
+    $worksheet9->set_column_pixels('E:E', 20);
+    $worksheet9->set_column_pixels('G:G', 20);
+    $worksheet9->set_column_pixels('I:I', 20);
+    
+    #
+    # Example of using dynamic ranges with older Excel functions.
+    #
+    $worksheet10->write_dynamic_array_formula('B1:B3', '=LEN(A1:A3)');
+    
+    # Write the data the to work on.
+    $worksheet10->write('A1', 'Foo');
+    $worksheet10->write('A2', 'Food');
+    $worksheet10->write('A3', 'Frood');
+    
+    
+    # Close the workbook.
+    $workbook->close();
+    
+    # Utility function to write the data some of the functions work on.
+    sub write_worksheet_data {
+        my $worksheet = shift;
+        my $header    = shift;
+    
+        $worksheet->write('A1', 'Region',    $header);
+        $worksheet->write('B1', 'Sales Rep', $header);
+        $worksheet->write('C1', 'Product',   $header);
+        $worksheet->write('D1', 'Units',     $header);
+    
+        my @data = (
+            ['East',  'Tom',    'Apple',  6380],
+            ['West',  'Fred',   'Grape',  5619],
+            ['North', 'Amy',    'Pear',   4565],
+            ['South', 'Sal',    'Banana', 5323],
+            ['East',  'Fritz',  'Apple',  4394],
+            ['West',  'Sravan', 'Grape',  7195],
+            ['North', 'Xi',     'Pear',   5231],
+            ['South', 'Hector', 'Banana', 2427],
+            ['East',  'Tom',    'Banana', 4213],
+            ['West',  'Fred',   'Pear',   3239],
+            ['North', 'Amy',    'Grape',  6520],
+            ['South', 'Sal',    'Apple',  1310],
+            ['East',  'Fritz',  'Banana', 6274],
+            ['West',  'Sravan', 'Pear',   4894],
+            ['North', 'Xi',     'Grape',  7580],
+            ['South', 'Hector', 'Apple',  9814],
+       );
+    
+        my $row_num = 1;
+        for my $row_data (@data) {
+            $worksheet->write_row($row_num, 0, $row_data);
+            $row_num++;
+        }
+    }
+    
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/dynamic_arrays.pl>
 
 =head2 Example: filehandle.pl
 
@@ -5979,6 +6500,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of using Excel::Writer::XLSX to write Excel files to different
 filehandles.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -5996,7 +6519,9 @@ Source code for this example:
     # Example of using Excel::Writer::XLSX to write Excel files to different
     # filehandles.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6099,7 +6624,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/filehandle.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/filehandle.pl>
 
 =head2 Example: headers.pl
 
@@ -6138,6 +6663,8 @@ The control characters used in the header/footer strings are:
 
 See the main Excel::Writer::XLSX documentation for more information.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6185,7 +6712,9 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -6290,7 +6819,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/headers.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/headers.pl>
 
 =head2 Example: hide_row_col.pl
 
@@ -6300,6 +6829,8 @@ Example of how to hide rows and columns in Excel::Writer::XLSX. In order to
 hide rows without setting each one, (of approximately 1 million rows),
 Excel uses an optimisation to hide all rows that don't have data.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6318,7 +6849,9 @@ Source code for this example:
     # hide rows without setting each one, (of approximately 1 million rows),
     # Excel uses an optimisation to hide all rows that don't have data.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6352,7 +6885,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/hide_row_col.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/hide_row_col.pl>
 
 =head2 Example: hide_sheet.pl
 
@@ -6360,6 +6893,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 Example of how to hide a worksheet with Excel::Writer::XLSX.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6376,7 +6911,9 @@ Source code for this example:
     #
     # Example of how to hide a worksheet with Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6404,7 +6941,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/hide_sheet.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/hide_sheet.pl>
 
 =head2 Example: hyperlink1.pl
 
@@ -6414,6 +6951,8 @@ Example of how to use the Excel::Writer::XLSX module to write hyperlinks
 
 See also hyperlink2.pl for worksheet URL examples.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6432,7 +6971,9 @@ Source code for this example:
     #
     # See also hyperlink2.pl for worksheet URL examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6480,7 +7021,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/hyperlink1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/hyperlink1.pl>
 
 =head2 Example: hyperlink2.pl
 
@@ -6500,6 +7041,8 @@ C:\ -- Temp --+-- Europe
 See also hyperlink1.pl for web URL examples.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -6518,7 +7061,9 @@ See also hyperlink1.pl for web URL examples.
     #
     # See also hyperlink1.pl for web URL examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -6643,7 +7188,7 @@ See also hyperlink1.pl for web URL examples.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/hyperlink2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/hyperlink2.pl>
 
 =head2 Example: indent.pl
 
@@ -6653,6 +7198,8 @@ A simple formatting example using Excel::Writer::XLSX.
 
 This program demonstrates the indentation cell format.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6671,7 +7218,9 @@ Source code for this example:
     #
     # This program demonstrates the indentation cell format.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -6695,7 +7244,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/indent.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/indent.pl>
 
 =head2 Example: ignore_errors.pl
 
@@ -6705,6 +7254,8 @@ An example of turning off worksheet cells errors/warnings using the
 Excel::Writer::XLSX module.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -6713,7 +7264,9 @@ Excel::Writer::XLSX module.
     # An example of turning off worksheet cells errors/warnings using the
     # Excel::Writer::XLSX module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6745,7 +7298,60 @@ Excel::Writer::XLSX module.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/ignore_errors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/ignore_errors.pl>
+
+=head2 Example: lambda.pl
+
+
+
+An example of using the new Excel LAMBDA() function with the
+Excel::Writer::XLSX module. Note, this function is only currently available
+if you are subscribed to the Microsoft Office Beta program.
+
+
+
+    #!/usr/bin/perl -w
+    
+    #######################################################################
+    #
+    # An example of using the new Excel LAMBDA() function with the
+    # Excel::Writer::XLSX module. Note, this function is only currently available
+    # if you are subscribed to the Microsoft Office Beta program.
+    #
+    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'lambda.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    $worksheet->write('A1', 'Note: Lambda functions currently only work with the Beta Channel versions of Excel 365');
+    
+    # Write a Lambda function to convert Fahrenheit to Celsius to a cell.
+    #
+    # Note that the lambda function parameters must be prefixed with
+    # "_xlpm.". These prefixes won't show up in Excel.
+    $worksheet->write('A2', '=LAMBDA(_xlpm.temp, (5/9) * (_xlpm.temp-32))(32)');
+    
+    # Create the same formula (without an argument) as a defined name and use that
+    # to calculate a value.
+    #
+    # Note that the formula name is prefixed with "_xlfn." (this is normally
+    # converted automatically by write_formula() but isn't for defined names)
+    # and note that the lambda function parameters are prefixed with
+    # "_xlpm.". These prefixes won't show up in Excel.
+    $workbook->define_name('ToCelsius',
+                           '=_xlfn.LAMBDA(_xlpm.temp, (5/9) * (_xlpm.temp-32))');
+    $worksheet->write_dynamic_array_formula( 'A3', '=ToCelsius(212)' );
+    
+    $workbook->close();
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/lambda.pl>
 
 =head2 Example: macros.pl
 
@@ -6759,6 +7365,8 @@ used to extract the vbaProject.bin file.
 
 An embedded macro is connected to a form button on the worksheet.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6781,7 +7389,9 @@ Source code for this example:
     #
     # An embedded macro is connected to a form button on the worksheet.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6816,7 +7426,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/macros.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/macros.pl>
 
 =head2 Example: merge1.pl
 
@@ -6829,6 +7439,8 @@ alignment which was the Excel 5 method of achieving a merge. For a more
 modern approach use the merge_range() worksheet method instead.
 See the merge3.pl - merge6.pl programs.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6850,7 +7462,9 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6881,7 +7495,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge1.pl>
 
 =head2 Example: merge2.pl
 
@@ -6894,6 +7508,8 @@ alignment which was the Excel 5 method of achieving a merge. For a more
 modern approach use the merge_range() worksheet method instead.
 See the merge3.pl - merge6.pl programs.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6915,7 +7531,9 @@ Source code for this example:
     # modern approach use the merge_range() worksheet method instead.
     # See the merge3.pl - merge6.pl programs.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -6955,7 +7573,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge2.pl>
 
 =head2 Example: merge3.pl
 
@@ -6964,6 +7582,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of how to use Excel::Writer::XLSX to write a hyperlink in a
 merged cell.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -6981,7 +7601,9 @@ Source code for this example:
     # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
     # merged cell.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7023,7 +7645,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge3.pl>
 
 =head2 Example: merge4.pl
 
@@ -7032,6 +7654,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of how to use the Excel::Writer::XLSX merge_range() workbook
 method with complex formatting.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -7049,7 +7673,9 @@ Source code for this example:
     # Example of how to use the Excel::Writer::XLSX merge_range() workbook
     # method with complex formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7135,7 +7761,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge4.pl>
 
 =head2 Example: merge5.pl
 
@@ -7145,6 +7771,8 @@ Example of how to use the Excel::Writer::XLSX merge_cells() workbook
 method with complex formatting and rotation.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -7163,7 +7791,9 @@ Source code for this example:
     # method with complex formatting and rotation.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7235,7 +7865,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge5.pl>
 
 =head2 Example: merge6.pl
 
@@ -7245,6 +7875,8 @@ Example of how to use the Excel::Writer::XLSX merge_cells() workbook
 method with Unicode strings.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -7263,7 +7895,9 @@ Source code for this example:
     # method with Unicode strings.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -7311,7 +7945,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/merge6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/merge6.pl>
 
 =head2 Example: mod_perl1.pl
 
@@ -7436,7 +8070,7 @@ The PerlHandler name above and the package name below *have* to match.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/mod_perl1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/mod_perl1.pl>
 
 =head2 Example: mod_perl2.pl
 
@@ -7564,7 +8198,7 @@ The PerlResponseHandler must match the package name below.
     1;
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/mod_perl2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/mod_perl2.pl>
 
 =head2 Example: outline.pl
 
@@ -7627,6 +8261,8 @@ rows as follows:
 
 See the main Excel::Writer::XLSX documentation for more information.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -7698,7 +8334,9 @@ Source code for this example:
     #
     # See the main Excel::Writer::XLSX documentation for more information.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     
@@ -7893,7 +8531,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/outline.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/outline.pl>
 
 =head2 Example: outline_collapsed.pl
 
@@ -7905,6 +8543,8 @@ grouping.
 These examples focus mainly on collapsed outlines. See also the
 outlines.pl example program for more general examples.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -7925,7 +8565,9 @@ Source code for this example:
     # These examples focus mainly on collapsed outlines. See also the
     # outlines.pl example program for more general examples.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8130,7 +8772,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/outline_collapsed.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/outline_collapsed.pl>
 
 =head2 Example: panes.pl
 
@@ -8138,6 +8780,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 Example of using the Excel::Writer::XLSX module to create worksheet panes.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8154,7 +8798,9 @@ Source code for this example:
     #
     # Example of using the Excel::Writer::XLSX module to create worksheet panes.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8286,7 +8932,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/panes.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/panes.pl>
 
 =head2 Example: properties.pl
 
@@ -8294,6 +8940,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 An example of adding document properties to a Excel::Writer::XLSX file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8310,7 +8958,9 @@ Source code for this example:
     #
     # An example of adding document properties to a Excel::Writer::XLSX file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8342,7 +8992,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/properties.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/properties.pl>
 
 =head2 Example: protection.pl
 
@@ -8351,6 +9001,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of cell locking and formula hiding in an Excel worksheet via
 the Excel::Writer::XLSX module.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8368,7 +9020,9 @@ Source code for this example:
     # Example of cell locking and formula hiding in an Excel worksheet via
     # the Excel::Writer::XLSX module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8408,7 +9062,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/protection.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/protection.pl>
 
 =head2 Example: rich_strings.pl
 
@@ -8417,6 +9071,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
 strings with multiple formatting.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8434,7 +9090,9 @@ Source code for this example:
     # An Excel::Writer::XLSX example showing how to use "rich strings", i.e.,
     # strings with multiple formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8473,7 +9131,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/rich_strings.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/rich_strings.pl>
 
 =head2 Example: right_to_left.pl
 
@@ -8483,6 +9141,8 @@ Example of how to change the default worksheet direction from
 left-to-right to right-to-left as required by some eastern verions
 of Excel.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8501,7 +9161,9 @@ Source code for this example:
     # left-to-right to right-to-left as required by some eastern verions
     # of Excel.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8522,7 +9184,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/right_to_left.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/right_to_left.pl>
 
 =head2 Example: sales.pl
 
@@ -8531,6 +9193,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 Example of a sales worksheet to demonstrate several different features.
 Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8548,7 +9212,9 @@ Source code for this example:
     # Example of a sales worksheet to demonstrate several different features.
     # Also uses functions from the L<Excel::Writer::XLSX::Utility> module.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8646,7 +9312,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/sales.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/sales.pl>
 
 =head2 Example: shape1.pl
 
@@ -8655,6 +9321,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 add shapes to an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8672,7 +9340,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8701,7 +9371,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape1.pl>
 
 =head2 Example: shape2.pl
 
@@ -8710,6 +9380,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 modify shape properties in an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8727,7 +9399,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # modify shape properties in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8776,7 +9450,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape2.pl>
 
 =head2 Example: shape3.pl
 
@@ -8785,6 +9459,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 scale shapes in an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8802,7 +9478,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # scale shapes in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8830,7 +9508,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape3.pl>
 
 =head2 Example: shape4.pl
 
@@ -8839,6 +9517,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 demonstrate stenciling in an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8856,7 +9536,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # demonstrate stenciling in an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8908,7 +9590,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape4.pl>
 
 =head2 Example: shape5.pl
 
@@ -8917,6 +9599,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 add shapes (objects and top/bottom connectors) to an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8934,7 +9618,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and top/bottom connectors) to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -8970,7 +9656,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape5.pl>
 
 =head2 Example: shape6.pl
 
@@ -8979,6 +9665,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 add shapes (objects and right/left connectors) to an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -8996,7 +9684,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes (objects and right/left connectors) to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9032,7 +9722,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape6.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape6.pl>
 
 =head2 Example: shape7.pl
 
@@ -9041,6 +9731,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 add shapes and one-to-many connectors to an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -9058,7 +9750,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9123,7 +9817,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape7.pl>
 
 =head2 Example: shape8.pl
 
@@ -9132,6 +9826,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of how to use the Excel::Writer::XLSX module to
 add shapes and one-to-many connectors to an Excel xlsx file.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -9149,7 +9845,9 @@ Source code for this example:
     # A simple example of how to use the Excel::Writer::XLSX module to
     # add shapes and one-to-many connectors to an Excel xlsx file.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9213,7 +9911,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape8.pl>
 
 =head2 Example: shape_all.pl
 
@@ -9228,6 +9926,8 @@ ST_ShapeType in ECMA-376, Office Open XML File Formats Part 4.
 The grouping by worksheet name is for illustration only. It isn't
 part of the ECMA-376 standard.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -9251,7 +9951,9 @@ Source code for this example:
     # The grouping by worksheet name is for illustration only. It isn't
     # part of the ECMA-376 standard.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9478,7 +10180,7 @@ Source code for this example:
     Tabs	squareTabs
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/shape_all.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/shape_all.pl>
 
 =head2 Example: sparklines1.pl
 
@@ -9490,6 +10192,8 @@ Sparklines are small charts that fit in a single cell and are
 used to show trends in data. See sparklines2.pl for examples
 of more complex sparkline formatting.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -9510,7 +10214,9 @@ Source code for this example:
     # used to show trends in data. See sparklines2.pl for examples
     # of more complex sparkline formatting.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9567,7 +10273,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/sparklines1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/sparklines1.pl>
 
 =head2 Example: sparklines2.pl
 
@@ -9579,6 +10285,8 @@ Sparklines are small charts that fit in a single cell and are
 used to show trends in data. This example shows the majority of
 options that can be applied to sparklines.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -9599,7 +10307,9 @@ Source code for this example:
     # used to show trends in data. This example shows the majority of
     # options that can be applied to sparklines.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -9995,7 +10705,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/sparklines2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/sparklines2.pl>
 
 =head2 Example: stats_ext.pl
 
@@ -10006,6 +10716,8 @@ Example of formatting using the Excel::Writer::XLSX module
 This is a simple example of how to use functions that reference cells in
 other worksheets within the same workbook.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10025,7 +10737,9 @@ Source code for this example:
     # This is a simple example of how to use functions that reference cells in
     # other worksheets within the same workbook.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10098,7 +10812,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/stats_ext.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/stats_ext.pl>
 
 =head2 Example: stocks.pl
 
@@ -10109,6 +10823,8 @@ Example of formatting using the Excel::Writer::XLSX module
 This example shows how to use a conditional numerical format
 with colours to indicate if a share price has gone up or down.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10128,7 +10844,9 @@ Source code for this example:
     # This example shows how to use a conditional numerical format
     # with colours to indicate if a share price has gone up or down.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10200,7 +10918,50 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/stocks.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/stocks.pl>
+
+=head2 Example: watermark.pl
+
+
+
+An example of adding a worksheet watermark image using the Excel::Writer::XLSX
+module. This is based on the method of putting an image in the worksheet
+header as suggested in the Microsoft documentation:
+https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d733-484e-825c-18ddf3edf009
+
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
+
+    #!/usr/bin/perl -w
+    
+    #######################################################################
+    #
+    # An example of adding a worksheet watermark image using the Excel::Writer::XLSX
+    # module. This is based on the method of putting an image in the worksheet
+    # header as suggested in the Microsoft documentation:
+    # https://support.microsoft.com/en-us/office/add-a-watermark-in-excel-a372182a-d733-484e-825c-18ddf3edf009
+    #
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+    #
+    
+    use strict;
+    use Excel::Writer::XLSX;
+    
+    my $workbook  = Excel::Writer::XLSX->new( 'watermark.xlsx' );
+    my $worksheet = $workbook->add_worksheet();
+    
+    # Set a worksheet header with the watermark image.
+    $worksheet->set_header( '&C&C&[Picture]', undef, { image_center => 'watermark.png' } );
+    
+    $workbook->close();
+    
+    __END__
+
+
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/watermark.pl>
 
 =head2 Example: background.pl
 
@@ -10209,6 +10970,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of setting a worksheet background image with Excel::Writer::XLSX.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl -w
     
@@ -10216,7 +10979,9 @@ An example of setting a worksheet background image with Excel::Writer::XLSX.
     #
     # An example of setting a worksheet background image with Excel::Writer::XLSX.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10232,7 +10997,7 @@ An example of setting a worksheet background image with Excel::Writer::XLSX.
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/background.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/background.pl>
 
 =head2 Example: tab_colors.pl
 
@@ -10240,6 +11005,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 Example of how to set Excel worksheet tab colours.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10256,7 +11023,9 @@ Source code for this example:
     #
     # Example of how to set Excel worksheet tab colours.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10281,7 +11050,7 @@ Source code for this example:
     __END__
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/tab_colors.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/tab_colors.pl>
 
 =head2 Example: tables.pl
 
@@ -10292,6 +11061,8 @@ Example of how to add tables to an Excel::Writer::XLSX worksheet.
 Tables in Excel are used to group rows and columns of data into a single
 structure that can be referenced in a formula or formatted collectively.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10311,7 +11082,9 @@ Source code for this example:
     # Tables in Excel are used to group rows and columns of data into a single
     # structure that can be referenced in a formula or formatted collectively.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10710,7 +11483,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/tables.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/tables.pl>
 
 =head2 Example: write_handler1.pl
 
@@ -10722,6 +11495,8 @@ Excel::Writer::XLSX write() method.
 The following example shows how to add a handler for a 7 digit ID number.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10742,7 +11517,9 @@ Source code for this example:
     # The following example shows how to add a handler for a 7 digit ID number.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10799,7 +11576,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/write_handler1.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/write_handler1.pl>
 
 =head2 Example: write_handler2.pl
 
@@ -10813,6 +11590,8 @@ It adds an additional constraint to the write_handler1.pl in that it only
 filters data that isn't in the third column.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10835,7 +11614,9 @@ Source code for this example:
     # filters data that isn't in the third column.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10897,7 +11678,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/write_handler2.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/write_handler2.pl>
 
 =head2 Example: write_handler3.pl
 
@@ -10911,6 +11692,8 @@ format.
 
 See write_handler4.pl for a more rigorous example with error handling.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -10933,7 +11716,9 @@ Source code for this example:
     #
     # See write_handler4.pl for a more rigorous example with error handling.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -10987,7 +11772,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/write_handler3.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/write_handler3.pl>
 
 =head2 Example: write_handler4.pl
 
@@ -11001,6 +11786,8 @@ format.
 
 This is a more rigorous version of write_handler3.pl.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11023,7 +11810,9 @@ Source code for this example:
     #
     # This is a more rigorous version of write_handler3.pl.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11117,7 +11906,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/write_handler4.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/write_handler4.pl>
 
 =head2 Example: write_to_scalar.pl
 
@@ -11126,6 +11915,8 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 An example of writing an Excel::Writer::XLSX file to a perl scalar.
 
 
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+
 
     #!/usr/bin/perl
     
@@ -11133,7 +11924,9 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
     # An example of writing an Excel::Writer::XLSX file to a perl scalar.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11166,7 +11959,7 @@ An example of writing an Excel::Writer::XLSX file to a perl scalar.
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/write_to_scalar.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/write_to_scalar.pl>
 
 =head2 Example: unicode_2022_jp.pl
 
@@ -11178,6 +11971,8 @@ Excel::Writer::XLSX.
 This example generates some Japanese from a file with ISO-2022-JP
 encoded text.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11198,7 +11993,9 @@ Source code for this example:
     # This example generates some Japanese from a file with ISO-2022-JP
     # encoded text.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11232,7 +12029,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_2022_jp.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_2022_jp.pl>
 
 =head2 Example: unicode_8859_11.pl
 
@@ -11244,6 +12041,8 @@ Excel::Writer::XLSX.
 This example generates some Thai from a file with ISO-8859-11 encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11264,7 +12063,9 @@ Source code for this example:
     # This example generates some Thai from a file with ISO-8859-11 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11298,7 +12099,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_8859_11.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_8859_11.pl>
 
 =head2 Example: unicode_8859_7.pl
 
@@ -11310,6 +12111,8 @@ Excel::Writer::XLSX.
 This example generates some Greek from a file with ISO-8859-7 encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11330,7 +12133,9 @@ Source code for this example:
     # This example generates some Greek from a file with ISO-8859-7 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11364,7 +12169,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_8859_7.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_8859_7.pl>
 
 =head2 Example: unicode_big5.pl
 
@@ -11376,6 +12181,8 @@ Excel::Writer::XLSX.
 This example generates some Chinese from a file with BIG5 encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11396,7 +12203,9 @@ Source code for this example:
     # This example generates some Chinese from a file with BIG5 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11430,7 +12239,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_big5.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_big5.pl>
 
 =head2 Example: unicode_cp1251.pl
 
@@ -11442,6 +12251,8 @@ Excel::Writer::XLSX.
 This example generates some Russian from a file with CP1251 encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11462,7 +12273,9 @@ Source code for this example:
     # This example generates some Russian from a file with CP1251 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11496,7 +12309,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_cp1251.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_cp1251.pl>
 
 =head2 Example: unicode_cp1256.pl
 
@@ -11508,6 +12321,8 @@ Excel::Writer::XLSX.
 This example generates some Arabic text from a CP-1256 encoded file.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11528,7 +12343,9 @@ Source code for this example:
     # This example generates some Arabic text from a CP-1256 encoded file.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11562,7 +12379,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_cp1256.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_cp1256.pl>
 
 =head2 Example: unicode_cyrillic.pl
 
@@ -11574,6 +12391,8 @@ Excel::Writer::XLSX.
 
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11594,7 +12413,9 @@ Source code for this example:
     #
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11633,7 +12454,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_cyrillic.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_cyrillic.pl>
 
 =head2 Example: unicode_koi8r.pl
 
@@ -11645,6 +12466,8 @@ Excel::Writer::XLSX.
 This example generates some Russian from a file with KOI8-R encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11665,7 +12488,9 @@ Source code for this example:
     # This example generates some Russian from a file with KOI8-R encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11699,7 +12524,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_koi8r.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_koi8r.pl>
 
 =head2 Example: unicode_polish_utf8.pl
 
@@ -11711,6 +12536,8 @@ Excel::Writer::XLSX.
 This example generates some Polish from a file with UTF8 encoded text.
 
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11731,7 +12558,9 @@ Source code for this example:
     # This example generates some Polish from a file with UTF8 encoded text.
     #
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11765,7 +12594,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_polish_utf8.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_polish_utf8.pl>
 
 =head2 Example: unicode_shift_jis.pl
 
@@ -11777,6 +12606,8 @@ Excel::Writer::XLSX.
 This example generates some Japenese text from a file with Shift-JIS
 encoded text.
 
+
+SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 
 
 =begin html
@@ -11797,7 +12628,9 @@ Source code for this example:
     # This example generates some Japenese text from a file with Shift-JIS
     # encoded text.
     #
-    # Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+    # Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+    #
+    # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     #
     
     use strict;
@@ -11831,7 +12664,7 @@ Source code for this example:
     
 
 
-Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.09/examples/unicode_shift_jis.pl>
+Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-XLSX-1.11/examples/unicode_shift_jis.pl>
 
 =head1 AUTHOR
 
@@ -11841,7 +12674,7 @@ Contributed examples contain the original author's name.
 
 =head1 COPYRIGHT
 
-Copyright 2000-2021, John McNamara.
+Copyright 2000-2023, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
 

@@ -4,7 +4,9 @@
 #
 # A demo of an Radar chart in Excel::Writer::XLSX.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use strict;
@@ -45,10 +47,8 @@ $chart1->add_series(
     values     => [ 'Sheet1', 1, 6, 2, 2 ],
 );
 
-# Add a chart title and some axis labels.
+# Add a chart title.
 $chart1->set_title ( name => 'Results of sample analysis' );
-$chart1->set_x_axis( name => 'Test number' );
-$chart1->set_y_axis( name => 'Sample length (mm)' );
 
 # Set an Excel chart style. Blue colors with white outline and shadow.
 $chart1->set_style( 11 );
@@ -80,10 +80,8 @@ $chart2->add_series(
     values     => [ 'Sheet1', 1, 6, 2, 2 ],
 );
 
-# Add a chart title and some axis labels.
+# Add a chart title.
 $chart2->set_title ( name => 'Stacked Chart' );
-$chart2->set_x_axis( name => 'Test number' );
-$chart2->set_y_axis( name => 'Sample length (mm)' );
 
 # Set an Excel chart style. Blue colors with white outline and shadow.
 $chart2->set_style( 12 );
@@ -115,10 +113,8 @@ $chart3->add_series(
     values     => [ 'Sheet1', 1, 6, 2, 2 ],
 );
 
-# Add a chart title and some axis labels.
+# Add a chart title.
 $chart3->set_title ( name => 'Percent Stacked Chart' );
-$chart3->set_x_axis( name => 'Test number' );
-$chart3->set_y_axis( name => 'Sample length (mm)' );
 
 # Set an Excel chart style. Blue colors with white outline and shadow.
 $chart3->set_style( 13 );

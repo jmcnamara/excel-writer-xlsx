@@ -2,7 +2,9 @@
 #
 # Tests the output of Excel::Writer::XLSX against Excel generated files.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -35,11 +37,11 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 
 my $format = $workbook->add_format(font => 'Arial', size => 8);
-my $normal = $workbook->add_shape( 
-    name => 'chip', 
-    type => 'diamond', 
-    text=> "Normal", 
-    width=> 100, 
+my $normal = $workbook->add_shape(
+    name => 'chip',
+    type => 'diamond',
+    text=> "Normal",
+    width=> 100,
     height => 100,
     format => $format,
 );

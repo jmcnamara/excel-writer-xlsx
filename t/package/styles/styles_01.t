@@ -2,7 +2,9 @@
 #
 # Tests for Excel::Writer::XLSX::Package::Styles methods.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -44,7 +46,7 @@ $style->_set_style_properties(
     $workbook->{_xf_formats},
     $workbook->{_palette},
     $workbook->{_font_count},
-    $workbook->{_num_format_count},
+    $workbook->{_num_formats},
     $workbook->{_border_count},
     $workbook->{_fill_count},
     $workbook->{_custom_colors},

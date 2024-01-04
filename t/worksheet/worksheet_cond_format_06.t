@@ -2,7 +2,9 @@
 #
 # Tests for Excel::Writer::XLSX::Worksheet methods.
 #
-# Copyright 2000-2021, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
 
 use lib 't/lib';
@@ -43,7 +45,7 @@ $worksheet->write( 'A4', 40 );
 $worksheet->conditional_formatting( 'A1:A4',
     {
         type     => 'top',
-        value    => 10,
+        value    => 15,
         format   => undef,
     }
 );
@@ -51,7 +53,7 @@ $worksheet->conditional_formatting( 'A1:A4',
 $worksheet->conditional_formatting( 'A1:A4',
     {
         type     => 'bottom',
-        value    => 10,
+        value    => 16,
         format   => undef,
     }
 );
@@ -60,7 +62,7 @@ $worksheet->conditional_formatting( 'A1:A4',
     {
         type     => 'top',
         criteria => '%',
-        value    => 10,
+        value    => 17,
         format   => undef,
     }
 );
@@ -68,7 +70,7 @@ $worksheet->conditional_formatting( 'A1:A4',
     {
         type     => 'bottom',
         criteria => '%',
-        value    => 10,
+        value    => 18,
         format   => undef,
     }
 );
@@ -114,10 +116,10 @@ __DATA__
     </row>
   </sheetData>
   <conditionalFormatting sqref="A1:A4">
-    <cfRule type="top10" priority="1" rank="10"/>
-    <cfRule type="top10" priority="2" bottom="1" rank="10"/>
-    <cfRule type="top10" priority="3" percent="1" rank="10"/>
-    <cfRule type="top10" priority="4" percent="1" bottom="1" rank="10"/>
+    <cfRule type="top10" priority="1" rank="15"/>
+    <cfRule type="top10" priority="2" bottom="1" rank="16"/>
+    <cfRule type="top10" priority="3" percent="1" rank="17"/>
+    <cfRule type="top10" priority="4" percent="1" bottom="1" rank="18"/>
   </conditionalFormatting>
   <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
 </worksheet>
