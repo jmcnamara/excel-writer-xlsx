@@ -180,13 +180,16 @@ sub get_align_properties {
 
 
 
-    # Indent is only allowed for horizontal left, right and distributed. If it
-    # is defined for any other alignment or no alignment has been set then
-    # default to left alignment.
+    # Indent is only allowed for some alignment properties. If it is defined
+    # for any other alignment or no alignment has been set then default to
+    # left alignment.
     if (   $self->{_indent}
         && $self->{_text_h_align} != 1
         && $self->{_text_h_align} != 3
-        && $self->{_text_h_align} != 7 )
+        && $self->{_text_h_align} != 7
+        && $self->{_text_v_align} != 1
+        && $self->{_text_v_align} != 3
+        && $self->{_text_v_align} != 5 )
     {
         $self->{_text_h_align} = 1;
     }
@@ -218,8 +221,8 @@ sub get_align_properties {
     push @align, 'vertical', 'justify'     if $self->{_text_v_align} == 4;
     push @align, 'vertical', 'distributed' if $self->{_text_v_align} == 5;
 
-    push @align, 'indent',       $self->{_indent}   if $self->{_indent};
     push @align, 'textRotation', $self->{_rotation} if $self->{_rotation};
+    push @align, 'indent',       $self->{_indent}   if $self->{_indent};
 
     push @align, 'wrapText',     1 if $self->{_text_wrap};
     push @align, 'shrinkToFit',  1 if $self->{_shrink};
