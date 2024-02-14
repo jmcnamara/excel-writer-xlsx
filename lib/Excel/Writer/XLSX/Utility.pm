@@ -22,6 +22,10 @@ use Exporter;
 use warnings;
 use autouse 'Date::Calc'  => qw(Delta_DHMS Decode_Date_EU Decode_Date_US);
 use autouse 'Date::Manip' => qw(ParseDate Date_Init);
+use Carp;
+use Digest::MD5 qw(md5_hex);
+use File::Basename 'fileparse';
+
 
 our $VERSION = '1.11';
 
@@ -52,7 +56,7 @@ my @dates = qw(
 
 our @ISA         = qw(Exporter);
 our @EXPORT_OK   = ();
-our @EXPORT      = ( @rowcol, @dates, 'quote_sheetname' );
+our @EXPORT      = ( @rowcol, @dates, 'quote_sheetname', 'get_image_properties' );
 our %EXPORT_TAGS = (
     rowcol => \@rowcol,
     dates  => \@dates
@@ -476,6 +480,282 @@ sub xl_string_pixel_width {
     }
 
     return $length;
+}
+
+
+
+###############################################################################
+#
+# get_image_properties()
+#
+# Extract information from the image file such as dimension, type, filename,
+# and extension. Also keep track of previously seen images to optimise out
+# any duplicates.
+#
+sub get_image_properties {
+
+    my $filename = shift;
+
+    my $type;
+    my $width;
+    my $height;
+    my $x_dpi = 96;
+    my $y_dpi = 96;
+    my $image_name;
+
+
+    ( $image_name ) = fileparse( $filename );
+
+    # Open the image file and import the data.
+    my $fh = FileHandle->new( $filename );
+    croak "Couldn't import $filename: $!" unless defined $fh;
+    binmode $fh;
+
+    # Slurp the file into a string and do some size calcs.
+    my $data = do { local $/; <$fh> };
+    my $size = length $data;
+    my $md5  = md5_hex($data);
+
+    if ( unpack( 'x A3', $data ) eq 'PNG' ) {
+
+        # Test for PNGs.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          _process_png( $data, $filename );
+
+    }
+    elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
+
+        # Test for JPEG files.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          _process_jpg( $data, $filename );
+
+    }
+    elsif ( unpack( 'A4', $data ) eq 'GIF8' ) {
+
+        # Test for GIFs.
+        ( $type, $width, $height, $x_dpi, $y_dpi ) =
+          _process_gif( $data, $filename );
+
+    }
+    elsif ( unpack( 'A2', $data ) eq 'BM' ) {
+
+        # Test for BMPs.
+        ( $type, $width, $height ) = _process_bmp( $data, $filename );
+
+    }
+    else {
+        croak "Unsupported image format for file: $filename\n";
+    }
+
+    # Set a default dpi for images with 0 dpi.
+    $x_dpi = 96 if $x_dpi == 0;
+    $y_dpi = 96 if $y_dpi == 0;
+
+    $fh->close;
+
+    return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi, $md5 );
+}
+
+
+###############################################################################
+#
+# _process_png()
+#
+# Extract width and height information from a PNG file.
+#
+sub _process_png {
+
+    my $data     = $_[0];
+    my $filename = $_[1];
+
+    my $type   = 'png';
+    my $width  = 0;
+    my $height = 0;
+    my $x_dpi  = 96;
+    my $y_dpi  = 96;
+
+    my $offset      = 8;
+    my $data_length = length $data;
+
+    # Search through the image data to read the height and width in the
+    # IHDR element. Also read the DPI in the pHYs element.
+    while ( $offset < $data_length ) {
+
+        my $length = unpack "N",  substr $data, $offset + 0, 4;
+        my $type   = unpack "A4", substr $data, $offset + 4, 4;
+
+        if ( $type eq "IHDR" ) {
+            $width  = unpack "N", substr $data, $offset + 8,  4;
+            $height = unpack "N", substr $data, $offset + 12, 4;
+        }
+
+        if ( $type eq "pHYs" ) {
+            my $x_ppu = unpack "N", substr $data, $offset + 8,  4;
+            my $y_ppu = unpack "N", substr $data, $offset + 12, 4;
+            my $units = unpack "C", substr $data, $offset + 16, 1;
+
+            if ( $units == 1 ) {
+                $x_dpi = $x_ppu * 0.0254;
+                $y_dpi = $y_ppu * 0.0254;
+            }
+        }
+
+        $offset = $offset + $length + 12;
+
+        last if $type eq "IEND";
+    }
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in png image.\n";
+    }
+
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
+}
+
+
+###############################################################################
+#
+# _process_bmp()
+#
+# Extract width and height information from a BMP file.
+#
+# Most of the checks came from old Spreadsheet::WriteExcel code.
+#
+sub _process_bmp {
+
+    my $data     = $_[0];
+    my $filename = $_[1];
+    my $type     = 'bmp';
+
+
+    # Check that the file is big enough to be a bitmap.
+    if ( length $data <= 0x36 ) {
+        croak "$filename doesn't contain enough data.";
+    }
+
+
+    # Read the bitmap width and height. Verify the sizes.
+    my ( $width, $height ) = unpack "x18 V2", $data;
+
+    if ( $width > 0xFFFF ) {
+        croak "$filename: largest image width $width supported is 65k.";
+    }
+
+    if ( $height > 0xFFFF ) {
+        croak "$filename: largest image height supported is 65k.";
+    }
+
+    # Read the bitmap planes and bpp data. Verify them.
+    my ( $planes, $bitcount ) = unpack "x26 v2", $data;
+
+    if ( $bitcount != 24 ) {
+        croak "$filename isn't a 24bit true color bitmap.";
+    }
+
+    if ( $planes != 1 ) {
+        croak "$filename: only 1 plane supported in bitmap image.";
+    }
+
+
+    # Read the bitmap compression. Verify compression.
+    my $compression = unpack "x30 V", $data;
+
+    if ( $compression != 0 ) {
+        croak "$filename: compression not supported in bitmap image.";
+    }
+
+    return ( $type, $width, $height );
+}
+
+
+###############################################################################
+#
+# _process_jpg()
+#
+# Extract width and height information from a JPEG file.
+#
+sub _process_jpg {
+
+    my $data     = $_[0];
+    my $filename = $_[1];
+    my $type     = 'jpeg';
+    my $x_dpi    = 96;
+    my $y_dpi    = 96;
+    my $width;
+    my $height;
+
+    my $offset      = 2;
+    my $data_length = length $data;
+
+    # Search through the image data to read the JPEG markers.
+    while ( $offset < $data_length ) {
+
+        my $marker = unpack "n", substr $data, $offset + 0, 2;
+        my $length = unpack "n", substr $data, $offset + 2, 2;
+
+        # Read the height and width in the 0xFFCn elements (except C4, C8 and
+        # CC which aren't SOF markers).
+        if (   ( $marker & 0xFFF0 ) == 0xFFC0
+            && $marker != 0xFFC4
+            && $marker != 0xFFCC )
+        {
+            $height = unpack "n", substr $data, $offset + 5, 2;
+            $width  = unpack "n", substr $data, $offset + 7, 2;
+        }
+
+        # Read the DPI in the 0xFFE0 element.
+        if ( $marker == 0xFFE0 ) {
+            my $units     = unpack "C", substr $data, $offset + 11, 1;
+            my $x_density = unpack "n", substr $data, $offset + 12, 2;
+            my $y_density = unpack "n", substr $data, $offset + 14, 2;
+
+            if ( $units == 1 ) {
+                $x_dpi = $x_density;
+                $y_dpi = $y_density;
+            }
+
+            if ( $units == 2 ) {
+                $x_dpi = $x_density * 2.54;
+                $y_dpi = $y_density * 2.54;
+            }
+        }
+
+        $offset = $offset + $length + 2;
+        last if $marker == 0xFFDA;
+    }
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in jpeg image.\n";
+    }
+
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
+}
+
+
+###############################################################################
+#
+# _process_gif()
+#
+# Extract width and height information from a GIF file.
+#
+sub _process_gif {
+
+    my $data     = $_[0];
+    my $filename = $_[1];
+
+    my $type   = 'gif';
+    my $x_dpi  = 96;
+    my $y_dpi  = 96;
+
+    my $width  = unpack "v", substr $data, 6, 2;
+    my $height = unpack "v", substr $data, 8, 2;
+    print join ", ", ( $type, $width, $height, $x_dpi, $y_dpi, "\n" );
+
+    if ( not defined $height ) {
+        croak "$filename: no size data found in gif image.\n";
+    }
+
+    return ( $type, $width, $height, $x_dpi, $y_dpi );
 }
 
 

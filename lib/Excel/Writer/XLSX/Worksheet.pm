@@ -30,7 +30,8 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     xl_col_to_name
                                     xl_range
                                     xl_string_pixel_width
-                                    quote_sheetname);
+                                    quote_sheetname
+                                    get_image_properties);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '1.11';
@@ -72,6 +73,9 @@ sub new {
     $self->{_excel2003_style}    = $_[11];
     $self->{_default_url_format} = $_[12];
     $self->{_max_url_length}     = $_[13] || 2079;
+
+    $self->{_embedded_image_indexes} = $_[14];
+    $self->{_embedded_images}        = $_[15];
 
     $self->{_ext_sheets}    = [];
     $self->{_fileclosed}    = 0;
@@ -228,8 +232,10 @@ sub new {
     $self->{_vml_drawing_rels_id}    = 0;
     $self->{_horizontal_dpi}         = 0;
     $self->{_vertical_dpi}           = 0;
-    $self->{_has_dynamic_arrays}     = 0;
+    $self->{_has_dynamic_functions}  = 0;
+    $self->{_has_embedded_images}    = 0;
     $self->{_use_future_functions}   = 0;
+    $self->{_ignore_write_string}    = 0;
 
     $self->{_rstring}      = '';
     $self->{_previous_row} = 0;
@@ -3214,7 +3220,7 @@ sub write_dynamic_array_formula {
     my $error = $self->_write_array_formula( 'd', @_ );
 
     if ( $error == 0 ) {
-        $self->{_has_dynamic_arrays} = 1;
+        $self->{_has_dynamic_functions} = 1;
     }
 
     return $error;
@@ -3432,18 +3438,22 @@ sub write_url {
         return -5;
     }
 
-    # Write previous row if in in-line string optimization mode.
-    if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
-        $self->_write_single_row( $row );
-    }
-
     # Add the default URL format.
     if ( !defined $xf ) {
         $xf = $self->{_default_url_format};
     }
 
-    # Write the hyperlink string.
-    $self->write_string( $row, $col, $str, $xf );
+
+    if ( !$self->{_ignore_write_string} ) {
+
+        # Write previous row if in in-line string optimization mode.
+        if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {
+            $self->_write_single_row( $row );
+        }
+
+        # Write the hyperlink string.
+        $self->write_string( $row, $col, $str, $xf );
+    }
 
     # Store the hyperlink data in a separate structure.
     $self->{_hyperlinks}->{$row}->{$col} = {
@@ -3452,6 +3462,7 @@ sub write_url {
         _str       => $url_str,
         _tip       => $tip
     };
+
 
     return $str_error;
 }
@@ -6522,6 +6533,78 @@ sub insert_image {
 
 ###############################################################################
 #
+# embed_image( $row, $col, $filename, $options )
+#
+# Embed an image into the worksheet.
+#
+sub embed_image {
+
+    my $self = shift;
+
+    # Check for a cell reference in A1 notation and substitute row and column.
+    if ( $_[0] =~ /^\D/ ) {
+        @_ = $self->_substitute_cellref( @_ );
+    }
+
+    my $row   = $_[0];
+    my $col   = $_[1];
+    my $image = $_[2];
+    my $xf    = undef;
+    my $url;
+    my $tip;
+    my $description;
+    my $decorative;
+
+    # Check that row and col are valid and store max and min values
+    return -2 if $self->_check_dimensions( $row, $col );
+
+    croak "Insufficient arguments in embed_image()" unless @_ >= 3;
+    croak "Couldn't locate $image: $!"              unless -e $image;
+
+    if ( ref $_[3] eq 'HASH' ) {
+
+        # Newer hashref bashed options.
+        my $options = $_[3];
+        $xf          = $options->{cell_format};
+        $url         = $options->{url};
+        $tip         = $options->{tip};
+        $description = $options->{description};
+        $decorative  = $options->{decorative};
+    }
+
+    # Write the url without writing a string.
+    if ( $url ) {
+        if ( !defined $xf ) {
+            $xf = $self->{_default_url_format};
+        }
+
+        $self->{_ignore_write_string} = 1;
+        $self->write_url( $row, $col, $url, $xf, undef, $tip );
+        $self->{_ignore_write_string} = 0;
+    }
+
+    # Get the image properties, mainly for the type and checksum.
+    my ( $type, undef, undef, undef, undef, undef, $md5 ) =
+      get_image_properties( $image );
+
+    # Check for duplicate images.
+    my $image_index = ${ $self->{_embedded_images_indexes} }->{$md5};
+    if ( !$image_index ) {
+        push @{ ${ $self->{_embedded_images} } },
+          [ $image, $type, $description, $decorative ];
+
+        $image_index = scalar @{ ${ $self->{_embedded_images} } };
+        ${ $self->{_embedded_images_indexes} }->{$md5} = $image_index;
+    }
+
+    # Write the cell placeholder.
+    $self->{_table}->{$row}->{$col} = [ 'e', "#VALUE!", $xf, $image_index ];
+    $self->{_has_embedded_images} = 1;
+}
+
+
+###############################################################################
+#
 # _prepare_image()
 #
 # Set up image/drawings.
@@ -8532,6 +8615,17 @@ sub _write_cell {
         # Write a empty cell.
         $self->xml_empty_tag( 'c', @attributes );
     }
+    elsif ( $type eq 'e' ) {
+
+        # Write a error value (mainly for embedded images).
+        push @attributes, ( 't' => 'e' );
+        push @attributes, ( 'vm' => $cell->[3] );
+
+        $self->xml_start_tag( 'c', @attributes );
+        $self->_write_cell_value( $cell->[1] );
+        $self->xml_end_tag( 'c' );
+    }
+
 }
 
 

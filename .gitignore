@@ -12,4 +12,5 @@ TAGS
 *#
 ~*xlsx
 *.bak
+.vscode
 

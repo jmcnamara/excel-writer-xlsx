@@ -23,9 +23,7 @@ use Carp;
 use IO::File;
 use File::Find;
 use File::Temp qw(tempfile);
-use File::Basename 'fileparse';
 use Archive::Zip;
-use Digest::MD5 qw(md5_hex);
 use Excel::Writer::XLSX::Worksheet;
 use Excel::Writer::XLSX::Chartsheet;
 use Excel::Writer::XLSX::Format;
@@ -33,7 +31,9 @@ use Excel::Writer::XLSX::Shape;
 use Excel::Writer::XLSX::Chart;
 use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
-use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol xl_rowcol_to_cell);
+use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
+                                    xl_rowcol_to_cell
+                                    get_image_properties);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '1.11';
@@ -102,7 +102,11 @@ sub new {
     $self->{_max_url_length}     = 2079;
     $self->{_has_comments}       = 0;
     $self->{_read_only}          = 0;
-    $self->{_has_metadata}       = 0;
+
+    $self->{_has_metadata}               = 0;
+    $self->{_has_dynamic_functions}      = 0;
+    $self->{_has_embedded_images}        = 0;
+    $self->{_has_embedded_descriptions}  = 0;
 
     $self->{_default_format_properties} = {};
 
@@ -140,6 +144,10 @@ sub new {
     $self->{_str_unique} = 0;
     $self->{_str_table}  = {};
     $self->{_str_array}  = [];
+
+    # Structures for embedded images.
+    $self->{_embedded_image_indexes}  = {};
+    $self->{_embedded_images}  = [];
 
     # Formula calculation default settings.
     $self->{_calc_id}      = 124519;
@@ -375,6 +383,7 @@ sub add_worksheet {
     #
     my @init_data = (
         $fh,
+
         $name,
         $index,
 
@@ -392,6 +401,9 @@ sub add_worksheet {
         $self->{_excel2003_style},
         $self->{_default_url_format},
         $self->{_max_url_length},
+
+        \$self->{_embedded_image_indexes},
+        \$self->{_embedded_images},
     );
 
     my $worksheet = Excel::Writer::XLSX::Worksheet->new( @init_data );
@@ -1792,12 +1804,23 @@ sub _prepare_drawings {
 
     my $self             = shift;
     my $chart_ref_id     = 0;
-    my $image_ref_id     = 0;
     my $drawing_id       = 0;
     my $ref_id           = 0;
     my %image_ids        = ();
     my %header_image_ids = ();
     my %background_ids   = ();
+
+    # Store the image types for any embedded images.
+    for my $image_data ( @{ $self->{_embedded_images} } ) {
+        $self->_store_image_types( $image_data->[1] );
+
+        if ( $image_data->[2] ) {
+            $self->{_has_embedded_descriptions} = 1;
+        }
+    }
+
+    # The image IDs start from after the embedded images.
+    my $image_ref_id = scalar @{ $self->{_embedded_images} };
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
 
@@ -1822,7 +1845,7 @@ sub _prepare_drawings {
             next;
         }
 
-        # Don't increase the drawing_id header/footer images.
+        # Only increase the drawing_id for worksheet charts/images/shapes.
         if ( $chart_count || $image_count || $shape_count ) {
             $drawing_id++;
             $has_drawing = 1;
@@ -1834,7 +1857,9 @@ sub _prepare_drawings {
             my $filename = $sheet->{_background_image};
 
             my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
-              $self->_get_image_properties( $filename );
+              get_image_properties( $filename );
+
+            $self->_store_image_types( $type );
 
             if ( exists $background_ids{$md5} ) {
                 $ref_id = $background_ids{$md5};
@@ -1848,13 +1873,17 @@ sub _prepare_drawings {
             $sheet->_prepare_background($ref_id, $type);
         }
 
+
+
         # Prepare the worksheet images.
         for my $index ( 0 .. $image_count - 1 ) {
 
             my $filename = $sheet->{_images}->[$index]->[2];
 
             my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
-              $self->_get_image_properties( $filename );
+              get_image_properties( $filename );
+
+            $self->_store_image_types( $type );
 
             if ( exists $image_ids{$md5} ) {
                 $ref_id = $image_ids{$md5};
@@ -1889,7 +1918,9 @@ sub _prepare_drawings {
             my $position = $sheet->{_header_images}->[$index]->[1];
 
             my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
-              $self->_get_image_properties( $filename );
+              get_image_properties( $filename );
+
+            $self->_store_image_types( $type );
 
             if ( exists $header_image_ids{$md5} ) {
                 $ref_id = $header_image_ids{$md5};
@@ -1913,7 +1944,9 @@ sub _prepare_drawings {
             my $position = $sheet->{_footer_images}->[$index]->[1];
 
             my ( $type, $width, $height, $name, $x_dpi, $y_dpi, $md5 ) =
-              $self->_get_image_properties( $filename );
+              get_image_properties( $filename );
+
+            $self->_store_image_types( $type );
 
             if ( exists $header_image_ids{$md5} ) {
                 $ref_id = $header_image_ids{$md5};
@@ -1929,6 +1962,7 @@ sub _prepare_drawings {
                 $position, $x_dpi, $y_dpi,  $md5
             );
         }
+
 
 
         if ( $has_drawing ) {
@@ -2050,8 +2084,10 @@ sub _prepare_metadata {
     my $self = shift;
 
     for my $sheet ( @{ $self->{_worksheets} } ) {
-        if ($sheet->{_has_dynamic_arrays}) {
+        if ($sheet->{_has_dynamic_functions} || $sheet->{_has_embedded_images}) {
             $self->{_has_metadata} = 1;
+            $self->{_has_dynamic_functions} ||= $sheet->{_has_dynamic_functions};
+            $self->{_has_embedded_images} ||= $sheet->{_has_embedded_images};
         }
     }
 }
@@ -2260,285 +2296,29 @@ sub _quote_sheetname {
 
 ###############################################################################
 #
-# _get_image_properties()
+# _store_image_types()
 #
-# Extract information from the image file such as dimension, type, filename,
-# and extension. Also keep track of previously seen images to optimise out
-# any duplicates.
+# Store the image types (PNG/JPEG/etc) used in the workbook to use in the
+# Content_Types file.
 #
-sub _get_image_properties {
+sub _store_image_types {
 
-    my $self     = shift;
-    my $filename = shift;
+    my $self = shift;
+    my $type = shift;
 
-    my $type;
-    my $width;
-    my $height;
-    my $x_dpi = 96;
-    my $y_dpi = 96;
-    my $image_name;
-
-
-    ( $image_name ) = fileparse( $filename );
-
-    # Open the image file and import the data.
-    my $fh = FileHandle->new( $filename );
-    croak "Couldn't import $filename: $!" unless defined $fh;
-    binmode $fh;
-
-    # Slurp the file into a string and do some size calcs.
-    my $data = do { local $/; <$fh> };
-    my $size = length $data;
-    my $md5  = md5_hex($data);
-
-    if ( unpack( 'x A3', $data ) eq 'PNG' ) {
-
-        # Test for PNGs.
-        ( $type, $width, $height, $x_dpi, $y_dpi ) =
-          $self->_process_png( $data, $filename );
-
+    if ( $type eq 'png') {
         $self->{_image_types}->{png} = 1;
     }
-    elsif ( unpack( 'n', $data ) == 0xFFD8 ) {
-
-        # Test for JPEG files.
-        ( $type, $width, $height, $x_dpi, $y_dpi ) =
-          $self->_process_jpg( $data, $filename );
-
+    elsif ( $type eq 'jpeg' ) {
         $self->{_image_types}->{jpeg} = 1;
     }
-    elsif ( unpack( 'A4', $data ) eq 'GIF8' ) {
-
-        # Test for GIFs.
-        ( $type, $width, $height, $x_dpi, $y_dpi ) =
-          $self->_process_gif( $data, $filename );
-
+    elsif ( $type eq 'gif' ) {
         $self->{_image_types}->{gif} = 1;
     }
-    elsif ( unpack( 'A2', $data ) eq 'BM' ) {
-
-        # Test for BMPs.
-        ( $type, $width, $height ) = $self->_process_bmp( $data, $filename );
-
+    elsif ( $type eq 'bmp' ) {
         $self->{_image_types}->{bmp} = 1;
     }
-    else {
-        croak "Unsupported image format for file: $filename\n";
-    }
 
-    # Set a default dpi for images with 0 dpi.
-    $x_dpi = 96 if $x_dpi == 0;
-    $y_dpi = 96 if $y_dpi == 0;
-
-    $fh->close;
-
-    return ( $type, $width, $height, $image_name, $x_dpi, $y_dpi, $md5 );
-}
-
-
-###############################################################################
-#
-# _process_png()
-#
-# Extract width and height information from a PNG file.
-#
-sub _process_png {
-
-    my $self     = shift;
-    my $data     = $_[0];
-    my $filename = $_[1];
-
-    my $type   = 'png';
-    my $width  = 0;
-    my $height = 0;
-    my $x_dpi  = 96;
-    my $y_dpi  = 96;
-
-    my $offset      = 8;
-    my $data_length = length $data;
-
-    # Search through the image data to read the height and width in the
-    # IHDR element. Also read the DPI in the pHYs element.
-    while ( $offset < $data_length ) {
-
-        my $length = unpack "N",  substr $data, $offset + 0, 4;
-        my $type   = unpack "A4", substr $data, $offset + 4, 4;
-
-        if ( $type eq "IHDR" ) {
-            $width  = unpack "N", substr $data, $offset + 8,  4;
-            $height = unpack "N", substr $data, $offset + 12, 4;
-        }
-
-        if ( $type eq "pHYs" ) {
-            my $x_ppu = unpack "N", substr $data, $offset + 8,  4;
-            my $y_ppu = unpack "N", substr $data, $offset + 12, 4;
-            my $units = unpack "C", substr $data, $offset + 16, 1;
-
-            if ( $units == 1 ) {
-                $x_dpi = $x_ppu * 0.0254;
-                $y_dpi = $y_ppu * 0.0254;
-            }
-        }
-
-        $offset = $offset + $length + 12;
-
-        last if $type eq "IEND";
-    }
-
-    if ( not defined $height ) {
-        croak "$filename: no size data found in png image.\n";
-    }
-
-    return ( $type, $width, $height, $x_dpi, $y_dpi );
-}
-
-
-###############################################################################
-#
-# _process_bmp()
-#
-# Extract width and height information from a BMP file.
-#
-# Most of the checks came from old Spredsheet::WriteExcel code.
-#
-sub _process_bmp {
-
-    my $self     = shift;
-    my $data     = $_[0];
-    my $filename = $_[1];
-    my $type     = 'bmp';
-
-
-    # Check that the file is big enough to be a bitmap.
-    if ( length $data <= 0x36 ) {
-        croak "$filename doesn't contain enough data.";
-    }
-
-
-    # Read the bitmap width and height. Verify the sizes.
-    my ( $width, $height ) = unpack "x18 V2", $data;
-
-    if ( $width > 0xFFFF ) {
-        croak "$filename: largest image width $width supported is 65k.";
-    }
-
-    if ( $height > 0xFFFF ) {
-        croak "$filename: largest image height supported is 65k.";
-    }
-
-    # Read the bitmap planes and bpp data. Verify them.
-    my ( $planes, $bitcount ) = unpack "x26 v2", $data;
-
-    if ( $bitcount != 24 ) {
-        croak "$filename isn't a 24bit true color bitmap.";
-    }
-
-    if ( $planes != 1 ) {
-        croak "$filename: only 1 plane supported in bitmap image.";
-    }
-
-
-    # Read the bitmap compression. Verify compression.
-    my $compression = unpack "x30 V", $data;
-
-    if ( $compression != 0 ) {
-        croak "$filename: compression not supported in bitmap image.";
-    }
-
-    return ( $type, $width, $height );
-}
-
-
-###############################################################################
-#
-# _process_jpg()
-#
-# Extract width and height information from a JPEG file.
-#
-sub _process_jpg {
-
-    my $self     = shift;
-    my $data     = $_[0];
-    my $filename = $_[1];
-    my $type     = 'jpeg';
-    my $x_dpi    = 96;
-    my $y_dpi    = 96;
-    my $width;
-    my $height;
-
-    my $offset      = 2;
-    my $data_length = length $data;
-
-    # Search through the image data to read the JPEG markers.
-    while ( $offset < $data_length ) {
-
-        my $marker = unpack "n", substr $data, $offset + 0, 2;
-        my $length = unpack "n", substr $data, $offset + 2, 2;
-
-        # Read the height and width in the 0xFFCn elements (except C4, C8 and
-        # CC which aren't SOF markers).
-        if (   ( $marker & 0xFFF0 ) == 0xFFC0
-            && $marker != 0xFFC4
-            && $marker != 0xFFCC )
-        {
-            $height = unpack "n", substr $data, $offset + 5, 2;
-            $width  = unpack "n", substr $data, $offset + 7, 2;
-        }
-
-        # Read the DPI in the 0xFFE0 element.
-        if ( $marker == 0xFFE0 ) {
-            my $units     = unpack "C", substr $data, $offset + 11, 1;
-            my $x_density = unpack "n", substr $data, $offset + 12, 2;
-            my $y_density = unpack "n", substr $data, $offset + 14, 2;
-
-            if ( $units == 1 ) {
-                $x_dpi = $x_density;
-                $y_dpi = $y_density;
-            }
-
-            if ( $units == 2 ) {
-                $x_dpi = $x_density * 2.54;
-                $y_dpi = $y_density * 2.54;
-            }
-        }
-
-        $offset = $offset + $length + 2;
-        last if $marker == 0xFFDA;
-    }
-
-    if ( not defined $height ) {
-        croak "$filename: no size data found in jpeg image.\n";
-    }
-
-    return ( $type, $width, $height, $x_dpi, $y_dpi );
-}
-
-
-###############################################################################
-#
-# _process_gif()
-#
-# Extract width and height information from a GIF file.
-#
-sub _process_gif {
-
-    my $self     = shift;
-    my $data     = $_[0];
-    my $filename = $_[1];
-
-    my $type   = 'gif';
-    my $x_dpi  = 96;
-    my $y_dpi  = 96;
-
-    my $width  = unpack "v", substr $data, 6, 2;
-    my $height = unpack "v", substr $data, 8, 2;
-    print join ", ", ( $type, $width, $height, $x_dpi, $y_dpi, "\n" );
-
-    if ( not defined $height ) {
-        croak "$filename: no size data found in gif image.\n";
-    }
-
-    return ( $type, $width, $height, $x_dpi, $y_dpi );
 }
 
 
@@ -2779,7 +2559,7 @@ sub _write_sheet {
     my $self     = shift;
     my $name     = shift;
     my $sheet_id = shift;
-    my $hidden   = shift;
+    my $hidden   = shift || 0;
     my $r_id     = 'rId' . $sheet_id;
 
     my @attributes = (

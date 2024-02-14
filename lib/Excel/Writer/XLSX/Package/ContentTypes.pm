@@ -352,6 +352,38 @@ sub _add_metadata {
 
 ###############################################################################
 #
+# _add_richvalue()
+#
+# Add the RichValue files to the ContentTypes overrides.
+#
+sub _add_richvalue {
+
+    my $self = shift;
+
+    $self->_add_override(
+        '/xl/richData/rdRichValueTypes.xml',
+        'application/vnd.ms-excel.rdrichvaluetypes+xml'
+    );
+
+    $self->_add_override(
+        '/xl/richData/rdrichvalue.xml',
+        'application/vnd.ms-excel.rdrichvalue+xml'
+    );
+
+    $self->_add_override(
+        '/xl/richData/rdrichvaluestructure.xml',
+        'application/vnd.ms-excel.rdrichvaluestructure+xml'
+    );
+
+    $self->_add_override(
+        '/xl/richData/richValueRel.xml',
+        'application/vnd.ms-excel.richvaluerel+xml'
+    );
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################

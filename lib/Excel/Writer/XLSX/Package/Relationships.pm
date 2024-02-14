@@ -148,6 +148,42 @@ sub _add_worksheet_relationship {
 
 ###############################################################################
 #
+# _add_workbook_rich_values()
+#
+# Add relationships for RichValue files.
+#
+sub _add_rich_value_relationships {
+
+    my $self = shift;
+
+    push @{ $self->{_rels} },
+      [
+        'http://schemas.microsoft.com/office/2022/10/relationships/richValueRel',
+        'richData/richValueRel.xml'
+      ];
+
+    push @{ $self->{_rels} },
+      [
+        'http://schemas.microsoft.com/office/2017/06/relationships/rdRichValue',
+        'richData/rdrichvalue.xml'
+      ];
+
+    push @{ $self->{_rels} },
+      [
+        'http://schemas.microsoft.com/office/2017/06/relationships/rdRichValueStructure',
+        'richData/rdrichvaluestructure.xml'
+      ];
+
+    push @{ $self->{_rels} },
+      [
+        'http://schemas.microsoft.com/office/2017/06/relationships/rdRichValueTypes',
+        'richData/rdRichValueTypes.xml'
+      ];
+}
+
+
+###############################################################################
+#
 # Internal methods.
 #
 ###############################################################################

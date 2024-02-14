@@ -44,6 +44,10 @@ sub new {
     my $fh    = shift;
     my $self  = Excel::Writer::XLSX::Package::XMLwriter->new( $fh );
 
+    $self->{_has_dynamic_functions} = 0;
+    $self->{_has_embedded_images}   = 0;
+    $self->{_num_embedded_images}   = 0;
+
     bless $self, $class;
 
     return $self;
@@ -60,6 +64,10 @@ sub _assemble_xml_file {
 
     my $self = shift;
 
+    if ( $self->{_num_embedded_images} > 0 ) {
+        $self->{_has_embedded_images} = 1;
+    }
+
     $self->xml_declaration;
 
     # Write the metadata element.
@@ -69,10 +77,12 @@ sub _assemble_xml_file {
     $self->_write_metadata_types();
 
     # Write the futureMetadata element.
-    $self->_write_future_metadata();
+    $self->_write_cell_future_metadata()  if $self->{_has_dynamic_functions};
+    $self->_write_value_future_metadata() if $self->{_has_embedded_images};
 
-    # Write the cellMetadata element.
-    $self->_write_cell_metadata();
+    # Write the valueMetadata element.
+    $self->_write_cell_metadata()  if $self->{_has_dynamic_functions};
+    $self->_write_value_metadata() if $self->{_has_embedded_images};
 
     $self->xml_end_tag( 'metadata' );
 
@@ -96,15 +106,29 @@ sub _assemble_xml_file {
 #
 sub _write_metadata {
 
-    my $self  = shift;
-    my $xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-    my $xmlns_xda =
-      'http://schemas.microsoft.com/office/spreadsheetml/2017/dynamicarray';
+    my $self = shift;
 
     my @attributes = (
-        'xmlns'     => $xmlns,
-        'xmlns:xda' => $xmlns_xda,
+        'xmlns' =>
+        'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
     );
+
+
+    if ( $self->{_has_embedded_images} ) {
+        push @attributes,
+          (
+              'xmlns:xlrd' =>
+              'http://schemas.microsoft.com/office/spreadsheetml/2017/richdata'
+          );
+    }
+
+    if ( $self->{_has_dynamic_functions} ) {
+        push @attributes,
+          (
+              'xmlns:xda' =>
+              'http://schemas.microsoft.com/office/spreadsheetml/2017/dynamicarray'
+          );
+    }
 
     $self->xml_start_tag( 'metadata', @attributes );
 }
@@ -119,13 +143,15 @@ sub _write_metadata {
 sub _write_metadata_types {
 
     my $self  = shift;
+    my $count = $self->{_has_dynamic_functions} + $self->{_has_embedded_images};
 
-    my @attributes = ( 'count' => 1 );
+    my @attributes = ( 'count' => $count );
 
     $self->xml_start_tag( 'metadataTypes', @attributes );
 
     # Write the metadataType element.
-    $self->_write_metadata_type();
+    $self->_write_cell_metadata_type()  if $self->{_has_dynamic_functions};
+    $self->_write_value_metadata_type() if $self->{_has_embedded_images};
 
     $self->xml_end_tag( 'metadataTypes' );
 }
@@ -133,11 +159,11 @@ sub _write_metadata_types {
 
 ##############################################################################
 #
-# _write_metadata_type()
+# _write_cell_metadata_type()
 #
 # Write the <metadataType> element.
 #
-sub _write_metadata_type {
+sub _write_cell_metadata_type {
 
     my $self = shift;
 
@@ -163,11 +189,40 @@ sub _write_metadata_type {
 
 ##############################################################################
 #
-# _write_future_metadata()
+# _write_value_metadata_type()
+#
+# Write the <metadataType> element.
+#
+sub _write_value_metadata_type {
+
+    my $self = shift;
+
+    my @attributes = (
+        'name'                => 'XLRICHVALUE',
+        'minSupportedVersion' => 120000,
+        'copy'                => 1,
+        'pasteAll'            => 1,
+        'pasteValues'         => 1,
+        'merge'               => 1,
+        'splitFirst'          => 1,
+        'rowColShift'         => 1,
+        'clearFormats'        => 1,
+        'clearComments'       => 1,
+        'assign'              => 1,
+        'coerce'              => 1,
+    );
+
+    $self->xml_empty_tag( 'metadataType', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_cell_future_metadata()
 #
 # Write the <futureMetadata> element.
 #
-sub _write_future_metadata {
+sub _write_cell_future_metadata {
 
     my $self  = shift;
 
@@ -181,7 +236,7 @@ sub _write_future_metadata {
     $self->xml_start_tag( 'extLst' );
 
     # Write the ext element.
-    $self->_write_ext();
+    $self->_write_cell_ext();
 
     $self->xml_end_tag( 'ext' );
     $self->xml_end_tag( 'extLst' );
@@ -193,13 +248,48 @@ sub _write_future_metadata {
 
 ##############################################################################
 #
-# _write_ext()
+# _write_value_future_metadata()
+#
+# Write the <futureMetadata> element.
+#
+sub _write_value_future_metadata {
+
+    my $self       = shift;
+    my $num_images = $self->{_num_embedded_images};
+
+    my @attributes = (
+        'name'  => 'XLRICHVALUE',
+        'count' => $num_images,
+    );
+
+    $self->xml_start_tag( 'futureMetadata', @attributes );
+
+    for my $i ( 0 .. $num_images - 1 ) {
+        $self->xml_start_tag( 'bk' );
+        $self->xml_start_tag( 'extLst' );
+
+        # Write the ext element.
+        $self->_write_value_ext( $i );
+
+        $self->xml_end_tag( 'ext' );
+        $self->xml_end_tag( 'extLst' );
+        $self->xml_end_tag( 'bk' );
+    }
+
+    $self->xml_end_tag( 'futureMetadata' );
+}
+
+
+##############################################################################
+#
+# _write_cell_ext()
 #
 # Write the <ext> element.
 #
-sub _write_ext {
+sub _write_cell_ext {
 
     my $self = shift;
+    my $uri = shift;
 
     my @attributes = ( 'uri' => '{bdbb8cdc-fa1e-496e-a857-3c3f30c029c3}' );
 
@@ -209,6 +299,25 @@ sub _write_ext {
     $self->_write_xda_dynamic_array_properties();
 }
 
+
+##############################################################################
+#
+# _write_value_ext()
+#
+# Write the <ext> element.
+#
+sub _write_value_ext {
+
+    my $self = shift;
+    my $num  = shift;
+
+    my @attributes = ( 'uri' => '{3e2802c4-a4d2-4d8b-9148-e3be6c30e623}' );
+
+    $self->xml_start_tag( 'ext', @attributes );
+
+    # Write the <xlrd:rvb> element.
+    $self->_write_xlrd_rvb( $num );
+}
 
 ##############################################################################
 #
@@ -246,10 +355,42 @@ sub _write_cell_metadata {
     $self->xml_start_tag( 'bk' );
 
     # Write the rc element.
-    $self->_write_rc();
+    $self->_write_rc(1, 0);
 
     $self->xml_end_tag( 'bk' );
     $self->xml_end_tag( 'cellMetadata' );
+}
+
+
+##############################################################################
+#
+# _write_value_metadata()
+#
+# Write the <valueMetadata> element.
+#
+sub _write_value_metadata {
+
+    my $self  = shift;
+    my $count = $self->{_num_embedded_images};
+    my $type  = 1;
+
+    if ($self->{_has_dynamic_functions}) {
+        $type  = 2;
+    }
+    my @attributes = ( 'count' => $count, );
+
+    $self->xml_start_tag( 'valueMetadata', @attributes );
+
+    for my $i ( 0 .. $count - 1 ) {
+        $self->xml_start_tag( 'bk' );
+
+        # Write the rc element.
+        $self->_write_rc( $type, $i );
+
+        $self->xml_end_tag( 'bk' );
+    }
+
+    $self->xml_end_tag( 'valueMetadata' );
 }
 
 
@@ -261,14 +402,33 @@ sub _write_cell_metadata {
 #
 sub _write_rc {
 
-    my $self = shift;
+    my $self  = shift;
+    my $type  = shift;
+    my $value = shift;
 
     my @attributes = (
-        't' => 1,
-        'v' => 0,
+        't' => $type,
+        'v' => $value,
     );
 
     $self->xml_empty_tag( 'rc', @attributes );
+}
+
+
+##############################################################################
+#
+# _write_xlrd_rvb()
+#
+# Write the <xlrd:rvb> element.
+#
+sub _write_xlrd_rvb {
+
+    my $self  = shift;
+    my $value = shift;
+
+    my @attributes = ( 'i' => $value, );
+
+    $self->xml_empty_tag( 'xlrd:rvb', @attributes );
 }
 
 
@@ -296,6 +456,7 @@ This module is used in conjunction with L<Excel::Writer::XLSX>.
 John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
+
 
 (c) MM-MMXXIII, John McNamara.
 

@@ -27,6 +27,10 @@ use Excel::Writer::XLSX::Package::ContentTypes;
 use Excel::Writer::XLSX::Package::Core;
 use Excel::Writer::XLSX::Package::Custom;
 use Excel::Writer::XLSX::Package::Metadata;
+use Excel::Writer::XLSX::Package::RichValue;
+use Excel::Writer::XLSX::Package::RichValueRel;
+use Excel::Writer::XLSX::Package::RichValueStructure;
+use Excel::Writer::XLSX::Package::RichValueTypes;
 use Excel::Writer::XLSX::Package::Relationships;
 use Excel::Writer::XLSX::Package::SharedStrings;
 use Excel::Writer::XLSX::Package::Styles;
@@ -146,9 +150,11 @@ sub _create_package {
     $self->_write_worksheet_rels_files();
     $self->_write_chartsheet_rels_files();
     $self->_write_drawing_rels_files();
+    $self->_write_rich_value_rels_files();
     $self->_add_image_files();
     $self->_add_vba_project();
     $self->_write_metadata_file();
+    $self->_write_rich_value_files();
 }
 
 
@@ -473,10 +479,109 @@ sub _write_metadata_file {
 
     return if !$self->{_workbook}->{_has_metadata};
 
+    $metadata->{_has_dynamic_functions} = $self->{_workbook}->{_has_dynamic_functions};
+    $metadata->{_num_embedded_images}   = @{ $self->{_workbook}->{_embedded_images} };
+
     _mkdir( $dir . '/xl' );
 
     $metadata->_set_xml_writer( $dir . '/xl/metadata.xml' );
     $metadata->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_rich_value_files()
+#
+# Write the rdrichvalue(*).xml file.
+#
+sub _write_rich_value_files {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+
+    return if !$self->{_workbook}->{_has_embedded_images};
+
+    _mkdir( $dir . '/xl' );
+    _mkdir( $dir . '/xl/richData' );
+
+    $self->_write_rich_value_file();
+    $self->_write_rich_value_structure_file();
+    $self->_write_rich_value_types_file();
+    $self->_write_rich_value_rel();
+}
+
+
+###############################################################################
+#
+# _write_rich_value_file()
+#
+# Write the rdrichvalue.xml file.
+#
+sub _write_rich_value_file {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $rich_value = Excel::Writer::XLSX::Package::RichValue->new();
+
+    $rich_value->{_embedded_images} = $self->{_workbook}->{_embedded_images};
+
+    $rich_value->_set_xml_writer( $dir . '/xl/richData/rdrichvalue.xml' );
+    $rich_value->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_rich_value_structure_file()
+#
+# Write the rdrichvaluestructure.xml file.
+#
+sub _write_rich_value_structure_file {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $rich_value = Excel::Writer::XLSX::Package::RichValueStructure->new();
+
+    $rich_value->{_has_embedded_descriptions} = $self->{_workbook}->{_has_embedded_descriptions};
+
+    $rich_value->_set_xml_writer( $dir . '/xl/richData/rdrichvaluestructure.xml' );
+    $rich_value->_assemble_xml_file();
+}
+
+
+###############################################################################
+#
+# _write_rich_value_types_file()
+#
+# Write the rdRichValueTypes.xml file.
+#
+sub _write_rich_value_types_file {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $rich_value = Excel::Writer::XLSX::Package::RichValueTypes->new();
+
+    $rich_value->_set_xml_writer( $dir . '/xl/richData/rdRichValueTypes.xml' );
+    $rich_value->_assemble_xml_file();
+}
+
+###############################################################################
+#
+# _write_rich_value_rel()
+#
+# Write the rdrichvalue.xml file.
+#
+sub _write_rich_value_rel {
+
+    my $self       = shift;
+    my $dir        = $self->{_package_dir};
+    my $rich_value = Excel::Writer::XLSX::Package::RichValueRel->new();
+
+    $rich_value->{_value_count} = @{ $self->{_workbook}->{_embedded_images} };
+
+    $rich_value->_set_xml_writer( $dir . '/xl/richData/richValueRel.xml' );
+    $rich_value->_assemble_xml_file();
 }
 
 
@@ -566,6 +671,11 @@ sub _write_content_types_file {
     # Add the metadata file if present.
     if ( $self->{_workbook}->{_has_metadata} ) {
         $content->_add_metadata();
+    }
+
+    # Add the RichValue file if present.
+    if ( $self->{_workbook}->{_has_embedded_images} ) {
+        $content->_add_richvalue();
     }
 
     $content->_set_xml_writer( $dir . '/[Content_Types].xml' );
@@ -751,6 +861,11 @@ sub _write_workbook_rels_file {
         $rels->_add_document_relationship( '/sheetMetadata', 'metadata.xml' );
     }
 
+    # Add the RichValue files if present.
+    if ( $self->{_workbook}->{_has_embedded_images} ) {
+        $rels->_add_rich_value_relationships();
+    }
+
     $rels->_set_xml_writer( $dir . '/xl/_rels/workbook.xml.rels' );
     $rels->_assemble_xml_file();
 }
@@ -802,6 +917,44 @@ sub _write_worksheet_rels_files {
             $dir . '/xl/worksheets/_rels/sheet' . $index . '.xml.rels' );
         $rels->_assemble_xml_file();
     }
+}
+
+
+###############################################################################
+#
+# _write_rich_value_rels_files()
+#
+# Write the richValueRel.xml.rels files for worksheets that contain embedded
+# images.
+#
+sub _write_rich_value_rels_files {
+
+    my $self = shift;
+    my $dir  = $self->{_package_dir};
+
+
+    return unless @{ $self->{_workbook}->{_embedded_images} };
+
+    # Create the .rels dirs.
+    _mkdir( $dir . '/xl' );
+    _mkdir( $dir . '/xl/richData' );
+    _mkdir( $dir . '/xl/richData/_rels' );
+
+    my $rels = Excel::Writer::XLSX::Package::Relationships->new();
+
+    my $index = 0;
+    for my $image_data ( @{ $self->{_workbook}->{_embedded_images} } ) {
+        $index++;
+
+        my $file_type  = $image_data->[1];
+        my $image_file = "../media/image$index.$file_type";
+
+        $rels->_add_worksheet_relationship( '/image', $image_file );
+    }
+
+    # Create the .rels file.
+    $rels->_set_xml_writer( $dir . '/xl/richData/_rels/richValueRel.xml.rels' );
+    $rels->_assemble_xml_file();
 }
 
 
@@ -936,6 +1089,17 @@ sub _add_image_files {
     my $dir      = $self->{_package_dir};
     my $workbook = $self->{_workbook};
     my $index    = 1;
+
+    for my $image ( @{ $workbook->{_embedded_images} } ) {
+
+        my $filename  = $image->[0];
+        my $extension = '.' . $image->[1];
+
+        _mkdir( $dir . '/xl' );
+        _mkdir( $dir . '/xl/media' );
+
+        copy( $filename, $dir . '/xl/media/image' . $index++ . $extension );
+    }
 
     for my $image ( @{ $workbook->{_images} } ) {
         my $filename  = $image->[0];
