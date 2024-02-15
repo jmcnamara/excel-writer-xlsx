@@ -2935,6 +2935,7 @@ sub _prepare_formula {
     $formula =~ s/\b(HYPGEOM.DIST\()/_xlfn.$1/g;
     $formula =~ s/\b(IFNA\()/_xlfn.$1/g;
     $formula =~ s/\b(IFS\()/_xlfn.$1/g;
+    $formula =~ s/\b(IMAGE\()/_xlfn.$1/g;
     $formula =~ s/\b(IMCOSH\()/_xlfn.$1/g;
     $formula =~ s/\b(IMCOT\()/_xlfn.$1/g;
     $formula =~ s/\b(IMCSCH\()/_xlfn.$1/g;
@@ -3081,8 +3082,8 @@ sub write_formula {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    # Remove the = sign if it exists.
-    $formula =~ s/^=//;
+    # Expand out the formula.
+    $formula = $self->_prepare_formula($formula);
 
     # Write previous row if in in-line string optimization mode.
     if ( $self->{_optimization} == 1 && $row > $self->{_previous_row} ) {

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Excel::Writer::XLSX::Worksheet;
 
-use Test::More tests => 179;
+use Test::More tests => 180;
 
 
 ###############################################################################
@@ -98,6 +98,7 @@ my @testcases = (
     ['F.INV()', '_xlfn.F.INV()'],
     ['GAMMA()', '_xlfn.GAMMA()'],
     ['GAUSS()', '_xlfn.GAUSS()'],
+    ['IMAGE()', '_xlfn.IMAGE()'],
     ['IMCOT()', '_xlfn.IMCOT()'],
     ['IMCSC()', '_xlfn.IMCSC()'],
     ['IMSEC()', '_xlfn.IMSEC()'],
