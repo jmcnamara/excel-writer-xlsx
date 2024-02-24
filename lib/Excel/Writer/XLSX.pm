@@ -1785,7 +1785,8 @@ BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid 
 
 =head2 embed_image( $row, $col, $filename, { %options } )
 
-This method can be used to embed an image into a worksheet. The image can be in PNG, JPEG, GIF or BMP format.
+This method can be used to embed an image into a worksheet. The image can be
+in PNG, JPEG, GIF or BMP format.
 
     $worksheet1->embed_image( 'A1', 'perl.bmp' );
     $worksheet2->embed_image( 'A1', '../images/perl.bmp' );
@@ -1797,10 +1798,13 @@ of the image is preserved but the size of the image is adjusted to fit the
 largest possible width or height depending on the cell dimensions.
 
 This is the equivalent of Excel's menu option to insert an image using the
-option to "Place in Cell". See C<insert_image()> for the equivalent method to
-"Place over Cells".
+option to "Place in Cell" which is only available in Excel 365 versions from
+2023 onwards. For older versions of Excel a ``#VALUE!`` error is displayed.
 
-The optional C<options> hash/hashref parameter can be used to set various options for the image. The defaults are:
+See C<insert_image()> for the equivalent method to "Place over Cells".
+
+The optional C<options> hash/hashref parameter can be used to set various
+options for the image. The defaults are:
 
     %options = (
         cell_format     => format,
@@ -1810,14 +1814,16 @@ The optional C<options> hash/hashref parameter can be used to set various option
         decorative      => 0,
     );
 
-The C<cell_format> parameters can be an standard Format to set the formatting of the cell behind the image.
+The C<cell_format> parameters can be an standard Format to set the formatting
+of the cell behind the image.
 
 The C<url> option can be use to used to add a hyperlink to an image:
 
     $worksheet->insert_image( 'A1', 'logo.png',
         { url => 'https://github.com/jmcnamara' } );
 
-The supported url formats are the same as those supported by the C<write_url()> method and the same rules/limits apply.
+The supported url formats are the same as those supported by the
+C<write_url()> method and the same rules/limits apply.
 
 The C<tip> option can be use to used to add a mouseover tip to the hyperlink:
 
@@ -1828,18 +1834,30 @@ The C<tip> option can be use to used to add a mouseover tip to the hyperlink:
         }
     );
 
-The C<description> parameter can be used to specify a description or "alt text" string for the image. In general this would be used to provide a text description of the image to help accessibility. It is an optional parameter and defaults to the filename of the image. It can be used as follows:
+The C<description> parameter can be used to specify a description or "alt
+text" string for the image. In general this would be used to provide a text
+description of the image to help accessibility. It is an optional parameter
+and defaults to the filename of the image. It can be used as follows:
 
     $worksheet->insert_image( 'E9', 'logo.png',
                               {description => "This is some alternative text"} );
 
-The optional C<decorative> parameter is also used to help accessibility. It is used to mark the image as decorative, and thus uninformative, for automated screen readers. As in Excel, if this parameter is in use the C<description> field isn't written. It is used as follows:
+The optional C<decorative> parameter is also used to help accessibility. It is
+used to mark the image as decorative, and thus uninformative, for automated
+screen readers. As in Excel, if this parameter is in use the C<description>
+field isn't written. It is used as follows:
 
     $worksheet->insert_image( 'E9', 'logo.png', {decorative => 1} );
 
-Note: you must call C<set_row()> or C<set_column()> before C<insert_image()> if you wish to change the default dimensions of any of the rows or columns that the image occupies. The height of a row can also change if you use a font that is larger than the default. This in turn will affect the scaling of your image. To avoid this you should explicitly set the height of the row using C<set_row()> if it contains a font size that will change the row height.
+Note: you must call C<set_row()> or C<set_column()> before C<insert_image()>
+if you wish to change the default dimensions of any of the rows or columns
+that the image occupies. The height of a row can also change if you use a font
+that is larger than the default. This in turn will affect the scaling of your
+image. To avoid this you should explicitly set the height of the row using
+C<set_row()> if it contains a font size that will change the row height.
 
-BMP images must be 24 bit, true colour, bitmaps. In general it is best to avoid BMP images since they aren't compressed.
+BMP images must be 24 bit, true colour, bitmaps. In general it is best to
+avoid BMP images since they aren't compressed.
 
 
 

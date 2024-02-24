@@ -6588,13 +6588,14 @@ sub embed_image {
       get_image_properties( $image );
 
     # Check for duplicate images.
-    my $image_index = ${ $self->{_embedded_images_indexes} }->{$md5};
+    my $image_index = ${ $self->{_embedded_image_indexes} }->{$md5};
+
     if ( !$image_index ) {
         push @{ ${ $self->{_embedded_images} } },
           [ $image, $type, $description, $decorative ];
 
         $image_index = scalar @{ ${ $self->{_embedded_images} } };
-        ${ $self->{_embedded_images_indexes} }->{$md5} = $image_index;
+        ${ $self->{_embedded_image_indexes} }->{$md5} = $image_index;
     }
 
     # Write the cell placeholder.
