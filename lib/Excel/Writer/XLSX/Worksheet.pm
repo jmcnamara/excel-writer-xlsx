@@ -34,7 +34,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     get_image_properties);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 
 ###############################################################################
@@ -11372,6 +11372,6 @@ John McNamara jmcnamara@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXIIIII, John McNamara.
+(c) MM-MMXIV, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.

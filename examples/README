@@ -46,6 +46,7 @@ date_time.pl            Write dates and times with write_date_time().
 defined_name.pl         Example of how to create defined names.
 diag_border.pl          A simple example of diagonal cell borders.
 dynamic_arrays.pl       Example of using new Excel 365 dynamic functions.
+embedded_images.pl      Example of embedding imges in worksheet cells. 
 filehandle.pl           Examples of working with filehandles.
 headers.pl              Examples of worksheet headers and footers.
 hide_row_col.pl         Example of hiding rows and columns.

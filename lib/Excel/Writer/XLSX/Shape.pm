@@ -22,7 +22,7 @@ use Carp;
 use Exporter;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 our $AUTOLOAD;
 
 ###############################################################################
@@ -639,6 +639,6 @@ Dave Clarke dclarke@cpan.org
 
 =head1 COPYRIGHT
 
-(c) MM-MMXXIIIII, John McNamara.
+(c) MM-MMXIV, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
