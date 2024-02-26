@@ -7,7 +7,7 @@
 # This example shows how to use a conditional numerical format
 # with colours to indicate if a share price has gone up or down.
 #
-# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

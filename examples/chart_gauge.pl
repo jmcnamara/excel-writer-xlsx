@@ -9,7 +9,7 @@
 # elements. This example follows the following online example of how to create
 # a Gauge Chart in Excel: https://www.excel-easy.com/examples/gauge-chart.html
 #
-# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

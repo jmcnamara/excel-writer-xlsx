@@ -5,7 +5,7 @@
 # Example of how to use Excel::Writer::XLSX to write a hyperlink in a
 # merged cell.
 #
-# Copyright 2000-2023, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
