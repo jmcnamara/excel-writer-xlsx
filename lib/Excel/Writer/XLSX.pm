@@ -2440,8 +2440,8 @@ Excel allows up to 7 outline levels. Therefore the C<$level> parameter should be
 
 This method is the same as C<set_column()> except that C<$width> is in pixels.
 
-    $worksheet->set_column( 0, 0, 10 );    # Column A width set to 20 in character units
-    $worksheet->set_column( 1, 1, 75 );    # Column B set to the same width in pixels
+    $worksheet->set_column       ( 0, 0, 10 ); # Column A width set to 10 in character units
+    $worksheet->set_column_pixels( 1, 1, 75 ); # Column B set to the same width in pixels
 
 
 
