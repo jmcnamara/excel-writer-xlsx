@@ -218,21 +218,95 @@ sub xl_range_formula {
 #
 # Sheetnames used in references should be quoted if they contain any spaces,
 # special characters or if they look like something that isn't a sheet name.
+# The rules are shown inline below.
 #
 sub quote_sheetname {
 
-    my $sheetname = $_[0];
+    my $sheetname     = shift;
+    my $uc_sheetname  = uc( $sheetname );
+    my $needs_quoting = 0;
+    my $row_max       = 1_048_576;
+    my $col_max       = 16_384;
 
-    # Use Excel's conventions and quote the sheet name if it contains any
-    # non-word character or if it isn't already quoted.
-    if ( $sheetname =~ /\W/ && $sheetname !~ /^'/ ) {
+    # Don't quote sheetname if it is already quoted by the user.
+    if ( $sheetname !~ /^'/ ) {
+
+
+        # Rule 1. Sheet names that contain anything other than \w and "."
+        # characters must be quoted.
+        if ( $sheetname =~ /[^\w\.\p{Emoticons}]/ ) {
+            $needs_quoting = 1;
+        }
+
+        # Rule 2. Sheet names that start with a digit or "." must be quoted.
+        elsif ( $sheetname =~ /^[\d\.\p{Emoticons}]/ ) {
+            $needs_quoting = 1;
+        }
+
+        # Rule 3. Sheet names must not be a valid A1 style cell reference.
+        # Valid means that the row and column values are within Excel limits.
+        elsif ( $uc_sheetname =~ /^([A-Z]{1,3}\d+)$/ ) {
+            my ( $row, $col ) = xl_cell_to_rowcol( $1 );
+
+            if ( $row >= 0 && $row < $row_max && $col >= 0 && $col < $col_max )
+            {
+                $needs_quoting = 1;
+            }
+        }
+
+        # Rule 4. Sheet names must not *start* with a valid RC style cell
+        # reference. Valid means that the row and column values are within
+        # Excel limits.
+
+        # Rule 4a. Check for some single R/C references.
+        elsif ($uc_sheetname eq "R"
+            || $uc_sheetname eq "C"
+            || $uc_sheetname eq "RC" )
+        {
+            $needs_quoting = 1;
+
+        }
+
+        # Rule 4b. Check for C1 or RC1 style references. References without
+        # trailing characters (like C12345) are caught by Rule 3.
+        elsif ( $uc_sheetname =~ /^R?C(\d+)/ ) {
+            my $col = $1;
+            if ( $col > 0 && $col <= $col_max ) {
+                $needs_quoting = 1;
+            }
+        }
+
+        # Rule 4c. Check for R1C1 style references where both the number
+        # ranges are optional. Note that only 1 of the number ranges is
+        # required to be valid.
+        elsif ( $uc_sheetname =~ /^R(\d+)?C(\d+)?/ ) {
+            if ( defined $1 ) {
+                my $row = $1;
+                if ( $row > 0 && $row <= $row_max ) {
+                    $needs_quoting = 1;
+                }
+            }
+
+            if ( defined $2 ) {
+                my $col = $1;
+                if ( $col > 0 && $col <= $col_max ) {
+                    $needs_quoting = 1;
+                }
+            }
+        }
+    }
+
+
+    if ( $needs_quoting ) {
         # Double quote any single quotes.
         $sheetname =~ s/'/''/g;
         $sheetname = q(') . $sheetname . q(');
     }
 
+
     return $sheetname;
 }
+
 
 
 ###############################################################################
