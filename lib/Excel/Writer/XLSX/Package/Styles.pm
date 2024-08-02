@@ -794,7 +794,7 @@ sub _write_sub_border {
 
     $self->xml_start_tag( $type, @attributes );
 
-    if ( $color && $color != 64 ) {
+    if ( $color && $color ne "64" ) {
         $color = $self->_get_palette_color( $color );
 
         $self->xml_empty_tag( 'color', 'rgb' => $color );
