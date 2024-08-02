@@ -3639,7 +3639,7 @@ Set the font size. Excel adjusts the height of a row to accommodate the largest 
 
     Default state:      Excels default color, usually black
     Default action:     Set the default color
-    Valid args:         Integers from 8..63 or the following strings:
+    Valid args:         Html RGB strings like "#FF0000" or the following shortcut strings:
                         'black'
                         'blue'
                         'brown'
