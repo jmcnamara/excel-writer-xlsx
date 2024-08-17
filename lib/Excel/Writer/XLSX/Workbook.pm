@@ -298,6 +298,11 @@ sub DESTROY {
     local ( $@, $!, $^E, $? );
 
     $self->close() if not $self->{_fileclosed};
+    if (defined $self->{_tempdir_object} && -d $self->{_tempdir_object}) {
+        use File::Path::Tiny;
+        # say STDERR $self->{_tempdir_object};
+        File::Path::Tiny::rm($self->{_tempdir_object}->dirname, 1);
+    }
     delete $self->{_tempdir_object};
 }
 
@@ -1129,14 +1134,15 @@ sub get_default_url_format {
 sub _store_workbook {
 
     my $self     = shift;
-    my $tempdir  = File::Temp->newdir( DIR => $self->{_tempdir} );
+    my $tempdir  = File::Temp->newdir(DIR => $self->{_tempdir});
 
-    # Store the File::Temp object within $self so that the temporary files
+    # Store the temp dir object within $self so that the temporary files
     # are only removed when the workbook object is destroyed.
-    # This control over timing is required because the removal
-    # of File::Temp temporary directories is not thread-safe.
+    # This control over timing is required because File::Temp uses
+    # File::Path for directory removal, and it is not thread-safe
+    # so we need to use a different cleanup approach.
+    $tempdir->unlink_on_destroy(0);
     $self->{_tempdir_object} = $tempdir;
-
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
