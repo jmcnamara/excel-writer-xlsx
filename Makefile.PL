@@ -7,9 +7,10 @@ use warnings;
 require 5.008002;
 
 my %deps = (
-    'Archive::Zip' => 1.30,
-    'IO::File'     => 1.14,
-    'File::Temp'   => 0.19,
+    'Archive::Zip'     => 1.30,
+    'IO::File'         => 1.14,
+    'File::Temp'       => 0.19,
+    'File::Path::Tiny' => 0,
 );
 
 my %resources = (
