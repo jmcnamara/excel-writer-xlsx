@@ -1104,7 +1104,7 @@ This functions takes a cell reference string in A1 notation and decrements the c
 
 =head1 TIME AND DATE FUNCTIONS
 
-Dates and times in Excel are represented by real numbers, for example "Jan 1 2001 12:30 AM" is represented by the number 36892.521.
+Dates and times in Excel are represented by real numbers, for example "Jan 1 2001 12:30:14 PM" is represented by the number 36892.521.
 
 The integer part of the number stores the number of days since the epoch and the fractional part stores the percentage of the day in seconds.
 
@@ -1112,7 +1112,7 @@ A date or time in Excel is like any other number. To display the number as a dat
 
     $date = xl_date_list( 2001, 1, 1, 12, 30 );
     $format->set_num_format( 'mmm d yyyy hh:mm AM/PM' );
-    $worksheet->write( 'A1', $date, $format );    # Jan 1 2001 12:30 AM
+    $worksheet->write( 'A1', $date, $format );    # Jan 1 2001 12:30 PM
 
 The date handling functions below are supplied for historical reasons. In the current version of the module it is easier to just use the C<write_date_time()> function to write dates or times. See the DATES AND TIME IN EXCEL section of the main L<Excel::Writer::XLSX> documentation for details.
 

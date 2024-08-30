@@ -3807,7 +3807,7 @@ Using format strings you can define very sophisticated formatting of numbers.
     $worksheet->write( 8, 0, 36892.521, $format09 );    # 1 January 2001
 
     $format10->set_num_format( 'dd/mm/yyyy hh:mm AM/PM' );
-    $worksheet->write( 9, 0, 36892.521, $format10 );    # 01/01/2001 12:30 AM
+    $worksheet->write( 9, 0, 36892.521, $format10 );    # 01/01/2001 12:30 PM
 
     $format11->set_num_format( '0 "dollar and" .00 "cents"' );
     $worksheet->write( 10, 0, 1.87, $format11 );        # 1 dollar and .87 cents
@@ -4400,7 +4400,7 @@ If you write a date string with C<write()> then all you will get is a string:
 
     $worksheet->write( 'A1', '02/03/04' );   # !! Writes a string not a date. !!
 
-Dates and times in Excel are represented by real numbers, for example "Jan 1 2001 12:30 AM" is represented by the number 36892.521.
+Dates and times in Excel are represented by real numbers, for example "Jan 1 2001 12:30 PM" is represented by the number 36892.521.
 
 The integer part of the number stores the number of days since the epoch and the fractional part stores the percentage of the day.
 
