@@ -13,5 +13,10 @@ perl:
   - "5.12"
   - "5.10"
   - "5.8"
+  - "5.26-shrplib"
+  - "5.24-shrplib"
+  - "5.22-shrplib"
+  - "5.20-shrplib"
+  - "5.18-shrplib"
 sudo: false
 

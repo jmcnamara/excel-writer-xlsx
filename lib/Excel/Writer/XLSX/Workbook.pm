@@ -298,6 +298,12 @@ sub DESTROY {
     local ( $@, $!, $^E, $? );
 
     $self->close() if not $self->{_fileclosed};
+    if (defined $self->{_tempdir_object} && -d $self->{_tempdir_object}) {
+        use File::Path::Tiny;
+        # say STDERR $self->{_tempdir_object};
+        File::Path::Tiny::rm($self->{_tempdir_object}->dirname, 1);
+    }
+    delete $self->{_tempdir_object};
 }
 
 
@@ -1128,7 +1134,15 @@ sub get_default_url_format {
 sub _store_workbook {
 
     my $self     = shift;
-    my $tempdir  = File::Temp->newdir( DIR => $self->{_tempdir} );
+    my $tempdir  = File::Temp->newdir(DIR => $self->{_tempdir});
+
+    # Store the temp dir object within $self so that the temporary files
+    # are only removed when the workbook object is destroyed.
+    # This control over timing is required because File::Temp uses
+    # File::Path for directory removal, and it is not thread-safe
+    # so we need to use a different cleanup approach.
+    $tempdir->unlink_on_destroy(0);
+    $self->{_tempdir_object} = $tempdir;
     my $packager = Excel::Writer::XLSX::Package::Packager->new();
     my $zip      = Archive::Zip->new();
 
@@ -1188,6 +1202,7 @@ sub _store_workbook {
     # Add the files to the zip archive. Due to issues with Archive::Zip in
     # taint mode we can't use addTree() so we have to build the file list
     # with File::Find and pass each one to addFile().
+    # The no_chdir option to File::Find::find is for thread safety.
     my @xlsx_files;
 
     my $wanted = sub { push @xlsx_files, $File::Find::name if -f };
@@ -1195,6 +1210,7 @@ sub _store_workbook {
     File::Find::find(
         {
             wanted          => $wanted,
+            no_chdir        => 1,
             untaint         => 1,
             untaint_pattern => qr|^(.+)$|
         },
