@@ -27,7 +27,7 @@ use Digest::MD5 qw(md5_hex);
 use File::Basename 'fileparse';
 
 
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 # Row and column functions
 my @rowcol = qw(

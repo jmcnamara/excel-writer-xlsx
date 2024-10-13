@@ -24,7 +24,7 @@ use Excel::Writer::XLSX::Utility qw(xl_rowcol_to_cell);
 
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 
 ###############################################################################

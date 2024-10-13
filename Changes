@@ -5,6 +5,12 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
+1.13 2024-10-13
+
+    ! Fixed issue with html color for border colors.
+      Issue #302 and #305.
+
+
 1.12 2024-02-26
 
     + Added support for embedding images into worksheets with
@@ -32,7 +38,7 @@ Revision history for Perl module Excel::Writer::XLSX.
     + Added worksheet `very_hidden()` method to hide a worksheet in a way that
       it can only be unhidden by VBA. Feature Request #228.
 
-    ! Fixed identation and alignment property mismatch.
+    ! Fixed indentation and alignment property mismatch.
 
       Fix issue where a horizontal alignment format was ignored if the
       indentation was also set.

@@ -20,7 +20,7 @@ use Exporter;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 
 ###############################################################################
@@ -7376,7 +7376,7 @@ different features and options of the module. See L<Excel::Writer::XLSX::Example
     defined_name.pl         Example of how to create defined names.
     diag_border.pl          A simple example of diagonal cell borders.
     dynamic_arrays.pl       Example of using new Excel 365 dynamic functions.
-    embedded_images.pl      Example of embedding imges in worksheet cells.
+    embedded_images.pl      Example of embedding images in worksheet cells.
     filehandle.pl           Examples of working with filehandles.
     headers.pl              Examples of worksheet headers and footers.
     hide_row_col.pl         Example of hiding rows and columns.
