@@ -1,0 +1,8 @@
+MANIFEST.SKIP
+.vscode
+.git
+.github
+blib
+Makefile
+MYMETA.json
+MYMETA.yml
