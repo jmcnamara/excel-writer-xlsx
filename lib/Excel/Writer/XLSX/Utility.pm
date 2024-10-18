@@ -1185,7 +1185,7 @@ This function converts a date and time string into a number that represents an E
 
 The parsing is performed using the C<ParseDate()> function of the L<Date::Manip> module. Refer to the C<Date::Manip> documentation for further information about the date and time formats that can be parsed. In order to use this function you will probably have to initialise some C<Date::Manip> variables via the C<xl_parse_date_init()> function, see below.
 
-    xl_parse_date_init( "TZ=GMT", "DateFormat=non-US" );
+    xl_parse_date_init( "DateFormat=non-US" );
 
     $date1 = xl_parse_date( "11/7/97" );
     $date2 = xl_parse_date( "Friday 11 July 1997" );
@@ -1211,10 +1211,7 @@ This function is used to initialise variables required by the L<Date::Manip> mod
 
 This function is a thin wrapper for the C<Date::Manip::Date_Init()> function. You can use C<Date_Init()>  directly if you wish. Refer to the C<Date::Manip> documentation for further information.
 
-    xl_parse_date_init( "TZ=MST", "DateFormat=US" );
-    $date1 = xl_parse_date( "11/7/97" );    # November 7th 1997
-
-    xl_parse_date_init( "TZ=GMT", "DateFormat=non-US" );
+    xl_parse_date_init( "DateFormat=non-US" );
     $date1 = xl_parse_date( "11/7/97" );    # July 11th 1997
 
 =head2 xl_decode_date_EU($string)

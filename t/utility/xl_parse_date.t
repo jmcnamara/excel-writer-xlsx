@@ -34,7 +34,7 @@ my $expected;
 my $caption;
 my $date;
 
-xl_parse_date_init( "TZ=GMT", "DateFormat=non-US" );
+xl_parse_date_init( "DateFormat=non-US" );
 
 
 ###############################################################################
