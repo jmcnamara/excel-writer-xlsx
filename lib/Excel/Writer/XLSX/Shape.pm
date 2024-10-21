@@ -22,7 +22,7 @@ use Carp;
 use Exporter;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 our $AUTOLOAD;
 
 ###############################################################################

@@ -36,7 +36,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     get_image_properties);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 
 
 ###############################################################################

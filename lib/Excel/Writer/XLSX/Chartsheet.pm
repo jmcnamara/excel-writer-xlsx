@@ -22,7 +22,7 @@ use Exporter;
 use Excel::Writer::XLSX::Worksheet;
 
 our @ISA     = qw(Excel::Writer::XLSX::Worksheet);
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 
 
 ###############################################################################
