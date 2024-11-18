@@ -668,7 +668,7 @@ sub _process_png {
             my $y_ppu = unpack "N", substr $data, $offset + 12, 4;
             my $units = unpack "C", substr $data, $offset + 16, 1;
 
-            if ( $units == 1 ) {
+            if ( $units == 1 && $x_ppu && $y_ppu) {
                 $x_dpi = $x_ppu * 0.0254;
                 $y_dpi = $y_ppu * 0.0254;
             }
