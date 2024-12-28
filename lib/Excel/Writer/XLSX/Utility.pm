@@ -288,7 +288,7 @@ sub quote_sheetname {
             }
 
             if ( defined $2 ) {
-                my $col = $1;
+                my $col = $2;
                 if ( $col > 0 && $col <= $col_max ) {
                     $needs_quoting = 1;
                 }
