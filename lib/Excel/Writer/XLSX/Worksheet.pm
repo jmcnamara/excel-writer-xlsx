@@ -774,7 +774,15 @@ sub set_column_pixels {
 #
 sub autofit {
     my $self      = shift;
+    my $max_width = shift || 255.0;
     my %col_width = ();
+
+    # Convert the autofit maximum pixel width to a column/character width, but
+    # limit it to the Excel max limit.
+    $max_width = _pixels_to_width($max_width);
+    if ( $max_width > 255.0 ) {
+        $max_width = 255.0;
+    }
 
     # Create a reverse lookup for the share strings table so we can convert
     # the string id back to the original string.
@@ -919,9 +927,9 @@ sub autofit {
         # additional padding of 7 pixels, like Excel.
         my $width = _pixels_to_width( $pixel_width + 7 );
 
-        # The max column character width in Excel is 255.
-        if ( $width > 255.0 ) {
-            $width = 255.0;
+        # Limit the width to the maximum user or Excel value.
+        if ( $width > $max_width ) {
+            $width = $max_width;
         }
 
         # Add the width to an existing col info structure or add a new one.
