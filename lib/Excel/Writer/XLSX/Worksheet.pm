@@ -8423,13 +8423,26 @@ sub _write_row {
     push @attributes, ( 's'            => $xf_index ) if $xf_index;
     push @attributes, ( 'customFormat' => 1 )         if $format;
 
-    if ( $height != $self->{_original_row_height} ) {
+
+    # Only add ht parameter if the height is non-default.
+    if (
+        $height != $self->{_original_row_height}
+        || (   $height == $self->{_original_row_height}
+            && $height != $self->{_default_row_height} )
+      )
+    {
         push @attributes, ( 'ht' => $height );
     }
 
     push @attributes, ( 'hidden'       => 1 )         if $hidden;
 
-    if ( $height != $self->{_original_row_height} ) {
+    # Only add customFormat parameter if the height is non-default.
+    if (
+        $height != $self->{_original_row_height}
+        || (   $height == $self->{_original_row_height}
+            && $height != $self->{_default_row_height} )
+      )
+    {
         push @attributes, ( 'customHeight' => 1 );
     }
 
