@@ -5,7 +5,7 @@ Revision history for Perl module Excel::Writer::XLSX.
      ! Bug fix.
 
 
-1.13 2024-10-21
+1.14 2024-10-21
 
     ! Cleaned up release tarball to remove editor dot files.
 
