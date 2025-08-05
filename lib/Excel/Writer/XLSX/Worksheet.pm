@@ -10275,7 +10275,7 @@ sub _write_cf_rule {
             my $value = $param->{value};
 
             # String "Cell" values must be quoted, apart from ranges.
-            if (   $value !~ /(\$?)([A-Z]{1,3})(\$?)(\d+)/
+            if (   $value !~ /^(\$?)([A-Z]{1,3})(\$?)(\d+)$/
                 && $value !~
                 /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/ )
             {
