@@ -1884,6 +1884,24 @@ sub _get_labels_properties {
                 $property{font} = $self->_convert_font_args( $property{font} );
             }
 
+
+            # Map user defined label positions to Excel positions.
+            if ( my $position = $property{position} ) {
+
+                if ( exists $self->{_label_positions}->{$position} ) {
+                    if ( $position eq $self->{_label_position_default} ) {
+                        $property{position} = undef;
+                    }
+                    else {
+                        $property{position} = $self->{_label_positions}->{$position};
+                    }
+                }
+                else {
+                    carp "Unsupported label position '$position' for this chart type";
+                    return undef;
+                }
+            }
+
             # Set the line properties for the data labels.
             my $line = $self->_get_line_properties( $property{line} );
 
@@ -5929,38 +5947,54 @@ sub _write_custom_labels {
         $index++;
         next if !defined $label;
 
+        my $use_custom_formatting = 1;
+
         $self->xml_start_tag( 'c:dLbl' );
 
         # Write the c:idx element.
         $self->_write_idx( $index - 1 );
 
         if ( defined $label->{delete} && $label->{delete} ) {
+
+            # Delete/hide label.
             $self->_write_delete( 1 );
         }
-        elsif ( defined $label->{formula} ) {
-            $self->_write_custom_label_formula( $label );
+        elsif (defined $label->{formula}
+            || defined $label->{value}
+            || $label->{position} )
+        {
 
-            if ( $parent->{position} ) {
-                $self->_write_d_lbl_pos( $parent->{position} );
+            # Write the c:layout element.
+            $self->_write_layout();
+
+            if ( defined $label->{formula} ) {
+                $self->_write_custom_label_formula( $label );
+            }
+            elsif ( defined $label->{value} ) {
+                $self->_write_custom_label_str( $label );
+
+                # String values use spPr formatting.
+                $use_custom_formatting = 0;
+            }
+
+
+            if ( $use_custom_formatting ) {
+                $self->_write_custom_label_format( $label );
+            }
+
+
+            if ( my $position = $label->{position} || $parent->{position} ) {
+                $self->_write_d_lbl_pos( $position );
             }
 
             $self->_write_show_val()      if $parent->{value};
             $self->_write_show_cat_name() if $parent->{category};
             $self->_write_show_ser_name() if $parent->{series_name};
-        }
-        elsif ( defined $label->{value} ) {
-            $self->_write_custom_label_str( $label );
 
-            if ( $parent->{position} ) {
-                $self->_write_d_lbl_pos( $parent->{position} );
-            }
 
-            $self->_write_show_val()      if $parent->{value};
-            $self->_write_show_cat_name() if $parent->{category};
-            $self->_write_show_ser_name() if $parent->{series_name};
         }
         else {
-            $self->_write_custom_label_format_only( $label );
+            $self->_write_custom_label_format( $label );
         }
 
         $self->xml_end_tag( 'c:dLbl' );
@@ -5970,6 +6004,7 @@ sub _write_custom_labels {
 
 ##############################################################################
 #
+
 # _write_custom_label_str()
 #
 # Write parts of the <c:dLbl> element for strings.
@@ -5982,9 +6017,6 @@ sub _write_custom_label_str {
     my $font           = $label->{font};
     my $is_y_axis      = 0;
     my $has_formatting = _has_fill_formatting($label);
-
-    # Write the c:layout element.
-    $self->_write_layout();
 
     $self->xml_start_tag( 'c:tx' );
 
@@ -6017,28 +6049,21 @@ sub _write_custom_label_formula {
         $data = $self->{_formula_data}->[$data_id];
     }
 
-    # Write the c:layout element.
-    $self->_write_layout();
-
     $self->xml_start_tag( 'c:tx' );
 
     # Write the c:strRef element.
     $self->_write_str_ref( $formula, $data, 'str' );
 
     $self->xml_end_tag( 'c:tx' );
-
-    # Write the data label formating, if any.
-    $self->_write_custom_label_format_only($label);
 }
 
 ##############################################################################
 #
-# _write_custom_label_format_only()
+# _write_custom_label_format()
 #
-# Write parts of the <c:dLbl> element for labels where only the formatting has
-# changed.
+# Write the formatting and font elements for the custom labels.
 #
-sub _write_custom_label_format_only {
+sub _write_custom_label_format {
 
     my $self           = shift;
     my $label          = shift;
@@ -8484,6 +8509,7 @@ The property elements of the C<custom> lists should be dicts with the following 
     pattern
     gradient
     delete
+    position
 
 The C<value> property should be a string, number or formula string that refers to a cell from which the value will be taken:
 
@@ -8538,6 +8564,11 @@ the maximum and the minimum:
         { delete => 1 },
         undef,
     ];
+
+The C<position> property is used to position the custom data such as "center"
+or "left" relative to the data point. See the explanation for the C<position>
+property of series data labels above.
+
 
 
 =head2 Points
