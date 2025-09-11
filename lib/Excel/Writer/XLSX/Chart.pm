@@ -826,6 +826,16 @@ sub _convert_axis_args {
     $axis->{_title}{_font} = $self->_convert_font_args( $arg{name_font} );
     $axis->{_title}{_layout} = $self->_get_layout_properties( $arg{name_layout}, 1 );
 
+    # Set the format properties.
+    $axis->{_title}{_line} = $self->_get_line_properties( $arg{name_line} );
+    if ( $arg{name_border} ) {
+        $axis->{_title}{_line} = $self->_get_line_properties( $arg{name_border} );
+    }
+
+    $axis->{_title}{_fill} = $self->_get_fill_properties( $arg{name_fill} );
+    $axis->{_title}{_pattern} = $self->_get_pattern_properties( $arg{name_pattern} );
+    $axis->{_title}{_gradient} = $self->_get_gradient_properties( $arg{name_gradient} );
+
     return $axis;
 }
 
@@ -7359,8 +7369,12 @@ The properties that can be set are:
     name
     name_font
     name_layout
-    num_font
+    name_line
+    name_fill
+    name_pattern
+    name_gradient
     num_format
+    num_font
     line
     fill
     pattern
@@ -7440,22 +7454,37 @@ The number format is similar to the Worksheet Cell Format C<num_format> apart fr
 
 =item * C<line>
 
-Set the properties of the axis line type such as colour and width. See the L</CHART FORMATTING> section below.
+Set the properties of the axis line/border type such as colour and width. See the L</CHART FORMATTING> section below.
 
     $chart->set_x_axis( line => { none => 1 });
 
-
 =item * C<fill>
 
-Set the fill properties of the axis such as colour. See the L</CHART FORMATTING> section below. Note, in Excel the axis fill is applied to the area of the numbers of the axis and not to the area of the axis bounding box. That background is set from the chartarea fill.
+Set the fill properties of the axis. See the L</CHART FORMATTING> section below. Note, in Excel the axis fill is applied to the area of the numbers of the axis and not to the area of the axis bounding box. That background is set from the chartarea fill.
 
 =item * C<pattern>
 
-Set the pattern properties of the axis such as colour. See the L</CHART FORMATTING> section below.
+Set the pattern properties of the axis. See the L</CHART FORMATTING> section below.
 
 =item * C<gradient>
 
-Set the gradient properties of the axis such as colour. See the L</CHART FORMATTING> section below.
+Set the gradient properties of the axis. See the L</CHART FORMATTING> section below.
+
+=item * C<name_line>
+
+Set the properties of the axis title/name line/border. See the L</CHART FORMATTING> section below.
+
+=item * C<name_fill>
+
+Set the fill properties of the axis title/name. See the L</CHART FORMATTING> section below.
+
+=item * C<name_pattern>
+
+Set the pattern properties of the axis title/name. See the L</CHART FORMATTING> section below.
+
+=item * C<name_gradient>
+
+Set the gradient properties of the axis title/name. See the L</CHART FORMATTING> section below.
 
 =item * C<min>
 
