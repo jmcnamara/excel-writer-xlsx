@@ -113,6 +113,7 @@ sub new {
     $self->{_already_inserted}  = 0;
     $self->{_combined}          = undef;
     $self->{_is_secondary}      = 0;
+    $self->{_title}             = {};
 
     $self->{_label_positions}          = {};
     $self->{_label_position_default}   = '';
@@ -393,29 +394,53 @@ sub set_y2_axis {
 #
 sub set_title {
 
-    my $self = shift;
-    my %arg  = @_;
+    my $self  = shift;
+    my %arg   = @_;
+    my $title = {};
 
     my ( $name, $name_formula ) =
       $self->_process_names( $arg{name}, $arg{name_formula} );
 
     my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
 
-    $self->{_title_name}    = $name;
-    $self->{_title_formula} = $name_formula;
-    $self->{_title_data_id} = $data_id;
+    $title->{_name}    = $name;
+    $title->{_formula} = $name_formula;
+    $title->{_data_id} = $data_id;
 
     # Set the font properties if present.
-    $self->{_title_font} = $self->_convert_font_args( $arg{name_font} );
+    $title->{_font} = $self->_convert_font_args( $arg{name_font} );
+    if ( $arg{font} ) {
+        $title->{_font} = $self->_convert_font_args( $arg{font} );
+    }
+
+    # Set the line properties.
+    $title->{_line} = $self->_get_line_properties( $arg{line} );
+
+    # Allow 'border' as a synonym for 'line'.
+    if ( $arg{border} ) {
+        $title->{_line} = $self->_get_line_properties( $arg{border} );
+    }
+
+    # Set the fill properties.
+    $title->{_fill} = $self->_get_fill_properties( $arg{fill} );
+
+    # Set the pattern properties.
+    $title->{_pattern} = $self->_get_pattern_properties( $arg{pattern} );
+
+    # Set the gradient fill properties.
+    $title->{_gradient} = $self->_get_gradient_properties( $arg{gradient} );
 
     # Set the title layout.
-    $self->{_title_layout} = $self->_get_layout_properties( $arg{layout}, 1 );
+    $title->{_layout} = $self->_get_layout_properties( $arg{layout}, 1 );
 
     # Set the title overlay option.
-    $self->{_title_overlay} = $arg{overlay};
+    $title->{_overlay} = $arg{overlay};
 
     # Set the no automatic title option.
-    $self->{_title_none} = $arg{none};
+    $title->{_none} = $arg{none};
+
+    # Copy the title to the main chart object.
+    $self->{_title} = $title;
 }
 
 
@@ -510,7 +535,6 @@ sub show_blanks_as {
 
     $self->{_show_blanks} = $option;
 }
-
 
 
 ###############################################################################
@@ -702,16 +726,8 @@ sub _convert_axis_args {
     my $axis = shift;
     my %arg  = ( %{ $axis->{_defaults} }, @_ );
 
-    my ( $name, $name_formula ) =
-      $self->_process_names( $arg{name}, $arg{name_formula} );
-
-    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
-
     $axis = {
         _defaults          => $axis->{_defaults},
-        _name              => $name,
-        _formula           => $name_formula,
-        _data_id           => $data_id,
         _reverse           => $arg{reverse},
         _min               => $arg{min},
         _max               => $arg{max},
@@ -731,6 +747,7 @@ sub _convert_axis_args {
         _interval_tick     => $arg{interval_tick},
         _visible           => defined $arg{visible} ? $arg{visible} : 1,
         _text_axis         => 0,
+        _title             => {},
     };
 
     # Map major_gridlines properties.
@@ -785,13 +802,8 @@ sub _convert_axis_args {
         $axis->{_text_axis} = 1;
     }
 
-
-    # Set the font properties if present.
+    # Set the number font properties if present.
     $axis->{_num_font}  = $self->_convert_font_args( $arg{num_font} );
-    $axis->{_name_font} = $self->_convert_font_args( $arg{name_font} );
-
-    # Set the axis name layout.
-    $axis->{_layout} = $self->_get_layout_properties( $arg{name_layout}, 1 );
 
     # Set the line properties for the axis.
     $axis->{_line} = $self->_get_line_properties( $arg{line} );
@@ -803,6 +815,16 @@ sub _convert_axis_args {
     $axis->{_minor_tick_mark} = $self->_get_tick_type($arg{minor_tick_mark});
     $axis->{_major_tick_mark} = $self->_get_tick_type($arg{major_tick_mark});
 
+    # Set the axis title properties.
+    my ( $name, $name_formula ) =
+      $self->_process_names( $arg{name}, $arg{name_formula} );
+    my $data_id = $self->_get_data_id( $name_formula, $arg{data} );
+
+    $axis->{_title}{_name}    = $name;
+    $axis->{_title}{_formula} = $name_formula;
+    $axis->{_title}{_data_id} = $data_id;
+    $axis->{_title}{_font} = $self->_convert_font_args( $arg{name_font} );
+    $axis->{_title}{_layout} = $self->_get_layout_properties( $arg{name_layout}, 1 );
 
     return $axis;
 }
@@ -2229,23 +2251,23 @@ sub _get_points_properties {
 
 ##############################################################################
 #
-# _has_fill_formatting()
+# _has_formatting()
 #
 # Check if a chart element has line, fill or gradient formatting.
 #
-sub _has_fill_formatting {
+sub _has_formatting {
 
     my $element = shift;
 
-    if (    !$element->{_line}->{_defined}
-        and !$element->{_fill}->{_defined}
-        and !$element->{_pattern}
-        and !$element->{_gradient} )
+    if (   $element->{_line}->{_defined}
+        or $element->{_fill}->{_defined}
+        or $element->{_pattern}
+        or $element->{_gradient} )
     {
-        return 0;
+        return 1;
     }
     else {
-        return 1;
+        return 0;
     }
 }
 
@@ -2577,36 +2599,7 @@ sub _write_chart {
     $self->xml_start_tag( 'c:chart' );
 
     # Write the chart title elements.
-
-    if ( $self->{_title_none} ) {
-
-        # Turn off the title.
-        $self->_write_auto_title_deleted();
-    }
-    else {
-        my $title;
-        if ( $title = $self->{_title_formula} ) {
-            $self->_write_title_formula(
-
-                $title,
-                $self->{_title_data_id},
-                undef,
-                $self->{_title_font},
-                $self->{_title_layout},
-                $self->{_title_overlay}
-            );
-        }
-        elsif ( $title = $self->{_title_name} ) {
-            $self->_write_title_rich(
-
-                $title,
-                undef,
-                $self->{_title_font},
-                $self->{_title_layout},
-                $self->{_title_overlay}
-            );
-        }
-    }
+    $self->_write_chart_title( $self->{_title} );
 
     # Write the c:plotArea element.
     $self->_write_plot_area();
@@ -2620,13 +2613,48 @@ sub _write_chart {
     # Write the c:dispBlanksAs element.
     $self->_write_disp_blanks_as();
 
-
     if ( $self->{_show_na_as_empty} ) {
         # Write the c:extLst element.
         $self->_write_ext_lst_display_na();
     }
 
     $self->xml_end_tag( 'c:chart' );
+}
+
+
+##############################################################################
+#
+# _write_chart_title()
+#
+# Write the <c:title> element. This applies to the main chart title and also
+# axis titles.
+#
+# It differentiates between text, formula and formatting only titles
+#
+sub _write_chart_title {
+
+    my $self      = shift;
+    my $title     = shift;
+    my $is_y_axis = shift;
+
+    if ( $title->{_none} ) {
+        # Turn off the title. For main chart title only.
+        $self->_write_auto_title_deleted();
+        return
+    }
+
+    if ( $title->{_name} ) {
+        # Simple text title.
+        $self->_write_title_rich( $title, $is_y_axis );
+    }
+    elsif ( $title->{_formula} ) {
+        # Formula based title.
+        $self->_write_title_formula( $title, $is_y_axis );
+    }
+    elsif ( _has_formatting( $title ) ) {
+        # Formatting only title.
+        $self->_write_title_format_only( $title );
+    }
 }
 
 
@@ -3334,16 +3362,7 @@ sub _write_cat_axis {
     $self->_write_minor_gridlines( $x_axis->{_minor_gridlines} );
 
     # Write the axis title elements.
-    my $title;
-    if ( $title = $x_axis->{_formula} ) {
-
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, $is_y_axis,
-            $x_axis->{_name_font}, $x_axis->{_layout} );
-    }
-    elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $is_y_axis, $x_axis->{_name_font},
-            $x_axis->{_layout} );
-    }
+    $self->_write_chart_title( $x_axis->{_title}, $is_y_axis );
 
     # Write the c:numFmt element.
     $self->_write_cat_number_format( $x_axis );
@@ -3449,15 +3468,7 @@ sub _write_val_axis {
     $self->_write_minor_gridlines( $y_axis->{_minor_gridlines} );
 
     # Write the axis title elements.
-    my $title;
-    if ( $title = $y_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $y_axis->{_data_id}, $is_y_axis,
-            $y_axis->{_name_font}, $y_axis->{_layout} );
-    }
-    elsif ( $title = $y_axis->{_name} ) {
-        $self->_write_title_rich( $title, $is_y_axis, $y_axis->{_name_font},
-            $y_axis->{_layout} );
-    }
+    $self->_write_chart_title( $y_axis->{_title}, $is_y_axis );
 
     # Write the c:numberFormat element.
     $self->_write_number_format( $y_axis );
@@ -3555,15 +3566,7 @@ sub _write_cat_val_axis {
     $self->_write_minor_gridlines( $x_axis->{_minor_gridlines} );
 
     # Write the axis title elements.
-    my $title;
-    if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, $is_y_axis,
-            $x_axis->{_name_font}, $x_axis->{_layout} );
-    }
-    elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, $is_y_axis, $x_axis->{_name_font},
-            $x_axis->{_layout} );
-    }
+    $self->_write_chart_title( $x_axis->{_title}, $is_y_axis );
 
     # Write the c:numberFormat element.
     $self->_write_number_format( $x_axis );
@@ -3660,15 +3663,7 @@ sub _write_date_axis {
     $self->_write_minor_gridlines( $x_axis->{_minor_gridlines} );
 
     # Write the axis title elements.
-    my $title;
-    if ( $title = $x_axis->{_formula} ) {
-        $self->_write_title_formula( $title, $x_axis->{_data_id}, undef,
-            $x_axis->{_name_font}, $x_axis->{_layout} );
-    }
-    elsif ( $title = $x_axis->{_name} ) {
-        $self->_write_title_rich( $title, undef, $x_axis->{_name_font},
-            $x_axis->{_layout} );
-    }
+    $self->_write_chart_title($x_axis->{_title});
 
     # Write the c:numFmt element.
     $self->_write_number_format( $x_axis );
@@ -4574,20 +4569,20 @@ sub _write_title_rich {
     my $self      = shift;
     my $title     = shift;
     my $is_y_axis = shift;
-    my $font      = shift;
-    my $layout    = shift;
-    my $overlay   = shift;
 
     $self->xml_start_tag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx_rich( $title, $is_y_axis, $font );
+    $self->_write_tx_rich( $title->{_name}, $is_y_axis, $title->{_font} );
 
     # Write the c:layout element.
-    $self->_write_layout( $layout, 'text' );
+    $self->_write_layout( $title->{_layout}, 'text' );
 
     # Write the c:overlay element.
-    $self->_write_overlay() if $overlay;
+    $self->_write_overlay() if $title->{_overlay};
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $title );
 
     $self->xml_end_tag( 'c:title' );
 }
@@ -4597,31 +4592,56 @@ sub _write_title_rich {
 #
 # _write_title_formula()
 #
-# Write the <c:title> element for a rich string.
+# Write the <c:title> element for a formulas
 #
 sub _write_title_formula {
 
     my $self      = shift;
     my $title     = shift;
-    my $data_id   = shift;
     my $is_y_axis = shift;
-    my $font      = shift;
-    my $layout    = shift;
-    my $overlay   = shift;
 
     $self->xml_start_tag( 'c:title' );
 
     # Write the c:tx element.
-    $self->_write_tx_formula( $title, $data_id );
+    $self->_write_tx_formula( $title->{_formula}, $title->{_data_id} );
 
     # Write the c:layout element.
-    $self->_write_layout( $layout, 'text' );
+    $self->_write_layout( $title->{_layout}, 'text' );
 
     # Write the c:overlay element.
-    $self->_write_overlay() if $overlay;
+    $self->_write_overlay() if $title->{_overlay};
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $title );
 
     # Write the c:txPr element.
-    $self->_write_tx_pr( $font, $is_y_axis );
+    $self->_write_tx_pr( $title->{_font}, $is_y_axis );
+
+    $self->xml_end_tag( 'c:title' );
+}
+
+
+##############################################################################
+#
+# _write_title_format_only()
+#
+# Write the <c:title> for a title with formatting but not text change.
+#
+sub _write_title_format_only {
+
+    my $self  = shift;
+    my $title = shift;
+
+    $self->xml_start_tag( 'c:title' );
+
+    # Write the c:layout element.
+    $self->_write_layout( $title->{_layout}, 'text' );
+
+    # Write the c:overlay element.
+    $self->_write_overlay() if $title->{_overlay};
+
+    # Write the c:spPr element.
+    $self->_write_sp_pr( $title );
 
     $self->xml_end_tag( 'c:title' );
 }
@@ -5116,42 +5136,42 @@ sub _write_symbol {
 sub _write_sp_pr {
 
     my $self   = shift;
-    my $series = shift;
+    my $object = shift;
 
-    return if !_has_fill_formatting($series);
+    return if !_has_formatting($object);
 
     $self->xml_start_tag( 'c:spPr' );
 
     # Write the fill elements for solid charts such as pie/doughnut and bar.
-    if ( $series->{_fill}->{_defined} ) {
+    if ( $object->{_fill}->{_defined} ) {
 
-        if ( $series->{_fill}->{none} ) {
+        if ( $object->{_fill}->{none} ) {
 
             # Write the a:noFill element.
             $self->_write_a_no_fill();
         }
         else {
             # Write the a:solidFill element.
-            $self->_write_a_solid_fill( $series->{_fill} );
+            $self->_write_a_solid_fill( $object->{_fill} );
         }
     }
 
-    if ( $series->{_pattern} ) {
+    if ( $object->{_pattern} ) {
 
         # Write the a:pattFill element.
-        $self->_write_a_patt_fill( $series->{_pattern} );
+        $self->_write_a_patt_fill( $object->{_pattern} );
     }
 
-    if ( $series->{_gradient} ) {
+    if ( $object->{_gradient} ) {
 
         # Write the a:gradFill element.
-        $self->_write_a_grad_fill( $series->{_gradient} );
+        $self->_write_a_grad_fill( $object->{_gradient} );
     }
 
 
     # Write the a:ln element.
-    if ( $series->{_line}->{_defined} ) {
-        $self->_write_a_ln( $series->{_line} );
+    if ( $object->{_line}->{_defined} ) {
+        $self->_write_a_ln( $object->{_line} );
     }
 
     $self->xml_end_tag( 'c:spPr' );
@@ -6016,7 +6036,7 @@ sub _write_custom_label_str {
     my $value          = $label->{value};
     my $font           = $label->{font};
     my $is_y_axis      = 0;
-    my $has_formatting = _has_fill_formatting($label);
+    my $has_formatting = _has_formatting($label);
 
     $self->xml_start_tag( 'c:tx' );
 
@@ -6042,7 +6062,7 @@ sub _write_custom_label_formula {
     my $formula        = $label->{formula};
     my $data_id        = $label->{data_id};
     my $font           = $label->{font};
-    my $has_formatting = _has_fill_formatting($label);
+    my $has_formatting = _has_formatting($label);
     my $data;
 
     if ( defined $data_id ) {
@@ -6068,7 +6088,7 @@ sub _write_custom_label_format {
     my $self           = shift;
     my $label          = shift;
     my $font           = $label->{font};
-    my $has_formatting = _has_fill_formatting($label);
+    my $has_formatting = _has_formatting($label);
 
     if ( $has_formatting ) {
 
@@ -7727,9 +7747,21 @@ The properties that can be set are:
 
 Set the name (title) for the chart. The name is displayed above the chart. The name can also be a formula such as C<=Sheet1!$A$1>. The name property is optional. The default is to have no chart title.
 
-=item * C<name_font>
+=item * C<font>
 
 Set the font properties for the chart title. See the L</CHART FONTS> section below.
+
+=item * C<fill>
+
+Set the fill properties of the legend such as colour. See the L</CHART FORMATTING> section below.
+
+=item * C<pattern>
+
+Set the pattern fill properties of the legend. See the L</CHART FORMATTING> section below.
+
+=item * C<gradient>
+
+Set the gradient fill properties of the legend. See the L</CHART FORMATTING> section below.
 
 =item * C<overlay>
 
