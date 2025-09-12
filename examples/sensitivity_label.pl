@@ -112,7 +112,7 @@
 #
 #
 # Once you have identified the necessary metadata you can add it to a new
-# docuemnt as shown below.
+# document as shown below.
 #
 
 use strict;

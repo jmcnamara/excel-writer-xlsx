@@ -300,7 +300,7 @@ _is_deep_diff( $got, $expected, $caption );
 
 ###############################################################################
 #
-# Test 19 Integer between 1 and 10 (same as test 1) + Error style == infor..
+# Test 19 Integer between 1 and 10 (same as test 1) + Error style == information.
 #
 
 $worksheet = _new_worksheet( \$got );

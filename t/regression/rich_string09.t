@@ -43,7 +43,7 @@ $worksheet->write( 'A1', 'Foo', $bold );
 $worksheet->write( 'A2', 'Bar', $italic );
 $worksheet->write_rich_string( 'A3', 'a', $bold, 'bc', 'defg' );
 
-# The following contains 2 consectutive formats and should be ignored.
+# The following contains 2 consecutive formats and should be ignored.
 $worksheet->write_rich_string( 'A3', 'a', $bold, $bold, 'bc', 'defg' );
 
 $workbook->close();

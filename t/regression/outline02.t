@@ -31,7 +31,7 @@ my $ignore_elements = { 'xl/workbook.xml' => ['<workbookView'] };
 ###############################################################################
 #
 # Test the creation of a outlines in a Excel::Writer::XLSX file. These tests
-# are based on the outline programs in the examles directory.
+# are based on the outline programs in the examples directory.
 #
 use Excel::Writer::XLSX;
 

@@ -40,7 +40,7 @@ sub new {
     $self->{_subtype}           = $self->{_subtype} || 'marker_only';
     $self->{_cross_between}     = 'midCat';
     $self->{_horiz_val_axis}    = 0;
-    $self->{_val_axis_postion}  = 'b';
+    $self->{_val_axis_position} = 'b';
     $self->{_smooth_allowed}    = 1;
     $self->{_requires_category} = 1;
 

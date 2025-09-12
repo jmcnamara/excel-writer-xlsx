@@ -704,7 +704,7 @@ sub set_column {
     $level = 7 if $level > 7;
 
 
-    # Excel has a maximumn column width of 255 characters.
+    # Excel has a maximum column width of 255 characters.
     if (defined $width && $width > 255.0) {
         $width = 255.0;
     }

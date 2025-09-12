@@ -582,7 +582,7 @@ sub get_image_properties {
 
     if ( unpack( 'x A3', $data ) eq 'PNG' ) {
 
-        # Test for PNGs.
+        # Test for PNG files.
         ( $type, $width, $height, $x_dpi, $y_dpi ) =
           _process_png( $data, $filename );
 

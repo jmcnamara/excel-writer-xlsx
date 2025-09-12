@@ -3362,7 +3362,7 @@ SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
     $column_chart2->set_x_axis( name => 'Test number' );
     $column_chart2->set_y_axis( name => 'Sample length (mm)' );
     
-    # Note: the y2 properites are on the secondary chart.
+    # Note: the y2 properties are on the secondary chart.
     $line_chart2->set_y2_axis( name => 'Target length (mm)' );
     
     
@@ -9189,7 +9189,7 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 
 
 Example of how to change the default worksheet direction from
-left-to-right to right-to-left as required by some eastern verions
+left-to-right to right-to-left as required by some eastern versions
 of Excel.
 
 
@@ -9209,7 +9209,7 @@ Source code for this example:
     #######################################################################
     #
     # Example of how to change the default worksheet direction from
-    # left-to-right to right-to-left as required by some eastern verions
+    # left-to-right to right-to-left as required by some eastern versions
     # of Excel.
     #
     # Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
@@ -12654,7 +12654,7 @@ Download this example: L<http://cpansearch.perl.org/src/JMCNAMARA/Excel-Writer-X
 A simple example of converting some Unicode text to an Excel file using
 Excel::Writer::XLSX.
 
-This example generates some Japenese text from a file with Shift-JIS
+This example generates some Japanese text from a file with Shift-JIS
 encoded text.
 
 
@@ -12676,7 +12676,7 @@ Source code for this example:
     # A simple example of converting some Unicode text to an Excel file using
     # Excel::Writer::XLSX.
     #
-    # This example generates some Japenese text from a file with Shift-JIS
+    # This example generates some Japanese text from a file with Shift-JIS
     # encoded text.
     #
     # Copyright 2000-2025, John McNamara, jmcnamara@cpan.org

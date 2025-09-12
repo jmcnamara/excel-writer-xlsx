@@ -103,7 +103,7 @@ $column_chart2->set_title(  name => 'Combine chart - secondary Y axis' );
 $column_chart2->set_x_axis( name => 'Test number' );
 $column_chart2->set_y_axis( name => 'Sample length (mm)' );
 
-# Note: the y2 properites are on the secondary chart.
+# Note: the y2 properties are on the secondary chart.
 $line_chart2->set_y2_axis( name => 'Target length (mm)' );
 
 

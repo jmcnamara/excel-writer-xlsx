@@ -55,7 +55,7 @@ $chart->add_series( values => '=Sheet1!$B$1:$B$5' );
 $chart->add_series( values => '=Sheet1!$C$1:$C$5' );
 
 
-# Test the deprected Spreadsheet::WriteExcel interface.
+# Test the deprecated Spreadsheet::WriteExcel interface.
 $chart->set_chartarea(
     line_pattern => 'none',
     color        => 'red'

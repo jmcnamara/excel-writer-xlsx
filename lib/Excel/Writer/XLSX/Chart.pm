@@ -9459,7 +9459,7 @@ In this case it is just necessary to add a C<y2_axis> parameter to the series an
 
     ...
 
-    # Note: the y2 properites are on the secondary chart.
+    # Note: the y2 properties are on the secondary chart.
     $line_chart2->set_y2_axis( name => 'Target length (mm)' );
 
 

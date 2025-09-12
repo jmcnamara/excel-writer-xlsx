@@ -3,7 +3,7 @@
 #######################################################################
 #
 # Example of how to change the default worksheet direction from
-# left-to-right to right-to-left as required by some eastern verions
+# left-to-right to right-to-left as required by some eastern versions
 # of Excel.
 #
 # Copyright 2000-2025, John McNamara, jmcnamara@cpan.org

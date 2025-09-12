@@ -38,7 +38,7 @@ my $workbook  = Excel::Writer::XLSX->new( $got_filename );
 my $worksheet = $workbook->add_worksheet();
 my $chart     = $workbook->add_chart( type => 'pie', embedded => 1 );
 
-# Replicate the cutom colors for testing.
+# Replicate the custom colors for testing.
 $workbook->set_custom_color( 40, 0xCC, 0x00, 0x00 );
 $workbook->set_custom_color( 41, 0x99, 0x00, 0x00 );
 

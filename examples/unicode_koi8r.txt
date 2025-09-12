@@ -3,7 +3,7 @@
 #
 # Sample encoded text borrowed from Sean Burke's Pod::Simple distro.
 #
-# The text is some Russina in KOI8-R.
+# The text is some Russian in KOI8-R.
 #
 # See the unicode_koi8r.pl example.
 #

@@ -270,7 +270,7 @@ sub _write_absolute_anchor {
 
     $self->xml_start_tag( 'xdr:absoluteAnchor' );
 
-    # Different co-ordinates for horizonatal (= 0) and vertical (= 1).
+    # Different co-ordinates for horizontal (= 0) and vertical (= 1).
     if ( $self->{_orientation} == 0 ) {
 
         # Write the xdr:pos element.
