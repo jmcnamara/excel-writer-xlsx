@@ -1,5 +1,5 @@
 CONTRIBUTING.md
-Changes
+Changelog.md
 LICENSE_Artistic_Perl
 LICENSE_GPL_1.0
 MANIFEST
@@ -7,9 +7,9 @@ Makefile.PL
 README
 bin/extract_vba
 examples/README
-examples/a_simple.pl  
+examples/a_simple.pl
 examples/array_formula.pl
-examples/autofilter.pl  
+examples/autofilter.pl
 examples/autofit.pl
 examples/background.pl
 examples/bug_report.pl

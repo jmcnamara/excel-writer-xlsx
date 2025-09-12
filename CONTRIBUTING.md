@@ -15,7 +15,7 @@ module. You can check which version of Excel::Writer::XLSX that you are using as
 
 
 
-The [Changes](https://github.com/jmcnamara/excel-writer-xlsx/blob/master/Changes) file lists what has changed in the latest versions.
+The [Changelog.md](https://github.com/jmcnamara/excel-writer-xlsx/blob/master/Changelog.md) file lists what has changed in the latest versions.
 
 
 ### Read the documentation
@@ -127,7 +127,7 @@ If applicable add an example program to the `examples` directory.
 
 ### Copyright and License
 
-Copyright remains with the original author. Do not include additional copyright claims or Licensing requirements. GitHub and the `git` repository will record your contribution an it will be acknowledged it in the Changes file.
+Copyright remains with the original author. Do not include additional copyright claims or Licensing requirements. GitHub and the `git` repository will record your contribution and it will be acknowledged it in the Changelog.md file.
 
 
 ### Submitting the Pull Request
