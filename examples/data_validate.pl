@@ -9,7 +9,7 @@
 # that a user enters in a cell and to display help and warning messages. It
 # also allows you to restrict input to values in a drop down list.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

@@ -10,7 +10,7 @@
 # since each segment is represented as a point so it is necessary to assign
 # formatting to each point in the series.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

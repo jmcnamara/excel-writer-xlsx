@@ -5,7 +5,7 @@
 # Excel::Writer::XLSX example of writing dates and times using the
 # write_date_time() Worksheet method.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

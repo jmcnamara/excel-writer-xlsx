@@ -9,7 +9,7 @@
 #
 # Each of the worksheets demonstrates different features of cell comments.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

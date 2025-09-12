@@ -8,7 +8,7 @@
 # of worksheet data. This allows users to filter the data based on
 # simple criteria so that some data is shown and some is hidden.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

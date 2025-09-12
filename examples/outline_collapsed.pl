@@ -8,7 +8,7 @@
 # These examples focus mainly on collapsed outlines. See also the
 # outlines.pl example program for more general examples.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

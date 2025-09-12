@@ -4,7 +4,7 @@
 # Excel::Writer::XLSX module. This is equivalent to Excel's "Place in cell"
 # image insert.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

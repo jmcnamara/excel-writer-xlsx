@@ -7,7 +7,7 @@
 # This method is used to define a user friendly name to represent a value,
 # a single cell or a range of cells in a workbook.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #

@@ -5,7 +5,7 @@
 # A demo of an various Excel chart data label features that are available
 # via an Excel::Writer::XLSX chart.
 #
-# Copyright 2000-2024, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
