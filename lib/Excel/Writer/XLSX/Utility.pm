@@ -40,7 +40,7 @@ my @rowcol = qw(
   xl_dec_row
   xl_inc_col
   xl_dec_col
-  xl_string_pixel_width
+  xl_cell_autofit_width
 );
 
 # Date and Time functions
@@ -529,14 +529,14 @@ sub xl_date_1904 {
 
 ###############################################################################
 #
-# xl_string_pixel_width($string)
+# xl_cell_autofit_width($string)
 #
 # Get the pixel width of a string based on individual character widths taken
 # from Excel. UTF8 characters are given a default width of 8.
 #
 # Note, Excel adds an additional 7 pixels padding to a cell.
 #
-sub xl_string_pixel_width {
+sub xl_cell_autofit_width {
     my $length = 0;
 
     for my $char (split //, shift) {
@@ -1091,6 +1091,24 @@ This functions takes a cell reference string in A1 notation and decrements the c
     my $str = xl_dec_col( 'AA1' );     # Z1
     my $str = xl_dec_col( '$C1' );     # $B1
     my $str = xl_dec_col( '$E$5' );    # $D$5
+
+
+=head2 xl_cell_autofit_width($string)
+
+    Parameters: $string, The string to calculate the cell width for.
+
+    Returns:    The string autofit width in pixels. Returns 0 if the string is empty.
+
+This function calculates the width required to auto-fit a string in a cell:
+
+    my $width = xl_cell_autofit_width($string);
+
+The Worksheet C<autofit()> method can be used to auto-fit cell data to the optimal column width. However, in some cases you may wish to handle auto-fitting yourself and apply additional logic to limit the maximum and minimum ranges.
+
+The C<xl_cell_autofit_width()> function can be used to perform the required calculation. It works by estimating the pixel width of a string based on the width of each character. It also adds a 7 pixel padding for the cell boundary in the same way that Excel does.
+
+You can use the calculated width in conjunction with Worksheet C<set_column_pixels()> method.
+
 
 =head1 TIME AND DATE FUNCTIONS
 

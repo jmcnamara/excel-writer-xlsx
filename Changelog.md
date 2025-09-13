@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add border, fill, gradient and pattern formatting options for
   chart titles and also chart axis titles.
 
+- Added documentation for the Worksheet `autofit()` method and the Utility
+  `xl_cell_autofit_width()` function.
+
 
 ### Fixed
 

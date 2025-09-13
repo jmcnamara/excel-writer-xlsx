@@ -2188,7 +2188,7 @@ t/utility/xl_parse_time.t
 t/utility/xl_range.t
 t/utility/xl_range_formula.t
 t/utility/xl_rowcol_to_cell.t
-t/utility/xl_string_pixel_width.t
+t/utility/xl_cell_autofit_width.t
 t/workbook/sub_close.t
 t/workbook/sub_get_chart_range.t
 t/workbook/sub_sort_defined_names.t

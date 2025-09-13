@@ -29,7 +29,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     xl_rowcol_to_cell
                                     xl_col_to_name
                                     xl_range
-                                    xl_string_pixel_width
+                                    xl_cell_autofit_width
                                     quote_sheetname
                                     get_image_properties);
 
@@ -832,14 +832,14 @@ sub autofit {
                         }
 
                         if ( $string !~ /\n/ ) {
-                            $length = xl_string_pixel_width( $string );
+                            $length = xl_cell_autofit_width( $string );
                         }
                         else {
                             # Handle multiline strings.
                             my @segments = split "\n", $string;
                             for my $string ( @segments ) {
                                 my $seg_length =
-                                  xl_string_pixel_width( $string );
+                                  xl_cell_autofit_width( $string );
 
                                 if ( $seg_length > $length ) {
                                     $length = $seg_length;
@@ -887,7 +887,7 @@ sub autofit {
                         # non-zero value.
                         my $value = $cell->[3];
                         if ( $value ) {
-                            $length = xl_string_pixel_width( $value );
+                            $length = xl_cell_autofit_width( $value );
                         }
                     }
                     elsif ( $type eq 'a' || $type eq 'd' ) {
@@ -895,7 +895,7 @@ sub autofit {
                         # Handle array and dynamic formulas.
                         my $value = $cell->[4];
                         if ( $value ) {
-                            $length = xl_string_pixel_width( $value );
+                            $length = xl_cell_autofit_width( $value );
                         }
                     }
 
