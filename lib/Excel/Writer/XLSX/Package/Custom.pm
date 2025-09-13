@@ -23,7 +23,7 @@ use Carp;
 use Excel::Writer::XLSX::Package::XMLwriter;
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 
 ###############################################################################

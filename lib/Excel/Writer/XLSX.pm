@@ -20,7 +20,7 @@ use Exporter;
 use Excel::Writer::XLSX::Workbook;
 
 our @ISA     = qw(Excel::Writer::XLSX::Workbook Exporter);
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 
 ###############################################################################
