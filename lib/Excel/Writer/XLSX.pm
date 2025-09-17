@@ -753,6 +753,7 @@ The following methods are available through a new worksheet:
     merge_range()
     merge_range_type()
     set_zoom()
+    set_zoom_to_fit()
     right_to_left()
     hide_zero()
     set_background()
@@ -2623,6 +2624,13 @@ The default zoom factor is 100. You cannot zoom to "Selection" because it is cal
 Note, C<set_zoom()> does not affect the scale of the printed page. For that you should use C<set_print_scale()>.
 
 
+=head2 set_zoom_to_fit()
+
+Set a chartsheet to zoom to fit the screen.
+
+This method is used to ensure that a chartsheet is zoomed automatically by Excel to fit the screen even when the window is resized.
+
+It only has an effect for chartsheets.
 
 
 =head2 right_to_left()

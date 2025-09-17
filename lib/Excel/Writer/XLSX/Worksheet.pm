@@ -77,6 +77,7 @@ sub new {
     $self->{_embedded_image_indexes} = $_[14];
     $self->{_embedded_images}        = $_[15];
 
+    $self->{_is_chartsheet} = 0;
     $self->{_ext_sheets}    = [];
     $self->{_fileclosed}    = 0;
     $self->{_excel_version} = 2007;
@@ -155,6 +156,7 @@ sub new {
 
     $self->{_zoom}              = 100;
     $self->{_zoom_scale_normal} = 1;
+    $self->{_zoom_to_fit}       = 0;
     $self->{_print_scale}       = 100;
     $self->{_right_to_left}     = 0;
     $self->{_show_zeros}        = 1;
@@ -2107,6 +2109,20 @@ sub set_zoom {
     }
 
     $self->{_zoom} = int $scale;
+}
+
+
+###############################################################################
+#
+# set_zoom_to_fit()
+#
+# Set the worksheet zoom  to selection/fit. Only works for chartsheets.
+#
+sub set_zoom_to_fit {
+
+    my $self = shift;
+
+    $self->{_zoom_to_fit} = 1;
 }
 
 
@@ -7842,6 +7858,7 @@ sub _write_sheet_view {
     my $tab_selected     = $self->{_selected};
     my $view             = $self->{_page_view} || 0;
     my $zoom             = $self->{_zoom};
+    my $zoom_to_fit      = $self->{_zoom_to_fit};
     my $row_col_headers  = $self->{_hide_row_col_headers};
     my $top_left_cell    = $self->{_top_left_cell};
     my $workbook_view_id = 0;
@@ -7907,6 +7924,12 @@ sub _write_sheet_view {
     }
 
     push @attributes, ( 'workbookViewId' => $workbook_view_id );
+
+    if ( $self->{_is_chartsheet} ) {
+        if ( $zoom_to_fit ) {
+            push @attributes, ( 'zoomToFit' => 1 );
+        }
+    }
 
     if ( @{ $self->{_panes} } || @{ $self->{_selections} } ) {
         $self->xml_start_tag( 'sheetView', @attributes );

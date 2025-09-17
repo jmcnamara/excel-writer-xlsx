@@ -9188,6 +9188,7 @@ The following Worksheet methods are also available through a non-embedded Chart 
     set_first_sheet()
     protect()
     set_zoom()
+    set_zoom_to_fit()
     set_tab_color()
 
     set_landscape()
