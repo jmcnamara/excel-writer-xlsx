@@ -4964,6 +4964,8 @@ sub add_table {
         name           => 1,
         style          => 1,
         total_row      => 1,
+        description    => 1,
+        title          => 1,
     );
 
     # Check for valid input parameters.
@@ -4995,7 +4997,8 @@ sub add_table {
     $table{_show_col_stripes} = $param->{banded_columns} ? 1 : 0;
     $table{_header_row_count} = $param->{header_row}     ? 1 : 0;
     $table{_totals_row_shown} = $param->{total_row}      ? 1 : 0;
-
+    $table{_description}      = $param->{description};
+    $table{_title}            = $param->{title};
 
     # Set the table name.
     if ( defined $param->{name} ) {

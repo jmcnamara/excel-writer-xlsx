@@ -6354,6 +6354,8 @@ The last parameter in C<add_table()> should be a hash ref containing the paramet
         total_row
         columns
         name
+        description
+        title
 
 The table parameters are detailed below. There are no required parameters and the hash ref isn't required if no options are specified.
 
@@ -6614,6 +6616,27 @@ Formatting can also be applied to columns, to the column data using C<format> an
 
 Standard Excel::Writer::XLSX format objects can be used. However, they should be limited to numerical formats for the columns and simple formatting like text wrap for the headers. Overriding other table formatting may produce inconsistent results.
 
+
+=head2 description
+
+The C<description> parameter can be used to set the alt text description for
+the table. This is useful for accessibility purposes and for users of screen
+readers:
+
+    $worksheet->add_table( 'B3:F7', {
+        description => 'Table with the sales data for Spain'
+    } );
+
+=head2 title
+
+The C<title> parameter can be used to set the alt text title for the table.
+This is useful for accessibility purposes and for users of screen readers. It
+can be used in conjunction with the C<description> parameter:
+
+    $worksheet->add_table( 'B3:F7', {
+        title       => 'Sales data table',
+        description => 'Table with the sales data for Spain'
+    } );
 
 
 =head1 FORMULAS AND FUNCTIONS IN EXCEL

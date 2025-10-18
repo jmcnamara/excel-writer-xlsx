@@ -76,6 +76,8 @@ sub _assemble_xml_file {
     # Write the tableStyleInfo element.
     $self->_write_table_style_info();
 
+    # Write the extLst element for alt text/title.
+    $self->_write_ext_lst();
 
     # Close the table tag.
     $self->xml_end_tag( 'table' );
@@ -311,6 +313,66 @@ sub _write_totals_row_formula {
     my $formula = shift;
 
     $self->xml_data_element( 'totalsRowFormula', $formula );
+}
+
+
+##############################################################################
+#
+# _write_ext_lst()
+#
+# Write the <extLst> element for the alt text/description.
+#
+sub _write_ext_lst {
+
+    my $self  = shift;
+    my $props = $self->{_properties};
+
+    if ( !$props->{_description} && !$props->{_title} ) {
+        return;
+    }
+
+    my $uri   = '{504A1905-F514-4f6f-8877-14C23A59335A}';
+    my $xmlns = 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/main';
+
+    my @attributes = (
+        'uri'       => $uri,
+        'xmlns:x14' => $xmlns,
+    );
+
+
+    $self->xml_start_tag( 'extLst' );
+    $self->xml_start_tag( 'ext', @attributes );
+
+    # Write the x14:table element.
+    $self->_write_x14_table();
+
+    $self->xml_end_tag( 'ext' );
+    $self->xml_end_tag( 'extLst' );
+}
+
+
+##############################################################################
+#
+# _write_x14_table()
+#
+# Write the <x14:table> element.
+#
+sub _write_x14_table {
+
+    my $self  = shift;
+    my $props = $self->{_properties};
+
+    my @attributes = ();
+
+    if ( $props->{_title} ) {
+        push @attributes, ( 'altText' => $props->{_title} );
+    }
+
+    if ( $props->{_description} ) {
+        push @attributes, ( 'altTextSummary' => $props->{_description} );
+    }
+
+    $self->xml_empty_tag( 'x14:table', @attributes );
 }
 
 
