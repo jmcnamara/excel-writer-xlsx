@@ -25,6 +25,7 @@ use autouse 'Date::Manip' => qw(ParseDate Date_Init);
 use Carp;
 use Digest::MD5 qw(md5_hex);
 use File::Basename 'fileparse';
+use FileHandle;
 
 
 our $VERSION = '1.15';
@@ -817,7 +818,6 @@ sub _process_gif {
 
     my $width  = unpack "v", substr $data, 6, 2;
     my $height = unpack "v", substr $data, 8, 2;
-    print join ", ", ( $type, $width, $height, $x_dpi, $y_dpi, "\n" );
 
     if ( not defined $height ) {
         croak "$filename: no size data found in gif image.\n";
