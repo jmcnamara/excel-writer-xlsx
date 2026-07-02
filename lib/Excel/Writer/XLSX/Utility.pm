@@ -698,9 +698,13 @@ sub _process_bmp {
     }
 
 
-    # Read the bitmap width and height. Verify the sizes.
-    my ( $width, $height ) = unpack "x18 V2", $data;
+    # Read the bitmap width and height. The height can be stored as negative
+    # for a top-down DIB.
+    my ( $width, $height ) = unpack "x18 l<2", $data;
+    $height = abs( $height );
 
+
+    # Verify the sizes.
     if ( $width > 0xFFFF ) {
         croak "$filename: largest image width $width supported is 65k.";
     }
