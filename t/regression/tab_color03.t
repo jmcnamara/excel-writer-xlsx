@@ -1,0 +1,77 @@
+###############################################################################
+#
+# Tests the output of Excel::Writer::XLSX against Excel generated files.
+#
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+#
+
+use lib 't/lib';
+use TestFunctions qw(_compare_xlsx_files _is_deep_diff);
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+
+###############################################################################
+#
+# Tests setup.
+#
+my $filename     = 'tab_color03.xlsx';
+my $dir          = 't/regression/';
+my $got_filename = $dir . "ewx_$filename";
+my $exp_filename = $dir . 'xlsx_files/' . $filename;
+
+my $ignore_members = [];
+
+my $ignore_elements = {};
+
+
+###############################################################################
+#
+# Test the creation of a simple Excel::Writer::XLSX file with a coloured tab.
+#
+use Excel::Writer::XLSX;
+
+my $workbook  = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet = $workbook->add_worksheet();
+
+$worksheet->set_portrait();
+$worksheet->{_vertical_dpi} = 200;
+
+$worksheet->fit_to_pages( 1, 1 );
+$worksheet->outline_settings( 1, 0, 1, 0 );
+
+$worksheet->write( 'A1', 'Foo' );
+$worksheet->set_tab_color( 'red' );
+
+$workbook->close();
+
+
+###############################################################################
+#
+# Compare the generated and existing Excel files.
+#
+
+my ( $got, $expected, $caption ) = _compare_xlsx_files(
+
+    $got_filename,
+    $exp_filename,
+    $ignore_members,
+    $ignore_elements,
+);
+
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Cleanup.
+#
+unlink $got_filename;
+
+__END__
+
+
+
