@@ -3826,7 +3826,9 @@ sub merge_range {
       if $col_first > $col_last;
 
     # Check that the data range is valid and store the max and min values.
-    return -2 if $self->_check_dimensions( $row_first, $col_first );
+    # The first cell uses the ignore flags: mergeCells is written at close(),
+    # so optimization mode must not refuse a range whose first row is flushed.
+    return -2 if $self->_check_dimensions( $row_first, $col_first, 1, 1 );
     return -2 if $self->_check_dimensions( $row_last, $col_last );
 
     # Store the merge range.
@@ -3898,7 +3900,9 @@ sub merge_range_type {
       if $col_first > $col_last;
 
     # Check that the data range is valid and store the max and min values.
-    return -2 if $self->_check_dimensions( $row_first, $col_first );
+    # The first cell uses the ignore flags: mergeCells is written at close(),
+    # so optimization mode must not refuse a range whose first row is flushed.
+    return -2 if $self->_check_dimensions( $row_first, $col_first, 1, 1 );
     return -2 if $self->_check_dimensions( $row_last, $col_last );
 
     # Store the merge range.
