@@ -1,0 +1,105 @@
+###############################################################################
+#
+# Tests the output of Excel::Writer::XLSX against Excel generated files.
+#
+# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
+#
+# SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
+#
+
+use lib 't/lib';
+use TestFunctions qw(_compare_xlsx_files _is_deep_diff);
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+
+###############################################################################
+#
+# Tests setup.
+#
+my $filename     = 'cond_format23.xlsx';
+my $dir          = 't/regression/';
+my $got_filename = $dir . "ewx_$filename";
+my $exp_filename = $dir . 'xlsx_files/' . $filename;
+
+my $ignore_members  = [];
+my $ignore_elements = {};
+
+
+###############################################################################
+#
+# Test the rule priorities when a range is repeated after a different
+# range.
+#
+use Excel::Writer::XLSX;
+
+my $workbook  = Excel::Writer::XLSX->new( $got_filename );
+my $worksheet = $workbook->add_worksheet();
+
+# We manually set the indices to get the same order as the target file.
+my $format1 = $workbook->add_format( bg_color => '#FF0000', dxf_index => 2 );
+my $format2 = $workbook->add_format( bg_color => '#0000FF', dxf_index => 0 );
+my $format3 = $workbook->add_format( bg_color => '#008000', dxf_index => 1 );
+
+for my $row ( 0 .. 4 ) {
+    $worksheet->write( $row, 0, 1 );
+    $worksheet->write( $row, 1, $row );
+}
+
+$worksheet->conditional_formatting( 'A1:A5',
+    {
+        type     => 'cell',
+        format   => $format1,
+        criteria => '>',
+        value    => 5,
+    }
+);
+
+$worksheet->conditional_formatting( 'A1:B5',
+    {
+        type     => 'cell',
+        format   => $format2,
+        criteria => '>',
+        value    => 0,
+    }
+);
+
+$worksheet->conditional_formatting( 'A1:A5',
+    {
+        type     => 'cell',
+        format   => $format3,
+        criteria => '>',
+        value    => 0,
+    }
+);
+
+$workbook->close();
+
+
+###############################################################################
+#
+# Compare the generated and existing Excel files.
+#
+
+my ( $got, $expected, $caption ) = _compare_xlsx_files(
+
+    $got_filename,
+    $exp_filename,
+    $ignore_members,
+    $ignore_elements,
+);
+
+_is_deep_diff( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Cleanup.
+#
+unlink $got_filename;
+
+__END__
+
+
+

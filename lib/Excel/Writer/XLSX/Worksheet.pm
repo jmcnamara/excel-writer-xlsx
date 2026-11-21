@@ -254,6 +254,7 @@ sub new {
 
     $self->{_validations}        = [];
     $self->{_cond_formats}       = {};
+    $self->{_cond_formats_order} = [];
     $self->{_data_bars_2010}     = [];
     $self->{_use_data_bars_2010} = 0;
     $self->{_dxf_priority}       = 1;
@@ -4794,6 +4795,10 @@ sub conditional_formatting {
     $param->{min_value} =~ s/^=// if defined $param->{min_value};
     $param->{mid_value} =~ s/^=// if defined $param->{mid_value};
     $param->{max_value} =~ s/^=// if defined $param->{max_value};
+
+    # Store the order that the ranges are added in.
+    push @{ $self->{_cond_formats_order} }, $range
+      unless exists $self->{_cond_formats}->{$range};
 
     # Store the validation information until we close the worksheet.
     push @{ $self->{_cond_formats}->{$range} }, $param;
@@ -10230,12 +10235,10 @@ sub _write_formula_2 {
 #
 sub _write_conditional_formats {
 
-    my $self   = shift;
-    my @ranges = sort keys %{ $self->{_cond_formats} };
+    my $self = shift;
 
-    return unless scalar @ranges;
-
-    for my $range ( @ranges ) {
+    # Write the ranges in the order that they were added in.
+    for my $range ( @{ $self->{_cond_formats_order} } ) {
         $self->_write_conditional_formatting( $range,
             $self->{_cond_formats}->{$range} );
     }
