@@ -5,6 +5,14 @@ This is a changelog for Excel::Writer::XLSX.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [1.16] - 2026-xx-xx
+
+### Fixed
+
+- Fix issue where `xl_date_list()` and `xl_parse_date()` returned 1900-02-29
+  for datetimes on 1900-02-28 with a time after midnight.
+
+
 ## [1.15] - 2025-09-12
 
 ### Added

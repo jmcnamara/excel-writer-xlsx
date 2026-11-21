@@ -386,7 +386,7 @@ sub xl_date_list {
       $days + ( $hours * 3600 + $minutes * 60 + $seconds ) / ( 24 * 60 * 60 );
 
     # Add a day for Excel's missing leap day in 1900
-    $date++ if ( $date > 59 );
+    $date++ if ( $date >= 60 );
 
     return $date;
 }

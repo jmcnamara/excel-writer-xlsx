@@ -20,7 +20,7 @@ if ($@) {
     plan skip_all => 'Date::Calc required to run optional tests.';
 }
 else {
-    plan tests => 9;
+    plan tests => 11;
 }
 
 
@@ -126,8 +126,30 @@ is( $got, $expected, $caption );
 #
 # Test the xl_date_list() method.
 #
+@date     = (1900, 2, 28, 12);
+$expected = 59.5;
+$caption  = " \tUtility: xl_date_list( @date )";
+$got      = xl_date_list( @date );
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the xl_date_list() method.
+#
 @date     = (1900, 3, 1);
 $expected = 61;
+$caption  = " \tUtility: xl_date_list( @date )";
+$got      = xl_date_list( @date );
+is( $got, $expected, $caption );
+
+
+###############################################################################
+#
+# Test the xl_date_list() method.
+#
+@date     = (1900, 3, 1, 12);
+$expected = 61.5;
 $caption  = " \tUtility: xl_date_list( @date )";
 $got      = xl_date_list( @date );
 is( $got, $expected, $caption );
