@@ -2275,7 +2275,8 @@ sub set_start_page {
     my $self = shift;
     return unless defined $_[0];
 
-    $self->{_page_start}   = $_[0];
+    $self->{_page_start}         = $_[0];
+    $self->{_page_setup_changed} = 1;
 }
 
 
