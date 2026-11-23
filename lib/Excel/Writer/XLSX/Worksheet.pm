@@ -31,7 +31,10 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     xl_range
                                     xl_cell_autofit_width
                                     quote_sheetname
-                                    get_image_properties);
+                                    get_image_properties
+                                    _utf16_len
+                                    _utf16_truncate
+                                    _has_invalid_name_chars);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '1.15';
@@ -1196,7 +1199,7 @@ sub set_header {
     # Replace the Excel placeholder &[Picture] with the internal &G.
     $string =~ s/&\[Picture\]/&G/g;
 
-    if ( length $string > 255 ) {
+    if ( _utf16_len( $string ) > 255 ) {
         carp "Header string cannot be longer than Excel's " .
              "limit of 255 characters";
         return;
@@ -1262,7 +1265,7 @@ sub set_footer {
     # Replace the Excel placeholder &[Picture] with the internal &G.
     $string =~ s/&\[Picture\]/&G/g;
 
-    if ( length $string > 255 ) {
+    if ( _utf16_len( $string ) > 255 ) {
         carp "Footer string cannot be longer than Excel's " .
              "limit of 255 characters";
         return;
@@ -2624,9 +2627,12 @@ sub write_string {
     # Check that row and col are valid and store max and min values
     return -2 if $self->_check_dimensions( $row, $col );
 
-    # Check that the string is < 32767 chars
-    if ( length $str > $self->{_xls_strmax} ) {
-        $str = substr( $str, 0, $self->{_xls_strmax} );
+    # Check that the string is < 32767 UTF-16 units. A string can't exceed
+    # the limit if it is less than half of it, so skip the slower check.
+    if (   length $str > $self->{_xls_strmax} / 2
+        && _utf16_len( $str ) > $self->{_xls_strmax} )
+    {
+        $str = _utf16_truncate( $str, $self->{_xls_strmax} );
         $str_error = -3;
     }
 
@@ -2775,7 +2781,7 @@ sub write_rich_string {
     }
 
     # Check that the string is < 32767 chars.
-    if ( length $raw_string > $self->{_xls_strmax} ) {
+    if ( _utf16_len( $raw_string ) > $self->{_xls_strmax} ) {
         return -3;
     }
 
@@ -3411,8 +3417,8 @@ sub write_url {
 
     # Check that the string is < 32767 chars
     my $str_error = 0;
-    if ( length $str > $self->{_xls_strmax} ) {
-        $str = substr( $str, 0, $self->{_xls_strmax} );
+    if ( _utf16_len( $str ) > $self->{_xls_strmax} ) {
+        $str = _utf16_truncate( $str, $self->{_xls_strmax} );
         $str_error = -3;
     }
 
@@ -3447,10 +3453,19 @@ sub write_url {
     my $tmp_url_str = $url_str || '';
     my $max_url     = $self->{_max_url_length};
 
-    if ( length $url > $max_url || length $tmp_url_str > $max_url ) {
+    if (   _utf16_len( $url ) > $max_url
+        || _utf16_len( $tmp_url_str ) > $max_url )
+    {
         carp "Ignoring URL '$url' where link or anchor > $max_url characters "
           . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
           . "section of the Excel::Writer::XLSX documentation.";
+        return -4;
+    }
+
+    # Excel limits the tool tip to 255 characters.
+    if ( defined $tip && _utf16_len( $tip ) > 255 ) {
+        carp "Ignoring URL '$url' since the tool tip exceeds Excel's limit "
+          . "of 255 characters.";
         return -4;
     }
 
@@ -4174,28 +4189,28 @@ sub data_validation {
     }
 
     # Check that the input title doesn't exceed the maximum length.
-    if ( $param->{input_title} and length $param->{input_title} > 32 ) {
+    if ( $param->{input_title} and _utf16_len( $param->{input_title} ) > 32 ) {
         carp "Length of input title '$param->{input_title}'"
           . " exceeds Excel's limit of 32";
         return -3;
     }
 
     # Check that the error title don't exceed the maximum length.
-    if ( $param->{error_title} and length $param->{error_title} > 32 ) {
+    if ( $param->{error_title} and _utf16_len( $param->{error_title} ) > 32 ) {
         carp "Length of error title '$param->{error_title}'"
           . " exceeds Excel's limit of 32";
         return -3;
     }
 
     # Check that the input message don't exceed the maximum length.
-    if ( $param->{input_message} and length $param->{input_message} > 255 ) {
+    if ( $param->{input_message} and _utf16_len( $param->{input_message} ) > 255 ) {
         carp "Length of input message '$param->{input_message}'"
           . " exceeds Excel's limit of 255";
         return -3;
     }
 
     # Check that the error message don't exceed the maximum length.
-    if ( $param->{error_message} and length $param->{error_message} > 255 ) {
+    if ( $param->{error_message} and _utf16_len( $param->{error_message} ) > 255 ) {
         carp "Length of error message '$param->{error_message}'"
           . " exceeds Excel's limit of 255";
         return -3;
@@ -4207,7 +4222,7 @@ sub data_validation {
         if ( ref $param->{value} eq 'ARRAY' ) {
 
             my $formula = join ',', @{ $param->{value} };
-            if ( length $formula > 255 ) {
+            if ( _utf16_len( $formula ) > 255 ) {
                 carp "Length of list items '$formula' exceeds Excel's "
                   . "limit of 255, use a formula range instead";
                 return -3;
@@ -5010,9 +5025,16 @@ sub add_table {
     if ( defined $param->{name} ) {
         my $name = $param->{name};
 
-        # Warn if the name contains invalid chars as defined by Excel help.
-        if ( $name !~ m/^[\w\\][\w\\.]*$/ || $name =~ m/^\d/ ) {
+        # Warn if the name contains invalid chars as defined by Excel.
+        if ( _has_invalid_name_chars( $name ) ) {
             carp "Invalid character in name '$name' used in add_table()";
+            return -3;
+        }
+
+        # Warn if the name exceeds Excel's maximum length.
+        if ( _utf16_len( $name ) > 255 ) {
+            carp "Name '$name' in add_table() exceeds Excel's limit of 255 "
+              . "characters";
             return -3;
         }
 
@@ -6743,10 +6765,14 @@ sub _prepare_image {
         }
 
         my $max_url = $self->{_max_url_length};
-        if ( length $target > $max_url ) {
+        if ( _utf16_len( $target ) > $max_url ) {
             carp "Ignoring URL '$url' where link or anchor > $max_url characters "
               . "since it exceeds Excel's limit for URLS. See LIMITATIONS "
               . "section of the Excel::Writer::XLSX documentation.";
+        }
+        elsif ( defined $tip && _utf16_len( $tip ) > 255 ) {
+            carp "Ignoring URL '$url' since the tool tip exceeds Excel's "
+              . "limit of 255 characters.";
         }
         else {
             if ( $target && !exists $self->{_drawing_rels}->{$url} ) {
@@ -7315,8 +7341,8 @@ sub _comment_params {
     # Limit the string to the max number of chars.
     my $max_len = 32767;
 
-    if ( length( $string ) > $max_len ) {
-        $string = substr( $string, 0, $max_len );
+    if ( _utf16_len( $string ) > $max_len ) {
+        $string = _utf16_truncate( $string, $max_len );
     }
 
 

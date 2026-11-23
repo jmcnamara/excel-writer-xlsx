@@ -56,7 +56,7 @@ my @dates = qw(
 );
 
 our @ISA         = qw(Exporter);
-our @EXPORT_OK   = ();
+our @EXPORT_OK   = qw(_utf16_len _utf16_truncate _has_invalid_name_chars);
 our @EXPORT      = ( @rowcol, @dates, 'quote_sheetname', 'get_image_properties' );
 our %EXPORT_TAGS = (
     rowcol => \@rowcol,
@@ -824,6 +824,66 @@ sub _process_gif {
     }
 
     return ( $type, $width, $height, $x_dpi, $y_dpi );
+}
+
+
+###############################################################################
+#
+# _utf16_len()
+#
+# Get the length of a string in UTF-16 units. Excel's string length limits are
+# in UTF-16 units, so characters above U+FFFF, such as emojis, count as 2.
+#
+sub _utf16_len {
+
+    my $string = shift;
+
+    # Count the characters above U+FFFF and add them to the length.
+    return length( $string ) + ( $string =~ tr/\x{10000}-\x{10FFFF}// );
+}
+
+
+###############################################################################
+#
+# _utf16_truncate()
+#
+# Truncate a string to a maximum length in UTF-16 units without splitting a
+# character above U+FFFF.
+#
+sub _utf16_truncate {
+
+    my $string  = shift;
+    my $max_len = shift;
+    my $length  = 0;
+    my $index   = 0;
+
+    for my $char ( split //, $string ) {
+        $length += ord( $char ) > 0xFFFF ? 2 : 1;
+
+        return substr( $string, 0, $index ) if $length > $max_len;
+
+        $index++;
+    }
+
+    return $string;
+}
+
+
+###############################################################################
+#
+# _has_invalid_name_chars()
+#
+# Check for characters that Excel doesn't allow in defined and table names.
+#
+sub _has_invalid_name_chars {
+
+    my $name = shift;
+
+    return 1 if !defined $name || $name eq '';
+    return 1 if $name =~ /[ !"#\$%&'()*+,\-\/:;<=>\@\[\]^`{|}~\x00-\x1f\x7f-\x9f]/;
+    return 1 if $name =~ /^[\d.?]/;
+
+    return 0;
 }
 
 

@@ -12,7 +12,7 @@ use TestFunctions qw(_expected_to_aref _got_to_aref _is_deep_diff _new_workbook)
 use strict;
 use warnings;
 
-use Test::More tests => 1;
+use Test::More tests => 3;
 
 
 
@@ -53,6 +53,22 @@ eval { $workbook->add_worksheet(q('Sheet')); };
 my $expected = 1;
 my $got      = scalar $workbook->sheets();
 is($got, $expected, $caption);
+
+
+###############################################################################
+#
+# Test the sheetname length limit, which Excel measures in UTF-16 units, so
+# characters above U+FFFF, such as emojis, count as 2.
+#
+$caption  = " \tWorkbook: _check_sheetname() UTF-16 length";
+$workbook = _new_workbook(\$tmp);
+
+my $name = "\x{1F600}" x 15 . 'a';
+my $worksheet = eval { $workbook->add_worksheet( $name ) };
+is( $worksheet && $worksheet->get_name(), $name, $caption );
+
+eval { $workbook->add_worksheet( "\x{1F600}" x 16 ) };
+like( $@, qr/must be <= 31 chars/, $caption );
 
 
 

@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix issue where `xl_date_list()` and `xl_parse_date()` returned 1900-02-29
   for datetimes on 1900-02-28 with a time after midnight.
 
+- Fixed Excel string length limit checks for strings with characters such as
+  emojis, which Excel counts as 2 characters.
+
+- Fixed the defined name and table name checks to allow emojis and other
+  characters that Excel accepts, and added a check for Excel's 255 character
+  limit for these names.
+
+- Fixed the `set_custom_property()` name length check, which was checking the
+  value instead of the name.
+
+- Added a check for Excel's 255 character limit for hyperlink tool tips in
+  `write_url()`, `insert_image()` and `embed_image()`.
+
 
 ## [1.15] - 2025-09-12
 

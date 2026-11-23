@@ -33,7 +33,9 @@ use Excel::Writer::XLSX::Package::Packager;
 use Excel::Writer::XLSX::Package::XMLwriter;
 use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     xl_rowcol_to_cell
-                                    get_image_properties);
+                                    get_image_properties
+                                    _utf16_len
+                                    _has_invalid_name_chars);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
 our $VERSION = '1.15';
@@ -534,7 +536,7 @@ sub _check_sheetname {
     }
 
     # Check that sheet name is <= 31. Excel limit.
-    croak "Sheetname $name must be <= 31 chars" if length $name > 31;
+    croak "Sheetname $name must be <= 31 chars" if _utf16_len( $name ) > 31;
 
     # Check that sheetname doesn't contain any invalid characters
     if ( $name =~ $invalid_char ) {
@@ -824,9 +826,16 @@ sub define_name {
         return -1;
     }
 
-    # Warn if the name contains invalid chars as defined by Excel help.
-    if ( $name !~ m/^[\w\\][\w\\.]*$/ || $name =~ m/^\d/ ) {
+    # Warn if the name contains invalid chars as defined by Excel.
+    if ( _has_invalid_name_chars( $name ) ) {
         carp "Invalid character in name '$name' used in defined_name()";
+        return -1;
+    }
+
+    # Warn if the name exceeds Excel's maximum length.
+    if ( _utf16_len( $name ) > 255 ) {
+        carp "Name '$name' in defined_name() exceeds Excel's limit of 255 "
+          . "characters";
         return -1;
     }
 
@@ -1001,12 +1010,12 @@ sub set_custom_property {
     }
 
     #  Check for strings longer than Excel's limit of 255 chars.
-    if ( $type eq 'text' and length $value > 255 ) {
+    if ( $type eq 'text' and _utf16_len( $value ) > 255 ) {
         carp "Length of text custom value '$value' exceeds "
           . "Excel's limit of 255 in set_custom_property()";
         return -1;
     }
-    if ( length $value > 255 ) {
+    if ( _utf16_len( $name ) > 255 ) {
         carp "Length of custom name '$name' exceeds "
           . "Excel's limit of 255 in set_custom_property()";
         return -1;

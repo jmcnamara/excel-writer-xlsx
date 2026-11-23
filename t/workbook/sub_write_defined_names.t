@@ -12,7 +12,7 @@ use TestFunctions qw(_new_workbook _is_deep_diff _got_to_aref);
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 4;
 
 
 ###############################################################################
@@ -72,7 +72,23 @@ $got      = _got_to_aref( $got );
 _is_deep_diff( $got, $expected, $caption );
 
 
+###############################################################################
+#
+# Test define_name() with emojis and Excel's 255 UTF-16 unit limit. Characters
+# above U+FFFF, such as emojis, count as 2.
+#
+$caption  = " \tWorkbook: define_name() UTF-16 length";
+$workbook = _new_workbook(\$got);
+
+{
+    local $SIG{__WARN__} = sub { };
+
+    my $result = $workbook->define_name( "\x{1F600}" x 127 . 'a', '=1' );
+    isnt( $result, -1, $caption );
+
+    $result = $workbook->define_name( "\x{1F600}" x 128, '=1' );
+    is( $result, -1, $caption );
+}
+
+
 __END__
-
-
-
