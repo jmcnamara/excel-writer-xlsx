@@ -5,11 +5,20 @@ This is a changelog for Excel::Writer::XLSX.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
-## [1.16] - 2026-xx-xx
+## [1.16] - 2026-11-24
+
+### Added
+
+- Added the chartsheet `set_zoom_to_fit()` method to make Excel zoom a
+  chartsheet chart to fit the window.
+
+- Added `title` and `description` options to `add_table()` to set the table
+  alt text.
+
 
 ### Fixed
 
-- Fix issue where `xl_date_list()` and `xl_parse_date()` returned 1900-02-29
+- Fixed issue where `xl_date_list()` and `xl_parse_date()` returned 1900-02-29
   for datetimes on 1900-02-28 with a time after midnight.
 
 - Fixed Excel string length limit checks for strings with characters such as
@@ -24,6 +33,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added a check for Excel's 255 character limit for hyperlink tool tips in
   `write_url()`, `insert_image()` and `embed_image()`.
+
+- Fixed conditional format rule priorities when a range is repeated after a
+  different range. The priorities now follow the order that the rules were
+  added in.
+
+- Fixed issue where `set_start_page()` had no effect unless another page setup
+  option was also set.
+
+- Fixed issue with BMP images stored top-down, with a negative height, which
+  weren't handled correctly.
 
 
 ## [1.15] - 2025-09-12

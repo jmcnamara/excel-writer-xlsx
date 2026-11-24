@@ -7,7 +7,7 @@ package Excel::Writer::XLSX::Workbook;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2026, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
@@ -38,7 +38,7 @@ use Excel::Writer::XLSX::Utility qw(xl_cell_to_rowcol
                                     _has_invalid_name_chars);
 
 our @ISA     = qw(Excel::Writer::XLSX::Package::XMLwriter);
-our $VERSION = '1.15';
+our $VERSION = '1.16';
 
 
 ###############################################################################

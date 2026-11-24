@@ -351,6 +351,7 @@ t/regression/background04.t
 t/regression/background05.t
 t/regression/background06.t
 t/regression/background07.t
+t/regression/background08.t
 t/regression/bootstrap62.t
 t/regression/bootstrap63.t
 t/regression/bootstrap64.t
@@ -748,6 +749,7 @@ t/regression/chart_table03.t
 t/regression/chart_title01.t
 t/regression/chart_title02.t
 t/regression/chart_title03.t
+t/regression/chart_title04.t
 t/regression/chart_up_down_bars01.t
 t/regression/chart_up_down_bars02.t
 t/regression/chart_up_down_bars03.t
@@ -761,6 +763,7 @@ t/regression/chartsheet07.t
 t/regression/chartsheet08.t
 t/regression/chartsheet09.t
 t/regression/chartsheet10.t
+t/regression/chartsheet11.t
 t/regression/comment01.t
 t/regression/comment02.t
 t/regression/comment03.t
@@ -779,6 +782,7 @@ t/regression/comment15.t
 t/regression/comment16.t
 t/regression/comment17.t
 t/regression/comment18.t
+t/regression/comment19.t
 t/regression/cond_format01.t
 t/regression/cond_format02.t
 t/regression/cond_format03.t
@@ -799,6 +803,9 @@ t/regression/cond_format17.t
 t/regression/cond_format18.t
 t/regression/cond_format19.t
 t/regression/cond_format20.t
+t/regression/cond_format21.t
+t/regression/cond_format22.t
+t/regression/cond_format23.t
 t/regression/custom_colors01.t
 t/regression/data_validation01.t
 t/regression/data_validation02.t
@@ -838,6 +845,7 @@ t/regression/embed_image10.t
 t/regression/embed_image11.t
 t/regression/embed_image12.t
 t/regression/embed_image13.t
+t/regression/embed_image14.t
 t/regression/escapes01.t
 t/regression/escapes02.t
 t/regression/escapes03.t
@@ -1018,12 +1026,14 @@ t/regression/image55.t
 t/regression/image56.t
 t/regression/image57.t
 t/regression/image58.t
+t/regression/image59.t
 t/regression/images/black_150.jpg
 t/regression/images/black_150.png
 t/regression/images/black_150e.png
 t/regression/images/black_300.jpg
 t/regression/images/black_300.png
 t/regression/images/black_300e.png
+t/regression/images/black_40000x45000.gif
 t/regression/images/black_72.jpg
 t/regression/images/black_72.png
 t/regression/images/black_72e.png
@@ -1042,6 +1052,8 @@ t/regression/images/mylogo.png
 t/regression/images/red_208.png
 t/regression/images/red_64x20.png
 t/regression/images/red_readonly.png
+t/regression/images/red_topdown_20x12.bmp
+t/regression/images/red_topdown_32x32.bmp
 t/regression/images/red.bmp
 t/regression/images/red.gif
 t/regression/images/red.jpg
@@ -1201,6 +1213,7 @@ t/regression/set_row04.t
 t/regression/set_start_page01.t
 t/regression/set_start_page02.t
 t/regression/set_start_page03.t
+t/regression/set_start_page04.t
 t/regression/shape_connect01.t
 t/regression/shape_connect02.t
 t/regression/shape_connect03.t
@@ -1219,6 +1232,7 @@ t/regression/simple03.t
 t/regression/simple04.t
 t/regression/simple05.t
 t/regression/tab_color01.t
+t/regression/tab_color03.t
 t/regression/table01.t
 t/regression/table02.t
 t/regression/table03.t
@@ -1255,6 +1269,9 @@ t/regression/table33.t
 t/regression/table34.t
 t/regression/table35.t
 t/regression/table36.t
+t/regression/table37.t
+t/regression/table38.t
+t/regression/table39.t
 t/regression/taint01.t
 t/regression/taint02.t
 t/regression/top_left_cell01.t
@@ -1317,6 +1334,7 @@ t/regression/xlsx_files/background04.xlsx
 t/regression/xlsx_files/background05.xlsx
 t/regression/xlsx_files/background06.xlsx
 t/regression/xlsx_files/background07.xlsx
+t/regression/xlsx_files/background08.xlsx
 t/regression/xlsx_files/bootstrap62.xlsx
 t/regression/xlsx_files/bootstrap63.xlsx
 t/regression/xlsx_files/bootstrap64.xlsx
@@ -1704,6 +1722,7 @@ t/regression/xlsx_files/chart_table03.xlsx
 t/regression/xlsx_files/chart_title01.xlsx
 t/regression/xlsx_files/chart_title02.xlsx
 t/regression/xlsx_files/chart_title03.xlsx
+t/regression/xlsx_files/chart_title04.xlsx
 t/regression/xlsx_files/chart_up_down_bars01.xlsx
 t/regression/xlsx_files/chart_up_down_bars02.xlsx
 t/regression/xlsx_files/chart_up_down_bars03.xlsx
@@ -1717,6 +1736,7 @@ t/regression/xlsx_files/chartsheet07.xlsx
 t/regression/xlsx_files/chartsheet08.xlsx
 t/regression/xlsx_files/chartsheet09.xlsx
 t/regression/xlsx_files/chartsheet10.xlsx
+t/regression/xlsx_files/chartsheet11.xlsx
 t/regression/xlsx_files/comment01.xlsx
 t/regression/xlsx_files/comment02.xlsx
 t/regression/xlsx_files/comment03.xlsx
@@ -1735,6 +1755,7 @@ t/regression/xlsx_files/comment15.xlsx
 t/regression/xlsx_files/comment16.xlsx
 t/regression/xlsx_files/comment17.xlsx
 t/regression/xlsx_files/comment18.xlsx
+t/regression/xlsx_files/comment19.xlsx
 t/regression/xlsx_files/cond_format01.xlsx
 t/regression/xlsx_files/cond_format02.xlsx
 t/regression/xlsx_files/cond_format03.xlsx
@@ -1754,6 +1775,9 @@ t/regression/xlsx_files/cond_format17.xlsx
 t/regression/xlsx_files/cond_format18.xlsx
 t/regression/xlsx_files/cond_format19.xlsx
 t/regression/xlsx_files/cond_format20.xlsx
+t/regression/xlsx_files/cond_format21.xlsx
+t/regression/xlsx_files/cond_format22.xlsx
+t/regression/xlsx_files/cond_format23.xlsx
 t/regression/xlsx_files/custom_colors01.xlsx
 t/regression/xlsx_files/data_validation01.xlsx
 t/regression/xlsx_files/data_validation02.xlsx
@@ -1790,6 +1814,7 @@ t/regression/xlsx_files/embed_image10.xlsx
 t/regression/xlsx_files/embed_image11.xlsx
 t/regression/xlsx_files/embed_image12.xlsx
 t/regression/xlsx_files/embed_image13.xlsx
+t/regression/xlsx_files/embed_image14.xlsx
 t/regression/xlsx_files/escapes01.xlsx
 t/regression/xlsx_files/escapes02.xlsx
 t/regression/xlsx_files/escapes03.xlsx
@@ -1970,6 +1995,7 @@ t/regression/xlsx_files/image55.xlsx
 t/regression/xlsx_files/image56.xlsx
 t/regression/xlsx_files/image57.xlsx
 t/regression/xlsx_files/image58.xlsx
+t/regression/xlsx_files/image59.xlsx
 t/regression/xlsx_files/landscape01.xlsx
 t/regression/xlsx_files/macro01.xlsm
 t/regression/xlsx_files/macro02.xlsm
@@ -2114,6 +2140,7 @@ t/regression/xlsx_files/set_row03.xlsx
 t/regression/xlsx_files/set_start_page01.xlsx
 t/regression/xlsx_files/set_start_page02.xlsx
 t/regression/xlsx_files/set_start_page03.xlsx
+t/regression/xlsx_files/set_start_page04.xlsx
 t/regression/xlsx_files/shape_connect01.xlsx
 t/regression/xlsx_files/shape_connect02.xlsx
 t/regression/xlsx_files/shape_connect03.xlsx
@@ -2132,6 +2159,7 @@ t/regression/xlsx_files/simple03.xlsx
 t/regression/xlsx_files/simple04.xlsx
 t/regression/xlsx_files/simple05.xlsx
 t/regression/xlsx_files/tab_color01.xlsx
+t/regression/xlsx_files/tab_color03.xlsx
 t/regression/xlsx_files/table01.xlsx
 t/regression/xlsx_files/table02.xlsx
 t/regression/xlsx_files/table03.xlsx
@@ -2166,6 +2194,9 @@ t/regression/xlsx_files/table33.xlsx
 t/regression/xlsx_files/table34.xlsx
 t/regression/xlsx_files/table35.xlsx
 t/regression/xlsx_files/table36.xlsx
+t/regression/xlsx_files/table37.xlsx
+t/regression/xlsx_files/table38.xlsx
+t/regression/xlsx_files/table39.xlsx
 t/regression/xlsx_files/taint01.xlsx
 t/regression/xlsx_files/taint02.xlsx
 t/regression/xlsx_files/top_left_cell01.xlsx
@@ -2195,6 +2226,7 @@ t/regression/xlsx_files/vml01.xlsx
 t/regression/xlsx_files/vml02.xlsx
 t/regression/xlsx_files/vml03.xlsx
 t/regression/xlsx_files/vml04.xlsx
+t/utility/get_image_properties.t
 t/utility/quote_sheetname.t
 t/utility/xl_cell_to_rowcol.t
 t/utility/xl_col_to_name.t
@@ -2246,6 +2278,7 @@ t/worksheet/sparkline_09.t
 t/worksheet/sparkline_10.t
 t/worksheet/sparkline_11.t
 t/worksheet/sparkline_12.t
+t/worksheet/sparkline_15.t
 t/worksheet/sub_calculate_spans.t
 t/worksheet/sub_convert_date_time_01.t
 t/worksheet/sub_convert_date_time_02.t

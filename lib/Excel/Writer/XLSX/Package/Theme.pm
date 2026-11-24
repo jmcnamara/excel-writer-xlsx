@@ -6,7 +6,7 @@ package Excel::Writer::XLSX::Package::Theme;
 #
 # Used in conjunction with Excel::Writer::XLSX
 #
-# Copyright 2000-2025, John McNamara, jmcnamara@cpan.org
+# Copyright 2000-2026, John McNamara, jmcnamara@cpan.org
 #
 # SPDX-License-Identifier: Artistic-1.0-Perl OR GPL-1.0-or-later
 #
@@ -32,7 +32,7 @@ use IO::File;
 use utf8;
 
 our @ISA     = qw(Exporter);
-our $VERSION = '1.15';
+our $VERSION = '1.16';
 
 
 ###############################################################################
